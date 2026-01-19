@@ -479,9 +479,9 @@ private object GutenbergPlaywrightTests : BuildType({
 			param("EXTRA_ENV_VARS", listOf(
 				value("", label = "Simple Production"),
 				value("GUTENBERG_EDGE=true", label = "Simple Edge"),
-				value("TEST_ON_ATOMIC=true", label = "Atomic Production"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_EDGE=true", label = "Atomic Edge"),
-				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true", label = "Atomic Nightly"),
+				value("TEST_ON_ATOMIC=true,PW_WORKERS=1", label = "Atomic Production"),
+				value("TEST_ON_ATOMIC=true,GUTENBERG_EDGE=true,PW_WORKERS=1", label = "Atomic Edge"),
+				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
 			))
 		}
 		notifications {

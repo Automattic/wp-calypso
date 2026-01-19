@@ -184,7 +184,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
 					IFS=',' read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
 					for pair in "${'$'}{ENV_PAIRS[@]}"; do
-						echo "##teamcity[setParameter name='env.${'$'}pair']"
+						KEY="${'$'}{pair%%=*}"
+						VALUE="${'$'}{pair#*=}"
+						echo "##teamcity[setParameter name='env.${'$'}KEY' value='${'$'}VALUE']"
 					done
 				fi
 			""".trimIndent()
