@@ -61,6 +61,7 @@
 	font-size: 13px;
 	text-align: center;
 }
+
 .switch-site__site {
 	border-radius: $radius-small;
 	cursor: pointer;
@@ -124,16 +125,8 @@
 	overflow: hidden;
 	font-size: 1em;
 
-	.switch-site__site {
-		color: var( --studio-gray-100 );
-	}
-
-	.switch-site__list [aria-selected='true'] & {
+	.switch-site__site[aria-selected='true'] & {
 		color: var( --studio-white );
-	}
-
-	.switch-site__site mark {
-		font-weight: 700;
 	}
 }
 
@@ -141,4 +134,8 @@
 	color: var( --studio-gray-60 );
 	opacity: 0.7;
 	font-size: 0.9em;
+
+	.switch-site__site[aria-selected='true'] & {
+		color: var( --studio-white );
+	}
 }
