@@ -80,3 +80,7 @@
   --color-error-background: #2E1F1F;
   --color-error: #FFDDDF;
 }
+
+.agenttic.dark [data-slot="collapsed-view"] svg {
+  color: var(--color-white);
+}
