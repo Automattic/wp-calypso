@@ -8,7 +8,6 @@ import {
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
-	READER_STREAMS_NEW_POST_RECEIVE,
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_REMOVE_ITEM,
 	READER_STREAMS_ERROR,
@@ -92,12 +91,6 @@ export function receiveUpdates( { streamKey, streamItems } ) {
 	};
 }
 
-export function receiveNewPost( { streamKey, postData } ) {
-	return {
-		type: READER_STREAMS_NEW_POST_RECEIVE,
-		payload: { streamKey, postData },
-	};
-}
 export function selectItem( { streamKey, postKey } ) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,

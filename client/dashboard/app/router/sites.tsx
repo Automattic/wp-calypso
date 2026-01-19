@@ -77,7 +77,10 @@ export const sitesRoute = createRoute( {
 	path: 'sites',
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
+		if (
+			! isEnabled( 'dashboard/v2/es-site-list' ) &&
+			! isEnabled( 'dashboard/v2/paginated-site-list' )
+		) {
 			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 		}
 

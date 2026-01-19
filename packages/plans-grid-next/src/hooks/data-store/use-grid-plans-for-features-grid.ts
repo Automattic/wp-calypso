@@ -29,6 +29,8 @@ const useGridPlansForFeaturesGrid = ( {
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -66,6 +68,8 @@ const useGridPlansForFeaturesGrid = ( {
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
 	} );
 
 	return useMemo( () => {

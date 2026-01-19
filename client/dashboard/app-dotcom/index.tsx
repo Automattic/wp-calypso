@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import {
 	sitesQuery,
+	paginatedSitesQuery,
 	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
@@ -9,6 +10,7 @@ import boot from '../app/boot';
 import Logo from './logo';
 import type {
 	FetchSitesOptions,
+	FetchPaginatedSitesOptions,
 	FetchDashboardSiteListParams,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
@@ -47,6 +49,8 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
+		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
 			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>

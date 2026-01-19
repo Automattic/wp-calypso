@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from '@wordpress/element';
+import { createContext, useContext, useState, useCallback, useEffect } from '@wordpress/element';
 import { type TranslateResult } from 'i18n-calypso';
 
 export interface LoginContextType {
@@ -40,6 +40,19 @@ const LoginContextProvider = ( {
 	const [ subHeadingTextSecondary, setSubHeadingTextSecondary ] = useState<
 		TranslateResult | undefined | null
 	>( initialSubHeadingSecondary ?? undefined );
+
+	// Sync state when initial values change (e.g., when locale changes)
+	useEffect( () => {
+		setHeadingText( initialHeading ?? undefined );
+	}, [ initialHeading ] );
+
+	useEffect( () => {
+		setSubHeadingText( initialSubHeading ?? undefined );
+	}, [ initialSubHeading ] );
+
+	useEffect( () => {
+		setSubHeadingTextSecondary( initialSubHeadingSecondary ?? undefined );
+	}, [ initialSubHeadingSecondary ] );
 
 	const setHeaders = useCallback(
 		( {

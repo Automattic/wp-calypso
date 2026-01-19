@@ -1,15 +1,6 @@
 import { DUMMY_DATA_VIEW_PREFIX } from './constants';
 import type { SiteExcerptData } from '@automattic/sites';
 
-const SORT_KEY_MAP = {
-	site: 'alphabetically',
-	'last-publish': 'updatedAt',
-};
-
-export function mapFieldIdToSortKey( fieldId: string ) {
-	return SORT_KEY_MAP[ fieldId as keyof typeof SORT_KEY_MAP ] ?? fieldId;
-}
-
 export function getSitesPagination(
 	allSites: SiteExcerptData[],
 	perPage: number

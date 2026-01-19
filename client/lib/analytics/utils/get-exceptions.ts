@@ -12,6 +12,7 @@ const getExceptions = (): Partial< Record< AdTracker, boolean > > => {
 
 	return {
 		facebook: region === 'california' && countryCode === 'us',
+		tiktok: region === 'california' && countryCode === 'us',
 	};
 };
 

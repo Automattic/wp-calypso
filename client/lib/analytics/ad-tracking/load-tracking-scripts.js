@@ -19,6 +19,7 @@ import {
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
 	REDDIT_TRACKING_SCRIPT_URL,
+	TIKTOK_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
@@ -121,6 +122,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeTrackByTracker( 'reddit' ) ) {
 		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
+	}
+	// The pixel must be loaded with the ID in the URL.
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		scripts.push( TIKTOK_SCRIPT_URL + TRACKING_IDS.tiktokPixelId );
 	}
 
 	return scripts;

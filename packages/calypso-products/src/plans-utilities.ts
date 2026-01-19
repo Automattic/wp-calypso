@@ -1,6 +1,5 @@
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
-	BEST_VALUE_PLANS,
 	TERM_MONTHLY,
 	PLAN_MONTHLY_PERIOD,
 	TERM_ANNUALLY,
@@ -30,10 +29,6 @@ import { BillingTerm } from './types';
 
 export { getPlanSlugForTermVariant } from './get-plan-term-variant';
 export { getPlanMultipleTermsVariantSlugs } from './get-plan-multiple-terms-variant-slugs';
-
-export function isBestValue( plan: string ): boolean {
-	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
-}
 
 /**
  * Return estimated duration of given PLAN_TERM in days
