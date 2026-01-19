@@ -60,6 +60,7 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -332,7 +333,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		}, [ isLoggedIn, currentStepSlug ] );
 
-		// Preload experiments
+		// Preload the visual split experiment
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
