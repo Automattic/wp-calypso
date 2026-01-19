@@ -284,6 +284,11 @@ export type GridContextProps = {
 	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+
+	/**
+	 * When true, apply var1d experiment styling to storage and other components.
+	 */
+	isVar1dVariant?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<
