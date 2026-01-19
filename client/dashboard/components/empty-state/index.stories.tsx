@@ -189,7 +189,7 @@ export const WithoutContentWrapper: Story = {
 	},
 };
 
-export const withContainerAndCallout: Story = {
+export const WithContainerAndCallout: Story = {
 	render: ( args ) => (
 		<EmptyState.Wrapper>
 			<EmptyState { ...args } />
