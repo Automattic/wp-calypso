@@ -37,6 +37,11 @@ export type TransformedFeatureObject = FeatureObject & {
 	 * When true, this is the last feature in a non-var1d experiment variant (37px bottom margin).
 	 */
 	isExperimentLastFeature?: boolean;
+	/**
+	 * Badge text to display after the feature title (var1d experiment).
+	 * Examples: 'Free', 'New', 'AI'
+	 */
+	badgeText?: TranslateResult;
 };
 
 export interface PlanFeaturesForGridPlan {

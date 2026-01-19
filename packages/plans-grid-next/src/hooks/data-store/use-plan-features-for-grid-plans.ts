@@ -1,9 +1,17 @@
 import {
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_WORDADS,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+	FEATURE_EARLY_ONBOARDING_CALLS,
 	applyTestFiltersToPlansList,
 	isMonthly,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
 import type {
@@ -13,6 +21,7 @@ import type {
 	GridPlan,
 } from '../../types';
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
@@ -72,6 +81,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	isExperimentVariant,
 	isVar1dVariant,
 } ) => {
+	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
 		return gridPlans.reduce(
@@ -294,6 +304,18 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					// Track whether we've passed a header feature for var1d styling
 					let passedHeaderFeature = false;
 
+					// var1d badge mapping for specific features
+					const var1dBadgeMap: Record< string, TranslateResult > = {
+						[ FEATURE_CUSTOM_DOMAIN ]: translate( 'Free' ),
+						[ FEATURE_UPLOAD_PLUGINS ]: translate( 'New' ),
+						[ FEATURE_SIMPLE_PAYMENTS ]: translate( 'New' ),
+						[ FEATURE_WORDADS ]: translate( 'New' ),
+						[ FEATURE_AI_WEBSITE_BUILDER ]: translate( 'AI' ),
+						[ FEATURE_AI_WRITER_DESIGNER ]: translate( 'AI' ),
+						[ FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ]: translate( 'New' ),
+						[ FEATURE_EARLY_ONBOARDING_CALLS ]: translate( 'Free' ),
+					};
+
 					wpcomFeatures.forEach( ( feature ) => {
 						// topFeature and highlightedFeatures are already added to the list above
 						const isHighlightedFeature =
@@ -325,6 +347,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							passedHeaderFeature = true;
 						}
 
+						// Get badge text for var1d variant
+						const badgeText = isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined;
+
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
@@ -332,6 +357,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							...( isHeaderFeature && { isHighlighted: true } ),
 							...( isHeaderFeature && isVar1dVariant && { isHeaderFeature: true } ),
 							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
+							...( badgeText && { badgeText } ),
 						} );
 					} );
 
@@ -379,6 +405,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useVar5Features,
 		isExperimentVariant,
 		isVar1dVariant,
+		translate,
 	] );
 };
 

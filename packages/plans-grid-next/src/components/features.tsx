@@ -22,6 +22,25 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
+// var1d experiment: Badge displayed after feature title
+const FeatureBadge = styled.span`
+	display: inline-flex;
+	height: 18px;
+	padding: 0 6px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	border-radius: 4px;
+	background: #d7ffba;
+	color: #008a20;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 20px;
+	margin-inline-start: 8px;
+	vertical-align: middle;
+`;
+
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
@@ -158,6 +177,9 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												{ currentFeature.getTitle( {
 													domainName: paidDomainName,
 												} ) }
+												{ currentFeature.badgeText && (
+													<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+												) }
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
