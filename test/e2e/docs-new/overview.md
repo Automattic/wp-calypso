@@ -8,7 +8,7 @@ This documentation supports the migration of Playwright Test specifications from
 - [Creating Reliable Tests](./creating_reliable_tests.md)
 - [Custom Fixtures](./custom_fixtures.md)
 - [Flowcharts](./flowcharts.md)
-- [Libary Objects](./library_objects.md)
+- [Library Objects](./library_objects.md)
 - [New Style Guide](./new_style_guide.md)
 - [Running and Debugging Tests](./running_debugging_tests.md)
 - [Setup](./setup.md)
