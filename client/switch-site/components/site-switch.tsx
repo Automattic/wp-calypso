@@ -171,6 +171,7 @@ const Switcher = ( { redirectTo }: { redirectTo: string } ) => {
 							aria-selected={ index === selectedIndex }
 							tabIndex={ 0 }
 							onClick={ () => handleSiteSelect( site ) }
+							onMouseEnter={ () => setSelectedIndex( index ) }
 							onKeyDown={ ( e ) => {
 								if ( e.key === 'Enter' || e.key === ' ' ) {
 									e.preventDefault();
