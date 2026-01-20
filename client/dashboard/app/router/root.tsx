@@ -22,7 +22,11 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			return;
 		}
 
-		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const [ userPreference, userSettings ] = await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.ensureQueryData( userSettingsQuery() ),
+		] );
+
 		if ( userPreference[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
 			return;
 		}
@@ -31,7 +35,6 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			throw redirect( { href: wpcomLink( '/reader' ), replace: true } );
 		}
 
-		const userSettings = await queryClient.ensureQueryData( userSettingsQuery() );
 		if ( userSettings.primary_site_ID ) {
 			let primarySite;
 			try {
