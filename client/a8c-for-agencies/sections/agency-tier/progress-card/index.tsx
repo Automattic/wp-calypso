@@ -20,10 +20,10 @@ import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 function getTierCtaLabel( tierId?: AgencyTierType ): string {
 	const labels: Record< AgencyTierType, string > = {
-		'emerging-partner': __( 'Start growing' ),
-		'agency-partner': __( 'Grow my tier' ),
-		'pro-agency-partner': __( 'Unlock more' ),
-		'vip-pro-agency-partner': __( 'Keep growing' ),
+		'emerging-partner': __( 'See how to grow' ),
+		'agency-partner': __( 'Unlock Pro tier' ),
+		'pro-agency-partner': __( 'Explore Pro perks' ),
+		'vip-pro-agency-partner': __( 'View my credits' ),
 		'premier-partner': __( 'View my benefits' ),
 	};
 
