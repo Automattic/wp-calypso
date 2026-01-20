@@ -41,14 +41,19 @@ const StorageDropdownOption = ( {
 	const addOnStorageString = useStorageString( addOnStorage || 0 );
 
 	const title = addOnStorage
-		? translate( '%(planStorageString)s + %(addOnStorageString)s', {
+		? translate( '%(planStorageString)s + %(addOnStorageString)s storage', {
 				args: {
 					planStorageString,
 					addOnStorageString,
 				},
+				comment: 'Storage option with add-on. Example: "50GB + 100GB storage"',
 		  } )
-		: planStorageString;
+		: translate( '%(planStorageString)s storage', {
+				args: { planStorageString },
+				comment: 'Storage option. Example: "50GB storage"',
+		  } );
 
+	// Only show price for add-on options, not for the base plan storage
 	const priceString =
 		price && addOnStorage
 			? translate( '%(price)s/month, billed yearly', {
@@ -56,13 +61,13 @@ const StorageDropdownOption = ( {
 					comment:
 						'The cost of a storage add on per month. Example reads as "$50/month, billed yearly"',
 			  } )
-			: translate( 'Included in plan' );
+			: null;
 
 	return priceOnSeparateLine ? (
 		<span className="plans-grid-next-storage-dropdown__option-title">{ title }</span>
 	) : (
 		<DropdownOption className="plans-grid-next-storage-dropdown__option" title={ title }>
-			<div>{ priceString }</div>
+			{ priceString && <div>{ priceString }</div> }
 		</DropdownOption>
 	);
 };
@@ -141,13 +146,17 @@ const StorageDropdown = ( { planSlug, onStorageAddOnClick }: StorageDropdownProp
 	const planStorageString = useStorageString( planStorage );
 	const selectedAddOnStorageString = useStorageString( selectedStorageAddOnStorage );
 	const accessibleOptionName = selectedStorageAddOnStorage
-		? translate( '%(planStorageString)s + %(addOnStorageString)s', {
+		? translate( '%(planStorageString)s + %(addOnStorageString)s storage', {
 				args: {
 					planStorageString,
 					addOnStorageString: selectedAddOnStorageString,
 				},
+				comment: 'Storage amount display with add-on. Example: "50GB + 100GB storage"',
 		  } )
-		: planStorageString;
+		: translate( '%(planStorageString)s storage', {
+				args: { planStorageString },
+				comment: 'Storage amount display. Example: "50GB storage"',
+		  } );
 
 	const selectedOption = {
 		key: selectedStorageOptionForPlan,

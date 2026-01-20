@@ -387,6 +387,7 @@ const PlansFeaturesMain = ( {
 		useVar3Features,
 		useVar4Features,
 		useVar5Features,
+		isVar1dVariant,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
@@ -469,6 +470,7 @@ const PlansFeaturesMain = ( {
 		useShortSetStackedFeatures: useVar1Features,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -497,6 +499,7 @@ const PlansFeaturesMain = ( {
 		useShortSetStackedFeatures: useVar1Features,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -947,6 +950,7 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
+										isVar1dVariant={ isVar1dVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }

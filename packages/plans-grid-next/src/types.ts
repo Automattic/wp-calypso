@@ -18,6 +18,30 @@ export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
 	availableOnlyForAnnualPlans: boolean;
 	isHighlighted?: boolean;
+	/**
+	 * When true, the feature should receive differentiator styling (var1d experiment).
+	 * Applied to features below the "Everything in X, plus:" header.
+	 * A CSS class will be added based on this flag to allow future customizations (badges, etc.).
+	 */
+	isDifferentiatorFeature?: boolean;
+	/**
+	 * When true, the feature is a header feature ("Included in plan:" or "Everything in X, plus:").
+	 * Used for var1d styling with 26px margin after the header.
+	 */
+	isHeaderFeature?: boolean;
+	/**
+	 * When true, this is the last feature in var1d variant (24px bottom margin).
+	 */
+	isVar1dLastFeature?: boolean;
+	/**
+	 * When true, this is the last feature in a non-var1d experiment variant (37px bottom margin).
+	 */
+	isExperimentLastFeature?: boolean;
+	/**
+	 * Badge text to display after the feature title (var1d experiment).
+	 * Examples: 'Free', 'New', 'AI'
+	 */
+	badgeText?: TranslateResult;
 };
 
 export interface PlanFeaturesForGridPlan {
@@ -260,6 +284,11 @@ export type GridContextProps = {
 	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+
+	/**
+	 * When true, apply var1d experiment styling to storage and other components.
+	 */
+	isVar1dVariant?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

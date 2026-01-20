@@ -41,7 +41,11 @@ export default function ResourceSection( {
 				<Heading level={ 2 } weight={ 500 } size={ 20 }>
 					{ title }
 				</Heading>
-				{ description && <Text size={ 15 }>{ description }</Text> }
+				{ description && (
+					<Text size={ 15 } style={ { display: 'block', maxWidth: '650px' } }>
+						{ description }
+					</Text>
+				) }
 			</Spacer>
 
 			<div className={ `resource-center-cards ${ className }` }>
