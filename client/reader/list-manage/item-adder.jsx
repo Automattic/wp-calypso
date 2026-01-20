@@ -6,10 +6,8 @@ import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-s
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
 import { resemblesUrl } from 'calypso/lib/url';
-import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import FeedUrlAdder from './feed-url-adder';
 import ListItem from './list-item';
 
@@ -18,9 +16,6 @@ export default function ItemAdder( props ) {
 
 	const [ query, updateQuery ] = useState( '' );
 	const queryIsUrl = resemblesUrl( query );
-	const followResults = useSelector( ( state ) =>
-		filterFollowsByQuery( query, getReaderFollows( state ) ).slice( 0, 7 )
-	);
 
 	const feedResults = useSelector( ( state ) =>
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
@@ -50,21 +45,8 @@ export default function ItemAdder( props ) {
 			<SyncReaderFollows />
 
 			{ query &&
-				! queryIsUrl &&
-				followResults?.map( ( item ) => (
-					<ListItem
-						hideIfInList
-						isFollowed
-						item={ item }
-						key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
-						list={ props.list }
-						owner={ props.owner }
-					/>
-				) ) }
-			{ ! queryIsUrl &&
 				feedResults?.map( ( item ) => (
 					<ListItem
-						hideIfInList
 						item={ item }
 						key={ item.feed_ID || item.feed_URL }
 						list={ props.list }
