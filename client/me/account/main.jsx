@@ -531,6 +531,7 @@ class Account extends Component {
 				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
 				disabled={ this.state.submittingForm }
+				filter={ ( siteId, site ) => ! site?.is_wpcom_staging_site }
 			/>
 		);
 	}
