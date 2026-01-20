@@ -91,19 +91,9 @@ export const TimeframeCommissionsColumn = memo(
 );
 TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
-export const WooPaymentsStatusColumn = ( {
-	state,
-	siteId,
-	woopaymentsData,
-}: {
-	state: string;
-	siteId: number;
-	woopaymentsData?: WooPaymentsData;
-} ) => {
+export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ showPopover, setShowPopover ] = useState( false );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
 
 	if ( ! state ) {
 		return (
@@ -120,37 +110,16 @@ export const WooPaymentsStatusColumn = ( {
 	}
 
 	const getStatusProps = () => {
-		// Check if site is commission eligible.
-		const siteExistsInWooPaymentsData =
-			woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
-
-		// Find ineligibility reason if site is in commission_ineligible_sites
-		const ineligibleSite = woopaymentsData?.data?.commission_ineligible_sites?.find(
-			( site ) => site.blog_id === siteId
-		);
-
-		// If site is active but not commission eligible, show "Not eligible" status.
-		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
-			return {
-				statusText: translate( 'Not eligible' ),
-				statusType: 'error',
-				showInfoIcon: true,
-				ineligibleReason: ineligibleSite?.ineligible_reason,
-			};
-		}
-
 		switch ( state ) {
 			case 'active':
 				return {
 					statusText: translate( 'Active' ),
 					statusType: 'success',
-					showInfoIcon: false,
 				};
 			case 'disconnected':
 				return {
 					statusText: translate( 'Disconnected' ),
 					statusType: 'error',
-					showInfoIcon: false,
 				};
 			default:
 				return null;
@@ -162,6 +131,58 @@ export const WooPaymentsStatusColumn = ( {
 	if ( ! statusProps ) {
 		return null;
 	}
+
+	return (
+		<div className="woopayments-status-column">
+			<StatusBadge
+				statusProps={ {
+					children: statusProps.statusText,
+					type: statusProps.statusType as BadgeType,
+				} }
+			/>
+		</div>
+	);
+};
+
+export const CommissionEligibilityColumn = ( {
+	state,
+	siteId,
+	woopaymentsData,
+}: {
+	state: string;
+	siteId: number;
+	woopaymentsData?: WooPaymentsData;
+} ) => {
+	const translate = useTranslate();
+	const [ showPopover, setShowPopover ] = useState( false );
+	const wrapperRef = useRef< HTMLDivElement | null >( null );
+
+	// Don't show eligibility status if WooPayments is not active.
+	if ( state !== 'active' ) {
+		return <Gridicon icon="minus" />;
+	}
+
+	// Check if site is commission eligible.
+	const isCommissionEligible = woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
+
+	// Find ineligibility reason if site is in commission_ineligible_sites.
+	const ineligibleSite = woopaymentsData?.data?.commission_ineligible_sites?.find(
+		( site ) => site.blog_id === siteId
+	);
+
+	const statusProps = isCommissionEligible
+		? {
+				statusText: translate( 'Eligible' ),
+				statusType: 'success' as BadgeType,
+				showInfoIcon: false,
+				ineligibleReason: undefined,
+		  }
+		: {
+				statusText: translate( 'Not eligible' ),
+				statusType: 'error' as BadgeType,
+				showInfoIcon: true,
+				ineligibleReason: ineligibleSite?.ineligible_reason,
+		  };
 
 	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '', translate );
 
@@ -184,7 +205,7 @@ export const WooPaymentsStatusColumn = ( {
 			<StatusBadge
 				statusProps={ {
 					children: statusProps.statusText,
-					type: statusProps.statusType as BadgeType,
+					type: statusProps.statusType,
 				} }
 			/>
 			{ statusProps.showInfoIcon && (
