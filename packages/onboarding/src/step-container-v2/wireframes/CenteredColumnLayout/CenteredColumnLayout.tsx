@@ -9,7 +9,6 @@ import { renderTopBar, TopBarRenderer } from '../../components/TopBar/TopBarRend
 
 interface CenteredColumnLayoutProps {
 	topBar?: ContentProp;
-	bottomBar?: ContentProp;
 	heading?: ReactNode;
 	className?: string;
 	children?: ContentProp;
@@ -24,7 +23,6 @@ interface CenteredColumnLayoutProps {
 export const CenteredColumnLayout = ( {
 	columnWidth,
 	topBar,
-	bottomBar,
 	heading,
 	className,
 	children,
@@ -51,7 +49,6 @@ export const CenteredColumnLayout = ( {
 		>
 			{ ( context ) => {
 				const content = typeof children === 'function' ? children( context ) : children;
-				const bottomBarContent = typeof bottomBar === 'function' ? bottomBar( context ) : bottomBar;
 
 				return (
 					<>
@@ -67,9 +64,6 @@ export const CenteredColumnLayout = ( {
 								{ content }
 							</ContentRow>
 						</ContentWrapper>
-						{ bottomBarContent && (
-							<div className="step-container-v2__bottom-bar-wrapper">{ bottomBarContent }</div>
-						) }
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
 				);
