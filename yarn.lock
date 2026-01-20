@@ -990,66 +990,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/command-palette-wp-admin@workspace:apps/command-palette-wp-admin":
-  version: 0.0.0-use.local
-  resolution: "@automattic/command-palette-wp-admin@workspace:apps/command-palette-wp-admin"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@automattic/command-palette": "workspace:^"
-    "@automattic/languages": "workspace:^"
-    "@automattic/sites": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
-    "@wordpress/data": "npm:^10.23.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
-    "@wordpress/dom-ready": "npm:^4.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    calypso: "workspace:^"
-    gettext-parser: "npm:^6.0.0"
-    i18n-calypso: "workspace:^"
-    lodash: "npm:^4.17.21"
-    npm-run-all: "npm:^4.1.5"
-    postcss: "npm:^8.5.3"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    redux: "npm:^5.0.1"
-    webpack: "npm:^5.99.8"
-    webpack-bundle-analyzer: "npm:^4.10.2"
-  languageName: unknown
-  linkType: soft
-
-"@automattic/command-palette@workspace:^, @automattic/command-palette@workspace:packages/command-palette":
-  version: 0.0.0-use.local
-  resolution: "@automattic/command-palette@workspace:packages/command-palette"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-products": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/components": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/sites": "workspace:^"
-    "@emotion/react": "npm:^11.11.1"
-    "@emotion/styled": "npm:^11.11.0"
-    "@wordpress/commands": "npm:^1.23.0"
-    "@wordpress/components": "npm:^30.9.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/react-i18n": "npm:^4.23.0"
-    "@wordpress/url": "npm:^4.23.0"
-    clsx: "npm:^2.1.1"
-    cmdk: "npm:^0.2.1"
-    typescript: "npm:^5.8.3"
-    utility-types: "npm:^3.10.0"
-  peerDependencies:
-    "@wordpress/data": ^10.23.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/components@workspace:^, @automattic/components@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
