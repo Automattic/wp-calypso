@@ -206,7 +206,7 @@ const UserStepComponent: StepType = function UserStep( {
 		if ( isLargeViewport ) {
 			return (
 				<Step.TwoColumnLayout
-					className="step-container-v2--user"
+					className="step-container-v2--user step-container-v2--user-with-slider"
 					firstColumnWidth={ 6 }
 					secondColumnWidth={ 6 }
 					columns={ 12 }
@@ -239,7 +239,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 		return (
 			<Step.CenteredColumnLayout
-				className="step-container-v2--user"
+				className="step-container-v2--user step-container-v2--user-with-slider"
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }

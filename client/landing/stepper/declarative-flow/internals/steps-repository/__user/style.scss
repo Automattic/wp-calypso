@@ -395,6 +395,12 @@ $breakpoint-mobile: 660px;
 	}
 }
 
+.step-container-v2:has(.step-container-v2--user-with-slider) {
+	.step-container-v2__content-wrapper {
+		gap: 0;
+	}
+}
+
 .step-container-v2__content-row--two-column-layout > div:has(.user-step-carousel) {
 	min-width: 0;
 }
