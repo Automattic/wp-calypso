@@ -139,8 +139,6 @@ class SocialSignupForm extends Component {
 							<ProvideExperimentData name="calypso_account_step_improvement_202601">
 								{ ( isLoading, experimentAssignment ) => {
 									const variantName = experimentAssignment?.variationName ?? 'control';
-									console.log( 'experimentAssignment inside social.jsx', experimentAssignment );
-									console.log( 'variantName inside social.jsx', variantName );
 									if (
 										isLoading ||
 										( variantName !== 'control' && variantName !== 'treatment_messaging_slider' )

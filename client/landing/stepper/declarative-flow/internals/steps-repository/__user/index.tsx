@@ -53,10 +53,6 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 	const variationName = experimentAssignment?.variationName ?? 'control';
 
-	console.log( 'flow', flow );
-	console.log( 'variationName', variationName );
-	console.log( 'isLoadingExperiment', isLoadingExperiment );
-
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
@@ -241,6 +237,17 @@ const UserStepComponent: StepType = function UserStep( {
 
 		let layoutClassName = 'step-container-v2--user';
 		if (
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging',
+				'treatment_email_messaging_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+		) {
+			layoutClassName += ' step-container-v2--user-with-slider';
+		}
+
+		if (
 			isLargeViewport &&
 			! isLoadingExperiment &&
 			[
@@ -249,7 +256,6 @@ const UserStepComponent: StepType = function UserStep( {
 				'treatment_messaging_slider',
 			].includes( variationName )
 		) {
-			layoutClassName += ' step-container-v2--user-with-slider';
 			return (
 				<Step.TwoColumnLayout
 					className={ layoutClassName }
@@ -277,17 +283,6 @@ const UserStepComponent: StepType = function UserStep( {
 					</DotPager>
 				</Step.TwoColumnLayout>
 			);
-		}
-
-		if (
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging',
-				'treatment_email_messaging_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-		) {
-			layoutClassName += ' step-container-v2--user-with-slider';
 		}
 
 		return (
