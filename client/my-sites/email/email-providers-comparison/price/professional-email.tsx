@@ -23,7 +23,7 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 		: TITAN_MAIL_YEARLY_SLUG;
 };
 
-const getTitanFreeTrialMonths = ( product: ProductListItem | null ): number | null => {
+const getTitanFreeTrialMonths = ( product: ProductListItem | null ): number => {
 	return product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 };
 
