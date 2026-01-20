@@ -98,42 +98,6 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
-	const carouselSlides = [
-		<div className="user-step-carousel-column" key="slide-1">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-title">
-						{ translate( 'Join 472+ million websites worldwide' ) }
-					</p>
-				</div>
-			</div>
-		</div>,
-		<div className="user-step-carousel-column-2" key="slide-2">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-testimonial">
-						{ translate(
-							'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
-						) }
-					</p>
-					<p className="user-step-carousel-testimonial-author">{ translate( 'Brett S.' ) }</p>
-					<p className="user-step-carousel-testimonial-title">
-						{ translate( 'Founder/Blogger in Chief' ) }
-					</p>
-				</div>
-			</div>
-		</div>,
-		<div className="user-step-carousel-column-3" key="slide-3">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-title">
-						{ translate( 'AI builds the site — you make it yours' ) }
-					</p>
-				</div>
-			</div>
-		</div>,
-	];
-
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
 		if ( 'ID' in data ) {
 			setSignupIsNewUser( data.ID );
@@ -181,6 +145,42 @@ const UserStepComponent: StepType = function UserStep( {
 			) }
 		</>
 	);
+
+	const carouselSlides = [
+		<div className="user-step-carousel-column" key="slide-1">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
+					<p className="user-step-carousel-title">
+						{ translate( 'Join 472+ million websites worldwide' ) }
+					</p>
+				</div>
+			</div>
+		</div>,
+		<div className="user-step-carousel-column-2" key="slide-2">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
+					<p className="user-step-carousel-testimonial">
+						{ translate(
+							'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
+						) }
+					</p>
+					<p className="user-step-carousel-testimonial-author">{ translate( 'Brett S.' ) }</p>
+					<p className="user-step-carousel-testimonial-title">
+						{ translate( 'Founder/Blogger in Chief' ) }
+					</p>
+				</div>
+			</div>
+		</div>,
+		<div className="user-step-carousel-column-3" key="slide-3">
+			<div className="user-step-carousel-column-inner">
+				<div className="user-step-carousel-slide">
+					<p className="user-step-carousel-title">
+						{ translate( 'AI builds the site — you make it yours' ) }
+					</p>
+				</div>
+			</div>
+		</div>,
+	];
 
 	if ( isStepContainerV2 ) {
 		const headingText = isMessagingVariation
@@ -262,8 +262,6 @@ const UserStepComponent: StepType = function UserStep( {
 						heading={ heading }
 						topBar={ topBar }
 						stickyBottomBar={ stickyBottomBar }
-						noTopPadding
-						noBottomPadding
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
