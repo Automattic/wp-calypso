@@ -372,6 +372,34 @@
 			font-weight: 600;
 		}
 
+		// var1d experiment: differentiator feature styling
+		// Features below "Everything in X, plus:" get distinctive underline treatment
+		&.is-differentiator-feature {
+			display: flex;
+			align-items: flex-start;
+			color: var(--studio-gray-90);
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			line-height: 16px;
+
+			// Make the tooltip hover area a flex container so text doesn't wrap under icon
+			.plans-2023-tooltip__hover-area-container {
+				display: flex;
+				align-items: flex-start;
+			}
+
+			// Apply underline styling only to the text, not the icon
+			> span {
+				text-decoration-line: underline;
+				text-decoration-style: dotted;
+				text-decoration-skip-ink: none;
+				text-decoration-color: #00ba37;
+				text-decoration-thickness: 9%;
+				text-underline-offset: auto;
+				text-underline-position: from-font;
+			}
+		}
+
 		@include plans-grid-medium-large {
 			font-size: $font-body-extra-small;
 			line-height: 16px;
@@ -392,6 +420,34 @@
 			margin-top: 8px;
 		}
 	}
+}
+
+// var1d experiment: 26px margin after header features ("Included in plan:" / "Everything in X, plus:")
+.plan-features-2023-grid__table-item .is-header-feature {
+	.plan-features-2023-grid__item {
+		padding-block-end: 26px;
+	}
+}
+
+// var1d experiment: 17px vertical margin between differentiator features
+.plan-features-2023-grid__table-item .is-differentiator-feature {
+	.plan-features-2023-grid__item {
+		padding-block-end: 17px;
+	}
+
+	&.is-last-feature .plan-features-2023-grid__item {
+		padding-block-end: 0;
+	}
+}
+
+// var1d experiment: 24px bottom margin after last feature
+.plan-features-2023-grid__table-item .is-var1d-last-feature {
+	margin-block-end: 24px;
+}
+
+// Other experiment variants (var1, var3, var4, var5): 37px bottom margin after last feature
+.plan-features-2023-grid__table-item .is-experiment-last-feature {
+	margin-block-end: 37px;
 }
 
 .plan-features-2023-grid__row:last-of-type .plan-features-2023-grid__table-item {

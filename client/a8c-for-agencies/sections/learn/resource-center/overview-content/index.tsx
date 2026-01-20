@@ -50,7 +50,7 @@ export default function ResourceCenterOverviewContent( {
 			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
 				<Text size={ 15 }>
 					{ __(
-						"Explore our resource center for agencies, where you'll find exclusive materials designed to help you sell and integrate Automattic products effectively. These tools not only enhance your sales strategies but also support you in running your agency smoothly and maximizing conversions."
+						'Explore our resource center for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including resources to understand, position, and integrate Automattic products when they are the right fit.'
 					) }
 				</Text>
 			</Spacer>
@@ -66,8 +66,10 @@ export default function ResourceCenterOverviewContent( {
 			/>
 
 			<ResourceSection
-				title={ __( 'The art of the deal' ) }
-				description={ __( 'Learn tips from our world-class sales team to win clients!' ) }
+				title={ __( 'Client conversations that work' ) }
+				description={ __(
+					'Learn practical ways to have better client conversations, build trust, and guide decisions that lead to new business and extended partnerships.'
+				) }
 				resources={ artOfTheDealResources }
 				onOpenVideoModal={ handleOpenVideoModal }
 				maxResources={ 2 }

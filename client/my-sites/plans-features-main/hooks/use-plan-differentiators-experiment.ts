@@ -22,7 +22,7 @@ type PlanDifferentiatorsExperimentResult = {
 	isShortSet: boolean;
 	/**
 	 * When true, show the differentiator header (3 bullet points).
-	 * Applies to: var1d
+	 * Currently disabled for all variants.
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
@@ -45,6 +45,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 * Applies to: var1, var1d
 	 */
 	useVar1Features: boolean;
+	/**
+	 * When true, the user is specifically in the var1d variant.
+	 * Used to apply differentiator styling to features below "Everything in X" headers.
+	 */
+	isVar1dVariant: boolean;
 	/**
 	 * When true, the user is in an experiment variant (not control).
 	 */
@@ -91,11 +96,12 @@ function usePlanDifferentiatorsExperiment( {
 			variant === 'var1' || variant === 'var1d' || variant === 'var3' || variant === 'var5',
 		isLongSet: variant === 'var3' || variant === 'var4',
 		isShortSet: variant === 'var1' || variant === 'var1d' || variant === 'var5',
-		showDifferentiatorHeader: variant === 'var1d',
+		showDifferentiatorHeader: false,
 		useVar5Features: variant === 'var5',
 		useVar4Features: variant === 'var4',
 		useVar3Features: variant === 'var3',
 		useVar1Features: variant === 'var1' || variant === 'var1d',
+		isVar1dVariant: variant === 'var1d',
 		isExperimentVariant,
 	};
 }

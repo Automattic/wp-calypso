@@ -22,6 +22,40 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
+// var1d experiment: Badge displayed after feature title
+const FeatureBadge = styled.span`
+	display: inline-flex;
+	height: 18px;
+	padding: 0 6px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	border-radius: 4px;
+	background: #d7ffba;
+	color: #008a20;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 20px;
+	margin-inline-start: 8px;
+	vertical-align: middle;
+`;
+
+// var1d experiment: Checkmark bullet icon for differentiator features
+const DifferentiatorCheckIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="16"
+		height="20"
+		viewBox="0 0 16 20"
+		fill="none"
+		style={ { flexShrink: 0, marginInlineEnd: '8px', verticalAlign: 'top' } }
+	>
+		<circle opacity="0.13" cx="8" cy="10" r="8" fill="#9CA0B2" />
+		<path d="M5 9.77778L7.14286 12L11 8" stroke="#5B5E6C" strokeWidth="1.2" />
+	</svg>
+);
+
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
@@ -106,6 +140,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-header-feature': currentFeature.isHeaderFeature,
+					'is-var1d-last-feature': currentFeature.isVar1dLastFeature,
+					'is-experiment-last-feature': currentFeature.isExperimentLastFeature,
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
@@ -114,6 +152,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
 				} );
 
 				return (
@@ -150,9 +189,13 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											id={ key }
 										>
 											<>
+												{ currentFeature.isDifferentiatorFeature && <DifferentiatorCheckIcon /> }
 												{ currentFeature.getTitle( {
 													domainName: paidDomainName,
 												} ) }
+												{ currentFeature.badgeText && (
+													<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+												) }
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (

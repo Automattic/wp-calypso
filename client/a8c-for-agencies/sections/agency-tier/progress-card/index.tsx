@@ -18,6 +18,18 @@ import InfluencedRevenue from '../overview-content/influenced-revenue';
 import type { AgencyTierType } from '../overview-content/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
+function getTierCtaLabel( tierId?: AgencyTierType ): string {
+	const labels: Record< AgencyTierType, string > = {
+		'emerging-partner': __( 'See how to grow' ),
+		'agency-partner': __( 'Unlock Pro tier' ),
+		'pro-agency-partner': __( 'Explore Pro perks' ),
+		'vip-pro-agency-partner': __( 'View my credits' ),
+		'premier-partner': __( 'View my benefits' ),
+	};
+
+	return tierId ? labels[ tierId ] : __( 'View tiers' );
+}
+
 export default function AgencyTierProgressCard( {
 	currentAgencyTierId,
 	influencedRevenue,
@@ -85,11 +97,12 @@ export default function AgencyTierProgressCard( {
 						/>
 						<ButtonStack justify="flex-start">
 							<Button
+								className="agency-tier__progress-card-cta-button"
 								onClick={ handleExploreTiersAndBenefits }
 								href={ A4A_AGENCY_TIER_LINK }
 								variant="secondary"
 							>
-								{ __( 'Explore Tiers and benefits' ) }
+								{ getTierCtaLabel( currentAgencyTierId ) }
 							</Button>
 						</ButtonStack>
 					</VStack>

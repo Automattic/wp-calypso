@@ -36,7 +36,6 @@ export default function BrowseAllResources( {
 	const filterOptions = useMemo( () => {
 		const products = new Set< string >();
 		const resourceTypes = new Set< string >();
-		const formats = new Set< string >();
 
 		resources.forEach( ( resource ) => {
 			if ( resource.relatedProduct ) {
@@ -44,9 +43,6 @@ export default function BrowseAllResources( {
 			}
 			if ( resource.resourceType ) {
 				resourceTypes.add( resource.resourceType );
-			}
-			if ( resource.format ) {
-				formats.add( resource.format );
 			}
 		} );
 
@@ -56,10 +52,6 @@ export default function BrowseAllResources( {
 				label: value,
 			} ) ),
 			resourceTypes: Array.from( resourceTypes ).map( ( value ) => ( {
-				value,
-				label: value,
-			} ) ),
-			formats: Array.from( formats ).map( ( value ) => ( {
 				value,
 				label: value,
 			} ) ),
@@ -96,18 +88,6 @@ export default function BrowseAllResources( {
 				type: 'text',
 				getValue: ( { item } ) => item.resourceType,
 				elements: filterOptions.resourceTypes,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
-			{
-				id: 'format',
-				label: __( 'Format' ),
-				type: 'text',
-				getValue: ( { item } ) => item.format,
-				elements: filterOptions.formats,
 				filterBy: {
 					operators: [ 'is' ],
 				},

@@ -468,6 +468,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
 	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
@@ -630,6 +631,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 
 	// Stacked variant: same as above for Free (no previous plan)
 	getLongSetStackedSignupWpcomFeatures: () => [
+		FEATURE_INCLUDED_IN_PLAN,
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_BANDWIDTH,
 		FEATURE_SECURITY_BRUTE_FORCE,
@@ -639,6 +641,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 
 	// Short set stacked: Free matches the long stacked base set (no previous plan)
 	getShortSetStackedSignupWpcomFeatures: () => [
+		FEATURE_INCLUDED_IN_PLAN,
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_BANDWIDTH,
 		FEATURE_SECURITY_BRUTE_FORCE,
@@ -647,7 +650,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	],
 
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
+	getVar5StackedSignupWpcomFeatures: () => [ FEATURE_INCLUDED_IN_PLAN, FEATURE_UNLIMITED_ENTITIES ],
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
