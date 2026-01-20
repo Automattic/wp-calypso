@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -371,7 +372,7 @@ $breakpoint-mobile: 660px;
 		line-height: 32px;
 		letter-spacing: 0;
 		font-weight: 400;
-		font-family: "SF Pro Display", "SF Pro Text", "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: $font-sf-pro-display;
 		margin-bottom: 24px;
 		text-align: left;
 	}
@@ -380,7 +381,7 @@ $breakpoint-mobile: 660px;
 		color: #FFF;
 		font-size: 1.25rem;
 		font-weight: 500;
-		font-family: "SF Pro Display", "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: $font-sf-pro-display;
 		margin-bottom: 4px;
 		text-align: left;
 	}
@@ -389,7 +390,7 @@ $breakpoint-mobile: 660px;
 		color: #FFF;
 		font-size: 1rem;
 		font-weight: 400;
-		font-family: "SF Pro Display", "SF Pro Text", Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: $font-sf-pro-display;
 		margin-bottom: 0;
 		text-align: left;
 	}
