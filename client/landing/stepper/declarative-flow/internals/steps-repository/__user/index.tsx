@@ -212,6 +212,7 @@ const UserStepComponent: StepType = function UserStep( {
 					columns={ 12 }
 					noTopPadding
 					noBottomPadding
+					sidePadding="20px"
 					isFullWidth
 				>
 					<Step.CenteredColumnLayout

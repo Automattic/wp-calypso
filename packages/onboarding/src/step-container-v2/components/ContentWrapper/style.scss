@@ -28,6 +28,11 @@
 		padding-bottom: 0;
 	}
 
+	&.has-custom-side-padding {
+		padding-left: var( --content-wrapper-side-padding );
+		padding-right: var( --content-wrapper-side-padding );
+	}
+
 	--step-container-v2-content-max-width: 1344px;
 
 	max-width: calc(
