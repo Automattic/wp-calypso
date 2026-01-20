@@ -105,6 +105,112 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
+
+		describe( 'Jetpack Cloud site filtering', () => {
+			let isJetpackCloudMock;
+
+			beforeEach( () => {
+				isJetpackCloudMock = jest.spyOn(
+					require( 'calypso/lib/jetpack/is-jetpack-cloud' ),
+					'default'
+				);
+			} );
+
+			afterEach( () => {
+				isJetpackCloudMock.mockRestore();
+			} );
+
+			describe( 'when in Jetpack Cloud', () => {
+				useNock( ( nock ) => {
+					nock( 'https://public-api.wordpress.com:443' )
+						.persist()
+						.filteringPath( () => mySitesPath )
+						.get( mySitesPath )
+						.reply( 200, {
+							sites: [
+								{ ID: 1, name: 'Regular Site', jetpack: true },
+								{ ID: 2, name: 'Garden Site', is_garden: true, jetpack: true },
+								{ ID: 3, name: 'Another Regular Site', jetpack: true },
+								{ ID: 4, name: 'P2 Site', jetpack: true, options: { is_wpforteams_site: true } },
+								{
+									ID: 5,
+									name: 'Simple Non-Classic',
+									options: { wpcom_admin_interface: 'calypso' },
+								},
+							],
+						} );
+				} );
+
+				test( 'should filter out garden sites', async () => {
+					isJetpackCloudMock.mockReturnValue( true );
+
+					await requestSites()( spy );
+
+					expect( spy ).toHaveBeenCalledWith( {
+						type: SITES_RECEIVE,
+						sites: [
+							{ ID: 1, name: 'Regular Site', jetpack: true },
+							{ ID: 3, name: 'Another Regular Site', jetpack: true },
+						],
+					} );
+				} );
+
+				test( 'should filter out P2 sites', async () => {
+					isJetpackCloudMock.mockReturnValue( true );
+
+					await requestSites()( spy );
+
+					const receivedCall = spy.mock.calls.find(
+						( call ) => call[ 0 ].type === 'SITES_RECEIVE'
+					);
+					const receivedSites = receivedCall[ 0 ].sites;
+
+					expect( receivedSites.some( ( site ) => site.ID === 4 ) ).toBe( false );
+				} );
+
+				test( 'should filter out Simple non-Classic sites', async () => {
+					isJetpackCloudMock.mockReturnValue( true );
+
+					await requestSites()( spy );
+
+					const receivedCall = spy.mock.calls.find(
+						( call ) => call[ 0 ].type === 'SITES_RECEIVE'
+					);
+					const receivedSites = receivedCall[ 0 ].sites;
+
+					expect( receivedSites.some( ( site ) => site.ID === 5 ) ).toBe( false );
+				} );
+			} );
+
+			describe( 'when not in Jetpack Cloud', () => {
+				useNock( ( nock ) => {
+					nock( 'https://public-api.wordpress.com:443' )
+						.persist()
+						.filteringPath( () => mySitesPath )
+						.get( mySitesPath )
+						.reply( 200, {
+							sites: [
+								{ ID: 1, name: 'Regular Site', jetpack: true },
+								{ ID: 2, name: 'Garden Site', is_garden: true, jetpack: true },
+							],
+						} );
+				} );
+
+				test( 'should include garden sites', async () => {
+					isJetpackCloudMock.mockReturnValue( false );
+
+					await requestSites()( spy );
+
+					expect( spy ).toHaveBeenCalledWith( {
+						type: SITES_RECEIVE,
+						sites: [
+							{ ID: 1, name: 'Regular Site', jetpack: true },
+							{ ID: 2, name: 'Garden Site', is_garden: true, jetpack: true },
+						],
+					} );
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'requestSite()', () => {

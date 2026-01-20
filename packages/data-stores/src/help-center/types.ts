@@ -1,6 +1,7 @@
 import * as actions from './actions';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { HelpCenterAction } from './actions';
 import type { Location } from 'history';
 export interface HelpCenterShowOptions {
 	hasPremiumSupport: boolean;
@@ -42,15 +43,22 @@ export type HelpCenterSelect = SelectFromMap< typeof selectors > & {
 	isResolving: ( key: string ) => boolean;
 };
 
+export type HelpCenterThunkDispatch = ( action: HelpCenterAction ) => void;
+
+export type HelpCenterThunkProps = {
+	dispatch: HelpCenterThunkDispatch;
+	select: HelpCenterSelect;
+};
+
 export interface HelpCenterOptions {
 	hideBackButton?: boolean;
 }
 
 export interface Preferences {
 	calypso_preferences: {
-		help_center_open?: boolean;
-		help_center_minimized?: boolean;
-		help_center_router_history?: {
+		help_center_open: boolean | undefined;
+		help_center_minimized: boolean;
+		help_center_router_history: {
 			entries: Location[];
 			index: number;
 		} | null;

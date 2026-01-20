@@ -27,6 +27,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -39,6 +41,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
+	useVar5Features?: boolean;
+	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -58,6 +62,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -70,8 +76,26 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let wpcomFeatures: FeatureObject[] = [];
 				let jetpackFeatures: FeatureObject[] = [];
 
-				if ( useShortSetStackedFeatures ) {
-					// Use the stacked features (incremental) for short_set_stacked variant
+				if ( useVar5Features ) {
+					// Use var5 features (getVar5StackedSignupWpcomFeatures) for var5 variant
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj?.getVar5StackedSignupWpcomFeatures?.() ??
+							planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+								isSummerSpecial,
+							} ) ??
+							[],
+						isExperimentVariant ?? true // isExperimentVariant
+					);
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						isExperimentVariant ?? true // isExperimentVariant
+					);
+				} else if ( useShortSetStackedFeatures ) {
+					// Use the stacked features (incremental) for var1/var1d variant
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
@@ -79,16 +103,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 								isSummerSpecial,
 							} ) ??
 							[],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useLongSetStackedFeatures ) {
-					// Use the stacked features (incremental) for long_set_stacked variant
+					// Use the stacked features (incremental) for var3 variant
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetStackedSignupWpcomFeatures?.() ??
@@ -97,16 +121,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 								isSummerSpecial,
 							} ) ??
 							[],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useLongSetFeatures ) {
-					// Use the long set features for the differentiators experiment
+					// Use the long set features for var4 variant
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
@@ -114,13 +138,13 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 								isSummerSpecial,
 							} ) ??
 							[],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						true // isExperimentVariant
+						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -319,6 +343,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
 	] );
 };
 

@@ -16,14 +16,6 @@ export function recordTracksEvent( eventName, eventProperties ) {
 	baseRecordTracksEvent( eventName, eventProperties );
 }
 
-export function createRecordTracksEvent( defaultProperties ) {
-	return ( eventName, eventProperties ) =>
-		recordTracksEvent( eventName, {
-			...defaultProperties,
-			...eventProperties,
-		} );
-}
-
 export function recordTracksPageView( urlPath, params ) {
 	baseRecordTracksPageView( urlPath, params );
 }

@@ -6,12 +6,6 @@ export function recordAuthorClick( author ) {
 	recordTrack( 'calypso_reader_author_on_discover_card_clicked', { author_url: author } );
 }
 
-export function recordSiteClick( siteUrl ) {
-	recordGaEvent( 'Clicked Discover Card Site Link' );
-	recordAction( 'discover_card_site_clicked' );
-	recordTrack( 'calypso_reader_site_on_discover_card_clicked', { site_url: siteUrl } );
-}
-
 export function recordFollowToggle( isFollowing, siteUrl ) {
 	recordAction( 'discover_card_following_clicked' );
 

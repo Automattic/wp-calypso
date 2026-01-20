@@ -1,6 +1,5 @@
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Context } from '@automattic/calypso-router';
@@ -96,22 +95,6 @@ export function getProductSlugFromContext( context: Context ): string | undefine
 	}
 
 	return '';
-}
-
-/**
- * Prepends "http(s)" to user-supplied URL if protocol is missing.
- * @param {string} inputUrl User-supplied URL
- * @param {?boolean} httpsIsDefault Default to 'https' if true vs 'http' if false
- * @returns {string} URL string with http(s) included
- */
-export function addHttpIfMissing( inputUrl: string, httpsIsDefault = true ): string {
-	const scheme = httpsIsDefault ? 'https' : 'http';
-	let url = inputUrl.trim().toLowerCase();
-
-	if ( url && url.substr( 0, 4 ) !== 'http' ) {
-		url = `${ scheme }://` + url;
-	}
-	return untrailingslashit( url );
 }
 
 export function isContextJetpackSitelessCheckout( context: Context ): boolean {

@@ -7,73 +7,9 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_SHARE,
-	PUBLICIZE_SHARE_SUCCESS,
-	PUBLICIZE_SHARE_FAILURE,
-	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { connectionsSchema } from './schema';
-
-export const sharePostStatus = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case PUBLICIZE_SHARE: {
-			const { siteId, postId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						requesting: true,
-					},
-				},
-			};
-		}
-		case PUBLICIZE_SHARE_SUCCESS: {
-			const { siteId, postId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						requesting: false,
-						success: true,
-					},
-				},
-			};
-		}
-		case PUBLICIZE_SHARE_FAILURE: {
-			const { siteId, postId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						requesting: false,
-						success: false,
-						error: true,
-					},
-				},
-			};
-		}
-		case PUBLICIZE_SHARE_DISMISS: {
-			const { siteId, postId } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: undefined,
-				},
-			};
-		}
-	}
-
-	return state;
-};
 
 /**
  * Track the current status for fetching connections. Maps site ID to the
@@ -164,5 +100,4 @@ export default combineReducers( {
 	fetchingConnections,
 	fetchedConnections,
 	connections,
-	sharePostStatus,
 } );

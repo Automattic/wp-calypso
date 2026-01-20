@@ -156,6 +156,7 @@ export function usePersistentView( {
 				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
 					navigate( {
 						search: mergeQueryParamsWithTransientProperties( queryParams, newTransientProperties ),
+						resetScroll: false,
 					} );
 				}
 			}

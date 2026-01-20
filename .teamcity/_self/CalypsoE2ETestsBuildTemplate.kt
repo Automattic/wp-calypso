@@ -29,6 +29,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		text("CALYPSO_BASE_URL", "")
 		text("DASHBOARD_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
+		text("EXTRA_ENV_VARS", "")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "false")
 	}
 
@@ -172,6 +173,23 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is false, keeping TEST_GROUP as is"
 				fi
 				"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Set extra environment variables"
+			id = "set_extra_env_vars"
+			scriptContent = """
+				# Parse EXTRA_ENV_VARS param (comma-separated KEY=value pairs) and set as TeamCity env params
+				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
+					IFS=',' read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
+					for pair in "${'$'}{ENV_PAIRS[@]}"; do
+						KEY="${'$'}{pair%%=*}"
+						VALUE="${'$'}{pair#*=}"
+						echo "##teamcity[setParameter name='env.${'$'}KEY' value='${'$'}VALUE']"
+					done
+				fi
+			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
 
