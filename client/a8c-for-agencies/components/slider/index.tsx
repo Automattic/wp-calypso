@@ -1,3 +1,4 @@
+import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useRef } from 'react';
 
@@ -31,6 +32,7 @@ export default function A4ASlider( {
 	minimum = 0,
 }: Props ) {
 	const rangeRef = useRef< HTMLInputElement >( null );
+	const [ resizeListener, { width: sliderWidth = 0 } ] = useResizeObserver();
 
 	// Safeguard incase we have minimum value that is out of bounds
 	const normalizeMinimum = Math.min( minimum, options.length - 1 );
@@ -41,13 +43,25 @@ export default function A4ASlider( {
 		onChange?.( options[ Math.max( next, normalizeMinimum ) ] );
 	};
 
-	const sliderWidth = rangeRef.current?.offsetWidth ?? 1;
 	const sliderSectionWidth = sliderWidth / ( options.length - 1 );
 
-	// It is important we have offset otherwise we will encounter some overlapping issues with the thumb and disabled area.
-	// Offset is calculated based on the Thumb size and position of the minimum value.
-	const offset = Math.round( ( THUMB_SIZE * normalizeMinimum ) / ( options.length - 1 ) );
-	const disabledAreaWidth = `${ sliderSectionWidth * normalizeMinimum - offset + 1 }px`;
+	// Disabled area covers owned sites (indices 0 through minimum-1).
+	// With minimum=3, gray covers indices 0,1,2 (labels 1,2,3), extending to position 2.
+	const valueOffset = Math.round( ( THUMB_SIZE * value ) / ( options.length - 1 ) );
+	const lastOwnedIndex = normalizeMinimum - 1;
+	const lastOwnedOffset = Math.round( ( THUMB_SIZE * lastOwnedIndex ) / ( options.length - 1 ) );
+	// Add half the thumb size to align with marker center
+	const disabledEndPosition =
+		normalizeMinimum > 0
+			? sliderSectionWidth * lastOwnedIndex + THUMB_SIZE / 2 - lastOwnedOffset
+			: 0;
+	const disabledAreaWidth = `${ disabledEndPosition }px`;
+
+	// Fill area shows progress from minimum to current value (the newly selected portion).
+	// Starts where disabled area ends for visual continuity.
+	const fillAreaLeft = `${ disabledEndPosition }px`;
+	const fillEndPosition = sliderSectionWidth * value - valueOffset;
+	const fillAreaWidth = `${ Math.max( 0, fillEndPosition - disabledEndPosition + 1 ) }px`;
 
 	useEffect( () => {
 		onChange?.( options[ Math.max( value, normalizeMinimum ) ] );
@@ -63,6 +77,14 @@ export default function A4ASlider( {
 			) }
 
 			<div className="a4a-slider__input">
+				{ resizeListener }
+				<div
+					className="a4a-slider__input-fill-area"
+					style={ {
+						left: fillAreaLeft,
+						width: fillAreaWidth,
+					} }
+				></div>
 				<div
 					className="a4a-slider__input-disabled-area"
 					style={ {
