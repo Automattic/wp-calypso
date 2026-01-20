@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import {
 	ConsolidatedStatsCard,
 	ConsolidatedStatsGroup,
@@ -8,6 +9,7 @@ import {
 import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import { useDownloadCommissionsCsv } from '../hooks/use-download-commissions-csv';
 import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import PayoutCards from './payout-cards';
 import type { Referral } from '../types';
@@ -23,6 +25,21 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
 		useGetConsolidatedPayoutData( referrals, productsData );
 	const { showSupportGuide } = useHelpCenter();
+	const { downloadCommissionsCsv } = useDownloadCommissionsCsv();
+
+	// Determine if this is a single client view
+	const isSingleClient = referrals.length === 1;
+	const clientEmail = isSingleClient ? referrals[ 0 ]?.client?.email : undefined;
+
+	const handleDownloadCsv = useCallback( () => {
+		downloadCommissionsCsv( referrals, productsData || [], clientEmail );
+	}, [ downloadCommissionsCsv, referrals, productsData, clientEmail ] );
+
+	const downloadCsvButton = (
+		<Button variant="link" onClick={ handleDownloadCsv }>
+			{ translate( 'Download CSV' ) }
+		</Button>
+	);
 
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
@@ -30,6 +47,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				<ConsolidatedStatsCard
 					value={ formatCurrency( totalPayouts, 'USD' ) }
 					footerText={ translate( 'All time referral payouts' ) }
+					footerAction={ downloadCsvButton }
 					popoverTitle={ translate( 'Total payouts' ) }
 					popoverContent={ translate(
 						'The exact amount your agency has been paid out for referrals.' +
@@ -52,6 +70,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				isFetching={ isFetching }
 				previousQuarterExpectedCommission={ previousQuarterExpectedCommission }
 				currentQuarterExpectedCommission={ currentQuarterExpectedCommission }
+				footerAction={ isSingleClient ? downloadCsvButton : undefined }
 			/>
 			<ConsolidatedStatsCard
 				value={ pendingOrders }
