@@ -5,8 +5,6 @@ import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 const ListStreamHeader = ( {
 	isPublic,
@@ -46,8 +44,6 @@ const ListStreamHeader = ( {
 							iconSize={ 24 }
 							following={ following }
 							onFollowToggle={ onFollowToggle }
-							followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
-							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
 						/>
 					</div>
 				) }
