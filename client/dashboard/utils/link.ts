@@ -42,9 +42,6 @@ export type DashboardType = 'ciab' | 'v2';
  * Used when in Stepper to know which dashboard the user came from.
  */
 function getDashboardFromQuery(): DashboardType | null {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
 	const params = new URLSearchParams( window.location.search );
 	const dashboard = params.get( 'dashboard' );
 	if ( dashboard === 'ciab' ) {
@@ -58,18 +55,14 @@ function getDashboardFromQuery(): DashboardType | null {
 
 /**
  * Returns the dashboard type from the current path.
- * Used when already on a dashboard.
+ * Only detects ciab (which has a distinctive /ciab prefix).
+ * Returns null for all other paths, falling through to default v2.
  */
 function getDashboardFromPath(): DashboardType | null {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
-	const pathname = window.location.pathname;
-	if ( pathname.startsWith( '/ciab' ) ) {
+	if ( window.location.pathname.startsWith( '/ciab' ) ) {
 		return 'ciab';
 	}
-	// Root path is v2 dashboard (my.wordpress.com)
-	return 'v2';
+	return null;
 }
 
 /**
@@ -77,7 +70,7 @@ function getDashboardFromPath(): DashboardType | null {
  * Fallback when query param and path don't indicate dashboard.
  */
 function getDashboardFromReferrer(): DashboardType | null {
-	if ( typeof document === 'undefined' || ! document.referrer ) {
+	if ( ! document.referrer ) {
 		return null;
 	}
 	try {
@@ -85,7 +78,7 @@ function getDashboardFromReferrer(): DashboardType | null {
 		if ( referrerUrl.pathname.startsWith( '/ciab' ) ) {
 			return 'ciab';
 		}
-		return 'v2';
+		return null;
 	} catch {
 		return null;
 	}
