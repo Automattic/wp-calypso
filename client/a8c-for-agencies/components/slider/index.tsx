@@ -32,10 +32,14 @@ export default function A4ASlider( {
 	minimum = 0,
 }: Props ) {
 	const rangeRef = useRef< HTMLInputElement >( null );
-	const [ resizeListener, { width: sliderWidth = 0 } ] = useResizeObserver();
+	const [ resizeListener, { width } ] = useResizeObserver();
+	const sliderWidth = width ?? 0;
 
 	// Safeguard incase we have minimum value that is out of bounds
 	const normalizeMinimum = Math.min( minimum, options.length - 1 );
+
+	// Ensure displayed value is never below minimum
+	const displayValue = Math.max( value, normalizeMinimum );
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSliderChange = ( event: any ) => {
@@ -47,7 +51,7 @@ export default function A4ASlider( {
 
 	// Disabled area covers owned sites (indices 0 through minimum-1).
 	// With minimum=3, gray covers indices 0,1,2 (labels 1,2,3), extending to position 2.
-	const valueOffset = Math.round( ( THUMB_SIZE * value ) / ( options.length - 1 ) );
+	const valueOffset = Math.round( ( THUMB_SIZE * displayValue ) / ( options.length - 1 ) );
 	const lastOwnedIndex = normalizeMinimum - 1;
 	const lastOwnedOffset = Math.round( ( THUMB_SIZE * lastOwnedIndex ) / ( options.length - 1 ) );
 	// Add half the thumb size to align with marker center
@@ -60,7 +64,7 @@ export default function A4ASlider( {
 	// Fill area shows progress from minimum to current value (the newly selected portion).
 	// Starts where disabled area ends for visual continuity.
 	const fillAreaLeft = `${ disabledEndPosition }px`;
-	const fillEndPosition = sliderSectionWidth * value - valueOffset;
+	const fillEndPosition = sliderSectionWidth * displayValue - valueOffset;
 	const fillAreaWidth = `${ Math.max( 0, fillEndPosition - disabledEndPosition + 1 ) }px`;
 
 	useEffect( () => {
@@ -98,7 +102,7 @@ export default function A4ASlider( {
 					min="0"
 					max={ options.length - 1 }
 					onChange={ onSliderChange }
-					value={ value }
+					value={ displayValue }
 				/>
 
 				<div className="a4a-slider__marker-container">
