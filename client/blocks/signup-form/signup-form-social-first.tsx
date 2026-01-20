@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isOnboardingFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
@@ -8,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FormDivider } from 'calypso/blocks/authentication';
 import InfoNotice from 'calypso/components/social-buttons/info-notice';
-import { useExperiment } from 'calypso/lib/explat';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -88,20 +86,14 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
+	isEmailVariation,
+	isMessagingVariation,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
-
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_account_step_improvement_202601',
-		{
-			isEligible: isOnboardingFlow( flowName ),
-		}
-	);
-	const variationName = experimentAssignment?.variationName ?? 'control';
 
 	const renderTermsOfService = () => {
 		let tosText;
@@ -118,14 +110,7 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if (
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging',
-				'treatment_email_messaging_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-		) {
+		} else if ( isMessagingVariation ) {
 			tosText = __( 'Sign up for free to start creating your site.' );
 		} else {
 			tosText = createInterpolateElement(
@@ -161,15 +146,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	let emailLoginComponent = null;
-	if (
-		! isLoadingExperiment &&
-		[
-			'treatment_email',
-			'treatment_email_messaging',
-			'treatment_email_messaging_slider',
-			'treatment_email_slider',
-		].includes( variationName )
-	) {
+	if ( isEmailVariation ) {
 		emailLoginComponent = (
 			<>
 				<div className="signup-form-social-first-email">
@@ -208,14 +185,7 @@ const SignupFormSocialFirst = ( {
 	}
 
 	let InfoNoticeComponent = null;
-	if (
-		! isLoadingExperiment &&
-		[
-			'treatment_email_messaging',
-			'treatment_email_messaging_slider',
-			'treatment_messaging_slider',
-		].includes( variationName )
-	) {
+	if ( isMessagingVariation ) {
 		InfoNoticeComponent = <InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>;
 	}
 
@@ -233,9 +203,7 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton={
-						variationName && [ 'control', 'treatment_messaging_slider' ].includes( variationName )
-					}
+					shouldShowEmailButton={ ! isEmailVariation }
 				/>
 				{ InfoNoticeComponent }
 			</div>

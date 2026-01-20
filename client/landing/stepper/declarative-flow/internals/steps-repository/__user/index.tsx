@@ -51,7 +51,25 @@ const UserStepComponent: StepType = function UserStep( {
 			isEligible: isOnboardingFlow( flow ),
 		}
 	);
-	const variationName = experimentAssignment?.variationName ?? 'control';
+	const variationName = isLoadingExperiment
+		? 'control'
+		: experimentAssignment?.variationName ?? 'control';
+	const isEmailVariation = [
+		'treatment_email',
+		'treatment_email_messaging',
+		'treatment_email_messaging_slider',
+		'treatment_email_slider',
+	].includes( variationName );
+	const isMessagingVariation = [
+		'treatment_email_messaging',
+		'treatment_email_messaging_slider',
+		'treatment_messaging_slider',
+	].includes( variationName );
+	const isSliderVariation = [
+		'treatment_email_messaging_slider',
+		'treatment_email_slider',
+		'treatment_messaging_slider',
+	].includes( variationName );
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -151,6 +169,8 @@ const UserStepComponent: StepType = function UserStep( {
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				isEmailVariation={ isEmailVariation }
+				isMessagingVariation={ isMessagingVariation }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -163,15 +183,9 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
-		const headingText =
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging',
-				'treatment_email_messaging_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-				? translate( 'Welcome to WordPress.com' )
-				: translate( 'Create your account' );
+		const headingText = isMessagingVariation
+			? translate( 'Welcome to WordPress.com' )
+			: translate( 'Create your account' );
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
@@ -222,40 +236,15 @@ const UserStepComponent: StepType = function UserStep( {
 		);
 
 		let stickyBottomBar = null;
-		if (
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging',
-				'treatment_email_messaging_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-		) {
+		let layoutClassName = 'step-container-v2--user';
+		if ( isMessagingVariation ) {
 			stickyBottomBar = () => (
 				<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
 			);
-		}
-
-		let layoutClassName = 'step-container-v2--user';
-		if (
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging',
-				'treatment_email_messaging_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-		) {
 			layoutClassName += ' step-container-v2--user-with-slider';
 		}
 
-		if (
-			isLargeViewport &&
-			! isLoadingExperiment &&
-			[
-				'treatment_email_messaging_slider',
-				'treatment_email_slider',
-				'treatment_messaging_slider',
-			].includes( variationName )
-		) {
+		if ( isLargeViewport && isSliderVariation ) {
 			return (
 				<Step.TwoColumnLayout
 					className={ layoutClassName }
