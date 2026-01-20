@@ -2,6 +2,7 @@ import { DotPager } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
@@ -120,6 +121,7 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	const stepContent = (
 		<>
@@ -201,33 +203,53 @@ const UserStepComponent: StepType = function UserStep( {
 			</div>
 		);
 
-		return (
-			<Step.TwoColumnLayout
-				className="step-container-v2--user"
-				firstColumnWidth={ 6 }
-				secondColumnWidth={ 6 }
-				columns={ 12 }
-				noTopPadding
-				noBottomPadding
-				isFullWidth
-			>
-				<Step.CenteredColumnLayout
-					verticalAlign="center"
-					columnWidth={ 4 }
-					heading={ heading }
-					topBar={ topBar }
-					stickyBottomBar={ () => (
-						<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
-					) }
+		if ( isLargeViewport ) {
+			return (
+				<Step.TwoColumnLayout
+					className="step-container-v2--user"
+					firstColumnWidth={ 6 }
+					secondColumnWidth={ 6 }
+					columns={ 12 }
 					noTopPadding
 					noBottomPadding
+					isFullWidth
 				>
-					{ stepContent }
-				</Step.CenteredColumnLayout>
-				<DotPager className="user-step-carousel" hasDynamicHeight={ false }>
-					{ carouselSlides }
-				</DotPager>
-			</Step.TwoColumnLayout>
+					<Step.CenteredColumnLayout
+						verticalAlign="center"
+						columnWidth={ 4 }
+						heading={ heading }
+						topBar={ topBar }
+						stickyBottomBar={ () => (
+							<Step.StickyBottomBar
+								className="user-step-tos-bottom-bar"
+								centerElement={ tosText }
+							/>
+						) }
+						noTopPadding
+						noBottomPadding
+					>
+						{ stepContent }
+					</Step.CenteredColumnLayout>
+					<DotPager className="user-step-carousel" hasDynamicHeight={ false } rotateTime={ 5000 }>
+						{ carouselSlides }
+					</DotPager>
+				</Step.TwoColumnLayout>
+			);
+		}
+
+		return (
+			<Step.CenteredColumnLayout
+				className="step-container-v2--user"
+				verticalAlign="center"
+				columnWidth={ 4 }
+				heading={ heading }
+				topBar={ topBar }
+				stickyBottomBar={ () => (
+					<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
+				) }
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		);
 	}
 
