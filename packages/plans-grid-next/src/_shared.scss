@@ -193,6 +193,9 @@ $storage-feature-label-y-padding: 4px;
 	&.is-var1d-variant {
 		margin-top: 11px;
 		margin-bottom: 14px;
+		div[class*="input-control"] {
+			border: none;
+		}
 
 		button[role="combobox"] {
 			height: 26px;
