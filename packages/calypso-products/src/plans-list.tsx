@@ -1015,7 +1015,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PREMIUM_THEMES,
-			FEATURE_SUPPORT,
+			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
 		];
 
 		let features = baseFeatures;
@@ -1811,13 +1811,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_FREE_FAST_SUPPORT, // Shows "Free support with faster response times"
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_WORDADS,
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
-			FEATURE_SUPPORT,
 		];
 
 		let features = baseFeatures;
