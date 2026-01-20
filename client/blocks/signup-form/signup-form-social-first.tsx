@@ -160,7 +160,7 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	let EmailLogin = null;
+	let emailLoginComponent = null;
 	if (
 		! isLoadingExperiment &&
 		[
@@ -170,7 +170,7 @@ const SignupFormSocialFirst = ( {
 			'treatment_email_slider',
 		].includes( variationName )
 	) {
-		EmailLogin = (
+		emailLoginComponent = (
 			<>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -224,7 +224,7 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
-				{ EmailLogin }
+				{ emailLoginComponent }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -233,6 +233,9 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={
+						variationName && [ 'control', 'treatment_messaging_slider' ].includes( variationName )
+					}
 				/>
 				{ InfoNoticeComponent }
 			</div>

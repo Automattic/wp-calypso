@@ -15,7 +15,6 @@ import {
 	PayPalSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -33,6 +32,7 @@ class SocialSignupForm extends Component {
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
+		shouldShowEmailButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -96,6 +96,7 @@ class SocialSignupForm extends Component {
 			isSocialFirst,
 			flowName,
 			setCurrentStep,
+			shouldShowEmailButton,
 		} = this.props;
 		return (
 			<Card
@@ -135,19 +136,8 @@ class SocialSignupForm extends Component {
 							/>
 						) }
 
-						{ isSocialFirst && (
-							<ProvideExperimentData name="calypso_account_step_improvement_202601">
-								{ ( isLoading, experimentAssignment ) => {
-									const variantName = experimentAssignment?.variationName ?? 'control';
-									if (
-										isLoading ||
-										( variantName !== 'control' && variantName !== 'treatment_messaging_slider' )
-									) {
-										return null;
-									}
-									return <UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />;
-								} }
-							</ProvideExperimentData>
+						{ isSocialFirst && shouldShowEmailButton && (
+							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
 					{ ! disableTosText && <SocialToS /> }
