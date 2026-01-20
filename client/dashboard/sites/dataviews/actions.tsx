@@ -22,6 +22,9 @@ export function useActions(): Action< Site >[] {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 
+	// Some actions are not available if the site has migration, deleted, or DIFM status
+	const hasPendingStatus = ( site: Site ) => !! getSiteStatus( site );
+
 	return [
 		{
 			id: 'admin',
@@ -62,7 +65,7 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) =>
 				siteTypeSupportsFeature( item, 'domains' ) &&
 				canManageSite( item ) &&
-				! getSiteStatus( item ),
+				! hasPendingStatus( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -87,7 +90,7 @@ export function useActions(): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
-				! getSiteStatus( item ) &&
+				! hasPendingStatus( item ) &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},
@@ -101,7 +104,7 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) =>
 				siteTypeSupportsFeature( item, 'settings' ) &&
 				canManageSite( item ) &&
-				! getSiteStatus( item ),
+				! hasPendingStatus( item ),
 		},
 		{
 			id: 'restore',
