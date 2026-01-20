@@ -241,7 +241,7 @@ const UserStepComponent: StepType = function UserStep( {
 			stickyBottomBar = () => (
 				<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
 			);
-			layoutClassName += ' step-container-v2--user-with-slider';
+			layoutClassName += ' step-container-v2--user-messaging-variation';
 		}
 
 		if ( isLargeViewport && isSliderVariation ) {
