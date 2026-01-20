@@ -50,6 +50,23 @@ export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( new Date( purchase.expiry_date ) >= new Date() ) {
+		return false;
+	}
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
+}
+
 export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiry_status;
 }
@@ -509,7 +526,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiry_date ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 export function isPartnerPurchase(

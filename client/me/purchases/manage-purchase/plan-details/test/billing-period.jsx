@@ -114,14 +114,16 @@ describe( 'PlanBillingPeriod', () => {
 
 		describe( 'when plan is expiring', () => {
 			it( 'should display a warning to the user', () => {
+				// Use a future date - expiring plans should have a future expiry date
+				const futureDate = moment().add( 1, 'month' );
 				const purchase = {
 					...annualPlanProps.purchase,
-					expiryDate: moment( '2020-01-01' ).format(),
+					expiryDate: futureDate.format(),
 					expiryStatus: 'expiring',
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
-					'Billed yearly, expires on January 1, 2020'
+					`Billed yearly, expires on ${ futureDate.format( 'MMMM D, YYYY' ) }`
 				);
 			} );
 		} );

@@ -10,7 +10,8 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
-import { formatDate } from '../../utils/datetime';
+import { formatDate, getRelativeTimeString } from '../../utils/datetime';
+import { isInExpirationGracePeriod } from '../../utils/purchase';
 import { PaymentMethodDetails } from './payment-method-details';
 import type { Purchase, StoredPaymentMethod } from '@automattic/api-core';
 
@@ -85,15 +86,23 @@ export const PaymentMethodDeleteDialog = ( {
 										<Text>{ purchase.meta || purchase.domain }</Text>
 									</VStack>
 									<Text>
-										{ sprintf(
-											// translators: date is a formatted renewal date
-											__( 'Renews on %(date)s' ),
-											{
-												date: formatDate( new Date( purchase.renew_date ), locale, {
-													dateStyle: 'long',
-												} ),
-											}
-										) }
+										{ isInExpirationGracePeriod( purchase )
+											? sprintf(
+													// translators: "expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"
+													__( 'Expired %(expiry)s: Pending renewal' ),
+													{
+														expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+													}
+											  )
+											: sprintf(
+													// translators: date is a formatted renewal date
+													__( 'Renews on %(date)s' ),
+													{
+														date: formatDate( new Date( purchase.renew_date ), locale, {
+															dateStyle: 'long',
+														} ),
+													}
+											  ) }
 									</Text>
 								</HStack>
 							) ) }

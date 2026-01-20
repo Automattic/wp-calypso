@@ -47,6 +47,7 @@ import {
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -492,6 +493,20 @@ export function PurchaseItemStatus( {
 			);
 		}
 
+		if ( isInExpirationGracePeriod( purchase ) ) {
+			return (
+				<span className="purchase-item__is-error">
+					{ translate( 'Expired %(expiry)s: Pending renewal', {
+						args: {
+							expiry: expiry.fromNow(),
+						},
+						comment:
+							'expiry is relative to the present time and already localized, e.g. "3 days ago"',
+					} ) }
+				</span>
+			);
+		}
+
 		if ( purchase.billPeriodDays ) {
 			const translateOptions = {
 				args: {
@@ -550,7 +565,11 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
+	if (
+		isExpiring( purchase ) &&
+		! isInExpirationGracePeriod( purchase ) &&
+		! isAkismetFreeProduct( purchase )
+	) {
 		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
 				expiry < moment().add( 7, 'days' )
@@ -581,7 +600,7 @@ export function PurchaseItemStatus( {
 		} );
 	}
 
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		if ( isConciergeSession( purchase ) ) {
 			return translate( 'Session used on %s', {
 				args: expiry.format( 'LL' ),
