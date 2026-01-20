@@ -5,6 +5,7 @@ export interface PostObject {
 	ID: number;
 	site_ID: number;
 	slug: string;
+	source?: string;
 }
 
 export interface ArticleContentProps {
