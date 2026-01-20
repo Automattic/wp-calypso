@@ -679,6 +679,36 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 		];
 	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_AI_ASSISTANT,
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PAGES,
+			FEATURE_USERS,
+			FEATURE_POST_EDITS_HISTORY,
+			FEATURE_NEWSLETTERS_RSS,
+			FEATURE_SECURITY_BRUTE_FORCE,
+			FEATURE_SMART_REDIRECTS,
+			FEATURE_ALWAYS_ONLINE,
+			FEATURE_PAYMENT_TRANSACTION_FEES_10,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CPUS,
+			FEATURE_CDN,
+			FEATURE_ES_SEARCH_JP,
+			FEATURE_MULTI_SITE,
+			FEATURE_WP_UPDATES,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_BANDWIDTH,
+			FEATURE_FAST_DNS,
+		];
+	},
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
@@ -950,6 +980,35 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 
 	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			FEATURE_PREMIUM_THEMES,
+			FEATURE_SUPPORT,
+		];
+
+		let features = baseFeatures;
+
+		if ( isGlobalStylesGridChangesVariation() ) {
+			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
+		}
+
+		if ( isGlobalStylesOnPersonalEnabled() ) {
+			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		}
+
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1746,6 +1805,29 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		return features;
 	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			FEATURE_WORDADS,
+			FEATURE_CONNECT_ANALYTICS,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_SUPPORT,
+		];
+
+		let features = baseFeatures;
+
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
+	},
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
@@ -2018,6 +2100,38 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
+		return [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_PLUGINS_THEMES,
+			FEATURE_BANDWIDTH,
+			FEATURE_UNLIMITED_TRAFFIC,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_CDN,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
+			FEATURE_REAL_TIME_SECURITY_SCANS,
+			FEATURE_SPAM_JP,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_DEV_TOOLS_GIT,
+			FEATURE_DEV_TOOLS_SSH,
+			FEATURE_SITE_STAGING_SITES,
+			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+			FEATURE_WP_UPDATES,
+			FEATURE_MULTI_SITE,
+			FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+			FEATURE_COMMISSION_FEE_WOO_FEATURES,
+			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+		];
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_PRIORITY_24_7_SUPPORT,

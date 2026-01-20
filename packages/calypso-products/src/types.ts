@@ -360,6 +360,15 @@ export type Plan = BillingTerm & {
 	get2023PlanComparisonFeatureOverride?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
 
 	/**
+	 * Experimental: Comparison grid features for experiment variants.
+	 * This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	 * When present, this takes precedence over get2023PlanComparisonFeatureOverride when isExperimentVariant is true.
+	 */
+	get2023PlanComparisonFeatureOverrideForExperiment?: ( props?: {
+		isSummerSpecial?: boolean;
+	} ) => Feature[];
+
+	/**
 	 * Features to be shown in the plan details jetpack section and the jetpack features in the plans comparison table.
 	 * If get2023PlanComparisonJetpackFeatureOverride exists,
 	 * this feature list will be ignored in the plans comparison table only.
