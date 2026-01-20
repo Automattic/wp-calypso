@@ -1,6 +1,6 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import clsx from 'clsx';
-import { isValidElement, useMemo, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import './style.scss';
 
@@ -9,13 +9,8 @@ import './style.scss';
  * This is determined by the `dashboard=ciab` URL parameter.
  */
 function useIsWooDashboard(): boolean {
-	return useMemo( () => {
-		if ( typeof window === 'undefined' ) {
-			return false;
-		}
-		const params = new URLSearchParams( window.location.search );
-		return params.get( 'dashboard' ) === 'ciab';
-	}, [] );
+	const params = new URLSearchParams( window.location.search );
+	return params.get( 'dashboard' ) === 'ciab';
 }
 
 /**
