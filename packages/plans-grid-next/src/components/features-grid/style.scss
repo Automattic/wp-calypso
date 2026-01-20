@@ -382,6 +382,12 @@
 			font-weight: 400;
 			line-height: 16px;
 
+			// Make the tooltip hover area a flex container so text doesn't wrap under icon
+			.plans-2023-tooltip__hover-area-container {
+				display: flex;
+				align-items: flex-start;
+			}
+
 			// Apply underline styling only to the text, not the icon
 			> span {
 				text-decoration-line: underline;
