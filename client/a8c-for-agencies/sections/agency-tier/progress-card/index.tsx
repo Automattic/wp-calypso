@@ -97,6 +97,7 @@ export default function AgencyTierProgressCard( {
 						/>
 						<ButtonStack justify="flex-start">
 							<Button
+								className="agency-tier__progress-card-cta-button"
 								onClick={ handleExploreTiersAndBenefits }
 								href={ A4A_AGENCY_TIER_LINK }
 								variant="secondary"
