@@ -1037,6 +1037,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
 	},
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	// Advanced Jetpack Forms is excluded for Personal plan in experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [];
+	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => {
 		const baseFeatures = {
@@ -1872,6 +1877,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPLOAD_VIDEO,
 			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
+		];
+	},
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	// Advanced Jetpack Forms is excluded for Premium plan in experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_PAYPAL_JP,
+			FEATURE_UPLOAD_VIDEO,
+			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
 		];
 	},
 	// Features not displayed but used for checking plan abilities

@@ -383,6 +383,12 @@ export type Plan = BillingTerm & {
 	get2023PlanComparisonJetpackFeatureOverride?: () => Feature[];
 
 	/**
+	 * Experimental: Comparison grid Jetpack features for experiment variants.
+	 * When present, this takes precedence over get2023PlanComparisonJetpackFeatureOverride when isExperimentVariant is true.
+	 */
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment?: () => Feature[];
+
+	/**
 	 * Features that are conditionally available and are to be shown in the plans comparison table.
 	 * For example: "Available with plugins"
 	 */

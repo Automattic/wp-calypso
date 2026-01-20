@@ -142,16 +142,30 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					);
 				}
 
-				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()
-					.length
-					? getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
-					  )
-					: getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
-					  );
+				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
+				// when in an experiment variant for Jetpack features.
+				// Note: We check if the function exists, not if it returns a non-empty array, because an empty array
+				// is a valid return value (meaning "show no Jetpack features").
+				let jetpackFeatures;
+				if (
+					isExperimentVariant &&
+					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
+				) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice()
+					);
+				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
+					);
+				} else {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
+					);
+				}
 
 				const wpcomFeaturesTransformed: TransformedFeatureObject[] | null | undefined =
 					annualPlansOnlyFeatures
