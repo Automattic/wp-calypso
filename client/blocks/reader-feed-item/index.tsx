@@ -28,7 +28,6 @@ import './style.scss';
 
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
-	showSubscribeButton?: boolean; // Defaults to true.
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
@@ -46,7 +45,6 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
-		showSubscribeButton = true,
 		shouldHideOnSubscribedState,
 		onChangeSubscribe,
 	} = props;
@@ -215,25 +213,17 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		}
 	}
 
-	const SubscribeButton = (): JSX.Element | null => {
-		if ( ! showSubscribeButton ) {
-			return null;
-		}
-
-		return (
-			<div className="reader-feed-item__subscribe-button">
-				<Button
-					variant={ subscriptionId ? 'secondary' : 'primary' }
-					isBusy={ isSubscribing || isUnsubscribing }
-					disabled={ isSubscribing || isUnsubscribing }
-					onClick={ onSubscribeToggle }
-					__next40pxDefaultSize
-				>
-					{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
-				</Button>
-			</div>
-		);
-	};
+	const SubscribeButton = (): JSX.Element => (
+		<Button
+			variant={ subscriptionId ? 'secondary' : 'primary' }
+			isBusy={ isSubscribing || isUnsubscribing }
+			disabled={ isSubscribing || isUnsubscribing }
+			onClick={ onSubscribeToggle }
+			__next40pxDefaultSize
+		>
+			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
+		</Button>
+	);
 
 	if ( subscriptionId && shouldHideOnSubscribedState ) {
 		return null;
