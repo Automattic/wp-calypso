@@ -11,7 +11,10 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
 /**
  * Define general routes
  */
-export const rootRoute = createRootRouteWithContext< RootRouterContext >()( { component: Root } );
+export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
+	component: Root,
+	beforeLoad: async () => {},
+} );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,

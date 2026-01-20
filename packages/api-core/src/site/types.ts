@@ -35,6 +35,7 @@ export interface SiteOptions {
 	unmapped_url?: string;
 	wordads?: boolean;
 	woocommerce_is_active?: boolean;
+	wpcom_admin_interface?: string;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
