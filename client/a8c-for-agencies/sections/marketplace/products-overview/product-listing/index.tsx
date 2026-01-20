@@ -147,6 +147,7 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			} else {
@@ -157,11 +158,12 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			}
 		},
-		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems ]
+		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems, termPricing ]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
@@ -183,6 +185,7 @@ export default function ProductListing( {
 						product: replace.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 
@@ -191,6 +194,7 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			} else {
@@ -204,6 +208,7 @@ export default function ProductListing( {
 			selectedCartItems,
 			setSelectedCartItems,
 			marketplaceType,
+			termPricing,
 		]
 	);
 

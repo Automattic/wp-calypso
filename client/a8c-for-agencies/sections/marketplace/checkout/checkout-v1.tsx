@@ -216,7 +216,9 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	);
 
 	if ( isAutomatedReferrals && ! onlyFreeItems ) {
-		actionContent = <RequestClientPayment checkoutItems={ checkoutItems } />;
+		actionContent = (
+			<RequestClientPayment checkoutItems={ checkoutItems } termPricing={ termPricing } />
+		);
 	}
 
 	if ( isClient ) {
