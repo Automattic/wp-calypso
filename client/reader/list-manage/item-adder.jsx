@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -33,7 +33,10 @@ export default function ItemAdder( props ) {
 			</Card>
 
 			{ ! feedResults && query && (
-				<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
+				<>
+					<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
+					<Spinner />
+				</>
 			) }
 
 			<SyncReaderFollows />
