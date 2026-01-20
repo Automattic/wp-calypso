@@ -1,12 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DeveloperModeSection from '../developer-mode';
 import AccountDeletionSection from '../profile-deletion';
 import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
 export default function Profile() {
+	const isDeveloperModeCardEnabled = isEnabled( 'me/developer-mode-card' );
+
 	return (
 		<PageLayout
 			size="small"
@@ -24,6 +28,7 @@ export default function Profile() {
 		>
 			<PersonalDetailsSection />
 			<GravatarProfileSection />
+			{ isDeveloperModeCardEnabled && <DeveloperModeSection /> }
 			<AccountDeletionSection />
 		</PageLayout>
 	);

@@ -3,6 +3,7 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -180,13 +181,15 @@ export default function PersonalDetailsSection() {
 							onValidationChange={ setIsEmailValid }
 						/>
 
-						{ /* Developer checkbox */ }
-						<DataForm< UserSettings >
-							data={ data }
-							fields={ [ devAccountField ] }
-							form={ devForm }
-							onChange={ handleFieldChange }
-						/>
+						{ /* Developer checkbox - only show when separate card is disabled */ }
+						{ ! isEnabled( 'me/developer-mode-card' ) && (
+							<DataForm< UserSettings >
+								data={ data }
+								fields={ [ devAccountField ] }
+								form={ devForm }
+								onChange={ handleFieldChange }
+							/>
+						) }
 
 						<HStack justify="flex-start">
 							<Button
