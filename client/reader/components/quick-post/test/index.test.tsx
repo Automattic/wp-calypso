@@ -16,6 +16,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 	} ),
 	createBlock: jest.fn(),
 	serialize: jest.fn(),
+	unregisterBlockType: jest.fn(),
 } ) );
 
 jest.mock( '../utils', () => ( {
