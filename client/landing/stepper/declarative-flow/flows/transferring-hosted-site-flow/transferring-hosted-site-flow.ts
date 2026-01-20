@@ -46,7 +46,8 @@ const transferringHostedSite: Flow = {
 				return site?.options?.admin_url as string;
 			}
 
-			return dashboardLink( `/sites/${ siteSlug }` );
+			// Redirect to site overview if siteSlug is available, otherwise to sites list
+			return dashboardLink( siteSlug ? `/sites/${ siteSlug }` : '/sites' );
 		};
 
 		const includeWooCommerce = useIsValidWooPartner();

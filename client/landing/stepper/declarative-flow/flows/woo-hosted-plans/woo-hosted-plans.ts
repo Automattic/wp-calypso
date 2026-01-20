@@ -77,7 +77,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 				// This is NOT a signup flow - use logged-in behavior for current plans
 				isInSignup: false,
 
-				// Provide a custom back handler that goes to back_to or /ciab/sites
+				// Provide a custom back handler that goes to back_to or the dashboard sites list
 				wrapperProps: {
 					goBack: () => {
 						window.location.assign( safeBackTo );
