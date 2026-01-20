@@ -106,19 +106,21 @@ export class CommentsComponent {
 	async unlike( comment: string ): Promise< void > {
 		let unlikeButton;
 		let unlikedStatus;
+		const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
+			// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
+			// unless the focus is "unstuck" by shifting the page.
+			await this.page.mouse.wheel( 0, 120 );
+
 			// See the like() method for info on the following method call.
 			await waitForWPWidgetsIfNecessary( this.page );
 
-			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
 			const likeButtonFrame = commentContent.frameLocator( "iframe[name^='like-comment-frame']" );
 
 			unlikeButton = likeButtonFrame.getByRole( 'link', { name: 'Liked by you' } );
 			unlikedStatus = likeButtonFrame.getByRole( 'link', { name: 'Like' } );
 		} else {
-			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
-
 			unlikeButton = commentContent.locator( '.comment-liked:has-text("Liked by") > a' );
 			unlikedStatus = commentContent.locator( '.comment-not-liked > span:text-is("Like"):visible' );
 		}

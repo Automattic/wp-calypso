@@ -14,7 +14,6 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 		page,
 		accountGivenByEnvironment,
 		helperData,
-		environment,
 	} ) => {
 		const postContent =
 			'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
@@ -79,11 +78,6 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 		} );
 
 		await test.step( 'And I can unlike a comment', async function () {
-			if ( environment.TEST_ON_ATOMIC ) {
-				// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
-				// unless the focus is "unstuck" by shifting the page.
-				await page.mouse.wheel( 0, 120 );
-			}
 			await commentsComponent.unlike( commentToBeUnliked.raw_content );
 		} );
 
