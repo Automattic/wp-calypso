@@ -181,7 +181,7 @@ export default function PersonalDetailsSection() {
 							onValidationChange={ setIsEmailValid }
 						/>
 
-						{ /* Developer checkbox - only show when separate card is disabled */ }
+						{ /* Developer checkbox */ }
 						{ ! isEnabled( 'me/developer-mode-card' ) && (
 							<DataForm< UserSettings >
 								data={ data }
