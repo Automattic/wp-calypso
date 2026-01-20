@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { isDashboardEnabled } from './is-dashboard-enabled';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
@@ -9,7 +10,7 @@ export const hasDashboardOptIn = ( state: AppState ): boolean => {
 		| undefined;
 
 	if ( ! isDashboardEnabled( state ) ) {
-		return preference?.value === 'forced-opt-in';
+		return preference?.value === 'forced-opt-in' || isEnabled( 'dashboard/forced-opt-in' );
 	}
 
 	return preference?.value === 'opt-in';
@@ -20,5 +21,5 @@ export const hasDashboardForcedOptIn = ( state: AppState ): boolean => {
 		| HostingDashboardOptIn
 		| undefined;
 
-	return preference?.value === 'forced-opt-in';
+	return preference?.value === 'forced-opt-in' || isEnabled( 'dashboard/forced-opt-in' );
 };
