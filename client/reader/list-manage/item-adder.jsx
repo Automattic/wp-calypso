@@ -5,18 +5,13 @@ import { useSelector } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
-import { resemblesUrl } from 'calypso/lib/url';
 import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
-import FeedUrlAdder from './feed-url-adder';
 import ListItem from './list-item';
 
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
-
 	const [ query, updateQuery ] = useState( '' );
-	const queryIsUrl = resemblesUrl( query );
-
 	const feedResults = useSelector( ( state ) =>
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);
@@ -35,7 +30,6 @@ export default function ItemAdder( props ) {
 					placeholder={ translate( 'Search or enter URL to follow…' ) }
 					value={ query }
 				/>
-				{ queryIsUrl && <FeedUrlAdder list={ props.list } query={ query } /> }
 			</Card>
 
 			{ ! feedResults && query && (

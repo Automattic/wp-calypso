@@ -89,12 +89,13 @@ export default function FeedItem( props: {
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
-		item.feed_ID && dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+		item.feed_ID &&
+		dispatch( addReaderListFeed( list.ID, owner, list.slug, Number( item.feed_ID ) ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
 		shouldDelete &&
 			item.feed_ID &&
-			dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+			dispatch( deleteReaderListFeed( list.ID, owner, list.slug, Number( item.feed_ID ) ) );
 	};
 
 	if ( isInList && props.hideIfInList ) {
