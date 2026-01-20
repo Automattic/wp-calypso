@@ -536,6 +536,9 @@ export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-person
 export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
 export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
 
+// "Included in plan:" header for Free plan in stacked variants
+export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
+
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';
 export const FEATURE_BLAZE_AD_CREDITS = 'feature-blaze-ad-credits';

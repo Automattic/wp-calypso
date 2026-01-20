@@ -342,6 +342,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
 	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
@@ -2865,6 +2866,12 @@ const FEATURES_LIST: FeatureList = {
 				: i18n.translate( 'AI Writer & Designer (limited)' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+	},
+
+	// "Included in plan:" header for Free plan in stacked variants
+	[ FEATURE_INCLUDED_IN_PLAN ]: {
+		getSlug: () => FEATURE_INCLUDED_IN_PLAN,
+		getTitle: () => i18n.translate( 'Included in plan:' ),
 	},
 
 	// "Everything in X, plus:" features for stacked variants

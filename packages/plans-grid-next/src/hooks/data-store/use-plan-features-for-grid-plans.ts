@@ -1,9 +1,17 @@
 import {
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_WORDADS,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+	FEATURE_EARLY_ONBOARDING_CALLS,
 	applyTestFiltersToPlansList,
 	isMonthly,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
 import type {
@@ -13,6 +21,7 @@ import type {
 	GridPlan,
 } from '../../types';
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
@@ -29,6 +38,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -43,6 +53,11 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
 	isExperimentVariant?: boolean;
+	/**
+	 * When true, mark features after "Everything in X, plus:" header as differentiator features.
+	 * Used for var1d experiment variant styling.
+	 */
+	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -64,7 +79,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 } ) => {
+	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
 		return gridPlans.reduce(
@@ -284,6 +301,21 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				}
 
 				if ( annualPlansOnlyFeatures.length > 0 ) {
+					// Track whether we've passed a header feature for var1d styling
+					let passedHeaderFeature = false;
+
+					// var1d badge mapping for specific features
+					const var1dBadgeMap: Record< string, TranslateResult > = {
+						[ FEATURE_CUSTOM_DOMAIN ]: translate( 'Free' ),
+						[ FEATURE_UPLOAD_PLUGINS ]: translate( 'New' ),
+						[ FEATURE_SIMPLE_PAYMENTS ]: translate( 'New' ),
+						[ FEATURE_WORDADS ]: translate( 'New' ),
+						[ FEATURE_AI_WEBSITE_BUILDER ]: translate( 'AI' ),
+						[ FEATURE_AI_WRITER_DESIGNER ]: translate( 'AI' ),
+						[ FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ]: translate( 'New' ),
+						[ FEATURE_EARLY_ONBOARDING_CALLS ]: translate( 'Free' ),
+					};
+
 					wpcomFeatures.forEach( ( feature ) => {
 						// topFeature and highlightedFeatures are already added to the list above
 						const isHighlightedFeature =
@@ -299,18 +331,45 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							feature.getSlug()
 						);
 
-						// Highlight "Everything in X, plus:" features for stacked variants
-						const isEverythingInPlusFeature = feature
-							.getSlug()
-							.startsWith( 'feature-everything-in' );
+						const featureSlug = feature.getSlug();
+
+						// Header features: "Everything in X, plus:" and "Included in plan:"
+						const isEverythingInPlusFeature = featureSlug.startsWith( 'feature-everything-in' );
+						const isIncludedInPlanFeature = featureSlug === 'feature-included-in-plan';
+						const isHeaderFeature = isEverythingInPlusFeature || isIncludedInPlanFeature;
+
+						// For var1d: mark features after header as differentiators
+						const shouldMarkAsDifferentiator =
+							isVar1dVariant && ! isHeaderFeature && passedHeaderFeature;
+
+						// After we see a header feature, subsequent features are differentiators
+						if ( isHeaderFeature ) {
+							passedHeaderFeature = true;
+						}
+
+						// Get badge text for var1d variant
+						const badgeText = isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined;
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-							...( isEverythingInPlusFeature && { isHighlighted: true } ),
+							...( isHeaderFeature && { isHighlighted: true } ),
+							...( isHeaderFeature && isVar1dVariant && { isHeaderFeature: true } ),
+							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
+							...( badgeText && { badgeText } ),
 						} );
 					} );
+
+					// Mark the last feature with variant-specific styling for bottom margin
+					if ( wpcomFeaturesTransformed.length > 0 ) {
+						const lastIndex = wpcomFeaturesTransformed.length - 1;
+						if ( isVar1dVariant ) {
+							wpcomFeaturesTransformed[ lastIndex ].isVar1dLastFeature = true;
+						} else if ( isExperimentVariant ) {
+							wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
+						}
+					}
 				}
 
 				const storageFeature = planConstantObj.getStorageFeature?.(
@@ -345,6 +404,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useShortSetStackedFeatures,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
+		translate,
 	] );
 };
 
