@@ -1,6 +1,7 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -45,7 +46,7 @@ const transferringHostedSite: Flow = {
 				return site?.options?.admin_url as string;
 			}
 
-			return `/home/${ siteId }`;
+			return dashboardLink( `/sites/${ siteSlug }` );
 		};
 
 		const includeWooCommerce = useIsValidWooPartner();
