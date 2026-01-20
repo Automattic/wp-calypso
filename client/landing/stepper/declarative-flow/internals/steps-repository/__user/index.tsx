@@ -1,6 +1,6 @@
 import { DotPager } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
@@ -15,6 +15,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
@@ -43,6 +44,18 @@ const UserStepComponent: StepType = function UserStep( {
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
+
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_account_step_improvement_202601',
+		{
+			isEligible: isOnboardingFlow( flow ),
+		}
+	);
+	const variationName = experimentAssignment?.variationName ?? 'control';
+
+	console.log( 'flow', flow );
+	console.log( 'variationName', variationName );
+	console.log( 'isLoadingExperiment', isLoadingExperiment );
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -154,11 +167,20 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
+		const headingText =
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging',
+				'treatment_email_messaging_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+				? translate( 'Welcome to WordPress.com' )
+				: translate( 'Create your account' );
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ translate( 'Welcome to WordPress.com' ) } />
+				<Step.Heading text={ headingText } />
 			</>
 		);
 
@@ -203,10 +225,34 @@ const UserStepComponent: StepType = function UserStep( {
 			</div>
 		);
 
-		if ( isLargeViewport ) {
+		let stickyBottomBar = null;
+		if (
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging',
+				'treatment_email_messaging_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+		) {
+			stickyBottomBar = () => (
+				<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
+			);
+		}
+
+		let layoutClassName = 'step-container-v2--user';
+		if (
+			isLargeViewport &&
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging_slider',
+				'treatment_email_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+		) {
+			layoutClassName += ' step-container-v2--user-with-slider';
 			return (
 				<Step.TwoColumnLayout
-					className="step-container-v2--user step-container-v2--user-with-slider"
+					className={ layoutClassName }
 					firstColumnWidth={ 6 }
 					secondColumnWidth={ 6 }
 					columns={ 12 }
@@ -220,12 +266,7 @@ const UserStepComponent: StepType = function UserStep( {
 						columnWidth={ 4 }
 						heading={ heading }
 						topBar={ topBar }
-						stickyBottomBar={ () => (
-							<Step.StickyBottomBar
-								className="user-step-tos-bottom-bar"
-								centerElement={ tosText }
-							/>
-						) }
+						stickyBottomBar={ stickyBottomBar }
 						noTopPadding
 						noBottomPadding
 					>
@@ -238,16 +279,25 @@ const UserStepComponent: StepType = function UserStep( {
 			);
 		}
 
+		if (
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging',
+				'treatment_email_messaging_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+		) {
+			layoutClassName += ' step-container-v2--user-with-slider';
+		}
+
 		return (
 			<Step.CenteredColumnLayout
-				className="step-container-v2--user step-container-v2--user-with-slider"
+				className={ layoutClassName }
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }
-				stickyBottomBar={ () => (
-					<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
-				) }
+				stickyBottomBar={ stickyBottomBar }
 			>
 				{ stepContent }
 			</Step.CenteredColumnLayout>

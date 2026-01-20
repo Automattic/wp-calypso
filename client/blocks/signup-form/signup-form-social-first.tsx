@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
@@ -7,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FormDivider } from 'calypso/blocks/authentication';
 import InfoNotice from 'calypso/components/social-buttons/info-notice';
+import { useExperiment } from 'calypso/lib/explat';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -93,6 +95,14 @@ const SignupFormSocialFirst = ( {
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_account_step_improvement_202601',
+		{
+			isEligible: isOnboardingFlow( flowName ),
+		}
+	);
+	const variationName = experimentAssignment?.variationName ?? 'control';
+
 	const renderTermsOfService = () => {
 		let tosText;
 
@@ -108,14 +118,22 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else {
-			// tosText = createInterpolateElement(
-			// 	__(
-			// 		'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-			// 	),
-			// 	options
-			// );
+		} else if (
+			! isLoadingExperiment &&
+			[
+				'treatment_email_messaging',
+				'treatment_email_messaging_slider',
+				'treatment_messaging_slider',
+			].includes( variationName )
+		) {
 			tosText = __( 'Sign up for free to start creating your site.' );
+		} else {
+			tosText = createInterpolateElement(
+				__(
+					'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+				),
+				options
+			);
 		}
 
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
@@ -142,11 +160,18 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	return (
-		<div className="signup-form signup-form-social-first">
-			<div className={ getVisibilityClassName( 'initial' ) }>
-				{ notice }
-				{ renderTermsOfService() }
+	let EmailLogin = null;
+	if (
+		! isLoadingExperiment &&
+		[
+			'treatment_email',
+			'treatment_email_messaging',
+			'treatment_email_messaging_slider',
+			'treatment_email_slider',
+		].includes( variationName )
+	) {
+		EmailLogin = (
+			<>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						stepName={ stepName }
@@ -178,6 +203,28 @@ const SignupFormSocialFirst = ( {
 					/>
 				</div>
 				<FormDivider isHorizontal />
+			</>
+		);
+	}
+
+	let InfoNoticeComponent = null;
+	if (
+		! isLoadingExperiment &&
+		[
+			'treatment_email_messaging',
+			'treatment_email_messaging_slider',
+			'treatment_messaging_slider',
+		].includes( variationName )
+	) {
+		InfoNoticeComponent = <InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>;
+	}
+
+	return (
+		<div className="signup-form signup-form-social-first">
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				{ renderTermsOfService() }
+				{ EmailLogin }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -187,7 +234,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 				/>
-				<InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>
+				{ InfoNoticeComponent }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
