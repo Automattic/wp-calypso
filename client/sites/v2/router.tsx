@@ -13,7 +13,7 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
  */
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
-	beforeLoad: async () => {},
+	beforeLoad: async () => {}, // Empty beforeLoad is required to maintain type compatibility with MSD
 } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
