@@ -1,0 +1,120 @@
+@import '@wordpress/base-styles/variables';
+
+.gravatar-profile {
+	position: relative;
+	width: auto; // HStack's default 100% width gets interpretted differently because we're using relative positioning
+	background: rgba( 56, 88, 233, 0.06 );
+	border-radius: $radius-medium;
+	padding: $grid-unit-15;
+	padding-inline-start: $grid-unit-15 + 4px; // Extra space for focus ring
+	padding-inline-end: $grid-unit-20; // Match vertical padding for visual balance
+}
+
+.gravatar-profile__avatar {
+	border: none;
+	padding: 0;
+	background: none;
+	cursor: pointer;
+	border-radius: 50%;
+
+	&:hover img,
+	&:focus img {
+		opacity: 0.8;
+	}
+
+	&:focus {
+		outline: 2px solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: 2px;
+	}
+
+	img {
+		width: 72px;
+		height: 72px;
+		margin: 5px 0;
+		border-radius: 50%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+.gravatar-profile__logo {
+	position: absolute;
+	inset-inline-start: 72px; // Position over the avatar's right edge
+	padding: 3px;
+	background: var(--color-surface, #fff);
+	border-radius: 50%;
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
+}
+
+.gravatar-profile__link-row {
+	display: inline-flex;
+	align-items: center;
+}
+
+.gravatar-profile__text {
+	flex: 1;
+	min-width: 0;
+	margin-inline-end: $grid-unit-20;
+
+	p {
+		margin: 0 0 $grid-unit-05;
+	}
+}
+
+// Edit Gravatar component styles
+.edit-gravatar__button {
+	border: none;
+	padding: 0;
+	background: transparent;
+	cursor: pointer;
+
+	&--disabled {
+		cursor: default;
+	}
+}
+
+.edit-gravatar__avatar-container {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.edit-gravatar__avatar-image {
+	object-fit: cover;
+}
+
+.edit-gravatar__overlay {
+	position: absolute;
+	top: 0;
+	inset-inline-start: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba( 0, 0, 0, 0.5 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&--visible {
+		opacity: 1;
+	}
+}
+
+.edit-gravatar__overlay-icon {
+	color: var(--color-text-inverted, #fff);
+	fill: var(--color-text-inverted, #fff);
+}
+
+.edit-gravatar__verification-notice {
+	background-color: #fff8e5;
+	padding: $grid-unit-15;
+	margin-block: $grid-unit-10 0;
+	border-inline-start: 3px solid #f0b849;
+}
+
+.edit-gravatar__verification-notice p {
+	margin-block-end: $grid-unit-10;
+}

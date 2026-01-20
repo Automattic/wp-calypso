@@ -1,4 +1,5 @@
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
+import { GravatarLogo } from '@automattic/components/src/logos/gravatar-logo';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -11,18 +12,20 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { useMemo } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
-import GravatarLogo from './gravatar-logo';
+import type { EditGravatarHandle } from './edit-gravatar';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
+
+import './style.scss';
 
 const fields: Field< UserSettings >[] = [
 	{
@@ -86,7 +89,7 @@ const fields: Field< UserSettings >[] = [
 
 const form: Form = {
 	layout: { type: 'regular' as const, labelPosition: 'top' as const },
-	fields: [ 'avatar_URL', 'display_name', 'user_URL', 'description' ],
+	fields: [ 'display_name', 'user_URL', 'description' ],
 };
 
 // Derive controlled keys from fields, excluding avatar_URL since it's not editable
@@ -96,6 +99,7 @@ const controlledKeys = fields
 
 export default function GravatarProfileSection() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const editGravatarRef = useRef< EditGravatarHandle >( null );
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
@@ -142,25 +146,41 @@ export default function GravatarProfileSection() {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader
-							decoration={ <GravatarLogo /> }
-							level={ 3 }
-							title={ __( 'Public Gravatar profile' ) }
-							description={ createInterpolateElement(
-								sprintf(
-									/* translators: %1$s: User email */
-									__(
-										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>'
-									),
-									data.user_email
-								),
-								{
-									strong: <strong />,
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									external: <ExternalLink href="https://gravatar.com/profile" />,
-								}
-							) }
-						/>
+						<SectionHeader level={ 3 } title={ __( 'Public profile' ) } />
+						<HStack className="gravatar-profile" spacing={ 3 } alignment="center">
+							<button
+								type="button"
+								className="gravatar-profile__avatar"
+								onClick={ () => editGravatarRef.current?.open() }
+								aria-label={ __( 'Edit avatar on Gravatar' ) }
+							>
+								<img src={ data.avatar_URL } alt={ __( 'User avatar' ) } />
+							</button>
+							<div className="gravatar-profile__text">
+								<p>
+									{ __(
+										'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar.'
+									) }
+								</p>
+								<span className="gravatar-profile__link-row">
+									<GravatarLogo
+										className="gravatar-profile__logo"
+										fill="#3858E9"
+										size={ 16 }
+										aria-hidden="true"
+									/>
+									<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/">
+										{ __( 'What is Gravatar?' ) }
+									</ExternalLink>
+								</span>
+							</div>
+							<EditGravatar
+								ref={ editGravatarRef }
+								avatarUrl={ data.avatar_URL }
+								userEmail={ data.user_email }
+								showAvatarPreview={ false }
+							/>
+						</HStack>
 
 						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< UserSettings >

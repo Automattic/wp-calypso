@@ -86,6 +86,39 @@
 			max-width: 260px;
 		}
 	}
+
+	// Redesign styles
+	&.edit-gravatar--redesign {
+		.edit-gravatar__branding {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			margin-top: 16px;
+			color: var( --color-text-subtle );
+		}
+
+		.edit-gravatar__gravatar-logo {
+			flex-shrink: 0;
+		}
+
+		.edit-gravatar__branding-text {
+			font-size: $font-body-small;
+		}
+
+		.edit-gravatar__explanation-container {
+			margin-top: 8px;
+			margin-bottom: 8px;
+		}
+
+		.edit-gravatar__learn-more {
+			font-size: $font-body-extra-small;
+			color: var( --color-text-subtle );
+
+			&:hover {
+				color: var( --color-link );
+			}
+		}
+	}
 }
 
 /* Override the default popover styles. */
