@@ -30,6 +30,7 @@ export default function useShoppingCart() {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
 				purchase_mode: marketplaceType,
+				term_pricing: termPricing,
 			} )
 		);
 		setShowCart( ( prevState ) => {
