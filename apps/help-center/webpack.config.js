@@ -22,7 +22,7 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js', // dynamic filename
-			chunkFilename: `${ name }.[id].[contenthash:8].min.js`,
+			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
 		},
 		optimization: {
