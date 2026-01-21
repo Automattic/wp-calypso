@@ -168,9 +168,12 @@ export function ImageUploader( {
 			}
 		};
 
-		const handleWindowDragLeave = () => {
+		const handleWindowDragLeave = ( e: DragEvent ) => {
 			dragCounterRef.current -= 1;
-			if ( dragCounterRef.current === 0 ) {
+			// Reset if counter reaches 0 OR if leaving the window entirely
+			// (relatedTarget is null when drag leaves the document)
+			if ( dragCounterRef.current === 0 || e.relatedTarget === null ) {
+				dragCounterRef.current = 0;
 				setIsDraggingFile( false );
 			}
 		};
