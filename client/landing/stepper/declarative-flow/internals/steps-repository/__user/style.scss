@@ -291,10 +291,9 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-slide {
-		height: 100vh;
 		box-sizing: border-box;
-		padding: 20px 0;
-		min-height: 0;
+		height: 100vh;
+		padding: 20px;
 	}
 
 	.signup-slider-slide-content {
@@ -375,7 +374,7 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.step-container-v2:has(.step-container-v2--user-messaging-variation) {
+.step-container-v2:has(.signup-tos-bottom-bar) {
 	.step-container-v2__content-wrapper {
 		gap: 0;
 	}

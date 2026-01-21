@@ -7,9 +7,7 @@ type ContentWrapperProps = {
 	children: ReactNode;
 	centerAligned?: boolean;
 	axisDirection?: 'vertical' | 'horizontal';
-	noTopPadding?: boolean;
-	noBottomPadding?: boolean;
-	sidePadding?: string;
+	noPadding?: boolean;
 	isFullWidth?: boolean;
 };
 
@@ -17,24 +15,16 @@ export const ContentWrapper = ( {
 	children,
 	centerAligned,
 	axisDirection = 'vertical',
-	noTopPadding = false,
-	noBottomPadding = false,
-	sidePadding,
+	noPadding = false,
 	isFullWidth = false,
 }: ContentWrapperProps ) => {
-	const style =
-		sidePadding !== undefined ? { '--content-wrapper-side-padding': sidePadding } : undefined;
-
 	return (
 		<div
 			className={ clsx( 'step-container-v2__content-wrapper', `axis-${ axisDirection }`, {
 				'center-aligned': centerAligned,
-				'no-top-padding': noTopPadding,
-				'no-bottom-padding': noBottomPadding,
-				'has-custom-side-padding': sidePadding !== undefined,
+				'no-padding': noPadding,
 				'is-full-width': isFullWidth,
 			} ) }
-			style={ style as React.CSSProperties }
 		>
 			{ children }
 		</div>

@@ -17,11 +17,9 @@ interface TwoColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	firstColumnWidth: number;
 	secondColumnWidth: number;
-	noTopPadding?: boolean;
-	noBottomPadding?: boolean;
-	sidePadding?: string;
 	columns?: number;
 	isFullWidth?: boolean;
+	noPadding?: boolean;
 }
 
 export const TwoColumnLayout = ( {
@@ -33,11 +31,9 @@ export const TwoColumnLayout = ( {
 	className,
 	footer,
 	stickyBottomBar,
-	noTopPadding = false,
-	noBottomPadding = false,
-	sidePadding,
 	columns = 10,
 	isFullWidth = false,
+	noPadding = false,
 }: TwoColumnLayoutProps ) => {
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
@@ -69,12 +65,7 @@ export const TwoColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper
-							noTopPadding={ noTopPadding }
-							noBottomPadding={ noBottomPadding }
-							sidePadding={ sidePadding }
-							isFullWidth={ isFullWidth }
-						>
+						<ContentWrapper noPadding={ noPadding } isFullWidth={ isFullWidth }>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
 								columns={ columns }

@@ -15,8 +15,6 @@ interface CenteredColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
 	verticalAlign?: 'center';
-	noTopPadding?: boolean;
-	noBottomPadding?: boolean;
 	isFullWidth?: boolean;
 }
 
@@ -28,8 +26,6 @@ export const CenteredColumnLayout = ( {
 	children,
 	stickyBottomBar,
 	verticalAlign,
-	noTopPadding = false,
-	noBottomPadding = false,
 	isFullWidth = false,
 }: CenteredColumnLayoutProps ) => {
 	return (
@@ -55,8 +51,6 @@ export const CenteredColumnLayout = ( {
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper
 							centerAligned={ verticalAlign === 'center' }
-							noTopPadding={ noTopPadding }
-							noBottomPadding={ noBottomPadding }
 							isFullWidth={ isFullWidth }
 						>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }

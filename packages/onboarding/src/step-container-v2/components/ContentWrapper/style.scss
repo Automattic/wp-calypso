@@ -20,17 +20,8 @@
 	padding: var( --step-container-v2-content-block-padding )
 		var( --step-container-v2-content-inline-padding );
 
-	&.no-top-padding {
-		padding-top: 0;
-	}
-
-	&.no-bottom-padding {
-		padding-bottom: 0;
-	}
-
-	&.has-custom-side-padding {
-		padding-left: var( --content-wrapper-side-padding );
-		padding-right: var( --content-wrapper-side-padding );
+	&.no-padding {
+		padding: 0;
 	}
 
 	--step-container-v2-content-max-width: 1344px;

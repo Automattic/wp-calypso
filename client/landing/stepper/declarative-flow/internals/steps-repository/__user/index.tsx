@@ -199,50 +199,44 @@ const UserStepComponent: StepType = function UserStep( {
 			/>
 		);
 
-		const options = {
-			tosLink: (
-				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-			privacyLink: (
-				<a
-					href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-		};
-
 		let stickyBottomBar = null;
-		let layoutClassName = 'step-container-v2--user';
 		if ( isMessagingVariation ) {
 			const tosText = createInterpolateElement(
 				translate(
 					'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
 				),
-				options
+				{
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				}
 			);
 			stickyBottomBar = () => (
 				<Step.StickyBottomBar className="signup-tos-bottom-bar" centerElement={ tosText } />
 			);
-			layoutClassName += ' step-container-v2--user-messaging-variation';
 		}
 
 		if ( isLargeViewport && isSliderVariation ) {
 			return (
 				<Step.TwoColumnLayout
-					className={ layoutClassName }
+					className="step-container-v2--user"
 					firstColumnWidth={ 6 }
 					secondColumnWidth={ 6 }
 					columns={ 12 }
-					noTopPadding
-					noBottomPadding
-					sidePadding="20px"
+					noPadding
 					isFullWidth
 				>
 					<Step.CenteredColumnLayout
@@ -263,7 +257,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 		return (
 			<Step.CenteredColumnLayout
-				className={ layoutClassName }
+				className="step-container-v2--user"
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
