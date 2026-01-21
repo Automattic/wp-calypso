@@ -1351,6 +1351,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
+			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -2232,6 +2233,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
+			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
