@@ -192,6 +192,18 @@ export default function ( router ) {
 			`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
 		],
 		redirectLoggedOut,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( ( params ) => {
+			if ( params.action === 'create' ) {
+				return `/plugins/scheduled-updates/new`;
+			}
+
+			if ( params.action === 'edit' && params.id ) {
+				return `/plugins/scheduled-updates/edit/${ params.id }`;
+			}
+
+			return '/plugins/scheduled-updates';
+		} ),
 		navigation,
 		renderPluginsSidebar,
 		scheduledUpdatesMultisite,
