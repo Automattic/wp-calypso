@@ -15,7 +15,6 @@ interface CenteredColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
 	verticalAlign?: 'center';
-	isFullWidth?: boolean;
 }
 
 export const CenteredColumnLayout = ( {
@@ -26,7 +25,6 @@ export const CenteredColumnLayout = ( {
 	children,
 	stickyBottomBar,
 	verticalAlign,
-	isFullWidth = false,
 }: CenteredColumnLayoutProps ) => {
 	return (
 		<StepContainerV2
@@ -49,10 +47,7 @@ export const CenteredColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper
-							centerAligned={ verticalAlign === 'center' }
-							isFullWidth={ isFullWidth }
-						>
+						<ContentWrapper centerAligned={ verticalAlign === 'center' }>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow columns={ columnWidth } className={ className }>
 								{ content }
