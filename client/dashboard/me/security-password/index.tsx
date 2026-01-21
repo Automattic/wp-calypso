@@ -7,7 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import useDebouncedState from '../../app/hooks/use-debounced-state';
@@ -22,6 +22,7 @@ import './style.scss';
 
 type SecurityPasswordFormData = {
 	password: string;
+	confirmPassword: string;
 };
 
 const fields: Field< SecurityPasswordFormData >[] = [
@@ -30,6 +31,7 @@ const fields: Field< SecurityPasswordFormData >[] = [
 		label: __( 'New password' ),
 		type: 'password' as const,
 		isValid: {
+			required: true,
 			custom: async ( data: SecurityPasswordFormData ) => {
 				const validation = await validatePassword( data.password );
 				if ( ! validation.passed ) {
@@ -40,11 +42,19 @@ const fields: Field< SecurityPasswordFormData >[] = [
 			},
 		},
 	},
+	{
+		id: 'confirmPassword',
+		label: __( 'Confirm new password' ),
+		type: 'password' as const,
+		isValid: {
+			required: true,
+		},
+	},
 ];
 
 const form: Form = {
 	layout: { type: 'regular' as const, labelPosition: 'top' as const },
-	fields: [ 'password' ],
+	fields: [ 'password', 'confirmPassword' ],
 };
 
 export default function SecurityPassword() {
@@ -57,9 +67,54 @@ export default function SecurityPassword() {
 	const [ formData, setFormData, debouncedFormData ] =
 		useDebouncedState< SecurityPasswordFormData >( {
 			password: '',
+			confirmPassword: '',
 		} );
 
-	const { validity, isValid } = useFormValidity( debouncedFormData, fields, form );
+	const { validity: baseValidity, isValid: baseIsValid } = useFormValidity(
+		debouncedFormData,
+		fields,
+		form
+	);
+
+	// Extract values for clearer useMemo dependencies
+	const { password, confirmPassword } = debouncedFormData;
+
+	// Always check password match since DataForm doesn't re-validate confirmPassword when password changes
+	// Also remove confirmPassword validity when valid to hide the "Valid" indicator
+	const { validity, isValid } = useMemo( () => {
+		const passwordHasValue = password.length > 0;
+		const confirmPasswordHasValue = confirmPassword.length > 0;
+		const passwordsMatch = password === confirmPassword;
+
+		// Show mismatch error when confirm has value but doesn't match
+		if ( confirmPasswordHasValue && ! passwordsMatch ) {
+			return {
+				validity: {
+					...baseValidity,
+					confirmPassword: {
+						custom: {
+							type: 'invalid' as const,
+							message: __( 'Passwords do not match.' ),
+						},
+					},
+				},
+				isValid: false,
+			};
+		}
+
+		// When both fields have values and match, hide the "Valid" indicator
+		// by removing confirmPassword from validity
+		if ( passwordHasValue && confirmPasswordHasValue && passwordsMatch ) {
+			const { confirmPassword: _, ...restValidity } = baseValidity ?? {};
+			return {
+				validity: Object.keys( restValidity ).length > 0 ? restValidity : undefined,
+				isValid: baseIsValid,
+			};
+		}
+
+		return { validity: baseValidity, isValid: baseIsValid };
+	}, [ baseValidity, baseIsValid, password, confirmPassword ] );
+
 	const isLoading = mutation.isPending || isReloading;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -87,9 +142,11 @@ export default function SecurityPassword() {
 
 	const handleGeneratePassword = () => {
 		recordTracksEvent( 'calypso_dashboard_security_password_generate_password_click' );
+		const newPassword = generatePassword();
 		setFormData( ( data ) => ( {
 			...data,
-			password: generatePassword(),
+			password: newPassword,
+			confirmPassword: newPassword,
 		} ) );
 	};
 
