@@ -99,7 +99,21 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		} );
 	};
 
-	const renderEnabled = () => {
+	const handleDisable = () => {
+		handleSubmit( {
+			active: false,
+		} );
+	};
+
+	const handleEnable = ( event: React.FormEvent ) => {
+		event.preventDefault();
+		handleSubmit( {
+			active: true,
+			ttl: Number( formData.ttl ),
+		} );
+	};
+
+	const renderEnabledNotice = () => {
 		if ( ! data ) {
 			return null;
 		}
@@ -115,12 +129,6 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 			minute: '2-digit',
 		} );
 
-		const handleDisable = () => {
-			handleSubmit( {
-				active: false,
-			} );
-		};
-
 		return (
 			<Notice
 				variant="success"
@@ -128,7 +136,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				actions={
 					! enabled_by_a11n && (
 						<Button
-							variant="primary"
+							variant="secondary"
 							size="compact"
 							type="submit"
 							isBusy={ isPending }
@@ -167,51 +175,15 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		);
 	};
 
-	const renderDisabled = () => {
-		const handleEnable = ( event: React.FormEvent ) => {
-			event.preventDefault();
-			handleSubmit( {
-				active: true,
-				ttl: Number( formData.ttl ),
-			} );
-		};
+	const renderDisabledNotice = () => {
+		if ( ! shouldShowDisabledNotice ) {
+			return null;
+		}
 
 		return (
-			<VStack spacing={ 8 }>
-				{ shouldShowDisabledNotice && (
-					<Notice onClose={ () => setShouldShowDisabledNotice( false ) }>
-						{ __( 'Defensive mode is disabled.' ) }
-					</Notice>
-				) }
-				<Card>
-					<CardBody>
-						<form onSubmit={ handleEnable }>
-							<VStack spacing={ 4 }>
-								<SectionHeader title={ __( 'Enable defensive mode' ) } level={ 3 } />
-								<DataForm< { ttl: string } >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: { ttl?: string } ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-								<ButtonStack justify="flex-start">
-									<Button
-										__next40pxDefaultSize
-										variant="primary"
-										type="submit"
-										isBusy={ isPending }
-										disabled={ isPending }
-									>
-										{ __( 'Enable' ) }
-									</Button>
-								</ButtonStack>
-							</VStack>
-						</form>
-					</CardBody>
-				</Card>
-			</VStack>
+			<Notice onClose={ () => setShouldShowDisabledNotice( false ) }>
+				{ __( 'Defensive mode is disabled.' ) }
+			</Notice>
 		);
 	};
 
@@ -238,7 +210,37 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				feature={ HostingFeatures.DEFENSIVE_MODE }
 				upsellId="site-settings-defensive-mode"
 			>
-				{ data?.enabled ? renderEnabled() : renderDisabled() }
+				<VStack spacing={ 8 }>
+					{ data?.enabled ? renderEnabledNotice() : renderDisabledNotice() }
+					<Card>
+						<CardBody>
+							<form onSubmit={ handleEnable }>
+								<VStack spacing={ 4 }>
+									<SectionHeader title={ __( 'Enable defensive mode' ) } level={ 3 } />
+									<DataForm< { ttl: string } >
+										data={ formData }
+										fields={ fields }
+										form={ form }
+										onChange={ ( edits: { ttl?: string } ) => {
+											setFormData( ( data ) => ( { ...data, ...edits } ) );
+										} }
+									/>
+									<ButtonStack justify="flex-start">
+										<Button
+											__next40pxDefaultSize
+											variant="primary"
+											type="submit"
+											isBusy={ isPending && ! data?.enabled }
+											disabled={ isPending || !! data?.enabled }
+										>
+											{ __( 'Enable' ) }
+										</Button>
+									</ButtonStack>
+								</VStack>
+							</form>
+						</CardBody>
+					</Card>
+				</VStack>
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
