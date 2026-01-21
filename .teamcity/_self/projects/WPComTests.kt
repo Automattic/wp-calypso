@@ -8,6 +8,7 @@ import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.Template
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -71,6 +72,9 @@ object WPComTests : Project({
 	buildType(I18NTests);
 	buildType(P2E2ETests);
 	buildType(GutenbergPlaywrightTests);
+
+	// Jetpack E2E Tests (Playwright)
+	template(JetpackE2ETestsBuildTemplate);
 	buildType(JetpackSimpleE2ETests);
 	buildType(JetpackAtomicE2ETests);
 	buildType(JetpackAtomicSmokeE2ETests);
@@ -514,12 +518,11 @@ private object GutenbergPlaywrightTests : BuildType({
 	}
 })
 
-private object JetpackSimpleE2ETests : BuildType({
+private object JetpackE2ETestsBuildTemplate : Template({
+	name = "Jetpack E2E Tests Build Template"
+	description = "Runs Jetpack WPCOM integration tests using Playwright Test runner"
+
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("WPComTests_JetpackSimpleE2ETests")
-	uuid = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d"
-	name = "Jetpack Simple E2E Tests"
-	description = "Runs Jetpack WPCOM integration tests on Simple sites"
 
 	params {
 		param("TEST_GROUP", "@jetpack-wpcom-integration")
@@ -528,12 +531,6 @@ private object JetpackSimpleE2ETests : BuildType({
 	}
 
 	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile"),
-			))
-		}
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -549,24 +546,34 @@ private object JetpackSimpleE2ETests : BuildType({
 			buildProbablyHanging = true
 		}
 	}
+})
 
-	failureConditions {
-		executionTimeoutMin = 30
+private object JetpackSimpleE2ETests : BuildType({
+	templates(JetpackE2ETestsBuildTemplate)
+	id("WPComTests_JetpackSimpleE2ETests")
+	uuid = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d"
+	name = "Jetpack Simple E2E Tests"
+	description = "Runs Jetpack WPCOM integration tests on Simple sites"
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
 	}
 })
 
 private object JetpackAtomicE2ETests : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate)
+	templates(JetpackE2ETestsBuildTemplate)
 	id("WPComTests_JetpackAtomicE2ETests")
 	uuid = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
 	name = "Jetpack Atomic E2E Tests"
 	description = "Runs Jetpack WPCOM integration tests on all Atomic variations"
 
 	params {
-		param("TEST_GROUP", "@jetpack-wpcom-integration")
-		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("PROJECT", "desktop")
-		param("env.JETPACK_TARGET", "wpcom-deployment")
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "5")
 	}
@@ -583,62 +590,20 @@ private object JetpackAtomicE2ETests : BuildType({
 				value("ecomm-plan", label = "Ecomm"),
 			))
 		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 30
 	}
 })
 
 private object JetpackAtomicSmokeE2ETests : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate)
+	templates(JetpackE2ETestsBuildTemplate)
 	id("WPComTests_JetpackAtomicSmokeE2ETests")
 	uuid = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
 	name = "Jetpack Atomic E2E Tests - Mixed Variations"
 	description = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations"
 
 	params {
-		param("TEST_GROUP", "@jetpack-wpcom-integration")
-		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("PROJECT", "desktop")
-		param("env.JETPACK_TARGET", "wpcom-deployment")
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
-	}
-
-	features {
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 30
 	}
 })
