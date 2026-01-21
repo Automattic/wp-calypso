@@ -184,9 +184,9 @@ const SignupFormSocialFirst = ( {
 		);
 	}
 
-	let InfoNoticeComponent = null;
+	let infoNoticeComponent = null;
 	if ( isMessagingVariation ) {
-		InfoNoticeComponent = <InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>;
+		infoNoticeComponent = <InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>;
 	}
 
 	return (
@@ -205,7 +205,7 @@ const SignupFormSocialFirst = ( {
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailVariation }
 				/>
-				{ InfoNoticeComponent }
+				{ infoNoticeComponent }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
