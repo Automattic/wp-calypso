@@ -47,6 +47,8 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
+	isEmailVariation?: boolean;
+	isMessagingVariation?: boolean;
 }
 
 const options = {
