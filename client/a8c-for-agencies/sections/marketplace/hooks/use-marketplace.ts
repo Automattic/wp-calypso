@@ -191,12 +191,16 @@ export const useGetProductPricingInfo = (
 			};
 		}
 
-		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
-		const bundleAmount = bundle && bundle.amount ? bundle.amount.replace( ',', '' ) : '';
+		const getAmount = ( amount?: string ) => {
+			if ( ! amount ) {
+				return 0;
+			}
+			return parseFloat( amount.replace( ',', '' ) ) || 0;
+		};
 
-		const productBundleCost = bundle
-			? parseFloat( bundleAmount )
-			: parseFloat( product?.amount.replace( ',', '' ) ) || 0;
+		const bundle = product?.supported_bundles?.find( ( bundle ) => bundle.quantity === quantity );
+
+		const productBundleCost = bundle ? getAmount( bundle.amount ) : getAmount( product.amount );
 		const isDailyPricing = product.price_interval === 'day';
 
 		const discountInfo: {
@@ -231,7 +235,7 @@ export const useGetProductPricingInfo = (
 
 			// If a monthly product is found, calculate the actual cost and discount percentage
 			if ( monthlyProduct ) {
-				const monthlyProductBundleCost = parseFloat( product.amount.replace( ',', '' ) ) * quantity;
+				const monthlyProductBundleCost = getAmount( product.amount ) * quantity;
 				const actualCost = isDailyPricing
 					? monthlyProductBundleCost / 365
 					: monthlyProductBundleCost;
