@@ -1,5 +1,4 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
-import { GravatarLogo } from '@automattic/components/src/logos/gravatar-logo';
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Icon, Button } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
@@ -159,14 +158,6 @@ export class EditGravatar extends Component {
 						</div>
 					) }
 				</div>
-
-				<div className="edit-gravatar__branding">
-					<GravatarLogo className="edit-gravatar__gravatar-logo" size={ 20 } />
-					<span className="edit-gravatar__branding-text">
-						{ translate( 'Powered by Gravatar' ) }
-					</span>
-				</div>
-
 				<div className="edit-gravatar__explanation-container">
 					{ user.email_verified ? (
 						<Button
@@ -193,13 +184,6 @@ export class EditGravatar extends Component {
 						</Button>
 					) }
 				</div>
-
-				<ExternalLink
-					className="edit-gravatar__learn-more"
-					href="https://support.gravatar.com/basic/what-is-gravatar/"
-				>
-					{ translate( 'What is Gravatar?' ) }
-				</ExternalLink>
 			</div>
 		);
 	}

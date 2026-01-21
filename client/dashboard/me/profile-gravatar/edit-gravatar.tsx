@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useState, useEffect, useRef, KeyboardEvent, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 
 interface EditGravatarProps {
@@ -91,23 +91,6 @@ const EditGravatar = forwardRef< EditGravatarHandle, EditGravatarProps >(
 			setIsOverlayVisible( false );
 		};
 
-		const handleFocus = (): void => {
-			setIsOverlayVisible( true );
-		};
-
-		const handleBlur = (): void => {
-			setIsOverlayVisible( false );
-		};
-
-		const handleKeyDown = ( event: KeyboardEvent< HTMLDivElement > ): void => {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				event.preventDefault();
-				if ( isEmailVerified ) {
-					// The openFileDialog function will be called by the button's onClick handler
-				}
-			}
-		};
-
 		const openGravatarEditor = () => {
 			handleUnverifiedUserClick();
 			if ( isEmailVerified ) {
@@ -149,22 +132,16 @@ const EditGravatar = forwardRef< EditGravatarHandle, EditGravatarProps >(
 					<button
 						type="button"
 						onClick={ openGravatarEditor }
+						onMouseOver={ handleMouseOver }
+						onMouseOut={ handleMouseOut }
+						onFocus={ handleMouseOver }
+						onBlur={ handleMouseOut }
 						className={ clsx( 'edit-gravatar__button', {
 							'edit-gravatar__button--disabled': ! isEmailVerified,
 						} ) }
 						aria-label={ uploadButtonLabel }
 					>
-						<div
-							className="edit-gravatar__avatar-container"
-							onMouseOver={ handleMouseOver }
-							onMouseOut={ handleMouseOut }
-							onFocus={ handleFocus }
-							onBlur={ handleBlur }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ 0 }
-							role="button"
-							aria-label={ uploadButtonLabel }
-						>
+						<div className="edit-gravatar__avatar-container">
 							<img
 								src={ tempImage || displayUrl }
 								alt={ __( 'Gravatar' ) }
