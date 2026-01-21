@@ -707,15 +707,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					) }
 					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
 
-					<AtomicRevertChanges
-						atomicTransfer={ atomicTransfer }
-						purchase={ purchase }
-						onConfirmationChange={ this.onAtomicRevertConfirmationChange }
-						needsAtomicRevertConfirmation={ Boolean(
-							atomicTransfer?.created_at && ! isRefundable( purchase )
-						) }
-						isLoading={ this.state.isLoading }
-					/>
+					{ isPlan( purchase ) && (
+						<AtomicRevertChanges
+							atomicTransfer={ atomicTransfer }
+							purchase={ purchase }
+							onConfirmationChange={ this.onAtomicRevertConfirmationChange }
+							needsAtomicRevertConfirmation={ Boolean(
+								atomicTransfer?.created_at && ! isRefundable( purchase )
+							) }
+							isLoading={ this.state.isLoading }
+						/>
+					) }
 				</CompactCard>
 
 				<CompactCard className="cancel-purchase__footer">

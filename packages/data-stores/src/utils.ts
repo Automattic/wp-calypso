@@ -1,7 +1,6 @@
 /**
  * Utility functions shared across data stores
  */
-
 declare const helpCenterData:
 	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
 	| undefined;
@@ -32,22 +31,3 @@ export const isInSupportSession = () => {
 	}
 	return false;
 };
-
-const memoryStore: { [ key: string ]: unknown } = {};
-
-export function persistValueSafely< T >( key: string, value: T ): void {
-	try {
-		window.localStorage.setItem( key, JSON.stringify( value ) );
-	} catch ( error ) {
-		memoryStore[ key ] = value;
-	}
-}
-
-export function retrieveValueSafely< T >( key: string ): T | undefined {
-	try {
-		const value = window.localStorage.getItem( key );
-		return value ? JSON.parse( value ) : undefined;
-	} catch ( error ) {
-		return memoryStore[ key ] as T | undefined;
-	}
-}

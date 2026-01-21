@@ -11,6 +11,7 @@ export function SitesDataViews< SiteType >( {
 	fields,
 	actions,
 	isLoading,
+	isPlaceholderData,
 	empty,
 	paginationInfo,
 	renderItemLink,
@@ -23,6 +24,7 @@ export function SitesDataViews< SiteType >( {
 	fields: Field< SiteType >[];
 	actions?: Action< SiteType >[];
 	isLoading: boolean;
+	isPlaceholderData?: boolean;
 	empty: ReactNode;
 	paginationInfo: ComponentProps< typeof DataViews< SiteType > >[ 'paginationInfo' ];
 	renderItemLink: ComponentProps< typeof DataViews< SiteType > >[ 'renderItemLink' ];
@@ -41,6 +43,7 @@ export function SitesDataViews< SiteType >( {
 					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
+					isPlaceholderData={ isPlaceholderData }
 					onChangeView={ onChangeView }
 					onResetView={ onResetView }
 					defaultLayouts={ DEFAULT_LAYOUTS }

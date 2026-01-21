@@ -41,6 +41,12 @@ export const OdieSendMessageButton = () => {
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
+	useEffect( () => {
+		if ( initialQuery ) {
+			setInputValue( initialQuery );
+		}
+	}, [ initialQuery ] );
+
 	// I'm only using adjustHeight from agenttic-ui
 	const { textareaRef } = useInput( {
 		value: inputValue,
