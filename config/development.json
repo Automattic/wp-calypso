@@ -65,7 +65,6 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
-		"domain-search-rewrite": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": true,
