@@ -547,7 +547,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 })
 
 private object JetpackSimpleE2ETests : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate, JetpackE2ETestsBuildTemplate)
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
 	id("WPComTests_JetpackSimpleE2ETests")
 	uuid = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d"
 	name = "Jetpack Simple E2E Tests"
@@ -564,7 +564,7 @@ private object JetpackSimpleE2ETests : BuildType({
 })
 
 private object JetpackAtomicE2ETests : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate, JetpackE2ETestsBuildTemplate)
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
 	id("WPComTests_JetpackAtomicE2ETests")
 	uuid = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
 	name = "Jetpack Atomic E2E Tests"
@@ -592,7 +592,7 @@ private object JetpackAtomicE2ETests : BuildType({
 })
 
 private object JetpackAtomicSmokeE2ETests : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate, JetpackE2ETestsBuildTemplate)
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
 	id("WPComTests_JetpackAtomicSmokeE2ETests")
 	uuid = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
 	name = "Jetpack Atomic E2E Tests - Mixed Variations"
