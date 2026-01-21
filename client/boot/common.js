@@ -135,13 +135,13 @@ function saveOauthFlags() {
 	window.sessionStorage.setItem( 'flags', oauthFlag );
 }
 
-function authorizePath( nextPath = null ) {
+function authorizePath() {
 	const redirectUri = new URL(
 		isJetpackCloud() || isA8CForAgencies() ? '/connect/oauth/token' : '/api/oauth/token',
 		window.location
 	);
 	redirectUri.search = new URLSearchParams( {
-		next: nextPath || window.location.pathname + window.location.search,
+		next: window.location.pathname + window.location.search,
 	} ).toString();
 
 	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
@@ -182,10 +182,8 @@ const oauthTokenMiddleware = () => {
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
-				// Use previousPath to preserve the original page for redirect after OAuth
-				// This prevents 404 when user presses back after login
-				const nextPath = context.previousPath || '/';
-				window.location.replace( authorizePath( nextPath ) );
+				// Use replace to avoid adding the current path to browser history
+				window.location.replace( authorizePath() );
 				return;
 			}
 
