@@ -288,7 +288,13 @@ $breakpoint-mobile: 660px;
 		border-radius: 16px;
 		height: 100%;
 		display: flex;
-		align-items: flex-end;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: center;
+		padding-inline: 50px;
+		padding-bottom: 80px;
+		text-align: center;
+		box-sizing: border-box;
 	}
 
 	.signup-slider-column-2 .signup-slider-column-inner {
@@ -324,13 +330,6 @@ $breakpoint-mobile: 660px;
 	.signup-slider .dot-pager__control-prev,
 	.signup-slider .dot-pager__control-next {
 		display: none;
-	}
-
-	.signup-slider-slide {
-		padding-inline: 50px;
-		padding-bottom: 80px;
-		text-align: center;
-		width: 100%;
 	}
 
 	.signup-slider-title {
@@ -377,22 +376,22 @@ $breakpoint-mobile: 660px;
 		text-align: left;
 	}
 
-	.signup-slider-testimonial-author {
-		color: #FFF;
-		font-size: 1.25rem;
-		font-weight: 500;
-		font-family: $font-sf-pro-display;
-		margin-bottom: 4px;
-		text-align: left;
-	}
-
 	.signup-slider-testimonial-title {
 		color: #FFF;
 		font-size: 1rem;
 		font-weight: 400;
 		font-family: $font-sf-pro-display;
 		margin-bottom: 0;
-		text-align: left;
+		align-self: flex-start;
+	}
+
+	.signup-slider-testimonial-author {
+		color: #FFF;
+		font-size: 1.25rem;
+		font-weight: 500;
+		font-family: $font-sf-pro-display;
+		margin-bottom: 4px;
+		align-self: flex-start;
 	}
 }
 
