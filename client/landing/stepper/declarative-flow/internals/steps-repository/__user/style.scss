@@ -405,16 +405,13 @@ $breakpoint-mobile: 660px;
 	min-width: 0;
 }
 
-.bottom-bar-text {
-	font-size: 0.875rem;
-}
-
-.step-container-v2__sticky-bottom-bar.user-step-tos-bottom-bar {
+.step-container-v2__sticky-bottom-bar.signup-tos-bottom-bar {
 	box-shadow: none;
 }
 
-.user-step-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
+.signup-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
 	margin-inline: 0;
 	width: 100%;
 	text-align: center;
+	font-size: 0.875rem;
 }

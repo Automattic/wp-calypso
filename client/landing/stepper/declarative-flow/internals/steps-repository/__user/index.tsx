@@ -218,22 +218,17 @@ const UserStepComponent: StepType = function UserStep( {
 			),
 		};
 
-		const tosText = (
-			<div className="bottom-bar-text">
-				{ createInterpolateElement(
-					translate(
-						'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-					),
-					options
-				) }
-			</div>
-		);
-
 		let stickyBottomBar = null;
 		let layoutClassName = 'step-container-v2--user';
 		if ( isMessagingVariation ) {
+			const tosText = createInterpolateElement(
+				translate(
+					'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+				),
+				options
+			);
 			stickyBottomBar = () => (
-				<Step.StickyBottomBar className="user-step-tos-bottom-bar" centerElement={ tosText } />
+				<Step.StickyBottomBar className="signup-tos-bottom-bar" centerElement={ tosText } />
 			);
 			layoutClassName += ' step-container-v2--user-messaging-variation';
 		}
