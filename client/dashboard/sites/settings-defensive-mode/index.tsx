@@ -75,6 +75,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	} );
 	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ shouldShowDisabledNotice, setShouldShowDisabledNotice ] = useState( true );
 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {
 		ttl: availableTtls[ 0 ].value,
@@ -177,7 +178,11 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 		return (
 			<VStack spacing={ 8 }>
-				<Notice>{ __( 'Defensive mode is disabled.' ) }</Notice>
+				{ shouldShowDisabledNotice && (
+					<Notice onClose={ () => setShouldShowDisabledNotice( false ) }>
+						{ __( 'Defensive mode is disabled.' ) }
+					</Notice>
+				) }
 				<Card>
 					<CardBody>
 						<form onSubmit={ handleEnable }>
