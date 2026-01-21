@@ -1,4 +1,4 @@
-import { EmailSubscription } from '@automattic/api-core';
+import { EmailSubscription, Product } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -37,7 +37,7 @@ import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
 
-const getTrialMonths = ( product?: Pick< Product, 'introductory_offer' > ) =>
+const getTrialMonths = ( product?: Product ) =>
 	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 export default function ChooseEmailSolution() {
