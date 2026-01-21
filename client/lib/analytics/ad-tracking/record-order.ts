@@ -83,6 +83,7 @@ export async function recordOrder(
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
+	recordOrderInTikTok( orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -717,6 +718,28 @@ function recordOrderInReddit(
 
 	debug( 'recordOrderInReddit:', 'track', params );
 	window.rdt( 'track', 'Purchase', params );
+}
+function recordOrderInTikTok(
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( ! mayWeTrackByTracker( 'tiktok' ) ) {
+		return;
+	}
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+	const params = {
+		contents: wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
+			content_id: product.product_slug,
+			content_name: product.product_name_en,
+			content_type: 'product',
+		} ) ),
+		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		currency: 'USD',
+	};
+	debug( 'recordOrderInTikTok:', 'track', params );
+	window.ttq.track( 'PlaceAnOrder', params );
 }
 
 /**

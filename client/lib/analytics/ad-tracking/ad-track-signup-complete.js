@@ -108,6 +108,26 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		window.fbq( ...params );
 	}
 
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		const params = {
+			contents: [
+				{
+					content_id: syntheticCart.products
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					content_type: 'product',
+					content_name: syntheticCart.products
+						.map( ( product ) => product.product_name )
+						.join( ', ' ),
+				},
+			],
+			value: syntheticCart.total_cost,
+			currency: syntheticCart.currency,
+		};
+		debug( 'recordSignup: [TikTok]', params );
+		window.ttq.track( 'CompleteRegistration', params );
+	}
+
 	// DCM Floodlight
 
 	if ( mayWeTrackByTracker( 'floodlight' ) ) {
