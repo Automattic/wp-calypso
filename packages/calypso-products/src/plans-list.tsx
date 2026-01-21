@@ -1016,6 +1016,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
 		];
 
 		let features = baseFeatures;
@@ -1049,6 +1051,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SUPPORT ]: isExperimentVariant
 				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1317,6 +1323,36 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
+	// Experimental: Comparison grid features for experiment variants.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_WOOCOMMERCE_HOSTING,
+			FEATURE_PREMIUM_STORE_THEMES,
+			FEATURE_STORE_DESIGN,
+			FEATURE_UNLIMITED_PRODUCTS,
+			FEATURE_DISPLAY_PRODUCTS_BRAND,
+			FEATURE_PRODUCT_ADD_ONS,
+			FEATURE_ASSEMBLED_KITS,
+			FEATURE_MIN_MAX_ORDER_QUANTITY,
+			FEATURE_STOCK_NOTIFS,
+			FEATURE_DYNAMIC_UPSELLS,
+			FEATURE_CUSTOM_MARKETING_AUTOMATION,
+			FEATURE_BULK_DISCOUNTS,
+			FEATURE_INVENTORY_MGMT,
+			FEATURE_STREAMLINED_CHECKOUT,
+			FEATURE_SELL_60_COUNTRIES,
+			FEATURE_SHIPPING_INTEGRATIONS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+			FEATURE_SUPPORT,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
+			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+			FEATURE_BLAZE_AD_CREDITS,
+			FEATURE_EMAIL_MARKETING,
+		];
+	},
 	getCheckoutFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PRIORITY_24_7_SUPPORT,
@@ -1351,6 +1387,10 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SUPPORT ]: isExperimentVariant
 				? i18n.translate( 'Free 24/7 expert support with priority response times' )
 				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1827,6 +1867,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_ISOLATED_INFRA,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
 		];
 
 		let features = baseFeatures;
@@ -1867,6 +1909,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			// AI features show "(limited)" text for Premium plan
 			[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
 			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -2181,6 +2227,11 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
+			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+			FEATURE_BLAZE_AD_CREDITS,
+			FEATURE_EMAIL_MARKETING,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -2238,6 +2289,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SUPPORT ]: isExperimentVariant
 				? i18n.translate( 'Free 24/7 expert support with priority response times' )
 				: i18n.translate( 'Priority 24/7 support from our expert team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()

@@ -2614,7 +2614,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AI_ASSISTANT ]: {
 		getSlug: () => FEATURE_AI_ASSISTANT,
-		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools' )
+				: i18n.translate( 'AI Assistant' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
 	},
