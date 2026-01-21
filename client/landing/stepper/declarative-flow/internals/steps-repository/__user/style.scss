@@ -258,18 +258,17 @@ $breakpoint-mobile: 660px;
 		margin-top: 3rem;
 	}
 
+	.step-container-v2__content-row--two-column-layout > div:has(.signup-slider) {
+		min-width: 0;
+	}
+
 	.signup-slider {
-		box-sizing: border-box;
 		height: 100%;
-		margin: 0;
-		padding: 0;
 		display: flex;
-		width: 100%;
 		flex-direction: column;
 		position: relative;
 
 		.dot-pager__controls {
-			justify-content: center;
 			position: absolute;
 			bottom: 40px;
 			left: 50%;
@@ -292,7 +291,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-slide {
-		flex-grow: 1;
 		height: 100vh;
 		box-sizing: border-box;
 		padding: 20px 0;
@@ -313,8 +311,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-slide.slide-1 .signup-slider-slide-content {
-		background-color: #183AD6;
-		background-image: url( ./images/slide1.svg );
+		background: #183AD6 url( ./images/slide1.svg );
 		background-repeat: no-repeat;
 		background-position: top center;
 		background-size: contain;
@@ -343,8 +340,9 @@ $breakpoint-mobile: 660px;
 
 	.signup-slider-slide-content.testimonial {
 		color: var( --studio-white );
-		text-align: left;
 		font-family: $font-sf-pro-display;
+		text-align: left;
+		align-items: flex-start;
 
 		.signup-slider-testimonial-text {
 			font-size: 1.75rem;
@@ -357,15 +355,23 @@ $breakpoint-mobile: 660px;
 			font-size: 1.25rem;
 			font-weight: 500;
 			margin-bottom: 4px;
-			align-self: flex-start;
 		}
 
 		.signup-slider-testimonial-role {
 			font-size: 1rem;
 			font-weight: 400;
-			margin-bottom: 0;
-			align-self: flex-start;
 		}
+	}
+
+	.signup-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
+		margin-inline: 0;
+		width: 100%;
+		text-align: center;
+		font-size: 0.875rem;
+	}
+
+	.step-container-v2__sticky-bottom-bar.signup-tos-bottom-bar {
+		box-shadow: none;
 	}
 }
 
@@ -373,19 +379,4 @@ $breakpoint-mobile: 660px;
 	.step-container-v2__content-wrapper {
 		gap: 0;
 	}
-}
-
-.step-container-v2__content-row--two-column-layout > div:has(.signup-slider) {
-	min-width: 0;
-}
-
-.step-container-v2__sticky-bottom-bar.signup-tos-bottom-bar {
-	box-shadow: none;
-}
-
-.signup-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
-	margin-inline: 0;
-	width: 100%;
-	text-align: center;
-	font-size: 0.875rem;
 }
