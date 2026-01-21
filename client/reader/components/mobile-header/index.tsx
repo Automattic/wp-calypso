@@ -4,7 +4,7 @@ import AppTitle from '../app-title';
 import './index.scss';
 
 export const MobileHeader = () => {
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( 'small', '>=' );
 
 	if ( isDesktop ) {
 		return null;
@@ -16,3 +16,5 @@ export const MobileHeader = () => {
 		</HStack>
 	);
 };
+
+export default MobileHeader;
