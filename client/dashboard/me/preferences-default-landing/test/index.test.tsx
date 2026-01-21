@@ -67,7 +67,7 @@ afterEach( () => {
 	rawUserPreferencesQuery.mockClear();
 } );
 
-test( 'save button is disabled when form is not dirty', async () => {
+test( 'renders all landing page options as cards', async () => {
 	renderPreferencesDefaultLanding();
 
 	await waitFor(
@@ -77,54 +77,41 @@ test( 'save button is disabled when form is not dirty', async () => {
 		{ timeout: 5000 }
 	);
 
-	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	expect( saveButton ).toBeDisabled();
+	// Verify all three options are rendered
+	expect( screen.getByText( 'All Sites' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Primary Site' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Reader' ) ).toBeInTheDocument();
+
+	// Verify the radiogroup role is present
+	expect( screen.getByRole( 'radiogroup' ) ).toBeInTheDocument();
+
+	// Verify all radio options are present
+	const radioOptions = screen.getAllByRole( 'radio' );
+	expect( radioOptions ).toHaveLength( 3 );
 } );
 
-test( 'save button becomes enabled when form is modified', async () => {
-	const user = userEvent.setup();
-	renderPreferencesDefaultLanding();
-
-	await waitFor(
-		() => {
-			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
-		},
-		{ timeout: 5000 }
-	);
-
-	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
-	await user.click( sitesRadio );
-
-	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	await waitFor(
-		() => {
-			expect( saveButton ).toBeEnabled();
-		},
-		{ timeout: 5000 }
-	);
-} );
-
-test( 'saves preferences successfully', async () => {
+test( 'clicking an option saves immediately', async () => {
 	const mockCreateSuccessNotice = jest.fn();
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createSuccessNotice: mockCreateSuccessNotice,
+		createErrorNotice: jest.fn(),
 	} );
 
-	// Override the mock to make mutationFn return a resolved promise
 	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	const mockMutationFn = jest.fn( () =>
+		Promise.resolve( {
+			'sites-landing-page': {
+				useSitesAsLandingPage: true,
+				updatedAt: Date.now(),
+			},
+			'reader-landing-page': {
+				useReaderAsLandingPage: false,
+				updatedAt: Date.now(),
+			},
+		} )
+	);
 	userPreferencesMutation.mockReturnValue( {
-		mutationFn: jest.fn( () =>
-			Promise.resolve( {
-				'sites-landing-page': {
-					useSitesAsLandingPage: true,
-					updatedAt: Date.now(),
-				},
-				'reader-landing-page': {
-					useReaderAsLandingPage: false,
-					updatedAt: Date.now(),
-				},
-			} )
-		),
+		mutationFn: mockMutationFn,
 	} );
 
 	const user = userEvent.setup();
@@ -137,12 +124,29 @@ test( 'saves preferences successfully', async () => {
 		{ timeout: 5000 }
 	);
 
-	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
-	await user.click( sitesRadio );
+	// Click on the "All Sites" option card
+	const allSitesOption = screen.getByText( 'All Sites' ).closest( '[role="radio"]' );
+	expect( allSitesOption ).toBeInTheDocument();
+	await user.click( allSitesOption! );
 
-	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+	// Verify mutation was called with correct parameters
+	await waitFor(
+		() => {
+			expect( mockMutationFn ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					'sites-landing-page': expect.objectContaining( {
+						useSitesAsLandingPage: true,
+					} ),
+					'reader-landing-page': expect.objectContaining( {
+						useReaderAsLandingPage: false,
+					} ),
+				} )
+			);
+		},
+		{ timeout: 5000 }
+	);
 
-	await user.click( saveButton );
+	// Verify success notice was shown
 	await waitFor(
 		() => {
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Default landing page saved.', {
@@ -156,11 +160,10 @@ test( 'saves preferences successfully', async () => {
 test( 'handles save error gracefully', async () => {
 	const mockCreateErrorNotice = jest.fn();
 	( useDispatch as jest.Mock ).mockReturnValue( {
+		createSuccessNotice: jest.fn(),
 		createErrorNotice: mockCreateErrorNotice,
 	} );
 
-	// Override the mock to make mutationFn return a rejected promise
-	// This simulates an API error
 	const { userPreferencesMutation } = require( '@automattic/api-queries' );
 	userPreferencesMutation.mockReturnValue( {
 		mutationFn: jest.fn( () => Promise.reject( new Error( 'Server error' ) ) ),
@@ -176,12 +179,11 @@ test( 'handles save error gracefully', async () => {
 		{ timeout: 5000 }
 	);
 
-	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
-	await user.click( sitesRadio );
+	// Click on the "Reader" option card
+	const readerOption = screen.getByText( 'Reader' ).closest( '[role="radio"]' );
+	await user.click( readerOption! );
 
-	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	await user.click( saveButton );
-
+	// Verify error notice was shown
 	await waitFor(
 		() => {
 			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
@@ -195,16 +197,13 @@ test( 'handles save error gracefully', async () => {
 	);
 } );
 
-test( 'disables save button while saving', async () => {
+test( 'cards are disabled while saving', async () => {
 	const mockCreateSuccessNotice = jest.fn();
-	const mockCreateErrorNotice = jest.fn();
 	( useDispatch as jest.Mock ).mockReturnValue( {
 		createSuccessNotice: mockCreateSuccessNotice,
-		createErrorNotice: mockCreateErrorNotice,
+		createErrorNotice: jest.fn(),
 	} );
 
-	// Override the mock to make mutationFn return a delayed promise
-	// This simulates an async operation that takes time, making isPending true
 	const { userPreferencesMutation } = require( '@automattic/api-queries' );
 	userPreferencesMutation.mockReturnValue( {
 		mutationFn: jest.fn( () => {
@@ -235,20 +234,58 @@ test( 'disables save button while saving', async () => {
 		{ timeout: 5000 }
 	);
 
-	const sitesRadio = screen.getByLabelText( 'See a list of all your sites.' );
-	await user.click( sitesRadio );
+	const allSitesOption = screen.getByText( 'All Sites' ).closest( '[role="radio"]' );
+	await user.click( allSitesOption! );
 
-	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-
-	await user.click( saveButton );
-
+	// Verify cards are disabled during save (aria-disabled="true")
 	await waitFor(
 		() => {
-			expect( saveButton ).toBeDisabled();
+			const radioOptions = screen.getAllByRole( 'radio' );
+			radioOptions.forEach( ( option ) => {
+				expect( option ).toHaveAttribute( 'aria-disabled', 'true' );
+			} );
 		},
 		{ timeout: 5000 }
 	);
 
+	// Wait for save to complete
+	await waitFor(
+		() => {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalled();
+		},
+		{ timeout: 5000 }
+	);
+} );
+
+test( 'supports keyboard navigation', async () => {
+	const mockCreateSuccessNotice = jest.fn();
+	( useDispatch as jest.Mock ).mockReturnValue( {
+		createSuccessNotice: mockCreateSuccessNotice,
+		createErrorNotice: jest.fn(),
+	} );
+
+	const { userPreferencesMutation } = require( '@automattic/api-queries' );
+	userPreferencesMutation.mockReturnValue( {
+		mutationFn: jest.fn( () => Promise.resolve( {} ) ),
+	} );
+
+	const user = userEvent.setup();
+	renderPreferencesDefaultLanding();
+
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Default landing page' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	const allSitesOption = screen.getByText( 'All Sites' ).closest( '[role="radio"]' );
+
+	// Focus the option and press Enter
+	allSitesOption!.focus();
+	await user.keyboard( '{Enter}' );
+
+	// Verify save was triggered
 	await waitFor(
 		() => {
 			expect( mockCreateSuccessNotice ).toHaveBeenCalled();
