@@ -3,12 +3,15 @@ import clsx from 'clsx';
 
 import './style.scss';
 
-type InfoNoticeProps = {
+type UniqueSellingPropositionNoticeProps = {
 	children: JSX.Element | string;
 	className?: string;
 };
 
-const InfoNotice = ( { children, className }: InfoNoticeProps ) => {
+const UniqueSellingPropositionNotice = ( {
+	children,
+	className,
+}: UniqueSellingPropositionNoticeProps ) => {
 	return (
 		<div className={ clsx( 'social-buttons__info-notice', className ) }>
 			<span className="social-buttons__info-notice-icon">
@@ -19,4 +22,4 @@ const InfoNotice = ( { children, className }: InfoNoticeProps ) => {
 	);
 };
 
-export default InfoNotice;
+export default UniqueSellingPropositionNotice;

@@ -6,7 +6,7 @@ import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FormDivider } from 'calypso/blocks/authentication';
-import InfoNotice from 'calypso/components/social-buttons/info-notice';
+import UniqueSellingPropositionNotice from 'calypso/components/social-buttons/unique-selling-proposition-notice';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -184,9 +184,13 @@ const SignupFormSocialFirst = ( {
 		);
 	}
 
-	let infoNoticeComponent = null;
+	let uniqueSellingPropositionComponent = null;
 	if ( isMessagingVariation ) {
-		infoNoticeComponent = <InfoNotice>{ __( 'Join 472+ million websites worldwide' ) }</InfoNotice>;
+		uniqueSellingPropositionComponent = (
+			<UniqueSellingPropositionNotice>
+				{ __( 'Join 472+ million websites worldwide' ) }
+			</UniqueSellingPropositionNotice>
+		);
 	}
 
 	return (
@@ -205,7 +209,7 @@ const SignupFormSocialFirst = ( {
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailVariation }
 				/>
-				{ infoNoticeComponent }
+				{ uniqueSellingPropositionComponent }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
