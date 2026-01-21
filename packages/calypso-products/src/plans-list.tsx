@@ -1338,7 +1338,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
-			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_PREMIUM_THEMES ]: isExperimentVariant
+				? i18n.translate( 'All premium and store themes' )
+				: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
