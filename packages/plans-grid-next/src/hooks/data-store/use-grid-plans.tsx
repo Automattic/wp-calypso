@@ -306,6 +306,7 @@ const useGridPlans: UseGridPlansType = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	isExperimentVariant,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -352,6 +353,7 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
+		isExperimentVariant,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
