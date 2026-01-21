@@ -81,12 +81,6 @@ export interface ServerLoadResult {
 }
 
 /**
- * Truncation method for conversation list
- * Determines which message to show as the preview
- */
-export type TruncationMethod = 'last_message' | 'first_message';
-
-/**
  * Message preview for conversation list items
  */
 export interface TruncatedMessage {

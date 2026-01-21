@@ -7,7 +7,6 @@ import type {
 	ServerChat,
 	ServerConversationListItem,
 	ServerLoadResult,
-	TruncationMethod,
 } from './serverTypes';
 import { serverChatToLoadResult, ServerConversationError } from './serverTypes';
 import { logger } from '../client/utils/logger';
@@ -139,15 +138,15 @@ export async function loadChatFromServer(
 /**
  * List available conversations from server
  * Useful for testing and debugging - lists recent conversations for a bot
- * @param botId            - The bot ID to get conversations for
- * @param config           - Service configuration (omit botId, will use parameter)
- * @param truncationMethod - Truncation method for conversation list (default: 'last_message')
+ * @param botId        - The bot ID to get conversations for
+ * @param config       - Service configuration (omit botId, will use parameter)
+ * @param firstMessage - If `true`, show first message as preview; if `false`, show last message (default: `false`)
  * @return Array of conversation list items
  */
 export async function listConversationsFromServer(
 	botId: string,
 	config: Omit< OdieServiceConfig, 'botId' >,
-	truncationMethod: TruncationMethod = 'last_message'
+	firstMessage = false
 ): Promise< ServerConversationListItem[] > {
 	const { apiBaseUrl = DEFAULT_API_BASE_URL, authProvider } = config;
 
@@ -158,16 +157,10 @@ export async function listConversationsFromServer(
 		) }`
 	);
 
-	// Validate truncation method
-	if (
-		truncationMethod !== 'last_message' &&
-		truncationMethod !== 'first_message'
-	) {
-		throw new Error(
-			`Invalid truncation method: ${ truncationMethod }. Must be 'last_message' or 'first_message'.`
-		);
-	}
-	url.searchParams.set( 'truncation_method', truncationMethod );
+	url.searchParams.set(
+		'truncation_method',
+		firstMessage ? 'first_message' : 'last_message'
+	);
 
 	logger( 'Listing conversations from server for bot: %s', botId );
 
