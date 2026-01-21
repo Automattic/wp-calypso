@@ -459,6 +459,7 @@ export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
 export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
 export const FEATURE_AI_ASSISTANT = 'ai-assistant';
+export const FEATURE_BIG_SKY = 'big-sky';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -535,6 +536,9 @@ export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus'
 export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
 export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
 export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
+
+// "Included in plan:" header for Free plan in stacked variants
+export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

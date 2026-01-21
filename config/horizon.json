@@ -86,7 +86,7 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/post-checkout-ai-step": false,
+		"onboarding/post-checkout-ai-step": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

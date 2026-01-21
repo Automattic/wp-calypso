@@ -28,6 +28,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -41,6 +42,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
 	isExperimentVariant?: boolean;
+	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -57,6 +59,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		useShortSetStackedFeatures,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -70,6 +73,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			useShortSetStackedFeatures,
 			useVar5Features,
 			isExperimentVariant,
+			isVar1dVariant,
 		} );
 
 		return useMemo( () => {
