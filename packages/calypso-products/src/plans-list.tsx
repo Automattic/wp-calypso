@@ -987,6 +987,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_SUPPORT,
+			FEATURE_ISOLATED_INFRA,
 		];
 
 		let features = baseFeatures;
@@ -1016,6 +1017,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
+			FEATURE_ISOLATED_INFRA,
 		];
 
 		let features = baseFeatures;
@@ -1804,6 +1806,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
+			FEATURE_ISOLATED_INFRA,
 		];
 
 		let features = baseFeatures;
@@ -1826,6 +1829,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_ISOLATED_INFRA,
 		];
 
 		let features = baseFeatures;
