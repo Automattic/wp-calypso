@@ -362,20 +362,20 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.signup-tos-bottom-bar .step-container-v2__sticky-bottom-bar-center-element {
+	.step-container-v2__sticky-bottom-bar {
+		box-shadow: none;
+	}
+
+	.step-container-v2__sticky-bottom-bar-center-element {
 		margin-inline: 0;
 		width: 100%;
 		text-align: center;
 		font-size: 0.875rem;
 	}
 
-	.step-container-v2__sticky-bottom-bar.signup-tos-bottom-bar {
-		box-shadow: none;
-	}
-}
-
-.step-container-v2:has(.signup-tos-bottom-bar) {
-	.step-container-v2__content-wrapper {
-		gap: 0;
+	&:has(.step-container-v2__sticky-bottom-bar) {
+		.step-container-v2__content-wrapper {
+			gap: 0;
+		}
 	}
 }

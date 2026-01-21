@@ -224,9 +224,7 @@ const UserStepComponent: StepType = function UserStep( {
 					),
 				}
 			);
-			stickyBottomBar = () => (
-				<Step.StickyBottomBar className="signup-tos-bottom-bar" centerElement={ tosText } />
-			);
+			stickyBottomBar = () => <Step.StickyBottomBar centerElement={ tosText } />;
 		}
 
 		if ( isLargeViewport && isSliderVariation ) {
