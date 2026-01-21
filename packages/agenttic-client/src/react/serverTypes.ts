@@ -81,8 +81,22 @@ export interface ServerLoadResult {
 }
 
 /**
- * Conversation list item from server
- * Represents a chat with metadata and latest message preview
+ * Truncation method for conversation list
+ * Determines which message to show as the preview
+ */
+export type TruncationMethod = 'last_message' | 'first_message';
+
+/**
+ * Message preview for conversation list items
+ */
+export interface TruncatedMessage {
+	content: string;
+	role: 'user' | 'bot' | 'system';
+	created_at: string; // MySQL datetime format
+}
+
+/**
+ * Conversation list item with metadata and message preview
  */
 export interface ServerConversationListItem {
 	chat_id: number;
@@ -90,11 +104,8 @@ export interface ServerConversationListItem {
 	wpcom_user_id?: number;
 	session_id?: string;
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
-	last_message?: {
-		content: string;
-		role: 'user' | 'bot' | 'system';
-		created_at: string; // MySQL datetime format
-	};
+	last_message?: TruncatedMessage;
+	first_message?: TruncatedMessage;
 }
 
 /**

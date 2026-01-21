@@ -117,6 +117,8 @@ export type {
 	ServerLoadResult,
 	PaginationMeta,
 	ServerConversationListItem,
+	TruncatedMessage,
+	TruncationMethod,
 } from './react/serverTypes';
 
 // Odie bot configuration utilities
