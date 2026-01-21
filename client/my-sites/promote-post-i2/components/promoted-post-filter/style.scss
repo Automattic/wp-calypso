@@ -1,17 +1,15 @@
 @import "@automattic/components/src/styles/typography";
 
 .promote-post-i2__filter-credits-popover {
-	min-width: 400px;
 
 	.components-popover__content {
-		min-width: 400px;
+		min-width: 350px;
 		padding: 12px 16px;
 		font-family: $font-sf-pro-text;
 		font-size: 0.875rem;
 
 		.promote-post-i2__filter-credits-popover-header {
 			font-weight: 600;
-			margin-bottom: 8px;
 		}
 
 		ul {
@@ -21,11 +19,4 @@
 			margin-bottom: 0;
 		}
 	}
-
-}
-
-.promote-post-i2__filter-info-icon-wrapper {
-	display: inline-block;
-	line-height: 0;
-	margin-inline-start: 4px;
 }
