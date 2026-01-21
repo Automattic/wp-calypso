@@ -181,6 +181,7 @@ import {
 	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -1885,6 +1886,12 @@ const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
+	},
+	[ FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS ]: {
+		getSlug: () => FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+		getTitle: () => i18n.translate( 'Customize fonts & colors sitewide' ),
+		getDescription: () =>
+			i18n.translate( "Take control of every font, color, and detail of your site's design." ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
