@@ -104,7 +104,6 @@ describe( 'PersonalDetailsSection', () => {
 			expect( screen.getByLabelText( 'Last name' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'Username' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'I am a developer' ) ).toBeInTheDocument();
 
 			renderWithUserData();
 

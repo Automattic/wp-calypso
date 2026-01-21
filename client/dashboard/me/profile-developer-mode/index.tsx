@@ -45,7 +45,7 @@ export default function DeveloperModeSection() {
 	};
 
 	return (
-		<Card className="developer-mode-section">
+		<Card>
 			<CardBody>
 				<HStack spacing={ 2 } alignment="flex-start">
 					<span style={ { display: 'inline-flex', flexShrink: 0 } }>
