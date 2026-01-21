@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
@@ -199,18 +198,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
-				case 'post-checkout-onboarding':
+				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
-
-					/*
-					 * If the post-checkout ai step feature flag is enabled,
-					 * redirect the user to the relevant step.
-					 */
-					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
-						return navigate( 'setup-your-site-ai' );
-					}
-
 					return navigate( 'processing' );
+				}
 				case 'setup-your-site-ai': {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
@@ -286,6 +277,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
+						} else if ( providedDependencies?.postCheckoutBigSky ) {
+							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );

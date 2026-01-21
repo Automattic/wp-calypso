@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { hasMarketplaceProduct } from '@automattic/calypso-products';
-import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -81,23 +80,6 @@ interface PluginsDashboardProps {
 		perPage: number;
 		search: string;
 	};
-}
-
-export function showPluginsDashboardPage( route: string ) {
-	const currentParams = new URL( window.location.href ).searchParams;
-	const newUrl = new URL( route, window.location.origin );
-
-	const supportedParams = [ 'page', 'per-page', 'search', 'status', 'siteType' ];
-	supportedParams.forEach( ( param ) => {
-		if ( currentParams.has( param ) ) {
-			const value = currentParams.get( param );
-			if ( value ) {
-				newUrl.searchParams.set( param, value );
-			}
-		}
-	} );
-
-	pagejs.show( newUrl.toString().replace( window.location.origin, '' ) );
 }
 
 const PluginsDashboard = ( {

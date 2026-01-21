@@ -57,10 +57,6 @@ export function isDomainRenewable( domain: DomainSummary ): boolean {
 	);
 }
 
-export function isDomainUpdatable( domain: DomainSummary ) {
-	return domain.domain_status.id !== DomainStatus.PENDING_TRANSFER && ! domain.expired;
-}
-
 export function isDomainInGracePeriod( domain: DomainSummary ) {
 	if ( domain.expiry === null ) {
 		return true;

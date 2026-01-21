@@ -181,6 +181,7 @@ import {
 	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -342,6 +343,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
 	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
@@ -1885,6 +1887,12 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
+	[ FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS ]: {
+		getSlug: () => FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+		getTitle: () => i18n.translate( 'Customize fonts & colors sitewide' ),
+		getDescription: () =>
+			i18n.translate( "Take control of every font, color, and detail of your site's design." ),
+	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
 		getTitle: () => i18n.translate( 'Avant-garde design tools' ),
@@ -2564,7 +2572,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Free support with faster response times' )
+				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
@@ -2610,7 +2621,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AI_ASSISTANT ]: {
 		getSlug: () => FEATURE_AI_ASSISTANT,
-		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools' )
+				: i18n.translate( 'AI Assistant' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
 	},
@@ -2865,6 +2879,12 @@ const FEATURES_LIST: FeatureList = {
 				: i18n.translate( 'AI Writer & Designer (limited)' ),
 		getDescription: () =>
 			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+	},
+
+	// "Included in plan:" header for Free plan in stacked variants
+	[ FEATURE_INCLUDED_IN_PLAN ]: {
+		getSlug: () => FEATURE_INCLUDED_IN_PLAN,
+		getTitle: () => i18n.translate( 'Included in plan:' ),
 	},
 
 	// "Everything in X, plus:" features for stacked variants

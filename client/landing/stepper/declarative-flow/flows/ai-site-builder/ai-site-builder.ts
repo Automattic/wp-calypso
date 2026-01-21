@@ -155,7 +155,38 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
-							const triggerBackendBuild = queryParams.get( 'trigger_backend_build' ) === '1';
+
+							/**
+							 * Redirect behavior after site creation:
+							 *
+							 * The `trigger_backend_build` parameter controls where the user is redirected
+							 * after site creation. The default behavior differs based on site type:
+							 *
+							 * NON-GARDEN SITES (no create_garden_site param):
+							 *   - Default: site-editor.php (triggerBackendBuild=false)
+							 *   - With trigger_backend_build=1: /wp-admin/
+							 *   - With trigger_backend_build=0: site-editor.php
+							 *
+							 * GARDEN SITES (create_garden_site=1):
+							 *   - Default: /wp-admin/ (triggerBackendBuild=true)
+							 *   - With trigger_backend_build=1: /wp-admin/
+							 *   - With trigger_backend_build=0: site-editor.php
+							 *
+							 * Full permutation matrix:
+							 * | create_garden_site | trigger_backend_build | Redirect destination                              |
+							 * |--------------------|----------------------|---------------------------------------------------|
+							 * | (not set)          | (not set)            | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
+							 * | (not set)          | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
+							 * | (not set)          | 1                    | /wp-admin/                                        |
+							 * | 1                  | (not set)            | /wp-admin/                                        |
+							 * | 1                  | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
+							 * | 1                  | 1                    | /wp-admin/                                        |
+							 */
+							const triggerBackendBuildParam = queryParams.get( 'trigger_backend_build' );
+							const triggerBackendBuild = gardenName
+								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
+								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
+
 							let sourceParam = '';
 							let specIdParam = '';
 

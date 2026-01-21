@@ -16,8 +16,8 @@ function initialize() {
 	const specId = queryParams.get( 'spec_id' );
 
 	if ( specId ) {
-		// Redirect to main ai-site-builder flow with spec_id
-		window.location.replace( `/setup/ai-site-builder?spec_id=${ specId }` );
+		// Redirect to main ai-site-builder flow preserving query parameters
+		window.location.replace( `/setup/ai-site-builder?${ queryParams.toString() }` );
 		return [];
 	}
 
