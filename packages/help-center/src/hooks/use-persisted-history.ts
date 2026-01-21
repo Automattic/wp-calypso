@@ -1,7 +1,7 @@
 import { HelpCenterDispatch, HelpCenterSelect } from '@automattic/data-stores';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
@@ -135,17 +135,24 @@ export const usePersistedHistory = () => {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
 		[]
 	);
+	const isInitialized = useRef( false );
 
 	useLayoutEffect( () => {
 		return history.listen( setState );
 	}, [ history ] );
 
 	useEffect( () => {
+		// Only initialize from persisted history once to prevent infinite loops.
+		if ( isInitialized.current ) {
+			return;
+		}
+
 		const urlParams = new URLSearchParams( window.location.search );
 		// Skip persisted history if help-center=happiness-engineer to allow escalation to live chat, otherwise the location is overwritten.
 		const helpCenterParam = urlParams.get( 'help-center' );
 
 		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
+			isInitialized.current = true;
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
 
