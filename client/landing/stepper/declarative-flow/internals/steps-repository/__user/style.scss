@@ -291,9 +291,7 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.signup-slider-slide-1,
-	.signup-slider-slide-2,
-	.signup-slider-slide-3 {
+	.signup-slider-slide {
 		flex-grow: 1;
 		height: 100vh;
 		box-sizing: border-box;
@@ -302,11 +300,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-slide-content {
-		background-color: #183AD6;
-		background-image: url( ./images/slide1.svg );
-		background-repeat: no-repeat;
-		background-position: top center;
-		background-size: contain;
 		border-radius: 16px;
 		height: 100%;
 		display: flex;
@@ -319,57 +312,60 @@ $breakpoint-mobile: 660px;
 		box-sizing: border-box;
 	}
 
-	.signup-slider-slide-2 .signup-slider-slide-content {
+	.signup-slider-slide.slide-1 .signup-slider-slide-content {
+		background-color: #183AD6;
+		background-image: url( ./images/slide1.svg );
+		background-repeat: no-repeat;
+		background-position: top center;
+		background-size: contain;
+	}
+
+	.signup-slider-slide.slide-2 .signup-slider-slide-content {
 		background: url( ./images/slide2.jpg );
+		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
 
-	.signup-slider-slide-3 .signup-slider-slide-content {
+	.signup-slider-slide.slide-3 .signup-slider-slide-content {
 		background: url( ./images/slide3.svg );
+		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
 
-	.signup-slider-title {
+	.signup-slider-headline {
 		color: var( --studio-white );
 		font-size: 3.375rem;
 		font-family: $font-recoleta;
 		margin-block-end: 40px;
 	}
 
-	.swipeable__container {
-		min-height: 100%;
-		overflow: hidden;
-	}
-
-	.signup-slider-testimonial {
+	.signup-slider-slide-content.testimonial {
 		color: var( --studio-white );
-		font-size: 1.75rem;
-		line-height: 32px;
-		letter-spacing: 0;
-		font-weight: 400;
-		font-family: $font-sf-pro-display;
-		margin-bottom: 24px;
 		text-align: left;
-	}
-
-	.signup-slider-testimonial-title {
-		color: var( --studio-white );
-		font-size: 1rem;
-		font-weight: 400;
 		font-family: $font-sf-pro-display;
-		margin-bottom: 0;
-		align-self: flex-start;
-	}
 
-	.signup-slider-testimonial-author {
-		color: var( --studio-white );
-		font-size: 1.25rem;
-		font-weight: 500;
-		font-family: $font-sf-pro-display;
-		margin-bottom: 4px;
-		align-self: flex-start;
+		.signup-slider-testimonial-text {
+			font-size: 1.75rem;
+			line-height: 32px;
+			font-weight: 400;
+			margin-bottom: 24px;
+		}
+
+		.signup-slider-testimonial-author {
+			font-size: 1.25rem;
+			font-weight: 500;
+			margin-bottom: 4px;
+			align-self: flex-start;
+		}
+
+		.signup-slider-testimonial-role {
+			font-size: 1rem;
+			font-weight: 400;
+			margin-bottom: 0;
+			align-self: flex-start;
+		}
 	}
 }
 

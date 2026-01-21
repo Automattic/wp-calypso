@@ -147,29 +147,29 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	const carouselSlides = [
-		<div className="signup-slider-slide-1" key="slide-1">
+		<div className="signup-slider-slide slide-1" key="slide-1">
 			<div className="signup-slider-slide-content">
-				<p className="signup-slider-title">
+				<p className="signup-slider-headline">
 					{ translate( 'Join 472+ million websites worldwide' ) }
 				</p>
 			</div>
 		</div>,
-		<div className="signup-slider-slide-2" key="slide-2">
-			<div className="signup-slider-slide-content">
-				<p className="signup-slider-testimonial">
+		<div className="signup-slider-slide slide-2" key="slide-2">
+			<div className="signup-slider-slide-content testimonial">
+				<p className="signup-slider-testimonial-text">
 					{ translate(
 						'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
 					) }
 				</p>
 				<p className="signup-slider-testimonial-author">{ translate( 'Brett S.' ) }</p>
-				<p className="signup-slider-testimonial-title">
+				<p className="signup-slider-testimonial-role">
 					{ translate( 'Founder/Blogger in Chief' ) }
 				</p>
 			</div>
 		</div>,
-		<div className="signup-slider-slide-3" key="slide-3">
+		<div className="signup-slider-slide slide-3" key="slide-3">
 			<div className="signup-slider-slide-content">
-				<p className="signup-slider-title">
+				<p className="signup-slider-headline">
 					{ translate( 'AI builds the site — you make it yours' ) }
 				</p>
 			</div>
