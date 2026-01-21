@@ -1,11 +1,11 @@
-export type SiteStatus =
+export type SiteBlockingStatus =
 	| 'deleted'
 	| 'migration_pending'
 	| 'migration_started'
 	| 'difm_lite_in_progress'
 	| null;
 
-export type SiteBadge = 'staging' | 'trial' | 'p2' | SiteStatus;
+export type SiteBadge = 'staging' | 'trial' | 'p2' | SiteBlockingStatus;
 
 export interface DashboardSiteListSite {
 	badge?: SiteBadge;
@@ -44,7 +44,7 @@ export interface DashboardSiteListSite {
 	owner_id?: number;
 	php_version?: string;
 	slug: string; // Slug is always fetched
-	status?: SiteStatus;
+	status?: SiteBlockingStatus;
 	views?: null | number;
 	visitors?: null | number;
 	total_wpcom_subscribers?: number;
