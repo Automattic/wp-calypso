@@ -269,9 +269,9 @@ $breakpoint-mobile: 660px;
 		position: relative;
 	}
 
-	.signup-slider-column,
-	.signup-slider-column-2,
-	.signup-slider-column-3 {
+	.signup-slider-slide-1,
+	.signup-slider-slide-2,
+	.signup-slider-slide-3 {
 		flex-grow: 1;
 		height: 100vh;
 		box-sizing: border-box;
@@ -279,7 +279,7 @@ $breakpoint-mobile: 660px;
 		min-height: 0;
 	}
 
-	.signup-slider-column-inner {
+	.signup-slider-slide-content {
 		background-color: #183AD6;
 		background-image: url( ./images/slide1.svg );
 		background-repeat: no-repeat;
@@ -297,14 +297,14 @@ $breakpoint-mobile: 660px;
 		box-sizing: border-box;
 	}
 
-	.signup-slider-column-2 .signup-slider-column-inner {
+	.signup-slider-slide-2 .signup-slider-slide-content {
 		background: url( ./images/slide2.jpg );
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
 
-	.signup-slider-column-3 .signup-slider-column-inner {
+	.signup-slider-slide-3 .signup-slider-slide-content {
 		background: url( ./images/slide3.svg );
 		background-repeat: no-repeat;
 		background-size: cover;
