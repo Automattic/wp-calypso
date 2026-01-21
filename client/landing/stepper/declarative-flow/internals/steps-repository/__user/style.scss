@@ -267,6 +267,28 @@ $breakpoint-mobile: 660px;
 		width: 100%;
 		flex-direction: column;
 		position: relative;
+
+		.dot-pager__controls {
+			justify-content: center;
+			position: absolute;
+			bottom: 40px;
+			left: 50%;
+			transform: translateX( -50% );
+			z-index: 1;
+		}
+
+		.dot-pager__controls .dot-pager__controls-spacer,
+		.dot-pager__control-prev,
+		.dot-pager__control-next {
+			display: none;
+		}
+
+		// Disable the opacity fade transition
+		.dot-pager__page {
+			transition: none;
+			opacity: 1;
+			visibility: visible;
+		}
 	}
 
 	.signup-slider-slide-1,
@@ -299,51 +321,21 @@ $breakpoint-mobile: 660px;
 
 	.signup-slider-slide-2 .signup-slider-slide-content {
 		background: url( ./images/slide2.jpg );
-		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
 
 	.signup-slider-slide-3 .signup-slider-slide-content {
 		background: url( ./images/slide3.svg );
-		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;
 	}
-	
-	.signup-slider .dot-pager__pages {
-		flex: 1;
-		display: flex;
-		align-items: flex-end;
-	}
-
-	.signup-slider .dot-pager__controls {
-		justify-content: center;
-		position: absolute;
-		bottom: 40px;
-		left: 50%;
-		transform: translateX( -50% );
-		z-index: 1;
-	}
-
-	.signup-slider .dot-pager__controls .dot-pager__controls-spacer,
-	.signup-slider .dot-pager__control-prev,
-	.signup-slider .dot-pager__control-next {
-		display: none;
-	}
 
 	.signup-slider-title {
-		color: #FFF;
+		color: var( --studio-white );
 		font-size: 3.375rem;
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		margin-block-end: 8px;
-		margin-bottom: 40px;
-	}
-
-	.signup-slider-description {
-		color: $gray-60;
-		font-size: 1rem;
-		line-height: 1.5;
+		font-family: $font-recoleta;
+		margin-block-end: 40px;
 	}
 
 	.swipeable__container {
@@ -351,23 +343,9 @@ $breakpoint-mobile: 660px;
 		overflow: hidden;
 	}
 
-	// Disable the opacity fade transition to prevent white overlay flash between slides
-	.signup-slider .dot-pager__page {
-		transition: none;
-		opacity: 1;
-		visibility: visible;
-
-		&.is-prev,
-		&.is-next {
-			opacity: 1;
-			visibility: visible;
-		}
-	}
-
 	.signup-slider-testimonial {
-		color: #FFF;
-		// font-size: 1.5rem;
-		font-size: 28px;
+		color: var( --studio-white );
+		font-size: 1.75rem;
 		line-height: 32px;
 		letter-spacing: 0;
 		font-weight: 400;
@@ -377,7 +355,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-testimonial-title {
-		color: #FFF;
+		color: var( --studio-white );
 		font-size: 1rem;
 		font-weight: 400;
 		font-family: $font-sf-pro-display;
@@ -386,7 +364,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-slider-testimonial-author {
-		color: #FFF;
+		color: var( --studio-white );
 		font-size: 1.25rem;
 		font-weight: 500;
 		font-family: $font-sf-pro-display;
