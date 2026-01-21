@@ -362,6 +362,7 @@ export const FEATURE_ALWAYS_ONLINE = 'always-online';
 export const FEATURE_99_999_UPTIME = '99-999-uptime';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
+export const FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS = 'style-customization-fonts-colors';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';

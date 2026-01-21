@@ -65,7 +65,6 @@
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false,
 		"importers/newsletter": true,
 		"jetpack/crm-downloads": true
 	},
