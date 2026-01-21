@@ -261,10 +261,6 @@ class Layout extends Component {
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
-		const shouldEnableCommandPalette =
-			// There is a custom command palette in the "Switch site" page, so we disable it.
-			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
-
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
@@ -356,9 +352,6 @@ class Layout extends Component {
 
 				{ ! this.props.isMSDEnabledForReader && (
 					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
-				) }
-				{ shouldEnableCommandPalette && (
-					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
 			</div>
 		);
