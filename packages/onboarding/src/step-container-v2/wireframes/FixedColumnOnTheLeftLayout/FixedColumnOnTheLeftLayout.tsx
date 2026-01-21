@@ -38,7 +38,10 @@ const FixedColumnOnTheLeftLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper axisDirection={ context.isLargeViewport ? 'horizontal' : 'vertical' }>
+						<ContentWrapper
+							axisDirection={ context.isLargeViewport ? 'horizontal' : 'vertical' }
+							noTopPadding={ context.isLargeViewport }
+						>
 							<ContentRow
 								columns={ context.isLargeViewport ? fixedColumnWidth : undefined }
 								stretched
