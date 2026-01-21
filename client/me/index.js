@@ -31,8 +31,32 @@ export default function () {
 	page( '/me/trophies', controller.profileRedirect, makeLayout, clientRender );
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
-	page( '/me/get-apps', controller.sidebar, controller.apps, makeLayout, clientRender );
+	page(
+		'/me/get-apps',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/apps' ),
+		controller.sidebar,
+		controller.apps,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/me/mcp', controller.sidebar, controller.mcp, makeLayout, clientRender );
-	page( '/me/mcp-setup', controller.sidebar, controller.mcpSetup, makeLayout, clientRender );
+	page(
+		'/me/mcp',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcp,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-setup',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/mcp/setup' ),
+		controller.sidebar,
+		controller.mcpSetup,
+		makeLayout,
+		clientRender
+	);
 }
