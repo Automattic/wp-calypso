@@ -1,7 +1,6 @@
-import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -12,34 +11,19 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';
 import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
 import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
-import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
 
 import './style.scss';
 
 export default function MigrationsCommissions() {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-
-	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 
 	const title = translate( 'Migrations: Commissions' );
 
-	const onTagSitesClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' ) );
-		setShowAddSitesModal( true );
-	}, [ dispatch ] );
-
-	const {
-		data: taggedSites,
-		isLoading,
-		refetch: fetchMigratedSites,
-	} = useFetchTaggedSitesForMigration();
+	const { data: taggedSites, isLoading } = useFetchTaggedSitesForMigration();
 
 	const showEmptyState = ! taggedSites?.length;
 
@@ -54,17 +38,14 @@ export default function MigrationsCommissions() {
 		}
 
 		return showEmptyState ? (
-			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
+			<MigrationsCommissionsEmptyState />
 		) : (
 			<div className="migrations-commissions__content">
 				<MigrationsConsolidatedCommissions items={ taggedSites } />
-				<MigrationsCommissionsList
-					items={ taggedSites }
-					fetchMigratedSites={ fetchMigratedSites }
-				/>
+				<MigrationsCommissionsList items={ taggedSites } />
 			</div>
 		);
-	}, [ isLoading, showEmptyState, taggedSites, setShowAddSitesModal, fetchMigratedSites ] );
+	}, [ isLoading, showEmptyState, taggedSites ] );
 
 	return (
 		<Layout
@@ -90,25 +71,11 @@ export default function MigrationsCommissions() {
 					/>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-						<Button variant="primary" onClick={ onTagSitesClick }>
-							{ translate( 'Tag sites for commission' ) }
-						</Button>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
-				<>
-					{ content }
-					{ showAddSitesModal && (
-						<MigrationsTagSitesModal
-							onClose={ () => setShowAddSitesModal( false ) }
-							taggedSites={ taggedSites }
-							fetchMigratedSites={ fetchMigratedSites }
-						/>
-					) }
-				</>
-			</LayoutBody>
+			<LayoutBody>{ content }</LayoutBody>
 		</Layout>
 	);
 }
