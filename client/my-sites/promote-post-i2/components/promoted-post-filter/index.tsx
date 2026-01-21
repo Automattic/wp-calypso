@@ -1,8 +1,8 @@
-import { Popover } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
+import { Popover } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { ReactNode, useMemo, useRef, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -11,11 +11,8 @@ import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-cr
 import { TabOption, TabType } from 'calypso/my-sites/promote-post-i2/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import {
-	getAdvertisingDashboardPath,
-	getCreditExpirationInfo,
-	getCreditExpirationLines,
-} from '../../utils';
+import { useCreditExpirationLines } from '../../hooks/use-credit-expiration-lines';
+import { getAdvertisingDashboardPath, getCreditExpirationInfo } from '../../utils';
 
 import './style.scss';
 
@@ -27,8 +24,8 @@ type Props = {
 function CreditBalanceContent( { formattedBalance }: { formattedBalance: string } ) {
 	const translate = useTranslate();
 	const { data: { history: creditsHistory = [] } = {} } = useCreditBalanceQuery();
-	const infoIconRef = useRef< HTMLSpanElement >( null );
 	const [ isVisible, setIsVisible ] = useState( false );
+	const [ popoverAnchor, setPopoverAnchor ] = useState< HTMLSpanElement | null >( null );
 
 	// Get all credits sorted by expiration (not just those expiring soon)
 	const { sortedHistory } = useMemo(
@@ -36,17 +33,14 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 		[ creditsHistory ]
 	);
 
-	const expirationLines = useMemo(
-		() => getCreditExpirationLines( sortedHistory, translate ),
-		[ sortedHistory, translate ]
-	);
+	const expirationLines = useCreditExpirationLines( sortedHistory, true );
 
 	return (
 		<>
 			{ translate( 'Credits: ' ) }
 			{ formattedBalance }
 			<span
-				ref={ infoIconRef }
+				ref={ setPopoverAnchor }
 				onMouseEnter={ () => setIsVisible( true ) }
 				onMouseLeave={ () => setIsVisible( false ) }
 			>
@@ -61,17 +55,23 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 					) }
 				/>
 			</span>
-			{ isVisible && expirationLines && infoIconRef.current && (
+			{ isVisible && expirationLines && (
 				<Popover
-					context={ infoIconRef.current }
-					isVisible
-					position="right"
-					onClose={ () => setIsVisible( false ) }
+					offset={ 26 }
+					placement="right"
+					anchor={ popoverAnchor }
+					className="promote-post-i2__filter-credits-popover"
+					noArrow={ false }
 				>
-					<div className="promote-post-i2__filter-credits-popover">
-						{ expirationLines.map( ( line: string, index: number ) => (
-							<div key={ index }>{ line }</div>
-						) ) }
+					<div>
+						<div className="promote-post-i2__filter-credits-popover-header">
+							{ expirationLines[ 0 ] }
+						</div>
+						<ul>
+							{ expirationLines.slice( 1 ).map( ( line: ReactNode, index: number ) => (
+								<li key={ index }>{ line }</li>
+							) ) }
+						</ul>
 					</div>
 				</Popover>
 			) }

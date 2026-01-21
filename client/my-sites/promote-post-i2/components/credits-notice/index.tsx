@@ -1,21 +1,19 @@
-import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import DashboardNotice from 'calypso/dashboard/components/notice';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
-import { getCreditExpirationInfo, getCreditExpirationLines } from '../../utils';
+import { useCreditExpirationLines } from '../../hooks/use-credit-expiration-lines';
+import { getCreditExpirationInfo } from '../../utils';
+
+import './style.scss';
 
 function CreditsNotice() {
-	const translate = useTranslate();
 	const { data: { history: creditsHistory = [] } = {} } = useCreditBalanceQuery();
 	const { hasExpiringCredits, sortedHistory } = useMemo(
 		() => getCreditExpirationInfo( creditsHistory ),
 		[ creditsHistory ]
 	);
 
-	const expirationLines = useMemo(
-		() => getCreditExpirationLines( sortedHistory, translate ),
-		[ sortedHistory, translate ]
-	);
+	const expirationLines = useCreditExpirationLines( sortedHistory, false );
 
 	if ( ! hasExpiringCredits || ! expirationLines ) {
 		return null;
@@ -23,9 +21,14 @@ function CreditsNotice() {
 
 	return (
 		<DashboardNotice variant="warning">
-			{ expirationLines.map( ( line, index ) => (
-				<div key={ index }>{ line }</div>
-			) ) }
+			<div className="promote-post-i2__credits-notice-content">
+				<div className="promote-post-i2__credits-notice-header">{ expirationLines[ 0 ] }</div>
+				<ul>
+					{ expirationLines.slice( 1 ).map( ( line, index ) => (
+						<li key={ index }>{ line }</li>
+					) ) }
+				</ul>
+			</div>
 		</DashboardNotice>
 	);
 }

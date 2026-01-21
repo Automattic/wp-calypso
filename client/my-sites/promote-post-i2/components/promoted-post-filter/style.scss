@@ -1,18 +1,31 @@
+@import "@automattic/components/src/styles/typography";
+
 .promote-post-i2__filter-credits-popover {
-	padding: 12px 16px;
-	max-width: 280px;
-	text-align: left;
+	min-width: 400px;
 
-	div {
-		margin-bottom: 4px;
+	.components-popover__content {
+		min-width: 400px;
+		padding: 12px 16px;
+		font-family: $font-sf-pro-text;
+		font-size: 0.875rem;
 
-		&:last-child {
+		.promote-post-i2__filter-credits-popover-header {
+			font-weight: 600;
+			margin-bottom: 8px;
+		}
+
+		ul {
+			list-style-type: disc;
+			list-style-position: inside;
+			margin-left: 0;
 			margin-bottom: 0;
 		}
 	}
 
-	div:first-child {
-		font-weight: 600;
-		margin-bottom: 8px;
-	}
+}
+
+.promote-post-i2__filter-info-icon-wrapper {
+	display: inline-block;
+	line-height: 0;
+	margin-inline-start: 4px;
 }

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
-import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
@@ -479,41 +479,4 @@ export const getCreditExpirationInfo = (
 		hasExpiringCredits,
 		sortedHistory,
 	};
-};
-
-/**
- * Get formatted expiration lines for credits
- * @param sortedHistory - Array of credit history items sorted by expiration
- * @param translate - Translation function
- */
-export const getCreditExpirationLines = (
-	sortedHistory: Array< { amount: number; expires: string } >,
-	translate: ( text: string, options?: any ) => string
-): string[] | null => {
-	if ( ! sortedHistory || sortedHistory.length === 0 ) {
-		return null;
-	}
-
-	if ( sortedHistory.length === 1 ) {
-		const firstItem = sortedHistory[ 0 ];
-		const firstDate = moment( firstItem.expires ).format( 'LL' );
-		const firstAmount = formatCurrency( firstItem.amount, 'USD', { isSmallestUnit: true } );
-
-		return [
-			translate( 'You have %(amount)s in credits expiring on %(firstDate)s.', {
-				args: { amount: firstAmount, firstDate },
-			} ),
-		];
-	}
-
-	const header = translate( 'You got several credit assignations:' );
-	const items = sortedHistory.map( ( item ) => {
-		const amount = formatCurrency( item.amount, 'USD', { isSmallestUnit: true } );
-		const date = moment( item.expires ).format( 'LL' );
-		return translate( '- %(amount)s in credits expiring on %(date)s', {
-			args: { amount, date },
-		} );
-	} );
-
-	return [ header, ...items ];
 };
