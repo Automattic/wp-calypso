@@ -6,7 +6,7 @@ import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FormDivider } from 'calypso/blocks/authentication';
-import UniqueSellingPropositionNotice from 'calypso/components/social-buttons/unique-selling-proposition-notice';
+import UniqueSellingPropositionNotice from 'calypso/components/unique-selling-proposition-notice';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
