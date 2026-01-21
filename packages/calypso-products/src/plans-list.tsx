@@ -988,16 +988,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		if ( isGlobalStylesOnPersonalEnabled() ) {
-			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
 		}
 
 		if ( props?.isSummerSpecial ) {
@@ -1018,16 +1015,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
 			FEATURE_ISOLATED_INFRA,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		if ( isGlobalStylesOnPersonalEnabled() ) {
-			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
 		}
 
 		if ( props?.isSummerSpecial ) {
@@ -1320,6 +1314,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_INTEGRATIONS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
 			FEATURE_SUPPORT,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -2149,6 +2144,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
 	// Experimental: Comparison grid features for experiment variants.
@@ -2182,6 +2178,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
 	getCheckoutFeatures: () => [
