@@ -36,7 +36,8 @@ import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
-const getTrialMonths = ( product?: { introductory_offer?: { interval_unit?: string | null } } ) =>
+
+const getTrialMonths = ( product?: Pick< Product, 'introductory_offer' > ) =>
 	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 export default function ChooseEmailSolution() {
