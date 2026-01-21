@@ -65,6 +65,16 @@ const A11nChatMenu = ( { onCloseDropdown }: { onCloseDropdown: () => void } ) =>
 					>
 						{ __( 'Odie chat', '__i18n_text_domain__' ) }
 					</MenuItem>
+					<MenuItem
+						disabled={ isNewOdieChat }
+						onClick={ () => {
+							navigate( '/zendesk' );
+							onCloseSubmenu();
+							onCloseDropdown();
+						} }
+					>
+						{ __( 'Zendesk chat', '__i18n_text_domain__' ) }
+					</MenuItem>
 				</MenuGroup>
 			) }
 		/>

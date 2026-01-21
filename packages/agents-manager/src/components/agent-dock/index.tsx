@@ -25,6 +25,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import { ZendeskChat } from './zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
@@ -233,6 +234,23 @@ export default function AgentDock( {
 		/>
 	);
 
+	const ZendeskChatRoute = (
+		<ZendeskChat
+			suggestions={ [] }
+			isProcessing={ isOdieProcessing }
+			error={ error }
+			isLoadingConversation={ isLoadingConversation }
+			isDocked={ isDocked }
+			isOpen={ isPersistedOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ () => setIsOpen( true ) }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+			emptyViewSuggestions={ emptyViewSuggestions }
+		/>
+	);
+
 	const OdieChat = (
 		<AgentChat
 			messages={ odieMessages }
@@ -298,6 +316,7 @@ export default function AgentDock( {
 			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
+			<Route path="/zendesk" element={ ZendeskChatRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />

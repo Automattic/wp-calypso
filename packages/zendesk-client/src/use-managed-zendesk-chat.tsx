@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
-import Smooch from 'smooch';
+import { useLocation, useNavigate } from 'react-router-dom';
+import SmoochLibrary from 'smooch';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { ZendeskConversation } from './types';
 import {
@@ -12,51 +13,63 @@ import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { ZendeskMessage } from './types';
 
-const destroy = () => {
-	try {
-		Smooch.destroy();
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Error destroying Smooch', error );
-	}
-};
+// const destroy = () => {
+// 	try {
+// 		Smooch.destroy();
+// 	} catch ( error ) {
+// 		// eslint-disable-next-line no-console
+// 		console.error( 'Error destroying Smooch', error );
+// 	}
+// };
 
-const initSmooch = (
-	{
-		jwt,
-		externalId,
-	}: {
-		isLoggedIn: boolean;
-		jwt: string;
-		externalId: string | undefined;
-	},
-	queryClient: QueryClient
-) => {
-	const isTestMode = isTestModeEnvironment();
+function useSmooch( jwt?: string, externalId?: string ) {
+	const queryClient = useQueryClient();
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( true, false );
+	console.log( { jwt, externalId } );
 
-	return Smooch.init( {
-		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
-		delegate: {
-			async onInvalidAuth() {
-				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
+	return useQuery< typeof SmoochLibrary, Error, typeof SmoochLibrary, string[] >( {
+		queryKey: [ 'smooch', jwt, externalId ],
+		queryFn: () => {
+			console.log( 'useSmooch' );
+			const isTestMode = isTestModeEnvironment();
+			return SmoochLibrary.init( {
+				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
+				delegate: {
+					async onInvalidAuth() {
+						recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
 
-				await queryClient.invalidateQueries( {
-					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+						await queryClient.invalidateQueries( {
+							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+						} );
+						const authData = await queryClient.fetchQuery( {
+							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
+							queryFn: () => fetchMessagingAuth( 'zendesk' ),
+						} );
+
+						return authData.jwt;
+					},
+				},
+				embedded: true,
+				soundNotificationEnabled: false,
+				externalId,
+				jwt,
+			} )
+				.then( () => {
+					debugger;
+					return SmoochLibrary;
+				} )
+				.catch( ( error ) => {
+					debugger;
+					return error;
 				} );
-				const authData = await queryClient.fetchQuery( {
-					queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
-					queryFn: () => fetchMessagingAuth( 'zendesk' ),
-				} );
-
-				return authData.jwt;
-			},
 		},
-		embedded: true,
-		soundNotificationEnabled: false,
-		externalId,
-		jwt,
+		staleTime: Infinity,
+		enabled: !! jwt && isMessagingScriptLoaded && !! externalId,
+		meta: {
+			persist: false,
+		},
 	} );
-};
+}
 
 const playNotificationSound = () => {
 	// @ts-expect-error expected because of fallback webkitAudioContext
@@ -94,9 +107,7 @@ document.body.appendChild( smoochContainer );
 /**
  * Returns a complete API for managing a Zendesk chat.
  * @param enabled - Whether the chat is enabled.
- * @param conversationId - The ID of the conversation to manage.
  * @returns An object with the following properties:
- * - isChatLoaded: Whether the chat is loaded.
  * - typingStatus: The status of the typing.
  * - clientId: The ID of the client.
  * - conversation: The conversation.
@@ -104,31 +115,19 @@ document.body.appendChild( smoochContainer );
  * - agentticMessages: The messages in the conversation in Agenttic-compatible format.
  * - sendMessage: A function to send a message to the conversation.
  */
-export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string ) => {
-	const queryClient = useQueryClient();
-	const [ isChatLoaded, setIsChatLoaded ] = useState( false );
+export const useManagedZendeskChat = ( enabled: boolean ) => {
+	const location = useLocation();
+	const conversationId = new URLSearchParams( location.search ).get( 'conversationId' );
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
 
-	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'messenger' );
+	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'zendesk' );
+	const { data: Smooch } = useSmooch( authData?.jwt, authData?.externalId );
 
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( enabled, enabled );
-
-	// const getUnreadNotifications = useGetUnreadConversations();
-
-	const getUnreadListener = useCallback(
-		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
-			playNotificationSound();
-			Smooch.getConversationById( data?.conversation?.id ).then( ( conversation ) => {
-				setConversation( conversation );
-				//getUnreadNotifications();
-			} );
-		},
-		[]
-	);
+	console.log( { Smooch } );
 
 	const disconnectedListener = useCallback( () => {
 		setConnectionStatus( 'disconnected' );
@@ -162,66 +161,49 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 		}
 	}, [ setConnectionStatus, connectionStatus ] );
 
+	const navigate = useNavigate();
+
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if (
-			! isMessagingScriptLoaded ||
-			! authData?.isLoggedIn ||
-			! authData?.jwt ||
-			! authData?.externalId ||
-			! enabled
-		) {
+		if ( ! Smooch || conversation ) {
 			return;
 		}
 
-		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
+		// Smooch.render( smoochContainer );
 
-		const initializeSmooch = async () => {
-			return initSmooch( authData, queryClient )
-				.then( () => {
-					setIsChatLoaded( true );
-					recordTracksEvent( 'calypso_smooch_messenger_init', {
-						success: true,
-						error: '',
-					} );
-				} )
-				.catch( ( error ) => {
-					setIsChatLoaded( false );
-					retryTimeout = setTimeout( initializeSmooch, 30000 );
-					recordTracksEvent( 'calypso_smooch_messenger_init', {
-						success: false,
-						error: error.message,
-					} );
-				} );
-		};
-
-		initializeSmooch().then( () => {
-			if ( conversationId ) {
-				Smooch.getConversationById( conversationId ).then( setConversation );
-			} else {
-				Smooch.createConversation( {
-					metadata: {
-						createdAt: Date.now(),
-					},
-				} ).then( setConversation );
-			}
-		} );
-
-		Smooch.render( smoochContainer );
-
-		return () => {
-			clearTimeout( retryTimeout );
-			destroy();
-		};
-	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, queryClient, enabled, conversationId ] );
+		if ( conversationId ) {
+			debugger;
+			Smooch.getConversationById( conversationId ).then( setConversation );
+			Smooch.loadConversation( conversationId );
+		} else {
+			Smooch.createConversation( {
+				metadata: {
+					createdAt: Date.now(),
+				},
+			} ).then( ( conversation ) => {
+				setConversation( conversation );
+				const params = new URLSearchParams( location.search );
+				params.set( 'conversationId', conversation.id );
+				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+				Smooch.loadConversation( conversation.id );
+			} );
+		}
+	}, [
+		Smooch,
+		conversationId,
+		location.pathname,
+		location.search,
+		navigate,
+		conversation,
+		Smooch?.render,
+	] );
 
 	const agentticMessages = useMemo( () => {
 		return conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
 	}, [ conversation?.messages ] );
 
 	useEffect( () => {
-		if ( isChatLoaded ) {
-			Smooch.on( 'message:received', getUnreadListener );
+		if ( Smooch ) {
 			Smooch.on( 'disconnected', disconnectedListener );
 			Smooch.on( 'reconnecting', reconnectingListener );
 			Smooch.on( 'connected', connectedListener );
@@ -230,10 +212,6 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 		}
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:sent', clientIdListener );
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'disconnected', disconnectedListener );
 			// @ts-expect-error -- 'off' is not part of the def.
@@ -246,32 +224,37 @@ export const useManagedZendeskChat = ( enabled: boolean, conversationId?: string
 			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [
-		getUnreadListener,
 		setConnectionStatus,
-		isChatLoaded,
 		typingStartListener,
 		typingStopListener,
 		//getUnreadNotifications,
 		disconnectedListener,
 		reconnectingListener,
 		connectedListener,
+		Smooch,
 	] );
 
 	return {
-		isChatLoaded,
 		typingStatus,
 		conversation,
 		connectionStatus,
 		agentticMessages,
-		sendMessage: ( message: ZendeskMessage ) => {
+		onSubmit: ( message: string ) => {
+			const messageToSend: ZendeskMessage = {
+				type: 'text',
+				text: message,
+				role: 'user',
+				id: crypto.randomUUID(),
+				received: Date.now(),
+			};
 			if ( conversation?.id ) {
 				// Todo: mark the message as `is_sending`.
 				setConversation( {
 					...conversation,
-					messages: [ ...conversation.messages, message ],
+					messages: [ ...conversation.messages, messageToSend ],
 				} );
 				// Todo: mark the message as sent after the following resolves.
-				Smooch.sendMessage( message, conversation.id );
+				Smooch.sendMessage( messageToSend, conversation.id );
 			}
 		},
 	};
