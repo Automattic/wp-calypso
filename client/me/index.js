@@ -1,5 +1,11 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSelectedSiteIdByOrigin,
+	redirectIfMultiSiteDashboardForcedOptIn,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import * as controller from './controller';
 
 import './style.scss';
@@ -8,6 +14,8 @@ export default function () {
 	page(
 		'/me',
 		controller.maybeRedirectToDashboard,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/profile' ),
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,

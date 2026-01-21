@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectIfMultiSiteDashboardForcedOptIn,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as billingController from 'calypso/me/purchases/billing-history/controller';
@@ -11,6 +16,8 @@ import * as paths from './paths';
 export default ( router ) => {
 	router(
 		paths.paymentMethods,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods' ),
 		sidebar,
 		paymentMethodsController.paymentMethods,
 		makeLayout,
@@ -19,23 +26,43 @@ export default ( router ) => {
 
 	router(
 		paths.addNewPaymentMethod,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/add' ),
 		sidebar,
 		controller.addNewPaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
-	router( paths.addCreditCard, sidebar, controller.addNewPaymentMethod, makeLayout, clientRender );
+	router(
+		paths.addCreditCard,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/add' ),
+		sidebar,
+		controller.addNewPaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
 	// redirect legacy urls
 	router( '/payment-methods/add-credit-card', () => {
 		page.redirect( paths.addCreditCard );
 	} );
 
-	router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
+	router(
+		paths.vatDetails,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/tax-details' ),
+		sidebar,
+		controller.vatDetails,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		paths.billingHistory,
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/history' ),
 		sidebar,
 		billingController.billingHistory,
 		makeLayout,
@@ -44,6 +71,8 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/history' ),
 		sidebar,
 		membershipsController.subscription,
 		makeLayout,
@@ -52,6 +81,8 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/crm-downloads/:subscription',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/history' ),
 		sidebar,
 		controller.crmDownloads,
 		makeLayout,
@@ -60,6 +91,8 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/subscription-removed',
+		setupPreferences,
+		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/history' ),
 		sidebar,
 		membershipsController.cancelledSubscriptionReturnFromRedirect,
 		makeLayout,
