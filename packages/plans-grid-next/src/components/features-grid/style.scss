@@ -384,8 +384,7 @@
 
 			// Make the tooltip hover area a flex container so text doesn't wrap under icon
 			.plans-2023-tooltip__hover-area-container {
-				display: flex;
-				align-items: flex-start;
+				display: inline;
 			}
 
 			// Apply underline styling only to the text, not the icon
