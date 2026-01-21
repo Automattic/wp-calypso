@@ -116,6 +116,7 @@ import {
 	FEATURE_WORDADS,
 	FEATURE_WORDPRESS_CMS,
 	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_WORDPRESS_STUDIO_SYNC,
 	FEATURE_WP_UPDATES,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PRIORITY_24_7_SUPPORT,
@@ -605,12 +606,33 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 	};
 }
 
-export function resolveFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
+export function resolveFeatureGroupsForComparisonGrid( props?: {
+	isExperimentVariant?: boolean;
+} ): Partial< FeatureGroupMap > {
+	const { isExperimentVariant } = props || {};
+
+	// For experiment variants, add FEATURE_WORDPRESS_STUDIO_SYNC after FEATURE_MULTI_SITE
+	const developerToolsGroup = isExperimentVariant
+		? ( {
+				slug: FEATURE_GROUP_DEVELOPER_TOOLS,
+				getTitle: () => i18n.translate( 'Developer tools' ),
+				getFeatures: () => [
+					FEATURE_DEV_TOOLS,
+					FEATURE_DEV_TOOLS_SSH,
+					FEATURE_DEV_TOOLS_GIT,
+					FEATURE_SITE_STAGING_SITES,
+					FEATURE_MULTI_SITE,
+					FEATURE_WORDPRESS_STUDIO_SYNC,
+					FEATURE_WP_UPDATES,
+				],
+		  } as const )
+		: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ];
+
 	return {
 		[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: featureGroups[ FEATURE_GROUP_ESSENTIAL_FEATURES ],
 		[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ]: featureGroups[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ],
 		[ FEATURE_GROUP_HIGH_AVAILABILITY ]: featureGroups[ FEATURE_GROUP_HIGH_AVAILABILITY ],
-		[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
+		[ FEATURE_GROUP_DEVELOPER_TOOLS ]: developerToolsGroup,
 		[ FEATURE_GROUP_SECURITY_AND_SAFETY ]: featureGroups[ FEATURE_GROUP_SECURITY_AND_SAFETY ],
 		[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]:
 			featureGroups[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ],
