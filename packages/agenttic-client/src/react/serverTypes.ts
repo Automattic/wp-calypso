@@ -83,7 +83,7 @@ export interface ServerLoadResult {
 /**
  * Message preview for conversation list items
  */
-export interface TruncatedMessage {
+export interface ServerConversationListItemMessage {
 	content: string;
 	role: 'user' | 'bot' | 'system';
 	created_at: string; // MySQL datetime format
@@ -98,8 +98,8 @@ export interface ServerConversationListItem {
 	wpcom_user_id?: number;
 	session_id?: string;
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
-	last_message?: TruncatedMessage;
-	first_message?: TruncatedMessage;
+	last_message?: ServerConversationListItemMessage;
+	first_message?: ServerConversationListItemMessage;
 }
 
 /**
