@@ -179,6 +179,10 @@ function initLoadedTrackingScripts() {
 
 		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 	}
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		// Track page on init, as retarget isn't triggered when accepting the banner.
+		window.ttq.page();
+	}
 
 	debug( 'loadTrackingScripts: init done' );
 }

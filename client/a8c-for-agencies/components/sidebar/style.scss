@@ -61,9 +61,26 @@
 	}
 }
 
-.a4a-sidebar__footer ul {
-	list-style: none;
-	margin: 0;
+.a4a-sidebar__footer {
+
+	ul {
+		list-style: none;
+		margin: 0;
+	}
+
+	.components-button.sidebar__item-help {
+		svg {
+			&.help-center__icon-has-new-items circle {
+				transform: translate(-1px, 3px);
+			}
+
+			fill: var(--color-sidebar-text);
+		}
+	
+		&:hover {
+			background: var(--color-sidebar-menu-hover-background);
+		}
+	}
 }
 
 .sidebar-menu-item__title-with-badge {
