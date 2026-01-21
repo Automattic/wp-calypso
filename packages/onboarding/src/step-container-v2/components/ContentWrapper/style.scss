@@ -20,6 +20,14 @@
 	padding: var( --step-container-v2-content-block-padding )
 		var( --step-container-v2-content-inline-padding );
 
+	&.no-top-padding {
+		padding-top: 0;
+	}
+
+	&.no-bottom-padding {
+		padding-bottom: 0;
+	}
+
 	&.no-padding {
 		padding: 0;
 	}
