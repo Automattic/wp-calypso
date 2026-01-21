@@ -13,11 +13,11 @@ const UniqueSellingPropositionNotice = ( {
 	className,
 }: UniqueSellingPropositionNoticeProps ) => {
 	return (
-		<div className={ clsx( 'social-buttons__info-notice', className ) }>
-			<span className="social-buttons__info-notice-icon">
+		<div className={ clsx( 'unique-selling-proposition-notice', className ) }>
+			<span className="unique-selling-proposition-notice-icon">
 				<Icon icon={ globe } size={ 16 } />
 			</span>
-			<span className="social-buttons__info-notice-text">{ children }</span>
+			<span className="unique-selling-proposition-notice-text">{ children }</span>
 		</div>
 	);
 };
