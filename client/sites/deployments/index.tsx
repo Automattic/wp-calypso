@@ -24,7 +24,7 @@ export default function () {
 		siteSelection,
 		setupPreferences,
 		redirectIfMultiSiteDashboardForcedOptIn(
-			( params: Record< string, string > ) => `/sites/deployments/${ params.site }`
+			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
 		),
 		navigation,
 		deploymentsList,
@@ -70,7 +70,7 @@ export default function () {
 		siteSelection,
 		setupPreferences,
 		redirectIfMultiSiteDashboardForcedOptIn(
-			( params: Record< string, string > ) => `/sites/deployments/${ params.site }`
+			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
 		),
 		navigation,
 		deploymentRunLogs,
