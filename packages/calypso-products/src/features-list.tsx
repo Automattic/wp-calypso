@@ -791,7 +791,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Add payment buttons' )
+				? i18n.translate( 'Add payment buttons to your site' )
 				: i18n.translate( 'PayPal Payment Buttons' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
@@ -816,7 +816,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
-		getTitle: () => i18n.translate( 'Install WordPress plugins' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Install all WordPress plugins' )
+				: i18n.translate( 'Install WordPress plugins' ),
 		getDescription: () =>
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +
