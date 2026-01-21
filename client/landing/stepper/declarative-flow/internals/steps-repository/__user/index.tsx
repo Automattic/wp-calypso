@@ -147,34 +147,34 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	const carouselSlides = [
-		<div className="user-step-carousel-column" key="slide-1">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-title">
+		<div className="signup-slider-column" key="slide-1">
+			<div className="signup-slider-column-inner">
+				<div className="signup-slider-slide">
+					<p className="signup-slider-title">
 						{ translate( 'Join 472+ million websites worldwide' ) }
 					</p>
 				</div>
 			</div>
 		</div>,
-		<div className="user-step-carousel-column-2" key="slide-2">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-testimonial">
+		<div className="signup-slider-column-2" key="slide-2">
+			<div className="signup-slider-column-inner">
+				<div className="signup-slider-slide">
+					<p className="signup-slider-testimonial">
 						{ translate(
 							'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
 						) }
 					</p>
-					<p className="user-step-carousel-testimonial-author">{ translate( 'Brett S.' ) }</p>
-					<p className="user-step-carousel-testimonial-title">
+					<p className="signup-slider-testimonial-author">{ translate( 'Brett S.' ) }</p>
+					<p className="signup-slider-testimonial-title">
 						{ translate( 'Founder/Blogger in Chief' ) }
 					</p>
 				</div>
 			</div>
 		</div>,
-		<div className="user-step-carousel-column-3" key="slide-3">
-			<div className="user-step-carousel-column-inner">
-				<div className="user-step-carousel-slide">
-					<p className="user-step-carousel-title">
+		<div className="signup-slider-column-3" key="slide-3">
+			<div className="signup-slider-column-inner">
+				<div className="signup-slider-slide">
+					<p className="signup-slider-title">
 						{ translate( 'AI builds the site — you make it yours' ) }
 					</p>
 				</div>
@@ -265,7 +265,7 @@ const UserStepComponent: StepType = function UserStep( {
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
-					<DotPager className="user-step-carousel" hasDynamicHeight={ false } rotateTime={ 5000 }>
+					<DotPager className="signup-slider" hasDynamicHeight={ false } rotateTime={ 5000 }>
 						{ carouselSlides }
 					</DotPager>
 				</Step.TwoColumnLayout>
