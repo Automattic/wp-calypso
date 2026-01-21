@@ -9,7 +9,7 @@ import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName, getSitePlanDisplayName__ES } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteStatus } from '../../utils/site-status';
+import { getSiteBlockingStatus } from '../../utils/site-status';
 import {
 	isSelfHostedJetpackConnected,
 	isSelfHostedJetpackConnected__ES,
@@ -135,7 +135,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 				<Visibility
 					siteSlug={ item.slug }
 					visibility={ field.getValue( { item } ) }
-					status={ getSiteStatus( item ) }
+					status={ getSiteBlockingStatus( item ) }
 					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }
 				/>
 			),

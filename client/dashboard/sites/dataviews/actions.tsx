@@ -6,7 +6,7 @@ import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { getSiteStatus } from '../../utils/site-status';
+import { getSiteBlockingStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
@@ -23,7 +23,7 @@ export function useActions(): Action< Site >[] {
 	const { recordTracksEvent } = useAnalytics();
 
 	// Some actions are not available if the site has migration, deleted, or DIFM status
-	const hasPendingStatus = ( site: Site ) => !! getSiteStatus( site );
+	const hasBlockingStatus = ( site: Site ) => !! getSiteBlockingStatus( site );
 
 	return [
 		{
@@ -65,7 +65,7 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) =>
 				siteTypeSupportsFeature( item, 'domains' ) &&
 				canManageSite( item ) &&
-				! hasPendingStatus( item ),
+				! hasBlockingStatus( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -90,7 +90,7 @@ export function useActions(): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
-				! hasPendingStatus( item ) &&
+				! hasBlockingStatus( item ) &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},
@@ -104,7 +104,7 @@ export function useActions(): Action< Site >[] {
 			isEligible: ( item: Site ) =>
 				siteTypeSupportsFeature( item, 'settings' ) &&
 				canManageSite( item ) &&
-				! hasPendingStatus( item ),
+				! hasBlockingStatus( item ),
 		},
 		{
 			id: 'restore',
