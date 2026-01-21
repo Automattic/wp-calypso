@@ -233,7 +233,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
-					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
+					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
+						isExperimentVariant,
+					} ),
 				};
 
 				previousPlan = planSlug;

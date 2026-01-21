@@ -392,7 +392,9 @@ export type Plan = BillingTerm & {
 	 * Features that are conditionally available and are to be shown in the plans comparison table.
 	 * For example: "Available with plugins"
 	 */
-	getPlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
+	getPlanComparisonFeatureLabels?: ( props?: {
+		isExperimentVariant?: boolean;
+	} ) => Record< Feature, TranslateResult >;
 
 	getStorageFeature?: (
 		showLegacyStorageFeature?: boolean,

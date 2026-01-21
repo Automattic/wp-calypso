@@ -1015,6 +1015,7 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
+													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle

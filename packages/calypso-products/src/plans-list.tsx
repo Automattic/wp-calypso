@@ -1043,14 +1043,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.08, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free support' )
+				: i18n.translate( 'Support from our expert\u00A0team' ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1337,7 +1339,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;
 	},
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
@@ -1347,7 +1349,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
+				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1849,14 +1853,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	getStorageFeature: () => FEATURE_13GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.04, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free support with faster response times' )
+				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 			// AI features show "(limited)" text for Premium plan
 			[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
 			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
@@ -2200,7 +2206,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const featureLabels: Record< Feature, TranslateResult > = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_PREMIUM_STORE_THEMES ]: i18n.translate( 'Available with plugins' ),
@@ -2225,7 +2231,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
+				: i18n.translate( 'Priority 24/7 support from our expert team' ),
 		};
 
 		return isStatsFeatureTranslated()

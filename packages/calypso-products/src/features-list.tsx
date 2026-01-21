@@ -2565,7 +2565,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Free support with faster response times' )
+				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
