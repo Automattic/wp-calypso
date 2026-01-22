@@ -180,8 +180,7 @@ function initLoadedTrackingScripts() {
 		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 	}
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
-		// Track page on init, as retarget isn't triggered when accepting the banner.
-		window.ttq.page();
+		initTikTok();
 	}
 
 	debug( 'loadTrackingScripts: init done' );
@@ -270,4 +269,25 @@ function initFacebook() {
 		window.fbq( 'init', TRACKING_IDS.facebookAkismetInit, advancedMatching );
 		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
 	}
+}
+/**
+ * When the user is logged in, additional hashed data is forwarded.
+ * @see https://business-api.tiktok.com/portal/docs?id=1739585700402178
+ */
+function initTikTok() {
+	// Track page on init, as retarget isn't triggered when accepting the banner.
+	window.ttq.page();
+	let advancedMatching = {};
+
+	const currentUser = getCurrentUser();
+
+	if ( currentUser ) {
+		advancedMatching = {
+			email: currentUser.hashedPii.email,
+			external_id: currentUser.hashedPii.ID,
+		};
+	}
+	window.ttq.identify( advancedMatching );
+
+	debug( 'initTikTok', advancedMatching );
 }

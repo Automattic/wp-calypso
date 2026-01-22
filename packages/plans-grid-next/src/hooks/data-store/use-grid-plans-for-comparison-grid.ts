@@ -54,6 +54,7 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
+		isExperimentVariant,
 	} );
 
 	// Get summer special status
