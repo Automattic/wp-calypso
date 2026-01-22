@@ -1,0 +1,66 @@
+@font-face {
+	font-family: Recoleta;
+	src: url(https://s1.wp.com/i/fonts/recoleta/400.woff2);
+}
+
+@keyframes big-sky-rotate-enlarge {
+	0% {
+		transform: scale(1) rotate(0deg);
+	}
+	50% {
+		transform: scale(1.5) rotate(360deg);
+	}
+	100% {
+		transform: scale(1) rotate(720deg);
+	}
+}
+
+.image-studio-modal {
+	&__generate-layout {
+		color: #666;
+		text-align: center;
+		margin-top: 8rem;
+		transition: flex-grow 0.3s ease;
+
+		h2,
+		svg {
+			color: #fff;
+		}
+
+		svg {
+			width: 80px;
+			height: 80px;
+			transition: transform 0.3s ease;
+			margin-bottom: 32px;
+		}
+
+		&.is-prompt-sent {
+			flex-grow: 1;
+			h2 {
+				opacity: 0;
+			}
+		}
+
+		&.is-ai-processing {
+			svg {
+				animation: big-sky-rotate-enlarge 5s ease-in-out infinite;
+			}
+		}
+
+		h2 {
+			opacity: 1;
+			transition: opacity 0.3s ease;
+			font-family: Recoleta, serif;
+			font-size: clamp(32px, 4vw + 16px, 44px);
+			font-style: normal;
+			font-weight: 400;
+			text-wrap: pretty;
+			line-height: 1.1;
+			text-align: center;
+			margin: 0 auto 8px;
+			color: #fff;
+			margin-bottom: 6rem;
+			max-width: clamp(300px, 50vw, 400px);
+		}
+	}
+}

@@ -1,0 +1,120 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+.image-studio-header {
+	display: flex;
+	width: 100%;
+	align-items: flex-start;
+
+	.image-studio-modal--edit & {
+		flex: 1 0 $footer-height;
+	}
+
+	.components-button.is-tertiary {
+		&:not(:disabled, [aria-disabled="true"]) {
+			color: #fff;
+
+			&:hover {
+				color: #fff;
+				background-color: #ffffff1a;
+			}
+
+			&:focus {
+				color: #fff;
+			}
+		}
+	}
+
+	.components-modal__header-heading {
+		color: #f0f0f0;
+	}
+
+	.image-studio-annotation-toolbar {
+		display: flex;
+		gap: 10px;
+	}
+
+	.image-studio-toolbar-alt-button {
+		position: relative;
+
+		&::after {
+			content: "";
+			position: absolute;
+			bottom: 6px;
+			left: 24px;
+			width: 8px;
+			height: 8px;
+			border: 1px solid #fff;
+			background-color: #0073aa;
+			border-radius: 50%;
+		}
+	}
+
+	&__toolbar-group {
+		display: flex;
+		gap: 8px;
+
+		& + & {
+			border-left: 1px solid #2f2f2f;
+			padding-left: 16px;
+		}
+
+		.components-button.has-icon {
+			gap: 4px;
+		}
+	}
+
+	&__button-text {
+		@media ($breakpoint-medium-down) {
+			display: none;
+		}
+	}
+
+	.components-button.is-pressed {
+		background: #ffffff1a;
+	}
+
+	&__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		position: relative;
+		flex-wrap: wrap;
+		padding: $modal-padding;
+
+		.image-studio-modal--edit & {
+			border-bottom: 1px solid #2f2f2f;
+		}
+	}
+
+	&__left,
+	&__right {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		height: $header-toolbar-height;
+	}
+
+	&__left {
+		justify-content: flex-start;
+	}
+
+	&__right {
+		justify-content: flex-end;
+	}
+
+	&__title {
+		font-weight: 600;
+		text-align: center;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: #f0f0f0;
+
+		@media ($breakpoint-medium-down) {
+			@include visually-hidden();
+		}
+	}
+}
