@@ -28,6 +28,7 @@ interface Options {
 interface ReturnValue {
 	isDocked: boolean;
 	isDesktop: boolean;
+	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
 	openSidebar: () => void;
@@ -239,6 +240,7 @@ export default function useAgentLayoutManager( {
 	return {
 		isDocked: !! shouldRenderSidebar,
 		isDesktop,
+		canDock: isDesktop && hasEnoughHeight,
 		dock,
 		undock,
 		openSidebar: handleOpenSidebar,
