@@ -25,19 +25,14 @@ export function AddDomainButton( {
 			queryArgs.redirect_to = redirectTo;
 		}
 
-		const dashboard = getCurrentDashboard();
-		if ( dashboard ) {
-			queryArgs.dashboard = dashboard;
-		}
+		queryArgs.dashboard = getCurrentDashboard();
 		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug
-			? addQueryArgs( urlWithSite, queryArgs )
-			: addQueryArgs( urlWithoutSite, queryArgs );
+		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
 		return false;
 	};
 

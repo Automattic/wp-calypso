@@ -13,6 +13,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
@@ -37,6 +38,7 @@ function DomainTransferOrConnect( {
 	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
+	dashboard,
 	recordMappingButtonClickInUseYourDomain,
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
@@ -71,6 +73,7 @@ function DomainTransferOrConnect( {
 		currencyCode,
 		domain,
 		domainInboundTransferStatusInfo: inboundTransferStatusInfo,
+		dashboard,
 		isSignupStep,
 		onConnect: handleConnect,
 		onSkip,
@@ -162,6 +165,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 			productsList: getProductsList( state ),
+			dashboard: getCurrentQueryArguments( state )?.dashboard,
 			selectedSite,
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};

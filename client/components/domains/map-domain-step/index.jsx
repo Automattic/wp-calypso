@@ -25,6 +25,7 @@ import {
 	recordInputFocusInMapDomain,
 	recordGoButtonClickInMapDomain,
 } from 'calypso/state/domains/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -258,10 +259,18 @@ class MapDomainStep extends Component {
 				const availabilityStatus = MAPPED === mappableStatus ? mappableStatus : status;
 
 				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
-				const { message, severity } = getAvailabilityNotice( domain, availabilityStatus, {
-					site,
-					maintenanceEndTime,
-				} );
+				const { message, severity } = getAvailabilityNotice(
+					domain,
+					availabilityStatus,
+					{
+						site,
+						maintenanceEndTime,
+					},
+					false,
+					'_self',
+					'',
+					this.props.dashboard
+				);
 				this.setState( { notice: message, noticeSeverity: severity, isPendingSubmit: false } );
 			}
 		);
@@ -271,6 +280,7 @@ class MapDomainStep extends Component {
 export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
+		dashboard: getCurrentQueryArguments( state )?.dashboard,
 		selectedSite: getSelectedSite( state ),
 		primaryWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )

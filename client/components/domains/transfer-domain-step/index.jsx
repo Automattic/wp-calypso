@@ -47,6 +47,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -635,10 +636,18 @@ class TransferDomainStep extends Component {
 							}
 
 							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
-							const { message, severity } = getAvailabilityNotice( domain, status, {
-								site,
-								maintenanceEndTime,
-							} );
+							const { message, severity } = getAvailabilityNotice(
+								domain,
+								status,
+								{
+									site,
+									maintenanceEndTime,
+								},
+								false,
+								'_self',
+								'',
+								this.props.dashboard
+							);
 							this.setState( { notice: message, noticeSeverity: severity } );
 						}
 					}
@@ -726,6 +735,7 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		dashboard: getCurrentQueryArguments( state )?.dashboard,
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),
