@@ -278,6 +278,7 @@ import {
 	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_BANDWIDTH,
@@ -679,6 +680,36 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 		];
 	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_AI_ASSISTANT,
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PAGES,
+			FEATURE_USERS,
+			FEATURE_POST_EDITS_HISTORY,
+			FEATURE_NEWSLETTERS_RSS,
+			FEATURE_SECURITY_BRUTE_FORCE,
+			FEATURE_SMART_REDIRECTS,
+			FEATURE_ALWAYS_ONLINE,
+			FEATURE_PAYMENT_TRANSACTION_FEES_10,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CPUS,
+			FEATURE_CDN,
+			FEATURE_ES_SEARCH_JP,
+			FEATURE_MULTI_SITE,
+			FEATURE_WP_UPDATES,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_BANDWIDTH,
+			FEATURE_FAST_DNS,
+		];
+	},
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
@@ -688,6 +719,19 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_DONATIONS_AND_TIPS_JP,
 			FEATURE_PREMIUM_CONTENT_JP,
 			FEATURE_PAYMENT_BUTTONS_JP,
+			FEATURE_STATS_JP,
+			FEATURE_SPAM_JP,
+			FEATURE_CONTACT_FORM_JP,
+			FEATURE_SITE_ACTIVITY_LOG_JP,
+			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+			FEATURE_ES_SEARCH_JP,
+		];
+	},
+	// Experimental: Exclude payment features for Free plan in experiment variants
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_PAID_SUBSCRIBERS_JP,
+			FEATURE_PREMIUM_CONTENT_JP,
 			FEATURE_STATS_JP,
 			FEATURE_SPAM_JP,
 			FEATURE_CONTACT_FORM_JP,
@@ -957,6 +1001,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_SUPPORT,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_STYLE_CUSTOMIZATION,
 		];
 
 		let features = baseFeatures;
@@ -965,8 +1011,34 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
-		if ( isGlobalStylesOnPersonalEnabled() ) {
-			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			FEATURE_PREMIUM_THEMES,
+			FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
+		];
+
+		let features = baseFeatures;
+
+		if ( isGlobalStylesGridChangesVariation() ) {
+			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
 		if ( props?.isSummerSpecial ) {
@@ -978,15 +1050,26 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
 	},
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	// Advanced Jetpack Forms is excluded for Personal plan in experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [];
+	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.08, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free support' )
+				: i18n.translate( 'Support from our expert\u00A0team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1252,6 +1335,39 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_INTEGRATIONS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
 			FEATURE_SUPPORT,
+			FEATURE_STYLE_CUSTOMIZATION,
+		];
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_WOOCOMMERCE_HOSTING,
+			FEATURE_PREMIUM_STORE_THEMES,
+			FEATURE_STORE_DESIGN,
+			FEATURE_UNLIMITED_PRODUCTS,
+			FEATURE_DISPLAY_PRODUCTS_BRAND,
+			FEATURE_PRODUCT_ADD_ONS,
+			FEATURE_ASSEMBLED_KITS,
+			FEATURE_MIN_MAX_ORDER_QUANTITY,
+			FEATURE_STOCK_NOTIFS,
+			FEATURE_DYNAMIC_UPSELLS,
+			FEATURE_CUSTOM_MARKETING_AUTOMATION,
+			FEATURE_BULK_DISCOUNTS,
+			FEATURE_INVENTORY_MGMT,
+			FEATURE_STREAMLINED_CHECKOUT,
+			FEATURE_SELL_60_COUNTRIES,
+			FEATURE_SHIPPING_INTEGRATIONS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+			FEATURE_SUPPORT,
+			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
+			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+			FEATURE_BLAZE_AD_CREDITS,
+			FEATURE_EMAIL_MARKETING,
+			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -1265,6 +1381,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => [
+		FEATURE_DONATIONS_AND_TIPS_JP,
+		FEATURE_PAYMENT_BUTTONS_JP,
+		FEATURE_PAYPAL_JP,
+	],
 	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
 		if ( showLegacyStorageFeature && isCurrentPlan ) {
 			return FEATURE_200GB_STORAGE;
@@ -1273,9 +1395,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;
 	},
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
-			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_PREMIUM_THEMES ]: isExperimentVariant
+				? i18n.translate( 'All premium and store themes' )
+				: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
@@ -1283,7 +1407,13 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
+				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1736,6 +1866,34 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
+			FEATURE_ISOLATED_INFRA,
+		];
+
+		let features = baseFeatures;
+
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_FREE_FAST_SUPPORT, // Shows "Free support with faster response times"
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			FEATURE_WORDADS,
+			FEATURE_CONNECT_ANALYTICS,
+			FEATURE_SEO_JP,
+			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
 		];
 
 		let features = baseFeatures;
@@ -1763,17 +1921,23 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	getStorageFeature: () => FEATURE_13GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => {
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.04, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free support with faster response times' )
+				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 			// AI features show "(limited)" text for Premium plan
 			[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
 			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1791,6 +1955,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPLOAD_VIDEO,
 			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
+		];
+	},
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	// Advanced Jetpack Forms is excluded for Premium plan in experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_PAYPAL_JP,
+			FEATURE_UPLOAD_VIDEO,
+			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+			FEATURE_DONATIONS_AND_TIPS_JP,
+			FEATURE_PAYMENT_BUTTONS_JP,
 		];
 	},
 	// Features not displayed but used for checking plan abilities
@@ -2044,6 +2219,48 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
 			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+			FEATURE_STYLE_CUSTOMIZATION,
+		];
+	},
+	// Experimental: Comparison grid features for experiment variants.
+	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
+	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_PLUGINS_THEMES,
+			FEATURE_BANDWIDTH,
+			FEATURE_UNLIMITED_TRAFFIC,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_CDN,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
+			FEATURE_REAL_TIME_SECURITY_SCANS,
+			FEATURE_SPAM_JP,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_DEV_TOOLS_GIT,
+			FEATURE_DEV_TOOLS_SSH,
+			FEATURE_SITE_STAGING_SITES,
+			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+			FEATURE_WP_UPDATES,
+			FEATURE_MULTI_SITE,
+			FEATURE_WORDPRESS_STUDIO_SYNC,
+			FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
+			FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO,
+			FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR,
+			FEATURE_COMMISSION_FEE_WOO_FEATURES,
+			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
+			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_AI_ASSISTANT,
+			FEATURE_AI_WEBSITE_BUILDER,
+			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+			FEATURE_BLAZE_AD_CREDITS,
+			FEATURE_EMAIL_MARKETING,
+			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -2073,7 +2290,21 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
-	getPlanComparisonFeatureLabels: () => {
+	// Experimental: Comparison grid Jetpack features for experiment variants.
+	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
+		return [
+			FEATURE_REALTIME_BACKUPS_JP,
+			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_UPTIME_MONITOR_JP,
+			FEATURE_PLUGIN_AUTOUPDATE_JP,
+			FEATURE_SEO_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
+			FEATURE_DONATIONS_AND_TIPS_JP,
+			FEATURE_PAYMENT_BUTTONS_JP,
+			FEATURE_PAYPAL_JP,
+		];
+	},
+	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const featureLabels: Record< Feature, TranslateResult > = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_PREMIUM_STORE_THEMES ]: i18n.translate( 'Available with plugins' ),
@@ -2098,7 +2329,13 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
+			[ FEATURE_SUPPORT ]: isExperimentVariant
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
+				: i18n.translate( 'Priority 24/7 support from our expert team' ),
+			...( isExperimentVariant && {
+				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
+				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
+			} ),
 		};
 
 		return isStatsFeatureTranslated()

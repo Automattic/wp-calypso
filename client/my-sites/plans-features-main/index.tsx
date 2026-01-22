@@ -744,7 +744,7 @@ const PlansFeaturesMain = ( {
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
 		? getWooExpressFeaturesGroupedForComparisonGrid()
-		: getPlanFeaturesGroupedForComparisonGrid();
+		: getPlanFeaturesGroupedForComparisonGrid( { isExperimentVariant } );
 
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
@@ -1015,6 +1015,7 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
+													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle

@@ -35,7 +35,12 @@ import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteVisibility } from '../../types';
-import type { DashboardSiteListSite, Site, SiteBadge, SiteStatus } from '@automattic/api-core';
+import type {
+	DashboardSiteListSite,
+	Site,
+	SiteBadge,
+	SiteBlockingStatus,
+} from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -474,7 +479,7 @@ export function Visibility( {
 }: {
 	siteSlug: string;
 	visibility: SiteVisibility;
-	status: SiteStatus;
+	status: SiteBlockingStatus;
 	isLaunched?: boolean;
 } ) {
 	const visibilityLabels = getVisibilityLabels();
