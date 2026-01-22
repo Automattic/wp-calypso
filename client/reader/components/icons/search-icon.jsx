@@ -1,4 +1,4 @@
-export default function ReaderSearchIcon( { viewBox = '0 0 20 20' } ) {
+export default function ReaderSearchIcon( { viewBox = '0 0 24 24' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-search"

@@ -3,6 +3,12 @@
 @import '@wordpress/base-styles/variables';
 
 .dashboard-empty-state {
+	width: 100%;
+}
+
+.dashboard-empty-state__wrapper {
+	display: flex;
+	flex-direction: column;
 	justify-content: flex-start;
 
 	@include break-small {
@@ -11,7 +17,8 @@
 	}
 }
 
-.dashboard-empty-state__title {
+// Extra specificity to override <Text> component styles
+.dashboard-empty-state__title.dashboard-empty-state__title {
 	font-size: $font-size-x-large;
 	font-weight: 500;
 }

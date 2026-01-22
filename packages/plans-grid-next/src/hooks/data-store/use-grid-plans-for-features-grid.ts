@@ -52,6 +52,7 @@ const useGridPlansForFeaturesGrid = ( {
 		highlightLabelOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
+		isExperimentVariant,
 	} );
 
 	// Get summer special status early
