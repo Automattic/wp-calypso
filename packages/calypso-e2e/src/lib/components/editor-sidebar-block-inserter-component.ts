@@ -44,16 +44,21 @@ export class EditorSidebarBlockInserterComponent {
 		const sidebarParentSelectorDetachedPromise = this.page
 			.locator( sidebarParentSelector )
 			.waitFor( { state: 'detached' } );
+		const closeBlockInserterButtonLocator = editorParent.locator(
+			selectors.closeBlockInserterButton
+		);
 
 		// Gutenberg 22.4.0 closes the sidebar automatically in some cases, so sometimes the button won't be there to click.
-		// So we wait for either click-then-detached or detached to happen on its own.
 		await Promise.any( [
-			editorParent
-				.locator( selectors.closeBlockInserterButton )
-				.click()
-				.then( () => sidebarParentSelectorDetachedPromise ),
+			closeBlockInserterButtonLocator.waitFor(),
 			sidebarParentSelectorDetachedPromise,
 		] );
+
+		// If the button is there, click it.
+		if ( await closeBlockInserterButtonLocator.isVisible() ) {
+			await closeBlockInserterButtonLocator.click();
+			await sidebarParentSelectorDetachedPromise;
+		}
 	}
 
 	/**
