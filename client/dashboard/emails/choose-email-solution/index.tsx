@@ -244,11 +244,13 @@ export default function ChooseEmailSolution() {
 									</Text>
 									{ provider.hasFreeTrial && (
 										<div className="email-provider-trial">
-											{ sprintf(
-												/* translators: %d is the number of free trial months. */
-												__( '%d month free trial' ),
-												provider.trialMonths
-											) }
+											{ provider.trialMonths === 12
+												? sprintf(
+														/* translators: %d is the number of free trial months. */
+														__( '%d month free trial' ),
+														provider.trialMonths
+												  )
+												: __( '3 month free trial' ) }
 										</div>
 									) }
 								</>
