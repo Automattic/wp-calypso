@@ -16,6 +16,58 @@ import type {
 } from 'calypso/a8c-for-agencies/types/products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
+/**
+ * Calculates the discount percentage between an original price and a discounted price.
+ * @param originalPrice - The original price before discount
+ * @param discountedPrice - The price after discount
+ * @returns The discount percentage (0-100), or 0 if originalPrice is 0 or negative
+ */
+export const calculateDiscountPercentage = (
+	originalPrice: number,
+	discountedPrice: number
+): number => {
+	if ( originalPrice <= 0 ) {
+		return 0;
+	}
+	return Math.round( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 );
+};
+
+export const getWPCOMTieredPrice = (
+	product: APIProductFamilyProduct,
+	quantity: number,
+	termPricing: TermPricingType
+) => {
+	// Calculate actual cost (base product price * quantity)
+	const basePricePerUnit =
+		termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+	const actualCost = basePricePerUnit * quantity;
+
+	// Find tier for exact quantity, or for 10 units if quantity > 10
+	const tier =
+		product?.price_tier_list?.find( ( t ) => t.units === quantity ) ||
+		( quantity > 10 ? product?.price_tier_list?.find( ( t ) => t.units === 10 ) : undefined );
+
+	// Get price per unit from tier if found, otherwise from product
+	let pricePerUnit: number;
+	if ( tier ) {
+		pricePerUnit = termPricing === 'yearly' ? tier.yearly_price : tier.monthly_price;
+	} else {
+		pricePerUnit = basePricePerUnit;
+	}
+
+	const discountedCost = pricePerUnit * quantity;
+	// Calculate discount percentage from per-unit prices for consistency
+	// This ensures the percentage matches the tier structure and is consistent across quantities
+	// and currencies, avoiding rounding errors from multiplication
+	const discountPercentage = calculateDiscountPercentage( basePricePerUnit, pricePerUnit );
+
+	return {
+		actualCost,
+		discountedCost,
+		discountPercentage,
+	};
+};
+
 export const checkProductTermAvailability = (
 	product: APIProductFamilyProduct,
 	termPricing?: TermPricingType
@@ -143,15 +195,30 @@ export const useGetProductPricingInfo = (
 		const productBundlePrice = productPrice ? productPrice * quantity : 0;
 
 		if ( product.family_slug === 'wpcom-hosting' ) {
-			const tier = calculateTier( options, quantity + ownedPlans );
-			const discountedCost = productBundlePrice * ( 1 - tier.discount );
+			let actualCost: number;
+			let discountedCost: number;
+			let discountPercentage: number;
+
+			if ( isTermPricingEnabled && termPricing ) {
+				const pricingInfo = getWPCOMTieredPrice( product, quantity, termPricing );
+				actualCost = pricingInfo.actualCost;
+				discountedCost = pricingInfo.discountedCost;
+				discountPercentage = pricingInfo.discountPercentage;
+			} else {
+				// Fallback to discount tier calculation when term pricing is not enabled
+				const tier = calculateTier( options, quantity + ownedPlans );
+				actualCost = productBundlePrice;
+				discountedCost = productBundlePrice * ( 1 - tier.discount );
+				discountPercentage = Math.round( tier.discount * 100 );
+			}
+
 			return {
-				actualCost: productBundlePrice,
+				actualCost,
 				discountedCost,
-				discountPercentage: tier.discount,
-				showActualCost: productBundlePrice > discountedCost,
+				discountPercentage,
+				showActualCost: actualCost > discountedCost,
 				discountedCostFormatted: formatCurrency( discountedCost, currency ?? 'USD' ),
-				actualCostFormatted: formatCurrency( productBundlePrice, currency ?? 'USD' ),
+				actualCostFormatted: formatCurrency( actualCost, currency ?? 'USD' ),
 				isFree: productPrice === 0,
 			};
 		}

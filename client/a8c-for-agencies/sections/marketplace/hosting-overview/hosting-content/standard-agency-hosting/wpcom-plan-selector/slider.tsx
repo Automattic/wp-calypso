@@ -1,18 +1,61 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import { TermPricingContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
+import { calculateDiscountPercentage } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
-import type { APIProductFamily } from 'calypso/a8c-for-agencies/types/products';
+import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
+import type {
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	ownedPlans: number;
 	quantity: number;
 	onChange: ( quantity: number ) => void;
+	plan?: APIProductFamilyProduct;
 };
 
-export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange }: Props ) {
+const createOptionsFromPriceTierList = (
+	plan: APIProductFamilyProduct,
+	termPricing: TermPricingType
+) => {
+	const priceTierList = plan.price_tier_list || [];
+	const basePrice = termPricing === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
+
+	const options = priceTierList.map( ( tier ) => {
+		const tierPrice = termPricing === 'yearly' ? tier.yearly_price : tier.monthly_price;
+		const discountPercent = calculateDiscountPercentage( basePrice, tierPrice );
+
+		return {
+			value: tier.units,
+			label: `${ tier.units }`,
+			discount: discountPercent / 100,
+			sub: discountPercent > 0 ? `${ discountPercent }%` : '',
+		};
+	} );
+
+	// Ensure first option is always 1
+	if ( options.length === 0 || options[ 0 ]?.value !== 1 ) {
+		options.unshift( {
+			value: 1,
+			label: '1',
+			discount: 0,
+			sub: '',
+		} );
+	}
+
+	return options;
+};
+
+export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan }: Props ) {
 	const translate = useTranslate();
+	const { termPricing } = useContext( TermPricingContext );
+
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	const { data } = useProductsQuery( true );
 
@@ -23,12 +66,21 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange }: Pro
 		: undefined;
 
 	const options = useMemo( () => {
-		const options = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
+		let sliderOptions = [];
+
+		if ( isTermPricingEnabled && termPricing && plan ) {
+			// Use price_tier_list when term pricing is enabled
+			sliderOptions = createOptionsFromPriceTierList( plan, termPricing );
+		} else {
+			// Fallback to discount tiers
+			sliderOptions = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
+		}
 
 		// Override the last option label to include '+' symbol.
-		options[ options.length - 1 ].label = options[ options.length - 1 ].label + '+';
-		return options;
-	}, [ wpcomProducts?.discounts?.tiers ] );
+		sliderOptions[ sliderOptions.length - 1 ].label =
+			sliderOptions[ sliderOptions.length - 1 ].label + '+';
+		return sliderOptions;
+	}, [ wpcomProducts?.discounts?.tiers, isTermPricingEnabled, termPricing, plan ] );
 
 	const MaxValue = options[ options.length - 1 ].value;
 

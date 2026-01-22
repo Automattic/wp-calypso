@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
+import { getWPCOMTieredPrice } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-wpcom-plan-description';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
@@ -61,11 +62,16 @@ export default function WPCOMPlanSelector( {
 		return calculateTier( discountTiers, quantity + ownedPlans ).discount;
 	}, [ discountTiers, ownedPlans, quantity, isReferralMode ] );
 
-	const termPrice = termPricing === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
-	const productPrice = isTermPricingEnabled ? termPrice : Number( plan?.amount ?? 0 );
+	const originalPrice = Number( plan?.amount ?? 0 ) * quantity;
+	const pricingInfo = isTermPricingEnabled
+		? getWPCOMTieredPrice( plan, quantity, termPricing )
+		: {
+				actualCost: originalPrice,
+				discountedCost: originalPrice - originalPrice * discount,
+				discountPercentage: Math.round( discount * 100 ),
+		  };
 
-	const originalPrice = Number( productPrice ) * quantity;
-	const actualPrice = originalPrice - originalPrice * discount;
+	const actualPrice = pricingInfo.discountedCost;
 
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
 
@@ -140,16 +146,16 @@ export default function WPCOMPlanSelector( {
 					<b className="wpcom-plan-selector__price-actual-value">
 						{ formatCurrency( actualPrice, plan.currency ) }
 					</b>
-					{ !! discount && (
+					{ pricingInfo.discountPercentage > 0 && (
 						<>
 							<b className="wpcom-plan-selector__price-original-value">
-								{ formatCurrency( originalPrice, plan.currency ) }
+								{ formatCurrency( pricingInfo.actualCost, plan.currency ) }
 							</b>
 
 							<span className="wpcom-plan-selector__price-discount">
 								{ translate( 'You save %(discount)s%', {
 									args: {
-										discount: Math.floor( discount * 100 ),
+										discount: pricingInfo.discountPercentage,
 									},
 									comment: '%(discount)s is the discount percentage.',
 								} ) }
