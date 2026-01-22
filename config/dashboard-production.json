@@ -15,7 +15,8 @@
 		"cookie-banner": true,
 		"dashboard/v2": false,
 		"domain-transfer-redesign": true,
-		"marketplace-redesign": true
+		"marketplace-redesign": true,
+		"mcp-settings": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
