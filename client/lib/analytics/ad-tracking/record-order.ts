@@ -739,7 +739,7 @@ function recordOrderInTikTok(
 		currency: 'USD',
 	};
 	debug( 'recordOrderInTikTok:', 'track', params );
-	window.ttq.track( 'PlaceAnOrder', params );
+	window.ttq.track( 'Purchase', params );
 }
 
 /**
