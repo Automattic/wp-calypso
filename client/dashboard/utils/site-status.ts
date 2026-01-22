@@ -1,5 +1,4 @@
-import type { SiteBlockingStatus } from './site-badge';
-import type { SiteMigrationStatus } from '../types';
+import type { SiteBlockingStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const MIGRATION_STATUSES: SiteMigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
