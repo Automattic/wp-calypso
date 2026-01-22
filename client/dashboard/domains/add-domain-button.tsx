@@ -25,7 +25,10 @@ export function AddDomainButton( {
 			queryArgs.redirect_to = redirectTo;
 		}
 
-		queryArgs.dashboard = getCurrentDashboard();
+		const dashboard = getCurrentDashboard();
+		if ( dashboard ) {
+			queryArgs.dashboard = dashboard;
+		}
 		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};

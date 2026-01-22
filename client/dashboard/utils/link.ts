@@ -87,7 +87,9 @@ function getDashboardFromReferrer(): DashboardType | null {
  * Priority: query param → current path → referrer → default (undefined = main MSD)
  */
 export function getCurrentDashboard(): DashboardType {
-	return getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer();
+	return (
+		getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? undefined
+	);
 }
 
 /**
