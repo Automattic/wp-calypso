@@ -1,6 +1,5 @@
-/**
- * WordPress dependencies
- */
+import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { AgentUI, cn } from '@automattic/agenttic-ui';
 import {
 	__unstableAnimatePresence as AnimatePresence,
 	Modal,
@@ -10,24 +9,14 @@ import { useMediaQuery, withInstanceId } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-/**
- * External dependencies
- */
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
-import { AgentUI, cn } from '@automattic/agenttic-ui';
-
-/**
- * Internal dependencies
- */
 import { useAgentConfig } from '../hooks/use-agent-config';
-import { defaultAgentConfigFactory, type AgentConfigFactory } from '../utils/agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
+import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
-import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
@@ -37,20 +26,21 @@ import {
 	type ImageStudioProps,
 	ToolbarOption,
 } from '../types';
-import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
+import { defaultAgentConfigFactory, type AgentConfigFactory } from '../utils/agent-config';
 import { getSessionId } from '../utils/session';
+import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
+import { AspectRatioPicker } from './aspect-ratio-picker';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
 import { ImageFeedbackButtons } from './image-feedback-buttons';
-import { Footer } from './footer';
 import LoadingSpinner from './loading-spinner';
-import { ImageStudioAltTextSidebar } from './sidebar';
 import { ImageStudioNotice } from './notice';
+import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
-import { AspectRatioPicker } from './aspect-ratio-picker';
 import './style.scss';
 
 function ImageStudioAgentChat( {
@@ -141,7 +131,9 @@ function ImageStudioAgentChat( {
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
 	useEffect( () => {
-		if ( ! agentError ) return;
+		if ( ! agentError ) {
+			return;
+		}
 		const errorMessage =
 			( agentError as unknown as Error )?.message ||
 			String( agentError ) ||

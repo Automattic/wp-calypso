@@ -1,5 +1,6 @@
-import { act, render } from '@testing-library/react';
+/* eslint-disable import/order */
 import '@testing-library/jest-dom';
+import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../../store';

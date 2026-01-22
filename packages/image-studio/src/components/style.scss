@@ -363,7 +363,7 @@ body.js.is-image-studio-open {
 		background-color: #2a2a2a;
 		padding: 4px 4px 4px 8px;
 		transition: margin-top 0.3s ease;
-		border-radius: calc(var(--radius-lg) + 1px);
+		border-radius: calc(var(--radius-lg) + 2px);
 
 		&:has(.Suggestions-module_container) {
 			margin-top: 42px;
@@ -468,7 +468,7 @@ body.js.is-image-studio-open {
 	color: #e0e0e0;
 	background-color: transparent;
 	border: 2px solid transparent;
-	border-radius: 12px;
+	border-radius: 16px;
 	cursor: pointer;
 	transition:
 		border-color 0.15s ease,

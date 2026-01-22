@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import type { AnnotationPath, AnnotationPoint } from '../../types/annotation';
-import type { ImageStudioActions } from '../../store';
-import { store as imageStudioStore } from '../../store';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as imageStudioStore } from '../../store';
+import type { ImageStudioActions } from '../../store';
+import type { AnnotationPath, AnnotationPoint } from '../../types/annotation';
 import './style.scss';
 
 interface AnnotationCanvasProps {
@@ -13,7 +13,6 @@ interface AnnotationCanvasProps {
 
 /**
  * Renders annotation paths onto a canvas context.
- *
  * @param context  - Canvas 2D context
  * @param pathList - List of annotation paths
  */

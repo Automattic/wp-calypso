@@ -6,10 +6,8 @@
  */
 
 import { getAbilities, executeAbility } from '@wordpress/abilities';
-
-import type { ToolProvider, ContextProvider, ClientContextType } from '@automattic/agents-manager';
-
 import { registerUpdateCanvasImageAbility } from '../abilities';
+import type { ToolProvider, ContextProvider, ClientContextType } from '@automattic/agents-manager';
 
 /**
  * Allowed abilities that Image Studio exposes to the agent

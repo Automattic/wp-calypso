@@ -1,16 +1,10 @@
-/**
- * WordPress dependencies
- */
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
 import { store as coreStore } from '@wordpress/core-data';
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
+import { useDraftCleanup } from './hooks/use-draft-cleanup';
 import { type ImageStudioActions, ImageStudioEntryPoint, store as imageStudioStore } from './store';
 import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from './types';
 import { getImageData, type ImageData } from './utils/get-image-data';
@@ -19,8 +13,6 @@ import {
 	trackImageStudioImageSaved,
 	trackImageStudioOpened,
 } from './utils/tracking';
-import { useDraftCleanup } from './hooks/use-draft-cleanup';
-import { registerBlockEditorFilters } from './extensions';
 
 /**
  * Type definitions
@@ -112,7 +104,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 		/**
 		 * Gets MIME type for an attachment using REST API.
 		 * @param id - The attachment ID to get the MIME type for.
-		 * @return The MIME type of the attachment or null if not found.
+		 * @returns The MIME type of the attachment or null if not found.
 		 */
 		const getAttachmentMimeType = async ( id: number ): Promise< string | null > => {
 			try {
@@ -121,6 +113,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 				} );
 				return fetched?.mime_type ?? null;
 			} catch {
+				// eslint-disable-next-line no-console
 				console.error( '[BIG-SKY] failed to get mime type for attachment using REST API' );
 			}
 
@@ -134,7 +127,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 		 * @param link               - The link element to check.
 		 * @param event              - The mouse event to prevent.
 		 * @param supportedMimeTypes - The supported MIME types.
-		 * @return True if the link was overridden, false otherwise.
+		 * @returns True if the link was overridden, false otherwise.
 		 */
 		const handleImagePostLinkClick = async (
 			link: HTMLAnchorElement,
@@ -400,6 +393,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 				);
 			} catch ( error ) {
 				// Surface the error but continue so the modal is not stuck open
+				// eslint-disable-next-line no-console
 				console.error( '[BIG-SKY] Failed to update attachment metadata', error );
 			}
 		}
@@ -506,6 +500,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			try {
 				await handleSave();
 			} catch ( error ) {
+				// eslint-disable-next-line no-console
 				console.error( '[Image Studio] Save failed during Media Library navigation:', error );
 				// Don't navigate if save failed - would lose unsaved changes
 				// Error notice will be shown by Header component, allowing user to retry
@@ -516,6 +511,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			try {
 				await cleanupOnExit();
 			} catch ( cleanupError ) {
+				// eslint-disable-next-line no-console
 				console.error(
 					'[Image Studio] Cleanup failed during navigation (proceeding anyway):',
 					cleanupError

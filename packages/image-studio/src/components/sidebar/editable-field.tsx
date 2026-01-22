@@ -1,15 +1,15 @@
-import { Button, TextareaControl, TextControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { RegenerateIcon } from '@automattic/agenttic-ui';
-import './editable-field.scss';
 import { useAgentChat, type UseAgentChatConfig } from '@automattic/agenttic-client';
+import { RegenerateIcon } from '@automattic/agenttic-ui';
+import { Button, TextareaControl, TextControl } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../../hooks/use-agent-config';
-import { defaultAgentConfigFactory } from '../../utils/agent-config';
 import { store as imageStudioStore } from '../../store';
+import { defaultAgentConfigFactory } from '../../utils/agent-config';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';
 import type { MetadataField } from '../../types';
+import './editable-field.scss';
 
 interface GenAIButtonProps {
 	agentConfigState: UseAgentChatConfig;
@@ -34,7 +34,9 @@ function GenAIButton( {
 	}, [ agentChatProps.isProcessing, setProcessing ] );
 
 	useEffect( () => {
-		if ( ! agentChatProps.error ) return;
+		if ( ! agentChatProps.error ) {
+			return;
+		}
 
 		const errorMessage =
 			( agentChatProps.error as unknown as Error )?.message ||
@@ -109,7 +111,9 @@ export function EditableField( {
 	};
 
 	const handleBlur = async () => {
-		if ( editedValue === value ) return;
+		if ( editedValue === value ) {
+			return;
+		}
 		await onSave( editedValue );
 	};
 
@@ -142,7 +146,7 @@ export function EditableField( {
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					disabled={ disabled || processing }
-					__nextHasNoMarginBottom={ true }
+					__nextHasNoMarginBottom
 				/>
 			) : (
 				<TextControl
@@ -151,7 +155,7 @@ export function EditableField( {
 					onChange={ handleChange }
 					onBlur={ handleBlur }
 					disabled={ disabled || processing }
-					__nextHasNoMarginBottom={ true }
+					__nextHasNoMarginBottom
 				/>
 			) }
 		</div>

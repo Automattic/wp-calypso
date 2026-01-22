@@ -1,19 +1,19 @@
 /**
  * Custom hook for handling Image Studio annotation functionality
  */
-import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import type { ImageStudioActions } from '../store';
-import type { ImageStudioConfig } from '../types';
+import { useCallback } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
-import { uploadAnnotation } from '../utils/upload-annotation';
+import { ImageStudioMode } from '../types';
 import {
 	trackImageStudioAnnotationRedo,
 	trackImageStudioAnnotationSave,
 	trackImageStudioAnnotationUndo,
 	trackImageStudioImageGenerated,
 } from '../utils/tracking';
-import { ImageStudioMode } from '../types';
+import { uploadAnnotation } from '../utils/upload-annotation';
+import type { ImageStudioActions } from '../store';
+import type { ImageStudioConfig } from '../types';
 
 interface UseAnnotationOptions {
 	originalImageUrl: string | null;
@@ -236,6 +236,7 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 					value: false,
 				} );
 
+				// eslint-disable-next-line no-console
 				console.error( error );
 			},
 		} );

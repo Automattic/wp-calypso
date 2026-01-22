@@ -1,12 +1,5 @@
-/**
- * WordPress dependencies
- */
-import { useEffect } from '@wordpress/element';
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
 
 /**

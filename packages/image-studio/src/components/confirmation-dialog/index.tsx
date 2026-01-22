@@ -46,26 +46,25 @@ interface ConfirmationDialogProps {
  * Example usage:
  * ```tsx
  * <ConfirmationDialog
- *   isOpen={showDialog}
- *   title="Unsaved changes"
- *   actions={[
- *     { text: 'Cancel', onClick: handleCancel, variant: 'tertiary' },
- *     { text: 'Discard', onClick: handleDiscard, variant: 'secondary', isDestructive: true },
- *     { text: 'Save', onClick: handleSave, variant: 'primary' }
- *   ]}
- *   onClose={handleCancel}
+ * isOpen={showDialog}
+ * title="Unsaved changes"
+ * actions={[
+ * { text: 'Cancel', onClick: handleCancel, variant: 'tertiary' },
+ * { text: 'Discard', onClick: handleDiscard, variant: 'secondary', isDestructive: true },
+ * { text: 'Save', onClick: handleSave, variant: 'primary' }
+ * ]}
+ * onClose={handleCancel}
  * >
- *   What would you like to do with your changes?
+ * What would you like to do with your changes?
  * </ConfirmationDialog>
  * ```
- *
  * @param {ConfirmationDialogProps} props          - Component props.
  * @param {boolean}                 props.isOpen   - Whether the dialog is open.
  * @param {string}                  props.title    - Dialog title (optional).
  * @param {*}                       props.children - Dialog message/content.
  * @param {ActionButton[]}          props.actions  - Array of action buttons to display.
  * @param {Function}                props.onClose  - Handler for dialog dismissal (optional).
- * @return {JSX.Element|null} The confirmation dialog component or null if not open.
+ * @returns The confirmation dialog component or null if not open.
  */
 export function ConfirmationDialog( props: ConfirmationDialogProps ) {
 	const { isOpen, title, children, actions, onClose } = props;

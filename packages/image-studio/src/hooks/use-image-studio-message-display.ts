@@ -12,9 +12,8 @@ const getLastMessageByRole = ( messages: Message[], role: string ) => {
  * - Filters messages to show only the last message when display is enabled
  * - Automatically enables display when user sends first message
  * - Returns empty array when display is disabled (modal just opened)
- *
  * @param messages - Array of messages from agent chat (sorted by timestamp)
- * @return Filtered array of messages to display
+ * @returns Filtered array of messages to display
  */
 export function useImageStudioMessageDisplay( messages?: Message[] ) {
 	const [ displayMessagesInChat, setDisplayMessagesInChat ] = useState< boolean >( false );

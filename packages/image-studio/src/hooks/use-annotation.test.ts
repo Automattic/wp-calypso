@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { renderHook } from '@testing-library/react';
 
 let mockSelectorState: {

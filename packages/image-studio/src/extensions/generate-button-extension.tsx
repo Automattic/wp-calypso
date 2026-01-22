@@ -1,13 +1,13 @@
 import { useBlockEditContext } from '@wordpress/block-editor';
-import { useCallback } from '@wordpress/element';
 import { Button } from '@wordpress/components';
-import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
-import { dispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { trackImageStudioOpened } from '../utils/tracking';
-import { type ImageData } from '../utils/get-image-data';
+import { dispatch } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
+import { type ImageData } from '../utils/get-image-data';
+import { trackImageStudioOpened } from '../utils/tracking';
 import { handleImageSelection } from './utils';
 
 export const withImageStudioGenerateButton = createHigherOrderComponent(
@@ -25,9 +25,10 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			return allowedBlocks.includes( name );
 		};
 
-		return ( props: any ) => {
+		const WrappedComponent = ( props: any ) => {
 			const { name } = useBlockEditContext();
-			let { render, onSelect, multiple } = props;
+			const { render: originalRenderProp, onSelect, multiple } = props;
+			let render = originalRenderProp;
 			const { openImageStudio } = dispatch( imageStudioStore );
 
 			const handleClose = useCallback(
@@ -79,6 +80,12 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 
 			return <OriginalComponent { ...props } render={ render } />;
 		};
+
+		WrappedComponent.displayName = `withImageStudioGenerateButton(${
+			OriginalComponent.displayName || OriginalComponent.name || 'Component'
+		})`;
+
+		return WrappedComponent;
 	},
 	'withImageStudioGenerateButton'
 );

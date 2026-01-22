@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
 import { useImageStudioMessageDisplay } from './use-image-studio-message-display';
+import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 // Helper to create test messages with only the properties we need
 const createMessages = ( msgs: Array< { role: string; timestamp: number } > ): Message[] =>

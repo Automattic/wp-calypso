@@ -23,8 +23,7 @@ interface StoredSession {
 
 /**
  * Generate a simple UUID v4
- *
- * @return Generated UUID string
+ * @returns Generated UUID string
  */
 function generateSessionId(): string {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
@@ -37,8 +36,7 @@ function generateSessionId(): string {
 /**
  * Get the current session ID.
  * Uses agents-manager session if available, falls back to localStorage.
- *
- * @return The current session ID
+ * @returns The current session ID
  */
 export function getSessionId(): string {
 	// Try agents-manager first (if available via window global)
@@ -85,8 +83,7 @@ export function getSessionId(): string {
 /**
  * React hook to get the session ID.
  * Uses useMemo to ensure stable reference.
- *
- * @return The current session ID
+ * @returns The current session ID
  */
 export function useSessionId(): string {
 	// For now, return synchronously

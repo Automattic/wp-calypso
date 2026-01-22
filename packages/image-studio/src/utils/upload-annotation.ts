@@ -16,7 +16,6 @@ interface UploadAnnotationOptions {
 /**
  * Uploads an annotated image to WordPress media library.
  * Returns a Promise that resolves when the upload completes and onSuccess finishes.
- *
  * @param options                  - Upload options
  * @param options.blob
  * @param options.originalFilename - Original image filename (optional)
