@@ -100,12 +100,7 @@ export default function LayoutBodyContent( {
 	if ( referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && (
-					<ConsolidatedViews
-						referrals={ referrals }
-						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
-					/>
-				) }
+				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
 				<ReferralList
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
