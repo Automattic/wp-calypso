@@ -12,6 +12,7 @@ import { stringify } from 'qs';
 import { useEffect, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -266,6 +267,7 @@ const EmailProvidersStackedComparison = ( {
 		>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			<QueryProductsList />
+			{ selectedSite && <QuerySiteProducts siteId={ selectedSite.ID } /> }
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 

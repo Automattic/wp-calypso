@@ -22,7 +22,12 @@ const getFirstRenewalPrice = ( product: ProductListItem, currencyCode: string ):
 	}
 
 	if ( isTitanMail( product ) ) {
-		return formatCurrency( ( ( product.cost ?? 0 ) * 9 ) / 12, currencyCode, { stripZeros: true } );
+		// We could calculate the first renewal price based on the introductory offer,
+		// but for Tital the options are either 3 month free with prorated renewal or 12 month free with full renewal.
+		const renewalMonths = product.introductory_offer?.interval_unit === 'year' ? 12 : 9;
+		return formatCurrency( ( ( product.cost ?? 0 ) * renewalMonths ) / 12, currencyCode, {
+			stripZeros: true,
+		} );
 	}
 
 	return null;
