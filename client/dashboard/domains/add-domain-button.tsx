@@ -32,7 +32,9 @@ export function AddDomainButton( {
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug ? addQueryArgs( urlWithSite, queryArgs ) : urlWithoutSite;
+		window.location.href = siteSlug
+			? addQueryArgs( urlWithSite, queryArgs )
+			: addQueryArgs( urlWithoutSite, queryArgs );
 		return false;
 	};
 

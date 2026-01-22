@@ -1,14 +1,14 @@
 import { addQueryArgs } from '@wordpress/url';
 import { domainConnectionSetupRoute } from '../app/router/domains';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
+import { dashboardLink, getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
 
 export function getDomainConnectionSetupTemplateUrl() {
 	const domainConnectionSetupTemplateUrl = domainConnectionSetupRoute.fullPath.replace(
 		'$domainName',
 		'%s'
 	);
-	return new URL( domainConnectionSetupTemplateUrl, window.location.origin ).href;
+	return dashboardLink( domainConnectionSetupTemplateUrl );
 }
 
 export function getAddSiteDomainUrl( siteSlug: string ) {
