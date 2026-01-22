@@ -81,7 +81,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 								</span>
 							) }
 							<span>
-								{ termPricing === 'yearly'
+								{ hasIntroductoryOffer && termPricing === 'yearly'
 									? translate( '/yr', {
 											comment: 'Abbreviation for per year',
 									  } )

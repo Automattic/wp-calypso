@@ -99,7 +99,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 								: translate( 'Total your client will pay:' ) }
 						</span>
 						<span>
-							{ termPricing === 'yearly'
+							{ hasAnyIntroductoryOffer && termPricing === 'yearly'
 								? translate( '%(total)s/yr', {
 										args: {
 											total: formatCurrency( totalCost, items[ 0 ]?.currency ?? 'USD' ),
