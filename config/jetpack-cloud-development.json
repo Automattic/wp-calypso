@@ -55,7 +55,6 @@
 		"jetpack/pro-dashboard-wpcom-atomic-hosting": true,
 		"jetpack/manage-simple-sites": true,
 		"jetpack/manage-sites-v2-menu": false,
-		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/url-only-connection": true,

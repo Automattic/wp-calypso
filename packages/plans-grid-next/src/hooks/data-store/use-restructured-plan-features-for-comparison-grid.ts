@@ -88,32 +88,22 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: map variant flags to their feature methods
-				const experimentFeatureMethodMap = [
-					{
-						flag: useVar5Features,
-						method: 'getVar5StackedSignupWpcomFeatures' as const,
-					},
-					{
-						flag: useShortSetStackedFeatures,
-						method: 'getShortSetStackedSignupWpcomFeatures' as const,
-					},
-					{
-						flag: useLongSetStackedFeatures,
-						method: 'getLongSetStackedSignupWpcomFeatures' as const,
-					},
-					{ flag: useLongSetFeatures, method: 'getLongSetSignupWpcomFeatures' as const },
-				];
-
-				const experimentFeatureMethod =
-					experimentFeatureMethodMap.find( ( { flag } ) => flag )?.method ?? null;
-
-				// Use the experiment feature set if available, otherwise fall back to default
-				if ( experimentFeatureMethod && planConstantObj[ experimentFeatureMethod ]?.().length ) {
+				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
+				// when in an experiment variant. This ensures all features are displayed in the comparison grid
+				// regardless of which experiment variant (var1, var1d, var3, var4, var5) is active.
+				if (
+					isExperimentVariant &&
+					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.( {
+						isSummerSpecial,
+					} )?.length
+				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj[ experimentFeatureMethod ]().slice(),
-						isExperimentVariant ?? true // isExperimentVariant - use alternative copy for experiment
+						planConstantObj
+							.get2023PlanComparisonFeatureOverrideForExperiment( {
+								isSummerSpecial,
+							} )
+							.slice()
 					);
 				} else if (
 					// Check if there's a specific override for comparison
@@ -152,16 +142,30 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					);
 				}
 
-				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()
-					.length
-					? getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
-					  )
-					: getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
-					  );
+				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
+				// when in an experiment variant for Jetpack features.
+				// Note: We check if the function exists, not if it returns a non-empty array, because an empty array
+				// is a valid return value (meaning "show no Jetpack features").
+				let jetpackFeatures;
+				if (
+					isExperimentVariant &&
+					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
+				) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice()
+					);
+				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
+					);
+				} else {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
+					);
+				}
 
 				const wpcomFeaturesTransformed: TransformedFeatureObject[] | null | undefined =
 					annualPlansOnlyFeatures
@@ -229,7 +233,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
-					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
+					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
+						isExperimentVariant,
+					} ),
 				};
 
 				previousPlan = planSlug;
@@ -243,10 +249,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			hasRedeemedDomainCredit,
 			isSummerSpecial,
-			useLongSetFeatures,
-			useLongSetStackedFeatures,
-			useShortSetStackedFeatures,
-			useVar5Features,
 			isExperimentVariant,
 		] );
 	};
