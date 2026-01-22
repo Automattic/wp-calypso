@@ -23,6 +23,7 @@ const requiresPlanUpgrade = ( site: Site ) => {
 };
 
 const useDomainSuggestion = ( site: Site ) => {
+	// Temporary debugging. See: https://github.com/Automattic/wp-calypso/pull/108256
 	if ( site.slug === undefined ) {
 		captureException( new Error( 'site.slug is undefined in useDomainSuggestion()' ), {
 			extra: { site },
