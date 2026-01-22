@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { lazy, useEffect, useMemo } from 'react';
+import React, { lazy, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
@@ -120,13 +120,24 @@ export const FlowRenderer: React.FC< {
 		state: AssertConditionState.SUCCESS,
 	};
 
+	// Detect CIAB dashboard for Woo branding. Using useState + useEffect
+	// instead of useMemo avoids hydration mismatches.
+	const [ isWooDashboard, setIsWooDashboard ] = useState( false );
+
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		setIsWooDashboard( params.get( 'dashboard' ) === 'ciab' );
+	}, [] );
+
 	const stepContainerV2Context = useMemo(
 		() => ( {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
+			// Only set logo for Woo; undefined lets TopBar use default WordPress logo.
+			logo: isWooDashboard ? <Step.WooLogo /> : undefined,
 		} ),
-		[ flow.name, currentStepRoute ]
+		[ flow.name, currentStepRoute, isWooDashboard ]
 	);
 
 	const renderStep = ( step: StepperStep ) => {

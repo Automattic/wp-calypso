@@ -1,10 +1,11 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
@@ -87,6 +88,24 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+
+	// Detect CIAB dashboard for Woo branding. Using useState + useEffect
+	// instead of useMemo avoids hydration mismatches.
+	const [ isWooDashboard, setIsWooDashboard ] = useState( false );
+
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		setIsWooDashboard( params.get( 'dashboard' ) === 'ciab' );
+	}, [] );
+
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			// Only set logo for Woo; undefined lets TopBar use default WordPress logo.
+			// Login screens use compactLogo='always' which applies to the default logo.
+			logo: isWooDashboard ? <Step.WooLogo /> : undefined,
+		} ),
+		[ isWooDashboard ]
+	);
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -245,76 +264,86 @@ const LayoutLoggedOut = ( {
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
 	return (
-		<div className={ clsx( 'layout', classes ) }>
-			{ loadHelpCenter && (
-				<HelpCenterLoader
-					sectionName={ sectionName }
-					loadHelpCenter={ loadHelpCenter }
-					currentRoute={ currentRoute }
-				/>
-			) }
-			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
-			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
-			<div className="layout__header-section">
-				{ masterbar }
-				{ renderHeaderSection && (
-					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
-				) }
-			</div>
-			{ isJetpackCloudEnvironment() && (
-				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
-			) }
-			{ isA8CForAgencies() && (
-				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
-			) }
-			<div id="content" className="layout__content">
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				<div id="primary" className="layout__primary">
-					{ primary }
-				</div>
-				<div id="secondary" className="layout__secondary">
-					{ secondary }
-				</div>
-			</div>
-			{ config.isEnabled( 'cookie-banner' ) && (
-				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
-			) }
-
-			{ [ 'plugins' ].includes( sectionName ) && (
-				<>
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-
-					{ config.isEnabled( 'layout/support-article-dialog' ) && (
-						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
-					) }
-				</>
-			) }
-
-			{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
-				! isReaderTagEmbed && (
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-				) }
-
-			{ ! isLoggedIn &&
-				// Limit this to reader pages. If we need to expand its scope, make sure we do not
-				// render it in the 'signup' sections, otherwise this may appear a second time in
-				// the external signup window it opens.
-				[ 'reader' ].includes( sectionName ) &&
-				! isReaderTagEmbed && (
-					<ReaderJoinConversationDialog
-						onClose={ () => clearLastActionRequiresLogin() }
-						isVisible={ !! loggedInAction }
-						loggedInAction={ loggedInAction }
-						onLoginSuccess={ () => {
-							if ( loggedInAction?.redirectTo ) {
-								window.location = loggedInAction.redirectTo;
-							} else {
-								window.location.reload();
-							}
-						} }
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+			<div className={ clsx( 'layout', classes ) }>
+				{ loadHelpCenter && (
+					<HelpCenterLoader
+						sectionName={ sectionName }
+						loadHelpCenter={ loadHelpCenter }
+						currentRoute={ currentRoute }
 					/>
 				) }
-		</div>
+				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
+				<BodySectionCssClass
+					group={ sectionGroup }
+					section={ sectionName }
+					bodyClass={ bodyClass }
+				/>
+				<div className="layout__header-section">
+					{ masterbar }
+					{ renderHeaderSection && (
+						<div className="layout__header-section-content">{ renderHeaderSection() }</div>
+					) }
+				</div>
+				{ isJetpackCloudEnvironment() && (
+					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
+				{ isA8CForAgencies() && (
+					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+				) }
+				<div id="content" className="layout__content">
+					<AsyncLoad
+						require="calypso/components/global-notices"
+						placeholder={ null }
+						id="notices"
+					/>
+					<div id="primary" className="layout__primary">
+						{ primary }
+					</div>
+					<div id="secondary" className="layout__secondary">
+						{ secondary }
+					</div>
+				</div>
+				{ config.isEnabled( 'cookie-banner' ) && (
+					<CookieBannerContainerSSR serverShow={ showGdprBanner } />
+				) }
+
+				{ [ 'plugins' ].includes( sectionName ) && (
+					<>
+						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+
+						{ config.isEnabled( 'layout/support-article-dialog' ) && (
+							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+						) }
+					</>
+				) }
+
+				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
+					! isReaderTagEmbed && (
+						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+					) }
+
+				{ ! isLoggedIn &&
+					// Limit this to reader pages. If we need to expand its scope, make sure we do not
+					// render it in the 'signup' sections, otherwise this may appear a second time in
+					// the external signup window it opens.
+					[ 'reader' ].includes( sectionName ) &&
+					! isReaderTagEmbed && (
+						<ReaderJoinConversationDialog
+							onClose={ () => clearLastActionRequiresLogin() }
+							isVisible={ !! loggedInAction }
+							loggedInAction={ loggedInAction }
+							onLoginSuccess={ () => {
+								if ( loggedInAction?.redirectTo ) {
+									window.location = loggedInAction.redirectTo;
+								} else {
+									window.location.reload();
+								}
+							} }
+						/>
+					) }
+			</div>
+		</Step.StepContainerV2Provider>
 	);
 };
 

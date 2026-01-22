@@ -14,6 +14,7 @@ export { LinkButton } from './components/buttons/LinkButton/LinkButton';
 export { Heading } from './components/Heading/Heading';
 export { TopBar } from './components/TopBar/TopBar';
 export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
+export { WooLogo } from './components/logos';
 
 export { CenteredColumnLayout } from './wireframes/CenteredColumnLayout/CenteredColumnLayout';
 export { TwoColumnLayout } from './wireframes/TwoColumnLayout/TwoColumnLayout';

@@ -1,9 +1,10 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 
 export type StepContainerV2ContextType = null | {
-	flowName: string;
-	stepName: string;
-	recordTracksEvent: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	flowName?: string;
+	stepName?: string;
+	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
+	logo?: ReactNode;
 };
 
 const StepContainerV2Context = createContext< StepContainerV2ContextType >( null );
