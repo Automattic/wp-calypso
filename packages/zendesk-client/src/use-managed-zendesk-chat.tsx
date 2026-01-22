@@ -301,6 +301,13 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 		connectionStatus,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch,
+		onTypingStatusChange: ( typingStatus: boolean ) => {
+			if ( typingStatus ) {
+				Smooch?.startTyping( conversation?.id );
+			} else {
+				Smooch?.stopTyping( conversation?.id );
+			}
+		},
 		onSubmit: ( message: string ) => {
 			const messageToSend = {
 				type: 'text',
