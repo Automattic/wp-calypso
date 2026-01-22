@@ -105,6 +105,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 		const { enabled_by_a11n, enabled_until } = data;
 
+		// enabled_until < 0 indicates defensive mode is enabled indefinitely.
 		const date = enabled_until > 0 ? new Date( enabled_until * 1000 ) : null;
 		const enabledUntil = date?.toLocaleString( undefined, {
 			year: 'numeric',
