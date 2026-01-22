@@ -118,6 +118,7 @@ export function canSetAsPrimary( {
 	return (
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
+		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR &&
 		! shouldUpgradeToMakeDomainPrimary( {
 			domain,
 			site,
