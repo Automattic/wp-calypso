@@ -1,4 +1,10 @@
-import { type DomainSummary, type Site, type User, DomainSubtype } from '@automattic/api-core';
+import {
+	type DomainSummary,
+	type Site,
+	type User,
+	DomainSubtype,
+	DomainStatus,
+} from '@automattic/api-core';
 import { siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -63,7 +69,8 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 					domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
 					domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) &&
 				domain.can_set_as_primary &&
-				! domain.primary_domain;
+				! domain.primary_domain &&
+				domain.domain_status.id !== DomainStatus.CONNECTION_ERROR;
 
 			if ( ! isEligible ) {
 				return false;
