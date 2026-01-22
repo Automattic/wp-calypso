@@ -12,7 +12,6 @@ import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { isCommerceGarden } from '../../utils/site-types';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -167,10 +166,6 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 	}
 
 	if ( requiresPlanUpgrade( site ) ) {
-		if ( isCommerceGarden( site ) ) {
-			// Hide plan upgrade upsell for CIAB sites: DOTMSD-1033
-			return null;
-		}
 		return (
 			<DomainUpsellCardContent
 				site={ site }
