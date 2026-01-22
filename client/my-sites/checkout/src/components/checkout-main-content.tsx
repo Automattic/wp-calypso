@@ -400,6 +400,9 @@ export default function CheckoutMainContent( {
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
 
+	const isWooHostedCheckout =
+		selectedSiteData?.is_garden && selectedSiteData?.garden_name === 'commerce';
+
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
 	const shouldShowSitePreview =
 		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
@@ -876,7 +879,7 @@ export default function CheckoutMainContent( {
 									</Step.LinkButton>
 								</span>
 							}
-							hideLogo
+							hideLogo={ isWooHostedCheckout }
 						/>
 					);
 

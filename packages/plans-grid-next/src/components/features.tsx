@@ -36,9 +36,11 @@ const FeatureBadge = styled.span`
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 20px;
+	line-height: 16px;
 	margin-inline-start: 8px;
-	vertical-align: middle;
+	vertical-align: baseline;
+	text-decoration: none;
+	white-space: nowrap;
 `;
 
 // var1d experiment: Checkmark bullet icon for differentiator features
@@ -190,12 +192,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										>
 											<>
 												{ currentFeature.isDifferentiatorFeature && <DifferentiatorCheckIcon /> }
-												{ currentFeature.getTitle( {
-													domainName: paidDomainName,
-												} ) }
-												{ currentFeature.badgeText && (
-													<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
-												) }
+												<span className="plan-features-2023-grid__item-text-content">
+													{ currentFeature.getTitle( {
+														domainName: paidDomainName,
+													} ) }
+													{ currentFeature.badgeText && (
+														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+													) }
+												</span>
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (

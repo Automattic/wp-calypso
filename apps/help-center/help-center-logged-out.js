@@ -8,10 +8,11 @@ import loadHelpCenter from './async-help-center';
  */
 function shouldAutoLoadHelpCenter() {
 	try {
-		const preferences = window.localStorage.getItem( 'logged_out_help_center_preferences' );
+		const preferences = window.localStorage.getItem(
+			'logged_out_help_center_preferences_help_center_open'
+		);
 		if ( preferences ) {
-			const preferencesObject = JSON.parse( preferences );
-			return preferencesObject.help_center_open;
+			return JSON.parse( preferences );
 		}
 		return false;
 	} catch ( error ) {
