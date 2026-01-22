@@ -51,18 +51,8 @@ function getSmoochContainer(): HTMLDivElement | null {
 	return smoochContainer;
 }
 
-// const destroy = () => {
-// 	try {
-// 		Smooch.destroy();
-// 	} catch ( error ) {
-// 		// eslint-disable-next-line no-console
-// 		console.error( 'Error destroying Smooch', error );
-// 	}
-// };
-
 function useSmooch( jwt?: string, externalId?: string ) {
 	const queryClient = useQueryClient();
-	//const { isMessagingScriptLoaded } = useLoadZendeskMessaging( true, false );
 
 	return useQuery( {
 		queryKey: [ 'smooch', jwt, externalId ],
