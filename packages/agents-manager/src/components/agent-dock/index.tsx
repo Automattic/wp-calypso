@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login } from '@wordpress/icons';
+import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -168,6 +168,12 @@ export default function AgentDock( {
 			isDisabled: pathname !== '/history' && ! messages.length,
 			onClick: handleNewChat,
 		};
+		const newZDChatMenuItem = {
+			icon: lifesaver,
+			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
+			isDisabled: pathname === '/zendesk' && ! messages.length,
+			onClick: () => navigate( '/zendesk' ),
+		};
 		const undockMenuItem = {
 			icon: login,
 			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
@@ -185,7 +191,7 @@ export default function AgentDock( {
 			},
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem ];
+		const options: ChatHeaderOptions = [ newChatMenuItem, newZDChatMenuItem ];
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
