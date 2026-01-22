@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Popover } from '@wordpress/components';
@@ -7,7 +8,7 @@ import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
-import { MarketplaceTypeContext } from '../../context';
+import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 import { useTotalInvoiceValue } from '../../hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
@@ -28,6 +29,35 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
+	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
+
+	// Calculate total introductory offer cost for all items with intro offers
+	const introductoryOfferTotal = items.reduce( ( total, item ) => {
+		const productIdForOffer =
+			termPricing === 'yearly' ? item?.yearly_product_id : item?.monthly_product_id;
+		const productWithOffer = productIdForOffer
+			? Object.values( userProducts ).find( ( p ) => p.product_id === productIdForOffer )
+			: null;
+		const introductoryOffer = productWithOffer?.introductory_offer;
+		if ( isBdCheckoutEnabled && introductoryOffer?.cost_per_interval ) {
+			return total + introductoryOffer.cost_per_interval * item.quantity;
+		}
+		return total;
+	}, 0 );
+
+	// Check if any item has an introductory offer
+	const hasAnyIntroductoryOffer = items.some( ( item ) => {
+		const productIdForOffer =
+			termPricing === 'yearly' ? item?.yearly_product_id : item?.monthly_product_id;
+		const productWithOffer = productIdForOffer
+			? Object.values( userProducts ).find( ( p ) => p.product_id === productIdForOffer )
+			: null;
+		return isBdCheckoutEnabled && !! productWithOffer?.introductory_offer?.cost_per_interval;
+	} );
+
+	// Use intro offer total when applicable, otherwise use discounted cost
+	const totalCost = hasAnyIntroductoryOffer ? introductoryOfferTotal : discountedCost;
 
 	return (
 		<Popover
@@ -69,9 +99,17 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 								: translate( 'Total your client will pay:' ) }
 						</span>
 						<span>
-							{ translate( '%(total)s/mo', {
-								args: { total: formatCurrency( discountedCost, items[ 0 ]?.currency ?? 'USD' ) },
-							} ) }
+							{ termPricing === 'yearly'
+								? translate( '%(total)s/yr', {
+										args: {
+											total: formatCurrency( totalCost, items[ 0 ]?.currency ?? 'USD' ),
+										},
+								  } )
+								: translate( '%(total)s/mo', {
+										args: {
+											total: formatCurrency( totalCost, items[ 0 ]?.currency ?? 'USD' ),
+										},
+								  } ) }
 						</span>
 					</div>
 

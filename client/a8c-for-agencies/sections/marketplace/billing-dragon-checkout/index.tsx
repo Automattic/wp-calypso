@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -5,9 +6,10 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { TermPricingContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -43,6 +45,8 @@ function BillingDragonCheckoutContent( {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
+	const { termPricing } = useContext( TermPricingContext );
+	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -175,13 +179,20 @@ function BillingDragonCheckoutContent( {
 		const productsToAdd = cartItems.flatMap( ( product ) => {
 			const productQuantity = product.quantity > 0 ? product.quantity : 1;
 
+			// For Pressable plans with BD checkout enabled, use the billing term-specific product ID
+			let productId = product.alternative_product_id || product.product_id;
+			if ( isBdCheckoutEnabled && product.monthly_product_id && product.yearly_product_id ) {
+				productId =
+					termPricing === 'yearly' ? product.yearly_product_id : product.monthly_product_id;
+			}
+
 			let cartItemIndex = 0;
 			// Add each product separately instead of using volume
 			// This ensures each site gets the correct tier pricing
 			return Array.from( { length: productQuantity }, () => {
 				const product_cart = {
 					// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
-					product_id: product.alternative_product_id || product.product_id,
+					product_id: productId,
 					product_slug: product.slug,
 					extra: {
 						isA4ASitelessCheckout: true,
@@ -212,7 +223,17 @@ function BillingDragonCheckoutContent( {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems, isPlanCheckout ] );
+	}, [
+		isReady,
+		error,
+		replaceProductsInCart,
+		responseCart,
+		agency,
+		cartItems,
+		isPlanCheckout,
+		isBdCheckoutEnabled,
+		termPricing,
+	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
