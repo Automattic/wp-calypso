@@ -95,8 +95,6 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/subscription-removed',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/monetize-subscriptions' ),
 		sidebar,
 		membershipsController.cancelledSubscriptionReturnFromRedirect,
 		makeLayout,
@@ -155,8 +153,6 @@ export default ( router ) => {
 
 	router(
 		paths.managePurchaseByOwnership( ':ownershipId' ),
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/billing/purchases' ),
 		sidebar,
 		controller.managePurchaseByOwnership,
 		makeLayout,
