@@ -1,8 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Tooltip } from '@automattic/components';
 import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -10,7 +9,6 @@ import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { TermPricingContext } from '../../context';
 import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
 
@@ -38,8 +36,6 @@ export default function PlanSelectionDetails( {
 
 	const userProducts = useSelector( getProductsList );
 	const { getProductPricingInfo } = useGetProductPricingInfo();
-	const { termPricing } = useContext( TermPricingContext );
-	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
 
 	const isOwner = useSelector( isAgencyOwner );
 
@@ -50,22 +46,6 @@ export default function PlanSelectionDetails( {
 	const { discountedCost } = selectedPlan
 		? getProductPricingInfo( userProducts, selectedPlan, 1 )
 		: { discountedCost: 0 };
-
-	// Look up the product in userProducts to check for introductory offer based on billing term
-	const productIdForOffer =
-		termPricing === 'yearly' ? selectedPlan?.yearly_product_id : selectedPlan?.monthly_product_id;
-	const productWithOffer = productIdForOffer
-		? Object.values( userProducts ).find( ( p ) => p.product_id === productIdForOffer )
-		: null;
-
-	const introductoryOffer = productWithOffer?.introductory_offer;
-	const hasIntroductoryOffer = isBdCheckoutEnabled && !! introductoryOffer?.cost_per_interval;
-
-	// The introductory offer cost_per_interval is the price for the selected billing term
-	const introductoryOfferCost = introductoryOffer?.cost_per_interval ?? 0;
-
-	// Get the original price (before introductory offer) from the same product
-	const originalPrice = productWithOffer?.cost ?? discountedCost;
 
 	const onContactUs = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_contact_us_click' ) );
@@ -100,23 +80,12 @@ export default function PlanSelectionDetails( {
 
 					{ ! isReferMode && selectedPlan && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
-							<div className="pressable-overview-plan-selection__details-card-header-price-row">
-								<strong className="pressable-overview-plan-selection__details-card-header-price-value">
-									{ formatCurrency(
-										hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
-										selectedPlan.currency
-									) }
-								</strong>
-								{ hasIntroductoryOffer && (
-									<span className="pressable-overview-plan-selection__details-card-header-price-original">
-										{ formatCurrency( originalPrice, selectedPlan.currency ) }
-									</span>
-								) }
-							</div>
+							<strong className="pressable-overview-plan-selection__details-card-header-price-value">
+								{ formatCurrency( discountedCost, selectedPlan.currency ) }
+							</strong>
 							<span className="pressable-overview-plan-selection__details-card-header-price-interval">
-								{ termPricing === 'yearly'
-									? translate( 'per plan per year' )
-									: translate( 'per plan per month' ) }
+								{ selectedPlan.price_interval === 'day' && translate( 'per plan per day' ) }
+								{ selectedPlan.price_interval === 'month' && translate( 'per plan per month' ) }
 							</span>
 						</div>
 					) }
