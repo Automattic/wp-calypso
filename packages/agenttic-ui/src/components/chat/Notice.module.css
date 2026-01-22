@@ -62,7 +62,8 @@
 }
 
 .action:hover:not(:disabled) {
-	color: var(--color-muted-foreground);
+	color: var(--color-foreground);
+	opacity: 0.8;
 }
 
 .action:is(:focus, :focus-visible) {

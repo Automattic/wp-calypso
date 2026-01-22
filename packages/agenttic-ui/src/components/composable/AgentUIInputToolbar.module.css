@@ -8,6 +8,7 @@
 	gap: var(--spacing-1);
 	padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2.5);
 	background: var(--color-muted);
+	color: var(--color-foreground);
 	border-radius: calc(var(--radius) - 6px);
 	font-size: var(--text-sm);
 	font-family: inherit;
