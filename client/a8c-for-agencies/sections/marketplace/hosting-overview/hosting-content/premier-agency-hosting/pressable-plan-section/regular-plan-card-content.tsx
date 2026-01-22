@@ -50,6 +50,15 @@ export default function PressablePlanSelectorCard( {
 	// Get the original price (before introductory offer) from the same product
 	const originalPrice = productWithOffer?.cost ?? discountedCost;
 
+	const billingIntervalText = useMemo( () => {
+		if ( ! hasIntroductoryOffer ) {
+			return translate( 'per month, billed yearly' );
+		}
+		return termPricing === 'yearly'
+			? translate( 'per year, billed yearly' )
+			: translate( 'per month, billed monthly' );
+	}, [ hasIntroductoryOffer, termPricing, translate ] );
+
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {
 			return translate( 'Add %(planName)s to referral', {
@@ -99,9 +108,7 @@ export default function PressablePlanSelectorCard( {
 						</div>
 
 						<div className="pressable-plan-card-content__price-interval">
-							{ termPricing === 'yearly'
-								? translate( 'per year, billed yearly' )
-								: translate( 'per month, billed monthly' ) }
+							{ billingIntervalText }
 						</div>
 					</div>
 				) }
