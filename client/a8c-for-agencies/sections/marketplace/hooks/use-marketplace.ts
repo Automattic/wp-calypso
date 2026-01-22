@@ -35,22 +35,28 @@ export const calculateDiscountPercentage = (
 export const getWPCOMTieredPrice = (
 	product: APIProductFamilyProduct,
 	quantity: number,
-	termPricing: TermPricingType
+	termPricing: TermPricingType,
+	ownedPlans = 0
 ) => {
 	// Calculate actual cost (base product price * quantity)
 	const basePricePerUnit =
 		termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
 	const actualCost = basePricePerUnit * quantity;
+	const tierPrices =
+		termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
+	const tierQuantity = quantity + ownedPlans;
 
-	// Find tier for exact quantity, or for 10 units if quantity > 10
+	// Find tier for exact quantity, or get the greatest unit that is less than or equal to tierQuantity
 	const tier =
-		product?.price_tier_list?.find( ( t ) => t.units === quantity ) ||
-		( quantity > 10 ? product?.price_tier_list?.find( ( t ) => t.units === 10 ) : undefined );
+		tierPrices?.find( ( t ) => t.units === tierQuantity ) ||
+		tierPrices
+			?.filter( ( t ) => t.units <= tierQuantity )
+			.sort( ( a, b ) => b.units - a.units )[ 0 ];
 
 	// Get price per unit from tier if found, otherwise from product
 	let pricePerUnit: number;
 	if ( tier ) {
-		pricePerUnit = termPricing === 'yearly' ? tier.yearly_price : tier.monthly_price;
+		pricePerUnit = tier.price;
 	} else {
 		pricePerUnit = basePricePerUnit;
 	}
@@ -200,7 +206,7 @@ export const useGetProductPricingInfo = (
 			let discountPercentage: number;
 
 			if ( isTermPricingEnabled && termPricing ) {
-				const pricingInfo = getWPCOMTieredPrice( product, quantity, termPricing );
+				const pricingInfo = getWPCOMTieredPrice( product, quantity, termPricing, ownedPlans );
 				actualCost = pricingInfo.actualCost;
 				discountedCost = pricingInfo.discountedCost;
 				discountPercentage = pricingInfo.discountPercentage;

@@ -23,12 +23,12 @@ const createOptionsFromPriceTierList = (
 	plan: APIProductFamilyProduct,
 	termPricing: TermPricingType
 ) => {
-	const priceTierList = plan.price_tier_list || [];
+	const priceTierList =
+		termPricing === 'yearly' ? plan.tier_yearly_prices || [] : plan.tier_monthly_prices || [];
 	const basePrice = termPricing === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
 
 	const options = priceTierList.map( ( tier ) => {
-		const tierPrice = termPricing === 'yearly' ? tier.yearly_price : tier.monthly_price;
-		const discountPercent = calculateDiscountPercentage( basePrice, tierPrice );
+		const discountPercent = calculateDiscountPercentage( basePrice, tier.price );
 
 		return {
 			value: tier.units,
@@ -69,7 +69,7 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan 
 		let sliderOptions = [];
 
 		if ( isTermPricingEnabled && termPricing && plan ) {
-			// Use price_tier_list when term pricing is enabled
+			// Use tiered prices when term pricing is enabled
 			sliderOptions = createOptionsFromPriceTierList( plan, termPricing );
 		} else {
 			// Fallback to discount tiers
