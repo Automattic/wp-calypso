@@ -5,10 +5,12 @@
   --color-white: #FFFFFF;
   --color-background: #FCFCFC;
   --color-foreground: #1F1F1F;
+  --color-popover: #FCFCFC;
+  --color-popover-muted: #FCFCFC;
   --color-primary: #2D5AF2;
+  --color-primary-foreground: var(--color-white);
   --color-muted: #E9E9E9;
   --color-muted-foreground: #757575;
-  --color-primary-foreground: var(--color-white);
   --color-ring: var(--color-primary);
   --color-success-background: #F1F7F1;
   --color-success: var(--color-foreground);
@@ -73,6 +75,8 @@
 .agenttic.dark {
   --color-background: #1F1F1F;
   --color-foreground: #FFFFFF;
+  --color-popover: #1F1F1F;
+  --color-popover-muted: #2F2F2F;
   --color-muted: #464646;
   --color-muted-foreground: #8F8F8F;
   --color-success-background: #1F2E1F;
