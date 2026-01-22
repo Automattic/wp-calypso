@@ -1,4 +1,5 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
+import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -22,7 +23,13 @@ const requiresPlanUpgrade = ( site: Site ) => {
 };
 
 const useDomainSuggestion = ( site: Site ) => {
-	const search = site.slug.split( '.' )[ 0 ];
+	if ( site.slug === undefined ) {
+		captureException( new Error( 'site.slug is undefined in useDomainSuggestion()' ), {
+			extra: { site },
+		} );
+	}
+
+	const search = site.slug?.split( '.' )[ 0 ];
 	const { data: allDomainSuggestions } = useQuery(
 		domainSuggestionsQuery( search, {
 			vendor: 'domain-upsell',
