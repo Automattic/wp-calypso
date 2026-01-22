@@ -30,16 +30,20 @@ export default function useConversationList( { agentId, authProvider }: Options 
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when `botId` changes
 		queryKey: [ 'agents-manager-conversation-list', botId ],
 		queryFn: async () => {
-			const result = await listConversationsFromServer( botId, {
-				apiBaseUrl: API_BASE_URL,
-				authProvider,
-			} );
+			const result = await listConversationsFromServer(
+				botId,
+				{
+					apiBaseUrl: API_BASE_URL,
+					authProvider,
+				},
+				true
+			);
 
-			// Sort by `last_message.created_at` descending (most recent first)
+			// Sort by `first_message.created_at` descending (most recent first)
 			// Note: Dates are in MySQL format "2025-11-06 14:29:49"
 			const sorted = result.sort( ( a, b ) => {
-				const timeA = new Date( a.last_message?.created_at || 0 ).getTime();
-				const timeB = new Date( b.last_message?.created_at || 0 ).getTime();
+				const timeA = new Date( a.first_message?.created_at || 0 ).getTime();
+				const timeB = new Date( b.first_message?.created_at || 0 ).getTime();
 				return timeB - timeA;
 			} );
 
