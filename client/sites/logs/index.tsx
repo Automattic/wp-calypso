@@ -2,7 +2,7 @@ import page, { type Callback, type Context } from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
@@ -22,7 +22,7 @@ export default function () {
 		'/site-logs/:site/php',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/logs/php`
 		),
 		navigation,
@@ -36,7 +36,7 @@ export default function () {
 		'/site-logs/:site/web',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/logs/server`
 		),
 		navigation,

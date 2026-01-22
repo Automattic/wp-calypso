@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -17,7 +17,7 @@ export default ( router ) => {
 	router(
 		paths.paymentMethods,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods' ),
 		sidebar,
 		paymentMethodsController.paymentMethods,
 		makeLayout,
@@ -27,7 +27,7 @@ export default ( router ) => {
 	router(
 		paths.addNewPaymentMethod,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/add' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
 		sidebar,
 		controller.addNewPaymentMethod,
 		makeLayout,
@@ -37,7 +37,7 @@ export default ( router ) => {
 	router(
 		paths.addCreditCard,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/add' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
 		sidebar,
 		controller.addNewPaymentMethod,
 		makeLayout,
@@ -52,7 +52,7 @@ export default ( router ) => {
 	router(
 		paths.vatDetails,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/payment-methods/tax-details' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/tax-details' ),
 		sidebar,
 		controller.vatDetails,
 		makeLayout,
@@ -62,7 +62,7 @@ export default ( router ) => {
 	router(
 		paths.billingHistory,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/history' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/history' ),
 		sidebar,
 		billingController.billingHistory,
 		makeLayout,
@@ -72,7 +72,7 @@ export default ( router ) => {
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/monetize-subscriptions/${ params.subscriptionId }`
 		),
 		sidebar,
@@ -84,7 +84,7 @@ export default ( router ) => {
 	router(
 		paths.purchasesRoot + '/crm-downloads/:subscription',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/monetize-subscriptions/${ params.subscription }`
 		),
 		sidebar,
@@ -96,7 +96,7 @@ export default ( router ) => {
 	router(
 		paths.purchasesRoot + '/subscription-removed',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/monetize-subscriptions' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/monetize-subscriptions' ),
 		sidebar,
 		membershipsController.cancelledSubscriptionReturnFromRedirect,
 		makeLayout,
@@ -120,9 +120,7 @@ export default ( router ) => {
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
-			( params ) => `/me/billing/history/${ params.receiptId }`
-		),
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/me/billing/history/${ params.receiptId }` ),
 		sidebar,
 		billingController.transaction,
 		makeLayout,
@@ -132,7 +130,7 @@ export default ( router ) => {
 	router(
 		paths.purchasesRoot,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/purchases' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/purchases' ),
 		sidebar,
 		controller.list,
 		makeLayout,
@@ -146,7 +144,7 @@ export default ( router ) => {
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }`
 		),
 		sidebar,
@@ -158,7 +156,7 @@ export default ( router ) => {
 	router(
 		paths.managePurchaseByOwnership( ':ownershipId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/billing/purchases' ),
+		maybeRedirectToMultiSiteDashboard( '/me/billing/purchases' ),
 		sidebar,
 		controller.managePurchaseByOwnership,
 		makeLayout,
@@ -172,7 +170,7 @@ export default ( router ) => {
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
 		),
 		sidebar,
@@ -192,7 +190,7 @@ export default ( router ) => {
 	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
 		),
 		sidebar,
@@ -209,7 +207,7 @@ export default ( router ) => {
 	router(
 		paths.addPaymentMethod( ':site', ':purchaseId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `/me/billing/purchases/${ params.purchaseId }/payment-method/change`
 		),
 		sidebar,
@@ -225,7 +223,7 @@ export default ( router ) => {
 	router(
 		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params ) => `me/billing/purchases/${ params.purchaseId }/payment-method/change`
 		),
 		sidebar,

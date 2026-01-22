@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -200,7 +200,7 @@ export default function () {
 	page(
 		paths.domainManagementRoot(),
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/domains' ),
+		maybeRedirectToMultiSiteDashboard( '/domains' ),
 		domainsController.maybeRedirectToDashboard,
 		noSite,
 		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),

@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	setSelectedSiteIdByOrigin,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -15,7 +15,7 @@ export default function () {
 		'/me/account',
 		maybeRedirectToDashboard,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/preferences' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences' ),
 		sidebar,
 		setSelectedSiteIdByOrigin,
 		account,

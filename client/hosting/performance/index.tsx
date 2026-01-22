@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
@@ -17,7 +17,7 @@ export default function () {
 		'/sites/performance/:site',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/performance`
 		),
 		navigation,

@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
@@ -19,7 +19,7 @@ export default function () {
 		'/staging-site/:site',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }`
 		),
 		navigation,

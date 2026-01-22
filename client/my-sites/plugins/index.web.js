@@ -6,7 +6,7 @@ import {
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { noSite, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -128,7 +128,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/plugins' ),
+		maybeRedirectToMultiSiteDashboard( '/plugins' ),
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
@@ -144,7 +144,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( ( params ) => `/plugins/manage/${ params.slug }` ),
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/plugins/manage/${ params.slug }` ),
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
@@ -193,7 +193,7 @@ export default function ( router ) {
 		],
 		redirectLoggedOut,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( ( params ) => {
+		maybeRedirectToMultiSiteDashboard( ( params ) => {
 			if ( params.action === 'create' ) {
 				return `/plugins/scheduled-updates/new`;
 			}

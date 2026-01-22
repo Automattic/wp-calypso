@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	setSelectedSiteIdByOrigin,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { siteSelection, navigation } from 'calypso/my-sites/controller';
@@ -25,7 +25,7 @@ export default function () {
 		'/sites/:site/settings/:feature?',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(),
+		maybeRedirectToMultiSiteDashboard(),
 		navigation,
 		dashboardBackportSiteSettings,
 		siteDashboard( SETTINGS_SITE ),
@@ -37,7 +37,7 @@ export default function () {
 		'/sites/:site',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(),
+		maybeRedirectToMultiSiteDashboard(),
 		navigation,
 		dashboardBackportSiteOverview,
 		siteDashboard( OVERVIEW ),
@@ -61,7 +61,7 @@ export default function () {
 		maybeRemoveCheckoutSuccessNotice,
 		maybeRedirectToDashboard,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(),
+		maybeRedirectToMultiSiteDashboard(),
 		sanitizeQueryParameters,
 		navigation,
 		setSelectedSiteIdByOrigin,

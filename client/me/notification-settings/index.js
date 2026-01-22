@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -12,7 +12,7 @@ export default function () {
 	page(
 		'/me/notifications',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/notifications' ),
+		maybeRedirectToMultiSiteDashboard( '/me/notifications' ),
 		sidebar,
 		notifications,
 		makeLayout,
@@ -21,7 +21,7 @@ export default function () {
 	page(
 		'/me/notifications/comments',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/notifications/comments' ),
+		maybeRedirectToMultiSiteDashboard( '/me/notifications/comments' ),
 		sidebar,
 		comments,
 		makeLayout,
@@ -30,7 +30,7 @@ export default function () {
 	page(
 		'/me/notifications/updates',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/notifications/extras' ),
+		maybeRedirectToMultiSiteDashboard( '/me/notifications/extras' ),
 		sidebar,
 		updates,
 		makeLayout,
@@ -39,7 +39,7 @@ export default function () {
 	page(
 		'/me/notifications/subscriptions',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/notifications/emails' ),
+		maybeRedirectToMultiSiteDashboard( '/me/notifications/emails' ),
 		sidebar,
 		subscriptions,
 		makeLayout,

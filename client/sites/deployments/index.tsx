@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -23,7 +23,7 @@ export default function () {
 		'/github-deployments/:site',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
 		),
 		navigation,
@@ -38,7 +38,7 @@ export default function () {
 		'/github-deployments/:site/create',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/settings/repositories`
 		),
 		navigation,
@@ -53,7 +53,7 @@ export default function () {
 		'/github-deployments/:site/manage/:deploymentId',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) =>
 				`/sites/${ params.site }/settings/repositories/manage/${ params.deploymentId }`
 		),
@@ -69,7 +69,7 @@ export default function () {
 		'/github-deployments/:site/logs/:deploymentId',
 		siteSelection,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn(
+		maybeRedirectToMultiSiteDashboard(
 			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
 		),
 		navigation,

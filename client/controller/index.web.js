@@ -493,7 +493,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
  * Middleware to redirect a user to the multi-site dashboard if the value of
  * `hosting-dashboard-opt-in` is configured to `forced-opt-in`.
  */
-export const redirectIfMultiSiteDashboardForcedOptIn = ( path ) => ( context, next ) => {
+export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) => {
 	const state = context.store.getState();
 	if ( hasDashboardForcedOptIn( state ) ) {
 		const redirectUrl = typeof path === 'function' ? path( context.params ) : path;

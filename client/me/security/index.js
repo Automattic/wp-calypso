@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -23,7 +23,7 @@ export default function () {
 	page(
 		'/me/security',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security' ),
 		sidebar,
 		mainPageFunction,
 		makeLayout,
@@ -33,7 +33,7 @@ export default function () {
 	page(
 		'/me/security/account-email',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/profile' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/profile' ),
 		sidebar,
 		securityAccountEmail,
 		makeLayout,
@@ -43,7 +43,7 @@ export default function () {
 	page(
 		'/me/security/password',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/password' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/password' ),
 		sidebar,
 		password,
 		makeLayout,
@@ -53,7 +53,7 @@ export default function () {
 	page(
 		'/me/security/social-login',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/social-logins' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/social-logins' ),
 		sidebar,
 		socialLogin,
 		makeLayout,
@@ -63,7 +63,7 @@ export default function () {
 	page(
 		'/me/security/two-step',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/two-step-auth' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/two-step-auth' ),
 		sidebar,
 		twoStep,
 		makeLayout,
@@ -73,7 +73,7 @@ export default function () {
 	page(
 		'/me/security/connected-applications',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/connected-apps' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/connected-apps' ),
 		sidebar,
 		connectedApplications,
 		makeLayout,
@@ -83,7 +83,7 @@ export default function () {
 	page(
 		'/me/security/account-recovery',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/account-recovery' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/account-recovery' ),
 		sidebar,
 		accountRecovery,
 		makeLayout,
@@ -93,7 +93,7 @@ export default function () {
 	page(
 		'/me/security/ssh-key',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/security/ssh-key' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/ssh-key' ),
 		sidebar,
 		sshKey,
 		makeLayout,

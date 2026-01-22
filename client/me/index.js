@@ -3,7 +3,7 @@ import {
 	makeLayout,
 	render as clientRender,
 	setSelectedSiteIdByOrigin,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import * as controller from './controller';
@@ -15,7 +15,7 @@ export default function () {
 		'/me',
 		controller.maybeRedirectToDashboard,
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/profile' ),
+		maybeRedirectToMultiSiteDashboard( '/me/profile' ),
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,
@@ -34,7 +34,7 @@ export default function () {
 	page(
 		'/me/get-apps',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/apps' ),
+		maybeRedirectToMultiSiteDashboard( '/me/apps' ),
 		controller.sidebar,
 		controller.apps,
 		makeLayout,
@@ -44,7 +44,7 @@ export default function () {
 	page(
 		'/me/mcp',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
 		controller.sidebar,
 		controller.mcp,
 		makeLayout,
@@ -53,7 +53,7 @@ export default function () {
 	page(
 		'/me/mcp-setup',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/mcp/setup' ),
+		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
 		controller.sidebar,
 		controller.mcpSetup,
 		makeLayout,

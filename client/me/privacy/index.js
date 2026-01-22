@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -12,7 +12,7 @@ export default function () {
 	page(
 		'/me/privacy',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/privacy' ),
+		maybeRedirectToMultiSiteDashboard( '/me/privacy' ),
 		sidebar,
 		privacy,
 		makeLayout,

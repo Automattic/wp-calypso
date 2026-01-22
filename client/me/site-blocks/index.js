@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	render as clientRender,
-	redirectIfMultiSiteDashboardForcedOptIn,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
@@ -12,7 +12,7 @@ export default function () {
 	page(
 		'/me/site-blocks',
 		setupPreferences,
-		redirectIfMultiSiteDashboardForcedOptIn( '/me/blocked-sites' ),
+		maybeRedirectToMultiSiteDashboard( '/me/blocked-sites' ),
 		sidebar,
 		siteBlockList,
 		makeLayout,
