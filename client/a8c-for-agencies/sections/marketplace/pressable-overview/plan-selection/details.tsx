@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Tooltip } from '@automattic/components';
 import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
@@ -38,6 +39,7 @@ export default function PlanSelectionDetails( {
 	const userProducts = useSelector( getProductsList );
 	const { getProductPricingInfo } = useGetProductPricingInfo();
 	const { termPricing } = useContext( TermPricingContext );
+	const isBdCheckoutEnabled = isEnabled( 'a4a-bd-checkout' );
 
 	const isOwner = useSelector( isAgencyOwner );
 
@@ -57,7 +59,7 @@ export default function PlanSelectionDetails( {
 		: null;
 
 	const introductoryOffer = productWithOffer?.introductory_offer;
-	const hasIntroductoryOffer = !! introductoryOffer?.cost_per_interval;
+	const hasIntroductoryOffer = isBdCheckoutEnabled && !! introductoryOffer?.cost_per_interval;
 
 	// The introductory offer cost_per_interval is the price for the selected billing term
 	const introductoryOfferCost = introductoryOffer?.cost_per_interval ?? 0;
