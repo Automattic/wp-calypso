@@ -98,6 +98,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							quantity={ displayQuantity }
 							onChange={ setQuantity }
 							ownedPlans={ ownedPlans }
+							plan={ plan }
 						/>
 					</HostingPlanSection.Banner>
 				) }
