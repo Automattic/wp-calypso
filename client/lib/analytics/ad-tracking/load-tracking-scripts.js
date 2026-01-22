@@ -4,6 +4,7 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
+import { hashPii } from '../utils';
 import {
 	debug,
 	TRACKING_IDS,
@@ -280,11 +281,14 @@ function initTikTok() {
 	let advancedMatching = {};
 
 	const currentUser = getCurrentUser();
+	// TikTok specific email validation logic.
+	const notAllowedValues = [ '', 'null', 'undefined' ];
+	const processedEmail = currentUser.email.toLowerCase().replace( /\s/g, '' );
 
-	if ( currentUser ) {
+	if ( currentUser && notAllowedValues.indexOf( processedEmail ) === -1 ) {
 		advancedMatching = {
-			email: currentUser.hashedPii.email,
-			external_id: currentUser.hashedPii.ID,
+			email: hashPii( processedEmail ),
+			external_id: hashPii( currentUser.ID ),
 		};
 	}
 	window.ttq.identify( advancedMatching );
