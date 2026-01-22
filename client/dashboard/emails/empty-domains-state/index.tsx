@@ -30,50 +30,57 @@ export default function EmptyDomainsState() {
 	};
 
 	return (
-		<EmptyState
-			title={ __( 'You need a domain to set up email' ) }
-			description={ createInterpolateElement(
-				__( 'You need a domain to set up email. <learnMoreLink/>' ),
-				{
-					learnMoreLink: <InlineSupportLink supportContext="emails" />,
-				}
-			) }
-		>
-			<EmptyState.ActionList>
-				<EmptyState.ActionItem
-					title={ __( 'Find a domain' ) }
-					description={ __( 'Search available domains for your email address.' ) }
-					decoration={ <Icon icon={ search } size={ 24 } /> }
-					actions={
-						<Button
-							variant="secondary"
-							href={ wpcomLink( '/start/domain' ) }
-							onClick={ handleSearchDomainsClick }
-							size="compact"
-							__next40pxDefaultSize
-						>
-							{ __( 'Search domains' ) }
-						</Button>
-					}
-				/>
-				<EmptyState.ActionItem
-					title={ __( 'Use your own domain' ) }
-					description={ __( 'Transfer an existing domain to set up email here.' ) }
-					decoration={ <Icon icon={ globe } size={ 24 } /> }
-					actions={
-						<Button
-							variant="secondary"
-							href={ wpcomLink( '/setup/domain-transfer' ) }
-							onClick={ handleTransferDomainClick }
-							size="compact"
-							__next40pxDefaultSize
-						>
-							{ __( 'Start transfer' ) }
-						</Button>
-					}
-				/>
-			</EmptyState.ActionList>
-			<OfferCard onClick={ handleOfferClick } />
-		</EmptyState>
+		<EmptyState.Wrapper>
+			<EmptyState>
+				<EmptyState.Header>
+					<EmptyState.Title>{ __( 'You need a domain to set up email' ) }</EmptyState.Title>
+					<EmptyState.Description>
+						{ createInterpolateElement(
+							__( 'You need a domain to set up email. <learnMoreLink/>' ),
+							{
+								learnMoreLink: <InlineSupportLink supportContext="emails" />,
+							}
+						) }
+					</EmptyState.Description>
+				</EmptyState.Header>
+				<EmptyState.Content>
+					<EmptyState.ActionList>
+						<EmptyState.ActionItem
+							title={ __( 'Find a domain' ) }
+							description={ __( 'Search available domains for your email address.' ) }
+							decoration={ <Icon icon={ search } size={ 24 } /> }
+							actions={
+								<Button
+									variant="secondary"
+									href={ wpcomLink( '/start/domain' ) }
+									onClick={ handleSearchDomainsClick }
+									size="compact"
+									__next40pxDefaultSize
+								>
+									{ __( 'Search domains' ) }
+								</Button>
+							}
+						/>
+						<EmptyState.ActionItem
+							title={ __( 'Use your own domain' ) }
+							description={ __( 'Transfer an existing domain to set up email here.' ) }
+							decoration={ <Icon icon={ globe } size={ 24 } /> }
+							actions={
+								<Button
+									variant="secondary"
+									href={ wpcomLink( '/setup/domain-transfer' ) }
+									onClick={ handleTransferDomainClick }
+									size="compact"
+									__next40pxDefaultSize
+								>
+									{ __( 'Start transfer' ) }
+								</Button>
+							}
+						/>
+					</EmptyState.ActionList>
+					<OfferCard onClick={ handleOfferClick } />
+				</EmptyState.Content>
+			</EmptyState>
+		</EmptyState.Wrapper>
 	);
 }
