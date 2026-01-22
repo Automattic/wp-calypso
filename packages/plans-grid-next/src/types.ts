@@ -289,6 +289,12 @@ export type GridContextProps = {
 	 * When true, apply var1d experiment styling to storage and other components.
 	 */
 	isVar1dVariant?: boolean;
+
+	/**
+	 * When true, indicates the user is in an experiment variant.
+	 * Used to display experiment-specific feature titles in the comparison grid.
+	 */
+	isExperimentVariant?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<
