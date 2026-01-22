@@ -64,7 +64,7 @@ export default function WPCOMPlanSelector( {
 
 	const originalPrice = Number( plan?.amount ?? 0 ) * quantity;
 	const pricingInfo = isTermPricingEnabled
-		? getWPCOMTieredPrice( plan, quantity, termPricing )
+		? getWPCOMTieredPrice( plan, quantity, termPricing, ownedPlans )
 		: {
 				actualCost: originalPrice,
 				discountedCost: originalPrice - originalPrice * discount,
