@@ -53,7 +53,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 						? translate( 'Unable to add recommendation.' )
 						: translate( 'Unable to add feed to list.' );
 				// Support custom error messages
-				const errorMessage = action.errorMessage || error.message || defaultErrorMessage;
+				const errorMessage = action.errorMessage || error?.message || defaultErrorMessage;
 				return [
 					errorNotice( errorMessage ),
 					// Revert the optimistic add by dispatching a remove action that bypasses the data layer
