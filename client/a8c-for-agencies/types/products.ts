@@ -4,6 +4,11 @@ export interface APIProductFamilyProductBundlePrice {
 	price_per_unit: number; // price per day in cents
 }
 
+export interface APIProductTierPrice {
+	units: number;
+	price: number;
+}
+
 export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;
@@ -22,11 +27,8 @@ export interface APIProductFamilyProduct {
 	supported_bundles: APIProductFamilyProductBundlePrice[];
 	monthly_price?: number;
 	yearly_price?: number;
-	price_tier_list?: {
-		units: number;
-		monthly_price: number;
-		yearly_price: number;
-	}[];
+	tier_monthly_prices?: APIProductTierPrice[];
+	tier_yearly_prices?: APIProductTierPrice[];
 }
 
 export interface APIProductFamily {
