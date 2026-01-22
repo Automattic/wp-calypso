@@ -270,6 +270,7 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 		conversation,
 		connectionStatus,
 		agentticMessages,
+		isLoadingConversation: isSettingUpSmooch,
 		onSubmit: ( message: string ) => {
 			const messageToSend = {
 				type: 'text',

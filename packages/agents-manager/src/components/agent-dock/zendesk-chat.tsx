@@ -15,8 +15,6 @@ interface AgentChatProps {
 	emptyViewSuggestions?: Suggestion[];
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
-	/** Indicates if a conversation is being loaded. */
-	isLoadingConversation: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
@@ -37,7 +35,6 @@ export function ZendeskChat( {
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	isProcessing,
-	isLoadingConversation,
 	isDocked,
 	isOpen,
 	onClose,
@@ -45,7 +42,7 @@ export function ZendeskChat( {
 	markdownComponents = {},
 	markdownExtensions = {},
 }: AgentChatProps ) {
-	const { agentticMessages, onSubmit } = useManagedZendeskChat( true );
+	const { agentticMessages, onSubmit, isLoadingConversation } = useManagedZendeskChat( true );
 
 	return (
 		<AgentChat
