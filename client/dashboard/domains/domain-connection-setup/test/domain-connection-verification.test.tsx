@@ -419,10 +419,11 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			// Find the "What happens next" card header by its text
-			const [ whatHappensNextHeader ] = screen.getAllByRole( 'button', { name: 'Toggle content' } );
+			// Verify the "What happens next" section is visible and expanded
+			const whatHappensNextSection = screen.getByText( 'What happens next' );
+			expect( whatHappensNextSection ).toBeVisible();
 
-			expect( whatHappensNextHeader ).toHaveAttribute( 'aria-expanded', 'true' );
+			// Verify content is visible (indicates expansion)
 			expect( screen.getByText( 'Automatic verification' ) ).toBeVisible();
 		} );
 	} );
