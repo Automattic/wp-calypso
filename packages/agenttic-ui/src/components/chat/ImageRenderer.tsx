@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './ImageRenderer.module.css';
 import { motion } from 'framer-motion';
 import { CheckIcon } from '../icons/CheckIcon';
@@ -23,6 +23,7 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 	disabled = false,
 } ) => {
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
+	const containerRef = useRef< HTMLDivElement >( null );
 
 	const handleImageClick = ( image: ImageData ) => {
 		setSelectedUrl( image.url );
@@ -35,12 +36,19 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 			return;
 		}
 
-		const resetSelection = () => {
-			setSelectedUrl( null );
-			onSelect( null );
+		const handleClickOutside = ( event: MouseEvent ) => {
+			if (
+				containerRef.current &&
+				! containerRef.current.contains( event.target as Node )
+			) {
+				setSelectedUrl( null );
+				onSelect( null );
+			}
 		};
-		window.addEventListener( 'click', resetSelection );
-		return () => window.removeEventListener( 'click', resetSelection );
+
+		window.addEventListener( 'click', handleClickOutside, true );
+		return () =>
+			window.removeEventListener( 'click', handleClickOutside, true );
 	}, [ onSelect, disabled, selectedUrl ] );
 
 	return (
@@ -52,7 +60,7 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 					<CheckIcon /> Done
 				</div>
 			) }
-			<div className={ styles.container }>
+			<div className={ styles.container } ref={ containerRef }>
 				{ images.map( ( image ) => (
 					<button
 						key={ image.url }
@@ -63,10 +71,7 @@ export const ImageRenderer: React.FC< ImageRendererProps > = ( {
 								: '',
 							disabled ? styles.disabled : ''
 						) }
-						onClick={ ( e ) => {
-							e.stopPropagation();
-							handleImageClick( image );
-						} }
+						onClick={ () => handleImageClick( image ) }
 						disabled={ disabled }
 						type="button"
 					>

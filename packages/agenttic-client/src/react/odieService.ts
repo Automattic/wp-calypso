@@ -138,13 +138,15 @@ export async function loadChatFromServer(
 /**
  * List available conversations from server
  * Useful for testing and debugging - lists recent conversations for a bot
- * @param botId  - The bot ID to get conversations for
- * @param config - Service configuration (omit botId, will use parameter)
+ * @param botId           - The bot ID to get conversations for
+ * @param config          - Service configuration (omit botId, will use parameter)
+ * @param useFirstMessage - If `true`, show first message as preview; if `false`, show last message (default: `false`)
  * @return Array of conversation list items
  */
 export async function listConversationsFromServer(
 	botId: string,
-	config: Omit< OdieServiceConfig, 'botId' >
+	config: Omit< OdieServiceConfig, 'botId' >,
+	useFirstMessage = false
 ): Promise< ServerConversationListItem[] > {
 	const { apiBaseUrl = DEFAULT_API_BASE_URL, authProvider } = config;
 
@@ -153,6 +155,11 @@ export async function listConversationsFromServer(
 		`${ apiBaseUrl }/wpcom/v2/odie/conversations/${ encodeURIComponent(
 			botId
 		) }`
+	);
+
+	url.searchParams.set(
+		'truncation_method',
+		useFirstMessage ? 'first_message' : 'last_message'
 	);
 
 	logger( 'Listing conversations from server for bot: %s', botId );

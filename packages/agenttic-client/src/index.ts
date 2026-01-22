@@ -117,6 +117,7 @@ export type {
 	ServerLoadResult,
 	PaginationMeta,
 	ServerConversationListItem,
+	ServerConversationListItemMessage,
 } from './react/serverTypes';
 
 // Odie bot configuration utilities

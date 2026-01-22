@@ -18,7 +18,7 @@
 }
 
 .message.error {
-    color: var(--color-destructive);
+    color: var(--color-error);
 }
 
 .content {

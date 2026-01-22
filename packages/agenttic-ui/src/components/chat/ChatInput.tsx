@@ -82,6 +82,18 @@ export function ChatInput( {
 			// Normalize key to lowercase for easier comparison
 			const key = e.key.toLowerCase();
 
+			// Ignore keydowns from IMEs
+			// e.keyCode === 229: Workaround for Mac Safari where the final Enter/Backspace of an IME composition
+			// is `isComposing=false`, even though it's technically still part of the composition.
+			if (
+				key === 'enter' &&
+				! e.shiftKey &&
+				( e.nativeEvent.isComposing || e.keyCode === 229 )
+			) {
+				e.preventDefault();
+				return;
+			}
+
 			// Override onKeyDown based on canSubmit
 			// https://linear.app/a8c/issue/DES-306
 			if ( key === 'enter' && ! e.shiftKey && ! canSubmit ) {

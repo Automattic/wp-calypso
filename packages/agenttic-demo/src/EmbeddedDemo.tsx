@@ -23,7 +23,7 @@ import {
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 
-const EmbeddedDemo: React.FC = () => {
+const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
 		getClientContext,
 	} ) );
@@ -260,28 +260,10 @@ const EmbeddedDemo: React.FC = () => {
 		<>
 			<style>
 				{ `
-                :root {
-                    --color-brand: #030AB2;
-                    --color-text: #FFF;
-                }
                 body {
-                    background-color: var(--color-brand);
+                    background-color: ${ currentTheme === 'dark' ? '#1F1F1F' : '#FCFCFC' };
                 }
-                .agenttic {
-                    --color-background: var(--color-brand);
-                    --color-foreground: oklch(1 0 0);
-                    --color-primary: oklch(1 0 0);
-                    --color-primary-foreground: var(--color-background);
-                }
-                .agenttic [data-slot="chat-footer"] {
-                    --color-background: oklch(1 0 0);
-                    --color-foreground: oklch(0.241 0 0);
-                    --color-primary: var(--color-brand);
-                    --color-primary-foreground: oklch(1 0 0);
-                    --color-muted: oklch(0.925 0 0);
-                    --color-muted-foreground: oklch(0.6 0 0);
-                }
-                
+
                 /* Override suggestions positioning to appear below footer */
                 .embedded-demo .agenttic [data-slot="conversation-view"] > div:last-child {
                     position: static !important;
@@ -354,8 +336,13 @@ const EmbeddedDemo: React.FC = () => {
 					</button>
 					<button
 						onClick={ () => {
-							setManualThinkingMessage( 'Testing progress message...' );
-							setTimeout( () => setManualThinkingMessage( undefined ), 3000 );
+							setManualThinkingMessage(
+								'Testing progress message...'
+							);
+							setTimeout(
+								() => setManualThinkingMessage( undefined ),
+								3000
+							);
 						} }
 						style={ {
 							padding: '4px 8px',
@@ -380,7 +367,7 @@ const EmbeddedDemo: React.FC = () => {
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					messageRenderer={ messageRenderer }
-					className="agenttic"
+					className={ `agenttic ${ currentTheme }` }
 					placeholder={ [
 						'Ask me anything',
 						'How can I help you today?',
@@ -396,6 +383,11 @@ const EmbeddedDemo: React.FC = () => {
 						<AgentUI.Footer>
 							<AgentUI.Notice />
 							<AgentUI.Input />
+							<AgentUI.InputToolbar label="Custom Toolbar">
+								<div>
+									<p>This is a custom input toolbar.</p>
+								</div>
+							</AgentUI.InputToolbar>
 						</AgentUI.Footer>
 						<AgentUI.Suggestions
 							onSelect={ handleSuggestionSelect }

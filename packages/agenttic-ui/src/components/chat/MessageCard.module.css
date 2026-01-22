@@ -3,8 +3,8 @@
 	align-items: center;
 	gap: var(--spacing-3);
 	padding: var(--spacing-4);
-	background-color: var(--color-popover-muted);
-	border: 1px solid var(--color-popover-border);
+	background-color: var(--color-background);
+	border: 1px solid var(--color-muted);
 	border-radius: var(--radius-sm);
 	text-decoration: none;
 	color: inherit;

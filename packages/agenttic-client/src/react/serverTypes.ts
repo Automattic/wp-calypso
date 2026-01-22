@@ -81,8 +81,16 @@ export interface ServerLoadResult {
 }
 
 /**
- * Conversation list item from server
- * Represents a chat with metadata and latest message preview
+ * Message preview for conversation list items
+ */
+export interface ServerConversationListItemMessage {
+	content: string;
+	role: 'user' | 'bot' | 'system';
+	created_at: string; // MySQL datetime format
+}
+
+/**
+ * Conversation list item with metadata and message preview
  */
 export interface ServerConversationListItem {
 	chat_id: number;
@@ -90,11 +98,8 @@ export interface ServerConversationListItem {
 	wpcom_user_id?: number;
 	session_id?: string;
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
-	last_message?: {
-		content: string;
-		role: 'user' | 'bot' | 'system';
-		created_at: string; // MySQL datetime format
-	};
+	last_message?: ServerConversationListItemMessage;
+	first_message?: ServerConversationListItemMessage;
 }
 
 /**
