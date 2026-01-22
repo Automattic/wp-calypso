@@ -447,6 +447,14 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 	return checkoutProductSlug;
 }
 
+function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		// Akismet checkout never uses a site slug.
+		return '';
+	}
+	return purchase.site_slug || '';
+}
+
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
@@ -465,7 +473,8 @@ export function getRenewUrlForPurchases(
 	const checkoutProductSlug = purchases
 		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
 		.join( ',' );
-	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
+	const checkoutSiteSlug =
+		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
 	const backUrl = redirectToDashboardLink();
