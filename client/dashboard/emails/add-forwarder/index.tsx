@@ -1,5 +1,9 @@
 import { EmailProvider } from '@automattic/api-core';
-import { addEmailForwarderMutation, userMailboxesQuery } from '@automattic/api-queries';
+import {
+	addEmailForwarderMutation,
+	domainQuery,
+	userMailboxesQuery,
+} from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -27,6 +31,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
+import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
@@ -87,6 +92,11 @@ function AddEmailForwarder() {
 		forwards,
 		maxForwards,
 	} = useDomainMaxForwards( formData.domain );
+
+	const { data: domainData } = useQuery( {
+		...domainQuery( formData.domain ),
+		enabled: !! formData.domain,
+	} );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -266,6 +276,10 @@ function AddEmailForwarder() {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
+
+								{ formData.domain && (
+									<DnsRequirementsNotice domainName={ formData.domain } domainData={ domainData } />
+								) }
 
 								<FormTokenField
 									__next40pxDefaultSize
