@@ -74,14 +74,17 @@ export function buildTitanMailboxLink( email: string ) {
 /**
  * Masks an email address for privacy while keeping it recognizable.
  *
- * Shows the first 1-2 characters and last 1-2 characters of the local part,
- * with asterisks in between. The domain is always shown in full.
+ * The domain is always shown in full. The local part is masked as follows:
+ * - 1 char: first char + 3 asterisks (a → a***)
+ * - 2-5 chars: first char + 3 asterisks + last char (john → j***n)
+ * - 6 chars: first 2 chars + 3 asterisks + last char (abcdef → ab***f)
+ * - 7+ chars: first 2 chars + 3 asterisks + last 2 chars (johndoe → jo***oe)
  *
  * Examples:
  * - a@example.com → a***@example.com
  * - ab@example.com → a***b@example.com
- * - abc@example.com → a***c@example.com
  * - john@example.com → j***n@example.com
+ * - abcdef@example.com → ab***f@example.com
  * - johndoe@example.com → jo***oe@example.com
  */
 export function maskEmail( email: string ): string {
@@ -93,16 +96,21 @@ export function maskEmail( email: string ): string {
 	const localPart = email.slice( 0, atIndex );
 	const domain = email.slice( atIndex );
 
-	if ( localPart.length <= 2 ) {
-		// Very short local part: show first char + asterisks
+	if ( localPart.length === 1 ) {
+		// Single char: show first char + asterisks
 		return localPart[ 0 ] + '***' + domain;
 	}
 
-	if ( localPart.length <= 4 ) {
-		// Short local part: show first and last char
+	if ( localPart.length <= 5 ) {
+		// 2-5 chars: show first and last char
 		return localPart[ 0 ] + '***' + localPart[ localPart.length - 1 ] + domain;
 	}
 
-	// Longer local part: show first 2 and last 2 chars
+	if ( localPart.length === 6 ) {
+		// 6 chars: show first 2 and last 1 char
+		return localPart.slice( 0, 2 ) + '***' + localPart[ localPart.length - 1 ] + domain;
+	}
+
+	// 7+ chars: show first 2 and last 2 chars
 	return localPart.slice( 0, 2 ) + '***' + localPart.slice( -2 ) + domain;
 }

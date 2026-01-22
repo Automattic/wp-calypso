@@ -2,7 +2,7 @@ import { maskEmail } from '../email-utils';
 
 describe( 'maskEmail', () => {
 	describe( 'standard email addresses', () => {
-		it( 'should mask a typical email address', () => {
+		it( 'should mask a typical email address (7+ chars)', () => {
 			expect( maskEmail( 'johndoe@example.com' ) ).toBe( 'jo***oe@example.com' );
 		} );
 
@@ -11,13 +11,13 @@ describe( 'maskEmail', () => {
 		} );
 	} );
 
-	describe( 'short local parts', () => {
+	describe( 'short local parts (1-5 chars)', () => {
 		it( 'should handle single character local part', () => {
 			expect( maskEmail( 'a@example.com' ) ).toBe( 'a***@example.com' );
 		} );
 
 		it( 'should handle two character local part', () => {
-			expect( maskEmail( 'ab@example.com' ) ).toBe( 'a***@example.com' );
+			expect( maskEmail( 'ab@example.com' ) ).toBe( 'a***b@example.com' );
 		} );
 
 		it( 'should handle three character local part', () => {
@@ -27,11 +27,21 @@ describe( 'maskEmail', () => {
 		it( 'should handle four character local part', () => {
 			expect( maskEmail( 'abcd@example.com' ) ).toBe( 'a***d@example.com' );
 		} );
+
+		it( 'should handle five character local part', () => {
+			expect( maskEmail( 'abcde@example.com' ) ).toBe( 'a***e@example.com' );
+		} );
 	} );
 
-	describe( 'longer local parts', () => {
-		it( 'should show first 2 and last 2 chars for 5+ character local part', () => {
-			expect( maskEmail( 'abcde@example.com' ) ).toBe( 'ab***de@example.com' );
+	describe( 'medium local parts (6 chars)', () => {
+		it( 'should show first 2 and last 1 char for 6 character local part', () => {
+			expect( maskEmail( 'abcdef@example.com' ) ).toBe( 'ab***f@example.com' );
+		} );
+	} );
+
+	describe( 'longer local parts (7+ chars)', () => {
+		it( 'should show first 2 and last 2 chars for 7 character local part', () => {
+			expect( maskEmail( 'abcdefg@example.com' ) ).toBe( 'ab***fg@example.com' );
 		} );
 
 		it( 'should handle very long local parts', () => {
