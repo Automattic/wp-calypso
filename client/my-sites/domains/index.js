@@ -211,6 +211,8 @@ export default function () {
 
 	page(
 		paths.domainManagementList( ':site' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/sites/${ params.site }/domains` ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,
 		makeLayout,
@@ -344,6 +346,10 @@ export default function () {
 
 	page(
 		paths.domainMappingSetup( ':site', ':domain' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/domains/${ params.domain }/domain-connection-setup`
+		),
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
@@ -403,6 +409,10 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot() + '/:domain/edit',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/domains/${ params.domain }?back_to=site-domains`
+		),
 		stagingSiteNotSupportedRedirect,
 		domainsController.redirectDomainToSite,
 		makeLayout,
@@ -423,6 +433,8 @@ export default function () {
 	page(
 		paths.domainManagementOverviewRoot() + '/:domain/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }` ),
 		navigation,
 		domainManagementController.domainManagementV2,
 		domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
@@ -434,6 +446,10 @@ export default function () {
 	page(
 		paths.domainManagementAllEmailRoot() + '/:domain/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/emails/choose-email-solution/${ params.domain }`
+		),
 		navigation,
 		emailController.emailManagement,
 		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
@@ -469,6 +485,8 @@ export default function () {
 	page(
 		paths.domainManagementAllRoot() + '/contact-info/edit/:domain/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/contact-info` ),
 		navigation,
 		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
 		domainManagementController.domainManagementEditContactInfo,
@@ -481,6 +499,8 @@ export default function () {
 	page(
 		paths.domainManagementOverviewRoot() + '/:domain/dns/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/dns` ),
 		navigation,
 		domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
 		domainManagementController.domainManagementDns,
@@ -493,6 +513,8 @@ export default function () {
 	page(
 		paths.domainManagementOverviewRoot() + '/:domain/dns/add/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/dns/add` ),
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
 		domainManagementController.domainManagementDnsAddRecord,
@@ -529,6 +551,10 @@ export default function () {
 	page(
 		paths.domainManagementOverviewRoot() + '/:domain/transfer/other-site/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/domains/${ params.domain }/transfer/other-site`
+		),
 		navigation,
 		domainManagementController.domainManagementSubpageParams( TRANSFER_OTHER_SITE ),
 		domainManagementController.domainManagementTransferToOtherSite,
