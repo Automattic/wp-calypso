@@ -7,9 +7,8 @@ import { useEffect, useState } from '@wordpress/element';
  * Custom hook to handle image URL conversion and cleanup
  *
  * Converts File objects to blob URLs and handles cleanup to prevent memory leaks.
- *
  * @param {File | string | null} image - The image as a File object or URL string
- * @return {string | null} The URL string to use for the image src
+ * @returns {string | null} The URL string to use for the image src
  */
 export function useImageUrl( image: File | string | null ): string | null {
 	const [ url, setUrl ] = useState< string | null >( null );

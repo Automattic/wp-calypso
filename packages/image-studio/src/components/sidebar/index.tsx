@@ -1,16 +1,16 @@
 import { Button, Icon } from '@wordpress/components';
-import { close, external } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
-import './style.scss';
 import { __ } from '@wordpress/i18n';
-import { EditableField } from './editable-field';
-import { FileDetails } from './file-details';
+import { close, external } from '@wordpress/icons';
 import { store as imageStudioStore } from '../../store';
+import { MetadataField } from '../../types';
 import {
 	trackImageStudioMetadataUpdated,
 	trackImageStudioSidebarClose,
 } from '../../utils/tracking';
-import { MetadataField } from '../../types';
+import { EditableField } from './editable-field';
+import { FileDetails } from './file-details';
+import './style.scss';
 
 interface ImageStudioSidebarProps {
 	onClose: () => void;
@@ -59,7 +59,9 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 	);
 
 	const handleSave = async ( key: MetadataField, value: string ) => {
-		if ( ! attachmentId ) return;
+		if ( ! attachmentId ) {
+			return;
+		}
 
 		const metadataPayload = {
 			...( canvasMetadata || {} ),
@@ -89,7 +91,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				label={ __( 'Caption', 'default' ) }
 				value={ canvasMetadata?.caption || '' }
 				onSave={ ( value ) => handleSave( MetadataField.Caption, value ) }
-				isTextarea={ true }
+				isTextarea
 				field={ MetadataField.Caption }
 				attachmentId={ attachmentId }
 			/>
@@ -97,7 +99,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				label={ __( 'Description', 'default' ) }
 				value={ canvasMetadata?.description || '' }
 				onSave={ ( value ) => handleSave( MetadataField.Description, value ) }
-				isTextarea={ true }
+				isTextarea
 				field={ MetadataField.Description }
 				attachmentId={ attachmentId }
 			/>
@@ -105,7 +107,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				label={ __( 'Alt Text', 'default' ) }
 				value={ canvasMetadata?.alt_text || '' }
 				onSave={ ( value ) => handleSave( MetadataField.AltText, value ) }
-				isTextarea={ true }
+				isTextarea
 				field={ MetadataField.AltText }
 				attachmentId={ attachmentId }
 			/>

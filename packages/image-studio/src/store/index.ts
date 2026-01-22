@@ -277,10 +277,9 @@ const initialState: ImageStudioState = {
 
 /**
  * Reducer
- *
  * @param state  - Current state
  * @param action - Action to handle
- * @return New state
+ * @returns New state
  */
 const reducer = (
 	state: ImageStudioState = initialState,

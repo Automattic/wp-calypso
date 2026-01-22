@@ -1,13 +1,12 @@
-import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import './file-details.scss';
 
 /**
  * Format file size in bytes to human-readable format
- *
  * @param {number} bytes - File size in bytes
- * @return {string} Formatted file size string
+ * @returns {string} Formatted file size string
  */
 function formatFileSize( bytes: number ): string {
 	if ( ! bytes || bytes === 0 ) {
@@ -69,7 +68,9 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				attachment.post
 			) as any;
 
-			if ( post ) return post;
+			if ( post ) {
+				return post;
+			}
 
 			// If not found, try 'page'
 			return select( coreStore ).getEntityRecord( 'postType', 'page', attachment.post ) as any;

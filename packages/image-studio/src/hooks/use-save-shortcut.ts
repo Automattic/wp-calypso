@@ -5,7 +5,6 @@ import { useEffect } from '@wordpress/element';
 
 /**
  * Hook to handle save keyboard shortcut (Cmd+S / Ctrl+S)
- *
  * @param onSave    - Callback to execute when save shortcut is triggered
  * @param isEnabled - Whether the save action is currently enabled
  */
@@ -30,6 +29,7 @@ export const useSaveShortcut = (
 				try {
 					await onSave();
 				} catch ( error ) {
+					// eslint-disable-next-line no-console
 					console.error( '[Image Studio] Save failed:', error );
 				}
 			}

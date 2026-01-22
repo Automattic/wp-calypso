@@ -48,9 +48,8 @@ interface WordPressMediaEntity {
  * to the format expected by Image Studio.
  * Note: this could be placed in @utils/media.js as a getImageDataFromStore
  * function and reused in other places - however, it's being used by image studio (to be moved) so it's kept here for now.
- *
  * @param attachmentId - The attachment ID to fetch.
- * @return The transformed image data or null if not found/error.
+ * @returns The transformed image data or null if not found/error.
  */
 export async function getImageData( attachmentId: number ): Promise< ImageData | null > {
 	try {
@@ -76,6 +75,7 @@ export async function getImageData( attachmentId: number ): Promise< ImageData |
 			height: media.media_details?.height || 0,
 		};
 	} catch ( error ) {
+		// eslint-disable-next-line no-console
 		console.error( 'Error fetching image data:', error );
 		return null;
 	}

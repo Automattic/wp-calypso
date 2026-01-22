@@ -27,7 +27,6 @@
 	}
 
 	.components-textarea-control__input {
-		/* stylelint-disable-next-line property-no-unknown -- field-sizing is a valid CSS property and in this case is used as progressive enhancement */
 		field-sizing: content;
 		min-height: 4lh;
 		max-height: 13lh;

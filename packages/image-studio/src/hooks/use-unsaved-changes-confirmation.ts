@@ -1,12 +1,5 @@
-/**
- * WordPress dependencies
- */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 
 /**
@@ -33,7 +26,6 @@ export interface UseUnsavedChangesConfirmationReturn {
 /**
  * Encapsulates the "unsaved changes" confirmation flow.
  * Manages dialog state and orchestrates save/discard/exit callbacks.
- *
  * @param root0
  * @param root0.onSave    - Save checkpoint callback
  * @param root0.onDiscard - Discard changes callback

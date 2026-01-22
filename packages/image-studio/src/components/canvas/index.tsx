@@ -1,16 +1,5 @@
-/**
- * WordPress dependencies
- */
-import { forwardRef } from '@wordpress/element';
-
-/**
- * External dependencies
- */
 import { cn } from '@automattic/agenttic-ui';
-
-/**
- * Internal dependencies
- */
+import { forwardRef } from '@wordpress/element';
 import LoadingSpinner from '../loading-spinner';
 import './style.scss';
 

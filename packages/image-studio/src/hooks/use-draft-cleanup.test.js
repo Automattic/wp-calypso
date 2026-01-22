@@ -7,6 +7,7 @@
  *   - Delete: all other draft IDs in the current session.
  *   - originalAttachmentId and all savedAttachmentIds are NEVER deleted.
  */
+/* eslint-disable import/no-extraneous-dependencies, import/order */
 import { renderHook, waitFor } from '@testing-library/react';
 
 // Mutable selector state used by the `select` mock.

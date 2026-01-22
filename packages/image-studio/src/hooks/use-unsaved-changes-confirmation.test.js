@@ -7,6 +7,7 @@
  * - Discard: runs onDiscard, then onExit( true ).
  * - Clean exit (no changes): runs onExit( false ).
  */
+/* eslint-disable import/no-extraneous-dependencies, import/order */
 import { act, renderHook } from '@testing-library/react';
 
 // Store selector and action mocks

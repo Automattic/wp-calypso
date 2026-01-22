@@ -1,5 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import { BigSkyIcon, cn } from '@automattic/agenttic-ui';
+import { __ } from '@wordpress/i18n';
 import './style.scss';
 
 export const GenerateLayout = ( {

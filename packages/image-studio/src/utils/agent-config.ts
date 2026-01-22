@@ -7,13 +7,13 @@
 /**
  * External dependencies
  */
-import type { AuthProvider, UseAgentChatConfig } from '@automattic/agenttic-client';
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { registerUpdateCanvasImageAbility } from '../abilities';
 import { contextProvider } from './client-context';
 import { createToolProvider } from './tool-provider';
+import type { AuthProvider, UseAgentChatConfig } from '@automattic/agenttic-client';
 
 /**
  * Constants
@@ -246,9 +246,8 @@ const createAuthProvider = (): AuthProvider => {
 
 /**
  * Create a default agent config for Image Studio
- *
  * @param sessionId - The session ID
- * @return Agent configuration
+ * @returns Agent configuration
  */
 async function createDefaultAgentConfig( sessionId: string ): Promise< UseAgentChatConfig > {
 	// Register abilities before creating config

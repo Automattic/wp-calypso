@@ -1,43 +1,30 @@
-/**
- * WordPress dependencies
- */
+import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import { AgentUI, cn } from '@automattic/agenttic-ui';
-
-/**
- * Internal dependencies
- */
+import threeDModelPreview from '../../assets/3d-model.webp';
+import analogFilmPreview from '../../assets/analog-film.webp';
+import animePreview from '../../assets/anime.webp';
+import autoPreview from '../../assets/auto.webp';
+import cinematicPreview from '../../assets/cinematic.webp';
+import comicbookPreview from '../../assets/comicbook.webp';
+import craftClayPreview from '../../assets/craft-clay.webp';
+import digitalArtPreview from '../../assets/digital-art.webp';
+import enhancePreview from '../../assets/enhance.webp';
+import fantasyArtPreview from '../../assets/fantasy-art.webp';
+import isometricPreview from '../../assets/isometric.webp';
+import lineArtPreview from '../../assets/line-art.webp';
+import lowpolyPreview from '../../assets/lowpoly.webp';
+import neonpunkPreview from '../../assets/neonpunk.webp';
+import origamiPreview from '../../assets/origami.webp';
+import photographicPreview from '../../assets/photographic.webp';
+import pixelArtPreview from '../../assets/pixel-art.webp';
+import texturePreview from '../../assets/texture.webp';
 import { store as imageStudioStore } from '../../store';
 import { BrushIcon } from '../icons/BrushIcon';
 
 interface StylePickerProps {
 	disabled?: boolean;
 }
-
-// Import individual style preview images
-import autoPreview from '../../assets/auto.webp';
-import enhancePreview from '../../assets/enhance.webp';
-import animePreview from '../../assets/anime.webp';
-import photographicPreview from '../../assets/photographic.webp';
-import digitalArtPreview from '../../assets/digital-art.webp';
-import comicbookPreview from '../../assets/comicbook.webp';
-import fantasyArtPreview from '../../assets/fantasy-art.webp';
-import analogFilmPreview from '../../assets/analog-film.webp';
-import neonpunkPreview from '../../assets/neonpunk.webp';
-import isometricPreview from '../../assets/isometric.webp';
-import lowpolyPreview from '../../assets/lowpoly.webp';
-import origamiPreview from '../../assets/origami.webp';
-import lineArtPreview from '../../assets/line-art.webp';
-import craftClayPreview from '../../assets/craft-clay.webp';
-import cinematicPreview from '../../assets/cinematic.webp';
-import threeDModelPreview from '../../assets/3d-model.webp';
-import pixelArtPreview from '../../assets/pixel-art.webp';
-import texturePreview from '../../assets/texture.webp';
 
 export const STYLE_OPTIONS = [
 	{ label: __( 'Select style', 'default' ), value: 'none', preview: null },

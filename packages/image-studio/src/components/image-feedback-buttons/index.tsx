@@ -4,11 +4,11 @@
  * Displays thumbs up/down feedback buttons overlaid on the bottom-left of the generated image.
  * Uses the Agenttic UI MessageActions component for consistent styling and behavior.
  */
+import { cn, MessageActions, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { cn, MessageActions, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
-import type { ImageStudioMode } from '../../types';
 import { trackImageStudioImageFeedback } from '../../utils/tracking';
+import type { ImageStudioMode } from '../../types';
 import './style.scss';
 
 interface ImageFeedbackButtonsProps {
@@ -21,7 +21,6 @@ interface ImageFeedbackButtonsProps {
 
 /**
  * Submit feedback for an image to the API and track the event
- *
  * @param {string}          imageUrl     - URL of the image being rated
  * @param {'up' | 'down'}   feedback     - User's feedback rating
  * @param {string}          sessionId    - Current session ID

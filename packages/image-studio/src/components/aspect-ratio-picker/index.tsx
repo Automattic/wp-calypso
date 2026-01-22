@@ -1,17 +1,6 @@
-/**
- * WordPress dependencies
- */
+import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import { AgentUI, cn } from '@automattic/agenttic-ui';
-
-/**
- * Internal dependencies
- */
 import { store as imageStudioStore } from '../../store';
 import { AspectRatioIcon } from '../icons/AspectRatioIcon';
 

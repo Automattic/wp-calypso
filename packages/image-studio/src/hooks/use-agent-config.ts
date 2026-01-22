@@ -1,6 +1,5 @@
 import { getAgentManager } from '@automattic/agenttic-client';
 import { useEffect, useState } from '@wordpress/element';
-
 import { getSessionId } from '../utils/session';
 
 /**
@@ -10,11 +9,10 @@ import { getSessionId } from '../utils/session';
  * - Manages session ID from the session utility
  * - Handles agent cleanup on unmount
  * - Returns null while loading
- *
  * @param agentConfigFactory                   - Factory function to create agent config
  * @param agentConfigFactory.createAgentConfig
  * @param modalOpenKey                         - Key that changes when modal reopens (triggers reload)
- * @return Loaded agent config or null if still loading
+ * @returns Loaded agent config or null if still loading
  */
 export function useAgentConfig(
 	agentConfigFactory: {

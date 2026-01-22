@@ -1,16 +1,16 @@
-import { Fragment, useEffect } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useKeyboardShortcut } from '@wordpress/compose';
-import { isAppleOS } from '@wordpress/keycodes';
+import { cn } from '@automattic/agenttic-ui';
 import { Button, Icon } from '@wordpress/components';
+import { useKeyboardShortcut } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close, external, redo, undo } from '@wordpress/icons';
-import { LassoIcon } from '../icons/LassoIcon';
-import { AltIcon } from '../icons/AltIcon';
-import { cn } from '@automattic/agenttic-ui';
-import { trackImageStudioToolClick } from '../../utils/tracking';
+import { isAppleOS } from '@wordpress/keycodes';
 import { type ImageStudioActions, store as imageStudioStore } from '../../store';
 import { type ImageStudioConfig, ImageStudioMode, ToolbarOption } from '../../types';
+import { trackImageStudioToolClick } from '../../utils/tracking';
+import { AltIcon } from '../icons/AltIcon';
+import { LassoIcon } from '../icons/LassoIcon';
 import './style.scss';
 
 interface HeaderProps {
@@ -162,6 +162,7 @@ export const Header = ( {
 													),
 													'error'
 												);
+												// eslint-disable-next-line no-console
 												console.error( '[Image Studio] Navigation handler error:', error );
 											}
 										} }

@@ -1,5 +1,5 @@
-import { select } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { select } from '@wordpress/data';
 import { transformAttachment } from '@wordpress/media-utils';
 import { type ImageData } from '../utils/get-image-data';
 
@@ -12,7 +12,6 @@ interface HandleImageSelectionOptions {
 /**
  * Handles image selection by fetching the full attachment record,
  * transforming it to block editor format, and calling onSelect.
- *
  * @param options          - The image selection options
  * @param options.image    - The image data from Image Studio
  * @param options.onSelect - Callback to execute with the transformed attachment
@@ -25,6 +24,7 @@ export function handleImageSelection( {
 }: HandleImageSelectionOptions ): void {
 	if ( ! image?.id ) {
 		// TODO: Show an error message to the user.
+		// eslint-disable-next-line no-console
 		console.error( '[Image Studio] Image data is missing an ID.' );
 		return;
 	}

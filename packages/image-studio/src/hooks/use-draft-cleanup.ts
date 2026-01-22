@@ -18,9 +18,9 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { select, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { trackImageStudioError } from '../utils/tracking';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
+import { trackImageStudioError } from '../utils/tracking';
 
 export const useDraftCleanup = () => {
 	const { setDraftIds } = useDispatch( imageStudioStore ) as ImageStudioActions;
@@ -35,7 +35,6 @@ export const useDraftCleanup = () => {
 
 	/**
 	 * Check if an error is a permission/capability error
-	 *
 	 * @param reason - The error/rejection reason to check
 	 */
 	const isPermissionError = ( reason: unknown ): boolean => {
@@ -71,7 +70,6 @@ export const useDraftCleanup = () => {
 	 * (instead of relying on React selector closures) so that it always uses
 	 * the freshest `draftIds` and `attachmentId` values, even when called
 	 * immediately after a save/checkpoint action (e.g. Save & Exit).
-	 *
 	 * @param idsToKeep - IDs to preserve (not delete)
 	 */
 	const deleteDraftsExcept = useCallback(
@@ -123,6 +121,7 @@ export const useDraftCleanup = () => {
 					} );
 
 					// TODO: Add proper user-facing notices once we have a working notice system
+					// eslint-disable-next-line no-console
 					console.error( '[Image Studio] Failed to delete some draft images:', rejectedResults );
 				}
 			} catch ( error ) {
@@ -138,6 +137,7 @@ export const useDraftCleanup = () => {
 				} );
 
 				// TODO: Add proper user-facing notices once we have a working notice system
+				// eslint-disable-next-line no-console
 				console.error( '[Image Studio] Error during draft cleanup:', error );
 			}
 		},
@@ -155,6 +155,7 @@ export const useDraftCleanup = () => {
 
 		// Guard against store not being available
 		if ( ! selectors ) {
+			// eslint-disable-next-line no-console
 			console.warn( '[Image Studio] Store not available for cleanup' );
 			return;
 		}

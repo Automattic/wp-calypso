@@ -7,18 +7,15 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-
+import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
 import type { ImageStudioMode, MetadataField } from '../types';
-import type { ImageStudioEntryPoint } from '../store';
-import { store as imageStudioStore } from '../store';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
- *
  * @param suggestions - Array of suggestions with id property
- * @return Pipe-delimited string of suggestion IDs
+ * @returns Pipe-delimited string of suggestion IDs
  */
 export function formatSuggestionIds( suggestions: Array< { id?: string } > ): string {
 	return suggestions
@@ -29,8 +26,7 @@ export function formatSuggestionIds( suggestions: Array< { id?: string } > ): st
 
 /**
  * Get Image Studio entry point from the store
- *
- * @return The entry point where Image Studio was opened from
+ * @returns The entry point where Image Studio was opened from
  */
 function getImageStudioEntryPoint(): string | null {
 	try {
@@ -46,7 +42,6 @@ function getImageStudioEntryPoint(): string | null {
 
 /**
  * Record a tracks event with the Big Sky prefix
- *
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
  */
@@ -59,7 +54,6 @@ function recordTracksEvent(
 
 /**
  * Wrapper function to record Image Studio tracking events with entry point automatically included
- *
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
  */
@@ -148,7 +142,6 @@ interface TrackImageStudioImageFeedbackOptions {
 
 /**
  * Tracks when Image Studio modal is opened
- *
  * @param options              - Tracking options
  * @param options.mode         - 'edit' or 'generate'
  * @param options.attachmentId - Attachment ID if editing existing image
@@ -173,7 +166,6 @@ export function trackImageStudioOpened( {
 
 /**
  * Tracks when Image Studio modal is closed
- *
  * @param options      - Tracking options
  * @param options.mode - 'edit' or 'generate'
  */
@@ -183,7 +175,6 @@ export function trackImageStudioClosed( { mode }: TrackImageStudioClosedOptions 
 
 /**
  * Tracks when a toolbar tool is accessed
- *
  * @param toolName - Name of the tool ('annotate', 'alt_text', 'media_library')
  * @param action   - Optional action ('open' or 'close') for tools that toggle
  */
@@ -207,7 +198,6 @@ export function trackImageStudioSidebarClose(): void {
 
 /**
  * Tracks when a prompt is sent in Image Studio
- *
  * @param options               - Tracking options
  * @param options.mode          - 'edit' or 'generate'
  * @param options.messageLength - Length of the prompt message
@@ -225,7 +215,6 @@ export function trackImageStudioPromptSent( {
 
 /**
  * Tracks when an image is saved from Image Studio
- *
  * @param options              - Tracking options
  * @param options.mode         - 'edit' or 'generate'
  * @param options.attachmentId - Attachment ID if applicable
@@ -243,7 +232,6 @@ export function trackImageStudioImageSaved( {
 
 /**
  * Tracks when suggestions are rendered in Image Studio
- *
  * @param options                - Tracking options
  * @param options.suggestions    - Pipe-delimited suggestion IDs
  * @param options.mode           - 'edit' or 'generate'
@@ -263,7 +251,6 @@ export function trackImageStudioSuggestionsRendered( {
 
 /**
  * Tracks when a suggestion is clicked in Image Studio
- *
  * @param options                      - Tracking options
  * @param options.suggestionId         - ID of the clicked suggestion
  * @param options.suggestionText       - Text/prompt of the clicked suggestion
@@ -286,7 +273,6 @@ export function trackImageStudioSuggestionClick( {
 
 /**
  * Tracks when image metadata (caption, description, or alt text) is updated
- *
  * @param options              - Tracking options
  * @param options.attachmentId - Attachment ID
  * @param options.field        - Which field was updated
@@ -303,7 +289,6 @@ export function trackImageStudioMetadataUpdated( {
 
 /**
  * Tracks when GenAI button is clicked to regenerate metadata field
- *
  * @param options              - Tracking options
  * @param options.field        - Which field is being regenerated
  * @param options.attachmentId - Attachment ID if available
@@ -321,7 +306,6 @@ export function trackImageStudioGenAIButtonClick( {
 
 /**
  * Tracks when the annotation is saved
- *
  * @param options                - Tracking options
  * @param options.attachmentId   - Current attachment ID if available
  * @param options.hasAnnotations - Whether the canvas currently has annotations
@@ -343,7 +327,6 @@ export function trackImageStudioAnnotationSave( {
 
 /**
  * Tracks when the annotation is undone
- *
  * @param options                - Tracking options
  * @param options.attachmentId   - Current attachment ID if available
  * @param options.hasAnnotations - Whether the canvas currently has annotations
@@ -365,7 +348,6 @@ export function trackImageStudioAnnotationUndo( {
 
 /**
  * Tracks when the annotation is redone
- *
  * @param options                - Tracking options
  * @param options.attachmentId   - Current attachment ID if available
  * @param options.hasAnnotations - Whether the canvas currently has annotations
@@ -387,7 +369,6 @@ export function trackImageStudioAnnotationRedo( {
 
 /**
  * Tracks when an image is generated in Image Studio
- *
  * @param options              - Tracking options
  * @param options.mode         - 'edit' or 'generate'
  * @param options.attachmentId - Attachment ID of the generated image
@@ -412,7 +393,6 @@ export function trackImageStudioImageGenerated( {
 
 /**
  * Tracks when an error occurs in Image Studio
- *
  * @param options              - Tracking options
  * @param options.mode         - 'edit' or 'generate'
  * @param options.errorType    - Type of error that occurred
@@ -437,7 +417,6 @@ export function trackImageStudioError( {
 
 /**
  * Tracks when a user provides thumbs up/down feedback on an image
- *
  * @param options              - Tracking options
  * @param options.feedback     - User's feedback (up or down)
  * @param options.attachmentId - Attachment ID if available

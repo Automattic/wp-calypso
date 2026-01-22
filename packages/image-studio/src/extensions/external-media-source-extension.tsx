@@ -1,10 +1,10 @@
-import { dispatch } from '@wordpress/data';
 import { BigSkyIcon } from '@automattic/agenttic-ui';
+import { dispatch } from '@wordpress/data';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
+import { ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
 import { handleImageSelection } from './utils';
-import { ImageStudioMode } from '../types';
 
 export const addImageStudioMediaSource = (
 	_value: [],

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { dispatch, useSelect } from '@wordpress/data';
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { BlockControls } from '@wordpress/block-editor';
-import { useCallback } from '@wordpress/element';
+import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
-
-/**
- * Internal dependencies
- */
+import { dispatch, useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
 import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
@@ -22,7 +15,7 @@ import { trackImageStudioOpened } from '../utils/tracking';
  */
 export const withImageStudioToolbarButton = createHigherOrderComponent(
 	( BlockEdit: React.ComponentType< any > ) => {
-		return ( props: any ) => {
+		const WrappedComponent = ( props: any ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
 
@@ -90,6 +83,12 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				</>
 			);
 		};
+
+		WrappedComponent.displayName = `withImageStudioToolbarButton(${
+			BlockEdit.displayName || BlockEdit.name || 'Component'
+		})`;
+
+		return WrappedComponent;
 	},
 	'withImageStudioToolbarButton'
 );

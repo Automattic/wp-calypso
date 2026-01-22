@@ -4,15 +4,7 @@
  * Provides context about the current Image Studio state to the AI agent.
  * This mirrors the pattern used in big-sky-plugin for wp-orchestrator.
  */
-
-/**
- * WordPress dependencies
- */
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { store as imageStudioStore } from '../store';
 
 const CORE_STORE = 'core';
@@ -47,8 +39,7 @@ export interface ImageStudioClientContext {
  * The backend fetches the current URL from the clientId (attachmentId) via
  * resolve_image_studio_url(). This avoids the agent seeing URL changes mid-turn
  * and deciding to retry operations.
- *
- * @return Image entity context or null
+ * @returns Image entity context or null
  */
 function detectImageEntity(): { imageStudio: Record< string, any > } | null {
 	try {
@@ -113,8 +104,7 @@ function detectImageEntity(): { imageStudio: Record< string, any > } | null {
  *
  * This provides the AI agent with information about the current Image Studio state,
  * including the open/closed state, current attachment ID, and image metadata.
- *
- * @return Client context object
+ * @returns Client context object
  */
 export function getClientContext(): ImageStudioClientContext {
 	const imageEntity = detectImageEntity();

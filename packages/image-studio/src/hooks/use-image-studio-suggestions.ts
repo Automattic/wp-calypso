@@ -1,26 +1,25 @@
+import { type Suggestion } from '@automattic/agenttic-client';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { type Suggestion } from '@automattic/agenttic-client';
+import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import {
 	formatSuggestionIds,
 	trackImageStudioSuggestionClick,
 	trackImageStudioSuggestionsRendered,
 } from '../utils/tracking';
-import { store as imageStudioStore } from '../store';
 /**
  * Registers default image editing suggestions with the agent,
  * and clears them after the first user message.
- *
- * @param {Function}        registerSuggestions - Function to register suggestions.
- * @param {Function}        clearSuggestions    - Function to clear suggestions.
- * @param {Array}           messages            - Array of messages from agent chat.
- * @param {ImageStudioMode} mode                - Image studio mode (edit or generate).
+ * @param registerSuggestions - Function to register suggestions.
+ * @param clearSuggestions    - Function to clear suggestions.
+ * @param messages            - Array of messages from agent chat.
+ * @param mode                - Image studio mode (edit or generate).
  */
 export function useImageStudioSuggestions(
-	registerSuggestions?: Function,
-	clearSuggestions?: Function,
+	registerSuggestions?: ( suggestions: Suggestion[] ) => void,
+	clearSuggestions?: () => void,
 	messages?: any[],
 	mode?: ImageStudioMode
 ) {

@@ -8,14 +8,9 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import type { CanvasMetadata, ImageStudioActions } from '../store';
-import { store as imageStudioStore } from '../store';
-import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
+import { store as imageStudioStore, type CanvasMetadata, type ImageStudioActions } from '../store';
 import { ImageStudioMode } from '../types';
+import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
 
 function preloadImage( url: string ): Promise< void > {
 	if ( ! url || typeof window === 'undefined' ) {
@@ -148,7 +143,9 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 				let metadata = canvasMetadata as CanvasMetadata;
 				const pairs = Object.entries( input?.metadata || {} );
 				for ( const [ key, value ] of pairs ) {
-					if ( ! value ) continue;
+					if ( ! value ) {
+						continue;
+					}
 					metadata = { ...metadata, [ key ]: value };
 				}
 
@@ -194,6 +191,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 							);
 						} catch ( error ) {
 							// If the fetch fails, log but don't fail the ability
+							// eslint-disable-next-line no-console
 							console.warn( `[Image Studio] Failed to fetch attachment ${ attachmentId }:`, error );
 						}
 					}
