@@ -320,7 +320,6 @@ __metadata:
   dependencies:
     "@automattic/agenttic-client": "npm:^0.1.35"
     "@automattic/agenttic-ui": "npm:^0.1.35"
-    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
