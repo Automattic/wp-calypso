@@ -105,11 +105,16 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting
 		// for immediate upgrades to the next plan. We will change this in the future
 		// with appropriate page.
-		const upgradeProductPath = AkismetUpgradesProductMap[ purchase.product_slug ];
-		if ( upgradeProductPath ) {
-			return upgradeProductPath;
+		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
+		if ( ! url ) {
+			return undefined;
 		}
-		return undefined;
+		const isAbsolute =
+			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
+		if ( ! isAbsolute ) {
+			return wpcomLink( url );
+		}
+		return url;
 	}
 
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
