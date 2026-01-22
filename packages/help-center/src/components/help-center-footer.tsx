@@ -44,7 +44,7 @@ export const HelpCenterContactButton = () => {
 				className="button help-center-contact-page__button"
 				__next40pxDefaultSize
 			>
-				{ __( 'Need help? Get in touch', __i18n_text_domain__ ) }
+				{ __( 'Get help', __i18n_text_domain__ ) }
 			</Button>
 		</CardFooter>
 	);

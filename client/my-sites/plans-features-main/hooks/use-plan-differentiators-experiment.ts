@@ -73,7 +73,7 @@ function usePlanDifferentiatorsExperiment( {
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
-	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20260117', {
+	const [ isLoading, assignment ] = useExperiment( 'calypso_pricing_differentiation_202601_v1', {
 		isEligible,
 	} );
 

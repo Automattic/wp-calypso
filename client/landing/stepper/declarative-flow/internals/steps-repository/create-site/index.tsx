@@ -54,7 +54,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-async function pollForGardenProvisioning( siteId: number, maxAttempts = 10, delayMs = 3000 ) {
+async function pollForGardenProvisioning( siteId: number, maxAttempts = 22, delayMs = 5000 ) {
 	// Sleep for 10 seconds to allow for site creation to settle
 	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 
