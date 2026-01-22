@@ -11,12 +11,13 @@ import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
 import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
+import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
 import {
+	type ChatPosition,
 	getChatPosition,
 	setChatPosition,
-	type ChatPosition,
 } from '../utils/chatStorage';
 import { morphSpring } from './animations';
 import {
@@ -84,7 +85,7 @@ export function AgentUIContainer( {
 	thinkingMessage,
 	initialChatPosition,
 	onChatPositionChange,
-	...props
+	onTypingStatusChange,
 }: AgentUIContainerProps ) {
 	// Determine if input is controlled or uncontrolled
 	const isControlled = controlledInputValue !== undefined;
@@ -113,6 +114,11 @@ export function AgentUIContainer( {
 
 	const [ isDragging, setIsDragging ] = useState( false );
 
+	// Track typing status for callback
+	const [ isInputFocused, setIsInputFocused ] = useState( false );
+	const isWindowFocused = useWindowFocusStatus();
+	const [ lastTypingStatus, setLastTypingStatus ] = useState( false );
+
 	// Load translations when locale changes
 	useEffect( () => {
 		const translationsLoaded = loadAgentticTranslations( locale, {
@@ -126,6 +132,32 @@ export function AgentUIContainer( {
 			);
 		}
 	}, [ locale ] );
+
+	// Calculate typing status and trigger callback when it changes
+	useEffect( () => {
+		const hasText = inputValue.length > 0;
+		const isTyping = isInputFocused && isWindowFocused && hasText;
+
+		if ( isTyping !== lastTypingStatus ) {
+			setLastTypingStatus( isTyping );
+			onTypingStatusChange?.( isTyping );
+		}
+	}, [
+		isInputFocused,
+		isWindowFocused,
+		inputValue.length,
+		lastTypingStatus,
+		onTypingStatusChange,
+	] );
+
+	// Focus handlers for typing status tracking
+	const handleInputFocus = useCallback( () => {
+		setIsInputFocused( true );
+	}, [] );
+
+	const handleInputBlur = useCallback( () => {
+		setIsInputFocused( false );
+	}, [] );
 
 	// Calculate if input exceeds limit
 	const isInputOverLimit = inputValue.length > maxInputLength;
@@ -549,6 +581,10 @@ export function AgentUIContainer( {
 
 		// Input validation
 		isInputOverLimit,
+
+		// Focus handlers for typing status
+		onInputFocus: handleInputFocus,
+		onInputBlur: handleInputBlur,
 	};
 
 	// Handle embedded variant.
@@ -663,6 +699,7 @@ export function AgentUIContainer( {
 									placeholder={ placeholder }
 									isProcessing={ isProcessing }
 									onBlur={ handleAutoCollapse }
+									onFocus={ handleInputFocus }
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }

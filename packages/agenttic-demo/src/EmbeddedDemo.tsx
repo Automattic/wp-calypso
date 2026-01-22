@@ -32,6 +32,8 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 		string | undefined
 	>();
 
+	const [ isTyping, setIsTyping ] = useState( false );
+
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
 	const toolProvider = useMemo(
@@ -356,6 +358,9 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					>
 						Test Progress
 					</button>
+					<div style={ { marginLeft: '10px', display: 'inline-block' } }>
+						<strong>Typing Status:</strong> { isTyping ? '✍️ Typing...' : '💤 Not typing' }
+					</div>
 				</div>
 				<AgentUI.Container
 					messages={ messages }
@@ -377,6 +382,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					] }
 					emptyView={ <EmptyView suggestions={ suggestions } /> }
 					thinkingMessage={ manualThinkingMessage }
+					onTypingStatusChange={ setIsTyping }
 				>
 					<AgentUI.ConversationView showHeader={ false }>
 						<AgentUI.Messages />

@@ -6,7 +6,6 @@ import { useMultiTimeout } from '../../hooks/useMultiTimeout';
 
 // Constants for better maintainability
 const SUGGESTIONS_AUTO_HIDE_DELAY = 4000; // 4 seconds
-const SUGGESTIONS_EXIT_ANIMATION_DURATION = 400; // Must match CSS transition
 
 interface CompactViewProps {
 	value: string;
@@ -17,6 +16,7 @@ interface CompactViewProps {
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onBlur?: () => void;
+	onFocus?: () => void;
 	onExpand?: () => void;
 	showExpandButton?: boolean;
 	focusOnMount?: boolean;
@@ -41,6 +41,7 @@ export function CompactView( {
 	placeholder,
 	isProcessing,
 	onBlur,
+	onFocus,
 	onExpand,
 	showExpandButton = true,
 	focusOnMount = false,
@@ -68,15 +69,12 @@ export function CompactView( {
 	}, [ setNamedTimeout ] );
 
 	// Handle click event for expandOnClick functionality
-	const handleClick = useCallback(
-		( event?: React.MouseEvent< HTMLTextAreaElement > ) => {
-			// Only expand on click if expandOnClick is enabled AND the input is empty
-			if ( expandOnClick && onExpand && ! value ) {
-				onExpand();
-			}
-		},
-		[ expandOnClick, onExpand, value ]
-	);
+	const handleClick = useCallback( () => {
+		// Only expand on click if expandOnClick is enabled AND the input is empty
+		if ( expandOnClick && onExpand && ! value ) {
+			onExpand();
+		}
+	}, [ expandOnClick, onExpand, value ] );
 
 	useEffect( () => {
 		// Clear any existing timeouts when dependencies change
@@ -118,6 +116,7 @@ export function CompactView( {
 				placeholder={ placeholder }
 				isProcessing={ isProcessing }
 				onBlur={ onBlur }
+				onFocus={ onFocus }
 				onClick={ handleClick }
 				onExpand={ onExpand }
 				showExpandButton={ showExpandButton }

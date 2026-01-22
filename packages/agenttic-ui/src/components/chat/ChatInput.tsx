@@ -30,6 +30,7 @@ interface ChatInputProps {
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onBlur?: () => void;
+	onFocus?: () => void;
 	onClick?: ( event?: React.MouseEvent< HTMLTextAreaElement > ) => void;
 	fromCompact?: boolean;
 	onExpand?: () => void;
@@ -54,6 +55,7 @@ export function ChatInput( {
 	placeholder = __( 'Ask anything', 'a8c-agenttic' ),
 	isProcessing,
 	onBlur,
+	onFocus,
 	onClick,
 	fromCompact = false,
 	onExpand,
@@ -63,7 +65,6 @@ export function ChatInput( {
 	actionOrder = 'before-submit',
 	onStop,
 	disabled,
-	className,
 	onMouseEnter,
 	onMouseLeave,
 	expandOnClick = false,
@@ -237,6 +238,7 @@ export function ChatInput( {
 					onChange={ ( e ) => onChange( e.target.value ) }
 					onKeyDown={ handleTextareaKeyDown }
 					onBlur={ onBlur }
+					onFocus={ onFocus }
 					onClick={ onClick }
 					placeholder={
 						isAnimated ? '' : ( formattedPlaceholder as string )

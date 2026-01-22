@@ -90,6 +90,9 @@ export interface AgentUIProps {
 	// Chat position props
 	initialChatPosition?: ChatPosition;
 	onChatPositionChange?: ( position: ChatPosition ) => void;
+
+	// Typing status callback
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 }
 
 export interface NoticeConfig {

@@ -60,6 +60,10 @@ export interface AgentUIContextValue {
 
 	// Input validation
 	isInputOverLimit?: boolean;
+
+	// Focus handlers for typing status
+	onInputFocus?: () => void;
+	onInputBlur?: () => void;
 }
 
 const AgentUIContext = createContext< AgentUIContextValue | null >( null );

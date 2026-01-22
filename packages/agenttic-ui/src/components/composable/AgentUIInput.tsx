@@ -30,6 +30,8 @@ export function AgentUIInput( {
 		onExpand,
 		showExpandButton,
 		focusOnMount,
+		onInputFocus,
+		onInputBlur,
 	} = useAgentUIContext();
 
 	const onKeyDownHandler = (
@@ -50,6 +52,8 @@ export function AgentUIInput( {
 			onChange={ setInputValue }
 			onSubmit={ handleSubmit }
 			onKeyDown={ onKeyDownHandler }
+			onFocus={ onInputFocus }
+			onBlur={ onInputBlur }
 			textareaRef={ textareaRef }
 			placeholder={ placeholder }
 			isProcessing={ isProcessing }

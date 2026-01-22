@@ -112,6 +112,31 @@ function ExternallyControlledChat() {
 }
 ```
 
+### Typing Status Tracking
+
+Track when the user is actively typing in the input field:
+
+```tsx
+function ChatWithTypingStatus() {
+	const [ isTyping, setIsTyping ] = useState( false );
+
+	return (
+		<AgentUI
+			messages={ messages }
+			isProcessing={ isProcessing }
+			onSubmit={ onSubmit }
+			onTypingStatusChange={ setIsTyping }
+			variant="embedded"
+		/>
+	);
+}
+```
+
+The `onTypingStatusChange` callback is triggered when the typing status changes. The user is considered "typing" when:
+- The input field is focused
+- The browser window is focused  
+- The input contains text (length > 0)
+
 ## Architecture
 
 ### AgentUI Components
@@ -160,6 +185,9 @@ interface AgentUIProps {
 	// Controlled input (optional)
 	inputValue?: string;
 	onInputChange?: ( value: string ) => void;
+
+	// Typing status tracking
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 
 	// Styling
 	className?: string;
