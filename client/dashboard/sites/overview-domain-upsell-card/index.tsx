@@ -29,7 +29,7 @@ const useDomainSuggestion = ( site: Site ) => {
 		} );
 	}
 
-	const search = site.slug?.split( '.' )[ 0 ];
+	const search = site.slug?.split( '.' )[ 0 ] ?? '';
 	const { data: allDomainSuggestions } = useQuery(
 		domainSuggestionsQuery( search, {
 			vendor: 'domain-upsell',
