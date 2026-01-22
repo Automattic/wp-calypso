@@ -4,7 +4,7 @@
   align-items: start;
   justify-content: end;
   height: 100%;
-  padding: var(--spacing-6) var(--spacing-3) ;
+  padding: var(--spacing-6) var(--spacing-3);
   gap: var(--spacing-6);
 }
 

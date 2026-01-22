@@ -60,63 +60,59 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 
 	return (
 		<AnimatePresence>
-			{ internalSuggestions &&
-				internalSuggestions.length > 0 &&
-				visible && (
-					<motion.div
-						className={ cn(
-							styles.container,
-							layout === 'floating'
-								? styles.floating
-								: styles.vertical,
-							className
-						) }
-						initial={ { opacity: 0, y: '-80%' } }
-						animate={ { opacity: 1, y: translateY } }
-						exit={ { opacity: 0, y: '-80%' } }
-						transition={ fastSpringWithDelay }
-						onMouseEnter={ onMouseEnter }
-						onMouseLeave={ onMouseLeave }
-					>
-						{ internalSuggestions.map(
-							( suggestion: Suggestion, index: number ) => (
-								<motion.div
-									key={ suggestion.id }
-									initial={ { opacity: 0, y: 10 } }
-									animate={ { opacity: 1, y: 0 } }
-									exit={ { opacity: 0, y: 10 } }
-									transition={ {
-										...fastSpringWithDelay,
-										delay: index * 0.05,
+			{ visible && (
+				<motion.div
+					className={ cn(
+						styles.container,
+						layout === 'floating'
+							? styles.floating
+							: styles.vertical,
+						className
+					) }
+					initial={ { opacity: 0, y: '-80%' } }
+					animate={ { opacity: 1, y: translateY } }
+					exit={ { opacity: 0, y: '-80%' } }
+					transition={ fastSpringWithDelay }
+					onMouseEnter={ onMouseEnter }
+					onMouseLeave={ onMouseLeave }
+				>
+					{ internalSuggestions.map(
+						( suggestion: Suggestion, index: number ) => (
+							<motion.div
+								key={ suggestion.id }
+								initial={ { opacity: 0, y: 10 } }
+								animate={ { opacity: 1, y: 0 } }
+								exit={ { opacity: 0, y: 10 } }
+								transition={ {
+									...fastSpringWithDelay,
+									delay: index * 0.05,
+								} }
+							>
+								<Button
+									onClick={ ( e ) => {
+										e.stopPropagation();
+										handleSuggestionClick(
+											suggestion,
+											internalSuggestions
+										);
 									} }
+									variant={
+										layout === 'floating'
+											? 'transparent'
+											: 'outline'
+									}
+									size={
+										layout === 'floating' ? 'lg' : undefined
+									}
+									className={ styles.button }
 								>
-									<Button
-										onClick={ ( e ) => {
-											e.stopPropagation();
-											handleSuggestionClick(
-												suggestion,
-												internalSuggestions
-											);
-										} }
-										variant={
-											layout === 'floating'
-												? 'transparent'
-												: 'outline'
-										}
-										size={
-											layout === 'floating'
-												? 'lg'
-												: undefined
-										}
-										className={ styles.button }
-									>
-										{ suggestion.label }
-									</Button>
-								</motion.div>
-							)
-						) }
-					</motion.div>
-				) }
+									{ suggestion.label }
+								</Button>
+							</motion.div>
+						)
+					) }
+				</motion.div>
+			) }
 		</AnimatePresence>
 	);
 };
