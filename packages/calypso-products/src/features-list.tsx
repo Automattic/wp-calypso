@@ -835,7 +835,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Install all WordPress plugins' )
+				? i18n.translate( 'Extend your site with WordPress plugins' )
 				: i18n.translate( 'Install WordPress plugins' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -2639,10 +2639,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Get support from our expert, friendly Happiness team.' )
-				: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -2650,10 +2647,8 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support with faster response times' )
 				: i18n.translate( 'Fast support from our expert\u00A0team' ),
-		getDescription: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Prompt support from our expert, friendly Happiness team.' )
-				: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+		getDescription: () =>
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FREE_FAST_SUPPORT ]: {
 		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
