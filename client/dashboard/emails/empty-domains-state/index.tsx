@@ -36,7 +36,7 @@ export default function EmptyDomainsState() {
 					<EmptyState.Title>{ __( 'You need a domain to set up email' ) }</EmptyState.Title>
 					<EmptyState.Description>
 						{ createInterpolateElement(
-							__( 'You need a domain to set up email. <learnMoreLink/>' ),
+							__( 'Add a domain to create a mailbox or email forwarder. <learnMoreLink/>' ),
 							{
 								learnMoreLink: <InlineSupportLink supportContext="emails" />,
 							}
