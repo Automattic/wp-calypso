@@ -4,9 +4,7 @@ import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
 import { hasTouch } from '../lib/touch-detect';
 
-const HoverAreaContainer = styled.span`
-	max-width: 220px;
-`;
+const HoverAreaContainer = styled.span``;
 
 const StyledTooltip = styled( Tooltip )`
 	&.tooltip.popover .popover__inner {

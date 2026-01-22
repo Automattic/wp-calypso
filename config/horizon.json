@@ -31,7 +31,6 @@
 		"dashboard/v2/backport/site-overview": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
-		"domain-search-rewrite": true,
 		"domain-transfer-redesign": true,
 		"global-styles/on-personal-plan": true,
 		"google-my-business": false,
@@ -86,7 +85,7 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/post-checkout-ai-step": false,
+		"onboarding/post-checkout-ai-step": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
@@ -136,8 +135,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

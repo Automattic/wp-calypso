@@ -1,14 +1,14 @@
 import clsx from 'clsx';
 import { useMemo } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getSiteStatus } from '../../utils/site-status';
+import { getSiteBlockingStatus } from '../../utils/site-status';
 import SiteMigrationIcon from './site-migration-icon';
 import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
 export default function SiteIcon( { site, size }: { site: Site; size?: number } ) {
-	const status = getSiteStatus( site );
+	const status = getSiteBlockingStatus( site );
 	const isMigration = status === 'migration_pending' || status === 'migration_started';
 	const fallbackInitial = getSiteDisplayName( site ).charAt( 0 );
 	return (

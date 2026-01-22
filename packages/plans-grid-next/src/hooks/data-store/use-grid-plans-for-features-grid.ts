@@ -31,6 +31,7 @@ const useGridPlansForFeaturesGrid = ( {
 	useShortSetStackedFeatures,
 	useVar5Features,
 	isExperimentVariant,
+	isVar1dVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -51,6 +52,7 @@ const useGridPlansForFeaturesGrid = ( {
 		highlightLabelOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
+		isExperimentVariant,
 	} );
 
 	// Get summer special status early
@@ -70,6 +72,7 @@ const useGridPlansForFeaturesGrid = ( {
 		useShortSetStackedFeatures,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	return useMemo( () => {

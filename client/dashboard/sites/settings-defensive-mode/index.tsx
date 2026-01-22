@@ -105,8 +105,9 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 		const { enabled_by_a11n, enabled_until } = data;
 
-		const date = new Date( enabled_until * 1000 );
-		const enabledUntil = date.toLocaleString( undefined, {
+		// enabled_until < 0 indicates defensive mode is enabled indefinitely.
+		const date = enabled_until > 0 ? new Date( enabled_until * 1000 ) : null;
+		const enabledUntil = date?.toLocaleString( undefined, {
 			year: 'numeric',
 			month: 'long',
 			day: 'numeric',
@@ -154,13 +155,15 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 						</Text>
 					) }
 
-					<Text as="p">
-						{ sprintf(
-							// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
-							__( 'This will be automatically disabled on %s.' ),
-							enabledUntil
-						) }
-					</Text>
+					{ enabledUntil && (
+						<Text as="p">
+							{ sprintf(
+								// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
+								__( 'This will be automatically disabled on %s.' ),
+								enabledUntil
+							) }
+						</Text>
+					) }
 				</VStack>
 			</Notice>
 		);

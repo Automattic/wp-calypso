@@ -91,8 +91,10 @@ export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
 	} );
 }
 
-export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForComparisonGrid();
+export function getPlanFeaturesGroupedForComparisonGrid( props?: {
+	isExperimentVariant?: boolean;
+} ): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForComparisonGrid( props );
 }
 
 export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {

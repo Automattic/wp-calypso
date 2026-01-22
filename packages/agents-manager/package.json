@@ -41,13 +41,11 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.31",
-		"@automattic/agenttic-ui": "^0.1.31",
-		"@automattic/calypso-config": "workspace:^",
+		"@automattic/agenttic-client": "^0.1.35",
+		"@automattic/agenttic-ui": "^0.1.35",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
-		"@automattic/odie-client": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",

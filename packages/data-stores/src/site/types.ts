@@ -137,6 +137,8 @@ export interface SiteDetails {
 	is_wpcom_staging_site?: boolean;
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;
+	is_garden?: boolean;
+	garden_name?: string | null;
 	jetpack: boolean;
 	jetpack_connection?: boolean;
 	lang?: string;

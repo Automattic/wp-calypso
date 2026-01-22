@@ -19,8 +19,8 @@ interface Props {
 
 export default function ConversationListItem( { conversation, onClick }: Props ) {
 	const sessionId = conversation.session_id || '';
-	const title = generateConversationTitle( conversation.last_message?.content || '' );
-	const subtitle = generateConversationSubtitle( conversation.last_message?.created_at || '' );
+	const title = generateConversationTitle( conversation.first_message?.content || '' );
+	const subtitle = generateConversationSubtitle( conversation.first_message?.created_at || '' );
 
 	return (
 		<button
