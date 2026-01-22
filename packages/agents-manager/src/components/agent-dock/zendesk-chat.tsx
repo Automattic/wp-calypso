@@ -2,6 +2,7 @@ import { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import './style.scss';
 
 interface AgentChatProps {
 	/** Suggestions to show in the chat input. */

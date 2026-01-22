@@ -1,6 +1,8 @@
+import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
@@ -200,9 +202,31 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 		Smooch?.render,
 	] );
 
+	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
+
 	const agentticMessages = useMemo( () => {
-		return conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
-	}, [ conversation ] );
+		const messages = conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
+		if ( currentTypingStatus ) {
+			return [
+				...messages,
+				{
+					id: 'thinking_message_' + messages.length,
+					role: 'agent',
+					content: [
+						{
+							type: 'component',
+							component: () => (
+								<div className="agents-manager-typing-placeholder">
+									<ThinkingMessage content={ __( 'Typing…', '__i18n_text_domain__' ) } />
+								</div>
+							),
+						},
+					],
+				},
+			];
+		}
+		return messages;
+	}, [ conversation, currentTypingStatus ] );
 
 	useEffect( () => {
 		if ( Smooch ) {
