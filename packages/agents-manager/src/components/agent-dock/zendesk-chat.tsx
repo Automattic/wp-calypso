@@ -41,7 +41,7 @@ export function ZendeskChat( {
 	markdownComponents = {},
 	markdownExtensions = {},
 }: ZendeskChatProps ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing } =
+	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
 		useManagedZendeskChat( true );
 
 	return (
@@ -61,6 +61,7 @@ export function ZendeskChat( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			onTypingStatusChange={ onTypingStatusChange }
 		/>
 	);
 }
