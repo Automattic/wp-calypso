@@ -405,5 +405,25 @@ describe( 'DomainConnectionVerification', () => {
 
 			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
 		} );
+
+		test( '"What happens next" card is expanded by default when domain is verifying', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				has_wpcom_ip_addresses: false,
+				resolves_to_wpcom: false,
+			} );
+
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+				/>
+			);
+
+			// Find the "What happens next" card header by its text
+			const [ whatHappensNextHeader ] = screen.getAllByRole( 'button', { name: 'Toggle content' } );
+
+			expect( whatHappensNextHeader ).toHaveAttribute( 'aria-expanded', 'true' );
+			expect( screen.getByText( 'Automatic verification' ) ).toBeVisible();
+		} );
 	} );
 } );
