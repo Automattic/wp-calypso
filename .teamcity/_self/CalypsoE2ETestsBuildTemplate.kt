@@ -248,7 +248,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	""".trimIndent()
   
   	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 30
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
 

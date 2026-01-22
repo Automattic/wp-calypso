@@ -66,7 +66,7 @@ const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
 				onClick={ onSearchClicked }
 				aria-label={ translate( 'Search' ) }
 			>
-				<ReaderSearchIcon viewBox="0 0 24 24" />
+				<ReaderSearchIcon />
 			</Button>
 		</div>
 	);
