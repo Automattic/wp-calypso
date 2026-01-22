@@ -14,17 +14,42 @@ import {
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { ZendeskMessage } from './types';
 
-const smoochContainer = document.createElement( 'div' );
+type ConversationData = {
+	conversation: {
+		id: string;
+	};
+};
 
-smoochContainer.className = 'smooch-container';
-smoochContainer.style.display = 'none';
-smoochContainer.style.position = 'absolute';
-smoochContainer.style.top = '0';
-smoochContainer.style.left = '0';
-smoochContainer.style.width = '100%';
-smoochContainer.style.height = '100%';
-smoochContainer.style.zIndex = '1000';
-document.body.appendChild( smoochContainer );
+let smoochContainer: HTMLDivElement | null = null;
+
+function getSmoochContainer(): HTMLDivElement | null {
+	if ( typeof document === 'undefined' ) {
+		return null;
+	}
+
+	const existing = document.querySelector< HTMLDivElement >( '.smooch-container' );
+	if ( existing ) {
+		smoochContainer = existing;
+	} else if ( ! smoochContainer ) {
+		smoochContainer = document.createElement( 'div' );
+		smoochContainer.className = 'smooch-container';
+	}
+
+	// Keep the container hidden since we're using embedded mode.
+	smoochContainer.style.display = 'none';
+	smoochContainer.style.position = 'absolute';
+	smoochContainer.style.top = '0';
+	smoochContainer.style.left = '0';
+	smoochContainer.style.width = '100%';
+	smoochContainer.style.height = '100%';
+	smoochContainer.style.zIndex = '1000';
+
+	if ( ! document.body.contains( smoochContainer ) ) {
+		document.body.appendChild( smoochContainer );
+	}
+
+	return smoochContainer;
+}
 
 // const destroy = () => {
 // 	try {
@@ -43,7 +68,12 @@ function useSmooch( jwt?: string, externalId?: string ) {
 		queryKey: [ 'smooch', jwt, externalId ],
 		queryFn: () => {
 			const isTestMode = isTestModeEnvironment();
-			SmoochLibrary.render( smoochContainer );
+			const container = getSmoochContainer();
+			if ( ! container ) {
+				throw new Error( 'Smooch container is unavailable.' );
+			}
+
+			SmoochLibrary.render( container );
 			return SmoochLibrary.init( {
 				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
 				delegate: {
@@ -51,11 +81,11 @@ function useSmooch( jwt?: string, externalId?: string ) {
 						recordTracksEvent( 'calypso_smooch_messenger_auth_error' );
 
 						await queryClient.invalidateQueries( {
-							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode ],
+							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
 						} );
 						const authData = await queryClient.fetchQuery( {
 							queryKey: [ 'getMessagingAuth', 'zendesk', isTestMode, false ],
-							queryFn: () => fetchMessagingAuth( 'zendesk' ),
+							queryFn: () => fetchMessagingAuth( 'zendesk', false ),
 						} );
 
 						return authData.jwt;

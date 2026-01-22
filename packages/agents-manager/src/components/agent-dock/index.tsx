@@ -236,10 +236,6 @@ export default function AgentDock( {
 
 	const ZendeskChatRoute = (
 		<ZendeskChat
-			suggestions={ [] }
-			isProcessing={ isOdieProcessing }
-			error={ error }
-			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }

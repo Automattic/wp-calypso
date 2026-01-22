@@ -1,20 +1,21 @@
-import { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import {
+	type MarkdownComponents,
+	type MarkdownExtensions,
+	type Suggestion,
+} from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
-interface AgentChatProps {
+interface ZendeskChatProps {
 	/** Suggestions to show in the chat input. */
-	suggestions: Suggestion[];
-	/** Error message to display, if any. */
-	error?: string | null;
+	suggestions?: Suggestion[];
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
-	/** Indicates if the chat is processing a request. */
-	isProcessing: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
@@ -30,27 +31,26 @@ interface AgentChatProps {
 }
 
 export function ZendeskChat( {
-	suggestions,
-	error = null,
+	suggestions = [],
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
-	isProcessing,
 	isDocked,
 	isOpen,
 	onClose,
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-}: AgentChatProps ) {
-	const { agentticMessages, onSubmit, isLoadingConversation } = useManagedZendeskChat( true );
+}: ZendeskChatProps ) {
+	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing } =
+		useManagedZendeskChat( true );
 
 	return (
 		<AgentChat
-			messages={ agentticMessages as any }
-			suggestions={ [] }
+			messages={ agentticMessages as Message[] }
+			suggestions={ suggestions }
 			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
 			isProcessing={ isProcessing }
-			error={ error }
+			error={ null }
 			onSubmit={ onSubmit }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
