@@ -25,6 +25,7 @@ import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { formatDate } from '../../utils/datetime';
 import { findRegistrantWhois, getTopLevelOfTld } from '../../utils/domain';
+import { maskEmail } from '../../utils/email-utils';
 import InternalTransferOptions from './internal-transfer-options';
 import SelectIpsTag from './select-ips-tag';
 import type { Domain } from '@automattic/api-core';
@@ -172,11 +173,11 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 
 				const successMessage = registrantEmail
 					? sprintf(
-							/* translators: %s is the email address where the authorization code was sent */
+							/* translators: %s is the masked email address where the authorization code was sent */
 							__(
 								'We have sent the transfer authorization code to %s. If you don’t receive the email shortly, please check your spam folder.'
 							),
-							registrantEmail
+							maskEmail( registrantEmail )
 					  )
 					: __(
 							'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'

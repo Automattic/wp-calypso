@@ -70,3 +70,39 @@ export function buildTitanMailboxLink( email: string ) {
 
 	return titanMailUrl.href;
 }
+
+/**
+ * Masks an email address for privacy while keeping it recognizable.
+ *
+ * Shows the first 1-2 characters and last 1-2 characters of the local part,
+ * with asterisks in between. The domain is always shown in full.
+ *
+ * Examples:
+ * - a@example.com → a***@example.com
+ * - ab@example.com → a***b@example.com
+ * - abc@example.com → a***c@example.com
+ * - john@example.com → j***n@example.com
+ * - johndoe@example.com → jo***oe@example.com
+ */
+export function maskEmail( email: string ): string {
+	const atIndex = email.indexOf( '@' );
+	if ( atIndex === -1 ) {
+		return email;
+	}
+
+	const localPart = email.slice( 0, atIndex );
+	const domain = email.slice( atIndex );
+
+	if ( localPart.length <= 2 ) {
+		// Very short local part: show first char + asterisks
+		return localPart[ 0 ] + '***' + domain;
+	}
+
+	if ( localPart.length <= 4 ) {
+		// Short local part: show first and last char
+		return localPart[ 0 ] + '***' + localPart[ localPart.length - 1 ] + domain;
+	}
+
+	// Longer local part: show first 2 and last 2 chars
+	return localPart.slice( 0, 2 ) + '***' + localPart.slice( -2 ) + domain;
+}
