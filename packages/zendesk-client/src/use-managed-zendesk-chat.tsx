@@ -9,9 +9,20 @@ import {
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
-import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { ZendeskMessage } from './types';
+
+const smoochContainer = document.createElement( 'div' );
+
+smoochContainer.className = 'smooch-container';
+smoochContainer.style.display = 'none';
+smoochContainer.style.position = 'absolute';
+smoochContainer.style.top = '0';
+smoochContainer.style.left = '0';
+smoochContainer.style.width = '100%';
+smoochContainer.style.height = '100%';
+smoochContainer.style.zIndex = '1000';
+document.body.appendChild( smoochContainer );
 
 // const destroy = () => {
 // 	try {
@@ -24,14 +35,13 @@ import type { ZendeskMessage } from './types';
 
 function useSmooch( jwt?: string, externalId?: string ) {
 	const queryClient = useQueryClient();
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( true, false );
-	console.log( { jwt, externalId } );
+	//const { isMessagingScriptLoaded } = useLoadZendeskMessaging( true, false );
 
-	return useQuery< typeof SmoochLibrary, Error, typeof SmoochLibrary, string[] >( {
+	return useQuery( {
 		queryKey: [ 'smooch', jwt, externalId ],
 		queryFn: () => {
-			console.log( 'useSmooch' );
 			const isTestMode = isTestModeEnvironment();
+			SmoochLibrary.render( smoochContainer );
 			return SmoochLibrary.init( {
 				integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
 				delegate: {
@@ -53,18 +63,12 @@ function useSmooch( jwt?: string, externalId?: string ) {
 				soundNotificationEnabled: false,
 				externalId,
 				jwt,
-			} )
-				.then( () => {
-					debugger;
-					return SmoochLibrary;
-				} )
-				.catch( ( error ) => {
-					debugger;
-					return error;
-				} );
+			} ).then( () => {
+				return SmoochLibrary;
+			} );
 		},
 		staleTime: Infinity,
-		enabled: !! jwt && isMessagingScriptLoaded && !! externalId,
+		enabled: !! jwt && !! externalId,
 		meta: {
 			persist: false,
 		},
@@ -93,17 +97,6 @@ const playNotificationSound = () => {
 	oscillator.start();
 	oscillator.stop( audioContext.currentTime + duration );
 };
-
-const smoochContainer = document.createElement( 'div' );
-smoochContainer.style.display = 'none';
-smoochContainer.style.position = 'absolute';
-smoochContainer.style.top = '0';
-smoochContainer.style.left = '0';
-smoochContainer.style.width = '100%';
-smoochContainer.style.height = '100%';
-smoochContainer.style.zIndex = '1000';
-document.body.appendChild( smoochContainer );
-
 /**
  * Returns a complete API for managing a Zendesk chat.
  * @param enabled - Whether the chat is enabled.
@@ -124,10 +117,22 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
 
-	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'zendesk' );
-	const { data: Smooch } = useSmooch( authData?.jwt, authData?.externalId );
+	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'zendesk', false );
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch(
+		authData?.jwt,
+		authData?.externalId
+	);
 
-	console.log( { Smooch } );
+	const getUnreadListener = useCallback(
+		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
+			if ( data.conversation.id === conversation?.id ) {
+				playNotificationSound();
+				Smooch?.getConversationById( data.conversation.id ).then( setConversation );
+				//Smooch?.loadConversation( data.conversation.id );
+			}
+		},
+		[ Smooch, setConversation, conversation?.id ]
+	);
 
 	const disconnectedListener = useCallback( () => {
 		setConnectionStatus( 'disconnected' );
@@ -169,10 +174,7 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 			return;
 		}
 
-		// Smooch.render( smoochContainer );
-
 		if ( conversationId ) {
-			debugger;
 			Smooch.getConversationById( conversationId ).then( setConversation );
 			Smooch.loadConversation( conversationId );
 		} else {
@@ -200,33 +202,37 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 
 	const agentticMessages = useMemo( () => {
 		return conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
-	}, [ conversation?.messages ] );
+	}, [ conversation ] );
 
 	useEffect( () => {
 		if ( Smooch ) {
+			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'disconnected', disconnectedListener );
 			Smooch.on( 'reconnecting', reconnectingListener );
 			Smooch.on( 'connected', connectedListener );
 			Smooch.on( 'typing:start', typingStartListener );
 			Smooch.on( 'typing:stop', typingStopListener );
-		}
 
-		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'disconnected', disconnectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'reconnecting', reconnectingListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'typing:stop', typingStopListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'typing:start', typingStartListener );
-		};
+			return () => {
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'message:received', getUnreadListener );
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'disconnected', disconnectedListener );
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'reconnecting', reconnectingListener );
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'connected', connectedListener );
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'typing:stop', typingStopListener );
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch.off?.( 'typing:start', typingStartListener );
+			};
+		}
 	}, [
 		setConnectionStatus,
 		typingStartListener,
 		typingStopListener,
+		getUnreadListener,
 		//getUnreadNotifications,
 		disconnectedListener,
 		reconnectingListener,
@@ -236,24 +242,20 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 
 	return {
 		typingStatus,
+		isProcessing: isSettingUpSmooch,
 		conversation,
 		connectionStatus,
 		agentticMessages,
 		onSubmit: ( message: string ) => {
-			const messageToSend: ZendeskMessage = {
+			const messageToSend = {
 				type: 'text',
 				text: message,
-				role: 'user',
-				id: crypto.randomUUID(),
-				received: Date.now(),
 			};
-			if ( conversation?.id ) {
-				// Todo: mark the message as `is_sending`.
+			if ( conversation?.id && Smooch ) {
 				setConversation( {
 					...conversation,
-					messages: [ ...conversation.messages, messageToSend ],
+					messages: [ ...conversation.messages, messageToSend as ZendeskMessage ],
 				} );
-				// Todo: mark the message as sent after the following resolves.
 				Smooch.sendMessage( messageToSend, conversation.id );
 			}
 		},
