@@ -84,21 +84,24 @@ export default function PressablePlanSelectorCard( {
 					</div>
 				) : (
 					<div className="pressable-plan-card-content__price">
-						{ hasIntroductoryOffer && (
-							<span className="pressable-plan-card-content__price-original">
-								{ formatCurrency( originalPrice, plan.currency ) }
-							</span>
-						) }
-						<b className="pressable-plan-card-content__price-actual-value">
-							{ formatCurrency(
-								hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
-								plan.currency
+						<div className="pressable-plan-card-content__price-row">
+							<b className="pressable-plan-card-content__price-actual-value">
+								{ formatCurrency(
+									hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
+									plan.currency
+								) }
+							</b>
+							{ hasIntroductoryOffer && (
+								<span className="pressable-plan-card-content__price-original">
+									{ formatCurrency( originalPrice, plan.currency ) }
+								</span>
 							) }
-						</b>
+						</div>
 
 						<div className="pressable-plan-card-content__price-interval">
-							{ plan.price_interval === 'day' && translate( 'per day, billed monthly' ) }
-							{ plan.price_interval === 'month' && translate( 'per month, billed monthly' ) }
+							{ termPricing === 'yearly'
+								? translate( 'per year, billed yearly' )
+								: translate( 'per month, billed monthly' ) }
 						</div>
 					</div>
 				) }

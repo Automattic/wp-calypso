@@ -88,6 +88,12 @@
 	display: block;
 }
 
+.pressable-overview-plan-selection__details-card-header-price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
 .pressable-overview-plan-selection__details-card-header-price-original {
 	@include body-medium;
 	text-decoration: line-through;

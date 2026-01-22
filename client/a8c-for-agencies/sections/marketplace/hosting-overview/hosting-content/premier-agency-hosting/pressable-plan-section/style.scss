@@ -16,6 +16,12 @@
 	margin-block-end: 16px
 }
 
+.pressable-plan-card-content__price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
 .pressable-plan-card-content__price-original {
 	@include body-medium;
 	text-decoration: line-through;

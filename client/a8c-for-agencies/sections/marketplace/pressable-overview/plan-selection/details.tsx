@@ -100,20 +100,23 @@ export default function PlanSelectionDetails( {
 
 					{ ! isReferMode && selectedPlan && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
-							{ hasIntroductoryOffer && (
-								<span className="pressable-overview-plan-selection__details-card-header-price-original">
-									{ formatCurrency( originalPrice, selectedPlan.currency ) }
-								</span>
-							) }
-							<strong className="pressable-overview-plan-selection__details-card-header-price-value">
-								{ formatCurrency(
-									hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
-									selectedPlan.currency
+							<div className="pressable-overview-plan-selection__details-card-header-price-row">
+								<strong className="pressable-overview-plan-selection__details-card-header-price-value">
+									{ formatCurrency(
+										hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
+										selectedPlan.currency
+									) }
+								</strong>
+								{ hasIntroductoryOffer && (
+									<span className="pressable-overview-plan-selection__details-card-header-price-original">
+										{ formatCurrency( originalPrice, selectedPlan.currency ) }
+									</span>
 								) }
-							</strong>
+							</div>
 							<span className="pressable-overview-plan-selection__details-card-header-price-interval">
-								{ selectedPlan.price_interval === 'day' && translate( 'per plan per day' ) }
-								{ selectedPlan.price_interval === 'month' && translate( 'per plan per month' ) }
+								{ termPricing === 'yearly'
+									? translate( 'per plan per year' )
+									: translate( 'per plan per month' ) }
 							</span>
 						</div>
 					) }
