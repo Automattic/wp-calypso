@@ -41,6 +41,7 @@ declare global {
 		_qevents: any[];
 		uetq: any[];
 		rdt: any[] & { ( ...args: any[] ): void };
+		ttq: any[] & { ( ...args: any[] ): void };
 	}
 }
 
