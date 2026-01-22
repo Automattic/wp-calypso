@@ -256,6 +256,9 @@ function AddEmailForwarder() {
 			}
 			size="small"
 		>
+			{ formData.domain && domainData && (
+				<DnsRequirementsNotice domainName={ formData.domain } domainData={ domainData } />
+			) }
 			{ eligibleDomains.length === 0 ? (
 				<>
 					<Text size={ 16 }>
@@ -276,10 +279,6 @@ function AddEmailForwarder() {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-
-								{ formData.domain && (
-									<DnsRequirementsNotice domainName={ formData.domain } domainData={ domainData } />
-								) }
 
 								<FormTokenField
 									__next40pxDefaultSize
@@ -377,7 +376,7 @@ function AddEmailForwarder() {
 										variant="primary"
 										type="submit"
 										isBusy={ isBusy }
-										disabled={ isBusy || ! allFieldsSet || ! isValid }
+										disabled={ isBusy || ! allFieldsSet || ! isValid || ! domainData }
 									>
 										{ __( 'Save' ) }
 									</Button>
