@@ -35,7 +35,8 @@ import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteVisibility } from '../../types';
-import type { Site, SiteBadge, SiteBlockingStatus } from '@automattic/api-core';
+import type { SiteBadge } from '../../utils/site-badge';
+import type { Site, SiteBlockingStatus } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
