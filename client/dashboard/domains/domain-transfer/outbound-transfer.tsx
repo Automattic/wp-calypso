@@ -36,7 +36,7 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 	const domainName = domain.domain;
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
-	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
+	const { data: whoisData, isLoading: isLoadingWhois } = useQuery( domainWhoisQuery( domainName ) );
 	const registrantEmail = findRegistrantWhois( whoisData )?.email;
 	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation( {
 		...domainLockMutation( domainName ),
@@ -201,7 +201,7 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 					__next40pxDefaultSize
 					variant="secondary"
 					onClick={ onRequestTransferCode }
-					disabled={ isRequestingTransferCode }
+					disabled={ isRequestingTransferCode || isLoadingWhois }
 					isBusy={ isRequestingTransferCode }
 				>
 					{ __( 'Get authorization code' ) }
