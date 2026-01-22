@@ -34,8 +34,9 @@ export function a4aLink( path: string ) {
 
 /**
  * Dashboard type identifier.
+ * undefined represents the default (main MSD dashboard).
  */
-export type DashboardType = 'ciab' | 'v2';
+export type DashboardType = 'ciab' | undefined;
 
 /**
  * Returns the dashboard type from URL query params.
@@ -47,16 +48,13 @@ function getDashboardFromQuery(): DashboardType | null {
 	if ( dashboard === 'ciab' ) {
 		return 'ciab';
 	}
-	if ( dashboard === 'v2' ) {
-		return 'v2';
-	}
 	return null;
 }
 
 /**
  * Returns the dashboard type from the current path.
  * Only detects ciab (which has a distinctive /ciab prefix).
- * Returns null for all other paths, falling through to default v2.
+ * Returns null for all other paths, falling through to default.
  */
 function getDashboardFromPath(): DashboardType | null {
 	if ( window.location.pathname.startsWith( '/ciab' ) ) {
@@ -86,10 +84,10 @@ function getDashboardFromReferrer(): DashboardType | null {
 
 /**
  * Detects the current dashboard context.
- * Priority: query param → current path → referrer → default (v2)
+ * Priority: query param → current path → referrer → default (undefined = main MSD)
  */
 export function getCurrentDashboard(): DashboardType {
-	return getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? 'v2';
+	return getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer();
 }
 
 /**
@@ -104,7 +102,7 @@ function getDashboardOrigin(): string {
 
 /**
  * This function returns the link to the dashboard.
- * Context-aware: automatically uses correct base path (/ciab for ciab, root for v2).
+ * Context-aware: automatically uses correct base path (/ciab for CIAB, root for default).
  */
 export function dashboardLink( path: string = '' ) {
 	const origin = getDashboardOrigin();
@@ -120,7 +118,7 @@ export function dashboardLink( path: string = '' ) {
 		return new URL( `/ciab${ path }`, origin ).href;
 	}
 
-	// v2 dashboard uses root path (no prefix)
+	// Default dashboard uses root path (no prefix)
 	return new URL( path, origin ).href;
 }
 
