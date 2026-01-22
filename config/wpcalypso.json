@@ -117,7 +117,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
 		"onboarding/user-on-stepper-hosting": true,
-		"onboarding/post-checkout-ai-step": false,
+		"onboarding/post-checkout-ai-step": true,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
@@ -174,8 +174,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

@@ -98,25 +98,11 @@
 				opacity 0.15s ease-out;
 		}
 
-		.sidebar__header,
 		.sidebar__body,
 		.sidebar__footer {
 			transition: all 220ms ease-out;
 			> * {
 				transition: all 220ms ease-out;
-			}
-		}
-		.sidebar__header {
-			flex-direction: row !important;
-			transition: none;
-			.dotcom {
-				transition: width 220ms ease-out;
-				background-position: left;
-			}
-			.sidebar__menu-link {
-				transition: all 220ms ease-out;
-				min-width: 40px;
-				margin: 0 12px;
 			}
 		}
 		.sidebar__footer {
@@ -132,16 +118,12 @@
 				transition: all 220ms ease-out;
 
 				.global-sidebar {
-					.sidebar__header,
 					.sidebar__body,
 					.sidebar__footer {
 						transition: all 220ms ease-out;
 						> * {
 							transition: all 220ms ease-out;
 						}
-					}
-					.sidebar__header {
-						padding-inline: 19px;
 					}
 					.sidebar__body {
 						.sidebar__menu-link-text {

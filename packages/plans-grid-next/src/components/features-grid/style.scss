@@ -388,6 +388,11 @@
 				align-items: flex-start;
 			}
 
+			// Text content wrapper to keep badge inline with text
+			.plan-features-2023-grid__item-text-content {
+				flex: 1;
+			}
+
 			// Apply underline styling only to the text, not the icon
 			> span {
 				text-decoration-line: underline;

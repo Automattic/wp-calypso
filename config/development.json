@@ -87,7 +87,6 @@
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/ai-logo-generator": true,
 		"jetpack/api-cache": true,
-		"jetpack/backup-contents-page": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-restore-preflight-checks": true,
 		"jetpack/backup-retention-settings": true,
@@ -143,7 +142,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
 		"onboarding/user-on-stepper-hosting": true,
-		"onboarding/post-checkout-ai-step": false,
+		"onboarding/post-checkout-ai-step": true,
 		"entrepreneur/skip-trial-for-migration": true,
 		"p2/p2-plus": true,
 		"page/export": true,
@@ -205,7 +204,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": true,
-		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"wpcom-user-bootstrap": false
 	}
 }
