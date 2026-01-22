@@ -72,6 +72,15 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteId, selectedSiteSlu
 	if ( hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain ) ) {
 		return null;
 	}
+	const badgeTitle =
+		siteProduct?.introductory_offer?.interval_unit === 'year'
+			? translate( 'Try %(months)d months free', {
+					args: {
+						months: trialMonths,
+					},
+					comment: '%(months)d is the number of free trial months',
+			  } )
+			: translate( 'Try 3 months free' );
 
 	return (
 		<VerticalNavItem
@@ -80,14 +89,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteId, selectedSiteSlu
 		>
 			{ translate( 'Upgrade to Professional Email' ) }
 			{ isDomainEligibleForTitanIntroductoryOffer( domain ) && (
-				<Badge type="info-green">
-					{ translate( 'Try %(months)d months free', {
-						args: {
-							months: trialMonths,
-						},
-						comment: '%(months)d is the number of free trial months',
-					} ) }
-				</Badge>
+				<Badge type="info-green">{ badgeTitle }</Badge>
 			) }
 		</VerticalNavItem>
 	);

@@ -56,12 +56,15 @@ const ProfessionalEmailPrice = ( {
 		isDomainInCart ||
 		isDomainEligibleForTitanFreeTrial( { domain, product: siteProduct ?? product } );
 	const offerMonths = getTitanFreeTrialMonths( siteProduct ?? product );
-	const freeTrialLabel = translate( '%(months)d months free', {
-		args: {
-			months: offerMonths,
-		},
-		comment: '%(months)d is the number of free trial months',
-	} );
+	const freeTrialLabel =
+		offerMonths === 12
+			? translate( '%(months)d months free', {
+					args: {
+						months: offerMonths,
+					},
+					comment: '%(months)d is the number of free trial months',
+			  } )
+			: translate( '3 months free' );
 
 	const priceWithInterval = (
 		<PriceWithInterval

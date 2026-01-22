@@ -19,16 +19,20 @@ const TitanBanner = () => {
 		siteId ? getSiteAvailableProduct( state, siteId, productSlug ) : null
 	);
 	const trialMonths = siteProduct?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
-	return (
-		<>
-			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<Task
-				title={ translate( 'Get %(months)d months free Professional Email', {
+	const bannerTitle =
+		siteProduct?.introductory_offer?.interval_unit === 'year'
+			? translate( 'Get %(months)d months free Professional Email', {
 					args: {
 						months: trialMonths,
 					},
 					comment: '%(months)d is the number of free trial months',
-				} ) }
+			  } )
+			: translate( 'Get 3 months free Professional Email' );
+	return (
+		<>
+			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			<Task
+				title={ bannerTitle }
 				description={ translate(
 					'Build your brand with a custom @%(domain)s email address. Professional Email helps promote your site with every email you send.',
 					{
