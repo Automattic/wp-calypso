@@ -13,6 +13,7 @@ import {
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import useFetchCommissionPayout from 'calypso/a8c-for-agencies/data/referrals/use-fetch-commission-payout';
 import {
 	MARKETPLACE_TYPE_REFERRAL,
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -47,6 +48,8 @@ export default function LayoutBodyContent( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { data: commissionPayoutData } = useFetchCommissionPayout();
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
@@ -100,7 +103,12 @@ export default function LayoutBodyContent( {
 	if ( referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
+				{ ! dataViewsState.selectedItem && (
+					<ConsolidatedViews
+						referrals={ referrals }
+						totalPayouts={ commissionPayoutData?.total_commission }
+					/>
+				) }
 				<ReferralList
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
