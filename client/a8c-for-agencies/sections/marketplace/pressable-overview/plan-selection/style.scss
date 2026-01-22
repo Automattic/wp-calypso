@@ -88,6 +88,12 @@
 	display: block;
 }
 
+.pressable-overview-plan-selection__details-card-header-price-original {
+	@include body-medium;
+	text-decoration: line-through;
+	color: var( --color-neutral-40 );
+}
+
 .pressable-overview-plan-selection__details-card-header-price-interval {
 	@include body-medium;
 	color: var( --color-neutral-60 );

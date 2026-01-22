@@ -16,9 +16,15 @@
 	margin-block-end: 16px
 }
 
-.pressable-plan-card-content__price-actual-value{
+.pressable-plan-card-content__price-original {
+	@include body-medium;
+	text-decoration: line-through;
+	color: var( --color-neutral-40 );
+}
+
+.pressable-plan-card-content__price-actual-value {
 	@include heading-large;
-	color: var(--color-text);
+	color: var( --color-text );
 }
 
 .pressable-plan-card-content__price-interval {

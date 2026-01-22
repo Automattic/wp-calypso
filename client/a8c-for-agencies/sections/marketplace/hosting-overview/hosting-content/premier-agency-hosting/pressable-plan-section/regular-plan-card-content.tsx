@@ -1,7 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { TermPricingContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-total-invoice-value';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useSelector } from 'calypso/state';
@@ -23,12 +24,29 @@ export default function PressablePlanSelectorCard( {
 }: Props ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
+	const { termPricing } = useContext( TermPricingContext );
 
 	const { getProductPricingInfo } = useGetProductPricingInfo();
 
 	const { discountedCost } = plan
 		? getProductPricingInfo( userProducts, plan, 1 )
 		: { discountedCost: 0 };
+
+	// Look up the product in userProducts to check for introductory offer based on billing term
+	const productIdForOffer =
+		termPricing === 'yearly' ? plan?.yearly_product_id : plan?.monthly_product_id;
+	const productWithOffer = productIdForOffer
+		? Object.values( userProducts ).find( ( p ) => p.product_id === productIdForOffer )
+		: null;
+
+	const introductoryOffer = productWithOffer?.introductory_offer;
+	const hasIntroductoryOffer = !! introductoryOffer?.cost_per_interval;
+
+	// The introductory offer cost_per_interval is the price for the selected billing term
+	const introductoryOfferCost = introductoryOffer?.cost_per_interval ?? 0;
+
+	// Get the original price (before introductory offer) from the same product
+	const originalPrice = productWithOffer?.cost ?? discountedCost;
 
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {
@@ -64,8 +82,16 @@ export default function PressablePlanSelectorCard( {
 					</div>
 				) : (
 					<div className="pressable-plan-card-content__price">
+						{ hasIntroductoryOffer && (
+							<span className="pressable-plan-card-content__price-original">
+								{ formatCurrency( originalPrice, plan.currency ) }
+							</span>
+						) }
 						<b className="pressable-plan-card-content__price-actual-value">
-							{ formatCurrency( discountedCost, plan.currency ) }
+							{ formatCurrency(
+								hasIntroductoryOffer ? introductoryOfferCost : discountedCost,
+								plan.currency
+							) }
 						</b>
 
 						<div className="pressable-plan-card-content__price-interval">
