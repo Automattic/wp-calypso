@@ -45,7 +45,7 @@ interface AgentChatProps {
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
 	/** Called when the typing status changes. */
-	onTypingStatusChange: ( typingStatus: boolean ) => void;
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
