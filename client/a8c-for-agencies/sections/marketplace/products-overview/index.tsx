@@ -128,7 +128,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	const productListingStickyTopOffset =
 		actionPanelStickyTopOffset + ( actionPanelRef.current?.offsetHeight ?? 0 );
 
-	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' );
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	return (
 		<Layout

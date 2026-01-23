@@ -101,6 +101,8 @@ function HostingOverview( { section }: SectionProps ) {
 		}, 300 );
 	}, [ sidebarRef ] );
 
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
 	return (
 		<Layout
 			className="hosting-overview"
@@ -127,7 +129,7 @@ function HostingOverview( { section }: SectionProps ) {
 						hideOnMobile
 					/>
 					<Actions>
-						{ isEnabled( 'a4a-bd-term-pricing' ) && (
+						{ isTermPricingEnabled && (
 							<div className="a4a-marketplace__header-actions">
 								<TermPricingToggle />
 							</div>
