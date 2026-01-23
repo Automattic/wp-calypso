@@ -25,6 +25,7 @@ export interface Message {
 	icon?: string;
 	actions?: MessageAction[];
 	disabled?: boolean;
+	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
 export interface MessageAction {

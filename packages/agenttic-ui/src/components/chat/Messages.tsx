@@ -132,7 +132,7 @@ export function Messages( {
 				<AnimatePresence mode="popLayout">
 					{ visibleMessages.map( ( message ) => (
 						<Message
-							key={ message.id }
+							key={ message.reactKey || message.id }
 							message={ message }
 							messageRenderer={ messageRenderer }
 						/>
