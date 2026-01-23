@@ -44,6 +44,8 @@ interface AgentChatProps {
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
+	/** Called when the typing status changes. */
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
@@ -66,6 +68,7 @@ export default function AgentChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
+	onTypingStatusChange,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -97,6 +100,7 @@ export default function AgentChat( {
 			onExpand={ onExpand }
 			onStop={ onAbort }
 			messageRenderer={ messageRenderer }
+			onTypingStatusChange={ onTypingStatusChange }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
