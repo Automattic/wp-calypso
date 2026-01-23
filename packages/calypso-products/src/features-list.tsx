@@ -835,7 +835,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Install all WordPress plugins' )
+				? i18n.translate( 'Extend your site with WordPress plugins' )
 				: i18n.translate( 'Install WordPress plugins' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -1683,7 +1683,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Turn off WordPress.com ads' )
+				? i18n.translate( 'No ads for visitors' )
 				: i18n.translate( 'Ad-free browsing experience for your visitors' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -1869,7 +1869,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Spam, brute-force, DDoS protection and mitigation' )
+				? i18n.translate( 'Protection against spam and hacking attacks' )
 				: i18n.translate( 'Brute-force protection' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -1918,7 +1918,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Use custom CSS' )
+				? i18n.translate( 'Customize your site with CSS' )
 				: i18n.translate( 'Customize fonts and colors sitewide' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
@@ -2003,7 +2003,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Faster site loading from 28+ global locations' )
+				: i18n.translate( 'Global CDN with 28+ locations' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: ( params ) =>
@@ -2639,10 +2642,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Get support from our expert, friendly Happiness team.' )
-				: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -2650,10 +2650,8 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support with faster response times' )
 				: i18n.translate( 'Fast support from our expert\u00A0team' ),
-		getDescription: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Prompt support from our expert, friendly Happiness team.' )
-				: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+		getDescription: () =>
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FREE_FAST_SUPPORT ]: {
 		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
