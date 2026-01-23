@@ -84,7 +84,10 @@ export default function AgentDock( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => setIsOpen( true ),
+			onOpenSidebar: () => {
+				setIsOpen( true );
+				navigate( '/' );
+			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
