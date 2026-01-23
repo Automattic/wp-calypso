@@ -1,9 +1,9 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$blaze-orange: #f06428;
-$blaze-orange-darker: #c64916;
-$rad: 8px;
+$lp-orange: #f06428;
+$lp-orange-darker: #c64916;
+$radius: 8px;
 $content-width: 1060px;
 
 .promote-post-i2 {
@@ -144,7 +144,7 @@ $content-width: 1060px;
 		background-color: var(--studio-white);
 		color: var(--color-text);
 		position: relative;
-		border-radius: $rad;
+		border-radius: $radius;
 		padding: 32px 0;
 		margin-top: 32px;
 
@@ -223,25 +223,25 @@ $content-width: 1060px;
 	}
 
 	.is-primary {
-		background-color: $blaze-orange;
-		border-color: $blaze-orange;
+		background-color: $lp-orange;
+		border-color: $lp-orange;
 		color: var(--studio-white);
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		border-bottom: 3px solid darken( $blaze-orange, 20% );
-		border-radius: $rad;
+		border-bottom: 3px solid darken( $lp-orange, 20% );
+		border-radius: $radius;
 
 		&:hover,
 		&:focus,
 		&:active {
-			background-color: $blaze-orange-darker;
-			border-color: $blaze-orange-darker;
+			background-color: $lp-orange-darker;
+			border-color: $lp-orange-darker;
 			color: var(--studio-white);
 		}
 
 		&:focus-visible {
-			outline: 2px solid $blaze-orange;
+			outline: 2px solid $lp-orange;
 			outline-offset: 2px;
 		}
 
@@ -270,7 +270,7 @@ $content-width: 1060px;
 	.blaze-disconnected-site__hero {
 		background-color: #f4ede7;
 		padding: 64px 48px;
-		border-radius: $rad $rad 0 0;
+		border-radius: $radius $radius 0 0;
 		margin-top: 0;
 
 		.blaze-disconnected-site__hero-content {
@@ -394,7 +394,7 @@ $content-width: 1060px;
 		align-items: center;
 		text-align: start;
 		margin-top: 0;
-		border-radius: 0 0 $rad $rad;
+		border-radius: 0 0 $radius $radius;
 
 		@media (max-width: $break-large) {
 			flex-direction: column;
@@ -422,7 +422,7 @@ $content-width: 1060px;
 
 	// Steps section (three cards on grey background)
 	.blaze-disconnected-site__steps {
-		border-radius: $rad;
+		border-radius: $radius;
 		padding: 0;
 
 		.blaze-disconnected-site__steps-grid {
@@ -431,7 +431,7 @@ $content-width: 1060px;
 			gap: 24px;
 			max-width: $content-width;
 			margin: 0 auto;
-			border-radius: $rad;
+			border-radius: $radius;
 
 			@media (max-width: $break-large) {
 				grid-template-columns: 1fr;
@@ -440,7 +440,7 @@ $content-width: 1060px;
 
 		.blaze-disconnected-site__step-card {
 			background: var(--studio-white);
-			border-radius: $rad;
+			border-radius: $radius;
 			padding: 28px;
 			text-align: left;
 		}
