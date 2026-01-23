@@ -46,13 +46,12 @@
 @mixin notice-panel-open( $notice-panel-selector ) {
 	#{$notice-panel-selector} {
 		right: $sidebar-width !important;
-		top: $layout-spacing + $admin-bar-height !important;
+		top: $layout-spacing + $admin-bar-height + 1px !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
 		border: 1px solid $border-color;
 		border-top: none;
 		border-left: none;
-		overflow: hidden;
 	}
 }
 
