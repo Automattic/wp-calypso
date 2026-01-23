@@ -1,5 +1,6 @@
 export * from './query-client';
 
+export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
 export * from './dashboard-site-list';
@@ -27,6 +28,7 @@ export * from './emails';
 export * from './geo';
 export * from './github';
 export * from './hosting-update-schedules';
+export * from './jetpack-user-license';
 export * from './marketplace-search';
 export * from './marketing-survey';
 export * from './me-a8c';
