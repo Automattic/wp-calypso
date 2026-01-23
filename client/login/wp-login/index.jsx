@@ -491,13 +491,13 @@ export default connect(
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
-				'automattic-for-agencies-client' ===
-					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			ciabConfig: getCiabConfig(
-				get( getCurrentQueryArguments( state ), 'from' ) ||
-					get( getInitialQueryArguments( state ), 'from' )
-			),
+			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			'automattic-for-agencies-client' ===
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+		ciabConfig: getCiabConfig(
+			get( getCurrentQueryArguments( state ), 'from' ) ||
+				get( getInitialQueryArguments( state ), 'from' )
+		),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
