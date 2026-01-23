@@ -23,8 +23,8 @@ export default function DisconnectedSite() {
 					<div className="blaze-disconnected-site__hero-body">
 						<h1 className="blaze-disconnected-site__title">
 							{ isWooStore
-								? translate( 'Create ads from your products in a snap with Blaze Ads' )
-								: translate( 'Create ads from your content in a snap with Blaze Ads' ) }
+								? translate( 'Create ads from your products in a snap with Blaze' )
+								: translate( 'Create ads from your content in a snap with Blaze' ) }
 							<span className="blaze-title-logo" aria-hidden="true">
 								<img
 									className="blaze-title-logo__icon"

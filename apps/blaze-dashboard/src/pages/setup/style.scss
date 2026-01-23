@@ -424,6 +424,7 @@ $content-width: 1060px;
 	.blaze-disconnected-site__steps {
 		border-radius: $radius;
 		padding: 0;
+		background-color: transparent;
 
 		.blaze-disconnected-site__steps-grid {
 			display: grid;
@@ -443,6 +444,7 @@ $content-width: 1060px;
 			border-radius: $radius;
 			padding: 28px;
 			text-align: left;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		}
 
 		.blaze-disconnected-site__step-card-number {
