@@ -318,8 +318,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.35"
-    "@automattic/agenttic-ui": "npm:^0.1.35"
+    "@automattic/agenttic-client": "npm:^0.1.37"
+    "@automattic/agenttic-ui": "npm:^0.1.37"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -350,9 +350,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.35":
-  version: 0.1.35
-  resolution: "@automattic/agenttic-client@npm:0.1.35"
+"@automattic/agenttic-client@npm:^0.1.37":
+  version: 0.1.37
+  resolution: "@automattic/agenttic-client@npm:0.1.37"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -366,13 +366,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: b9ae718642cc5f8f904a8e47fa1fd50266e0b5e6316557bb7e9a06f7afa1ae7be063b2b2d1bff4591627a7fcdbaa430261c8fd5c398efc5c4af043326b5bd52a
+  checksum: a442983c4934fe21feac47ca28d253f3d82ac25405846b30ae60b65a8998d6bd05536fc54a8999afe67dd0fd6aabe9d93bebff1ece6062db51223aa408c25cee
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.35":
-  version: 0.1.35
-  resolution: "@automattic/agenttic-ui@npm:0.1.35"
+"@automattic/agenttic-ui@npm:^0.1.37":
+  version: 0.1.37
+  resolution: "@automattic/agenttic-ui@npm:0.1.37"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -397,7 +397,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 17364d5eb87a779809f90e5f2685d0963d5c25565eb849f99fb5f237eaba2b4f7eea786c8bd9657102a9098b46d635636c840fe798c8b9820066cafcda853716
+  checksum: 627e7eee721f49c41137e39bbf83f47cb8b3d743a93ae1cde8984378d2d174b9a8f9277e6ecfbfa3a2a7b35fecbbc0bec186923b1a45d2733d9a78a5f8c065f3
   languageName: node
   linkType: hard
 
@@ -1859,7 +1859,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.35"
+    "@automattic/agenttic-ui": "npm:^0.1.37"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -15266,7 +15266,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.35"
+    "@automattic/agenttic-ui": "npm:^0.1.37"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -38446,7 +38446,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.35"
+    "@automattic/agenttic-ui": "npm:^0.1.37"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
