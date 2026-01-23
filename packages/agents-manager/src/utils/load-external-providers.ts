@@ -63,10 +63,9 @@ type ChatComponentType =
 /**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
- * @returns The React component for the specified type
- * @throws Error if an unknown component type is provided
+ * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown >;
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
