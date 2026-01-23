@@ -39,7 +39,7 @@ export function PurchasePaymentMethod( {
 		return null;
 	}
 
-	if ( ! purchase.is_rechargable ) {
+	if ( ! purchase.is_rechargeable ) {
 		return (
 			<div>
 				<Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>

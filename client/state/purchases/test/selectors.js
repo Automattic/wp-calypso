@@ -56,7 +56,7 @@ describe( 'selectors', () => {
 							ID: 2,
 							product_name: 'premium plan',
 							blog_id: 1337,
-							is_rechargable: true,
+							is_rechargeable: true,
 							is_auto_renew_enabled: true,
 							refund_integer: 9600,
 							total_refund_integer: 9600,

@@ -55,7 +55,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
-		isRechargeable: Boolean( purchase.is_rechargable ),
+		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
