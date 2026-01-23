@@ -342,7 +342,7 @@ export default function SiteConfigurationsModal( {
 					<Button
 						variant="primary"
 						type="submit"
-						busy={ isSubmitting }
+						isBusy={ isSubmitting }
 						disabled={ ! siteName.isSiteNameReadyForUse }
 					>
 						{ translate( 'Create site' ) }
