@@ -19,7 +19,8 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews';
+import DataViewsEmptyState from '../components/dataviews';
+import FollowUpSurvey from '../components/follow-up-survey';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -309,7 +310,12 @@ export default function Sites() {
 				notices={
 					<>
 						<SitesNotices />
-						{ ! isDashboardBackport() && <OptInSurvey /> }
+						{ ! isDashboardBackport() && (
+							<>
+								<OptInSurvey />
+								<FollowUpSurvey />
+							</>
+						) }
 					</>
 				}
 			>

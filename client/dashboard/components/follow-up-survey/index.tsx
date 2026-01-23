@@ -7,11 +7,11 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
 
-const DISMISSED_AT_KEY = 'dashboard-opt-in-survey-dismissed-at';
-const DISMISSED_COUNT_KEY = 'dashboard-opt-in-survey-dismissed-count';
+const DISMISSED_AT_KEY = 'dashboard-follow-up-survey-dismissed-at';
+const DISMISSED_COUNT_KEY = 'dashboard-follow-up-survey-dismissed-count';
 
 const RESHOW_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const FOLLOW_UP_AFTER_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
+const INITIAL_DELAY_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 const MAX_DISMISSES = 2;
 
 const canUseLocalStorage = () =>
@@ -60,8 +60,7 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 	const welcomeNoticeDismissedTime = new Date( welcomeNoticeDismissedAt ).getTime();
 	const now = Date.now();
 
-	// If more than 14 days have passed, we show the follow-up survey instead.
-	if ( now >= welcomeNoticeDismissedTime + FOLLOW_UP_AFTER_MS ) {
+	if ( now < welcomeNoticeDismissedTime + INITIAL_DELAY_MS ) {
 		return false;
 	}
 
@@ -69,7 +68,7 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 	return now >= lastDismissedDate.getTime() + RESHOW_AFTER_MS;
 }
 
-export default function OptInSurvey() {
+export default function FollowUpSurvey() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -89,12 +88,12 @@ export default function OptInSurvey() {
 	};
 
 	const dismiss = () => {
-		recordTracksEvent( 'calypso_dashboard_opt_in_survey_dismiss_click' );
+		recordTracksEvent( 'calypso_dashboard_follow_up_survey_dismiss_click' );
 		setDismissedNow();
 	};
 
 	const confirm = () => {
-		recordTracksEvent( 'calypso_dashboard_opt_in_survey_take_click' );
+		recordTracksEvent( 'calypso_dashboard_follow_up_survey_take_click' );
 		setDismissedNow();
 	};
 
@@ -107,7 +106,7 @@ export default function OptInSurvey() {
 					<Button
 						variant="primary"
 						size="compact"
-						href="https://automattic.survey.fm/msd-survey-for-opt-in"
+						href="https://automattic.survey.fm/msd-survey-for-opt-in-after-2-weeks"
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ confirm }
