@@ -62,6 +62,9 @@ jest.mock( '../../../../app/router/sites', () => ( {
 	siteBackupDetailRoute: {
 		fullPath: '/sites/$siteSlug/backups/$rewindId',
 	},
+	siteLogsActivityRoute: {
+		useSearch: () => ( {} ),
+	},
 } ) );
 
 const mockSite: DeepPartial< Site > = {
@@ -141,6 +144,10 @@ const mockActivityLogsData = {
 };
 
 function renderActivityLogsDataViews() {
+	nock( API_BASE )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
 		.query( true )
