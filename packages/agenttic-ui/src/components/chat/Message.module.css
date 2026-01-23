@@ -41,7 +41,7 @@
 }
 
 .message a {
-    color: var(--color-primary);
+    color: var(--color-link);
 }
 
 .message p:last-child {
