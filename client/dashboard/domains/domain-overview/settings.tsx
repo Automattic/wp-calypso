@@ -3,6 +3,7 @@ import {
 	DomainTransferStatus,
 	type Domain,
 	DomainDiagnostics,
+	type DomainMappingStatus,
 } from '@automattic/api-core';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -20,17 +21,23 @@ import NameServersSettingsSummary from '../name-servers/summary';
 export default function DomainOverviewSettings( {
 	domain,
 	domainDiagnostics,
+	domainMappingStatus,
 	isDisabled,
 }: {
 	domain: Domain;
 	domainDiagnostics: DomainDiagnostics | undefined;
+	domainMappingStatus?: DomainMappingStatus;
 	isDisabled?: boolean;
 } ) {
 	const buttonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
-			<DomainConnectionSetupSummary key="connection-setup" domain={ domain } />
+			<DomainConnectionSetupSummary
+				key="connection-setup"
+				domain={ domain }
+				domainMappingStatus={ domainMappingStatus }
+			/>
 		);
 	}
 
