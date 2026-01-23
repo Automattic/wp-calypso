@@ -112,7 +112,7 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isLargeViewport = useViewportMatch( 'large' );
 
 	const stepContent = (
 		<>
