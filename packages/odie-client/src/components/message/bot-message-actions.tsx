@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/components';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
+import { ComponentProps } from 'react';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendOdieFeedback } from '../../data';
@@ -56,61 +57,42 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 	}, [ message.content, message.message_id, trackEvent ] );
 
 	const messageActions = useMemo( () => {
-		return isLoggedIn
-			? [
-					// Only show thumbs up if not already disliked
-					...( notLiked
-						? []
-						: [
-								{
-									id: 'thumbs-up',
-									icon: <ThumbsUpIcon />,
-									label: __( 'Yes, this was helpful', __i18n_text_domain__ ),
-									onClick: () => handleIsHelpful( true ),
-									disabled: rated,
-									pressed: rated && liked,
-									tooltip: __( 'Yes, this was helpful', __i18n_text_domain__ ),
-								},
-						  ] ),
-					// Only show thumbs down if not already liked
-					...( liked
-						? []
-						: [
-								{
-									id: 'thumbs-down',
-									icon: <ThumbsDownIcon />,
-									label: __( 'No, this was not helpful', __i18n_text_domain__ ),
-									onClick: () => handleIsHelpful( false ),
-									disabled: rated,
-									pressed: rated && notLiked,
-									tooltip: __( 'No, this was not helpful', __i18n_text_domain__ ),
-								},
-						  ] ),
-					{
-						id: 'copy',
-						icon: isCopied ? <Icon icon={ check } size={ 24 } /> : <CopyIcon />,
-						label: isCopied
-							? __( 'Copied', __i18n_text_domain__ )
-							: __( 'Copy', __i18n_text_domain__ ),
-						onClick: handleCopyToClipboard,
-						tooltip: isCopied
-							? __( 'Copied to clipboard', __i18n_text_domain__ )
-							: __( 'Copy message to clipboard', __i18n_text_domain__ ),
-					},
-			  ]
-			: [
-					{
-						id: 'copy',
-						icon: isCopied ? <Icon icon={ check } size={ 24 } /> : <CopyIcon />,
-						label: isCopied
-							? __( 'Copied', __i18n_text_domain__ )
-							: __( 'Copy', __i18n_text_domain__ ),
-						onClick: handleCopyToClipboard,
-						tooltip: isCopied
-							? __( 'Copied to clipboard', __i18n_text_domain__ )
-							: __( 'Copy message to clipboard', __i18n_text_domain__ ),
-					},
-			  ];
+		const actions: ComponentProps< typeof MessageActions >[ 'message' ][ 'actions' ] = [
+			{
+				id: 'copy',
+				icon: isCopied ? <Icon icon={ check } size={ 24 } /> : <CopyIcon />,
+				label: isCopied ? __( 'Copied', __i18n_text_domain__ ) : __( 'Copy', __i18n_text_domain__ ),
+				onClick: handleCopyToClipboard,
+				tooltip: isCopied
+					? __( 'Copied to clipboard', __i18n_text_domain__ )
+					: __( 'Copy message to clipboard', __i18n_text_domain__ ),
+			},
+		];
+		if ( isLoggedIn ) {
+			if ( ! liked ) {
+				actions.unshift( {
+					id: 'thumbs-down',
+					icon: <ThumbsDownIcon />,
+					label: __( 'No, this was not helpful', __i18n_text_domain__ ),
+					onClick: () => handleIsHelpful( false ),
+					disabled: rated,
+					pressed: rated && notLiked,
+					tooltip: __( 'No, this was not helpful', __i18n_text_domain__ ),
+				} );
+			}
+			if ( ! notLiked ) {
+				actions.unshift( {
+					id: 'thumbs-up',
+					icon: <ThumbsUpIcon />,
+					label: __( 'Yes, this was helpful', __i18n_text_domain__ ),
+					onClick: () => handleIsHelpful( true ),
+					disabled: rated,
+					pressed: rated && liked,
+					tooltip: __( 'Yes, this was helpful', __i18n_text_domain__ ),
+				} );
+			}
+		}
+		return actions;
 	}, [ isLoggedIn, notLiked, liked, rated, isCopied, handleCopyToClipboard, handleIsHelpful ] );
 
 	return (
