@@ -68,7 +68,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 							helpCenterDispatch.setNavigateToRoute(
-								'/odie?query=' + encodeURIComponent( input.value )
+								'/odie?query=' + encodeURIComponent( input.value ),
+								true
 							);
 							helpCenterDispatch.setShowHelpCenter( true );
 						}
@@ -77,7 +78,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					// Logged in variant is already loaded.
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 					helpCenterDispatch.setNavigateToRoute(
-						'/odie?query=' + encodeURIComponent( input.value )
+						'/odie?query=' + encodeURIComponent( input.value ),
+						true
 					);
 					helpCenterDispatch.setShowHelpCenter( true );
 				}
