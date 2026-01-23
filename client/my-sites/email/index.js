@@ -39,7 +39,7 @@ export default function () {
 		paths.getEmailManagementPath(),
 		siteSelection,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( 'emails' ),
+		maybeRedirectToMultiSiteDashboard( '/emails' ),
 		sites,
 		makeLayout,
 		clientRender
@@ -70,7 +70,7 @@ export default function () {
 		],
 		handlers: [
 			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) => `/email?domainName=${ params.domain }` ),
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/emails?domainName=${ params.domain }` ),
 			...commonHandlers,
 			controller.emailManagement,
 			makeLayout,

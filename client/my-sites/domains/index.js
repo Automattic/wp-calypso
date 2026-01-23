@@ -44,13 +44,13 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
-function registerStandardDomainManagementPages( pathFunction, controller ) {
+function registerStandardDomainManagementPages( pathFunction, controller, handlers = [] ) {
 	registerMultiPage( {
 		paths: [
 			pathFunction( ':site', ':domain' ),
 			pathFunction( ':site', ':domain', paths.domainManagementRoot() ),
 		],
-		handlers: [ ...getCommonHandlers(), controller, makeLayout, clientRender ],
+		handlers: [ ...handlers, ...getCommonHandlers(), controller, makeLayout, clientRender ],
 	} );
 }
 
@@ -124,7 +124,11 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementEditContactInfo,
-		domainManagementController.domainManagementEditContactInfo
+		domainManagementController.domainManagementEditContactInfo,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/contact-info` ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
@@ -139,12 +143,20 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementDns,
-		domainManagementController.domainManagementDns
+		domainManagementController.domainManagementDns,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/dns` ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementDnsAddRecord,
-		domainManagementController.domainManagementDnsAddRecord
+		domainManagementController.domainManagementDnsAddRecord,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/dns/add` ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
@@ -154,7 +166,11 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementTransfer,
-		domainManagementController.domainManagementTransfer
+		domainManagementController.domainManagementTransfer,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }/transfer` ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
@@ -164,7 +180,13 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementTransferToAnotherUser,
-		domainManagementController.domainManagementTransferToOtherUser
+		domainManagementController.domainManagementTransferToOtherUser,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard(
+				( params ) => `/domains/${ params.domain }/transfer/other-user`
+			),
+		]
 	);
 
 	registerStandardDomainManagementPages(
@@ -174,7 +196,13 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementTransferToOtherSite,
-		domainManagementController.domainManagementTransferToOtherSite
+		domainManagementController.domainManagementTransferToOtherSite,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard(
+				( params ) => `/domains/${ params.domain }/transfer/other-site`
+			),
+		]
 	);
 
 	// /domains/manage/select-site
@@ -238,7 +266,11 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,
-		domainManagementController.domainManagementEdit
+		domainManagementController.domainManagementEdit,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }` ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
@@ -248,7 +280,13 @@ export default function () {
 
 	registerStandardDomainManagementPages(
 		paths.domainManagementTransferIn,
-		domainManagementController.domainManagementTransferIn
+		domainManagementController.domainManagementTransferIn,
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard(
+				( params ) => `/domains/${ params.domain }/domain-transfer-setup`
+			),
+		]
 	);
 
 	page(
@@ -386,6 +424,10 @@ export default function () {
 	page(
 		paths.domainUseMyDomain( ':site' ),
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params, queries ) => `/domains/${ queries.initialQuery }/domain-transfer-setup`
+		),
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
