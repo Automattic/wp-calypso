@@ -121,8 +121,6 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 						.join( ', ' ),
 				},
 			],
-			value: syntheticCart.total_cost,
-			currency: syntheticCart.currency,
 		};
 		debug( 'recordSignup: [TikTok]', params );
 		window.ttq.track( 'CompleteRegistration', params );
