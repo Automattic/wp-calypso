@@ -30,9 +30,9 @@ export default function RegularPlanCardContent( {
 
 	const userProducts = useSelector( getProductsList );
 
-	const { discountedCostFormatted } = plan
+	const { discountedCostFormatted, actualCostFormatted, showActualCost } = plan
 		? getProductPricingInfo( userProducts, plan, 1 )
-		: { discountedCostFormatted: '' };
+		: { discountedCostFormatted: '', actualCostFormatted: '', showActualCost: false };
 
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {
@@ -83,9 +83,16 @@ export default function RegularPlanCardContent( {
 					</div>
 				) : (
 					<div className="pressable-plan-card-content__price">
-						<b className="pressable-plan-card-content__price-actual-value">
-							{ discountedCostFormatted }
-						</b>
+						<div className="pressable-plan-card-content__price-row">
+							<b className="pressable-plan-card-content__price-actual-value">
+								{ discountedCostFormatted }
+							</b>
+							{ isTermPricingEnabled && showActualCost && (
+								<span className="pressable-plan-card-content__price-original">
+									{ actualCostFormatted }
+								</span>
+							) }
+						</div>
 
 						<div className="pressable-plan-card-content__price-interval">{ priceInterval() }</div>
 					</div>

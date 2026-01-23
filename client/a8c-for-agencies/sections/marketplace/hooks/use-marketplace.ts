@@ -232,12 +232,32 @@ export const useGetProductPricingInfo = (
 		if ( isTermPricingEnabled ) {
 			// TODO: When we enable BD for all the agencies, we will only keep this logic for all the products, remove the rest of the logic.
 			const isDailyPricing = product.price_interval === 'day';
-			const actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
-			const discountedCost = productPrice || 0;
 
-			const discountPercentage = discountedCost
-				? Math.round( ( ( actualCost - discountedCost ) / actualCost ) * 100 )
-				: 100;
+			// Check for introductory pricing
+			const introductoryPrice =
+				termPricing === 'yearly'
+					? product.yearly_introductory_price
+					: product.monthly_introductory_price;
+			const regularTermPrice =
+				termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
+			const hasIntroductoryPricing = introductoryPrice !== undefined && introductoryPrice !== null;
+
+			let actualCost: number;
+			let discountedCost: number;
+
+			if ( hasIntroductoryPricing && regularTermPrice ) {
+				// Use introductory pricing: introductory price is the discounted cost
+				actualCost = regularTermPrice * quantity;
+				discountedCost = introductoryPrice * quantity;
+			} else {
+				actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
+				discountedCost = productPrice || 0;
+			}
+
+			const discountPercentage =
+				actualCost > 0 && actualCost > discountedCost
+					? calculateDiscountPercentage( actualCost, discountedCost )
+					: 0;
 
 			return {
 				actualCost,

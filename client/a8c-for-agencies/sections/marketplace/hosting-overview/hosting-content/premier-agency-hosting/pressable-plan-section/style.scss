@@ -25,6 +25,18 @@
 	@include body-small;
 }
 
+.pressable-plan-card-content__price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.pressable-plan-card-content__price-original {
+	text-decoration: line-through;
+	@include body-small;
+	color: var(--color-neutral-50);
+}
+
 // We need to do this specifically to override the white-space.
 .pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button {
 	min-width: 0;
