@@ -60,7 +60,7 @@ const EllipsisMenu = () => {
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { currentUser } = useHelpCenterContext();
-	const isLoggedIn = !! currentUser?.I;
+	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
