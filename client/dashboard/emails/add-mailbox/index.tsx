@@ -44,7 +44,7 @@ const AddProfessionalEmail = () => {
 
 	const { domain, domainName } = useDomainFromUrlParam();
 	const userCanAddEmail = domain?.current_user_can_add_email;
-	const { product } = useEmailProduct( provider, interval );
+	const { product } = useEmailProduct( provider, interval, domain );
 	const { data: existingMailboxes } = useSuspenseQuery(
 		mailboxAccountsQuery( domain.blog_id, domainName )
 	);

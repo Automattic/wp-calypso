@@ -95,6 +95,7 @@ export * from './site-plugins';
 export * from './site-performance';
 export * from './site-preview-links';
 export * from './site-primary-data-center';
+export * from './site-products';
 export * from './site-purchases';
 export * from './site-redirect';
 export * from './site-reset';

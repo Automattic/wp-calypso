@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -96,7 +96,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-					item.domain_status.id === 'connection_error',
+					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
 			},
 			{
 				id: 'manage-domain',
