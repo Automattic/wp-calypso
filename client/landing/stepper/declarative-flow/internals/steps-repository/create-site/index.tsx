@@ -26,6 +26,7 @@ import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommer
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import {
 	retrieveSignupDestination,
 	getSignupCompleteFlowName,
@@ -39,7 +40,10 @@ import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboar
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { PricingDifferentiationExperimentAssignment } from '@automattic/onboarding';
 import './styles.scss';
+
+const PRICING_DIFFERENTIATION_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202601_v1';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
@@ -188,6 +192,25 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
+	// Get the pricing differentiation experiment assignment to pass to site creation.
+	// The experiment is only eligible for onboarding flow, so we check that here.
+	const isEligibleForPricingExperiment = isOnboardingFlow( flow );
+	const [ , pricingExperimentAssignment ] = useExperiment(
+		PRICING_DIFFERENTIATION_EXPERIMENT_NAME,
+		{
+			isEligible: isEligibleForPricingExperiment,
+		}
+	);
+
+	// Build the pricing experiment assignment object to pass to the backend
+	const pricingDifferentiationExperimentAssignment: PricingDifferentiationExperimentAssignment | null =
+		pricingExperimentAssignment?.variationName
+			? {
+					experimentName: PRICING_DIFFERENTIATION_EXPERIMENT_NAME,
+					variationName: pricingExperimentAssignment.variationName,
+			  }
+			: null;
+
 	async function createSite() {
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
@@ -239,7 +262,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			gardenName,
 			gardenPartnerName,
 			urlQueryParams.get( 'spec_id' ),
-			blueprint
+			blueprint,
+			pricingDifferentiationExperimentAssignment
 		);
 
 		// Poll for garden provisioning status if this is a garden site

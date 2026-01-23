@@ -20,6 +20,16 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
+/**
+ * Pricing differentiation experiment assignment data to pass to the site creation endpoint.
+ * The backend can use this to create blog stickers after site creation.
+ * This is specifically for the calypso_pricing_differentiation_202601_v1 experiment.
+ */
+export interface PricingDifferentiationExperimentAssignment {
+	experimentName: string;
+	variationName: string | null;
+}
+
 interface GetNewSiteParams {
 	flowToCheck: string;
 	isPurchasingDomainItem: boolean;
@@ -56,6 +66,10 @@ type NewSiteParams = {
 		site_accent_color?: string;
 		site_intent?: string;
 		blueprint?: string;
+		pricing_experiment_assignment?: {
+			experiment_name: string;
+			variation_name: string | null;
+		};
 	};
 	validate: boolean;
 };
@@ -158,7 +172,8 @@ export const createSiteWithCart = async (
 	gardenName?: string | null,
 	gardenPartnerName?: string | null,
 	specId?: string | null,
-	blueprint?: string | null
+	blueprint?: string | null,
+	pricingExperimentAssignment?: PricingDifferentiationExperimentAssignment | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -192,7 +207,6 @@ export const createSiteWithCart = async (
 
 	// This is the parameter that will contain the internal referral, e.g. a landing page.
 	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
-
 	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
 		path: '/sites/new',
 		apiVersion: '1.1',
@@ -225,6 +239,13 @@ export const createSiteWithCart = async (
 					specId && {
 						trigger_backend_build: true,
 					} ),
+				// Pass pricing differentiation experiment assignment so the backend can create blog stickers
+				...( pricingExperimentAssignment && {
+					pricing_experiment_assignment: {
+						experiment_name: pricingExperimentAssignment.experimentName,
+						variation_name: pricingExperimentAssignment.variationName,
+					},
+				} ),
 			},
 		},
 	} );

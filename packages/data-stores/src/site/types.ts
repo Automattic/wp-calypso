@@ -74,6 +74,14 @@ export interface CreateSiteParams {
 		is_videopress_initial_purchase?: boolean;
 		wpcom_admin_interface?: string;
 		wpcom_hide_action_bar?: boolean;
+		/**
+		 * Pricing differentiation experiment assignment for the backend to create blog stickers.
+		 * This is specifically for the calypso_pricing_differentiation_202601_v1 experiment.
+		 */
+		pricing_experiment_assignment?: {
+			experiment_name: string;
+			variation_name: string | null;
+		};
 	};
 }
 

@@ -11,6 +11,7 @@ import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
+import type { PricingDifferentiationExperimentAssignment } from '@automattic/onboarding';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 type Params = {
@@ -31,6 +32,7 @@ type Params = {
 	siteGoals?: SiteGoal[];
 	planCartItems?: MinimalRequestCartProduct[] | null;
 	blueprint?: string | null;
+	pricingExperimentAssignment?: PricingDifferentiationExperimentAssignment | null;
 };
 
 async function fillCart(
@@ -80,6 +82,7 @@ export const createSite = async ( {
 	siteIntent,
 	planCartItems,
 	blueprint = null,
+	pricingExperimentAssignment = null,
 }: Params ) => {
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -108,7 +111,16 @@ export const createSite = async ( {
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			options: newSiteParams.options,
+			options: {
+				...newSiteParams.options,
+				// Pass pricing differentiation experiment assignment so the backend can create blog stickers
+				...( pricingExperimentAssignment && {
+					pricing_experiment_assignment: {
+						experiment_name: pricingExperimentAssignment.experimentName,
+						variation_name: pricingExperimentAssignment.variationName,
+					},
+				} ),
+			},
 		},
 	} );
 

@@ -10,6 +10,7 @@ export {
 	replaceProductsInCart,
 	setThemeOnSite,
 } from './cart';
+export type { PricingDifferentiationExperimentAssignment } from './cart';
 export { setupSiteAfterCreation, base64ImageToBlob } from './setup-tailored-site-after-creation';
 export { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
 export { default as Progress } from './progress';
