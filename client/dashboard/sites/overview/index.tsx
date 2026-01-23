@@ -13,6 +13,7 @@ import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
+import OptInFollowUpSurvey from '../../components/opt-in-follow-up-survey';
 import OptInSurvey from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -227,7 +228,14 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={ ! isDashboardBackport() && <OptInSurvey /> }
+			notices={
+				! isDashboardBackport() && (
+					<>
+						<OptInSurvey />
+						<OptInFollowUpSurvey />
+					</>
+				)
+			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />
