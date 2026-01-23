@@ -785,7 +785,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_NO_ADS ]: {
 		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
-		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'No ads for visitors' )
+				: i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
 				'Allow your visitors to visit and read your website without ' +
@@ -1869,7 +1872,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Spam, brute-force, DDoS protection and mitigation' )
+				? i18n.translate( 'Protection against spam and hacking attacks' )
 				: i18n.translate( 'Brute-force protection' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
@@ -1918,7 +1921,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Use custom CSS' )
+				? i18n.translate( 'Customize your site with CSS' )
 				: i18n.translate( 'Customize fonts and colors sitewide' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
@@ -2003,7 +2006,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Faster site loading from 28+ global locations' )
+				: i18n.translate( 'Global CDN with 28+ locations' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: ( params ) =>
