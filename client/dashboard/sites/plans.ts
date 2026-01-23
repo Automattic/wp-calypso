@@ -11,7 +11,7 @@ export const isSitePlanNotOneOf = ( site: Site, plans: StorePlanSlug[] ) => {
 		return false;
 	}
 
-	return ! plans.includes( site.plan.product_slug as StorePlanSlug );
+	return ! ( plans as string[] ).includes( site.plan.product_slug );
 };
 
 export const isSitePlanBigSkyTrial = ( site: Site ) => {
