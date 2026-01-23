@@ -14,6 +14,7 @@ import {
 	A4A_LICENSES_LINK,
 	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
@@ -109,6 +110,7 @@ export default function LicensePreview( {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -230,16 +232,20 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{icon/}}{{/a}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{/a}}",
 								{
 									components: {
 										bold: <strong />,
 										br: <br />,
 										a: (
-											<a
-												href="https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/"
-												target="_blank"
-												rel="noreferrer noopener"
+											<Button
+												borderless
+												compact
+												onClick={ () => {
+													showSupportGuide(
+														'https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/'
+													);
+												} }
 											/>
 										),
 										icon: (
