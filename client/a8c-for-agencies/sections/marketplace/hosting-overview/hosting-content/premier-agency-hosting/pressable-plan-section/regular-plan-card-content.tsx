@@ -87,11 +87,13 @@ export default function RegularPlanCardContent( {
 							<b className="pressable-plan-card-content__price-actual-value">
 								{ discountedCostFormatted }
 							</b>
-							{ isTermPricingEnabled && showActualCost && (
-								<span className="pressable-plan-card-content__price-original">
-									{ actualCostFormatted }
-								</span>
-							) }
+							{ isTermPricingEnabled &&
+								showActualCost &&
+								( pressableOwnership === 'none' || isReferralMode ) && (
+									<span className="pressable-plan-card-content__price-original">
+										{ actualCostFormatted }
+									</span>
+								) }
 						</div>
 
 						<div className="pressable-plan-card-content__price-interval">{ priceInterval() }</div>
