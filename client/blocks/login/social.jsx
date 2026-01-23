@@ -26,6 +26,7 @@ class SocialLoginForm extends Component {
 		lastUsedAuthenticationMethod: PropTypes.string,
 		resetLastUsedAuthenticationMethod: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		ciabConfig: PropTypes.object,
 	};
 
 	socialLoginButtons = [
@@ -119,6 +120,34 @@ class SocialLoginForm extends Component {
 		return button;
 	}
 
+	getFilteredSocialButtons() {
+		const { ciabConfig } = this.props;
+
+		if ( ! ciabConfig ) {
+			return this.socialLoginButtons;
+		}
+
+		// Map ssoProviders to buttons (preserves order from config)
+		const buttons = ciabConfig.ssoProviders
+			.map( ( service ) => this.socialLoginButtons.find( ( btn ) => btn.service === service ) )
+			.filter( Boolean )
+			.map( ( button ) => ( { ...button, enabled: true } ) );
+
+		// Add email button at the end
+		buttons.push( {
+			service: 'email',
+			enabled: true,
+			button: (
+				<UsernameOrEmailButton
+					key="social-login-button-email"
+					onClick={ this.props.resetLastUsedAuthenticationMethod }
+				/>
+			),
+		} );
+
+		return buttons;
+	}
+
 	render() {
 		const { isSocialFirst } = this.props;
 
@@ -128,7 +157,7 @@ class SocialLoginForm extends Component {
 			>
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						{ this.socialLoginButtons.map( this.renderSocialButton.bind( this ) ) }
+						{ this.getFilteredSocialButtons().map( this.renderSocialButton.bind( this ) ) }
 					</div>
 				</div>
 			</Card>
