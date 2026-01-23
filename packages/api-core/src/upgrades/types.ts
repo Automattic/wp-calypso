@@ -213,7 +213,7 @@ export interface Purchase {
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_plan: boolean;
-	is_rechargable: boolean;
+	is_rechargeable: boolean;
 	is_woo_hosted_product: boolean;
 
 	/**
