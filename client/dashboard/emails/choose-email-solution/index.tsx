@@ -1,4 +1,4 @@
-import { EmailSubscription } from '@automattic/api-core';
+import { EmailSubscription, Product } from '@automattic/api-core';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -37,6 +37,9 @@ import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 
 import './style.scss';
 
+const getTrialMonths = ( product?: Product ) =>
+	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
+
 export default function ChooseEmailSolution() {
 	const { domain, domainName } = useDomainFromUrlParam();
 
@@ -44,10 +47,18 @@ export default function ChooseEmailSolution() {
 		IntervalLength.Annually
 	);
 
-	const { bestAnnualSavings } = useAnnualSavings();
+	const { bestAnnualSavings } = useAnnualSavings( domain );
 
-	const { product: googleProduct } = useEmailProduct( MailboxProvider.Google, billingInterval );
-	const { product: titanProduct } = useEmailProduct( MailboxProvider.Titan, billingInterval );
+	const { product: googleProduct } = useEmailProduct(
+		MailboxProvider.Google,
+		billingInterval,
+		domain
+	);
+	const { product: titanProduct } = useEmailProduct(
+		MailboxProvider.Titan,
+		billingInterval,
+		domain
+	);
 
 	const canAddEmail = domain.current_user_can_add_email;
 
@@ -130,6 +141,7 @@ export default function ChooseEmailSolution() {
 			product: titanProduct,
 			hasFreeTrial: hasTitanFreeTrial,
 			available: isTitanAvailable,
+			trialMonths: getTrialMonths( titanProduct ),
 		},
 		[ MailboxProvider.Google ]: {
 			logo: <img src={ GoogleLogo } alt="" />,
@@ -154,6 +166,7 @@ export default function ChooseEmailSolution() {
 				product: googleProduct,
 			} ),
 			available: isGoogleAvailable,
+			trialMonths: getTrialMonths( googleProduct ),
 		},
 	};
 
@@ -230,7 +243,15 @@ export default function ChooseEmailSolution() {
 											: __( 'per month, per mailbox, excl. taxes.' ) }
 									</Text>
 									{ provider.hasFreeTrial && (
-										<div className="email-provider-trial">{ __( '3 month free trial' ) }</div>
+										<div className="email-provider-trial">
+											{ provider.trialMonths === 12
+												? sprintf(
+														/* translators: %d is the number of free trial months. */
+														__( '%d month free trial' ),
+														provider.trialMonths
+												  )
+												: __( '3 month free trial' ) }
+										</div>
 									) }
 								</>
 							) : (

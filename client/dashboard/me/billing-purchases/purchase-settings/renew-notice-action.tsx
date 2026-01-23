@@ -37,7 +37,7 @@ export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 		return true;
 	}
 
-	if ( ! purchase.is_rechargable ) {
+	if ( ! purchase.is_rechargeable ) {
 		return true;
 	}
 

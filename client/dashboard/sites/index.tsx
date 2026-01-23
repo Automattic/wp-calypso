@@ -29,7 +29,6 @@ import {
 	SitesDataViews,
 	useActions,
 	useFields,
-	useFields__ES,
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
@@ -37,14 +36,11 @@ import {
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
-import { SiteLink, SiteLink__ES } from './site-fields';
 import { OptInWelcomeModal } from './welcome-modal';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
 	Site,
-	FetchDashboardSiteListParams,
-	DashboardSiteListSite,
 	DashboardFilters,
 } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
@@ -123,117 +119,8 @@ const getFetchPaginatedSitesOptions = (
 	return options;
 };
 
-function getFetchSiteListParams(
-	view: View,
-	// isRestoringAccount: boolean TODO: Add site visibility filtering,
-	siteFilters: DashboardFilters = {}
-): FetchDashboardSiteListParams {
-	// The mapping from Dataview fields to Site Profiles fields.
-	const mappedFields: Record< string, keyof DashboardSiteListSite > = {
-		name: 'name',
-		URL: 'url',
-		'icon.ico': 'icon',
-		backup: 'has_backup',
-		// views: 'stats_views',
-		plan: 'plan',
-		wp_version: 'wordpress_version',
-		is_a8c: 'is_a8c',
-		// preview
-		last_published: 'last_publish',
-		// uptime
-		views: 'views',
-		visitors: 'visitors',
-		subscribers_count: 'total_wpcom_subscribers',
-		// links
-		php_version: 'php_version',
-		// storage
-		host: 'hosting_provider_guess',
-	};
-
-	const additionalMappedFields: Record< string, ( keyof DashboardSiteListSite )[] > = {
-		likes: [ 'enabled_modules' ],
-		name: [ 'badge' ],
-		plan: [ 'owner_id' ],
-		preview: [ 'name', 'icon', 'url', 'private' ],
-		visibility: [ 'wpcom_status', 'private', 'status' ],
-	};
-
-	// Always include ID and slug (for navigation), deleted (for styling), is_a8c (for included a8c owned) and other (for vip & self hosted jetpack)
-	const fields: ( keyof DashboardSiteListSite )[] = [
-		'blog_id',
-		'slug',
-		'deleted',
-		'capabilities',
-		'is_a8c',
-		'is_atomic',
-		'is_garden',
-		'is_jetpack',
-		'is_p2',
-		'is_vip',
-	];
-
-	const getMappedFields = ( field: string ): ( keyof DashboardSiteListSite )[] => {
-		const result: ( keyof DashboardSiteListSite )[] = [];
-		if ( mappedFields[ field ] ) {
-			result.push( mappedFields[ field ] );
-		}
-
-		if ( additionalMappedFields[ field ] ) {
-			fields.push( ...additionalMappedFields[ field ] );
-		}
-
-		return result;
-	};
-
-	if ( view.showTitle && view.titleField ) {
-		fields.push( ...getMappedFields( view.titleField ) );
-	}
-
-	if ( view.showMedia && view.mediaField ) {
-		fields.push( ...getMappedFields( view.mediaField ) );
-	}
-
-	if ( view.showDescription && view.descriptionField ) {
-		fields.push( ...getMappedFields( view.descriptionField ) );
-	}
-
-	view.fields?.forEach( ( field ) => {
-		fields.push( ...getMappedFields( field ) );
-	} );
-
-	const planSlugsByName = siteFilters.plan?.reduce(
-		( acc, current ) => ( {
-			...acc,
-			[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
-		} ),
-		{} as Record< string, string[] >
-	);
-
-	const filters = view.filters?.reduce( ( acc, current ) => {
-		let value = current.value;
-		if ( current.field === 'plan' && current.value ) {
-			value = current.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
-		}
-
-		return {
-			...acc,
-			[ current.field ]: value,
-		};
-	}, {} );
-
-	return {
-		fields: Array.from( new Set( fields ) ).filter( Boolean ),
-		s: view.search || undefined,
-		filters,
-		sort_by: mappedFields[ view.sort?.field ?? '' ],
-		sort_direction: view.sort?.direction,
-		page: view.page,
-		per_page: view.perPage,
-	};
-}
-
 /**
- * Enables the correct site query based on the dataviews/v2/es-site-list feature flag.
+ * Enables the correct site query based on feature flags.
  */
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const { queries } = useAppContext();
@@ -242,25 +129,14 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 		enabled:
-			isEnabled( 'dashboard/v2/es-site-list' ) &&
+			isEnabled( 'dashboard/v2/paginated-site-list' ) &&
 			!! view.filters?.find( ( filter ) => filter.field === 'plan' ),
-	} );
-
-	const siteProfilesQueryResult = useQuery( {
-		...queries.dashboardSiteListQuery( getFetchSiteListParams( view, siteFilters ) ),
-		placeholderData: keepPreviousData,
-		enabled: isEnabled( 'dashboard/v2/es-site-list' ),
-		meta: {
-			fullPageLoader: true,
-		},
 	} );
 
 	const sitesQueryResult = useQuery( {
 		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
 		placeholderData: keepPreviousData,
-		enabled:
-			! isEnabled( 'dashboard/v2/es-site-list' ) &&
-			! isEnabled( 'dashboard/v2/paginated-site-list' ),
+		enabled: ! isEnabled( 'dashboard/v2/paginated-site-list' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
@@ -272,21 +148,9 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 		},
 	} );
 
-	if ( isEnabled( 'dashboard/v2/es-site-list' ) ) {
-		return {
-			sites: [],
-			sites__ES: siteProfilesQueryResult.data?.sites,
-			hasNoData: siteProfilesQueryResult.data?.sites.length === 0,
-			isLoadingSites: siteProfilesQueryResult.isLoading,
-			isPlaceholderData: siteProfilesQueryResult.isPlaceholderData,
-			totalItems: siteProfilesQueryResult.data?.total,
-		};
-	}
-
 	if ( isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
 		return {
 			sites: paginatedSitesQueryResult.data?.sites,
-			sites__ES: [],
 			hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
 			isLoadingSites: paginatedSitesQueryResult.isLoading,
 			isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
@@ -296,29 +160,10 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 
 	return {
 		sites: sitesQueryResult.data,
-		sites__ES: [],
 		hasNoData: sitesQueryResult.data?.length === 0,
 		isLoadingSites: sitesQueryResult.isLoading,
 		isPlaceholderData: sitesQueryResult.isPlaceholderData,
 		totalItems: sitesQueryResult.data?.length,
-	};
-}
-
-/**
- * Meant to stand in for the dataview's filterSortAndPaginate function when
- * the filtering has already been done on the backend by elasticsearch.
- */
-export function filterSortAndPaginate__ES(
-	sites: DashboardSiteListSite[],
-	view: View,
-	totalItems: number
-) {
-	return {
-		data: sites,
-		paginationInfo: {
-			totalItems,
-			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
-		},
 	};
 }
 
@@ -355,11 +200,12 @@ export default function Sites() {
 		sanitizeFields,
 	} );
 
-	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
+	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
+		view,
+		{ isRestoringAccount, isAutomattician }
+	);
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
-	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
@@ -392,7 +238,7 @@ export default function Sites() {
 	}
 
 	useEffect( () => {
-		if ( sites && ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
+		if ( sites ) {
 			sites.forEach( ( site ) => {
 				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
 				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
@@ -404,12 +250,6 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
 		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
 		: filterSortAndPaginate( sites ?? [], view, fields );
-
-	const { data: filteredData__ES, paginationInfo: paginationInfo__ES } = filterSortAndPaginate__ES(
-		sites__ES ?? [],
-		view,
-		totalItems ?? 0
-	);
 
 	const emptyState = (
 		<DataViewsEmptyState
@@ -473,49 +313,18 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
-					<SitesDataViews< DashboardSiteListSite >
-						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
-						view={ view }
-						sites={ filteredData__ES }
-						fields={ fields__ES }
-						// TODO: actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						isPlaceholderData={ isPlaceholderData }
-						empty={ emptyState }
-						paginationInfo={ paginationInfo__ES }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink__ES
-								{ ...props }
-								site={ item }
-								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
-							/>
-						) }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-					/>
-				) : (
-					<SitesDataViews< Site >
-						getItemId={ ( item ) => item.ID.toString() }
-						view={ view }
-						sites={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						isPlaceholderData={ isPlaceholderData }
-						empty={ emptyState }
-						paginationInfo={ paginationInfo }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink
-								{ ...props }
-								site={ item }
-								onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
-							/>
-						) }
-					/>
-				) }
+				<SitesDataViews
+					view={ view }
+					sites={ filteredData }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+					isPlaceholderData={ isPlaceholderData }
+					empty={ emptyState }
+					paginationInfo={ paginationInfo }
+					onChangeView={ handleViewChange }
+					onResetView={ resetView }
+				/>
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

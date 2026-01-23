@@ -1,11 +1,14 @@
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
+import { SiteLink } from '../site-fields';
 import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from './views';
+import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ComponentProps, ReactNode } from 'react';
 
-export function SitesDataViews< SiteType >( {
+export function SitesDataViews( {
 	view,
 	sites,
 	fields,
@@ -14,30 +17,27 @@ export function SitesDataViews< SiteType >( {
 	isPlaceholderData,
 	empty,
 	paginationInfo,
-	renderItemLink,
-	getItemId,
 	onChangeView,
 	onResetView,
 }: {
 	view: View;
-	sites: SiteType[];
-	fields: Field< SiteType >[];
-	actions?: Action< SiteType >[];
+	sites: Site[];
+	fields: Field< Site >[];
+	actions?: Action< Site >[];
 	isLoading: boolean;
 	isPlaceholderData?: boolean;
 	empty: ReactNode;
-	paginationInfo: ComponentProps< typeof DataViews< SiteType > >[ 'paginationInfo' ];
-	renderItemLink: ComponentProps< typeof DataViews< SiteType > >[ 'renderItemLink' ];
-	getItemId: ComponentProps< typeof DataViews< SiteType > >[ 'getItemId' ];
+	paginationInfo: ComponentProps< typeof DataViews< Site > >[ 'paginationInfo' ];
 	onChangeView: ( view: View ) => void;
 	onResetView?: () => void;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
 		<>
 			<DataViewsCard>
-				{ /* @ts-ignore - TS doesn't seem able to resolve which branch of the DataViewsProps type to go down, either the branch were the row type has an `id`, or the branch where it does not. */ }
-				<DataViews< SiteType >
-					getItemId={ getItemId }
+				<DataViews< Site >
+					getItemId={ ( item ) => item.ID.toString() }
 					data={ sites }
 					fields={ fields }
 					actions={ actions }
@@ -50,7 +50,13 @@ export function SitesDataViews< SiteType >( {
 					paginationInfo={ paginationInfo }
 					config={ DEFAULT_CONFIG }
 					empty={ empty }
-					renderItemLink={ renderItemLink }
+					renderItemLink={ ( { item, ...props } ) => (
+						<SiteLink
+							{ ...props }
+							site={ item }
+							onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
+						/>
+					) }
 				/>
 			</DataViewsCard>
 			<GuidedTourContextProvider

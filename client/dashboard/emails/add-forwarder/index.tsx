@@ -1,5 +1,9 @@
 import { EmailProvider } from '@automattic/api-core';
-import { addEmailForwarderMutation, userMailboxesQuery } from '@automattic/api-queries';
+import {
+	addEmailForwarderMutation,
+	domainQuery,
+	userMailboxesQuery,
+} from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -27,6 +31,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
+import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
@@ -87,6 +92,11 @@ function AddEmailForwarder() {
 		forwards,
 		maxForwards,
 	} = useDomainMaxForwards( formData.domain );
+
+	const { data: domainData } = useQuery( {
+		...domainQuery( formData.domain ),
+		enabled: !! formData.domain,
+	} );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -246,6 +256,9 @@ function AddEmailForwarder() {
 			}
 			size="small"
 		>
+			{ formData.domain && domainData && (
+				<DnsRequirementsNotice domainName={ formData.domain } domainData={ domainData } />
+			) }
 			{ eligibleDomains.length === 0 ? (
 				<>
 					<Text size={ 16 }>
@@ -363,7 +376,7 @@ function AddEmailForwarder() {
 										variant="primary"
 										type="submit"
 										isBusy={ isBusy }
-										disabled={ isBusy || ! allFieldsSet || ! isValid }
+										disabled={ isBusy || ! allFieldsSet || ! isValid || ! domainData }
 									>
 										{ __( 'Save' ) }
 									</Button>

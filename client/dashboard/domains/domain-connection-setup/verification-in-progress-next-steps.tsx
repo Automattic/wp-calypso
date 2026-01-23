@@ -42,6 +42,7 @@ export default function VerificationInProgressNextSteps() {
 		<CollapsibleCard
 			header={ <SectionHeader level={ 3 } title={ __( 'What happens next' ) } /> }
 			className="verification-in-progress-next-steps"
+			initialExpanded
 		>
 			{ data.map( ( item ) => (
 				<IconList.Item

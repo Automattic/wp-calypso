@@ -8,7 +8,6 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -100,12 +99,6 @@ export default function AgentDock( {
 		abortCurrentRequest,
 		clearSuggestions,
 	} = useAgentChat( agentConfig );
-
-	const {
-		messages: odieMessages,
-		isProcessing: isOdieProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat();
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -233,26 +226,6 @@ export default function AgentDock( {
 		/>
 	);
 
-	const OdieChat = (
-		<AgentChat
-			messages={ odieMessages }
-			suggestions={ [] }
-			isProcessing={ isOdieProcessing }
-			error={ null }
-			onSubmit={ sendOdieMessage }
-			onAbort={ () => {} }
-			isLoadingConversation={ isLoadingConversation }
-			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
-		/>
-	);
-
 	const History = (
 		<AgentHistory
 			agentId={ agentId }
@@ -295,7 +268,6 @@ export default function AgentDock( {
 	return createAgentPortal(
 		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
-			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
