@@ -24,7 +24,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
-import { ZendeskChat } from './zendesk-chat';
+import { ZendeskChat } from '../zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
