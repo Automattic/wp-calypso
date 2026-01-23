@@ -10,13 +10,10 @@ import type { Site } from '@automattic/api-core';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
-	if ( site.is_garden ) {
+	if ( site.is_garden || site.options?.is_redirect ) {
 		return site.slug;
 	}
 
-	if ( site.options?.is_redirect ) {
-		return site.slug;
-	}
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
 }
 
