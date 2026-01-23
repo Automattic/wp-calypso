@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import blazeFire from 'calypso/assets/images/blaze/blaze-fire.svg';
 import getStarted from 'calypso/assets/images/blaze/get-started.png';
@@ -11,9 +13,10 @@ export default function DisconnectedSite() {
 	const translate = useTranslate();
 	const connectUrl = config( 'connect_url' );
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+	const minDailyBudget = formatCurrency( 5, 'USD' );
 
 	return (
-		<div className={ `blaze-disconnected-site ${ isWooStore ? 'is-woo' : '' }` }>
+		<div className={ clsx( 'blaze-disconnected-site', { 'is-woo': isWooStore } ) }>
 			{ /* Hero Section */ }
 			<div className="blaze-disconnected-site__hero blaze-disconnected-site__section">
 				<div className="blaze-disconnected-site__hero-content">
@@ -67,7 +70,11 @@ export default function DisconnectedSite() {
 								<li>{ translate( 'Grow your audience and subscribers' ) }</li>
 								<li>{ translate( 'Tap into a network of 100 million users' ) }</li>
 								<li>{ translate( 'Turn content into compelling ads' ) }</li>
-								<li>{ translate( 'Start with just $5 per day' ) }</li>
+								<li>
+									{ translate( 'Start with just %(minDailyBudget)s per day', {
+										args: { minDailyBudget },
+									} ) }
+								</li>
 							</>
 						) }
 					</ul>
@@ -139,9 +146,17 @@ export default function DisconnectedSite() {
 						<p className="blaze-disconnected-site__step-card-text">
 							{ isWooStore
 								? translate(
-										'See the impact on your store traffic for just $5 per day and gain the momentum you need.'
+										'See the impact on your store traffic for just %(minDailyBudget)s per day and gain the momentum you need.',
+										{
+											args: { minDailyBudget },
+										}
 								  )
-								: translate( 'Start building momentum and traffic for just $5 per day.' ) }
+								: translate(
+										'Start building momentum and traffic for just %(minDailyBudget)s per day.',
+										{
+											args: { minDailyBudget },
+										}
+								  ) }
 						</p>
 					</div>
 				</div>
@@ -167,7 +182,10 @@ export default function DisconnectedSite() {
 				<FaqAccordion
 					question={ translate( 'What can I expect from a minimum budget?' ) }
 					answer={ translate(
-						'Campaigns start at $5 per day. While higher budgets reach more people, the minimum spend is sufficient to generate thousands of impressions. This allows you to cost-effectively test different products or headlines to see what converts before committing to a larger budget.'
+						'Campaigns start at %(minDailyBudget)s per day. While higher budgets reach more people, the minimum spend is sufficient to generate thousands of impressions. This allows you to cost-effectively test different products or headlines to see what converts before committing to a larger budget.',
+						{
+							args: { minDailyBudget },
+						}
 					) }
 				/>
 				{ isWooStore && (
