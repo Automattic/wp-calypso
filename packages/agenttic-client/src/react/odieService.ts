@@ -21,16 +21,18 @@ export const DEFAULT_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
  * Load conversation messages from the server
- * @param chatId       - The chat/session ID to load
- * @param config       - Service configuration
- * @param pageNumber   - Page number to load (default: 1)
- * @param itemsPerPage - Items per page (default: 50, max: 100)
+ * @param chatId            - The chat/session ID to load
+ * @param config            - Service configuration
+ * @param pageNumber        - Page number to load (default: 1)
+ * @param itemsPerPage      - Items per page (default: 50, max: 100)
+ * @param allowToolMessages - When `true`, includes `tool_result` messages (default: `false`)
  */
 export async function loadChatFromServer(
 	chatId: string,
 	config: OdieServiceConfig,
 	pageNumber: number = 1,
-	itemsPerPage: number = 50
+	itemsPerPage: number = 50,
+	allowToolMessages = false
 ): Promise< ServerLoadResult > {
 	const { botId, apiBaseUrl = DEFAULT_API_BASE_URL, authProvider } = config;
 
@@ -106,7 +108,7 @@ export async function loadChatFromServer(
 		const serverChat: ServerChat = await response.json();
 
 		// Transform to client format
-		const result = serverChatToLoadResult( serverChat );
+		const result = serverChatToLoadResult( serverChat, allowToolMessages );
 
 		logger(
 			'Loaded %d messages from server (page %d/%d)',
@@ -220,17 +222,25 @@ export async function listConversationsFromServer(
 /**
  * Load multiple pages of messages and combine them
  * Useful for loading entire conversation history
- * @param chatId   - The chat/session ID to load
- * @param config   - Service configuration
- * @param maxPages - Maximum number of pages to load (default: 10)
+ * @param chatId            - The chat/session ID to load
+ * @param config            - Service configuration
+ * @param maxPages          - Maximum number of pages to load (default: 10)
+ * @param allowToolMessages - When `true`, includes `tool_result` messages (default: `false`)
  */
 export async function loadAllMessagesFromServer(
 	chatId: string,
 	config: OdieServiceConfig,
-	maxPages: number = 10
+	maxPages: number = 10,
+	allowToolMessages = false
 ): Promise< ServerLoadResult > {
 	// Load first page to get pagination info
-	const firstPage = await loadChatFromServer( chatId, config, 1, 50 );
+	const firstPage = await loadChatFromServer(
+		chatId,
+		config,
+		1,
+		50,
+		allowToolMessages
+	);
 
 	// If there's only one page, return it
 	if ( ! firstPage.pagination.hasMore ) {
@@ -247,7 +257,9 @@ export async function loadAllMessagesFromServer(
 	// Load remaining pages in parallel (up to maxPages)
 	const pagePromises: Promise< ServerLoadResult >[] = [];
 	for ( let page = 2; page <= totalPagesToLoad; page++ ) {
-		pagePromises.push( loadChatFromServer( chatId, config, page, 50 ) );
+		pagePromises.push(
+			loadChatFromServer( chatId, config, page, 50, allowToolMessages )
+		);
 	}
 
 	try {

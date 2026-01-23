@@ -174,16 +174,49 @@ export function serverMessageToMessage(
 }
 
 /**
+ * Check if a message is a `wpcom__think` tool message
+ * @param msg - Server message to check
+ */
+function isThinkToolMessage( msg: ServerMessage ): boolean {
+	if ( msg.role !== 'tool_call' && msg.role !== 'tool_result' ) {
+		return false;
+	}
+
+	try {
+		const content = JSON.parse( msg.content );
+		return content.tool_id === 'wpcom__think';
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Transform server chat response to client format
- * @param serverChat - Server chat from odie-assistant API
+ * @param serverChat        - Server chat from odie-assistant API
+ * @param allowToolMessages - When `true`, includes `tool_result` messages (except `wpcom__think`). Defaults to `false`.
  */
 export function serverChatToLoadResult(
-	serverChat: ServerChat
+	serverChat: ServerChat,
+	allowToolMessages = false
 ): ServerLoadResult {
-	// Filter out tool_call and tool_result messages before converting
-	const filteredServerMessages = serverChat.messages.filter(
-		( msg ) => msg.role !== 'tool_call' && msg.role !== 'tool_result'
-	);
+	const filteredServerMessages = serverChat.messages.filter( ( msg ) => {
+		// Always filter out `wpcom__think` tool messages
+		if ( isThinkToolMessage( msg ) ) {
+			return false;
+		}
+
+		// Always filter out `tool_call` messages
+		if ( msg.role === 'tool_call' ) {
+			return false;
+		}
+
+		// When `allowToolMessages` is `false`, filter out `tool_result` messages
+		if ( ! allowToolMessages && msg.role === 'tool_result' ) {
+			return false;
+		}
+
+		return true;
+	} );
 
 	const messages = filteredServerMessages.map( serverMessageToMessage );
 
