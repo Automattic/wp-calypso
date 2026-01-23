@@ -33,6 +33,7 @@
 		"checkout/checkout-version": true,
 		"help-center/logged-out": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"checkout/razorpay": true,
 		"checkout/vgs-ebanx": true,
 		"current-site/domain-warning": false,

@@ -47,7 +47,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 	woo: {
 		id: 'woo',
 		displayName: 'Woo',
-		featureFlag: 'ciab/woo-branding',
+		featureFlag: 'ciab/custom-branding',
 		logo: {
 			src: wooLogo,
 			alt: 'Woo',

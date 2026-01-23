@@ -7,9 +7,7 @@
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"facebook_api_key": false,
-	"features": {
-		"ciab/woo-branding": false
-	},
+	"features": {},
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"survicate_enabled": false,
