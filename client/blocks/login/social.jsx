@@ -23,11 +23,11 @@ class SocialLoginForm extends Component {
 		magicLoginLink: PropTypes.string,
 		qrLoginLink: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
-		lastUsedAuthenticationMethod: PropTypes.string,
-		resetLastUsedAuthenticationMethod: PropTypes.func,
-		isJetpack: PropTypes.bool,
-		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
-	};
+	lastUsedAuthenticationMethod: PropTypes.string,
+	resetLastUsedAuthenticationMethod: PropTypes.func,
+	isJetpack: PropTypes.bool,
+	allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
+};
 
 	socialLoginButtons = [
 		{
@@ -160,11 +160,11 @@ class SocialLoginForm extends Component {
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
-			>
-				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">{ this.getSocialButtons() }</div>
-				</div>
-			</Card>
+		>
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">{ this.getSocialButtons() }</div>
+			</div>
+		</Card>
 		);
 	}
 }
