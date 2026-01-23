@@ -147,7 +147,7 @@
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.37",
+		"@automattic/agenttic-ui": "^0.1.38",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
