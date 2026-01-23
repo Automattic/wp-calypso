@@ -563,6 +563,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					}
 
 					// Handle final update - replace streaming message with final message
+					// We need to replace to get the correct message ID and properties from server
 					if (
 						update.final &&
 						update.status?.message &&
@@ -577,12 +578,21 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						if ( finalMessage ) {
 							setState( ( prev ) => {
-								// Replace the streaming message with the final message
+								// Update the streaming message with final message's ID first
+								// to maintain ID consistency, then update all properties
 								const updatedMessages = prev.uiMessages.map(
-									( msg ) =>
-										msg.id === currentStreamingId
-											? finalMessage
-											: msg
+									( msg ) => {
+										if ( msg.id === currentStreamingId ) {
+											// Keep the same content (already displayed during streaming)
+											// but update ID and other properties from the final message
+											return {
+												...finalMessage,
+												// Preserve the streamed content to avoid flicker
+												content: msg.content,
+											};
+										}
+										return msg;
+									}
 								);
 
 								// Update client messages from conversation history
