@@ -154,6 +154,11 @@ export default function AgentDock( {
 		navigate( '/' );
 	};
 
+	const handleExpand = () => {
+		setIsOpen( true );
+		navigate( '/' );
+	};
+
 	const handleSelectConversation = ( sessionId: string ) => {
 		abortCurrentRequest();
 		setSessionId( sessionId );
@@ -219,7 +224,7 @@ export default function AgentDock( {
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
@@ -236,7 +241,7 @@ export default function AgentDock( {
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>
