@@ -118,7 +118,7 @@ function SiteActivityLogsDataViews( {
 	const actions = useActivityActions( { isLoading: isFetching, site } );
 
 	const onChangeView = ( next: View ) => {
-		const nextFilters = next.filters ?? [];
+		const nextFilters = next.filters;
 		const nextSearch = next.search?.trim() ?? '';
 
 		const currentPage = view.page ?? 1;
@@ -172,7 +172,7 @@ function SiteActivityLogsDataViews( {
 	// Reset pagination when the date range changes
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
-	}, [ dateRangeVersion, view, updateView ] );
+	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
 	return (

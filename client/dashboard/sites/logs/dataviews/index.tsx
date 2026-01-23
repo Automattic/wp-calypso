@@ -150,7 +150,7 @@ function SiteLogsDataViews( {
 
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
-	}, [ dateRangeVersion, view, updateView ] );
+	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {
 		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
