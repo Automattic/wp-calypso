@@ -165,7 +165,7 @@ export default function AgentDock( {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname !== '/history' && ! messages.length,
+			isDisabled: pathname === '/chat' && ! messages.length,
 			onClick: handleNewChat,
 		};
 		const newZDChatMenuItem = {
