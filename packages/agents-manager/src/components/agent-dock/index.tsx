@@ -27,6 +27,7 @@ import SupportGuides from '../support-guides';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	GetChatComponent,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
@@ -49,6 +50,8 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Get a chat component by type for rendering in agent messages. */
+	getChatComponent?: GetChatComponent;
 }
 
 export default function AgentDock( {
@@ -61,6 +64,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	getChatComponent,
 }: AgentDockProps ) {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
@@ -105,6 +109,8 @@ export default function AgentDock( {
 		sessionId,
 		authProvider: agentConfig.authProvider,
 		onSuccess: ( messages, serverSessionId ) => {
+			// TODO: Handle component-related messages...
+
 			// Update the UI with the loaded messages
 			loadMessages( messages );
 			// Make sure future messages go to the right session

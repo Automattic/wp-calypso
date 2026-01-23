@@ -43,7 +43,8 @@ export default function useConversation( {
 					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
-				maxPages
+				maxPages,
+				true
 			);
 		},
 		enabled: !! sessionId,

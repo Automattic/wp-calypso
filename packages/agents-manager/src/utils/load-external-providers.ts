@@ -49,6 +49,25 @@ export type AbilitiesSetupHook = ( actions: {
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 } ) => void;
 
+/**
+ * Supported chat component types for agent messages.
+ */
+type ChatComponentType =
+	| 'button-picker'
+	| 'font-picker'
+	| 'color-picker'
+	| 'pattern-picker'
+	| 'completed-plan'
+	| 'product-card';
+
+/**
+ * Get a chat component by type for rendering in agent messages.
+ * @param type - The type of chat component to get
+ * @returns The React component for the specified type
+ * @throws Error if an unknown component type is provided
+ */
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown >;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -57,6 +76,7 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	getChatComponent?: GetChatComponent;
 }
 
 /**
@@ -81,6 +101,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
+	let mergedGetChatComponent: GetChatComponent | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -109,6 +130,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
+			if ( module.getChatComponent ) {
+				mergedGetChatComponent = module.getChatComponent;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -126,5 +150,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		getChatComponent: mergedGetChatComponent,
 	};
 }
