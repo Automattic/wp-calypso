@@ -5,7 +5,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { emailsRoute, mailboxesReadyRoute } from '../../app/router/emails';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLink, wpcomLink } from '../../utils/link';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { getCartItems } from '../utils/get-cart-items';
 import { getEmailProductProperties } from '../utils/get-email-product-properties';
@@ -59,7 +59,7 @@ export const useAddToCart = () => {
 			} ).href;
 
 		const checkoutPath = addQueryArgs( wpcomLink( '/checkout/' + site?.slug || '' ), {
-			redirect_to: redirectPath,
+			redirect_to: dashboardLink( redirectPath ),
 			checkoutBackUrl: backUrl,
 		} );
 
