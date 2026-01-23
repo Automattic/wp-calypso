@@ -11,7 +11,6 @@ import { PersistentRouter } from '../persistent-router';
 import type { ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
-import './style.scss';
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
