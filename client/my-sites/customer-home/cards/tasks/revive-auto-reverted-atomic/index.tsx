@@ -1,18 +1,36 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import ExternalLinkWithTracking from 'calypso/components/external-link-with-tracking';
+import { EVERY_TEN_SECONDS, useInterval } from 'calypso/lib/interval';
 import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_RESTORE_BACKUP,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
+import { useDispatch, useSelector } from 'calypso/state';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
 
 export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
+	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const restoreStatus = rewindState?.rewind?.status ?? null;
+
+	// Poll for rewind state to detect restores started from other tabs.
+	// Once a restore is detected, the data layer takes over with 3-second polling.
+	// Stop polling once the restore is finished.
+	const shouldPoll =
+		card === TASK_REACTIVATE_RESTORE_BACKUP && siteId && restoreStatus !== 'finished';
+	useInterval(
+		() => dispatch( requestRewindState( siteId as number ) ),
+		shouldPoll ? EVERY_TEN_SECONDS : false
+	);
 
 	if ( ! siteSlug || ! isRevivalTask( card ) ) {
 		return null;
@@ -69,7 +87,11 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 
 			case TASK_REACTIVATE_RESTORE_BACKUP:
 				return {
-					title: translate( 'Restore a Backup' ),
+					title: restoreStatus
+						? translate( 'Restore a Backup (status: %(status)s)', {
+								args: { status: restoreStatus },
+						  } )
+						: translate( 'Restore a Backup' ),
 					description: translate(
 						'When your plan previously expired, your site reverted. {{supportLink}}Follow these steps to restore a backup{{/supportLink}}, restoring your site to how it looked before the plan expired.{{lineBreak/}}No further action is needed if you do not need to restore from a backup.',
 						{
@@ -86,7 +108,12 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 	} )();
 
 	return (
-		<Task isUrgent { ...taskProps } taskId={ card } illustration={ disconnectedIllustration } />
+		<>
+			{ card === TASK_REACTIVATE_RESTORE_BACKUP && siteId && (
+				<QueryRewindState siteId={ siteId } />
+			) }
+			<Task isUrgent { ...taskProps } taskId={ card } illustration={ disconnectedIllustration } />
+		</>
 	);
 };
 
