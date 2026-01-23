@@ -4,6 +4,10 @@
     gap: var(--spacing);
 }
 
+.container textarea {
+    color: var(--color-foreground);
+}
+
 .textareaContainer {
     position: relative;
     flex: 1;
