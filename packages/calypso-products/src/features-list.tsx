@@ -785,10 +785,7 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_NO_ADS ]: {
 		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
-		getTitle: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'No ads for visitors' )
-				: i18n.translate( 'Remove WordPress.com ads' ),
+		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
 				'Allow your visitors to visit and read your website without ' +
@@ -1686,7 +1683,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Turn off WordPress.com ads' )
+				? i18n.translate( 'No ads for visitors' )
 				: i18n.translate( 'Ad-free browsing experience for your visitors' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
