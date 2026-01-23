@@ -7,7 +7,10 @@ import ClipboardInputControl from '../../../components/clipboard-input-control';
 import OverviewCard from '../../../components/overview-card';
 
 export default function AkismetApiKeyCard() {
-	const { data, isError, isLoading } = useQuery( akismetApiKeyQuery() );
+	const { data, isError, isLoading } = useQuery( {
+		...akismetApiKeyQuery(),
+		refetchOnWindowFocus: false,
+	} );
 
 	if ( isError ) {
 		return null;

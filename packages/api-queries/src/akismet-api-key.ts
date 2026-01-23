@@ -5,5 +5,4 @@ export const akismetApiKeyQuery = () =>
 	queryOptions( {
 		queryKey: [ 'akismet-api-key' ],
 		queryFn: () => fetchAkismetApiKey(),
-		refetchOnWindowFocus: false,
 	} );

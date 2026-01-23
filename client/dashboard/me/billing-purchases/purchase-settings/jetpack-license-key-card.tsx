@@ -11,7 +11,10 @@ interface JetpackLicenseKeyCardProps {
 }
 
 export default function JetpackLicenseKeyCard( { purchaseId }: JetpackLicenseKeyCardProps ) {
-	const { data, isError, isLoading } = useQuery( jetpackUserLicenseQuery( purchaseId ) );
+	const { data, isError, isLoading } = useQuery( {
+		...jetpackUserLicenseQuery( purchaseId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	if ( isError ) {
 		return null;

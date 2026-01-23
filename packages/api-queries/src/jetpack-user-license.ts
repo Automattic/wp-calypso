@@ -5,5 +5,4 @@ export const jetpackUserLicenseQuery = ( subscriptionId: number ) =>
 	queryOptions( {
 		queryKey: [ 'jetpack-user-license', subscriptionId ],
 		queryFn: () => fetchJetpackUserLicense( subscriptionId ),
-		refetchOnWindowFocus: false,
 	} );
