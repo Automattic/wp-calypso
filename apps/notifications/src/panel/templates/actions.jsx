@@ -3,7 +3,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getActions, getCommentsUrl, getReferenceId } from '../helpers/notes';
+import PendingApprovalBadge from '../../shared/pending-approval-badge';
+import { getActions, getReferenceId } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
 import AnswerPromptButton from './button-answer-prompt';
@@ -42,29 +43,6 @@ const getInitialReplyValue = ( note, translate ) => {
 		: translate( 'Reply to comment…' );
 };
 
-const PendingApprovalBadge = ( { note, translate } ) => {
-	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
-
-	return (
-		<div className="wpnc__pending-approval-badge">
-			<Gridicon icon="time" size={ 16 } />
-			<span className="wpnc__pending-approval-badge__text">
-				{ translate( 'Pending Approval' ) }
-			</span>
-			{ commentsUrl && (
-				<a
-					className="wpnc__pending-approval-badge__link"
-					href={ commentsUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{ translate( 'Manage Comments' ) }
-				</a>
-			) }
-		</div>
-	);
-};
-
 const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
@@ -73,7 +51,13 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 
 	return (
 		<div className="wpnc__note-actions">
-			{ showPendingBadge && <PendingApprovalBadge note={ note } translate={ translate } /> }
+			{ showPendingBadge && (
+				<PendingApprovalBadge
+					note={ note }
+					translate={ translate }
+					icon={ <Gridicon icon="time" size={ 16 } /> }
+				/>
+			) }
 			<div className="wpnc__note-actions__buttons">
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }

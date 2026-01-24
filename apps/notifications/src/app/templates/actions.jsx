@@ -1,16 +1,16 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	ExternalLink,
 	Icon,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { pending } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getActions, getCommentsUrl, getReferenceId } from '../../panel/helpers/notes';
+import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
+import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
@@ -19,39 +19,6 @@ import SpamButton from './button-spam';
 import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
-
-const pendingBadgeStyles = {
-	container: {
-		padding: '12px 16px',
-		margin: '-16px -16px 0',
-		backgroundColor: 'color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent)',
-		borderInlineStart: '3px solid var(--color-warning, #f0b849)',
-		fontSize: '13px',
-	},
-	icon: { fill: 'var(--color-warning, #f0b849)' },
-	text: { fontWeight: 500, color: 'var(--color-warning-80, #614200)' },
-	link: { marginInlineStart: 'auto', fontWeight: 500, whiteSpace: 'nowrap' },
-};
-
-const PendingApprovalBadge = ( { note } ) => {
-	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
-
-	return (
-		<HStack
-			className="wpnc__pending-approval-badge"
-			spacing={ 2 }
-			style={ pendingBadgeStyles.container }
-		>
-			<Icon icon={ pending } size={ 16 } style={ pendingBadgeStyles.icon } />
-			<span style={ pendingBadgeStyles.text }>{ __( 'Pending Approval' ) }</span>
-			{ commentsUrl && (
-				<ExternalLink href={ commentsUrl } style={ pendingBadgeStyles.link }>
-					{ __( 'Manage Comments' ) }
-				</ExternalLink>
-			) }
-		</HStack>
-	);
-};
 
 const getInitialReplyValue = ( note ) => {
 	let ranges;
@@ -86,7 +53,20 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
-			{ showPendingBadge && <PendingApprovalBadge note={ note } /> }
+			{ showPendingBadge && (
+				<PendingApprovalBadge
+					note={ note }
+					translate={ __ }
+					icon={
+						<Icon
+							icon={ pending }
+							size={ 16 }
+							style={ { fill: 'var(--color-warning, #f0b849)' } }
+						/>
+					}
+					isModern
+				/>
+			) }
 			<HStack spacing={ 2 }>
 				{ hasAction( 'approve-comment' ) && (
 					<ApproveButton note={ note } isApproved={ isApproved } />
