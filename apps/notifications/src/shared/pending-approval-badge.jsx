@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import PropTypes from 'prop-types';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
 
 /**
@@ -57,6 +58,13 @@ const PendingApprovalBadge = ( { note, translate, icon, isModern = false } ) => 
 			) }
 		</div>
 	);
+};
+
+PendingApprovalBadge.propTypes = {
+	note: PropTypes.object.isRequired,
+	translate: PropTypes.func.isRequired,
+	icon: PropTypes.node.isRequired,
+	isModern: PropTypes.bool,
 };
 
 export default PendingApprovalBadge;
