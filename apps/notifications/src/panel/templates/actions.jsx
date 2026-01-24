@@ -3,7 +3,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getActions, getReferenceId } from '../helpers/notes';
+import { getActions, getCommentsUrl, getReferenceId } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
 import AnswerPromptButton from './button-answer-prompt';
@@ -13,6 +13,7 @@ import LikeButton from './button-like';
 import SpamButton from './button-spam';
 import TrashButton from './button-trash';
 import ReplyInput from './comment-reply-input';
+import Gridicon from './gridicons';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
@@ -41,13 +42,38 @@ const getInitialReplyValue = ( note, translate ) => {
 		: translate( 'Reply to comment…' );
 };
 
+const PendingApprovalBadge = ( { note, translate } ) => {
+	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
+
+	return (
+		<div className="wpnc__pending-approval-badge">
+			<Gridicon icon="time" size={ 16 } />
+			<span className="wpnc__pending-approval-badge__text">
+				{ translate( 'Pending Approval' ) }
+			</span>
+			{ commentsUrl && (
+				<a
+					className="wpnc__pending-approval-badge__link"
+					href={ commentsUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Manage Comments' ) }
+				</a>
+			) }
+		</div>
+	);
+};
+
 const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
+	const showPendingBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	return (
 		<div className="wpnc__note-actions">
+			{ showPendingBadge && <PendingApprovalBadge note={ note } translate={ translate } /> }
 			<div className="wpnc__note-actions__buttons">
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }
