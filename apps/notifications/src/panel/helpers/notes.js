@@ -1,6 +1,6 @@
 /**
- * Returns the URL to the pending comments page for a site.
- * @param {number|null} siteId
+ * Returns the URL to the pending comments management page for the given site.
+ * @param {number|null} siteId Site ID whose pending comments management page URL should be returned.
  * @returns {string|null}
  */
 export function getCommentsUrl( siteId ) {
