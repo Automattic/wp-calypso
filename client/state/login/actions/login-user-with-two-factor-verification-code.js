@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
@@ -44,6 +45,13 @@ export const loginUserWithTwoFactorVerificationCode =
 				}
 
 				const error = getErrorFromHTTPError( httpError );
+
+				// Override the error message for backup codes to be more contextually appropriate
+				if ( twoFactorAuthType === 'backup' && error.code === 'invalid_two_step_code' ) {
+					error.message = translate(
+						"Hmm, that's not a valid backup code. Please double-check your code or select another backup code and try again."
+					);
+				}
 
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
