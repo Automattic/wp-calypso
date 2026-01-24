@@ -58,7 +58,8 @@ type ChatComponentType =
 	| 'color-picker'
 	| 'pattern-picker'
 	| 'completed-plan'
-	| 'product-card';
+	| 'product-card'
+	| 'chat-suggestions';
 
 /**
  * Get a chat component by type for rendering in agent messages.
