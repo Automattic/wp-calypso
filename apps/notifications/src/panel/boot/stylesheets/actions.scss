@@ -6,13 +6,13 @@
 		gap: 8px;
 		padding: 12px 9px;
 		margin: -17px 0 16px 14px;
-		background-color: color-mix(in srgb, var(--color-warning) 10%, transparent);
-		border-inline-start: 4px solid var(--color-warning);
+		background-color: color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent);
+		border-inline-start: 4px solid var(--color-warning, #f0b849);
 		font-size: 13px;
 		color: var(--color-text);
 
 		.gridicon {
-			fill: var(--color-warning);
+			fill: var(--color-warning, #f0b849);
 			flex-shrink: 0;
 		}
 
