@@ -20,7 +20,7 @@ const PendingApprovalBadge = ( { note, translate, icon, isModern = false } ) => 
 				padding: '12px 16px',
 				margin: '-16px -16px 0',
 				backgroundColor: 'color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent)',
-				borderInlineStart: '3px solid var(--color-warning, #f0b849)',
+				borderInlineStart: '4px solid var(--color-warning, #f0b849)',
 				fontSize: '13px',
 			},
 			text: { fontWeight: 500, color: 'var(--color-warning-80, #614200)' },
