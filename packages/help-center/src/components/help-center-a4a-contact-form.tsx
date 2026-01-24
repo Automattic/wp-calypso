@@ -7,6 +7,7 @@ import {
 	TextareaControl,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	__experimentalText as Text,
 	Notice,
 	TextControl,
 } from '@wordpress/components';
@@ -50,9 +51,7 @@ export const HelpCenterA4AContactForm = () => {
 		site: '',
 		product: '',
 		message: isMigrationRequest
-			? __( "I'd like to chat more about the migration offer.", __i18n_text_domain__ ) +
-			  '\n\n' +
-			  __( '[your message here]', __i18n_text_domain__ )
+			? __( "I'd like to migrate from [insert your current host here].", __i18n_text_domain__ )
 			: '',
 		no_of_sites: 1,
 		pressable_contact: 'sales',
@@ -120,7 +119,7 @@ export const HelpCenterA4AContactForm = () => {
 			{
 				id: 'product',
 				label: isMigrationRequest
-					? __( 'What hosting product are you considering?', __i18n_text_domain__ )
+					? __( 'Where would you like us to migrate your site?', __i18n_text_domain__ )
 					: __( 'What product would you like help with?', __i18n_text_domain__ ),
 				type: 'text' as const,
 				Edit: 'select',
@@ -139,7 +138,7 @@ export const HelpCenterA4AContactForm = () => {
 								value: 'pressable',
 							},
 							{
-								label: __( "Don't know", __i18n_text_domain__ ),
+								label: __( 'I need help to decide', __i18n_text_domain__ ),
 								value: 'dont-know',
 							},
 					  ]
@@ -192,7 +191,12 @@ export const HelpCenterA4AContactForm = () => {
 			},
 			{
 				id: 'message',
-				label: __( 'How can we help?', __i18n_text_domain__ ),
+				label: isMigrationRequest
+					? __(
+							'Anything we should know about your current site(s) or migration needs?',
+							__i18n_text_domain__
+					  )
+					: __( 'How can we help?', __i18n_text_domain__ ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
@@ -274,7 +278,20 @@ export const HelpCenterA4AContactForm = () => {
 	return (
 		<form onSubmit={ handleSubmit } className="help-center-a4a-contact-form">
 			<VStack spacing={ 4 } justify="flex-start">
-				<Heading level={ 3 }>{ __( 'Contact sales & support', __i18n_text_domain__ ) }</Heading>
+				<Heading level={ 3 }>
+					{ isMigrationRequest
+						? __( 'Request a Free Concierge Migration', __i18n_text_domain__ )
+						: __( 'Contact sales & support', __i18n_text_domain__ ) }
+				</Heading>
+
+				{ isMigrationRequest && (
+					<Text>
+						{ __(
+							'We’ll help move your site to Pressable or WordPress.com for free. Fill out this short form, and our team will get in touch to assist with your migration.',
+							__i18n_text_domain__
+						) }
+					</Text>
+				) }
 
 				<DataForm< FormData >
 					data={ formData }
