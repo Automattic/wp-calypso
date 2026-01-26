@@ -7,7 +7,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Setup Domain Flows',
@@ -18,6 +18,7 @@ test.describe(
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;
 			newUserDetails: NewUserResponse;
+			newSiteDetails?: NewSiteResponse;
 		}[] = [];
 
 		test( 'As a new user I can connect an external domain to a new site', async ( {
@@ -32,15 +33,15 @@ test.describe(
 		} ) => {
 			const targetDomain = 'testwoo.com';
 			const planName = 'Personal';
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I enter the domain setup flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -60,7 +61,8 @@ test.describe(
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
-				await pageSignupPickPlan.selectPlan( planName );
+				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'Then I see the plan at checkout', async function () {
@@ -587,6 +589,14 @@ test.describe(
 					},
 					account.newUserDetails.body.bearer_token
 				);
+
+				if ( account.newSiteDetails ) {
+					await apiDeleteSite( restAPIClient, {
+						url: account.newSiteDetails.blog_details.url,
+						id: account.newSiteDetails.blog_details.blogid,
+						name: account.newSiteDetails.blog_details.blogname,
+					} );
+				}
 
 				await apiCloseAccount( restAPIClient, {
 					userID: account.newUserDetails.body.user_id,
