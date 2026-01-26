@@ -3,45 +3,16 @@
 import PropTypes from 'prop-types';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
 
+import './pending-approval-badge.scss';
+
 /**
  * PendingApprovalBadge component that works with both modern and legacy systems
  */
-const PendingApprovalBadge = ( { note, translate, icon, isModern = false } ) => {
+const PendingApprovalBadge = ( { note, translate, icon } ) => {
 	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
 	const pendingText = translate( 'Pending Approval' );
 	const manageText = translate( 'Manage Comments' );
 
-	// Modern version uses inline styles
-	if ( isModern ) {
-		const styles = {
-			container: {
-				display: 'flex',
-				alignItems: 'center',
-				gap: '8px',
-				padding: '12px 9px',
-				margin: '-17px 0 16px 14px',
-				backgroundColor: 'color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent)',
-				borderInlineStart: '4px solid var(--color-warning, #f0b849)',
-				fontSize: '13px',
-			},
-			text: { fontWeight: 500, color: 'var(--color-warning-80, #614200)' },
-			link: { marginInlineStart: 'auto', fontWeight: 500, whiteSpace: 'nowrap' },
-		};
-
-		return (
-			<div className="wpnc__pending-approval-badge" style={ styles.container }>
-				{ icon }
-				<span style={ styles.text }>{ pendingText }</span>
-				{ commentsUrl && (
-					<a href={ commentsUrl } target="_blank" rel="noopener noreferrer" style={ styles.link }>
-						{ manageText }
-					</a>
-				) }
-			</div>
-		);
-	}
-
-	// Legacy version relies on CSS classes
 	return (
 		<div className="wpnc__pending-approval-badge">
 			{ icon }
@@ -64,7 +35,6 @@ PendingApprovalBadge.propTypes = {
 	note: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 	icon: PropTypes.node.isRequired,
-	isModern: PropTypes.bool,
 };
 
 export default PendingApprovalBadge;

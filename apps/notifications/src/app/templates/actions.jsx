@@ -57,14 +57,7 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 				<PendingApprovalBadge
 					note={ note }
 					translate={ __ }
-					icon={
-						<Icon
-							icon={ pending }
-							size={ 16 }
-							style={ { fill: 'var(--color-warning, #f0b849)' } }
-						/>
-					}
-					isModern
+					icon={ <Icon icon={ pending } size={ 16 } /> }
 				/>
 			) }
 			<HStack spacing={ 2 }>
