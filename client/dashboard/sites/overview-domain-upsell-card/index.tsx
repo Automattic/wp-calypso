@@ -6,10 +6,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { getDomainAndPlanUpsellUrl } from '../../utils/get-domain-and-plan-upsell-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
@@ -78,7 +79,7 @@ const DomainUpsellCardContent = ( {
 		if ( requiresPlanUpgrade( site ) ) {
 			window.location.href = wpcomLink(
 				getDomainAndPlanUpsellUrl( {
-					site,
+					siteSlug: site.slug,
 					backUrl,
 					step: 'plans',
 				} )
@@ -93,7 +94,7 @@ const DomainUpsellCardContent = ( {
 
 	const chooseYourOwnUrl = wpcomLink(
 		getDomainAndPlanUpsellUrl( {
-			site,
+			siteSlug: site.slug,
 			backUrl,
 		} )
 	);
