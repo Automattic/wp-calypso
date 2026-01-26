@@ -257,11 +257,14 @@ class PurchaseNotice extends Component<
 			);
 		}
 
-		return (
-			! isRechargeable( purchase ) && (
-				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
-			)
-		);
+		if (
+			! isRechargeable( purchase ) ||
+			( canExplicitRenew( purchase ) && isInExpirationGracePeriod( purchase ) )
+		) {
+			return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		}
+
+		return null;
 	}
 
 	trackImpression( warning: string ) {
