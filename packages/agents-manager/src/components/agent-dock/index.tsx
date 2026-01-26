@@ -256,6 +256,7 @@ export default function AgentDock( {
 						return [
 							componentMessage,
 							// Inject a completed-plan message after the component message
+							// TODO: Handle the restore case...
 							completedPlanComponent && {
 								id: `${ message.id }-completed-plan`,
 								content: [
@@ -270,6 +271,8 @@ export default function AgentDock( {
 								],
 							},
 						].filter( Boolean );
+
+						// TODO: Handle the next step case...
 					}
 
 					// TODO: Handle `ai start_over` components...
