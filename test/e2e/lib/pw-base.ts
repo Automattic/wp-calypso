@@ -71,6 +71,8 @@ import {
 	UserSignupPage,
 	MyHomePage,
 	PlansPage,
+	UseADomainIOwnPage,
+	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
@@ -150,6 +152,10 @@ export const test = base.extend<
 		 * Component for searching/selecting domains during signup flows.
 		 */
 		componentDomainSearch: DomainSearchComponent;
+		/**
+		 * Component for selecting items in various flows.
+		 */
+		componentSelectItems: SelectItemsComponent;
 		/**
 		 * Environment variables for the tests.
 		 */
@@ -291,6 +297,10 @@ export const test = base.extend<
 		 */
 		pageThemes: ThemesPage;
 		/**
+		 * Page object representing the Use A Domain I Already Own page.
+		 */
+		pageUseADomainIAlreadyOwn: UseADomainIOwnPage;
+		/**
 		 * Page object representing the WordPress.com user signup page.
 		 */
 		pageUserSignUp: UserSignupPage;
@@ -371,6 +381,10 @@ export const test = base.extend<
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
 		await use( previewComponent );
+	},
+	componentSelectItems: async ( { page }, use ) => {
+		const selectItemsComponent = new SelectItemsComponent( page );
+		await use( selectItemsComponent );
 	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
@@ -523,6 +537,10 @@ export const test = base.extend<
 	pageThemes: async ( { page }, use ) => {
 		const themesPage = new ThemesPage( page );
 		await use( themesPage );
+	},
+	pageUseADomainIAlreadyOwn: async ( { page }, use ) => {
+		const useADomainIOwnPage = new UseADomainIOwnPage( page );
+		await use( useADomainIOwnPage );
 	},
 	pageUserSignUp: async ( { page }, use ) => {
 		const userSignupPage = new UserSignupPage( page );
