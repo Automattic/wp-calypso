@@ -2,16 +2,18 @@ import { NewTestUserDetails, NewUserResponse, RestAPIClient } from '@automattic/
 import { tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
+interface testAccount {
+	testUser: NewTestUserDetails;
+	newUserDetails: NewUserResponse;
+}
+
 test.describe(
 	'Domain flow: Connect a domain to a site',
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
-		const targetDomain = 'testwoo.com';
-		const planName = 'Personal';
-		let testUser: NewTestUserDetails;
-		let newUserDetails: NewUserResponse;
+		const accountsToCleanup: testAccount[] = [];
 
 		test( 'As a new user, I can connect an external domain to a new site', async ( {
 			page,
@@ -23,14 +25,17 @@ test.describe(
 			pageUseADomainIAlreadyOwn,
 			pageUserSignUp,
 		} ) => {
-			testUser = helperData.getNewTestUser();
+			const targetDomain = 'testwoo.com';
+			const planName = 'Personal';
 
 			await test.step( 'When I enter the domain setup flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				const testUser = helperData.getNewTestUser();
+				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				accountsToCleanup.push( { testUser, newUserDetails } );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -62,20 +67,20 @@ test.describe(
 			} );
 		} );
 
-		test.afterEach( 'Delete all user accounts generated', async function () {
-			if ( newUserDetails && testUser ) {
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			for ( const account of accountsToCleanup ) {
 				const restAPIClient = new RestAPIClient(
 					{
-						username: testUser.username,
-						password: testUser.password,
+						username: account.testUser.username,
+						password: account.testUser.password,
 					},
-					newUserDetails.body.bearer_token
+					account.newUserDetails.body.bearer_token
 				);
 
 				await apiCloseAccount( restAPIClient, {
-					userID: newUserDetails.body.user_id,
-					username: newUserDetails.body.username,
-					email: testUser.email,
+					userID: account.newUserDetails.body.user_id,
+					username: account.newUserDetails.body.username,
+					email: account.testUser.email,
 				} );
 			}
 		} );
