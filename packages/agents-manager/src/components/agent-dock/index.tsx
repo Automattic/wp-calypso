@@ -217,7 +217,7 @@ export default function AgentDock( {
 				)
 				// Convert tool-related text to tool components
 				.map( ( message ) => {
-					const [ firstContent, ...restContent ] = message.content ?? [];
+					const [ firstContent ] = message.content ?? [];
 
 					if ( message.role !== 'agent' || ! firstContent?.text ) {
 						return message;
@@ -243,17 +243,15 @@ export default function AgentDock( {
 							...message,
 							content: [
 								{
-									...firstContent,
 									type: 'component',
 									component,
 									componentProps: { ...props, contentType },
 								},
-								...restContent,
 							],
 						};
 					}
 
-					// TODO: Handle user feedback components...
+					// TODO: Handle `response-actions` components...
 
 					// TODO: Handle `ai start_over` components...
 
