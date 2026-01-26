@@ -1,5 +1,5 @@
-import { domainsQuery, siteBySlugQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
@@ -131,12 +131,6 @@ function SiteOverviewSecondaryCards( {
 	const showFlexUsageCard = site.is_wpcom_flex;
 	const isCommerceGardenSite = isCommerceGarden( site );
 
-	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: siteDomains } = useQuery( {
-		...domainsQuery(),
-		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
-	} );
-
 	return (
 		<>
 			<HStack
@@ -147,17 +141,7 @@ function SiteOverviewSecondaryCards( {
 				alignment="flex-start"
 			>
 				{ isCommerceGardenSite ? (
-					// A layout optimisation for Commerce Garden sites: we know we can avoid CLS by hiding
-					// the card until loading is complete.
-					sitePlan &&
-					siteDomains && (
-						<DomainsCard
-							site={ site }
-							sitePlan={ sitePlan }
-							siteDomains={ siteDomains }
-							hideUpsells
-						/>
-					)
+					<DomainsCard site={ site } />
 				) : (
 					<>
 						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
@@ -166,7 +150,7 @@ function SiteOverviewSecondaryCards( {
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 								<>
 									<DIFMUpsellCard site={ site } />
-									<DomainsCard site={ site } sitePlan={ sitePlan } siteDomains={ siteDomains } />
+									<DomainsCard site={ site } />
 								</>
 							) }
 						</VStack>
