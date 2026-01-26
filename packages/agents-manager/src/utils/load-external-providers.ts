@@ -48,6 +48,8 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
+	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
 
 export interface LoadedProviders {

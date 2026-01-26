@@ -26,6 +26,10 @@ import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import {
+	groupSiteBuildMessages,
+	hasSiteBuildMessages,
+} from '../site-build-progress/group-messages';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import { ZendeskChat } from '../zendesk-chat';
@@ -34,7 +38,6 @@ import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 } from '../../utils/load-external-providers';
-import type { Message as UILibraryMessage } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentDockProps {
@@ -62,6 +65,8 @@ export default function AgentDock( {
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
+	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
+	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
@@ -164,6 +169,8 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
+		setIsBuildingSite,
+		setThinkingMessage,
 	} );
 
 	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
@@ -236,20 +243,30 @@ export default function AgentDock( {
 
 	// Filter out deleted messages and local tool running messages
 	const visibleMessages = useMemo( () => {
-		const filtered = messages.filter(
+		const filteredMessages = messages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
-		return filtered as unknown as UILibraryMessage[];
-	}, [ messages, deletedMessageIds ] );
+
+		// Group site-build messages only when needed
+		const hasBuildMessages = hasSiteBuildMessages( filteredMessages );
+		// Show progress card during styling phase (after structure, dock is visible)
+
+		if ( isBuildingSite || hasBuildMessages ) {
+			// Show spinner during post-layout workflow (colors, fonts, images)
+			return groupSiteBuildMessages( filteredMessages, isBuildingSite ? thinkingMessage : null );
+		}
+
+		return filteredMessages;
+	}, [ messages, isBuildingSite, deletedMessageIds, thinkingMessage ] );
 
 	const Chat = (
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
-			isProcessing={ isProcessing || isThinking }
+			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
