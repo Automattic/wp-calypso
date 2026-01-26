@@ -180,7 +180,7 @@ const card: StoredPaymentMethodCard = {
 	remember: true,
 	source: '',
 	original_stored_details_id: '',
-	is_rechargable: true,
+	is_rechargeable: true,
 	payment_type: '',
 	is_expired: false,
 	is_backup: false,

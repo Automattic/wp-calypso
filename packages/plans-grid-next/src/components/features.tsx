@@ -41,6 +41,12 @@ const FeatureBadge = styled.span`
 	vertical-align: baseline;
 	text-decoration: none;
 	white-space: nowrap;
+
+	@media ( max-width: 480px ) {
+		height: 16px;
+		padding: 0 4px;
+		margin-inline-start: 6px;
+	}
 `;
 
 // var1d experiment: Checkmark bullet icon for differentiator features

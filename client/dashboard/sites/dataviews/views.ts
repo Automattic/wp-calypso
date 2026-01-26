@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import type { AnalyticsClient } from '../../app/analytics';
 import type { User } from '@automattic/api-core';
 import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress/dataviews';
@@ -40,7 +39,7 @@ const DEFAULT_VIEW: Partial< View > = {
 	perPage: DEFAULT_PER_PAGE,
 	fields: [ 'visibility', 'visitors', 'subscribers_count', 'plan' ],
 	sort: {
-		field: isEnabled( 'dashboard/v2/es-site-list' ) ? 'URL' : 'name',
+		field: 'name',
 		direction: 'asc' as SortDirection,
 	},
 };

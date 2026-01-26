@@ -1,19 +1,6 @@
-import { fetchDashboardSiteList, fetchDashboardSiteFilters } from '@automattic/api-core';
+import { fetchDashboardSiteFilters } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import type {
-	FetchSiteTypes,
-	FetchDashboardSiteListParams,
-	FetchDashboardSiteFiltersParams,
-} from '@automattic/api-core';
-
-export const dashboardSiteListQuery = (
-	siteTypes: FetchSiteTypes,
-	params?: FetchDashboardSiteListParams
-) =>
-	queryOptions( {
-		queryKey: [ 'dashboard-site-list', siteTypes, params ],
-		queryFn: () => fetchDashboardSiteList( siteTypes, params ),
-	} );
+import type { FetchSiteTypes, FetchDashboardSiteFiltersParams } from '@automattic/api-core';
 
 export const dashboardSiteFiltersQuery = (
 	siteTypes: FetchSiteTypes,

@@ -7,40 +7,13 @@ import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
-export default function SiteIcon( { site, size }: { site: Site; size?: number } ) {
+export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
 	const status = getSiteBlockingStatus( site );
 	const isMigration = status === 'migration_pending' || status === 'migration_started';
 	const fallbackInitial = getSiteDisplayName( site ).charAt( 0 );
-	return (
-		<SiteIconRenderer
-			alt={ site.name }
-			fallbackInitial={ fallbackInitial }
-			icon={ site.icon }
-			isMigration={ isMigration }
-			size={ size }
-		/>
-	);
-}
-
-/**
- * The SiteIconRenderer component allows you to render a site icon when you
- * don't happen to have a `Site` object on hand.
- */
-export function SiteIconRenderer( {
-	alt,
-	fallbackInitial,
-	icon,
-	isMigration,
-	size = 48,
-}: {
-	alt: string;
-	fallbackInitial: string;
-	icon?: { img: string; ico: string };
-	isMigration: boolean;
-	size?: number;
-} ) {
 	const dims = { width: size, height: size };
-	const ico = icon?.img || icon?.ico;
+	const ico = site.icon?.img || site.icon?.ico;
+
 	const src = useMemo( () => {
 		if ( ! ico ) {
 			return;
@@ -62,7 +35,7 @@ export function SiteIconRenderer( {
 			<img
 				className={ clsx( 'site-icon', className ) }
 				src={ src }
-				alt={ alt }
+				alt={ site.name }
 				{ ...dims }
 				loading="lazy"
 				style={ { width: size, height: size, minWidth: size } }

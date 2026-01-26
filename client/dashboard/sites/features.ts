@@ -2,13 +2,8 @@ import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
-import {
-	isCommerceGarden,
-	isSelfHostedJetpackConnected,
-	isSelfHostedJetpackConnected__ES,
-	isP2,
-} from '../utils/site-types';
-import type { DashboardSiteListSite, Site, User } from '@automattic/api-core';
+import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
+import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
 	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
@@ -22,24 +17,6 @@ export function canManageSite( site: Site ) {
 
 	// Self-hosted Jetpack-connected sites are not supported in the dashboard backport.
 	if ( isSelfHostedJetpackConnected( site ) ) {
-		return ! isDashboardBackport();
-	}
-
-	return true;
-}
-
-export function canManageSite__ES( site: DashboardSiteListSite ) {
-	if ( site.deleted || ! site.capabilities?.manage_options ) {
-		return false;
-	}
-
-	// Unsupported site types
-	if ( site.is_p2 || site.is_vip ) {
-		return false;
-	}
-
-	// Self-hosted Jetpack-connected sites are not supported in the dashboard backport.
-	if ( isSelfHostedJetpackConnected__ES( site ) ) {
 		return ! isDashboardBackport();
 	}
 

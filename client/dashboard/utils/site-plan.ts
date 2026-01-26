@@ -17,12 +17,7 @@ import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
-import type {
-	JetpackFeatureSlug,
-	Purchase,
-	Site,
-	DashboardSiteListSite,
-} from '@automattic/api-core';
+import type { JetpackFeatureSlug, Purchase, Site } from '@automattic/api-core';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -112,25 +107,6 @@ export function getSitePlanDisplayName( site: Site ) {
 	}
 
 	return plan.product_name || plan.product_name_short;
-}
-
-export function getSitePlanDisplayName__ES( site: DashboardSiteListSite ) {
-	const plan = site.plan;
-	if ( ! plan ) {
-		return '';
-	}
-
-	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
-		const products = getJetpackProductsForSite( site );
-		if ( products.length === 1 ) {
-			return products[ 0 ].label;
-		}
-		if ( products.length > 1 ) {
-			return __( 'Jetpack' );
-		}
-	}
-
-	return plan.product_name_short;
 }
 
 export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {

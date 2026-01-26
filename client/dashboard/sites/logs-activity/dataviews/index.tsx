@@ -1,27 +1,22 @@
 import { ActivityLogParams, LogType } from '@automattic/api-core';
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { DataViews, View, Field, Filter } from '@wordpress/dataviews';
+import { View, Field, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { filtersSignature } from '../../logs/dataviews/filters';
-import { syncFiltersSearchParams } from '../../logs/dataviews/url-sync';
+import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { siteLogsActivityRoute } from '../../../app/router/sites';
+import { DataViews } from '../../../components/dataviews';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
 import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
-import {
-	extractActivityLogTypeValues,
-	sanitizeFilters,
-	ALLOWED_FILTER_FIELDS,
-	getInitialFiltersFromSearch,
-	getInitialSearchTermFromSearch,
-} from './filters';
-import { useActivityView } from './views';
+import { extractActivityLogTypeValues } from './filters';
+import { DEFAULT_VIEW } from './views';
 import type { Activity } from '../../../components/logs-activity/types';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 import './style.scss';
@@ -40,19 +35,20 @@ function SiteActivityLogsDataViews( {
 	dateRangeVersion,
 	hasActivityLogsAccess,
 }: SiteLogsDataViewsPropsActivity ) {
-	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const locationSearch = router.state.location.search;
-	const [ view, setView ] = useActivityView( {
-		initialFilters: sanitizeFilters( getInitialFiltersFromSearch( locationSearch ) ),
-		initialSearch: getInitialSearchTermFromSearch( locationSearch ),
-	} );
 
-	// buildTimeRangeInSeconds applies the proper timezone offset and normalizes to full-day bounds.
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
 		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
+
+	const searchParams = siteLogsActivityRoute.useSearch();
+
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-logs-activity',
+		defaultView: DEFAULT_VIEW,
+		queryParams: searchParams,
+	} );
 
 	// Convert to ISO strings since that's what the API expects.
 	const afterIso = new Date( startSec * 1000 ).toISOString();
@@ -122,38 +118,27 @@ function SiteActivityLogsDataViews( {
 	const actions = useActivityActions( { isLoading: isFetching, site } );
 
 	const onChangeView = ( next: View ) => {
-		const nextFilters = sanitizeFilters( next.filters as Filter[] | undefined );
+		const nextFilters = next.filters;
 		const nextSearch = next.search?.trim() ?? '';
-		const nextSearchValue = nextSearch.length > 0 ? nextSearch : undefined;
 
 		const currentPage = view.page ?? 1;
 		const requestedPage = next.page ?? currentPage;
 
 		const perPageChanged = next.perPage !== view.perPage;
 		const sortChanged = next.sort?.direction !== view.sort?.direction;
-		const filtersChanged =
-			filtersSignature( nextFilters, ALLOWED_FILTER_FIELDS ) !==
-			filtersSignature( view.filters, ALLOWED_FILTER_FIELDS );
+		const filtersChanged = ! fastDeepEqual( nextFilters, view.filters );
 
 		const searchChanged = nextSearch !== searchTerm;
 
 		const datasetChanged = perPageChanged || sortChanged || filtersChanged || searchChanged;
 
-		const url = new URL( window.location.href );
-		syncFiltersSearchParams( url.searchParams, ALLOWED_FILTER_FIELDS, nextFilters );
-		if ( nextSearchValue ) {
-			url.searchParams.set( 'search', nextSearchValue );
-		} else {
-			url.searchParams.delete( 'search' );
-		}
-		window.history.replaceState( null, '', url.pathname + url.search );
 		if ( perPageChanged ) {
 			recordTracksEvent( 'calypso_dashboard_sites_logs_activity_per_page_changed', {
 				per_page: next.perPage,
 			} );
 		}
 		if ( filtersChanged ) {
-			const activityTypes = extractActivityLogTypeValues( nextFilters );
+			const activityTypes = extractActivityLogTypeValues( nextFilters ?? [] );
 			const eventProps: Record< string, boolean | number > = {
 				num_groups_selected: activityTypes.length,
 			};
@@ -178,18 +163,16 @@ function SiteActivityLogsDataViews( {
 				page: requestedPage,
 			} );
 		}
-		setView( {
+		updateView( {
 			...next,
 			page: datasetChanged ? 1 : requestedPage,
-			filters: nextFilters,
-			search: nextSearchValue,
 		} );
 	};
 
 	// Reset pagination when the date range changes
 	useEffect( () => {
-		setView( ( next ) => ( { ...next, page: 1 } ) );
-	}, [ dateRangeVersion, setView ] );
+		updateView( { ...view, page: 1 } );
+	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
 	return (
@@ -206,9 +189,9 @@ function SiteActivityLogsDataViews( {
 					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
 				} // Disable changing perPage if no access
 				search
-				searchLabel={ __( 'Search posts by ID, title or author' ) }
 				defaultLayouts={ { table: {} } }
 				onChangeView={ onChangeView }
+				onResetView={ resetView }
 				empty={ <p>{ view.search ? __( 'No activity found' ) : __( 'No activities' ) }</p> }
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.
 			/>

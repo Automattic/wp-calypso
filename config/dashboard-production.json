@@ -15,8 +15,10 @@
 		"ciab/custom-branding": false,
 		"cookie-banner": true,
 		"dashboard/v2": false,
+		"dashboard/v2/paginated-site-list": true,
 		"domain-transfer-redesign": true,
-		"marketplace-redesign": true
+		"marketplace-redesign": true,
+		"mcp-settings": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
