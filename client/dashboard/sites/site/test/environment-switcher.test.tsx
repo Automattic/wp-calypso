@@ -64,6 +64,10 @@ jest.mock( '@automattic/api-queries', () => ( {
 		queryKey: [ 'site-by-slug', slug ],
 		queryFn: () => Promise.resolve( { slug, ID: 1 } ),
 	} ) ),
+	userPreferenceQuery: jest.fn( ( preference ) => ( {
+		queryKey: [ 'user-preference', preference ],
+		queryFn: () => Promise.resolve( false ),
+	} ) ),
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
