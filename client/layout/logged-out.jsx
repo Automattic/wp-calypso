@@ -1,11 +1,12 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { WooDashboardLogo } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
@@ -16,6 +17,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloudEnvironment from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -89,23 +91,21 @@ const LayoutLoggedOut = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
 
-	// Detect CIAB dashboard for Woo branding. Using useState + useEffect
-	// instead of useMemo avoids hydration mismatches.
-	const [ isWooDashboard, setIsWooDashboard ] = useState( false );
+	const stepContainerV2Context = useMemo( () => {
+		// Detect CIAB dashboard for Woo branding.
+		const isWooDashboard =
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
 
-	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-		setIsWooDashboard( params.get( 'dashboard' ) === 'ciab' );
-	}, [] );
-
-	const stepContainerV2Context = useMemo(
-		() => ( {
-			// Only set logo for Woo; undefined lets TopBar use default WordPress logo.
+		return {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent,
+			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
 			// Login screens use compactLogo='always' which applies to the default logo.
-			logo: isWooDashboard ? <Step.WooLogo /> : undefined,
-		} ),
-		[ isWooDashboard ]
-	);
+			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+		};
+	}, [] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';

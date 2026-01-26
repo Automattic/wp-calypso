@@ -59,7 +59,7 @@ export const TopBar = ( {
 		</div>
 	);
 
-	const resolvedLogo = logo ?? context?.logo ?? defaultWordPressLogo;
+	const resolvedLogo = logo ?? context.logo ?? defaultWordPressLogo;
 
 	return (
 		<div className="step-container-v2__top-bar">

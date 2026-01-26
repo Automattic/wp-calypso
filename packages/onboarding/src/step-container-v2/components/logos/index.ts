@@ -1,1 +1,0 @@
-export { WooLogo } from './WooLogo';
