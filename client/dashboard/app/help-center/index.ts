@@ -16,7 +16,7 @@ const HELP_CENTER_STORE = 'automattic/help-center';
 export function useHelpCenter() {
 	const loadingPromiseRef = useRef< Promise< unknown > >();
 	const [ isLoading, setIsLoading ] = useState( false );
-	const wasShownFromLastSession = useQuery( userPreferenceQuery( 'help_center_open' ) );
+	const { data: wasShownFromLastSession } = useQuery( userPreferenceQuery( 'help_center_open' ) );
 
 	const isShown = useSelect(
 		( select ) => !! ( select( HELP_CENTER_STORE ) as HelpCenterSelect )?.isHelpCenterShown?.(),
