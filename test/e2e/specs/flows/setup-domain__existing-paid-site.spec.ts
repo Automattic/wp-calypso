@@ -1,38 +1,44 @@
 import {
+	cancelAtomicPurchaseFlow,
 	NewTestUserDetails,
 	NewUserResponse,
 	NewSiteResponse,
 	RestAPIClient,
+	BrowserManager,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 test.describe(
-	'Domain flow: Purchase a domain for an existing free site',
+	'Domain flow: Purchase a domain for an existing paid site',
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
-		const siteCreationPlan = 'Free';
-		const domainAdditionPlan = 'Personal';
+		const planName = 'Personal';
 		let selectedDomain: string;
 		let testUser: NewTestUserDetails;
 		let newUserDetails: NewUserResponse;
 		let newSiteDetails: NewSiteResponse;
 
-		test( 'As a new user, I can create a free site and then add a domain with a plan upgrade', async ( {
+		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,
 			componentSiteSelect,
+			componentMeSidebar,
+			componentNotice,
 			helperData,
 			pageCartCheckout,
 			pageSignupPickPlan,
 			pageUserSignUp,
+			pageMyProfile,
+			pagePurchases,
 		} ) => {
 			testUser = helperData.getNewTestUser();
 
 			await test.step( 'When I enter the onboarding flow', async function () {
+				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 				await page.goto( helperData.getCalypsoURL( '/setup' ) );
 			} );
 
@@ -45,14 +51,31 @@ test.describe(
 				await componentDomainSearch.skipPurchase();
 			} );
 
-			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan(
-					siteCreationPlan,
-					new RegExp( '.*/home/.*' )
-				);
+			await test.step( `And I select the ${ planName } plan`, async function () {
+				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
 			} );
 
-			await test.step( 'And I enter the domain flow', async function () {
+			await test.step( 'Then I can see the plan at checkout', async function () {
+				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
+			} );
+
+			await test.step( 'When I enter billing and payment details', async function () {
+				const paymentDetails = helperData.getTestPaymentDetails();
+				await pageCartCheckout.enterBillingDetails( paymentDetails );
+				await pageCartCheckout.enterPaymentDetails( paymentDetails );
+			} );
+
+			await test.step( 'When I can make the purchase', async function () {
+				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
+			} );
+
+			await test.step( 'Then I can see the dashboard with a success message', async function () {
+				await componentNotice.noticeShown( "You're in! The Personal Plan is now active.", {
+					timeout: 60 * 1000,
+				} );
+			} );
+
+			await test.step( 'When I enter the domain flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
@@ -79,16 +102,36 @@ test.describe(
 				);
 			} );
 
-			await test.step( `And I select the ${ domainAdditionPlan } plan`, async function () {
-				await pageSignupPickPlan.selectPlanWithoutSiteCreation( domainAdditionPlan );
-			} );
-
-			await test.step( 'Then I see the plan at checkout', async function () {
-				await pageCartCheckout.validateCartItem( `WordPress.com ${ domainAdditionPlan }` );
-			} );
-
-			await test.step( 'And I see the domain at checkout', async function () {
+			await test.step( 'Then I see the domain at checkout', async function () {
 				await pageCartCheckout.validateCartItem( selectedDomain );
+			} );
+
+			await test.step( 'And I navigate to Me > Purchases', async function () {
+				await pageMyProfile.visit();
+				await componentMeSidebar.openMobileMenu();
+				await componentMeSidebar.navigate( 'Purchases' );
+			} );
+
+			await test.step( 'And I view details of the purchased plan', async function () {
+				await pagePurchases.clickOnPurchase(
+					`WordPress.com ${ planName }`,
+					newSiteDetails.blog_details.site_slug as string
+				);
+				await pagePurchases.cancelPurchase( 'Cancel plan' );
+			} );
+
+			await test.step( 'And I cancel the plan renewal', async function () {
+				await cancelAtomicPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
+
+				await componentNotice.noticeShown(
+					'Your refund has been processed and your purchase removed.',
+					{
+						timeout: 30 * 1000,
+					}
+				);
 			} );
 		} );
 

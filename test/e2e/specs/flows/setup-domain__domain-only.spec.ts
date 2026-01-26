@@ -51,7 +51,7 @@ test.describe(
 			} );
 		} );
 
-		test.afterAll( 'Delete all user accounts generated', async function () {
+		test.afterEach( 'Delete all user accounts generated', async function () {
 			if ( newUserDetails && testUser ) {
 				const restAPIClient = new RestAPIClient(
 					{

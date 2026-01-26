@@ -55,9 +55,13 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
+	MeSidebarComponent,
+	MyProfilePage,
 	NewSiteResponse,
+	NoticeComponent,
 	PeoplePage,
 	PreviewComponent,
+	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
@@ -152,6 +156,14 @@ export const test = base.extend<
 		 * Component for searching/selecting domains during signup flows.
 		 */
 		componentDomainSearch: DomainSearchComponent;
+		/**
+		 * Component for the Me sidebar (profile/settings)
+		 */
+		componentMeSidebar: MeSidebarComponent;
+		/**
+		 * Component for displaying notices (e.g., success/error messages).
+		 */
+		componentNotice: NoticeComponent;
 		/**
 		 * Component for selecting items in various flows.
 		 */
@@ -269,6 +281,10 @@ export const test = base.extend<
 		 */
 		pageMarketing: MarketingPage;
 		/**
+		 * Page object representing the WordPress.com My Profile page.
+		 */
+		pageMyProfile: MyProfilePage;
+		/**
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
@@ -288,6 +304,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com plans page.
 		 */
 		pagePlans: PlansPage;
+		/**
+		 * Page object representing the WordPress.com purchases page.
+		 */
+		pagePurchases: PurchasesPage;
 		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
@@ -377,6 +397,14 @@ export const test = base.extend<
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentMeSidebar: async ( { page }, use ) => {
+		const meSidebarComponent = new MeSidebarComponent( page );
+		await use( meSidebarComponent );
+	},
+	componentNotice: async ( { page }, use ) => {
+		const noticeComponent = new NoticeComponent( page );
+		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
@@ -514,6 +542,10 @@ export const test = base.extend<
 		const myHomePage = new MyHomePage( page );
 		await use( myHomePage );
 	},
+	pageMyProfile: async ( { page }, use ) => {
+		const myProfilePage = new MyProfilePage( page );
+		await use( myProfilePage );
+	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -529,6 +561,10 @@ export const test = base.extend<
 	pagePlans: async ( { page }, use ) => {
 		const plansPage = new PlansPage( page );
 		await use( plansPage );
+	},
+	pagePurchases: async ( { page }, use ) => {
+		const purchasesPage = new PurchasesPage( page );
+		await use( purchasesPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
