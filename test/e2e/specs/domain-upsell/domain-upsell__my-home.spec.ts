@@ -21,7 +21,7 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'And domain upsell card has suggested domain', async function () {
+			await test.step( 'And domain upsell card has a suggested domain', async function () {
 				suggestedDomain = await pageMyHome.getSuggestedUpsellDomain();
 				expect( suggestedDomain ).not.toBe( '' );
 			} );
@@ -34,7 +34,7 @@ test.describe(
 				await pagePlans.selectPlan( 'Personal' );
 			} );
 
-			await test.step( 'Then secure checkout loads', async function () {
+			await test.step( 'Then the secure checkout page displays', async function () {
 				await page.waitForURL( /checkout/ );
 			} );
 		} );

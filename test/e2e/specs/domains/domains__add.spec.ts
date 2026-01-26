@@ -52,7 +52,7 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I remove the domain from cart', async function () {
+			await test.step( 'And I can remove the domain from cart', async function () {
 				await pageCartCheckout.removeCartItem( selectedDomain, false );
 			} );
 		} );
