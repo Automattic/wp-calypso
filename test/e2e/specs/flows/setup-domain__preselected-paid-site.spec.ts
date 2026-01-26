@@ -1,16 +1,16 @@
 import {
-	cancelAtomicPurchaseFlow,
+	BrowserManager,
 	NewTestUserDetails,
 	NewUserResponse,
 	NewSiteResponse,
 	RestAPIClient,
-	BrowserManager,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 test.describe(
-	'Domain flow: Purchase a domain for an existing paid site',
+	'Domain flow: Purchase a domain for a pre-selected paid site',
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
@@ -21,11 +21,9 @@ test.describe(
 		let newUserDetails: NewUserResponse;
 		let newSiteDetails: NewSiteResponse;
 
-		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
+		test( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
-			componentSelectItems,
-			componentSiteSelect,
 			componentMeSidebar,
 			componentNotice,
 			helperData,
@@ -55,7 +53,7 @@ test.describe(
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
 			} );
 
-			await test.step( 'Then I can see the plan at checkout', async function () {
+			await test.step( 'Then I see the plan at checkout', async function () {
 				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
@@ -65,7 +63,7 @@ test.describe(
 				await pageCartCheckout.enterPaymentDetails( paymentDetails );
 			} );
 
-			await test.step( 'When I can make the purchase', async function () {
+			await test.step( 'And I make the purchase', async function () {
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
@@ -75,12 +73,12 @@ test.describe(
 				} );
 			} );
 
-			await test.step( 'When I enter the domain flow', async function () {
-				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
-			} );
-
-			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+			await test.step( 'When I enter the domain flow with pre-selected site', async function () {
+				await page.goto(
+					helperData.getCalypsoURL(
+						`/setup/domain?siteSlug=${ newSiteDetails.blog_details.site_slug as string }`
+					)
+				);
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
@@ -89,17 +87,6 @@ test.describe(
 
 			await test.step( 'And I continue to the next step', async function () {
 				await componentDomainSearch.continue();
-			} );
-
-			await test.step( 'And I select existing site option', async function () {
-				await componentSelectItems.clickButton( 'Existing WordPress.com site', 'Select a site' );
-			} );
-
-			await test.step( 'And I select the site', async function () {
-				await componentSiteSelect.selectSite(
-					newSiteDetails.blog_details.site_slug as string,
-					false
-				);
 			} );
 
 			await test.step( 'Then I see the domain at checkout', async function () {
@@ -148,7 +135,6 @@ test.describe(
 				await apiCloseAccount( restAPIClient, {
 					userID: newUserDetails.body.user_id,
 					username: newUserDetails.body.username,
-
 					email: testUser.email,
 				} );
 			}
