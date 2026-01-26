@@ -85,6 +85,8 @@ import {
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
+import AkismetApiKeyCard from './akismet-api-key-card';
+import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -1210,6 +1212,12 @@ export default function PurchaseSettings() {
 							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
 						}
 					/>
+					{ purchase.is_jetpack_plan_or_product && (
+						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
+					) }
+					{ isAkismetProduct( purchase ) && isTemporarySitePurchase( purchase ) && (
+						<AkismetApiKeyCard />
+					) }
 				</Grid>
 				{ site && purchase.subscription_status === 'active' && (
 					<WPComResourceMeters purchase={ purchase } site={ site } />
