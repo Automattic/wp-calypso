@@ -1,14 +1,21 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import PropTypes from 'prop-types';
+import { ReactElement } from 'react';
+import type { Note } from '../app/types';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
 
 import './pending-approval-badge.scss';
 
+interface PendingApprovalBadgeProps {
+	note: Note;
+	translate: ( text: string ) => string;
+	icon: ReactElement;
+}
+
 /**
  * PendingApprovalBadge component that works with both modern and legacy systems
  */
-const PendingApprovalBadge = ( { note, translate, icon } ) => {
+const PendingApprovalBadge = ( { note, translate, icon }: PendingApprovalBadgeProps ) => {
 	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
 	const pendingText = translate( 'Pending Approval' );
 	const manageText = translate( 'Manage Comments' );
@@ -29,12 +36,6 @@ const PendingApprovalBadge = ( { note, translate, icon } ) => {
 			) }
 		</div>
 	);
-};
-
-PendingApprovalBadge.propTypes = {
-	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
-	icon: PropTypes.node.isRequired,
 };
 
 export default PendingApprovalBadge;
