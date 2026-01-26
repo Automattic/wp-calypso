@@ -10,7 +10,7 @@ import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
 import type { ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
-import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
+import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
@@ -20,7 +20,7 @@ export interface UnifiedAIAgentProps {
 	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName: string;
 	/** The selected site object. */
-	site?: HelpCenterSite | null;
+	site?: AgentsManagerSite | null;
 	/** The current user object. */
 	currentUser?: CurrentUser;
 	/** Called when the agent is closed. */

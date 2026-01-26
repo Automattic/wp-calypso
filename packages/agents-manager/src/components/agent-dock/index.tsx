@@ -33,11 +33,11 @@ import type {
 	AbilitiesSetupHook,
 } from '../../utils/load-external-providers';
 import type { Message as UILibraryMessage } from '@automattic/agenttic-ui/dist/types';
-import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import type { AgentsManagerSelect, AgentsManagerSite } from '@automattic/data-stores';
 
 interface AgentDockProps {
 	/** The selected site object. */
-	site?: HelpCenterSite | null;
+	site?: AgentsManagerSite | null;
 	/** The name of the current section (e.g., 'posts', 'pages'). */
 	sectionName: string;
 	/** Indicates if the user is eligible for chat. */
