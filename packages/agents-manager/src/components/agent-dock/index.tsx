@@ -86,7 +86,9 @@ export default function AgentDock( {
 			defaultOpen: isPersistedOpen,
 			onOpenSidebar: () => {
 				setIsOpen( true );
-				navigate( '/' );
+				if ( pathname === '/history' ) {
+					navigate( '/' );
+				}
 			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
@@ -159,7 +161,9 @@ export default function AgentDock( {
 
 	const handleExpand = () => {
 		setIsOpen( true );
-		navigate( '/' );
+		if ( pathname === '/history' ) {
+			navigate( '/' );
+		}
 	};
 
 	const handleSelectConversation = ( sessionId: string ) => {
