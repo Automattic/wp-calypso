@@ -13,12 +13,12 @@ export default function AISiteToolsSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: pluginStatus } = useQuery( bigSkyPluginQuery( site.ID ) );
+	const { data: pluginStatus, isLoading } = useQuery( bigSkyPluginQuery( site.ID ) );
 	const isEnabled = pluginStatus?.enabled ?? false;
 	const isAvailable = pluginStatus?.available ?? false;
 
 	const getBadge = () => {
-		if ( ! isAvailable ) {
+		if ( isLoading || ! isAvailable ) {
 			return [];
 		}
 
