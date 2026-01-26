@@ -12,6 +12,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isBusinessTrial,
@@ -446,7 +447,8 @@ function getLoggedInPlansAction( {
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
-	const isUpgradeFlow = plansIntent && [ 'plans-upgrade' ].includes( plansIntent );
+	const isUpgradeFlow =
+		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
 	const current =
 		isUpgradeFlow && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
@@ -454,7 +456,8 @@ function getLoggedInPlansAction( {
 	const isTrialPlan =
 		sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY ||
+		sitePlanSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
 
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
