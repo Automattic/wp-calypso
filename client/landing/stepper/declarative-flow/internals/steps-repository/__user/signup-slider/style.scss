@@ -1,0 +1,107 @@
+@import "@automattic/components/src/styles/typography";
+
+.step-container-v2:has(.step-container-v2--user) {
+	.step-container-v2__content-row--two-column-layout > div:has(.signup-slider) {
+		min-width: 0;
+	}
+}
+
+.signup-slider {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	.dot-pager__controls {
+		position: absolute;
+		bottom: 40px;
+		left: 50%;
+		transform: translateX( -50% );
+		z-index: 1;
+	}
+
+	.dot-pager__controls .dot-pager__controls-spacer,
+	.dot-pager__control-prev,
+	.dot-pager__control-next {
+		display: none;
+	}
+
+	// Disable the opacity fade transition
+	.dot-pager__page {
+		transition: none;
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+.signup-slider__slide {
+	box-sizing: border-box;
+	height: 100vh;
+	padding: 20px;
+}
+
+.signup-slider__slide-content {
+	border-radius: 16px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+	padding-inline: 50px;
+	padding-bottom: 80px;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.signup-slider__slide.signup-slider__slide--1 .signup-slider__slide-content {
+	background: #183ad6 url( ./images/slide1.svg );
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: contain;
+}
+
+.signup-slider__slide.signup-slider__slide--2 .signup-slider__slide-content {
+	background: url( ./images/slide2.jpg );
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+.signup-slider__slide.signup-slider__slide--3 .signup-slider__slide-content {
+	background: url( ./images/slide3.svg );
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
+.signup-slider__headline {
+	color: var( --studio-white );
+	font-size: 3.375rem;
+	font-family: $font-recoleta;
+	margin-block-end: 40px;
+}
+
+.signup-slider__slide-content.signup-slider__slide-content--testimonial {
+	color: var( --studio-white );
+	font-family: $font-sf-pro-display;
+	text-align: left;
+	align-items: flex-start;
+
+	.signup-slider__testimonial-text {
+		font-size: 1.75rem;
+		line-height: 32px;
+		font-weight: 400;
+		margin-bottom: 24px;
+	}
+
+	.signup-slider__testimonial-author {
+		font-size: 1.25rem;
+		font-weight: 500;
+		margin-bottom: 4px;
+	}
+
+	.signup-slider__testimonial-role {
+		font-size: 1rem;
+		font-weight: 400;
+	}
+}

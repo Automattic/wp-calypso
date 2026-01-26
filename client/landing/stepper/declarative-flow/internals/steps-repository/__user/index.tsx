@@ -1,4 +1,3 @@
-import { DotPager } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -27,7 +26,9 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
+import { SignupSlider } from './signup-slider';
 import { useSocialService } from './use-social-service';
+
 import './style.scss';
 
 const UserStepComponent: StepType = function UserStep( {
@@ -146,36 +147,6 @@ const UserStepComponent: StepType = function UserStep( {
 		</>
 	);
 
-	const carouselSlides = [
-		<div className="signup-slider-slide slide-1" key="slide-1">
-			<div className="signup-slider-slide-content">
-				<p className="signup-slider-headline">
-					{ translate( 'Join 472+ million websites worldwide' ) }
-				</p>
-			</div>
-		</div>,
-		<div className="signup-slider-slide slide-2" key="slide-2">
-			<div className="signup-slider-slide-content testimonial">
-				<p className="signup-slider-testimonial-text">
-					{ translate(
-						'WordPress.com has made it easy to manage multiple news sites and blogs, letting me focus on the content rather than the technical aspects.'
-					) }
-				</p>
-				<p className="signup-slider-testimonial-author">{ translate( 'Brett S.' ) }</p>
-				<p className="signup-slider-testimonial-role">
-					{ translate( 'Founder/Blogger in Chief' ) }
-				</p>
-			</div>
-		</div>,
-		<div className="signup-slider-slide slide-3" key="slide-3">
-			<div className="signup-slider-slide-content">
-				<p className="signup-slider-headline">
-					{ translate( 'AI builds the site — you make it yours' ) }
-				</p>
-			</div>
-		</div>,
-	];
-
 	if ( isStepContainerV2 ) {
 		const headingText = isMessagingVariation
 			? translate( 'Welcome to WordPress.com' )
@@ -255,9 +226,7 @@ const UserStepComponent: StepType = function UserStep( {
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
-					<DotPager className="signup-slider" hasDynamicHeight={ false } rotateTime={ 5000 }>
-						{ carouselSlides }
-					</DotPager>
+					<SignupSlider />
 				</Step.TwoColumnLayout>
 			);
 		}
