@@ -21,11 +21,13 @@ export function sanitizeView( view: View, fields: Field< any >[] ) {
 		if ( ! fieldsSet.has( filter.field ) ) {
 			return false;
 		}
-		if ( filter.operator === 'is' && Array.isArray( filter.value ) ) {
-			return false;
-		}
-		if ( filter.operator === 'isAny' && ! Array.isArray( filter.value ) ) {
-			return false;
+		if ( filter.value !== undefined ) {
+			if ( filter.operator === 'is' && Array.isArray( filter.value ) ) {
+				return false;
+			}
+			if ( filter.operator === 'isAny' && ! Array.isArray( filter.value ) ) {
+				return false;
+			}
 		}
 		return true;
 	} );

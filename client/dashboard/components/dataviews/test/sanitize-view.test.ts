@@ -10,6 +10,7 @@ describe( 'sanitizeView', () => {
 		{ id: 'name', enableSorting: true },
 		{ id: 'is_deleted', enableSorting: false },
 		{ id: 'visibility', enableSorting: true },
+		{ id: 'plan', enableSorting: true },
 	];
 
 	const validView: View = {
@@ -18,6 +19,7 @@ describe( 'sanitizeView', () => {
 		filters: [
 			{ field: 'is_deleted', operator: 'is', value: true },
 			{ field: 'visibility', operator: 'isAny', value: [ 'public', 'private' ] },
+			{ field: 'plan', operator: 'isAny', value: undefined },
 		],
 	};
 
