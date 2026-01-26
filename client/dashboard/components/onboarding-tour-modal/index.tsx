@@ -1,4 +1,10 @@
-import { Button, MenuItem, Modal } from '@wordpress/components';
+import {
+	Button,
+	MenuItem,
+	Modal,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -90,8 +96,8 @@ function OnboardingTourModal( {
 			onRequestClose={ onClose }
 			__experimentalHideHeader
 		>
-			<div className="dashboard-onboarding-tour-modal">
-				<div className="dashboard-onboarding-tour-modal__aside">
+			<HStack className="dashboard-onboarding-tour-modal" alignment="top">
+				<VStack className="dashboard-onboarding-tour-modal__aside" spacing={ 1 }>
 					{ menuItems.map( ( menuItem ) => (
 						<MenuItem
 							className={ clsx( 'dashboard-onboarding-tour-modal__aside-menu-item', {
@@ -103,8 +109,8 @@ function OnboardingTourModal( {
 							{ menuItem.label }
 						</MenuItem>
 					) ) }
-				</div>
-				<div className="dashboard-onboarding-tour-modal__main">
+				</VStack>
+				<VStack className="dashboard-onboarding-tour-modal__main">
 					<Button
 						className={ clsx( 'dashboard-onboarding-tour-modal__close-button', {
 							'is-dark-background': currentSection?.props?.isDarkBanner,
@@ -126,7 +132,7 @@ function OnboardingTourModal( {
 							/>
 						) ) }
 					</div>
-					<div className="dashboard-onboarding-tour-modal__main-content">
+					<VStack className="dashboard-onboarding-tour-modal__main-content">
 						<div
 							className="dashboard-onboarding-tour-modal__main-content-body"
 							style={ {
@@ -144,9 +150,9 @@ function OnboardingTourModal( {
 								setCurrentSectionId={ onSectionChange }
 							/>
 						</div>
-					</div>
-				</div>
-			</div>
+					</VStack>
+				</VStack>
+			</HStack>
 		</Modal>
 	);
 }

@@ -1,3 +1,8 @@
+import {
+	__experimentalVStack as VStack,
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import type { ReactNode } from 'react';
 
 type Props = {
@@ -12,21 +17,26 @@ export default function OnboardingTourModalSectionContent( {
 	hint,
 }: Props ) {
 	return (
-		<div className="dashboard-onboarding-tour-modal__section-content">
-			<h1 className="dashboard-onboarding-tour-modal__section-content-title">{ title }</h1>
-			<div className="dashboard-onboarding-tour-modal__section-content-descriptions">
+		<VStack className="dashboard-onboarding-tour-modal__section-content" spacing={ 5 }>
+			<Heading level={ 4 } className="dashboard-onboarding-tour-modal__section-content-title">
+				{ title }
+			</Heading>
+			<VStack
+				className="dashboard-onboarding-tour-modal__section-content-descriptions"
+				spacing={ 4 }
+			>
 				{ descriptions.map( ( description: ReactNode, index: number ) => (
-					<p
+					<Text
 						className="dashboard-onboarding-tour-modal__section-content-description"
 						key={ `description-${ index }` }
 					>
 						{ description }
-					</p>
+					</Text>
 				) ) }
-			</div>
+			</VStack>
 			{ hint && (
-				<div className="dashboard-onboarding-tour-modal__section-content-hint">{ hint }</div>
+				<Text className="dashboard-onboarding-tour-modal__section-content-hint">{ hint }</Text>
 			) }
-		</div>
+		</VStack>
 	);
 }
