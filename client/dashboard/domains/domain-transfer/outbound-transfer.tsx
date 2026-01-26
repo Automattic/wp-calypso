@@ -1,6 +1,10 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainLockMutation, domainTransferCodeMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import {
+	domainLockMutation,
+	domainTransferCodeMutation,
+	domainWhoisQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -20,7 +24,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { formatDate } from '../../utils/datetime';
-import { getTopLevelOfTld } from '../../utils/domain';
+import { findRegistrantWhois, getTopLevelOfTld } from '../../utils/domain';
 import InternalTransferOptions from './internal-transfer-options';
 import SelectIpsTag from './select-ips-tag';
 import type { Domain } from '@automattic/api-core';
@@ -31,6 +35,8 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 	const domainName = domain.domain;
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
+	const { data: whoisData, isLoading: isLoadingWhois } = useQuery( domainWhoisQuery( domainName ) );
+	const registrantEmail = findRegistrantWhois( whoisData )?.email;
 	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation( {
 		...domainLockMutation( domainName ),
 		meta: {
@@ -43,9 +49,6 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 		...domainTransferCodeMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __(
-					'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
-				),
 				error: { source: 'server' },
 			},
 		},
@@ -166,6 +169,20 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 				recordTracksEvent( 'calypso_dashboard_domain_transfer_request_transfer_code_success', {
 					domain: domainName,
 				} );
+
+				const successMessage = registrantEmail
+					? sprintf(
+							/* translators: %s is the email address where the authorization code was sent */
+							__(
+								'We have sent the transfer authorization code to %s. If you don’t receive the email shortly, please check your spam folder.'
+							),
+							registrantEmail
+					  )
+					: __(
+							'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
+					  );
+
+				createSuccessNotice( successMessage, { type: 'snackbar' } );
 			},
 			onError: ( error ) => {
 				recordTracksEvent( 'calypso_dashboard_domain_transfer_request_transfer_code_failure', {
@@ -183,7 +200,7 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 					__next40pxDefaultSize
 					variant="secondary"
 					onClick={ onRequestTransferCode }
-					disabled={ isRequestingTransferCode }
+					disabled={ isRequestingTransferCode || isLoadingWhois }
 					isBusy={ isRequestingTransferCode }
 				>
 					{ __( 'Get authorization code' ) }
