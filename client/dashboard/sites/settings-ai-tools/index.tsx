@@ -58,7 +58,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					'Create content, transform designs, generate images, and get instant help with AI. <learnMoreLink />'
 				),
 				{
-					learnMoreLink: <InlineSupportLink supportContext="hosting-mysql" />,
+					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
 				}
 		  )
 		: undefined;
