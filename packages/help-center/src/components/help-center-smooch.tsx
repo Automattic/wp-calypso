@@ -21,29 +21,14 @@ import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
-const destroy = () => {
-	try {
-		Smooch.destroy();
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Error destroying Smooch', error );
-	}
-};
-
-const initSmooch = (
-	{
-		jwt,
-		externalId,
-	}: {
-		isLoggedIn: boolean;
-		jwt: string;
-		externalId: string | undefined;
-	},
+const initSmooch = async (
+	jwt: string,
+	externalId: string,
 	queryClient: QueryClient
-) => {
+): Promise< void > => {
 	const isTestMode = isTestModeEnvironment();
 
-	return Smooch.init( {
+	await Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
 		delegate: {
 			async onInvalidAuth() {
@@ -116,7 +101,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const allowChat = canConnectToZendesk && enableAuth && ( isEligibleForChat || hasPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
-
+	const authJwt = authData?.jwt;
+	const authExternalId = authData?.externalId;
+	const authIsLoggedIn = authData?.isLoggedIn;
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
 	const {
 		setIsChatLoaded,
@@ -187,47 +174,66 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if (
-			! isMessagingScriptLoaded ||
-			! authData?.isLoggedIn ||
-			! authData?.jwt ||
-			! authData?.externalId
-		) {
+		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
 			return;
 		}
 
 		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
+		let isCancelled = false;
 
-		const initializeSmooch = async () => {
-			initSmooch( authData, queryClient )
-				.then( () => {
-					setIsChatLoaded( true );
-					recordTracksEvent( 'calypso_smooch_messenger_init', {
-						success: true,
-						error: '',
-					} );
-				} )
-				.catch( ( error ) => {
-					setIsChatLoaded( false );
-					retryTimeout = setTimeout( initializeSmooch, 30000 );
-					recordTracksEvent( 'calypso_smooch_messenger_init', {
-						success: false,
-						error: error.message,
-					} );
+		const initialize = async () => {
+			setIsChatLoaded( false );
+			await Smooch?.destroy?.();
+
+			if ( isCancelled ) {
+				return;
+			}
+
+			try {
+				await initSmooch( authJwt, authExternalId, queryClient );
+
+				if ( isCancelled ) {
+					return;
+				}
+
+				setIsChatLoaded( true );
+				recordTracksEvent( 'calypso_smooch_messenger_init', {
+					success: true,
+					error: '',
 				} );
+			} catch ( error ) {
+				if ( isCancelled ) {
+					return;
+				}
+
+				setIsChatLoaded( false );
+				retryTimeout = setTimeout( initialize, 30000 );
+				recordTracksEvent( 'calypso_smooch_messenger_init', {
+					success: false,
+					error: ( error as Error ).message,
+				} );
+			}
 		};
 
-		initializeSmooch();
+		initialize();
 
 		if ( smoochRef.current ) {
 			Smooch.render( smoochRef.current );
 		}
 
 		return () => {
+			isCancelled = true;
 			clearTimeout( retryTimeout );
-			destroy();
+			Smooch?.destroy?.();
 		};
-	}, [ isMessagingScriptLoaded, authData, setIsChatLoaded, queryClient ] );
+	}, [
+		isMessagingScriptLoaded,
+		authIsLoggedIn,
+		authJwt,
+		authExternalId,
+		setIsChatLoaded,
+		queryClient,
+	] );
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations ) {
