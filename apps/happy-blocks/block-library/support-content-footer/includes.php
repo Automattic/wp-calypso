@@ -25,7 +25,7 @@ if ( ! function_exists( 'happy_blocks_get_content_footer_asset' ) ) {
 $css = happy_blocks_get_content_footer_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
 wp_enqueue_style( 'happy-blocks-support-footer-style', $css['path'], array(), $css['version'] );
 
-if ( ! is_user_logged_in() ) {
+if ( ! is_user_logged_in() && get_option( 'dotcom_support_enable_odie_answers', false ) ) {
 	$js = happy_blocks_get_content_footer_asset( 'view.js' );
 	wp_enqueue_script( 'happy-blocks-support-footer-view', $js['path'], array(), $js['version'], true );
 }
