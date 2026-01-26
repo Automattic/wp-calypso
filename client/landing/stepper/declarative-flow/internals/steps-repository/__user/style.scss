@@ -361,21 +361,4 @@ $breakpoint-mobile: 660px;
 			font-weight: 400;
 		}
 	}
-
-	.step-container-v2__sticky-bottom-bar {
-		box-shadow: none;
-	}
-
-	.step-container-v2__sticky-bottom-bar-center-element {
-		margin-inline: 0;
-		width: 100%;
-		text-align: center;
-		font-size: 0.875rem;
-	}
-
-	&:has(.step-container-v2__sticky-bottom-bar) {
-		.step-container-v2__content-wrapper {
-			gap: 0;
-		}
-	}
 }

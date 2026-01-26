@@ -224,7 +224,15 @@ const UserStepComponent: StepType = function UserStep( {
 					),
 				}
 			);
-			stickyBottomBar = () => <Step.StickyBottomBar centerElement={ tosText } />;
+			stickyBottomBar = () => (
+				<Step.StickyBottomBar
+					centerElement={ tosText }
+					noBoxShadow
+					hasTransparentBackground
+					centerText
+					fullWidth
+				/>
+			);
 		}
 
 		if ( isLargeViewport && isSliderVariation ) {
