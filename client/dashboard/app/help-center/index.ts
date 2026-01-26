@@ -1,3 +1,5 @@
+import { userPreferenceQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { dispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState, useRef } from 'react';
 // eslint-disable-next-line no-restricted-imports
@@ -14,6 +16,8 @@ const HELP_CENTER_STORE = 'automattic/help-center';
 export function useHelpCenter() {
 	const loadingPromiseRef = useRef< Promise< unknown > >();
 	const [ isLoading, setIsLoading ] = useState( false );
+	const wasShownFromLastSession = useQuery( userPreferenceQuery( 'help_center_open' ) );
+
 	const isShown = useSelect(
 		( select ) => !! ( select( HELP_CENTER_STORE ) as HelpCenterSelect )?.isHelpCenterShown?.(),
 		[ isLoading ] // We need to re-evaluate this incase a component used the hook before the store was loaded.
@@ -68,7 +72,7 @@ export function useHelpCenter() {
 
 	return {
 		isLoading,
-		isShown,
+		isShown: isShown || wasShownFromLastSession,
 		setShowHelpCenter,
 		setNavigateToRoute,
 		setSubject,
