@@ -28,7 +28,7 @@ export class FeedbackInboxPage {
 
 	/**
 	 * View a response row that has the provided text.
-	 * Doesn't verify the row is-selected, it just makes sure the response
+	 * Doesn't verify the row is selected, it just makes sure the response
 	 * is visible (inspector on desktop, modal on mobile)
 	 *
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
@@ -38,8 +38,7 @@ export class FeedbackInboxPage {
 			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
-		await responseRowLocator.waitFor();
-		await responseRowLocator.isVisible();
+		await responseRowLocator.waitFor( { state: 'visible' } );
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
 		// The menu item is on a popover portal, so outside of the response row locator
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();

@@ -292,7 +292,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Navigate to Inbox tab if needed', async function () {
 			// if it's not in spam, we should already be in the inbox tab as per
-			// find and click on the search test above.
+			// find and click on the search step above.
 			if ( isInSpam ) {
 				await feedbackInboxPage.clickFolderTab( 'Inbox' );
 			}
@@ -369,8 +369,8 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.verifyActionExistsInMenu( formData1.name, 'Trash' );
 		} );
 
-		// This step ensures the response is visible to act upon actions on its view
-		it( 'Ensure first response is selected', async function () {
+		// This step ensures the response is opened so actions can be performed on its view
+		it( 'Ensure first response is opened', async function () {
 			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 		} );
 
