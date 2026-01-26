@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { UIMessage } from '@automattic/agenttic-client';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-//import './style.scss';
 
 /**
  * Extracts text content from a message object
