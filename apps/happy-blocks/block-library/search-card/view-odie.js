@@ -40,10 +40,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 			input.value = query;
 			submitButton.click();
-
-			setTimeout( () => {
-				input.value = '';
-			}, 100 );
+			input.value = '';
 		} );
 	} );
 
@@ -54,8 +51,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				e.preventDefault();
 				e.stopPropagation();
 
+				// Use the submitted value, not the input.value since it's already cleared.
+				const searchQuery = new FormData( form ).get( 'odie-query' );
+
 				recordTracksEvent( 'calypso_happyblocks_support_ask_odie', {
-					query: input.value,
+					query: searchQuery,
 					location: window.location.href,
 				} );
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
@@ -67,8 +67,10 @@ document.addEventListener( 'DOMContentLoaded', function () {
 						input.removeAttribute( 'disabled' );
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
+
 							helpCenterDispatch.setNavigateToRoute(
-								'/odie?query=' + encodeURIComponent( input.value )
+								'/odie?query=' + encodeURIComponent( searchQuery ),
+								true
 							);
 							helpCenterDispatch.setShowHelpCenter( true );
 						}
@@ -77,7 +79,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
 					// Logged in variant is already loaded.
 					const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 					helpCenterDispatch.setNavigateToRoute(
-						'/odie?query=' + encodeURIComponent( input.value )
+						'/odie?query=' + encodeURIComponent( searchQuery ),
+						true
 					);
 					helpCenterDispatch.setShowHelpCenter( true );
 				}
