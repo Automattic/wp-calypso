@@ -130,8 +130,7 @@ class SocialLoginForm extends Component {
 		// Map ssoProviders to buttons (preserves order from config)
 		const buttons = ciabConfig.ssoProviders
 			.map( ( service ) => this.socialLoginButtons.find( ( btn ) => btn.service === service ) )
-			.filter( Boolean )
-			.map( ( button ) => ( { ...button, enabled: true } ) );
+			.filter( Boolean );
 
 		// Add email button at the end
 		buttons.push( {
