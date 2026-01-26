@@ -203,7 +203,7 @@ const UserStepComponent: StepType = function UserStep( {
 		if ( isMessagingVariation ) {
 			const tosText = createInterpolateElement(
 				translate(
-					'By continuing with any of the options listed, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					'By signing up you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
 				),
 				{
 					tosLink: (
