@@ -138,7 +138,7 @@ function SiteActivityLogsDataViews( {
 			} );
 		}
 		if ( filtersChanged ) {
-			const activityTypes = extractActivityLogTypeValues( nextFilters );
+			const activityTypes = extractActivityLogTypeValues( nextFilters ?? [] );
 			const eventProps: Record< string, boolean | number > = {
 				num_groups_selected: activityTypes.length,
 			};
