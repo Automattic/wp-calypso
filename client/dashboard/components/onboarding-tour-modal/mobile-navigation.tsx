@@ -1,5 +1,5 @@
+import { useCallback } from '@wordpress/element';
 import clsx from 'clsx';
-import { useCallback } from 'react';
 import type { MenuItemType } from './types';
 
 type Props = {

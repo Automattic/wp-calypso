@@ -28,6 +28,7 @@ export default function OnboardingTourModalSectionContent( {
 				{ descriptions.map( ( description: ReactNode, index: number ) => (
 					<Text
 						className="dashboard-onboarding-tour-modal__section-content-description"
+						// Using index as key is safe here since descriptions are static and order doesn't change
 						key={ `description-${ index }` }
 					>
 						{ description }

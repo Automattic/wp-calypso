@@ -5,10 +5,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useMemo, isValidElement, Children } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Children, isValidElement, useMemo, type ReactNode, type ReactElement } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
 import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection from './section';
 import OnboardingTourModalSectionContent from './section-content';
@@ -87,8 +88,7 @@ function OnboardingTourModal( {
 					</Button>
 				);
 			} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
+	}, [ currentSection?.props, onClose, onSectionChange, sections, currentSectionIndex ] );
 
 	return (
 		<Modal
