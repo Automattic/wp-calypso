@@ -20,7 +20,7 @@ interface TwoColumnLayoutProps {
 	noBottomPadding?: boolean;
 	columns?: number;
 	isFullWidth?: boolean;
-	noPadding?: boolean;
+	noInlinePadding?: boolean;
 }
 
 export const TwoColumnLayout = ( {
@@ -35,7 +35,7 @@ export const TwoColumnLayout = ( {
 	noBottomPadding = false,
 	columns = 10,
 	isFullWidth = false,
-	noPadding = false,
+	noInlinePadding = false,
 }: TwoColumnLayoutProps ) => {
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
@@ -69,7 +69,7 @@ export const TwoColumnLayout = ( {
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper
 							noBottomPadding={ noBottomPadding }
-							noPadding={ noPadding }
+							noInlinePadding={ noInlinePadding }
 							isFullWidth={ isFullWidth }
 						>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }

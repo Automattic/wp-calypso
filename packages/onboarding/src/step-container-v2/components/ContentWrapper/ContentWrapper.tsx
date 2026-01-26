@@ -9,7 +9,7 @@ type ContentWrapperProps = {
 	axisDirection?: 'vertical' | 'horizontal';
 	noTopPadding?: boolean;
 	noBottomPadding?: boolean;
-	noPadding?: boolean;
+	noInlinePadding?: boolean;
 	isFullWidth?: boolean;
 	noGap?: boolean;
 };
@@ -20,7 +20,7 @@ export const ContentWrapper = ( {
 	axisDirection = 'vertical',
 	noTopPadding = false,
 	noBottomPadding = false,
-	noPadding = false,
+	noInlinePadding = false,
 	isFullWidth = false,
 	noGap = false,
 }: ContentWrapperProps ) => {
@@ -30,7 +30,7 @@ export const ContentWrapper = ( {
 				'center-aligned': centerAligned,
 				'no-top-padding': noTopPadding,
 				'no-bottom-padding': noBottomPadding,
-				'no-padding': noPadding,
+				'no-inline-padding': noInlinePadding,
 				'is-full-width': isFullWidth,
 				'no-gap': noGap,
 			} ) }
