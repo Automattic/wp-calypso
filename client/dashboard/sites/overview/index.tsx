@@ -1,5 +1,5 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { domainsQuery, siteBySlugQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
 	__experimentalGrid as Grid,
@@ -131,12 +131,14 @@ function SiteOverviewSecondaryCards( {
 	const showFlexUsageCard = site.is_wpcom_flex;
 	const isCommerceGardenSite = isCommerceGarden( site );
 
+	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
+	const { data: siteDomains } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
+	} );
+
 	return (
 		<>
-			<Divider
-				orientation="horizontal"
-				style={ { color: 'var(--dashboard-overview__divider-color)' } }
-			/>
 			<HStack
 				className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
 					'is-large': isLargeViewport,
@@ -145,7 +147,17 @@ function SiteOverviewSecondaryCards( {
 				alignment="flex-start"
 			>
 				{ isCommerceGardenSite ? (
-					<DomainsCard site={ site } />
+					// A layout optimisation for Commerce Garden sites: we know we can avoid CLS by hiding
+					// the card until loading is complete.
+					sitePlan &&
+					siteDomains && (
+						<DomainsCard
+							site={ site }
+							sitePlan={ sitePlan }
+							siteDomains={ siteDomains }
+							hideUpsells
+						/>
+					)
 				) : (
 					<>
 						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
@@ -154,13 +166,19 @@ function SiteOverviewSecondaryCards( {
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 								<>
 									<DIFMUpsellCard site={ site } />
-									<DomainsCard site={ site } />
+									<DomainsCard site={ site } sitePlan={ sitePlan } siteDomains={ siteDomains } />
 								</>
 							) }
 						</VStack>
 					</>
 				) }
 			</HStack>
+			{ /* Divider re-ordered by CSS to appear above the HStack */ }
+			<Divider
+				className="site-overview-divider"
+				orientation="horizontal"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
 		</>
 	);
 }

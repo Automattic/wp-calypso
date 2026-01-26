@@ -1,6 +1,9 @@
-import { DomainSubtype, type DomainSummary, type Site } from '@automattic/api-core';
-import { domainsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	DomainSubtype,
+	type DomainSummary,
+	type Site,
+	type SiteContextualPlan,
+} from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -80,15 +83,17 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 	);
 };
 
-export default function DomainsCard( { site }: { site: Site } ) {
-	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: siteDomains } = useQuery( {
-		...domainsQuery(),
-		select: ( data ) => {
-			return data.filter( ( domain ) => domain.blog_id === site.ID );
-		},
-	} );
-
+export default function DomainsCard( {
+	site,
+	sitePlan,
+	siteDomains,
+	hideUpsells,
+}: {
+	site: Site;
+	sitePlan: SiteContextualPlan | undefined;
+	siteDomains: DomainSummary[] | undefined;
+	hideUpsells?: boolean;
+} ) {
 	if ( site.is_wpcom_staging_site ) {
 		return null;
 	}
@@ -107,10 +112,16 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		isSelfHostedJetpackConnected( site ) &&
 		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
+		if ( hideUpsells ) {
+			return null;
+		}
 		return <DomainTransferUpsellCard />;
 	}
 
 	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
+		if ( hideUpsells ) {
+			return null;
+		}
 		return <DomainUpsellCard site={ site } />;
 	}
 
