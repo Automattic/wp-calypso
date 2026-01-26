@@ -30,9 +30,14 @@ export default function RegularPlanCardContent( {
 
 	const userProducts = useSelector( getProductsList );
 
-	const { discountedCostFormatted, actualCostFormatted, showActualCost } = plan
+	const { discountedCostFormatted, actualCostFormatted, showActualCost, discountPercentage } = plan
 		? getProductPricingInfo( userProducts, plan, 1 )
-		: { discountedCostFormatted: '', actualCostFormatted: '', showActualCost: false };
+		: {
+				discountedCostFormatted: '',
+				actualCostFormatted: '',
+				showActualCost: false,
+				discountPercentage: 0,
+		  };
 
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {
@@ -90,9 +95,20 @@ export default function RegularPlanCardContent( {
 							{ isTermPricingEnabled &&
 								showActualCost &&
 								( pressableOwnership === 'none' || isReferralMode ) && (
-									<span className="pressable-plan-card-content__price-original">
-										{ actualCostFormatted }
-									</span>
+									<>
+										<span className="pressable-plan-card-content__price-original">
+											{ actualCostFormatted }
+										</span>
+										<span className="pressable-plan-card-content__price-discount">
+											{ translate( 'Save %(discountPercentage)s%%*', {
+												args: {
+													discountPercentage,
+												},
+												comment:
+													'%(discountPercentage)s is the discount percentage. The asterisk indicates limited time offer.',
+											} ) }
+										</span>
+									</>
 								) }
 						</div>
 
@@ -112,13 +128,32 @@ export default function RegularPlanCardContent( {
 					{ translate( 'Manage in Pressable ↗' ) }
 				</Button>
 			) : (
-				<Button
-					className="pressable-plan-card-content__cta-button"
-					variant="primary"
-					onClick={ () => onSelect( plan ) }
-				>
-					{ ctaLabel }
-				</Button>
+				<div className="pressable-plan-card-content__cta-section">
+					{ isTermPricingEnabled &&
+						showActualCost &&
+						( pressableOwnership === 'none' || isReferralMode ) && (
+							<span className="pressable-plan-card-content__promo-footnote">
+								{ translate( '*Limited time only. {{a}}See details{{/a}}', {
+									components: {
+										a: (
+											<a
+												href="https://pressable.com/legal/hosting-promotion-terms/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								} ) }
+							</span>
+						) }
+					<Button
+						className="pressable-plan-card-content__cta-button"
+						variant="primary"
+						onClick={ () => onSelect( plan ) }
+					>
+						{ ctaLabel }
+					</Button>
+				</div>
 			) }
 		</div>
 	);
