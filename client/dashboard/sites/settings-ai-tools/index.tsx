@@ -182,7 +182,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								} }
 							/>
 							<SummaryButton
-								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit'` }
+								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
 								title={ __( 'Update your site design' ) }
 								decoration={ <Icon icon={ brush } /> }
 							/>
