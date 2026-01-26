@@ -11,9 +11,11 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
+import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ActionList } from '../../components/action-list';
 import { Card, CardBody, CardFooter } from '../../components/card';
+import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -36,7 +38,9 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const isEnabled = pluginStatus?.enabled ?? false;
 	const isAvailable = pluginStatus?.available ?? false;
-	// const isFreeTrial = pluginStatus?.on_free_trial ?? false;
+	const isFreeTrial = pluginStatus?.on_free_trial ?? false;
+
+	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
 
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
@@ -60,7 +64,14 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {
-		mutation.mutate( { enable } );
+		mutation.mutate(
+			{ enable },
+			{
+				onSuccess: () => {
+					setIsConfirmModalOpen( false );
+				},
+			}
+		);
 	};
 
 	const renderContent = () => {
@@ -111,6 +122,22 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</CardFooter>
 					) }
 				</Card>
+				{ isFreeTrial && (
+					<ConfirmModal
+						isOpen={ isConfirmModalOpen }
+						onCancel={ () => setIsConfirmModalOpen( false ) }
+						onConfirm={ () => handleToggle( false ) }
+						confirmButtonProps={ {
+							label: __( 'Disable AI tools' ),
+							isBusy: mutation.isPending,
+							disabled: mutation.isPending,
+						} }
+					>
+						{ __(
+							'You are on a free trial. If you disable AI tools, you will not be able to turn it back on without a paid plan.'
+						) }
+					</ConfirmModal>
+				) }
 				{ isEnabled && (
 					<ActionList>
 						<ActionList.ActionItem
