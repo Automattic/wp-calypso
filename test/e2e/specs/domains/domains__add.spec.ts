@@ -10,16 +10,18 @@ test.describe(
 		test( 'As a user, I can add a domain to my existing site', async ( {
 			componentDomainSearch,
 			componentSidebar,
+			helperData,
 			page,
 			pageCartCheckout,
-			pageDashboard,
 			sitePublic,
 			viewportName,
 		} ) => {
 			let selectedDomain: string;
 
 			await test.step( 'When I navigate to Upgrades > Domains', async function () {
-				await pageDashboard.visitPath( `home/${ sitePublic.blog_details.site_slug }` );
+				await page.goto(
+					helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }` )
+				);
 				await componentSidebar.navigate( 'Upgrades', 'Domains' );
 			} );
 

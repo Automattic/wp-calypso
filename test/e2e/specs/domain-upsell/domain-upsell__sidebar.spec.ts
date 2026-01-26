@@ -6,7 +6,8 @@ test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test( `As a user, I can use the sidebar domain upsell to add a domain and a ${ planName } plan to cart`, async ( {
 		componentDomainSearch,
 		componentSidebar,
-		pageDashboard,
+		helperData,
+		page,
 		pageCartCheckout,
 		pagePlans,
 		sitePublic,
@@ -14,7 +15,7 @@ test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_PR ] }, () => {
 		let selectedDomain: string;
 
 		await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
-			pageDashboard.visitPath( `home/${ sitePublic.blog_details.site_slug }` );
+			await page.goto( helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }` ) );
 		} );
 
 		await test.step( 'And I open the sidebar Domain Upsell notice', async function () {
