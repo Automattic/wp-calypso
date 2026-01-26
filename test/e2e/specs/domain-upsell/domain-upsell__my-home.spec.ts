@@ -1,0 +1,40 @@
+import { expect, tags, test } from '../../lib/pw-base';
+
+test.describe(
+	'Domain: Upsell (Home)',
+	{
+		tag: [ tags.CALYPSO_PR ],
+	},
+	() => {
+		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
+			page,
+			pageDashboard,
+			pageMyHome,
+			pagePlans,
+			sitePublic,
+		} ) => {
+			let suggestedDomain: string;
+
+			await test.step( 'When I navigate to the Home dashboard on a new free site', async function () {
+				pageDashboard.visitPath( `home/${ sitePublic.blog_details.site_slug }` );
+			} );
+
+			await test.step( 'And domain upsell card has suggested domain', async function () {
+				suggestedDomain = await pageMyHome.getSuggestedUpsellDomain();
+				expect( suggestedDomain ).not.toBe( '' );
+			} );
+
+			await test.step( 'When I click to begin searching for a domain', async function () {
+				await pageMyHome.clickButton( 'Get this domain' );
+			} );
+
+			await test.step( 'And I choose the Free plan', async function () {
+				await pagePlans.selectPlan( 'Personal' );
+			} );
+
+			await test.step( 'Then secure checkout loads', async function () {
+				await page.waitForURL( /checkout/ );
+			} );
+		} );
+	}
+);

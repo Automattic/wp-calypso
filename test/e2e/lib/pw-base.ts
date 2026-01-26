@@ -69,6 +69,8 @@ import {
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
+	MyHomePage,
+	PlansPage,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
@@ -269,9 +271,17 @@ export const test = base.extend<
 		 */
 		pageInvitePeople: InvitePeoplePage;
 		/**
+		 * Page object representing the WordPress.com My Home page.
+		 */
+		pageMyHome: MyHomePage;
+		/**
 		 * Page object representing the WordPress.com People management page.
 		 */
 		pagePeople: PeoplePage;
+		/**
+		 * Page object representing the WordPress.com plans page.
+		 */
+		pagePlans: PlansPage;
 		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
@@ -486,6 +496,10 @@ export const test = base.extend<
 		const marketingPage = new MarketingPage( page );
 		await use( marketingPage );
 	},
+	pageMyHome: async ( { page }, use ) => {
+		const myHomePage = new MyHomePage( page );
+		await use( myHomePage );
+	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -497,6 +511,10 @@ export const test = base.extend<
 	pagePeople: async ( { page }, use ) => {
 		const peoplePage = new PeoplePage( page );
 		await use( peoplePage );
+	},
+	pagePlans: async ( { page }, use ) => {
+		const plansPage = new PlansPage( page );
+		await use( plansPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
