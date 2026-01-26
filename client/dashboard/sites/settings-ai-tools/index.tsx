@@ -1,5 +1,6 @@
 import { bigSkyPluginMutation, bigSkyPluginQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -13,6 +14,8 @@ import { __ } from '@wordpress/i18n';
 import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useHelpCenter } from '../../app/help-center';
+import { siteSettingsAIToolsRoute } from '../../app/router/sites';
 import { ActionList } from '../../components/action-list';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -33,6 +36,8 @@ const features = [
 ];
 
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
+	const navigate = useNavigate();
+	const currentSearchParams = siteSettingsAIToolsRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
 
@@ -41,6 +46,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const isFreeTrial = pluginStatus?.on_free_trial ?? false;
 
 	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
+
+	const { setShowHelpCenter } = useHelpCenter();
 
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
@@ -161,10 +168,18 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						<SectionHeader title={ __( 'Ways to get started' ) } level={ 3 } />
 						<SummaryButtonList>
 							<SummaryButton
-								// TODO: Open the assistant
-								href={ `${ site.options?.admin_url }edit.php?post_type=post` }
 								title={ __( 'Get answers' ) }
 								decoration={ <Icon icon={ help } /> }
+								onClick={ () => {
+									navigate( {
+										search: {
+											...currentSearchParams,
+											'help-center': 'wapuu',
+										},
+										replace: true,
+									} );
+									setShowHelpCenter( true );
+								} }
 							/>
 							<SummaryButton
 								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit'` }
