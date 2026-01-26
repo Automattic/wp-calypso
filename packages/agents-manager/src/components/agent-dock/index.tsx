@@ -30,6 +30,7 @@ import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
 } from '../../utils/load-external-providers';
+import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 interface AgentDockProps {
@@ -211,16 +212,16 @@ export default function AgentDock( {
 		() =>
 			messages
 				.filter(
-					( message ) =>
+					( message: Message ) =>
 						! deletedMessageIds.has( message.id ) &&
 						! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 				)
 				// Convert tool-related text to tool components
-				.map( ( message ) => {
+				.flatMap( ( message: Message ) => {
 					const [ firstContent ] = message.content ?? [];
 
 					if ( message.role !== 'agent' || ! firstContent?.text ) {
-						return message;
+						return [ message ];
 					}
 
 					// Safely parse tool message JSON; return original if not valid JSON
@@ -228,7 +229,7 @@ export default function AgentDock( {
 					try {
 						textData = JSON.parse( firstContent.text );
 					} catch {
-						return message;
+						return [ message ];
 					}
 
 					if ( textData?.tool_id === 'big_sky__show_component' ) {
@@ -236,10 +237,10 @@ export default function AgentDock( {
 						const component = getChatComponent?.( contentType );
 
 						if ( ! component ) {
-							return null;
+							return [];
 						}
 
-						return {
+						const componentMessage = {
 							...message,
 							content: [
 								{
@@ -249,15 +250,32 @@ export default function AgentDock( {
 								},
 							],
 						};
-					}
 
-					// TODO: Handle `response-actions` components...
+						const completedPlanComponent = getChatComponent?.( 'completed-plan' );
+
+						return [
+							componentMessage,
+							// Inject a completed-plan message after the component message
+							completedPlanComponent && {
+								id: `${ message.id }-completed-plan`,
+								content: [
+									{
+										type: 'component',
+										component: completedPlanComponent,
+										componentProps: {
+											id: message.id,
+											type: 'response-actions',
+										},
+									},
+								],
+							},
+						].filter( Boolean );
+					}
 
 					// TODO: Handle `ai start_over` components...
 
-					return message;
-				} )
-				.filter( Boolean ),
+					return [ message ];
+				} ),
 		[ messages, deletedMessageIds, getChatComponent ]
 	);
 
