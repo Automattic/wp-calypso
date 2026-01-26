@@ -8,7 +8,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
-import { getChatLinkFromConversation, getFirstMessage } from './utils';
+import { getChatLinkFromConversation, getLastMessage } from './utils';
 import './help-center-recent-conversations.scss';
 
 const trackContactButtonClicked = ( sectionName: string ) => {
@@ -30,7 +30,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 
 	const recentConversation = recentConversations[ 0 ];
 
-	const lastMessage = getFirstMessage( {
+	const lastMessage = getLastMessage( {
 		conversation: recentConversation,
 	} );
 
