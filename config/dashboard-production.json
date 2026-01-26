@@ -16,7 +16,8 @@
 		"dashboard/v2": false,
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
-		"mcp-settings": true
+		"mcp-settings": true,
+		"wordpress-ai-tools": false
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
