@@ -33,6 +33,12 @@ export function Messages( {
 	// Filter out context messages (type: 'context' should not be displayed in UI)
 	const visibleMessages = getVisibleMessages( messages );
 
+	// Check if we have an agent message being streamed
+	// If so, hide the thinking indicator since content is arriving
+	const hasAgentResponse =
+		visibleMessages.length > 0 &&
+		visibleMessages[ visibleMessages.length - 1 ].role === 'agent';
+
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
 		const agentMessages = visibleMessages.filter(
@@ -126,12 +132,12 @@ export function Messages( {
 				<AnimatePresence mode="popLayout">
 					{ visibleMessages.map( ( message ) => (
 						<Message
-							key={ message.id }
+							key={ message.reactKey || message.id }
 							message={ message }
 							messageRenderer={ messageRenderer }
 						/>
 					) ) }
-					{ isProcessing && (
+					{ isProcessing && ! hasAgentResponse && (
 						<ThinkingMessage content={ thinkingMessage } />
 					) }
 					{ error && (
