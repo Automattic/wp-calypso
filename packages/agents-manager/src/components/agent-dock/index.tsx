@@ -223,7 +223,13 @@ export default function AgentDock( {
 						return message;
 					}
 
-					const textData = JSON.parse( firstContent.text );
+					// Safely parse tool message JSON; return original if not valid JSON
+					let textData;
+					try {
+						textData = JSON.parse( firstContent.text );
+					} catch {
+						return message;
+					}
 
 					if ( textData?.tool_id === 'big_sky__show_component' ) {
 						const { type: contentType, props } = textData.data ?? {};
