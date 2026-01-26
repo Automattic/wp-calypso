@@ -46,7 +46,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		...bigSkyPluginMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: ! isEnabled ? __( 'AI tools enabled.' ) : __( 'AI tools disabled' ),
+				success: ! isEnabled ? __( 'AI tools enabled.' ) : __( 'AI tools disabled.' ),
 				error: __( 'Failed to save AI tools settings.' ),
 			},
 		},
