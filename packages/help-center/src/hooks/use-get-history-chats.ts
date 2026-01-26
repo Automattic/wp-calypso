@@ -7,7 +7,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
-	getFirstMessage,
+	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
@@ -30,14 +30,14 @@ interface UseGetHistoryChatsResult {
  * Retrieves the date when the last message from the specified conversation was received.
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
-const getFirstMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
+const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
 	// For Zendesk conversations, use lastUpdatedAt directly
 	if ( 'lastUpdatedAt' in conversation ) {
 		return ( conversation.lastUpdatedAt || 0 ) * 1000;
 	}
 
 	// For Odie conversations, get the last message timestamp
-	const lastMessage = getFirstMessage( { conversation } );
+	const lastMessage = getLastMessage( { conversation } );
 	return ( lastMessage?.received || 0 ) * 1000;
 };
 
@@ -93,7 +93,7 @@ const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConv
 		return true;
 	}
 
-	const lastMessage = getFirstMessage( { conversation } );
+	const lastMessage = getLastMessage( { conversation } );
 
 	if ( ! lastMessage || lastMessage?.text === null || lastMessage?.text === undefined ) {
 		return false;
@@ -117,7 +117,7 @@ const splitConversationsByRecency = (
 	const archived: Conversations = [];
 
 	conversations.forEach( ( conversation ) => {
-		if ( getFirstMessageReceived( conversation ) < oneYearAgo ) {
+		if ( getLastMessageReceived( conversation ) < oneYearAgo ) {
 			archived.push( conversation );
 		} else {
 			recent.push( conversation );
@@ -188,7 +188,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				: [] ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
-			.sort( ( a, b ) => getFirstMessageReceived( b ) - getFirstMessageReceived( a ) );
+			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
 
 		const { recent, archived } = splitConversationsByRecency( conversations );
 		setRecentConversations( recent );

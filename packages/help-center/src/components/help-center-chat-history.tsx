@@ -108,9 +108,9 @@ export const HelpCenterChatHistory = () => {
 				const { numberOfUnreadMessages } = calculateUnread( [
 					conversation as ZendeskConversation,
 				] );
-				const lastMessage = getFirstMessage( { conversation } );
+				const firstMessage = getFirstMessage( { conversation } );
 
-				if ( ! lastMessage ) {
+				if ( ! firstMessage ) {
 					return null;
 				}
 
@@ -118,7 +118,7 @@ export const HelpCenterChatHistory = () => {
 					<HelpCenterSupportChatMessage
 						sectionName="chat_history"
 						key={ conversation.id }
-						message={ lastMessage }
+						message={ firstMessage }
 						conversation={ conversation }
 						numberOfUnreadMessages={ numberOfUnreadMessages }
 					/>
