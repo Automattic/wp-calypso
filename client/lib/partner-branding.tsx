@@ -83,6 +83,19 @@ export function getCiabConfig( from: string | string[] | undefined ): CiabPartne
 }
 
 /**
+ * Get allowed social services for a partner from URL 'from' param
+ * Returns the array of allowed SSO providers or null if no restrictions apply
+ * @param from - The 'from' query parameter value
+ * @returns Array of allowed service names (e.g., ['paypal', 'google', 'apple']) or null
+ */
+export function getPartnerAllowedSocialServices(
+	from: string | string[] | undefined
+): string[] | null {
+	const ciabConfig = getCiabConfig( from );
+	return ciabConfig?.ssoProviders ?? null;
+}
+
+/**
  * Hook result
  */
 export interface UsePartnerBrandingResult {

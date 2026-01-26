@@ -31,7 +31,7 @@ import {
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getCiabConfig } from 'calypso/lib/partner-branding';
+import { getPartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -913,7 +913,7 @@ export class LoginForm extends Component {
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 							isJetpack={ isJetpack }
-							ciabConfig={ this.props.ciabConfig }
+							allowedSocialServices={ this.props.allowedSocialServices }
 						/>
 					</Fragment>
 				) }
@@ -980,7 +980,7 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			ciabConfig: getCiabConfig(
+			allowedSocialServices: getPartnerAllowedSocialServices(
 				get( getCurrentQueryArguments( state ), 'from' ) ||
 					get( getInitialQueryArguments( state ), 'from' )
 			),

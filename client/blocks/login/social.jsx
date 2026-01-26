@@ -26,7 +26,7 @@ class SocialLoginForm extends Component {
 		lastUsedAuthenticationMethod: PropTypes.string,
 		resetLastUsedAuthenticationMethod: PropTypes.func,
 		isJetpack: PropTypes.bool,
-		ciabConfig: PropTypes.object,
+		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 	};
 
 	socialLoginButtons = [
@@ -121,14 +121,14 @@ class SocialLoginForm extends Component {
 	}
 
 	getFilteredSocialButtons() {
-		const { ciabConfig } = this.props;
+		const { allowedSocialServices } = this.props;
 
-		if ( ! ciabConfig ) {
+		if ( ! allowedSocialServices ) {
 			return this.socialLoginButtons;
 		}
 
-		// Map ssoProviders to buttons (preserves order from config)
-		const buttons = ciabConfig.ssoProviders
+		// Map allowedSocialServices to buttons (preserves order from config)
+		const buttons = allowedSocialServices
 			.map( ( service ) => this.socialLoginButtons.find( ( btn ) => btn.service === service ) )
 			.filter( Boolean );
 
