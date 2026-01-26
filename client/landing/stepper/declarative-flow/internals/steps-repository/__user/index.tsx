@@ -251,6 +251,7 @@ const UserStepComponent: StepType = function UserStep( {
 						heading={ heading }
 						topBar={ topBar }
 						stickyBottomBar={ stickyBottomBar }
+						noGap={ isMessagingVariation }
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
@@ -269,6 +270,7 @@ const UserStepComponent: StepType = function UserStep( {
 				heading={ heading }
 				topBar={ topBar }
 				stickyBottomBar={ stickyBottomBar }
+				noGap={ isMessagingVariation }
 			>
 				{ stepContent }
 			</Step.CenteredColumnLayout>

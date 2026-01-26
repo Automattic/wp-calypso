@@ -11,6 +11,7 @@ type ContentWrapperProps = {
 	noBottomPadding?: boolean;
 	noPadding?: boolean;
 	isFullWidth?: boolean;
+	noGap?: boolean;
 };
 
 export const ContentWrapper = ( {
@@ -21,6 +22,7 @@ export const ContentWrapper = ( {
 	noBottomPadding = false,
 	noPadding = false,
 	isFullWidth = false,
+	noGap = false,
 }: ContentWrapperProps ) => {
 	return (
 		<div
@@ -30,6 +32,7 @@ export const ContentWrapper = ( {
 				'no-bottom-padding': noBottomPadding,
 				'no-padding': noPadding,
 				'is-full-width': isFullWidth,
+				'no-gap': noGap,
 			} ) }
 		>
 			{ children }
