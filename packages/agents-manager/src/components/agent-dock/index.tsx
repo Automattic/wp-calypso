@@ -110,8 +110,6 @@ export default function AgentDock( {
 		sessionId,
 		authProvider: agentConfig.authProvider,
 		onSuccess: ( messages, serverSessionId ) => {
-			// TODO: Handle component-related messages...
-
 			// Update the UI with the loaded messages
 			loadMessages( messages );
 			// Make sure future messages go to the right session
@@ -211,12 +209,52 @@ export default function AgentDock( {
 	// Filter out deleted messages and local tool running messages
 	const visibleMessages = useMemo(
 		() =>
-			messages.filter(
-				( message ) =>
-					! deletedMessageIds.has( message.id ) &&
-					! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
-			),
-		[ messages, deletedMessageIds ]
+			messages
+				.filter(
+					( message ) =>
+						! deletedMessageIds.has( message.id ) &&
+						! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
+				)
+				// Convert tool-related text to tool components
+				.map( ( message ) => {
+					const [ firstContent, ...restContent ] = message.content ?? [];
+
+					if ( message.role !== 'agent' || ! firstContent?.text ) {
+						return message;
+					}
+
+					const textData = JSON.parse( firstContent.text );
+
+					if ( textData?.tool_id === 'big_sky__show_component' ) {
+						const { type: contentType, props } = textData.data ?? {};
+						const component = getChatComponent?.( contentType );
+
+						if ( ! component ) {
+							return null;
+						}
+
+						return {
+							...message,
+							content: [
+								{
+									...firstContent,
+									type: 'component',
+									component,
+									componentProps: { ...props, contentType },
+								},
+								...restContent,
+							],
+						};
+					}
+
+					// TODO: Handle `response-actions` components...
+
+					// TODO: Handle `ai start_over` components...
+
+					return message;
+				} )
+				.filter( Boolean ),
+		[ messages, deletedMessageIds, getChatComponent ]
 	);
 
 	const Chat = (
