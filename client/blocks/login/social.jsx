@@ -128,23 +128,9 @@ class SocialLoginForm extends Component {
 		}
 
 		// Map allowedSocialServices to buttons (preserves order from config)
-		const buttons = allowedSocialServices
+		return allowedSocialServices
 			.map( ( service ) => this.socialLoginButtons.find( ( btn ) => btn.service === service ) )
 			.filter( Boolean );
-
-		// Add email button at the end
-		buttons.push( {
-			service: 'email',
-			enabled: true,
-			button: (
-				<UsernameOrEmailButton
-					key="social-login-button-email"
-					onClick={ this.props.resetLastUsedAuthenticationMethod }
-				/>
-			),
-		} );
-
-		return buttons;
 	}
 
 	render() {

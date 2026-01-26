@@ -60,7 +60,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 			width: 72,
 			height: 24,
 		},
-		ssoProviders: [ 'paypal', 'google', 'apple' ],
+		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 	},
 };
 
