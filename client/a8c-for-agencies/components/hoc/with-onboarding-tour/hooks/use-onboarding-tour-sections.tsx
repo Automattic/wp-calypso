@@ -17,7 +17,6 @@ import OnboardingTourBannerWelcome from 'calypso/assets/images/a8c-for-agencies/
 import OnboardingTourBannerWooPayments from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-woopayments.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { RenderableAction, RenderableActionProps } from '../../../onboarding-tour-modal/section';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MIGRATIONS_LINK,
@@ -31,6 +30,10 @@ import {
 	A4A_PARTNER_DIRECTORY_LINK,
 } from '../../../sidebar-menu/lib/constants';
 import useCurrentOnboardingSection from './use-current-onboarding-section';
+import type {
+	RenderableAction,
+	RenderableActionProps,
+} from 'calypso/dashboard/components/onboarding-tour-modal';
 
 export default function useOnboardingTourSections() {
 	const translate = useTranslate();

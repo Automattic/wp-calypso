@@ -2,61 +2,44 @@ import { Button, MenuItem, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
-import {
-	Children,
-	isValidElement,
-	useEffect,
-	useMemo,
-	useState,
-	type ReactNode,
-	type ReactElement,
-} from 'react';
-import { useAnalytics } from '../../app/analytics';
+import { Children, isValidElement, useMemo, type ReactNode, type ReactElement } from 'react';
 import OnboardingTourModalMobileNavigation from './mobile-navigation';
 import OnboardingTourModalSection from './section';
 import OnboardingTourModalSectionContent from './section-content';
-import {
-	ONBOARDING_TOUR_HASH,
-	type ActionProps,
-	type OnboardingTourModalSectionProps,
-	type RenderableAction,
-	type MenuItemType,
+import type {
+	ActionProps,
+	OnboardingTourModalSectionProps,
+	RenderableAction,
+	MenuItemType,
 } from './types';
 
 import './style.scss';
-
-export { ONBOARDING_TOUR_HASH };
 
 interface OnboardingTourModalProps {
 	onClose: () => void;
 	children?: ReactNode;
 	/**
-	 * Optional tracking event prefix. If provided, tracking events will be recorded.
-	 * Events recorded:
-	 * - `{trackingPrefix}_section_view` - when a section is viewed
-	 * - `{trackingPrefix}_section_menu_item_click` - when a menu item is clicked
-	 * - `{trackingPrefix}_section_menu_item_swipe` - when swiping on mobile navigation
-	 * - `{trackingPrefix}_close_button_click` - when the close button is clicked
+	 * Callback when the current section changes.
+	 * Consumer should update currentSectionId in response.
 	 */
-	trackingPrefix?: string;
+	onSectionChange: ( sectionId: string ) => void;
+	/**
+	 * Current section ID. Consumer manages this state.
+	 */
+	currentSectionId: string;
 }
 
-function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingTourModalProps ) {
-	const { recordTracksEvent } = useAnalytics();
-
+function OnboardingTourModal( {
+	onClose,
+	children,
+	onSectionChange,
+	currentSectionId,
+}: OnboardingTourModalProps ) {
 	const sections: ReactElement< OnboardingTourModalSectionProps >[] = Children.toArray(
 		children
 	).filter(
 		( child: ReactNode ) => isValidElement( child ) && child.type === OnboardingTourModalSection
 	) as ReactElement< OnboardingTourModalSectionProps >[];
-
-	const defaultSection = sections.find(
-		( section ) => `${ ONBOARDING_TOUR_HASH }-${ section?.props?.id }` === window.location.hash
-	);
-
-	const [ currentSectionId, setCurrentSectionId ] = useState(
-		defaultSection ? defaultSection.props?.id : sections[ 0 ].props?.id
-	);
 
 	const menuItems: MenuItemType[] = useMemo(
 		() =>
@@ -79,7 +62,7 @@ function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingT
 		return currentSection?.props
 			?.renderableActions?.( {
 				onClose,
-				onNext: () => setCurrentSectionId( sections[ currentSectionIndex + 1 ]?.props?.id ),
+				onNext: () => onSectionChange( sections[ currentSectionIndex + 1 ]?.props?.id ),
 			} )
 			?.map( ( renderableAction: RenderableAction ) => {
 				if ( ! renderableAction ) {
@@ -98,50 +81,8 @@ function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingT
 					</Button>
 				);
 			} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
-
-	useEffect( () => {
-		if ( currentSection?.props?.id && trackingPrefix ) {
-			recordTracksEvent( `${ trackingPrefix }_section_view`, {
-				section: currentSection?.props?.id,
-			} );
-		}
-	}, [ currentSection, recordTracksEvent, trackingPrefix ] );
-
-	const handleMenuItemClick = ( menuItem: MenuItemType ) => {
-		setCurrentSectionId( menuItem.id );
-		window.history.replaceState(
-			window.history.state,
-			'',
-			`${ ONBOARDING_TOUR_HASH }-${ menuItem.id }`
-		);
-		if ( trackingPrefix ) {
-			recordTracksEvent( `${ trackingPrefix }_section_menu_item_click`, {
-				section: menuItem.id,
-			} );
-		}
-	};
-
-	const handleMobileNavigationChange = ( sectionId: string ) => {
-		setCurrentSectionId( sectionId );
-		window.history.replaceState(
-			window.history.state,
-			'',
-			`${ ONBOARDING_TOUR_HASH }-${ sectionId }`
-		);
-		if ( trackingPrefix ) {
-			recordTracksEvent( `${ trackingPrefix }_section_menu_item_swipe`, {
-				section: sectionId,
-			} );
-		}
-	};
-
-	const handleClose = () => {
-		if ( trackingPrefix ) {
-			recordTracksEvent( `${ trackingPrefix }_close_button_click` );
-		}
-		onClose();
-	};
 
 	return (
 		<Modal
@@ -157,7 +98,7 @@ function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingT
 								'is-active': menuItem.id === currentSectionId,
 							} ) }
 							key={ menuItem.id }
-							onClick={ () => handleMenuItemClick( menuItem ) }
+							onClick={ () => onSectionChange( menuItem.id ) }
 						>
 							{ menuItem.label }
 						</MenuItem>
@@ -168,7 +109,7 @@ function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingT
 						className={ clsx( 'dashboard-onboarding-tour-modal__close-button', {
 							'is-dark-background': currentSection?.props?.isDarkBanner,
 						} ) }
-						onClick={ handleClose }
+						onClick={ onClose }
 						aria-label={ __( 'Close' ) }
 					>
 						<Icon size={ 24 } icon={ close } />
@@ -200,7 +141,7 @@ function OnboardingTourModal( { onClose, children, trackingPrefix }: OnboardingT
 							<OnboardingTourModalMobileNavigation
 								menuItems={ menuItems }
 								currentSectionId={ currentSectionId }
-								setCurrentSectionId={ handleMobileNavigationChange }
+								setCurrentSectionId={ onSectionChange }
 							/>
 						</div>
 					</div>
@@ -214,7 +155,6 @@ OnboardingTourModal.Section = OnboardingTourModalSection;
 OnboardingTourModal.SectionContent = OnboardingTourModalSectionContent;
 
 export default OnboardingTourModal;
-export { default as useOnboardingTour } from './use-onboarding-tour';
 export type {
 	ActionProps,
 	RenderableAction,

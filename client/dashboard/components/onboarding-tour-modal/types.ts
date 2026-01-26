@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 
-export const ONBOARDING_TOUR_HASH = '#onboarding-tour';
-
 export type ActionProps = {
 	variant: 'primary' | 'secondary';
 	onClick?: () => void;

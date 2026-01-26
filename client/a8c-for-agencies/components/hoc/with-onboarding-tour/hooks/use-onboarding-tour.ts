@@ -31,8 +31,15 @@ export default function useOnboardingTour() {
 		window.history.replaceState( '', '', window.location.pathname );
 	}, [] );
 
+	const openTour = useCallback( () => {
+		if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
+			setIsOpen( true );
+		}
+	}, [] );
+
 	return {
 		isOpen,
 		onClose,
+		openTour,
 	};
 }
