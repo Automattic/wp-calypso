@@ -10,7 +10,7 @@ import {
 import { useI18n } from '@wordpress/react-i18n';
 import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getLastMessage } from './utils';
+import { getFirstMessage } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 const EmptyStateArtWork = () => {
@@ -108,7 +108,7 @@ export const HelpCenterChatHistory = () => {
 				const { numberOfUnreadMessages } = calculateUnread( [
 					conversation as ZendeskConversation,
 				] );
-				const lastMessage = getLastMessage( { conversation } );
+				const lastMessage = getFirstMessage( { conversation } );
 
 				if ( ! lastMessage ) {
 					return null;

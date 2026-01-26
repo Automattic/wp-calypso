@@ -22,10 +22,10 @@ const filterConversationsBySupportInteractions = (
 };
 
 /**
- * Returns the last message from a conversation.
- * @returns The last message or null if there are no messages.
+ * Returns the first message from a conversation.
+ * @returns The first message or null if there are no messages.
  */
-export const getLastMessage = ( {
+export const getFirstMessage = ( {
 	conversation,
 }: {
 	conversation: OdieConversation | ZendeskConversation;
@@ -37,7 +37,8 @@ export const getLastMessage = ( {
 	const filteredMessages = conversation.messages.filter( ( message ) =>
 		'type' in message ? message.type !== 'form' : true
 	);
-	return filteredMessages.length > 0 ? filteredMessages[ filteredMessages.length - 1 ] : null;
+
+	return filteredMessages.length > 0 ? filteredMessages[ 0 ] : null;
 };
 
 export const getChatLinkFromConversation = (
