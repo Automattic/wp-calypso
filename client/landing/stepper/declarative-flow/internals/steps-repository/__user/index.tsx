@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step, StepContainer, isOnboardingFlow } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
@@ -14,7 +14,6 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
@@ -27,6 +26,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
+import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useSocialService } from './use-social-service';
 
 import './style.scss';
@@ -46,31 +46,8 @@ const UserStepComponent: StepType = function UserStep( {
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
 
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_account_step_improvement_202601',
-		{
-			isEligible: isOnboardingFlow( flow ),
-		}
-	);
-	const variationName = isLoadingExperiment
-		? 'control'
-		: experimentAssignment?.variationName ?? 'control';
-	const isEmailVariation = [
-		'treatment_email',
-		'treatment_email_messaging',
-		'treatment_email_messaging_slider',
-		'treatment_email_slider',
-	].includes( variationName );
-	const isMessagingVariation = [
-		'treatment_email_messaging',
-		'treatment_email_messaging_slider',
-		'treatment_messaging_slider',
-	].includes( variationName );
-	const isSliderVariation = [
-		'treatment_email_messaging_slider',
-		'treatment_email_slider',
-		'treatment_messaging_slider',
-	].includes( variationName );
+	const { isEmailVariation, isMessagingVariation, isSliderVariation } =
+		useAccountCreationExperiment( { flow } );
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
