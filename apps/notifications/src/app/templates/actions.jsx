@@ -49,11 +49,11 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
-	const showPendingBadge = hasAction( 'approve-comment' ) && ! isApproved;
+	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
-			{ showPendingBadge && (
+			{ showPendingApprovalBadge && (
 				<PendingApprovalBadge
 					note={ note }
 					translate={ __ }

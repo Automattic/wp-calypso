@@ -47,11 +47,11 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
-	const showPendingBadge = hasAction( 'approve-comment' ) && ! isApproved;
+	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	return (
 		<div className="wpnc__note-actions">
-			{ showPendingBadge && (
+			{ showPendingApprovalBadge && (
 				<PendingApprovalBadge
 					note={ note }
 					translate={ translate }
