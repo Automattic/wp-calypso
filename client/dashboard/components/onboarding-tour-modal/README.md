@@ -24,31 +24,31 @@ OnboardingTourModal
 
 ### OnboardingTourModal
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `onClose` | `() => void` | Yes | Callback function called when the modal is closed |
-| `onSectionChange` | `(sectionId: string) => void` | Yes | Callback function called when the current section changes. The consumer should update `currentSectionId` in response. |
-| `currentSectionId` | `string` | Yes | The ID of the currently active section. This state is managed by the consumer. |
-| `children` | `ReactNode` | No | Child elements, typically `OnboardingTourModal.Section` components |
+| Prop                | Type                          | Required | Description                                                                                                                                    |
+| ------------------- | ----------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onClose`           | `() => void`                  | Yes      | Callback function called when the modal is closed                                                                                              |
+| `onSectionChange`   | `(sectionId: string) => void` | Yes      | Callback function called when the current section changes. The consumer should update `currentSectionId` in response.                          |
+| `currentSectionId`  | `string`                      | Yes      | The ID of the currently active section. This state is managed by the consumer.                                                                 |
+| `children`          | `ReactNode`                   | No       | Child elements, typically `OnboardingTourModal.Section` components                                                                             |
 
 ### OnboardingTourModal.Section
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | Unique identifier for the section |
-| `title` | `string` | Yes | Title displayed in the sidebar menu |
-| `bannerImage` | `string` | Yes | URL of the banner image for this section |
-| `isDarkBanner` | `boolean` | No | If true, adjusts the close button styling for dark backgrounds |
-| `renderableActions` | `(props: RenderableActionProps) => RenderableAction[]` | No | Function that returns an array of action buttons or React elements |
-| `children` | `ReactNode` | Yes | Content to display in the section |
+| Prop                | Type                                                           | Required | Description                                                                                          |
+| ------------------- | -------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `id`                | `string`                                                       | Yes      | Unique identifier for the section                                                                    |
+| `title`             | `string`                                                       | Yes      | Title displayed in the sidebar menu                                                                  |
+| `bannerImage`       | `string`                                                       | Yes      | URL of the banner image for this section                                                             |
+| `isDarkBanner`      | `boolean`                                                      | No       | If true, adjusts the close button styling for dark backgrounds                                       |
+| `renderableActions` | `(props: RenderableActionProps) => RenderableAction[]`         | No       | Function that returns an array of action buttons or React elements                                   |
+| `children`          | `ReactNode`                                                    | Yes      | Content to display in the section                                                                    |
 
 ### OnboardingTourModal.SectionContent
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `title` | `ReactNode` | Yes | Main title for the section content |
-| `descriptions` | `ReactNode[]` | No | Array of description paragraphs |
-| `hint` | `ReactNode` | No | Optional hint text displayed at the bottom |
+| Prop          | Type         | Required | Description                                    |
+| ------------- | ------------ | -------- | ---------------------------------------------- |
+| `title`       | `ReactNode`  | Yes      | Main title for the section content             |
+| `descriptions`| `ReactNode[]`| No       | Array of description paragraphs                |
+| `hint`        | `ReactNode`  | No       | Optional hint text displayed at the bottom     |
 
 ## Usage
 
@@ -116,6 +116,6 @@ function MyComponent() {
       </OnboardingTourModal.Section>
     </OnboardingTourModal>
   );
-}
+} 
 ```
 
