@@ -160,7 +160,9 @@ export const useGetCombinedChat = (
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
-											? prevChat.messages.filter( ( message ) => message.role === 'user' )
+											? prevChat.messages.filter(
+													( message ) => message.role === 'user' && message.metadata?.temporary_id
+											  )
 											: [] ),
 										...conversation.messages,
 									] ) as Message[] ),
