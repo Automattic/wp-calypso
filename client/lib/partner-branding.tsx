@@ -68,9 +68,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
  * Get CIAB partner config from URL 'from' param
  * Returns the full partner config or null if not a CIAB partner
  */
-export function getCiabConfigFromParam(
-	from: string | string[] | undefined
-): CiabPartnerConfig | null {
+export function getCiabConfig( from: string | string[] | undefined ): CiabPartnerConfig | null {
 	const fromValue = Array.isArray( from ) ? from[ 0 ] : from;
 
 	if ( fromValue && CIAB_PARTNERS[ fromValue ] ) {
@@ -121,7 +119,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const from = fromInitial || fromCurrent;
 
 	return useMemo( () => {
-		const ciabConfig = getCiabConfigFromParam( from );
+		const ciabConfig = getCiabConfig( from );
 		const hasCustomBranding = ciabConfig !== null;
 
 		// Build logo element for TopBar

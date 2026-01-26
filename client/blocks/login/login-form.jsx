@@ -31,7 +31,7 @@ import {
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getCiabConfigFromParam } from 'calypso/lib/partner-branding';
+import { getCiabConfig } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -980,7 +980,7 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			ciabConfig: getCiabConfigFromParam(
+			ciabConfig: getCiabConfig(
 				get( getCurrentQueryArguments( state ), 'from' ) ||
 					get( getInitialQueryArguments( state ), 'from' )
 			),
