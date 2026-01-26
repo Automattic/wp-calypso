@@ -63,6 +63,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
+import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -78,6 +79,11 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-list', { fullPageLoad } );
+		}
+	},
 	loader: async ( { context } ) => {
 		const tasks: Promise< unknown >[] = [];
 
@@ -110,9 +116,13 @@ export const siteRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches, context } ) => {
 		if ( cause === 'preload' ) {
 			return;
+		}
+
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad: context.fullPageLoad } );
 		}
 
 		let site;

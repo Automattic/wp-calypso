@@ -14,6 +14,7 @@
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,
 		"cookie-banner": false,
+		"rum-tracking/logstash": true,
 		"dashboard/v2": false,
 		"dashboard/v2/paginated-site-list": true,
 		"dev/auth-helper": true,

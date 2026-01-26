@@ -14,23 +14,28 @@ export type RootRouterContext = {
 	config: AppConfig;
 };
 
+let isFirstLoad = true;
+
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
 	beforeLoad: async ( { cause } ) => {
+		const fullPageLoad = isFirstLoad;
+		isFirstLoad = false;
+
 		if ( cause === 'preload' ) {
-			return;
+			return { fullPageLoad };
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {
-			return;
+			return { fullPageLoad };
 		}
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
 		if ( optIn?.value === 'opt-in' || optIn?.value === 'forced-opt-in' ) {
-			return;
+			return { fullPageLoad };
 		}
 
 		throw redirect( { href: wpcomLink( '/' ), replace: true } );

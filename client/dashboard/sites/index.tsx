@@ -18,6 +18,7 @@ import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import OptInSurvey from '../components/opt-in-survey';
@@ -364,6 +365,7 @@ export default function Sites() {
 				treatmentExperience={ null }
 				loadingExperience={ null }
 			/>
+			<PerformanceTrackerStop id="sites" />
 		</>
 	);
 }
