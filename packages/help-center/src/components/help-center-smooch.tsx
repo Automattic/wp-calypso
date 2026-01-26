@@ -21,26 +21,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
-// Module-level promise to ensure init() waits for any pending destroy() to complete
-let destroyPromise: Promise< void > | null = null;
-
-const destroySmooch = (): Promise< void > => {
-	const result = Smooch?.destroy?.();
-
-	// Smooch.destroy() returns undefined if Smooch wasn't initialized
-	if ( ! result ) {
-		return Promise.resolve();
-	}
-
-	destroyPromise = result.finally( () => {
-		destroyPromise = null;
-	} );
-
-	return destroyPromise;
-};
-
-const waitForPendingDestroy = (): Promise< void > => destroyPromise ?? Promise.resolve();
-
 const initSmooch = async (
 	jwt: string,
 	externalId: string,
@@ -202,13 +182,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		let isCancelled = false;
 
 		const initialize = async () => {
-			await waitForPendingDestroy();
+			setIsChatLoaded( false );
+			await Smooch?.destroy?.();
 
 			if ( isCancelled ) {
 				return;
 			}
-
-			setIsChatLoaded( false );
 
 			try {
 				await initSmooch( authJwt, authExternalId, queryClient );
@@ -245,7 +224,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			destroySmooch();
+			Smooch?.destroy?.();
 		};
 	}, [
 		isMessagingScriptLoaded,
