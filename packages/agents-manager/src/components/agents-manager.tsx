@@ -1,15 +1,26 @@
-import {
-	HelpCenterRequiredContextProvider,
-	type HelpCenterRequiredInformation,
-	useHelpCenterContext,
-} from '@automattic/help-center/src/contexts/HelpCenterContext';
-import useChatStatus from '@automattic/help-center/src/hooks/use-chat-status';
 import UnifiedAIAgent from './unified-ai-agent';
+import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
-function AgentsManager() {
-	const { currentUser, site, sectionName } = useHelpCenterContext();
-	const { isEligibleForChat } = useChatStatus();
+export interface AgentsManagerProps {
+	sectionName: string;
+	currentUser?: CurrentUser;
+	site?: AgentsManagerSite | null;
+	isEligibleForChat: boolean;
+}
 
+/**
+ * Standalone AgentsManager component.
+ *
+ * Unlike the Help Center integration, this component receives all required
+ * data as props rather than through context. This allows it to work
+ * independently of the Help Center plugin.
+ */
+export default function AgentsManager( {
+	sectionName,
+	currentUser,
+	site,
+	isEligibleForChat,
+}: AgentsManagerProps ) {
 	return (
 		<UnifiedAIAgent
 			isEligibleForChat={ isEligibleForChat }
@@ -17,15 +28,5 @@ function AgentsManager() {
 			site={ site }
 			sectionName={ sectionName }
 		/>
-	);
-}
-
-export default function ContextualizedAgentsManager(
-	props: Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' | 'site' >
-) {
-	return (
-		<HelpCenterRequiredContextProvider value={ props }>
-			<AgentsManager />
-		</HelpCenterRequiredContextProvider>
 	);
 }

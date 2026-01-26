@@ -11,6 +11,7 @@ export default function AgentsManagerWithProvider() {
 				sectionName={ agentsManagerData.sectionName || 'wp-admin' }
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
+				isEligibleForChat={ agentsManagerData.isEligibleForChat ?? false }
 			/>
 		</QueryClientProvider>
 	);
