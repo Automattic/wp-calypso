@@ -232,8 +232,6 @@ export default function Sites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
 
-	const esSiteListEnabled = isEnabled( 'dashboard/v2/es-site-list' );
-
 	const userHasNoSites = user.site_count === 0;
 
 	let emptyDescription = __( 'Get started by creating a new site.' );
@@ -327,20 +325,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				<SitesDataViews
-					view={ view }
-					sites={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-					isPlaceholderData={ isPlaceholderData }
-					empty={ emptyState }
-					paginationInfo={ paginationInfo }
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
-				/>
-				{ userHasNoSites && <EmptySitesState /> }
-				{ ! userHasNoSites && (
+				{ ! userHasNoSites ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -353,6 +338,8 @@ export default function Sites() {
 						onChangeView={ handleViewChange }
 						onResetView={ resetView }
 					/>
+				) : (
+					<EmptySitesState />
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
