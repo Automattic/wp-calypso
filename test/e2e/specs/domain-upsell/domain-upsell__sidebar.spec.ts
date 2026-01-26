@@ -13,7 +13,7 @@ test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_PR ] }, () => {
 	} ) => {
 		let selectedDomain: string;
 
-		await test.step( 'When I navigate to the Home dashboard on a new free site', async function () {
+		await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
 			pageDashboard.visitPath( `home/${ sitePublic.blog_details.site_slug }` );
 		} );
 

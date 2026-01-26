@@ -15,7 +15,7 @@ test.describe(
 		} ) => {
 			let suggestedDomain: string;
 
-			await test.step( 'When I navigate to the Home dashboard on a new free site', async function () {
+			await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
 				pageDashboard.visitPath( `home/${ sitePublic.blog_details.site_slug }` );
 			} );
 
@@ -28,7 +28,7 @@ test.describe(
 				await pageMyHome.clickButton( 'Get this domain' );
 			} );
 
-			await test.step( 'And I choose the Free plan', async function () {
+			await test.step( 'And I choose the Personal plan', async function () {
 				await pagePlans.selectPlan( 'Personal' );
 			} );
 
