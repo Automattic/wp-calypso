@@ -432,6 +432,8 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 		&.Messages-module_emptyState {
 			justify-content: start;
+			padding-bottom: 0;
+			padding-top: 0;
 		}
 
 		.EmptyView-module_container {
@@ -455,6 +457,14 @@ body:not(.modal-open) .agents-manager-chat--docked {
 				margin: 0;
 			}
 		}
+	}
+
+	.EmptyView-module_container .Suggestions-module_container {
+		padding: 0;
+	}
+
+	.Textarea-module_textarea {
+		line-height: 1.8;
 	}
 
 	.big-sky__chat-actions {
