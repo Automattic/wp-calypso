@@ -127,6 +127,8 @@ test.describe(
 		} ) => {
 			const siteCreationPlan = 'Free';
 			const domainAdditionPlan = 'Personal';
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
 			let newSiteDetails: NewSiteResponse;
 			let selectedDomain: string;
 
@@ -135,9 +137,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I skip the domains step', async function () {
@@ -150,6 +150,7 @@ test.describe(
 					siteCreationPlan,
 					new RegExp( '.*/home/.*' )
 				);
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -208,6 +209,8 @@ test.describe(
 		} ) => {
 			const planName = 'Personal';
 			let selectedDomain: string;
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
 			let newSiteDetails: NewSiteResponse;
 
 			await test.step( 'When I enter the onboarding flow', async function () {
@@ -216,9 +219,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I skip the domains step', async function () {
@@ -228,6 +229,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'Then I can see the plan at checkout', async function () {
@@ -321,6 +323,8 @@ test.describe(
 		} ) => {
 			const planName = 'Personal';
 			let selectedDomain: string;
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I enter the domain setup flow', async function () {
 				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
@@ -328,9 +332,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -350,7 +352,8 @@ test.describe(
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
-				await pageSignupPickPlan.selectPlan( planName );
+				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'Then I see the plan at checkout', async function () {
@@ -371,8 +374,10 @@ test.describe(
 			pageUserSignUp,
 		} ) => {
 			const planName = 'Personal';
+			const testUser = helperData.getNewTestUser();
 			let selectedDomain: string;
 			let newSiteDetails: NewSiteResponse;
+			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I enter the onboarding flow', async function () {
 				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
@@ -380,9 +385,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I skip the domains step', async function () {
@@ -392,6 +395,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'And I enter the domain flow with pre-selected site', async function () {
@@ -436,8 +440,10 @@ test.describe(
 			pagePurchases,
 		} ) => {
 			const planName = 'Personal';
+			const testUser = helperData.getNewTestUser();
 			let selectedDomain: string;
 			let newSiteDetails: NewSiteResponse;
+			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I enter the onboarding flow', async function () {
 				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
@@ -445,9 +451,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I skip the domains step', async function () {
@@ -457,6 +461,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'Then I see the plan at checkout', async function () {
@@ -540,15 +545,15 @@ test.describe(
 		} ) => {
 			const targetDomain = 'a8ctesting.com';
 			const planName = 'Personal';
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
 
 			await test.step( 'When I enter the domain setup flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
 			await test.step( 'And I sign up as a new user', async function () {
-				const testUser = helperData.getNewTestUser();
-				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -568,7 +573,8 @@ test.describe(
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
-				await pageSignupPickPlan.selectPlan( planName );
+				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
 			await test.step( 'Then I see the plan at checkout', async function () {
