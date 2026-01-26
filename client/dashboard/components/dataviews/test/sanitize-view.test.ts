@@ -6,26 +6,65 @@ import { sanitizeView } from '../sanitize-view';
 import type { Field, View } from '@wordpress/dataviews';
 
 describe( 'sanitizeView', () => {
-	it( 'should sanitize the view', async () => {
-		const fields: Field< any >[] = [
-			{ id: 'name', enableSorting: true },
-			{ id: 'date', enableSorting: false },
-		];
+	const fields: Field< any >[] = [
+		{ id: 'name', enableSorting: true },
+		{ id: 'is_deleted', enableSorting: false },
+		{ id: 'visibility', enableSorting: true },
+	];
 
+	const validView: View = {
+		type: 'table',
+		sort: { field: 'name', direction: 'asc' },
+		filters: [
+			{ field: 'is_deleted', operator: 'is', value: true },
+			{ field: 'visibility', operator: 'isAny', value: [ 'public', 'private' ] },
+		],
+	};
+
+	it( 'should keep view unchanged when valid', () => {
+		const sanitizedView = sanitizeView( validView, fields );
+		expect( sanitizedView ).toEqual( validView );
+	} );
+
+	it( 'should remove sort when field is not sortable', () => {
 		const view: View = {
-			type: 'grid',
+			...validView,
+			sort: { field: 'is_deleted', direction: 'asc' },
+		};
 
-			// invalid preview size
-			layout: { previewSize: 100 },
+		const sanitizedView = sanitizeView( view, fields );
+		expect( sanitizedView ).toEqual( { ...validView, sort: undefined } );
+	} );
 
-			// non-sortable field
-			sort: { field: 'date', direction: 'asc' },
+	it( 'should remove filter with "is" operator and non-scalar value', () => {
+		const view: View = {
+			...validView,
+			filters: [
+				{ field: 'is_deleted', operator: 'is', value: [ true ] },
+				{ field: 'visibility', operator: 'isAny', value: [ 'public', 'private' ] },
+			],
 		};
 
 		const sanitizedView = sanitizeView( view, fields );
 		expect( sanitizedView ).toEqual( {
-			type: 'grid',
-			layout: {},
+			...validView,
+			filters: [ { field: 'visibility', operator: 'isAny', value: [ 'public', 'private' ] } ],
+		} );
+	} );
+
+	it( 'should remove filter with "isAny" operator and non-array value', () => {
+		const view: View = {
+			...validView,
+			filters: [
+				{ field: 'is_deleted', operator: 'is', value: true },
+				{ field: 'visibility', operator: 'isAny', value: 'public' },
+			],
+		};
+
+		const sanitizedView = sanitizeView( view, fields );
+		expect( sanitizedView ).toEqual( {
+			...validView,
+			filters: [ { field: 'is_deleted', operator: 'is', value: true } ],
 		} );
 	} );
 } );
