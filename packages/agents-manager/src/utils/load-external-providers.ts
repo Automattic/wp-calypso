@@ -59,7 +59,8 @@ type ChatComponentType =
 	| 'pattern-picker'
 	| 'completed-plan'
 	| 'product-card'
-	| 'chat-suggestions';
+	| 'chat-suggestions'
+	| 'next-step-button';
 
 /**
  * Get a chat component by type for rendering in agent messages.

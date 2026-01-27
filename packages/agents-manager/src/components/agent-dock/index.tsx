@@ -251,28 +251,33 @@ export default function AgentDock( {
 							],
 						};
 
-						const completedPlanComponent = getChatComponent?.( 'completed-plan' );
+						const nextStepButton = getChatComponent?.( 'next-step-button' );
+						const nextStepButtonMessageId = `${ message.id }-next-step`;
+						const showNextStepButton =
+							textData.data?.followUpTasks &&
+							nextStepButton &&
+							! deletedMessageIds.has( nextStepButtonMessageId );
 
 						return [
 							componentMessage,
-							// Inject a completed-plan message after the component message
-							// TODO: Handle the restore case...
-							completedPlanComponent && {
-								id: `${ message.id }-completed-plan`,
+							// Inject the next step button after the component message if applicable
+							showNextStepButton && {
+								id: nextStepButtonMessageId,
 								content: [
 									{
 										type: 'component',
-										component: completedPlanComponent,
+										component: nextStepButton,
 										componentProps: {
-											id: message.id,
-											type: 'response-actions',
+											onClick: () => {
+												setDeletedMessageIds(
+													( prevIds ) => new Set( [ ...prevIds, nextStepButtonMessageId ] )
+												);
+											},
 										},
 									},
 								],
 							},
 						].filter( Boolean );
-
-						// TODO: Handle the next step case...
 					}
 
 					// TODO: Handle `ai start_over` components...
