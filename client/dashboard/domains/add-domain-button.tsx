@@ -39,7 +39,10 @@ export function AddDomainButton( {
 		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+		navigateTo(
+			wpcomLink( '/setup/domain/use-my-domain' ),
+			wpcomLink( '/setup/domain/use-my-domain' )
+		);
 
 	return (
 		<Dropdown
@@ -61,7 +64,7 @@ export function AddDomainButton( {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						{ __( 'Use a domain name I own' ) }
 					</MenuItem>
 				</>
 			) }

@@ -1,4 +1,4 @@
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 export type ShoppingCartItem = APIProductFamilyProduct & {
 	quantity: number;
