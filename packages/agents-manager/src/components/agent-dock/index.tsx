@@ -18,6 +18,7 @@ import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
@@ -180,10 +181,14 @@ export default function AgentDock( {
 		}
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
+		if ( conversation.is_zendesk ) {
+			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
+		} else {
+			abortCurrentRequest();
+			setSessionId( sessionId );
+			navigate( '/chat', { state: { sessionId } } );
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
@@ -267,7 +272,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 
