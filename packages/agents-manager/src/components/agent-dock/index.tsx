@@ -1,5 +1,6 @@
 import {
 	getAgentManager,
+	ServerConversationListItem,
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
@@ -167,10 +168,14 @@ export default function AgentDock( {
 		}
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleSelectConversation = ( conversation: ServerConversationListItem ) => {
+		if ( conversation.is_zendesk ) {
+			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
+		} else {
+			abortCurrentRequest();
+			setSessionId( sessionId );
+			navigate( '/chat', { state: { sessionId } } );
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
@@ -254,7 +259,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 

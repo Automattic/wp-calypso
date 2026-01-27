@@ -3,6 +3,7 @@
  * Displays the list of past conversations with a "new chat" action
  */
 
+import { ServerConversationListItem } from '@automattic/agenttic-client';
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -14,7 +15,7 @@ import './style.scss';
 interface Props {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
-	onSelectConversation: ( sessionId: string ) => void;
+	onSelectConversation: ( conversation: ServerConversationListItem ) => void;
 	onNewChat: () => void;
 }
 
@@ -63,7 +64,7 @@ export default function ConversationHistoryView( {
 							<ConversationListItem
 								key={ conversation.session_id }
 								conversation={ conversation }
-								onClick={ ( sessionId ) => onSelectConversationRef.current( sessionId ) }
+								onClick={ ( conversation ) => onSelectConversationRef.current( conversation ) }
 							/>
 						) ) }
 					</div>

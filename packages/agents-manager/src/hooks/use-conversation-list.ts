@@ -3,10 +3,11 @@ import {
 	createOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
+import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
-
+import { normalizeZendeskConversations } from '../utils/zendesk';
 interface Options {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
@@ -20,6 +21,9 @@ interface Result {
 
 export default function useConversationList( { agentId, authProvider }: Options ): Result {
 	const botId = createOdieBotId( agentId );
+
+	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
+		useGetZendeskConversations();
 
 	const {
 		data: conversations,
@@ -38,16 +42,7 @@ export default function useConversationList( { agentId, authProvider }: Options 
 				},
 				true
 			);
-
-			// Sort by `first_message.created_at` descending (most recent first)
-			// Note: Dates are in MySQL format "2025-11-06 14:29:49"
-			const sorted = result.sort( ( a, b ) => {
-				const timeA = new Date( a.first_message?.created_at || 0 ).getTime();
-				const timeB = new Date( b.first_message?.created_at || 0 ).getTime();
-				return timeB - timeA;
-			} );
-
-			return sorted;
+			return result;
 		},
 		enabled: !! botId,
 	} );
@@ -59,9 +54,23 @@ export default function useConversationList( { agentId, authProvider }: Options 
 		}
 	}, [ error ] );
 
+	const mergedConversations = useMemo(
+		() =>
+			[ ...( conversations ?? [] ), ...normalizeZendeskConversations( zendeskConversations ) ].sort(
+				( a, b ) => {
+					// Sort by `first_message.created_at` descending (most recent first)
+					// Note: Dates are in ISO format "2025-11-06T14:29:49.000Z"
+					const timeA = new Date( a.first_message?.created_at || 0 ).getTime();
+					const timeB = new Date( b.first_message?.created_at || 0 ).getTime();
+					return timeB - timeA;
+				}
+			),
+		[ conversations, zendeskConversations ]
+	);
+
 	return {
-		conversations: conversations || [],
-		isLoading,
+		conversations: mergedConversations,
+		isLoading: isLoadingZendeskConversations || isLoading,
 		isError,
 	};
 }

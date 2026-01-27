@@ -1,8 +1,4 @@
-import {
-	type MarkdownComponents,
-	type MarkdownExtensions,
-	type Suggestion,
-} from '@automattic/agenttic-ui';
+import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -10,12 +6,8 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
 interface ZendeskChatProps {
-	/** Suggestions to show in the chat input. */
-	suggestions?: Suggestion[];
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
-	/** Suggestions displayed when the chat is empty. */
-	emptyViewSuggestions?: Suggestion[];
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
@@ -31,9 +23,7 @@ interface ZendeskChatProps {
 }
 
 export function ZendeskChat( {
-	suggestions = [],
 	chatHeaderOptions,
-	emptyViewSuggestions = [],
 	isDocked,
 	isOpen,
 	onClose,
@@ -42,13 +32,12 @@ export function ZendeskChat( {
 	markdownExtensions = {},
 }: ZendeskChatProps ) {
 	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat( true );
+		useManagedZendeskChat();
 
 	return (
 		<AgentChat
 			messages={ agentticMessages as Message[] }
-			suggestions={ suggestions }
-			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
+			suggestions={ [] }
 			isProcessing={ isProcessing }
 			error={ null }
 			onSubmit={ onSubmit }
