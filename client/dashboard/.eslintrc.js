@@ -60,6 +60,7 @@ module.exports = {
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
+							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
 							'!@automattic/load-script',

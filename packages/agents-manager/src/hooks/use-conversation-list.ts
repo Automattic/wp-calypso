@@ -3,13 +3,13 @@ import {
 	createOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
-import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { LocalConversationListItem } from '../types';
 import { normalizeZendeskConversations } from '../utils/zendesk';
+import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 interface Options {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;

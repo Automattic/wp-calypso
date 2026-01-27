@@ -8,7 +8,6 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -18,6 +17,7 @@ import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
