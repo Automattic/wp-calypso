@@ -25,6 +25,7 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
@@ -502,7 +503,8 @@ UseMyDomain.propTypes = {
 };
 
 export default connect( ( state ) => ( {
-	dashboard: getCurrentQueryArguments( state )?.dashboard,
+	dashboard:
+		getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ?? undefined,
 	selectedSite: getSelectedSite( state ),
 	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
 } ) )( UseMyDomain );

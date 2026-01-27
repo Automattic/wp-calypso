@@ -39,6 +39,17 @@ export function a4aLink( path: string ) {
 export type DashboardType = 'ciab' | 'msd';
 
 /**
+ * Returns the dashboard type from a string.
+ */
+export function getDashboardFromString( dashboard?: string ): DashboardType | null {
+	if ( dashboard === 'ciab' || dashboard === 'msd' ) {
+		return dashboard;
+	}
+
+	return null;
+}
+
+/**
  * Returns the dashboard type from URL query params.
  * Used when in Stepper to know which dashboard the user came from.
  */

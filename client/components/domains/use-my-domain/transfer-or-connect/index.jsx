@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -165,7 +166,9 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 			productsList: getProductsList( state ),
-			dashboard: getCurrentQueryArguments( state )?.dashboard,
+			dashboard:
+				getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
+				undefined,
 			selectedSite,
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};

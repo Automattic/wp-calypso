@@ -15,12 +15,14 @@ import {
 	getDomainTransferrability,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import Notice from 'calypso/components/notice';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { Maybe, StartStepProps } from './types';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -164,7 +166,8 @@ function TransferDomainStepStart( {
 	);
 }
 
-export default connect( ( state ) => ( {
-	dashboard: getCurrentQueryArguments( state as Record< string, unknown > )?.dashboard,
+export default connect( ( state: AppState ) => ( {
+	dashboard:
+		getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ?? undefined,
 	selectedSite: getSelectedSite( state ),
 } ) )( TransferDomainStepStart );

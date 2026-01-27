@@ -12,6 +12,7 @@ import DomainProductPrice from 'calypso/components/domains/domain-product-price'
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
 import { getFixedDomainSearch, checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -280,7 +281,9 @@ class MapDomainStep extends Component {
 export default connect(
 	( state ) => ( {
 		currentUser: getCurrentUser( state ),
-		dashboard: getCurrentQueryArguments( state )?.dashboard,
+		dashboard:
+			getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
+			undefined,
 		selectedSite: getSelectedSite( state ),
 		primaryWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )

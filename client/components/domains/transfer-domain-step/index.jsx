@@ -19,6 +19,7 @@ import TransferRestrictionMessage from 'calypso/components/domains/transfer-doma
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
@@ -735,7 +736,9 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		dashboard: getCurrentQueryArguments( state )?.dashboard,
+		dashboard:
+			getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
+			undefined,
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),
