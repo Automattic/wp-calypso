@@ -133,7 +133,7 @@ export default function RegularPlanCardContent( {
 						showActualCost &&
 						( pressableOwnership === 'none' || isReferralMode ) && (
 							<span className="pressable-plan-card-content__promo-footnote">
-								{ translate( '*Limited time only. {{a}}See details{{/a}}', {
+								{ translate( '*Limited time only. {{a}}See details{{/a}} ↗', {
 									components: {
 										a: (
 											<a
