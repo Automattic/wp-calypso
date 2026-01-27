@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -10,6 +10,7 @@ import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
+import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
@@ -50,6 +51,9 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
 						<SiteVisibilitySettingsSummary site={ site } />
+						{ isEnabled( 'wordpress-ai-tools' ) ? (
+							<AISiteToolsSettingsSummary site={ site } />
+						) : null }
 						{ siteTypeSupports.settingsGeneralRedirect ? (
 							<SiteRedirectSettingsSummary site={ site } />
 						) : null }
@@ -85,7 +89,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ siteTypeSupports.settingsExperimental && config.isEnabled( 'wordpress-ai-assistant' ) && (
+			{ siteTypeSupports.settingsExperimental && isEnabled( 'wordpress-ai-assistant' ) && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
 					<SummaryButtonList>
