@@ -3,6 +3,7 @@ import {
 	createOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -17,8 +18,11 @@ interface Options {
 export default function useConversationList( { agentId, authProvider }: Options ) {
 	const botId = createOdieBotId( agentId );
 
+	const useAgentsManager = useShouldUseUnifiedAgent();
+
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		useGetZendeskConversations();
+		// Only fetch Zendesk conversations if the unified agent flag is enabled
+		useGetZendeskConversations( !! useAgentsManager );
 
 	const {
 		data: conversations,

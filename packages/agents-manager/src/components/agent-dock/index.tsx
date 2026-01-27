@@ -8,6 +8,7 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
+import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -69,6 +70,7 @@ export default function AgentDock( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const useAgentsManager = useShouldUseUnifiedAgent();
 	const {
 		hasLoaded: isStoreReady,
 		isOpen: isPersistedOpen = false,
@@ -221,7 +223,11 @@ export default function AgentDock( {
 			},
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem, newZDChatMenuItem ];
+		const options: ChatHeaderOptions = [ newChatMenuItem ];
+
+		if ( useAgentsManager ) {
+			options.push( newZDChatMenuItem );
+		}
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
