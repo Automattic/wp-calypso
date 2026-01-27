@@ -291,10 +291,7 @@ class InviteAccept extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		user: getCurrentUser( state ),
-		hasDashboardOptIn: hasDashboardOptIn( state ),
-	} ),
+	( state ) => ( { user: getCurrentUser( state ), hasDashboardOptIn: hasDashboardOptIn( state ) } ),
 	{
 		successNotice,
 		infoNotice,
