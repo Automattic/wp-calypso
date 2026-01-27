@@ -277,7 +277,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
-						} else if ( providedDependencies?.postCheckoutBigSky ) {
+						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.

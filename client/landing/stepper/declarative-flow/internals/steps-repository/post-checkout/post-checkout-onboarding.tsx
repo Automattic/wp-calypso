@@ -6,7 +6,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -129,18 +128,12 @@ const PostCheckoutOnboarding: StepType< {
 			return;
 		}
 
-		if ( experimentAssignment?.variationName ) {
-			recordTracksEvent( 'calypso_post_checkout_big_sky_exposure', {
-				variation: experimentAssignment.variationName,
-			} );
-		}
-
 		setPendingAction( async () => {
 			const providedDependencies = {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				postCheckoutBigSky: experimentAssignment?.variationName === 'big_sky',
+				postCheckoutBigSkyVariation: experimentAssignment?.variationName,
 			};
 
 			if ( isJetpackOrAtomic ) {
