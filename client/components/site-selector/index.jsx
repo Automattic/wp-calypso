@@ -53,6 +53,7 @@ export class SiteSelector extends Component {
 		filter: PropTypes.func,
 		groups: PropTypes.bool,
 		keepCurrentSection: PropTypes.bool,
+		onKeyDown: PropTypes.func,
 		onSiteSelect: PropTypes.func,
 		searchPlaceholder: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -78,6 +79,7 @@ export class SiteSelector extends Component {
 		hideSelected: false,
 		selected: null,
 		onClose: noop,
+		onKeyDown: noop,
 		onSiteSelect: noop,
 		groups: false,
 		keepCurrentSection: false,
@@ -203,6 +205,8 @@ export class SiteSelector extends Component {
 				isKeyboardEngaged: true,
 			} );
 		}
+
+		this.props.onKeyDown( event );
 	};
 
 	onSiteSelect = ( event, siteId ) => {

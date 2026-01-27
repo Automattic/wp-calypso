@@ -64,9 +64,6 @@
 		.site__title,
 		.site__domain {
 			color: var(--color-sidebar-menu-selected-text);
-			&::after {
-				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background ) );
-			}
 		}
 
 		.count {
@@ -99,11 +96,7 @@
 	cursor: pointer;
 
 	.site__badge {
-		// Only apply hover styling to specific badge types that should change
-		// Exclude styled-component badges (staging, production, etc.) which handle their own hover states
-		&:not([class*="SitesLaunchStatusBadge"]):not([class*="SitesStagingBadge"]):not([class*="SitesProductionBadge"]) {
-			background-color: var(--color-surface);
-		}
+		background-color: var(--color-surface);
 
 		&.is-p2,
 		&.is-p2-workspace {
