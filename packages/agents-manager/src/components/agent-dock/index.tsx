@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login } from '@wordpress/icons';
+import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -24,6 +24,7 @@ import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import { ZendeskChat } from '../zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
@@ -84,7 +85,12 @@ export default function AgentDock( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => setIsOpen( true ),
+			onOpenSidebar: () => {
+				setIsOpen( true );
+				if ( pathname === '/history' ) {
+					navigate( '/' );
+				}
+			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -154,6 +160,13 @@ export default function AgentDock( {
 		navigate( '/' );
 	};
 
+	const handleExpand = () => {
+		setIsOpen( true );
+		if ( pathname === '/history' ) {
+			navigate( '/' );
+		}
+	};
+
 	const handleSelectConversation = ( sessionId: string ) => {
 		abortCurrentRequest();
 		setSessionId( sessionId );
@@ -164,8 +177,14 @@ export default function AgentDock( {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname !== '/history' && ! messages.length,
+			isDisabled: pathname === '/chat' && ! messages.length,
 			onClick: handleNewChat,
+		};
+		const newZDChatMenuItem = {
+			icon: lifesaver,
+			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
+			isDisabled: pathname === '/zendesk' && ! messages.length,
+			onClick: () => navigate( '/zendesk' ),
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -184,7 +203,7 @@ export default function AgentDock( {
 			},
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem ];
+		const options: ChatHeaderOptions = [ newChatMenuItem, newZDChatMenuItem ];
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
@@ -219,10 +238,23 @@ export default function AgentDock( {
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
+			onExpand={ handleExpand }
+			chatHeaderOptions={ getChatHeaderOptions() }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+		/>
+	);
+
+	const ZendeskChatRoute = (
+		<ZendeskChat
+			isDocked={ isDocked }
+			isOpen={ isPersistedOpen }
+			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ () => setIsOpen( true ) }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 
@@ -236,7 +268,7 @@ export default function AgentDock( {
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>
@@ -270,6 +302,7 @@ export default function AgentDock( {
 		<Routes>
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
+			<Route path="/zendesk" element={ ZendeskChatRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />

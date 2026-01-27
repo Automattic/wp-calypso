@@ -3,6 +3,7 @@ export * from './constants';
 export * from './error';
 
 export * from './agency';
+export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
 export * from './dashboard-site-list';
@@ -31,6 +32,7 @@ export * from './emails';
 export * from './geo';
 export * from './hosting-github';
 export * from './hosting-update-schedules';
+export * from './jetpack-user-license';
 export * from './marketplace-products';
 export * from './marketplace-search';
 export * from './marketing-survey';

@@ -1,8 +1,8 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
@@ -11,6 +11,7 @@ const DISMISSED_AT_KEY = 'dashboard-opt-in-survey-dismissed-at';
 const DISMISSED_COUNT_KEY = 'dashboard-opt-in-survey-dismissed-count';
 
 const RESHOW_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const FOLLOW_UP_AFTER_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 const MAX_DISMISSES = 2;
 
 const canUseLocalStorage = () =>
@@ -74,6 +75,11 @@ export default function OptInSurvey() {
 		return null;
 	}
 
+	const welcomeNoticeDismissedTime = welcomeNoticeDismissedAt
+		? new Date( welcomeNoticeDismissedAt ).getTime()
+		: 0;
+	const isFollowUp = Date.now() >= welcomeNoticeDismissedTime + FOLLOW_UP_AFTER_MS;
+
 	const setDismissedNow = () => {
 		setIsDismissed( true );
 		dismissSurvey();
@@ -89,6 +95,10 @@ export default function OptInSurvey() {
 		setDismissedNow();
 	};
 
+	const surveyUrl = isFollowUp
+		? 'https://automattic.survey.fm/msd-survey-for-opt-in-after-2-weeks'
+		: 'https://automattic.survey.fm/msd-survey-for-opt-in';
+
 	return (
 		<Notice
 			title={ __( 'How’s your experience with the new Hosting Dashboard?' ) }
@@ -98,7 +108,7 @@ export default function OptInSurvey() {
 					<Button
 						variant="primary"
 						size="compact"
-						href="https://automattic.survey.fm/msd-survey-for-opt-in"
+						href={ surveyUrl }
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ confirm }

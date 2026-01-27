@@ -9,6 +9,7 @@ import { View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { arrowUp } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
@@ -23,7 +24,6 @@ import {
 } from '../utils';
 import { useActions } from './actions';
 import { useFields } from './fields';
-import { getAllowedFields, filtersSignature } from './filters';
 import {
 	DEFAULT_PER_PAGE,
 	DEFAULT_PHP_LOGS_VIEW,
@@ -150,7 +150,7 @@ function SiteLogsDataViews( {
 
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
-	}, [ dateRangeVersion, view, updateView ] );
+	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {
 		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
@@ -194,8 +194,6 @@ function SiteLogsDataViews( {
 			setAutoRefresh( false );
 		}
 
-		const allowed = getAllowedFields( logType );
-
 		const sourceFilters = ( next.filters ?? view.filters ?? [] ) as Filter[];
 
 		// Track severity changes
@@ -227,7 +225,7 @@ function SiteLogsDataViews( {
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			filtersSignature( sourceFilters, allowed ) !== filtersSignature( view.filters, allowed );
+			! fastDeepEqual( sourceFilters, view.filters );
 
 		const url = new URL( window.location.href );
 		// Always keep canonical time range params
@@ -235,23 +233,15 @@ function SiteLogsDataViews( {
 		url.searchParams.set( 'to', String( endSec ) );
 		window.history.replaceState( null, '', url.pathname + url.search );
 
-		// Apply view with only allowed filters; reset page if dataset changed
 		if ( datasetChanged ) {
 			// Clear prior infinite data for old sort/filter so we don't show an empty state.
 			queryClient.removeQueries( {
 				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
 				exact: false,
 			} );
-			updateView( {
-				...next,
-				page: 1,
-				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
-			} );
+			updateView( { ...next, page: 1 } );
 		} else {
-			updateView( {
-				...next,
-				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
-			} );
+			updateView( next );
 		}
 	};
 

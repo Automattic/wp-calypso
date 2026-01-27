@@ -168,6 +168,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": true,
+		"wordpress-ai-tools": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

@@ -13,7 +13,6 @@ export const DotcomPlans = {
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
-	JETPACK_FREE: 'jetpack_free',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
@@ -97,6 +96,14 @@ export const WooHostedPlans = {
 	WOO_HOSTED_PRO_PLAN_YEARLY: 'woo_hosted_pro_plan_yearly',
 } as const;
 
+export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
+export type JetpackPlanSlug = ( typeof JetpackPlans )[ keyof typeof JetpackPlans ];
+export type AkismetPlanSlug = ( typeof AkismetPlans )[ keyof typeof AkismetPlans ];
+export type WooHostedPlanSlug = ( typeof WooHostedPlans )[ keyof typeof WooHostedPlans ];
+
+// Any valid plan slug sold through Store.
+export type StorePlanSlug = DotcomPlanSlug | JetpackPlanSlug | AkismetPlanSlug | WooHostedPlanSlug;
+
 export const BusinessPlans = [
 	DotcomPlans.BUSINESS_MONTHLY,
 	DotcomPlans.BUSINESS,
@@ -118,8 +125,6 @@ export const TrialPlans = [
 	DotcomPlans.MIGRATION_TRIAL_MONTHLY,
 	WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
 ];
-
-export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
 
 export const DotcomFeatures = {
 	ATOMIC: 'atomic',

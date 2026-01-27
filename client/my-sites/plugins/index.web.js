@@ -6,6 +6,7 @@ import {
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
 	redirectIfCurrentUserCannot,
+	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { noSite, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -126,6 +127,8 @@ export default function ( router ) {
 		`/${ langParam }/plugins/manage/sites`,
 		redirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/plugins' ),
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
@@ -140,6 +143,8 @@ export default function ( router ) {
 		`/${ langParam }/plugins/manage/sites/:slug`,
 		redirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/plugins/manage/${ params.slug }` ),
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
@@ -187,6 +192,18 @@ export default function ( router ) {
 			`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
 		],
 		redirectLoggedOut,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => {
+			if ( params.action === 'create' ) {
+				return `/plugins/scheduled-updates/new`;
+			}
+
+			if ( params.action === 'edit' && params.id ) {
+				return `/plugins/scheduled-updates/edit/${ params.id }`;
+			}
+
+			return '/plugins/scheduled-updates';
+		} ),
 		navigation,
 		renderPluginsSidebar,
 		scheduledUpdatesMultisite,

@@ -12,7 +12,7 @@ import { SectionHeader } from '../../components/section-header';
 import { useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
 
@@ -81,12 +81,11 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 };
 
 export default function DomainsCard( { site }: { site: Site } ) {
+	const isCommerceGardenSite = isCommerceGarden( site );
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( {
 		...domainsQuery(),
-		select: ( data ) => {
-			return data.filter( ( domain ) => domain.blog_id === site.ID );
-		},
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 
 	if ( site.is_wpcom_staging_site ) {
@@ -96,7 +95,8 @@ export default function DomainsCard( { site }: { site: Site } ) {
 	if ( ! sitePlan || ! siteDomains ) {
 		// Given that the SiteDomainsDataViews is disabled for the backport,
 		// we skip rendering the skeleton here as it might not result in any component being rendered at all.
-		if ( isDashboardBackport() ) {
+		// For CIAB (hideUpsells), we also skip the skeleton to avoid CLS when it turns out there are no domains.
+		if ( isDashboardBackport() || isCommerceGardenSite ) {
 			return null;
 		}
 
@@ -107,10 +107,16 @@ export default function DomainsCard( { site }: { site: Site } ) {
 		isSelfHostedJetpackConnected( site ) &&
 		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
+		if ( isCommerceGardenSite ) {
+			return null;
+		}
 		return <DomainTransferUpsellCard />;
 	}
 
 	if ( ! siteDomains.find( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS ) ) {
+		if ( isCommerceGardenSite ) {
+			return null;
+		}
 		return <DomainUpsellCard site={ site } />;
 	}
 

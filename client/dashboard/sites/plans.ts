@@ -1,11 +1,17 @@
-import { DotcomPlans, type DotcomPlanSlug, type Site } from '@automattic/api-core';
+import {
+	DotcomPlans,
+	JetpackPlans,
+	WooHostedPlans,
+	type StorePlanSlug,
+	type Site,
+} from '@automattic/api-core';
 
-export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlanSlug[] ) => {
+export const isSitePlanNotOneOf = ( site: Site, plans: StorePlanSlug[] ) => {
 	if ( ! site.plan ) {
 		return false;
 	}
 
-	return ! plans.includes( site.plan.product_slug as DotcomPlanSlug );
+	return ! ( plans as string[] ).includes( site.plan.product_slug );
 };
 
 export const isSitePlanBigSkyTrial = ( site: Site ) => {
@@ -36,7 +42,11 @@ export const isSitePlanBigSkyTrial = ( site: Site ) => {
 };
 
 export const isSitePlanPaid = ( site: Site ) => {
-	return isSitePlanNotOneOf( site, [ DotcomPlans.JETPACK_FREE, DotcomPlans.FREE_PLAN ] );
+	return isSitePlanNotOneOf( site, [
+		JetpackPlans.PLAN_JETPACK_FREE,
+		DotcomPlans.FREE_PLAN,
+		WooHostedPlans.WOO_HOSTED_FREE_PLAN,
+	] );
 };
 
 export const isSitePlanLaunchable = ( site: Site ) => {
@@ -51,7 +61,8 @@ export function isSitePlanTrial( site: Pick< Site, 'plan' > ) {
 		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 		DotcomPlans.HOSTING_TRIAL_MONTHLY,
 		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
-	] as DotcomPlanSlug[];
+		WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
+	] as StorePlanSlug[];
 
-	return trialPlans.includes( site.plan?.product_slug as DotcomPlanSlug );
+	return trialPlans.includes( site.plan?.product_slug as StorePlanSlug );
 }

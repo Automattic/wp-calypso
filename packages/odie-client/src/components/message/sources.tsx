@@ -58,7 +58,7 @@ export const Sources = ( {
 	const renderDisclaimers = () => (
 		<div className="disclaimer">
 			{ createInterpolateElement(
-				__( 'Some responses may be inaccurate. <a>Learn more</a>.', __i18n_text_domain__ ),
+				__( 'Some responses may be inaccurate. <a>Learn more</a>', __i18n_text_domain__ ),
 				{
 					a: (
 						// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.

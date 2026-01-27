@@ -182,7 +182,8 @@ const oauthTokenMiddleware = () => {
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
-				window.location = authorizePath();
+				// Use replace to avoid adding the current path to browser history
+				window.location.replace( authorizePath() );
 				return;
 			}
 
