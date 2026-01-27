@@ -2,7 +2,7 @@ import { VIPLogo } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 /**
  * Get the WPCOM Creator plan from a list of plans

@@ -19,7 +19,7 @@ type ConsolidatedViewsProps = {
 
 export default function ConsolidatedViews( { referrals, totalPayouts }: ConsolidatedViewsProps ) {
 	const translate = useTranslate();
-	const { data: productsData, isFetching } = useProductsQuery( false, false, true );
+	const { data: productsData, isFetching } = useProductsQuery( false, true );
 	const { previousQuarterExpectedCommission, pendingOrders, currentQuarterExpectedCommission } =
 		useGetConsolidatedPayoutData( referrals, productsData );
 	const { showSupportGuide } = useHelpCenter();

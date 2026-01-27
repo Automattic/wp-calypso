@@ -9,7 +9,7 @@ import {
 	SubscriptionStatus,
 } from '../field-content';
 import type { Subscription } from '../../../types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 

@@ -7,10 +7,12 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_SESSION_STORAGE_KEY } from './hoc/with-marketplace-type';
+import { TERM_PRICING_PREFERENCE_KEY, TERM_PRICING_YEARLY } from './hoc/with-term-pricing';
 import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
@@ -18,7 +20,7 @@ import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-ove
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import ReferHosting from './refer-hosting';
-import type { MarketplaceType } from './types';
+import type { MarketplaceType, TermPricingType } from './types';
 
 type Props = {
 	title: string;
@@ -31,6 +33,11 @@ function MarketplacePageViewTracker( { title, path, properties }: Props ) {
 		MARKETPLACE_TYPE_SESSION_STORAGE_KEY
 	) as MarketplaceType;
 
+	const [ termPricingValue ] = useAsyncPreference< TermPricingType >( {
+		defaultValue: TERM_PRICING_YEARLY,
+		preferenceName: TERM_PRICING_PREFERENCE_KEY,
+	} );
+
 	return (
 		<PageViewTracker
 			title={ title }
@@ -38,6 +45,7 @@ function MarketplacePageViewTracker( { title, path, properties }: Props ) {
 			properties={ {
 				...properties,
 				purchase_mode: marketplaceType,
+				term_pricing: termPricingValue,
 			} }
 		/>
 	);

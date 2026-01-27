@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
+import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -19,9 +20,9 @@ import useSubmitForm from '../hooks/use-submit-form';
 import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
-import type { ShoppingCartItem } from '../../types';
+import type { ShoppingCartItem, TermPricingType } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -34,6 +35,7 @@ interface ProductListingProps {
 	selectedBundleSize: number;
 	selectedFilters: SelectedFilters;
 	stickyHeadingTopOffset?: number;
+	termPricing: TermPricingType;
 }
 
 export default function ProductListing( {
@@ -44,12 +46,15 @@ export default function ProductListing( {
 	selectedBundleSize,
 	selectedFilters,
 	stickyHeadingTopOffset,
+	termPricing,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const termAvailabilityTooltip = useProductTermAvailabilityTooltip( termPricing );
 
 	const quantity = useMemo(
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
@@ -142,6 +147,7 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			} else {
@@ -152,11 +158,12 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			}
 		},
-		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems ]
+		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems, termPricing ]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
@@ -178,6 +185,7 @@ export default function ProductListing( {
 						product: replace.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 
@@ -186,6 +194,7 @@ export default function ProductListing( {
 						product: product.slug,
 						quantity,
 						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
 					} )
 				);
 			} else {
@@ -199,6 +208,7 @@ export default function ProductListing( {
 			selectedCartItems,
 			setSelectedCartItems,
 			marketplaceType,
+			termPricing,
 		]
 	);
 
@@ -261,9 +271,18 @@ export default function ProductListing( {
 						)
 				);
 
+			const termAvailabilityTooltipMessage = termAvailabilityTooltip( productOption );
+
+			const tooltip =
+				termAvailabilityTooltipMessage ||
+				( productDoNotHaveSupportedBundles
+					? translate( 'This product does not offer volume discounts.' )
+					: undefined );
+
 			return (
 				<ProductCard
 					asReferral={ isReferralMode }
+					termPricing={ termPricing }
 					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
@@ -279,11 +298,7 @@ export default function ProductListing( {
 					suggestedProduct={ suggestedProduct }
 					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
-					tooltip={
-						productDoNotHaveSupportedBundles
-							? translate( 'This product does not offer volume discounts.' )
-							: undefined
-					}
+					tooltip={ tooltip }
 					tooltipPosition="bottom"
 				/>
 			);
