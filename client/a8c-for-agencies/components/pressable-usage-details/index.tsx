@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { TitanOrder } from 'calypso/state/a8c-for-agencies/types';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 

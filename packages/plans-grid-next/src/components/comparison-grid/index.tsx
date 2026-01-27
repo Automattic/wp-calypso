@@ -3,8 +3,6 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	FEATURE_AI_WEBSITE_BUILDER,
-	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 } from '@automattic/calypso-products';
@@ -55,7 +53,6 @@ import './style.scss';
 
 // Plans Differentiators Experiment: treat feature variants (e.g., _LIMITED) as the same row
 const FEATURE_ALIASES: Record< string, string[] > = {
-	[ FEATURE_AI_WEBSITE_BUILDER ]: [ FEATURE_AI_WEBSITE_BUILDER_LIMITED ],
 	[ FEATURE_AI_WRITER_DESIGNER ]: [ FEATURE_AI_WRITER_DESIGNER_LIMITED ],
 };
 

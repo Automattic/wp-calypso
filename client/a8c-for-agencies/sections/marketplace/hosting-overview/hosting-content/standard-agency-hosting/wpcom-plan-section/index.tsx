@@ -7,15 +7,18 @@ import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-conf
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
-import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
+import {
+	MarketplaceTypeContext,
+	TermPricingContext,
+} from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import WPCOMPlanSlider from '../wpcom-plan-selector/slider';
 import WPCOMPlanSelector from './wpcom-plan-selector';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -58,6 +61,8 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMode = marketplaceType === 'referral';
 
+	const { termPricing } = useContext( TermPricingContext );
+
 	const ownedPlans = useMemo( () => {
 		if ( isReferralMode ) {
 			return 0;
@@ -93,6 +98,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							quantity={ displayQuantity }
 							onChange={ setQuantity }
 							ownedPlans={ ownedPlans }
+							plan={ plan }
 						/>
 					</HostingPlanSection.Banner>
 				) }
@@ -106,6 +112,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							isReferralMode={ isReferralMode }
 							quantity={ displayQuantity }
 							setQuantity={ setQuantity }
+							termPricing={ termPricing }
 						/>
 					) : (
 						<WPCOMPlanSelector.Placeholder />
