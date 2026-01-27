@@ -1,5 +1,5 @@
 import { ServerConversationListItem } from '@automattic/agenttic-client';
-import { ZendeskConversation, ZendeskMessage } from '../types';
+import { LocalConversationListItem, ZendeskConversation, ZendeskMessage } from '../types';
 
 function normalizeZDMessage(
 	message: ZendeskMessage | undefined
@@ -17,7 +17,7 @@ function normalizeZDMessage(
 
 export function normalizeZendeskConversations(
 	conversations: ZendeskConversation[]
-): ServerConversationListItem[] {
+): LocalConversationListItem[] {
 	return conversations.map( ( conversation ) => {
 		const createdAt = conversation.messages[ 0 ]
 			? new Date( conversation.messages[ 0 ].received * 1000 ).toISOString()

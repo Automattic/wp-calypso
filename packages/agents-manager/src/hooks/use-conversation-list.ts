@@ -7,19 +7,14 @@ import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { LocalConversationListItem } from '../types';
 import { normalizeZendeskConversations } from '../utils/zendesk';
 interface Options {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
 }
 
-interface Result {
-	conversations: ServerConversationListItem[];
-	isLoading: boolean;
-	isError: boolean;
-}
-
-export default function useConversationList( { agentId, authProvider }: Options ): Result {
+export default function useConversationList( { agentId, authProvider }: Options ) {
 	const botId = createOdieBotId( agentId );
 
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
@@ -30,7 +25,7 @@ export default function useConversationList( { agentId, authProvider }: Options 
 		isLoading,
 		isError,
 		error,
-	} = useQuery( {
+	} = useQuery< ServerConversationListItem[] >( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when `botId` changes
 		queryKey: [ 'agents-manager-conversation-list', botId ],
 		queryFn: async () => {
@@ -54,7 +49,7 @@ export default function useConversationList( { agentId, authProvider }: Options 
 		}
 	}, [ error ] );
 
-	const mergedConversations = useMemo(
+	const mergedConversations: LocalConversationListItem[] = useMemo(
 		() =>
 			[ ...( conversations ?? [] ), ...normalizeZendeskConversations( zendeskConversations ) ].sort(
 				( a, b ) => {

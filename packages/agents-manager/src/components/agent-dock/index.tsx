@@ -1,6 +1,5 @@
 import {
 	getAgentManager,
-	ServerConversationListItem,
 	useAgentChat,
 	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
@@ -19,6 +18,7 @@ import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
@@ -168,7 +168,7 @@ export default function AgentDock( {
 		}
 	};
 
-	const handleSelectConversation = ( conversation: ServerConversationListItem ) => {
+	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
 		if ( conversation.is_zendesk ) {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {

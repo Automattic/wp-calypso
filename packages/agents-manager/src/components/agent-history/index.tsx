@@ -3,9 +3,10 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
-import type { ServerConversationListItem, UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface AgentHistoryProps {
 	/** Agent ID for fetching conversation history. */
@@ -27,7 +28,7 @@ interface AgentHistoryProps {
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
 	/** Called when a conversation is selected. */
-	onSelectConversation: ( conversation: ServerConversationListItem ) => void;
+	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
 	/** Called when the user starts a new chat. */
 	onNewChat: () => void;
 }

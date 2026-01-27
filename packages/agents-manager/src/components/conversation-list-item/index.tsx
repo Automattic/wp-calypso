@@ -9,12 +9,12 @@ import {
 	generateConversationSubtitle,
 } from '../../utils/conversation-history-formatters';
 import ConversationAvatar from '../conversation-avatar';
-import type { ServerConversationListItem } from '@automattic/agenttic-client';
+import type { LocalConversationListItem } from '../../types';
 import './style.scss';
 
 interface Props {
-	conversation: ServerConversationListItem;
-	onClick: ( conversation: ServerConversationListItem ) => void;
+	conversation: LocalConversationListItem;
+	onClick: ( conversation: LocalConversationListItem ) => void;
 }
 
 export default function ConversationListItem( { conversation, onClick }: Props ) {
