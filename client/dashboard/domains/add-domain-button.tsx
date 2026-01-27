@@ -2,7 +2,7 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../utils/link';
 
 export function AddDomainButton( {
 	siteSlug,
@@ -25,13 +25,19 @@ export function AddDomainButton( {
 			queryArgs.redirect_to = redirectTo;
 		}
 
+		const dashboard = getCurrentDashboard();
+		if ( dashboard ) {
+			queryArgs.dashboard = dashboard;
+		}
 		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug ? addQueryArgs( urlWithSite, queryArgs ) : urlWithoutSite;
+		window.location.href = siteSlug
+			? addQueryArgs( urlWithSite, queryArgs )
+			: addQueryArgs( urlWithoutSite, queryArgs );
 		return false;
 	};
 
