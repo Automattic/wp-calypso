@@ -52,8 +52,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		...bigSkyPluginMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: ! isEnabled ? __( 'AI tools enabled.' ) : __( 'AI tools disabled.' ),
-				error: __( 'Failed to save AI tools settings.' ),
+				success: ! isEnabled ? __( 'AI assistant enabled.' ) : __( 'AI assistant disabled.' ),
+				error: __( 'Failed to save AI assistant settings.' ),
 			},
 		},
 	} );
@@ -139,13 +139,13 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						onCancel={ () => setIsConfirmModalOpen( false ) }
 						onConfirm={ () => handleToggle( false ) }
 						confirmButtonProps={ {
-							label: __( 'Disable AI tools' ),
+							label: __( 'Disable AI assistant' ),
 							isBusy: mutation.isPending,
 							disabled: mutation.isPending,
 						} }
 					>
 						{ __(
-							'You are on a free trial. If you disable AI tools, you will not be able to turn it back on without a paid plan.'
+							'You are on a free trial. If you disable AI assistant, you will not be able to turn it back on without a paid plan.'
 						) }
 					</ConfirmModal>
 				) }
