@@ -249,7 +249,7 @@ export const useGetProductPricingInfo = (
 				const isPressableProduct = product.family_slug === 'pressable-hosting';
 				if ( isPressableProduct ) {
 					// Only show intro pricing for Pressable if user has no active plan OR is in referral mode
-					return pressableOwnership === 'none' || isReferralMode;
+					return pressableOwnership !== 'agency' || isReferralMode;
 				}
 				return true; // Non-Pressable products always apply intro pricing if available
 			};
