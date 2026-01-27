@@ -1,0 +1,325 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// ============================================================================
+// Screen Layout
+// ============================================================================
+
+.connect-screen-layout {
+	position: fixed;
+	top: 0;
+	inset-inline-start: 0;
+	bottom: 0;
+	width: 100vw;
+	background: #fff;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.connect-screen-layout__container {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	min-height: 100%;
+	width: 100%;
+	max-width: 480px;
+	margin: 0 auto;
+	padding: 2rem 1.5rem;
+
+	@include break-mobile {
+		padding: 3rem 1.5rem;
+	}
+}
+
+// ============================================================================
+// Brand Header
+// ============================================================================
+
+.connect-screen-brand-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.connect-screen-brand-header__logo {
+	margin-bottom: 1.5rem;
+
+	@include break-mobile {
+		margin-bottom: 2rem;
+	}
+}
+
+.connect-screen-brand-header__logo-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.connect-screen-brand-header__title {
+	font-size: 1.75rem;
+	font-weight: 500;
+	margin: 0 0 0.5rem;
+	letter-spacing: -0.02em;
+	line-height: 1.35;
+	color: var( --color-text );
+
+	@include break-mobile {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+}
+
+.connect-screen-brand-header__description {
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+	margin: 0;
+}
+
+// ============================================================================
+// User Card
+// ============================================================================
+
+.connect-screen-user-card {
+	display: flex;
+	margin-bottom: 1rem;
+	padding: 1rem;
+	border: 1px solid var( --color-border-subtle, #dcdcde );
+	border-radius: 4px;
+	background: #fff;
+
+	.gravatar {
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+}
+
+// Small variant: horizontal layout
+.connect-screen-user-card.is-small {
+	flex-direction: row;
+	align-items: center;
+
+	.gravatar {
+		width: 48px;
+		height: 48px;
+		margin-inline-end: 1rem;
+	}
+
+	.connect-screen-user-card__info {
+		align-items: flex-start;
+		text-align: start;
+	}
+}
+
+// Large variant: vertical centered layout
+.connect-screen-user-card.is-large {
+	flex-direction: column;
+	align-items: center;
+	padding: 1.5rem;
+
+	.gravatar {
+		width: 64px;
+		height: 64px;
+		margin-bottom: 1rem;
+	}
+
+	.connect-screen-user-card__info {
+		align-items: center;
+		text-align: center;
+	}
+}
+
+.connect-screen-user-card__info {
+	display: flex;
+	flex-direction: column;
+}
+
+.connect-screen-user-card__name {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --color-text );
+	margin-bottom: 0.125rem;
+}
+
+.connect-screen-user-card__email {
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+}
+
+// ============================================================================
+// Action Buttons
+// ============================================================================
+
+.connect-screen-action-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.connect-screen-action-buttons__main {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.connect-screen-action-buttons__primary,
+.connect-screen-action-buttons__secondary {
+	flex: 1;
+	justify-content: center;
+	min-height: 48px;
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.connect-screen-action-buttons__tertiary.components-button.is-link {
+	color: var( --color-text );
+	text-decoration: underline;
+}
+
+// ============================================================================
+// Consent Text
+// ============================================================================
+
+.connect-screen-consent-text {
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+	text-align: center;
+	margin: 1.5rem 0 0;
+	width: 100%;
+
+	a {
+		color: var( --color-link );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-link-dark );
+		}
+	}
+}
+
+// ============================================================================
+// Permissions List
+// ============================================================================
+
+.connect-screen-permissions-list {
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.connect-screen-permissions-list__title {
+	font-size: 1rem;
+	font-weight: 500;
+	color: var( --color-text );
+	margin: 0 0 0.75rem;
+}
+
+.connect-screen-permissions-list__items {
+	list-style: none;
+	margin: 0;
+	padding-bottom: 0.5rem;
+}
+
+.connect-screen-permissions-list__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	padding-bottom: 0.5rem;
+	font-size: 0.875rem;
+	color: var( --color-text );
+	line-height: 1.5;
+}
+
+.connect-screen-permissions-list__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	color: var( --color-text, #1e1e1e );
+
+	svg {
+		width: 24px;
+		height: 24px;
+	}
+}
+
+.connect-screen-permissions-list__icon-placeholder {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.connect-screen-permissions-list__label {
+	line-height: 1.5;
+	padding-top: 2px;
+}
+
+.connect-screen-permissions-list__expand,
+.connect-screen-permissions-list__collapse {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-top: 0.5rem;
+	padding: 0;
+	font-size: 0.875rem;
+	color: var( --color-text, #1e1e1e );
+	text-decoration: none;
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&.components-button {
+		color: var( --color-text, #1e1e1e );
+	}
+
+	svg {
+		width: 20px;
+		height: 20px;
+		transition: transform 0.2s ease;
+		fill: currentColor;
+	}
+}
+
+.connect-screen-permissions-list__collapse svg {
+	transform: rotate( 180deg );
+}
+
+.connect-screen-permissions-list__learn-more.components-button.is-link {
+	display: block;
+	margin: 1.5rem auto 0;
+	color: var( --color-text );
+	text-align: center;
+}
+
+// ============================================================================
+// Loading Screen
+// ============================================================================
+
+.connect-screen-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+	padding: 2rem;
+
+	.components-spinner {
+		margin-bottom: 1rem;
+	}
+}
+
+.connect-screen-loading__message {
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	margin: 0;
+	text-align: center;
+}

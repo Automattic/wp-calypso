@@ -18,7 +18,9 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import { ConnectScreenDemo } from './connect-screen-demo';
 import normalizeInvite from './utils/normalize-invite';
 
 import './style.scss';
@@ -258,7 +260,12 @@ class InviteAccept extends Component {
 
 	render() {
 		const { invite } = this.state;
-		const { user } = this.props;
+		const { user, showConnectScreenDemo } = this.props;
+
+		// Show demo when ?connect_screen_demo=1 is in URL
+		if ( showConnectScreenDemo ) {
+			return <ConnectScreenDemo />;
+		}
 
 		const containerClasses = clsx( 'invite-accept', {
 			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
@@ -291,7 +298,11 @@ class InviteAccept extends Component {
 }
 
 export default connect(
-	( state ) => ( { user: getCurrentUser( state ), hasDashboardOptIn: hasDashboardOptIn( state ) } ),
+	( state ) => ( {
+		user: getCurrentUser( state ),
+		hasDashboardOptIn: hasDashboardOptIn( state ),
+		showConnectScreenDemo: getCurrentQueryArguments( state )?.connect_screen_demo === '1',
+	} ),
 	{
 		successNotice,
 		infoNotice,
