@@ -6,7 +6,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	Button,
 	Icon,
 	ToggleControl,
 } from '@wordpress/components';
@@ -17,7 +16,6 @@ import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
 import { siteSettingsAIToolsRoute } from '../../app/router/sites';
-import { ActionList } from '../../components/action-list';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -146,24 +144,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							'You are on a free trial. If you disable AI tools, you will not be able to turn it back on without a paid plan.'
 						) }
 					</ConfirmModal>
-				) }
-				{ isEnabled && (
-					<ActionList>
-						<ActionList.ActionItem
-							title={ __( 'Content guidelines' ) }
-							description={ __( 'Share details about your site to improve AI responses.' ) }
-							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									// TODO: Open the content guidelines page
-									onClick={ () => window.open( site.options?.admin_url, '_blank' ) }
-								>
-									{ __( 'Update' ) }
-								</Button>
-							}
-						/>
-					</ActionList>
 				) }
 				{ isEnabled && (
 					<VStack spacing={ 3 }>
