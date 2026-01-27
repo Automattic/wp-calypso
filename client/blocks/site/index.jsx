@@ -49,7 +49,6 @@ class Site extends Component {
 		isP2Hub: false,
 		isSiteP2: false,
 		defaultIcon: null,
-		iconSize: 32,
 	};
 
 	static propTypes = {
@@ -193,7 +192,7 @@ class Site extends Component {
 							this.props.defaultIcon || <Gridicon icon="globe" size={ this.props.iconSize || 28 } />
 						}
 						site={ site }
-						size={ this.props.iconSize }
+						size={ this.props.iconSize || 32 }
 					/>
 					<div className="site__info">
 						{ ! this.props.showChevronDownIcon ? (
