@@ -3,13 +3,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import { useCalypsoTools, mergeToolProviders } from '../../calypso-tools';
 import { ORCHESTRATOR_AGENT_URL, getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
-import type { ContextEntry } from '../../extension-types';
+import type { ContextEntry, ToolProvider } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
@@ -72,6 +73,9 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
+	// Get Calypso native tools (navigate, site picker, etc.)
+	const { toolProvider: calypsoToolProvider, SitePickerModalComponent } = useCalypsoTools();
+
 	const isChatRoute = pathname.startsWith( '/chat' );
 	const isNewChat = isChatRoute && !! state?.isNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
@@ -111,9 +115,18 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 				loadedProvidersRef.current = providers;
 			}
 
-			const { toolProvider, contextProvider } = providers;
+			const { toolProvider: externalToolProvider, contextProvider } = providers;
+
+			// Merge Calypso native tools with external provider tools
+			const mergedToolProvider = mergeToolProviders(
+				calypsoToolProvider,
+				externalToolProvider as ToolProvider | undefined
+			);
 
 			// Create the agent configuration
+			// NOTE: Streaming must be enabled because agenttic-client's non-streaming path
+			// has a bug where it doesn't include tool_call parts when sending tool_result back.
+			// The streaming path correctly includes the full conversation history.
 			const config: UseAgentChatConfig = {
 				agentId,
 				agentUrl: ORCHESTRATOR_AGENT_URL,
@@ -123,30 +136,37 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 				enableStreaming: true,
 			};
 
-			// Add tool provider if provided by plugin
-			if ( toolProvider ) {
-				// Wrap `toolProvider` to filter out `null` annotation values
-				// WordPress Abilities API uses `null`, but `agenttic-client` expects `undefined`
-				config.toolProvider = {
-					...toolProvider,
-					getAbilities: async (): Promise< AgenticAbility[] > => {
-						const abilities = await toolProvider.getAbilities();
-						return abilities.map( ( ability ) => ( {
-							...ability,
-							meta: ability.meta?.annotations
-								? {
-										...ability.meta,
-										annotations: Object.fromEntries(
-											Object.entries( ability.meta.annotations ).filter(
-												( [ , value ] ) => value !== null
-											)
-										),
-								  }
-								: ability.meta,
-						} ) ) as AgenticAbility[];
-					},
-				};
-			}
+			// Wrap merged tool provider to filter out `null` annotation values
+			// WordPress Abilities API uses `null`, but `agenttic-client` expects `undefined`
+			config.toolProvider = {
+				...mergedToolProvider,
+				getAbilities: async (): Promise< AgenticAbility[] > => {
+					const abilities = await mergedToolProvider.getAbilities();
+					// eslint-disable-next-line no-console
+					console.log( '[UnifiedAIAgent] getAbilities called, returning:', abilities );
+					return abilities.map( ( ability ) => ( {
+						...ability,
+						meta: ability.meta?.annotations
+							? {
+									...ability.meta,
+									annotations: Object.fromEntries(
+										Object.entries( ability.meta.annotations ).filter(
+											( [ , value ] ) => value !== null
+										)
+									),
+							  }
+							: ability.meta,
+					} ) ) as AgenticAbility[];
+				},
+				executeAbility: async ( name: string, args: unknown ) => {
+					// eslint-disable-next-line no-console
+					console.log( '[UnifiedAIAgent] executeAbility called:', { name, args } );
+					const result = await mergedToolProvider.executeAbility( name, args );
+					// eslint-disable-next-line no-console
+					console.log( '[UnifiedAIAgent] executeAbility result:', result );
+					return result;
+				},
+			};
 
 			// Add context provider - use plugin's or create default Calypso context
 			if ( contextProvider ) {
@@ -194,7 +214,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 		};
 
 		initializeAgent();
-	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+	}, [ calypsoToolProvider, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
 	// Default suggestions - can be overridden by loaded providers
 	const defaultSuggestions = useMemo(
@@ -226,15 +246,18 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 	}
 
 	return (
-		<AgentDock
-			agentConfig={ agentConfig }
-			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
-			markdownComponents={ loadedProviders.markdownComponents || {} }
-			markdownExtensions={ loadedProviders.markdownExtensions || {} }
-			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
-			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-			getChatComponent={ loadedProviders.getChatComponent }
-			siteBuildUtils={ loadedProviders.siteBuildUtils }
-		/>
+		<>
+			<AgentDock
+				agentConfig={ agentConfig }
+				emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
+				markdownComponents={ loadedProviders.markdownComponents || {} }
+				markdownExtensions={ loadedProviders.markdownExtensions || {} }
+				useNavigationContinuation={ loadedProviders.useNavigationContinuation }
+				useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				getChatComponent={ loadedProviders.getChatComponent }
+				siteBuildUtils={ loadedProviders.siteBuildUtils }
+			/>
+			<SitePickerModalComponent />
+		</>
 	);
 }
