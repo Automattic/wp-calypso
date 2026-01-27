@@ -24,7 +24,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -62,6 +61,7 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import MasterbarHelpIconWrapper from './masterbar-help-icon-wrapper';
 import Notifications from './masterbar-notifications/notifications-button';
 
 class MasterbarLoggedIn extends Component {
@@ -80,7 +80,6 @@ class MasterbarLoggedIn extends Component {
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
-		useUnifiedAgent: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -788,27 +787,9 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { siteId, translate, useUnifiedAgent } = this.props;
+		const { siteId, translate } = this.props;
 
-		if ( useUnifiedAgent ) {
-			return (
-				<AsyncLoad
-					require="./masterbar-agents-manager"
-					siteId={ siteId }
-					tooltip={ translate( 'Help' ) }
-					placeholder={ null }
-				/>
-			);
-		}
-
-		return (
-			<AsyncLoad
-				require="./masterbar-help-center"
-				siteId={ siteId }
-				tooltip={ translate( 'Help' ) }
-				placeholder={ null }
-			/>
-		);
+		return <MasterbarHelpIconWrapper siteId={ siteId } tooltip={ translate( 'Help' ) } />;
 	}
 
 	render() {
@@ -897,7 +878,6 @@ export default connect(
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
-			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
 		};
 	},
 	{
