@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import SimpleList from '../simple-list';
 
 import './style.scss';
@@ -22,20 +21,9 @@ const PressableOffer = () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
 	}, [] );
 
-	const onViewEligiblePlansClick = useCallback(
-		( e: React.MouseEvent< HTMLButtonElement > ) => {
-			e.stopPropagation();
-			dispatch( recordTracksEvent( 'a4a_pressable_offer_view_eligible_plans_click' ) );
-			window.history.replaceState(
-				null,
-				'',
-				window.location.pathname +
-					window.location.search +
-					CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT
-			);
-		},
-		[ dispatch ]
-	);
+	const onViewEligiblePlansClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'a4a_pressable_offer_view_eligible_plans_click' ) );
+	}, [ dispatch ] );
 
 	const onSeeFullTermClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'a4a_pressable_offer_see_full_terms_click' ) );
@@ -110,13 +98,19 @@ const PressableOffer = () => {
 						/>
 
 						<div className="a4a-pressable-offer__body-actions">
-							<Button variant="primary" onClick={ onViewEligiblePlansClick }>
+							<Button
+								variant="primary"
+								href="https://pressable.com/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ onViewEligiblePlansClick }
+							>
 								{ translate( 'View Eligible Plans ↗' ) }
 							</Button>
 
 							<Button
 								variant="secondary"
-								href="https://automattic.com/for-agencies/program-incentives/"
+								href="https://pressable.com/legal/hosting-promotion-terms/"
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ onSeeFullTermClick }
