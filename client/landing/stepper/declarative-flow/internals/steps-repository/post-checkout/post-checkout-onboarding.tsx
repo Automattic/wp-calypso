@@ -3,9 +3,10 @@ import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -39,11 +40,30 @@ const PostCheckoutOnboarding: StepType< {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
 
-	const [ , experimentAssignment ] = useExperiment( 'calyso_post_onboarding_big_sky_202601_v1', {
-		isEligible:
-			isEnabled( 'onboarding/post-checkout-ai-step' ) &&
-			site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ),
-	} );
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calyso_post_onboarding_big_sky_202601_v1',
+		{
+			isEligible:
+				isEnabled( 'onboarding/post-checkout-ai-step' ) &&
+				site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ),
+		}
+	);
+
+	const hasTrackedExposure = useRef( false );
+
+	// Track experiment exposure event
+	useEffect( () => {
+		if ( isLoadingExperiment || ! experimentAssignment || hasTrackedExposure.current ) {
+			return;
+		}
+
+		if ( experimentAssignment.variationName ) {
+			recordTracksEvent( 'calypso_post_checkout_big_sky_exposure', {
+				variation: experimentAssignment.variationName,
+			} );
+		}
+		hasTrackedExposure.current = true;
+	}, [ isLoadingExperiment, experimentAssignment ] );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
