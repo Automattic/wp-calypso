@@ -47,6 +47,7 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+	getSessionId: () => string | undefined;
 } ) => void;
 
 /**

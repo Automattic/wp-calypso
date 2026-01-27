@@ -159,6 +159,7 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
+		getSessionId: () => sessionId,
 	} );
 
 	const handleNewChat = () => {
