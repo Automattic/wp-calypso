@@ -129,7 +129,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const fromInitial = useSelector( ( state ) => get( getInitialQueryArguments( state ), 'from' ) );
 	const fromCurrent = useSelector( ( state ) => get( getCurrentQueryArguments( state ), 'from' ) );
 
-	const from = fromInitial || fromCurrent;
+	const from = fromCurrent || fromInitial;
 
 	return useMemo( () => {
 		const ciabConfig = getCiabConfig( from );
