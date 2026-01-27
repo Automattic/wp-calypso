@@ -1,37 +1,30 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import { ReactElement } from 'react';
-import type { Note } from '../app/types';
+import { Icon, pending } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
+import type { Note } from '../app/types';
 
 import './pending-approval-badge.scss';
 
 interface PendingApprovalBadgeProps {
 	note: Note;
-	translate: ( text: string ) => string;
-	icon: ReactElement;
 }
 
-/**
- * PendingApprovalBadge component that works with both modern and legacy systems
- */
-const PendingApprovalBadge = ( { note, translate, icon }: PendingApprovalBadgeProps ) => {
+const PendingApprovalBadge = ( { note }: PendingApprovalBadgeProps ): JSX.Element => {
+	const translate = useTranslate();
 	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
-	const pendingText = translate( 'Pending Approval' );
-	const manageText = translate( 'Manage Comments' );
 
 	return (
-		<div className="wpnc__pending-approval-badge">
-			{ icon }
-			<span className="wpnc__pending-approval-badge__text">{ pendingText }</span>
+		<div className="wpnc-pending-approval-badge">
+			<Icon icon={ pending } size={ 20 } />
+			<span className="wpnc-pending-approval-badge__text">{ translate( 'Pending Approval' ) }</span>
 			{ commentsUrl && (
 				<a
-					className="wpnc__pending-approval-badge__link"
+					className="wpnc-pending-approval-badge__link"
 					href={ commentsUrl }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ manageText }
+					{ translate( 'Manage Comments' ) }
 				</a>
 			) }
 		</div>

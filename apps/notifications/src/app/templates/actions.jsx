@@ -1,10 +1,8 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Icon,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { pending } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
@@ -53,13 +51,7 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
-			{ showPendingApprovalBadge && (
-				<PendingApprovalBadge
-					note={ note }
-					translate={ __ }
-					icon={ <Icon icon={ pending } size={ 16 } /> }
-				/>
-			) }
+			{ showPendingApprovalBadge && <PendingApprovalBadge note={ note } /> }
 			<HStack spacing={ 2 }>
 				{ hasAction( 'approve-comment' ) && (
 					<ApproveButton note={ note } isApproved={ isApproved } />
