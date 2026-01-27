@@ -125,31 +125,13 @@ export function NameRenderer( {
 }
 
 export function URL( { site, value }: { site: Site; value: string } ) {
-	return (
-		<URLRenderer
-			disabled={ site.is_deleted }
-			href={ getSiteFormattedUrl( site ) }
-			value={ value }
-		/>
-	);
-}
-
-export function URLRenderer( {
-	disabled,
-	href,
-	value,
-}: {
-	disabled: boolean;
-	href: string;
-	value: string;
-} ) {
-	return disabled ? (
+	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ href }
+			href={ getSiteFormattedUrl( site ) }
 		>
 			{ value }
 		</ExternalLink>
