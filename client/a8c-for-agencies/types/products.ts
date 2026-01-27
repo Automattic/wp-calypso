@@ -27,6 +27,8 @@ export interface APIProductFamilyProduct {
 	supported_bundles: APIProductFamilyProductBundlePrice[];
 	monthly_price?: number;
 	yearly_price?: number;
+	monthly_introductory_price?: number;
+	yearly_introductory_price?: number;
 	tier_monthly_prices?: APIProductTierPrice[];
 	tier_yearly_prices?: APIProductTierPrice[];
 }
