@@ -46,7 +46,7 @@ const UserStepComponent: StepType = function UserStep( {
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
 
-	const { isEmailVariation, isMessagingVariation, isSliderVariation } =
+	const { isEmailVariation, isMessagingVariation, isSliderVariation, isSimpleSliderVariation } =
 		useAccountCreationExperiment( { flow } );
 
 	useEffect( () => {
@@ -207,7 +207,7 @@ const UserStepComponent: StepType = function UserStep( {
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
-					<SignupSlider />
+					<SignupSlider hideDescription={ isSimpleSliderVariation } />
 				</Step.TwoColumnLayout>
 			);
 		}

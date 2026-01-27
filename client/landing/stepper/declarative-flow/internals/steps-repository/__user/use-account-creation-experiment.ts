@@ -4,8 +4,8 @@ import { useExperiment } from 'calypso/lib/explat';
 type AccountCreationExperimentVariant =
 	| 'control'
 	| 'treatment_email'
-	| 'treatment_email_messaging'
-	| 'treatment_email_messaging_slider'
+	| 'treatment_email_messaging' // this was repurposed as a slider variation
+	| 'treatment_email_messaging_slider' // this slider will not show the description text
 	| 'treatment_email_slider'
 	| 'treatment_messaging_slider';
 
@@ -15,6 +15,7 @@ type AccountCreationExperimentResult = {
 	isEmailVariation: boolean;
 	isMessagingVariation: boolean;
 	isSliderVariation: boolean;
+	isSimpleSliderVariation: boolean;
 	isExperimentVariant: boolean;
 };
 
@@ -36,9 +37,14 @@ const MESSAGING_VARIATIONS: AccountCreationExperimentVariant[] = [
 ];
 
 const SLIDER_VARIATIONS: AccountCreationExperimentVariant[] = [
-	'treatment_email_messaging_slider',
 	'treatment_email_slider',
 	'treatment_messaging_slider',
+	'treatment_email_messaging_slider',
+	'treatment_email_messaging', // this was repurposed as a slider variation
+];
+
+const SIMPLE_SLIDER_VARIATIONS: AccountCreationExperimentVariant[] = [
+	'treatment_email_messaging_slider', // this slider will have less text than the other
 ];
 
 function useAccountCreationExperiment( {
@@ -58,6 +64,7 @@ function useAccountCreationExperiment( {
 		isEmailVariation: EMAIL_VARIATIONS.includes( variationName ),
 		isMessagingVariation: MESSAGING_VARIATIONS.includes( variationName ),
 		isSliderVariation: SLIDER_VARIATIONS.includes( variationName ),
+		isSimpleSliderVariation: SIMPLE_SLIDER_VARIATIONS.includes( variationName ),
 		isExperimentVariant: variationName !== 'control',
 	};
 }

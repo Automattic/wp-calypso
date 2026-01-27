@@ -74,34 +74,75 @@
 	background-position: center;
 }
 
+.signup-slider__slide.signup-slider__slide--4 .signup-slider__slide-content {
+	background: url( ./images/slide2.jpg );
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+}
+
 .signup-slider__headline {
 	color: var( --studio-white );
 	font-size: 3.375rem;
 	font-family: $font-recoleta;
-	margin-block-end: 40px;
+	padding-inline: 5.5rem;
+	line-height: 1.2;
+	margin-bottom: 8px;
+}
+
+.signup-slider__description {
+	color: var( --studio-white );
+	font-family: $font-sf-pro-display;
+	text-align: center;
+	align-items: flex-start;
+	font-size: 1.75rem;
+	line-height: 1.5;
+	margin-bottom: 48px;
+	padding-inline: 2rem;
 }
 
 .signup-slider__slide-content.signup-slider__slide-content--testimonial {
 	color: var( --studio-white );
-	font-family: $font-sf-pro-display;
-	text-align: left;
-	align-items: flex-start;
+	text-align: center;
+	align-items: center;
 
 	.signup-slider__testimonial-text {
-		font-size: 1.75rem;
-		line-height: 32px;
+		font-size: 2.25rem;
+		font-family: $font-recoleta;
+		line-height: 1.1;
 		font-weight: 400;
-		margin-bottom: 24px;
+		margin-bottom: 30px;
+		padding-inline: 2rem;
 	}
 
 	.signup-slider__testimonial-author {
-		font-size: 1.25rem;
-		font-weight: 500;
-		margin-bottom: 4px;
-	}
+		font-size: 1.5rem;
+		font-family: $font-sf-pro-display;
+		font-weight: 600;
+		margin-bottom: 48px;
+		text-align: center;
+		display: inline-block;
+		position: relative;
+		padding: 4px 20px;
+		border-radius: 24px;
+		background-color: transparent;
 
-	.signup-slider__testimonial-role {
-		font-size: 1rem;
-		font-weight: 400;
+		/* This creates the "pill" border with color gradeint around the author name */
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			padding: 2px;
+			background: linear-gradient( 90deg, #069E08, #3858E9 );
+			-webkit-mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
+			-webkit-mask-composite: xor;
+			mask-composite: exclude;
+			pointer-events: none;
+		}
+
+		@supports not ( ( -webkit-mask-composite: xor ) or ( mask-composite: exclude ) ) {
+			border: 2px solid var( --studio-white );
+		}
 	}
 }
