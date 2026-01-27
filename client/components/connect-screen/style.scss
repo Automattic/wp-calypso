@@ -11,7 +11,7 @@
 	inset-inline-start: 0;
 	bottom: 0;
 	width: 100vw;
-	background: #fff;
+	background: var( --color-surface, #fff );
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -79,16 +79,13 @@
 }
 
 // ============================================================================
-// User Card
+// User Card (extends @automattic/components Card)
 // ============================================================================
 
-.connect-screen-user-card {
+.connect-screen-user-card.card {
 	display: flex;
+	width: 100%;
 	margin-bottom: 1rem;
-	padding: 1rem;
-	border: 1px solid var( --color-border-subtle, #dcdcde );
-	border-radius: 4px;
-	background: #fff;
 
 	.gravatar {
 		border-radius: 50%;
@@ -100,6 +97,7 @@
 .connect-screen-user-card.is-small {
 	flex-direction: row;
 	align-items: center;
+	padding: 1rem;
 
 	.gravatar {
 		width: 48px;
@@ -272,10 +270,6 @@
 	font-size: 0.875rem;
 	color: var( --color-text, #1e1e1e );
 	text-decoration: none;
-
-	&:hover {
-		color: var( --color-text );
-	}
 
 	&.components-button {
 		color: var( --color-text, #1e1e1e );
