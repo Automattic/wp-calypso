@@ -16,7 +16,6 @@ type AccountCreationExperimentResult = {
 	isMessagingVariation: boolean;
 	isSliderVariation: boolean;
 	isSimpleSliderVariation: boolean;
-	isExperimentVariant: boolean;
 };
 
 interface UseAccountCreationExperimentParams {
@@ -65,7 +64,6 @@ function useAccountCreationExperiment( {
 		isMessagingVariation: MESSAGING_VARIATIONS.includes( variationName ),
 		isSliderVariation: SLIDER_VARIATIONS.includes( variationName ),
 		isSimpleSliderVariation: SIMPLE_SLIDER_VARIATIONS.includes( variationName ),
-		isExperimentVariant: variationName !== 'control',
 	};
 }
 
