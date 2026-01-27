@@ -112,7 +112,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								checked={ isEnabled }
 								disabled={ mutation.isPending }
 								label={ __( 'Enable AI assistant' ) }
-								onChange={ ( checked: boolean ) => handleToggle( checked ) }
+								onChange={ handleToggle }
 							/>
 						</VStack>
 					</CardBody>
