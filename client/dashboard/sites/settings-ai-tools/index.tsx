@@ -121,8 +121,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							<ul style={ { padding: 0, margin: 0 } }>
 								{ features.map( ( feature, i ) => (
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>
-										<Icon icon={ check } fill="var(--dashboard__foreground-color-success" />
-										<Text>{ feature }</Text>
+										<Icon
+											icon={ check }
+											fill="var(--dashboard__foreground-color-success"
+											style={ { flexShrink: 0, alignSelf: 'flex-start' } }
+										/>
+										<Text lineHeight="24px">{ feature }</Text>
 									</HStack>
 								) ) }
 							</ul>
