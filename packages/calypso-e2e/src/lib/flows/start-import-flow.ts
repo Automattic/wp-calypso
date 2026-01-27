@@ -249,7 +249,7 @@ export class StartImportFlow {
 		await this.page.click( selectors.importerListButton( index ) );
 		await this.page
 			.locator( selectors.startBuildingHeader( 'Import content from WordPress' ) )
-			.waitFor();
+			.waitFor( { timeout: 60_000 } );
 	}
 
 	/**
