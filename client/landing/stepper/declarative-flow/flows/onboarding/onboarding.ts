@@ -47,7 +47,7 @@ async function initialize() {
 
 	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -275,7 +275,8 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 					return;
 				}
-				case 'playground': {
+				case 'playground':
+				case 'blueprint': {
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
