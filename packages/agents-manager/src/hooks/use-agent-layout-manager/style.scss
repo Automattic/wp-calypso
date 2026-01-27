@@ -99,7 +99,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border: 1px solid $border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var(--masterbar-height) + 1px );
+		height: calc( var( --masterbar-height ) + 1px );
 	}
 
 	#adminmenuback,
@@ -184,7 +184,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var(--masterbar-height) + 1px );
+			height: calc( var( --masterbar-height ) + 1px );
 
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
@@ -435,6 +435,13 @@ body.post-php.agents-manager-sidebar-container {
 		.EmptyView-module_container {
 			height: auto;
 			padding-block: 8px;
+		}
+
+		// Past conversations: Fix margin-bottom for variation picker components
+		.Message-module_message:has(
+				.big-sky__dock__menu__variation-picker .big-sky__item-picker__arrows
+			):has( + .Message-module_message:not( .big-sky__completed-plan ) ) {
+			margin-bottom: 24px;
 		}
 	}
 
