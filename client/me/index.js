@@ -1,5 +1,11 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSelectedSiteIdByOrigin,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import * as controller from './controller';
 
 import './style.scss';
@@ -8,6 +14,8 @@ export default function () {
 	page(
 		'/me',
 		controller.maybeRedirectToDashboard,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/profile' ),
 		controller.sidebar,
 		setSelectedSiteIdByOrigin,
 		controller.profile,
@@ -23,8 +31,32 @@ export default function () {
 	page( '/me/trophies', controller.profileRedirect, makeLayout, clientRender );
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
-	page( '/me/get-apps', controller.sidebar, controller.apps, makeLayout, clientRender );
+	page(
+		'/me/get-apps',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/apps' ),
+		controller.sidebar,
+		controller.apps,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/me/mcp', controller.sidebar, controller.mcp, makeLayout, clientRender );
-	page( '/me/mcp-setup', controller.sidebar, controller.mcpSetup, makeLayout, clientRender );
+	page(
+		'/me/mcp',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcp,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-setup',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
+		controller.sidebar,
+		controller.mcpSetup,
+		makeLayout,
+		clientRender
+	);
 }

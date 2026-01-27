@@ -16,6 +16,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -29,6 +30,7 @@ import {
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -484,5 +486,19 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 		window.location = wpAdminUrl;
 		return;
 	}
+	next();
+};
+
+/**
+ * Middleware to redirect a user to the multi-site dashboard if the value of
+ * `hosting-dashboard-opt-in` is configured to `forced-opt-in`.
+ */
+export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) => {
+	const state = context.store.getState();
+	if ( hasDashboardForcedOptIn( state ) ) {
+		const redirectUrl = typeof path === 'function' ? path( context.params ) : path;
+		return navigate( dashboardLink( redirectUrl ?? context.path ) );
+	}
+
 	next();
 };
