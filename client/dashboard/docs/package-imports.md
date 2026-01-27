@@ -5,12 +5,12 @@ The dashboard restricts imports from `calypso/` and `@automattic/` packages. Thi
 ## Why imports are restricted
 
 - Many packages pull in Calypso code/concepts we want to avoid
-- Non-Core UI elements that don't match the design system
-- They may d Calypso context providers or Redux store dependencies
+- Non-core UI elements that don't match the design system
+- They may depend on Calypso context providers or Redux store dependencies
 
 ## Ideal dependencies
 
-The ideal dependencies for this project are:
+The ideal dependencies for this project:
 
 - Have minimal dependencies of their own
 - Use `@automattic/api-core` for API types
