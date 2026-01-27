@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { bigSkyPluginMutation, bigSkyPluginQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -86,6 +87,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			return (
 				<UpsellCallout
 					site={ site }
+					feature={ HostingFeatures.BIG_SKY }
 					upsellId="ai-tools"
 					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
 					upsellDescription={ __(
