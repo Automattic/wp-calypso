@@ -3,7 +3,7 @@ import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -48,22 +48,6 @@ const PostCheckoutOnboarding: StepType< {
 				site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ),
 		}
 	);
-
-	const hasTrackedExposure = useRef( false );
-
-	// Track experiment exposure event
-	useEffect( () => {
-		if ( isLoadingExperiment || ! experimentAssignment || hasTrackedExposure.current ) {
-			return;
-		}
-
-		if ( experimentAssignment.variationName ) {
-			recordTracksEvent( 'calypso_post_checkout_big_sky_exposure', {
-				variation: experimentAssignment.variationName,
-			} );
-		}
-		hasTrackedExposure.current = true;
-	}, [ isLoadingExperiment, experimentAssignment ] );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -139,9 +123,16 @@ const PostCheckoutOnboarding: StepType< {
 			! site ||
 			! siteSlug ||
 			isLoadingMarketplaceThemeProducts ||
-			isLoadingSiteTransferStatusData
+			isLoadingSiteTransferStatusData ||
+			isLoadingExperiment
 		) {
 			return;
+		}
+
+		if ( experimentAssignment?.variationName ) {
+			recordTracksEvent( 'calypso_post_checkout_big_sky_exposure', {
+				variation: experimentAssignment.variationName,
+			} );
 		}
 
 		setPendingAction( async () => {
@@ -175,6 +166,7 @@ const PostCheckoutOnboarding: StepType< {
 		siteSlug,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
+		isLoadingExperiment,
 		isJetpackOrAtomic,
 		siteTransferStatusData,
 		selectedDesign,
