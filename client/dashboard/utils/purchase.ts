@@ -51,6 +51,10 @@ export function isExpired( purchase: Purchase ) {
 }
 
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
+
 	if ( new Date( purchase.expiry_date ) >= new Date() ) {
 		return false;
 	}

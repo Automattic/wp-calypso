@@ -529,6 +529,10 @@ export function isExpiring( purchase: Purchase ) {
 }
 
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiryDate ) {
+		return false;
+	}
+
 	if ( ! moment( purchase.expiryDate ).isBefore( moment() ) ) {
 		return false;
 	}
