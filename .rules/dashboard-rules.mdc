@@ -18,6 +18,10 @@ For detailed implementation guidance, refer to:
 - [Typography and Copy](mdc:client/dashboard/docs/typography-and-copy.md) - Capitalization, snackbar messages
 - [Testing](mdc:client/dashboard/docs/testing.md) - Testing strategies
 
+## Verification
+
+Verify your changes to the dashboard code using the dashboard-dev-verification skill.
+
 ## Code Review Guidelines
 
 When reviewing dashboard code, watch for these specific patterns and potential issues:
