@@ -230,22 +230,22 @@ export default function AgentDock( {
 				)
 				// Convert tool-related text to tool components
 				.flatMap( ( message: Message ) => {
-					const [ firstContent ] = message.content ?? [];
+					const firstContentText = message.content?.[ 0 ]?.text;
 
-					if ( message.role !== 'agent' || ! firstContent?.text ) {
+					if ( message.role !== 'agent' || ! firstContentText ) {
 						return [ message ];
 					}
 
 					// Safely parse tool message JSON; return original if not valid JSON
 					let textData;
 					try {
-						textData = JSON.parse( firstContent.text );
+						textData = JSON.parse( firstContentText );
 					} catch {
 						return [ message ];
 					}
 
-					if ( textData?.tool_id === 'big_sky__show_component' ) {
-						const { type: contentType, props } = textData.data ?? {};
+					if ( textData.tool_id === 'big_sky__show_component' ) {
+						const { type: contentType, props, followUpTasks } = textData.data ?? {};
 						const component = getChatComponent?.( contentType );
 
 						if ( ! component ) {
@@ -266,9 +266,7 @@ export default function AgentDock( {
 						const nextStepButton = getChatComponent?.( 'next-step-button' );
 						const nextStepButtonMessageId = `${ message.id }-next-step`;
 						const showNextStepButton =
-							textData.data?.followUpTasks &&
-							nextStepButton &&
-							! deletedMessageIds.has( nextStepButtonMessageId );
+							followUpTasks && nextStepButton && ! deletedMessageIds.has( nextStepButtonMessageId );
 
 						return [
 							componentMessage,
