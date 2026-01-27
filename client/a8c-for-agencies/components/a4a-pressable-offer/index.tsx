@@ -114,13 +114,15 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 						/>
 
 						<div className="a4a-pressable-offer__body-actions">
-							<Button
-								variant="primary"
-								href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
-								onClick={ onViewEligiblePlansClick }
-							>
-								{ translate( 'View Eligible Plans' ) }
-							</Button>
+							{ ! window.location.pathname.startsWith( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK ) && (
+								<Button
+									variant="primary"
+									href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
+									onClick={ onViewEligiblePlansClick }
+								>
+									{ translate( 'View Eligible Plans' ) }
+								</Button>
+							) }
 
 							<Button
 								variant="secondary"
