@@ -155,7 +155,6 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
-	FEATURE_AI_WEBSITE_BUILDER,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_BLAZE_AD_CREDITS,
@@ -227,7 +226,6 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_SMART_REDIRECTS,
 			// AI features for plan differentiators experiment
-			FEATURE_AI_WEBSITE_BUILDER,
 			FEATURE_AI_WRITER_DESIGNER,
 		],
 	},
@@ -640,7 +638,6 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 				getTitle: () => i18n.translate( 'Growth and monetization tools' ),
 				getFeatures: () => [
 					FEATURE_AI_ASSISTANT,
-					FEATURE_AI_WEBSITE_BUILDER,
 					FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 					FEATURE_BLAZE_AD_CREDITS,
 					FEATURE_NEWSLETTERS_RSS,
