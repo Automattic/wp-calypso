@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
-import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
@@ -47,11 +46,9 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
-	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
-			{ showPendingApprovalBadge && <PendingApprovalBadge note={ note } /> }
 			<HStack spacing={ 2 }>
 				{ hasAction( 'approve-comment' ) && (
 					<ApproveButton note={ note } isApproved={ isApproved } />

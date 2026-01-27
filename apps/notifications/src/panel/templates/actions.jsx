@@ -3,7 +3,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import { getActions, getReferenceId } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
@@ -46,11 +45,9 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
-	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	return (
 		<div className="wpnc__note-actions">
-			{ showPendingApprovalBadge && <PendingApprovalBadge note={ note } /> }
 			<div className="wpnc__note-actions__buttons">
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }

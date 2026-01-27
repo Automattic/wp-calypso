@@ -1,9 +1,14 @@
+.wpnc__note .wpnc__body .wpnc__pending-approval-section,
+.wpnc__body .wpnc__pending-approval-section {
+	margin: 0 0 0 14px;
+	box-shadow: inset 4px 0 0 var(--color-warning);
+}
+
 .wpnc__main .wpnc-pending-approval-badge {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding: 12px 9px;
-	margin-bottom: 5px;
+	padding: 12px;
 	background-color: color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent);
 	font-size: 13px;
 	color: var(--color-text);
