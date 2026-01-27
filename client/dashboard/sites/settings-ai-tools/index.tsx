@@ -169,7 +169,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								decoration={ <Icon icon={ brush } /> }
 							/>
 							<SummaryButton
-								href={ `${ site.options?.admin_url }edit.php?post_type=post` }
+								href={ `${ site.options?.admin_url }post-new.php` }
 								title={ __( 'Draft and revise content' ) }
 								decoration={ <Icon icon={ termDescription } /> }
 							/>
