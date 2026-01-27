@@ -28,10 +28,9 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 
 	// Make sure we only show the offer if the agency is a Billing Dragon agency and does not have a Pressable license through A4A, unless we are in referral mode
 	const shouldShowOffer =
-		isReferMode ||
-		( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
-			pressableOwnership !== 'agency' &&
-			agency?.billing_system === 'billingdragon' );
+		agency?.billing_system === 'billingdragon' &&
+		( isReferMode ||
+			( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) && pressableOwnership !== 'agency' ) );
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
