@@ -3,7 +3,8 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SimpleList from '../simple-list';
 
@@ -15,7 +16,10 @@ const PressableOffer = () => {
 
 	const [ isExpanded, setIsExpanded ] = useState( true );
 
-	const shouldShowOffer = new Date() <= new Date( '2026-04-30T23:59:59.999Z' );
+	const agency = useSelector( getActiveAgency );
+
+	const shouldShowOffer =
+		new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) && ! agency?.third_party?.pressable;
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
