@@ -86,7 +86,6 @@ const EmailProvidersStackedComparison = ( {
 	);
 
 	const domain = getSelectedDomain( { domains, selectedDomainName } );
-	// const domain = undefined;
 	const domainsWithForwards = getDomainsWithEmailForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
@@ -196,9 +195,7 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const queryArgs = getQueryArgs( window.location.href );
-	console.log( hasLoadedDomains, domain, isDomainInCart );
 	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
-		console.log( 'we are here' );
 		return null;
 	}
 
