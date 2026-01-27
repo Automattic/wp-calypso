@@ -737,6 +737,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 
 const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	feature?: FeatureObject | TransformedFeatureObject;
+	featureGroupSlug: string;
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
@@ -750,6 +751,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
+	featureGroupSlug,
 	isHiddenInMobile,
 	allJetpackFeatures,
 	visibleGridPlans,
@@ -768,7 +770,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
-	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
 	const title = feature?.getTitle?.();
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
@@ -961,6 +963,7 @@ const FeatureGroup = ( {
 				<ComparisonGridFeatureGroupRow
 					key={ feature.getSlug() }
 					feature={ feature }
+					featureGroupSlug={ featureGroup.slug }
 					isHiddenInMobile={ isHiddenInMobile }
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
@@ -977,6 +980,7 @@ const FeatureGroup = ( {
 			{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
 				<ComparisonGridFeatureGroupRow
 					key="feature-storage"
+					featureGroupSlug={ featureGroup.slug }
 					isHiddenInMobile={ isHiddenInMobile }
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
