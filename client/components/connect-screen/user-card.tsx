@@ -1,4 +1,4 @@
-import { Gravatar } from '@automattic/components';
+import { Card, Gravatar } from '@automattic/components';
 import clsx from 'clsx';
 import type { UserCardProps } from './types';
 
@@ -27,12 +27,12 @@ export function UserCard( { user, size = 'small', className }: UserCardProps ): 
 	};
 
 	return (
-		<div className={ clsx( 'connect-screen-user-card', `is-${ size }`, className ) }>
+		<Card className={ clsx( 'connect-screen-user-card', `is-${ size }`, className ) }>
 			<Gravatar user={ gravatarUser } size={ avatarSize } imgSize={ avatarSize * 2 } />
 			<div className="connect-screen-user-card__info">
 				<span className="connect-screen-user-card__name">{ user.displayName }</span>
 				<span className="connect-screen-user-card__email">{ user.email }</span>
 			</div>
-		</div>
+		</Card>
 	);
 }
