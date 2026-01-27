@@ -23,7 +23,8 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
-		"wordpress-ai-assistant": true
+		"wordpress-ai-assistant": true,
+		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
