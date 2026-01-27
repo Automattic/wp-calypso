@@ -3,6 +3,7 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,11 +23,13 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 
 	const agency = useSelector( getActiveAgency );
 
+	const pressableOwnership = usePressableOwnershipType();
+
 	// Make sure we only show the offer if the agency is a Billing Dragon agency and does not have a Pressable license through A4A, unless we are in referral mode
 	const shouldShowOffer =
 		isReferMode ||
 		( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
-			! agency?.third_party?.pressable?.a4a_id &&
+			pressableOwnership !== 'agency' &&
 			agency?.billing_system === 'billingdragon' );
 
 	const onToggleView = useCallback( () => {
