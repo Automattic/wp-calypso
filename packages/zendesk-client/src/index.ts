@@ -25,3 +25,4 @@ export {
 export type * from './types';
 export { zendeskMessageConverter } from './zendesk-message-converter';
 export { useManagedZendeskChat } from './use-managed-zendesk-chat';
+export { useGetZendeskConversations } from './use-managed-zendesk-chat';

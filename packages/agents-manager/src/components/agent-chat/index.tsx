@@ -45,6 +45,8 @@ interface AgentChatProps {
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
+	/** Called to clear the suggestions. */
+	clearSuggestions?: () => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -67,6 +69,7 @@ export default function AgentChat( {
 	onAbort,
 	onClose,
 	onExpand,
+	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
 	onTypingStatusChange,
@@ -96,6 +99,7 @@ export default function AgentChat( {
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
+			clearSuggestions={ clearSuggestions }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onExpand={ onExpand }

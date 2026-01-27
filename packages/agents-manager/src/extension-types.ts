@@ -150,3 +150,46 @@ export type ContextEntry = BaseContextEntry;
 
 // Re-export Suggestion from agenttic-ui for convenience
 export type { Suggestion } from '@automattic/agenttic-ui';
+
+/**
+ * Big Sky Message Format
+ *
+ * Message format used by Big Sky when calling addMessage.
+ * This is transformed to UIMessage format by the agents-manager.
+ */
+export interface BigSkyMessage {
+	/**
+	 * Unique message identifier
+	 */
+	id: string;
+
+	/**
+	 * Message role - Big Sky uses 'assistant', transformed to 'agent' for UI
+	 */
+	role: 'user' | 'assistant';
+
+	/**
+	 * Message content array
+	 */
+	content: Array< {
+		type: 'text' | 'component' | 'context';
+		text?: string;
+		component?: React.ComponentType;
+		componentProps?: Record< string, unknown >;
+	} >;
+
+	/**
+	 * Unix timestamp in seconds (converted to milliseconds for UI)
+	 */
+	created_at: number;
+
+	/**
+	 * Optional: whether message is archived (defaults to false)
+	 */
+	archived?: boolean;
+
+	/**
+	 * Optional: whether to show icon (defaults to true)
+	 */
+	showIcon?: boolean;
+}

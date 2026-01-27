@@ -18,6 +18,7 @@ import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
@@ -25,6 +26,7 @@ import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import { ZendeskChat } from '../zendesk-chat';
+import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
@@ -150,7 +152,18 @@ export default function AgentDock( {
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
 	useAbilitiesSetup?.( {
-		addMessage,
+		addMessage: ( message: BigSkyMessage ) => {
+			// Transform Big Sky message format to UIMessage format and add to chat
+			addMessage( {
+				id: message.id,
+				role: message.role === 'assistant' ? 'agent' : 'user',
+				content: message.content,
+				timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
+				archived: message.archived ?? false,
+				showIcon: message.showIcon ?? true,
+			} );
+		},
+		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
 		setIsThinking,
@@ -173,10 +186,14 @@ export default function AgentDock( {
 		}
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
+		if ( conversation.is_zendesk ) {
+			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
+		} else {
+			abortCurrentRequest();
+			setSessionId( sessionId );
+			navigate( '/chat', { state: { sessionId } } );
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
@@ -313,6 +330,7 @@ export default function AgentDock( {
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
 			onExpand={ handleExpand }
+			clearSuggestions={ clearSuggestions }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
@@ -328,7 +346,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 

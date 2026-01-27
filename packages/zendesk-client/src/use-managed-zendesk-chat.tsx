@@ -51,10 +51,14 @@ function getSmoochContainer(): HTMLDivElement | null {
 	return smoochContainer;
 }
 
-function useSmooch( jwt?: string, externalId?: string ) {
+function useSmooch() {
 	const queryClient = useQueryClient();
+	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
+		useAuthenticateZendeskMessaging( true, 'zendesk', false );
+	const jwt = authData?.jwt;
+	const externalId = authData?.externalId;
 
-	return useQuery( {
+	const smoochQuery = useQuery( {
 		queryKey: [ 'smooch', jwt, externalId ],
 		queryFn: () => {
 			const isTestMode = isTestModeEnvironment();
@@ -95,6 +99,8 @@ function useSmooch( jwt?: string, externalId?: string ) {
 			persist: false,
 		},
 	} );
+
+	return { ...smoochQuery, isLoading: isAuthenticatingZendeskMessaging || smoochQuery.isFetching };
 }
 
 const playNotificationSound = () => {
@@ -121,7 +127,6 @@ const playNotificationSound = () => {
 };
 /**
  * Returns a complete API for managing a Zendesk chat.
- * @param enabled - Whether the chat is enabled.
  * @returns An object with the following properties:
  * - typingStatus: The status of the typing.
  * - clientId: The ID of the client.
@@ -130,20 +135,16 @@ const playNotificationSound = () => {
  * - agentticMessages: The messages in the conversation in Agenttic-compatible format.
  * - sendMessage: A function to send a message to the conversation.
  */
-export const useManagedZendeskChat = ( enabled: boolean ) => {
-	const location = useLocation();
-	const conversationId = new URLSearchParams( location.search ).get( 'conversationId' );
+export const useManagedZendeskChat = () => {
+	const { state } = useLocation();
+	const conversationId = state?.conversationId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
 
-	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'zendesk', false );
-	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch(
-		authData?.jwt,
-		authData?.externalId
-	);
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
 
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
@@ -190,7 +191,6 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 
 	const navigate = useNavigate();
 
-	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
 		if ( ! Smooch || conversation ) {
 			return;
@@ -206,21 +206,11 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
-				const params = new URLSearchParams( location.search );
-				params.set( 'conversationId', conversation.id );
-				navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
+				navigate( '/zendesk', { state: { conversationId: conversation.id }, replace: true } );
 				Smooch.loadConversation( conversation.id );
 			} );
 		}
-	}, [
-		Smooch,
-		conversationId,
-		location.pathname,
-		location.search,
-		navigate,
-		conversation,
-		Smooch?.render,
-	] );
+	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render ] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
@@ -290,7 +280,7 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 		conversation,
 		connectionStatus,
 		agentticMessages,
-		isLoadingConversation: isSettingUpSmooch,
+		isLoadingConversation: isSettingUpSmooch || ! conversation,
 		onTypingStatusChange: ( typingStatus: boolean ) => {
 			if ( typingStatus ) {
 				Smooch?.startTyping( conversation?.id );
@@ -314,4 +304,7 @@ export const useManagedZendeskChat = ( enabled: boolean ) => {
 	};
 };
 
-export default useManagedZendeskChat;
+export const useGetZendeskConversations = () => {
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
+	return { conversations: Smooch?.getConversations() ?? [], isLoading: isSettingUpSmooch };
+};

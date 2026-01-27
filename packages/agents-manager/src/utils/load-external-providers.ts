@@ -6,7 +6,7 @@
  */
 
 import { getAgentManager } from '@automattic/agenttic-client';
-import type { ToolProvider, ContextProvider, Suggestion } from '../types';
+import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
@@ -42,7 +42,8 @@ export type NavigationContinuationHook = ( props: {
  * action handlers that will be used for agent and chat interaction.
  */
 export type AbilitiesSetupHook = ( actions: {
-	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	addMessage: ( message: BigSkyMessage ) => void;
+	clearMessages: () => void;
 	clearSuggestions: UseAgentChatReturn[ 'clearSuggestions' ];
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
