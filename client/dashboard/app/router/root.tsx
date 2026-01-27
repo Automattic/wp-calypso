@@ -20,22 +20,31 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
 	beforeLoad: async ( { cause } ) => {
-		const fullPageLoad = isFirstLoad;
-		isFirstLoad = false;
-
 		if ( cause === 'preload' ) {
-			return { fullPageLoad };
+			if ( isFirstLoad ) {
+				isFirstLoad = false;
+				return { fullPageLoad: true };
+			}
+			return { fullPageLoad: false };
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {
-			return { fullPageLoad };
+			if ( isFirstLoad ) {
+				isFirstLoad = false;
+				return { fullPageLoad: true };
+			}
+			return { fullPageLoad: false };
 		}
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
 		if ( optIn?.value === 'opt-in' || optIn?.value === 'forced-opt-in' ) {
-			return { fullPageLoad };
+			if ( isFirstLoad ) {
+				isFirstLoad = false;
+				return { fullPageLoad: true };
+			}
+			return { fullPageLoad: false };
 		}
 
 		throw redirect( { href: wpcomLink( '/' ), replace: true } );

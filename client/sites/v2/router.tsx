@@ -16,9 +16,11 @@ let isFirstLoad = true;
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	beforeLoad: () => {
-		const fullPageLoad = isFirstLoad;
-		isFirstLoad = false;
-		return { fullPageLoad };
+		if ( isFirstLoad ) {
+			isFirstLoad = false;
+			return { fullPageLoad: true };
+		}
+		return { fullPageLoad: false };
 	},
 } );
 
