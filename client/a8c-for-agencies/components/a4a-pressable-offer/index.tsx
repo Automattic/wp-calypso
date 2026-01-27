@@ -3,6 +3,7 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -115,12 +116,10 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 						<div className="a4a-pressable-offer__body-actions">
 							<Button
 								variant="primary"
-								href="https://pressable.com/"
-								target="_blank"
-								rel="noopener noreferrer"
+								href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
 								onClick={ onViewEligiblePlansClick }
 							>
-								{ translate( 'View Eligible Plans ↗' ) }
+								{ translate( 'View Eligible Plans' ) }
 							</Button>
 
 							<Button
