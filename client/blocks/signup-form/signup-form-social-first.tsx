@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
@@ -48,6 +49,7 @@ interface SignupFormSocialFirst {
 	emailLabelText?: string;
 	isEmailVariation?: boolean;
 	isMessagingVariation?: boolean;
+	isSliderVariation?: boolean;
 }
 
 const options = {
@@ -89,6 +91,7 @@ const SignupFormSocialFirst = ( {
 	emailLabelText,
 	isEmailVariation,
 	isMessagingVariation,
+	isSliderVariation,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -201,6 +204,11 @@ const SignupFormSocialFirst = ( {
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailVariation }
 				/>
+				{ isSliderVariation && (
+					<p className="signup-form-social-first__login-link">
+						Have an account? <Step.LinkButton href={ logInUrl }>{ __( 'Log in' ) }</Step.LinkButton>
+					</p>
+				) }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

@@ -113,6 +113,7 @@ const UserStepComponent: StepType = function UserStep( {
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
 				isEmailVariation={ isEmailVariation }
 				isMessagingVariation={ isMessagingVariation }
+				isSliderVariation={ isSliderVariation }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -142,7 +143,9 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+					isSliderVariation ? null : (
+						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+					)
 				}
 			/>
 		);
