@@ -365,7 +365,7 @@ export default function Sites() {
 				treatmentExperience={ null }
 				loadingExperience={ null }
 			/>
-			<PerformanceTrackerStop id="sites" />
+			<PerformanceTrackerStop id="dashboard-site-list" />
 		</>
 	);
 }

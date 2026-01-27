@@ -116,13 +116,9 @@ export const siteRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location, matches, context } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
 		if ( cause === 'preload' ) {
 			return;
-		}
-
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad: context.fullPageLoad } );
 		}
 
 		let site;
@@ -194,6 +190,11 @@ export const siteRoute = createRoute( {
 export const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {

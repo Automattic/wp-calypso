@@ -103,7 +103,7 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
-			<PerformanceTrackerStop id="domains" />
+			<PerformanceTrackerStop id="dashboard-domain-list" />
 		</Suspense>
 	);
 }

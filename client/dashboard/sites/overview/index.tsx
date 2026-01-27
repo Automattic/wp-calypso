@@ -269,7 +269,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
-			<PerformanceTrackerStop id="site-overview" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop id="dashboard-site-overview" siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

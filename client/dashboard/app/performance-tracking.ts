@@ -2,6 +2,7 @@ import { queryClient } from '@automattic/api-queries';
 import { start, stop } from '@automattic/browser-data-collector';
 import config from '@automattic/calypso-config';
 import { useLayoutEffect } from 'react';
+import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { getSiteFromCache } from './analytics/super-props';
 import { AUTH_QUERY_KEY } from './auth';
 import type { User } from '@automattic/api-core';
@@ -34,7 +35,7 @@ function buildCollector( siteSlug?: string ): Collector {
  * Call this in a route's beforeLoad handler.
  */
 export function startPerformanceTracking( id: string, { fullPageLoad = false } = {} ) {
-	if ( ! config.isEnabled( 'rum-tracking/logstash' ) ) {
+	if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 		return;
 	}
 	start( id, { fullPageLoad } );
@@ -46,7 +47,7 @@ export function startPerformanceTracking( id: string, { fullPageLoad = false } =
  */
 export function usePerformanceTrackerStop( id: string, siteSlug?: string ) {
 	useLayoutEffect( () => {
-		if ( ! config.isEnabled( 'rum-tracking/logstash' ) ) {
+		if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 			return;
 		}
 		requestAnimationFrame( () => {

@@ -8,14 +8,18 @@ import Root from './components/root';
 import type { Site } from '@automattic/api-core';
 import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
 
+let isFirstLoad = true;
+
 /**
  * Define general routes
  */
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
-	// Empty beforeLoad is required to maintain type compatibility with MSD
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	beforeLoad: async ( { cause } ) => {},
+	beforeLoad: () => {
+		const fullPageLoad = isFirstLoad;
+		isFirstLoad = false;
+		return { fullPageLoad };
+	},
 } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
