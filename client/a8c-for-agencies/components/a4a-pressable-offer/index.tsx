@@ -19,7 +19,9 @@ const PressableOffer = () => {
 	const agency = useSelector( getActiveAgency );
 
 	const shouldShowOffer =
-		new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) && ! agency?.third_party?.pressable;
+		new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
+		! agency?.third_party?.pressable &&
+		agency?.billing_system === 'billingdragon';
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
