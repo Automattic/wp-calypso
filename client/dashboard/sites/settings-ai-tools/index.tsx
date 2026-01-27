@@ -13,6 +13,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
 import { siteSettingsAIToolsRoute } from '../../app/router/sites';
@@ -36,6 +37,7 @@ const features = [
 
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
 	const currentSearchParams = siteSettingsAIToolsRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
@@ -70,6 +72,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {
+		if ( enable ) {
+			recordTracksEvent( 'calypso_dashboard_ai_tool_ai_assistant_enabled' );
+		} else {
+			recordTracksEvent( 'calypso_dashboard_ai_tool_ai_assistant_disabled' );
+		}
+
 		mutation.mutate(
 			{ enable },
 			{
@@ -157,6 +165,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								title={ __( 'Get answers' ) }
 								decoration={ <Icon icon={ help } /> }
 								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
 									navigate( {
 										search: {
 											...currentSearchParams,
@@ -171,17 +180,25 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
 								title={ __( 'Update your site design' ) }
 								decoration={ <Icon icon={ brush } /> }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
+								} }
 							/>
 							<SummaryButton
 								href={ `${ site.options?.admin_url }post-new.php` }
 								title={ __( 'Draft and revise content' ) }
 								decoration={ <Icon icon={ termDescription } /> }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
+								} }
 							/>
 							<SummaryButton
-								// TODO: Point to Image Studio
 								href={ `${ site.options?.admin_url }upload.php?action=image-studio` }
 								title={ __( 'Create beautiful images' ) }
 								decoration={ <Icon icon={ image } /> }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );
+								} }
 							/>
 						</SummaryButtonList>
 					</VStack>
