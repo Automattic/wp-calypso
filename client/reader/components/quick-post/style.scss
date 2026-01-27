@@ -1,85 +1,17 @@
-/* stylelint-disable scales/radii */
-.quick-post-input {
-	margin: 20px;
-
-	&--loading {
-		text-align: center;
-		padding: 24px;
+.quick-post {
+	.editor__header {
+		border-color: var( --color-border-subtle );
+		border-radius: 8px 8px 0 0;
 	}
 
-	&__fields {
-		margin-bottom: 16px;
-	}
+	.editor__main {
+		border-color: var( --color-border-subtle );
+		border-radius: 0 0 8px 8px;
+		border-top-width: 0;
 
-	&__site-select-wrapper {
-		margin-bottom: 16px;
-		display: flex;
-		justify-content: space-between;
-		align-items: end;
-		gap: 10px;
-
-		.sites-dropdown {
-			flex: 0 1 300px;
-
-			.sites-dropdown__wrapper {
-				border-color: var( --color-border-subtle );
-				border-radius: 6px 6px 0 0;
-			}
+		&,
+		iframe {
+			min-height: initial; // To make quick post box smaller.
 		}
-
-		.site-selector {
-			border-color: var( --color-border-subtle );
-			border-radius: 0 0 6px 6px;
-		}
-	}
-
-	&__actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 8px;
-	}
-
-	&__success-message {
-		padding-left: 5px;
-		color: rgb( 0, 128, 0 );
-		display: flex;
-		align-items: center;
-		opacity: 0;
-		transition: opacity 0.3s ease-in-out;
-
-		&.is-visible {
-			opacity: 1;
-		}
-
-		p {
-			margin: 0;
-		}
-	}
-
-	.verbum-editor-wrapper {
-		.editor__header {
-			border-color: var( --color-border-subtle );
-			border-style: solid;
-			border-radius: 6px 6px 0 0;
-			border-width: 1px;
-			border-bottom-width: 0;
-		}
-
-		.block-editor-block-contextual-toolbar {
-			background-color: transparent;
-		}
-
-		.editor__main {
-			border-color: var( --color-border-subtle );
-			border-style: solid;
-			border-radius: 0 0 6px 6px;
-			border-width: 1px;
-			border-top-width: 0;
-		}
-	}
-
-	.verbum-editor-wrapper .editor__main,
-	.verbum-editor-wrapper .editor__main iframe {
-		min-height: 80px;
 	}
 }
