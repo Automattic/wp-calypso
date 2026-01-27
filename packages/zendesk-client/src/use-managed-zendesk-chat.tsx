@@ -94,7 +94,7 @@ function useSmooch( enabled = true ) {
 			} );
 		},
 		staleTime: Infinity,
-		enabled: !! jwt && !! externalId,
+		enabled: !! jwt && !! externalId && enabled,
 		meta: {
 			persist: false,
 		},
