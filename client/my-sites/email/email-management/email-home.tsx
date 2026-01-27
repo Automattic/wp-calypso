@@ -92,6 +92,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		source,
 		context,
 	} = props;
+
 	const selectedSite = useSelector( getSelectedSite );
 
 	const canManageSite = useSelector( ( state ) => {

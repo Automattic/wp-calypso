@@ -195,6 +195,7 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const queryArgs = getQueryArgs( window.location.href );
+
 	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
 		return null;
 	}
