@@ -1,9 +1,8 @@
 @import "@automattic/components/src/styles/typography";
 
-.step-container-v2:has(.step-container-v2--user) {
-	.step-container-v2__content-row--two-column-layout > div:has(.signup-slider) {
-		min-width: 0;
-	}
+/* This is needed to prevent the slider from growing beyond its container */
+:where(:has(> .signup-slider)) {
+	min-width: 0;
 }
 
 .signup-slider {

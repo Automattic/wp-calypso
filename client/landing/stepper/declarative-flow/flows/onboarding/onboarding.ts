@@ -34,7 +34,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-function initialize() {
+async function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -44,6 +44,8 @@ function initialize() {
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
+
+	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
