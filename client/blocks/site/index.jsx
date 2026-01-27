@@ -49,6 +49,7 @@ class Site extends Component {
 		isP2Hub: false,
 		isSiteP2: false,
 		defaultIcon: null,
+		iconSize: 32,
 	};
 
 	static propTypes = {
@@ -66,6 +67,7 @@ class Site extends Component {
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
 		defaultIcon: PropTypes.node,
+		iconSize: PropTypes.number,
 	};
 
 	onSelect = ( event ) => {
@@ -187,9 +189,11 @@ class Site extends Component {
 				>
 					<SiteIcon
 						// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-						defaultIcon={ this.props.defaultIcon || <Gridicon icon="globe" size={ 28 } /> }
+						defaultIcon={
+							this.props.defaultIcon || <Gridicon icon="globe" size={ this.props.iconSize || 28 } />
+						}
 						site={ site }
-						size={ 32 }
+						size={ this.props.iconSize }
 					/>
 					<div className="site__info">
 						{ ! this.props.showChevronDownIcon ? (
