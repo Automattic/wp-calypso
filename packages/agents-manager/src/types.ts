@@ -10,4 +10,5 @@ export type {
 	BaseContextEntry,
 	ContextEntry,
 	Suggestion,
+	BigSkyMessage,
 } from './extension-types';
