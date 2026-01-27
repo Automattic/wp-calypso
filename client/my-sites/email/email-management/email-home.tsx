@@ -92,7 +92,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		source,
 		context,
 	} = props;
-
+	console.log( props );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const canManageSite = useSelector( ( state ) => {
@@ -124,6 +124,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
+		console.log( '1' );
 		return (
 			<LoadingPlaceholder
 				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
@@ -132,6 +133,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( ! canManageSite ) {
+		console.log( '2' );
 		return (
 			<NoAccess
 				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
@@ -140,6 +142,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( selectedDomainName ) {
+		console.log( '3' );
 		const selectedDomain =
 			domains.find( ( domain ) => selectedDomainName === domain.name ) ?? ( {} as ResponseDomain );
 
@@ -182,6 +185,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( nonWpcomDomains.length < 1 ) {
+		console.log( '4' );
 		return (
 			<ContentWithHeader>
 				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
@@ -190,6 +194,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
+		console.log( '5' );
 		return (
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
@@ -203,6 +208,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	}
 
 	if ( isSingleDomainThatHasEmail ) {
+		console.log( '6' );
 		if (
 			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
 			getConfiguredTitanMailboxCount( domainsWithEmail[ 0 ] ) === 0
@@ -214,6 +220,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		page.redirect( getEmailManagementPath( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
 		return null;
 	}
+	console.log( '7' );
 
 	return (
 		<ContentWithHeader>
