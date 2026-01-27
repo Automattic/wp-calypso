@@ -14,7 +14,6 @@ import LikeButton from './button-like';
 import SpamButton from './button-spam';
 import TrashButton from './button-trash';
 import ReplyInput from './comment-reply-input';
-import Gridicon from './gridicons';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
@@ -51,13 +50,7 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 
 	return (
 		<div className="wpnc__note-actions">
-			{ showPendingApprovalBadge && (
-				<PendingApprovalBadge
-					note={ note }
-					translate={ translate }
-					icon={ <Gridicon icon="time" size={ 16 } /> }
-				/>
-			) }
+			{ showPendingApprovalBadge && <PendingApprovalBadge note={ note } /> }
 			<div className="wpnc__note-actions__buttons">
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }
