@@ -10,7 +10,11 @@ import SimpleList from '../simple-list';
 
 import './style.scss';
 
-const PressableOffer = () => {
+type Props = {
+	isReferMode?: boolean;
+};
+
+const PressableOffer = ( { isReferMode }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -18,10 +22,12 @@ const PressableOffer = () => {
 
 	const agency = useSelector( getActiveAgency );
 
+	// Make sure we only show the offer if the agency is a Billing Dragon agency and does not have a Pressable license through A4A, unless we are in referral mode
 	const shouldShowOffer =
-		new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
-		! agency?.third_party?.pressable &&
-		agency?.billing_system === 'billingdragon';
+		isReferMode ||
+		( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
+			! agency?.third_party?.pressable &&
+			agency?.billing_system === 'billingdragon' );
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
