@@ -137,7 +137,7 @@ const playNotificationSound = () => {
  */
 export const useManagedZendeskChat = () => {
 	const { state } = useLocation();
-	const conversationId = state.conversationId as string | undefined;
+	const conversationId = state?.conversationId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
