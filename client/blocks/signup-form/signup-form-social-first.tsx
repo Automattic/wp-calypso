@@ -129,7 +129,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		return (
+		return isMessagingVariation ? null : (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
 					__(
