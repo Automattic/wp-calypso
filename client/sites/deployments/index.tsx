@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { DEPLOYMENTS } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
@@ -17,6 +22,10 @@ export default function () {
 	page(
 		'/github-deployments/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
+		),
 		navigation,
 		deploymentsList,
 		deploymentCallout,
@@ -28,6 +37,10 @@ export default function () {
 	page(
 		'/github-deployments/:site/create',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) => `/sites/${ params.site }/settings/repositories`
+		),
 		navigation,
 		deploymentCreation,
 		deploymentCallout,
@@ -39,6 +52,11 @@ export default function () {
 	page(
 		'/github-deployments/:site/manage/:deploymentId',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) =>
+				`/sites/${ params.site }/settings/repositories/manage/${ params.deploymentId }`
+		),
 		navigation,
 		deploymentManagement,
 		deploymentCallout,
@@ -50,6 +68,10 @@ export default function () {
 	page(
 		'/github-deployments/:site/logs/:deploymentId',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) => `/sites/${ params.site }/deployments`
+		),
 		navigation,
 		deploymentRunLogs,
 		deploymentCallout,

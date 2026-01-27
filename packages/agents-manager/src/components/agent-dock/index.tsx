@@ -90,7 +90,12 @@ export default function AgentDock( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => setIsOpen( true ),
+			onOpenSidebar: () => {
+				setIsOpen( true );
+				if ( pathname === '/history' ) {
+					navigate( '/' );
+				}
+			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -158,6 +163,13 @@ export default function AgentDock( {
 
 	const handleNewChat = () => {
 		navigate( '/' );
+	};
+
+	const handleExpand = () => {
+		setIsOpen( true );
+		if ( pathname === '/history' ) {
+			navigate( '/' );
+		}
 	};
 
 	const handleSelectConversation = ( sessionId: string ) => {
@@ -300,7 +312,7 @@ export default function AgentDock( {
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
@@ -330,7 +342,7 @@ export default function AgentDock( {
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>

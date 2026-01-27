@@ -14,5 +14,5 @@ export const isDashboardEnabled = ( state: AppState ): boolean => {
 		return false;
 	}
 
-	return true;
+	return false;
 };

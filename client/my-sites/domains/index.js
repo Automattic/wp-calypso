@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
 	navigation,
@@ -194,6 +199,8 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot(),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/domains' ),
 		domainsController.maybeRedirectToDashboard,
 		noSite,
 		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
