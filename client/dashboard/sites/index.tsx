@@ -46,6 +46,7 @@ import type {
 import type { View, Filter } from '@wordpress/dataviews';
 
 type SiteListQueryOptions = {
+	isDefaultView?: boolean;
 	isRestoringAccount: boolean;
 	isAutomattician: boolean;
 };
@@ -75,7 +76,7 @@ const getFetchSitesOptions = (
 
 const getFetchPaginatedSitesOptions = (
 	view: View,
-	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions,
+	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
 	siteFilters: DashboardFilters = {}
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
@@ -86,6 +87,8 @@ const getFetchPaginatedSitesOptions = (
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
 	const options: FetchPaginatedSitesOptions = {
+		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
+
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
@@ -202,7 +205,11 @@ export default function Sites() {
 
 	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
 		view,
-		{ isRestoringAccount, isAutomattician }
+		{
+			isDefaultView: ! resetView && ! view.search && view.page === 1,
+			isRestoringAccount,
+			isAutomattician,
+		}
 	);
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
