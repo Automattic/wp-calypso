@@ -503,6 +503,7 @@ export class LoginForm extends Component {
 			oauth2ClientId: this.props.oauth2Client?.id,
 			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
+			from: this.props.currentQuery?.from,
 		} );
 	}
 

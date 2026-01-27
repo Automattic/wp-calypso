@@ -84,7 +84,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title="Create it yourself"
+					title={ __( 'Create it yourself' ) }
 					description={ __( 'Start with a clean WordPress site and make it yours.' ) }
 					onClick={ wordpressClick }
 					href={ addQueryArgs( wpcomLink( '/start' ), {

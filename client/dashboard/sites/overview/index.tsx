@@ -129,17 +129,10 @@ function SiteOverviewSecondaryCards( {
 } ) {
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 	const showFlexUsageCard = site.is_wpcom_flex;
-
-	if ( isCommerceGarden( site ) ) {
-		return null;
-	}
+	const isCommerceGardenSite = isCommerceGarden( site );
 
 	return (
 		<>
-			<Divider
-				orientation="horizontal"
-				style={ { color: 'var(--dashboard-overview__divider-color)' } }
-			/>
 			<HStack
 				className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
 					'is-large': isLargeViewport,
@@ -147,17 +140,29 @@ function SiteOverviewSecondaryCards( {
 				spacing={ spacing }
 				alignment="flex-start"
 			>
-				<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-				<VStack spacing={ spacing } justify="start">
-					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
-					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-						<>
-							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } />
-						</>
-					) }
-				</VStack>
+				{ isCommerceGardenSite ? (
+					<DomainsCard site={ site } />
+				) : (
+					<>
+						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						<VStack spacing={ spacing } justify="start">
+							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+								<>
+									<DIFMUpsellCard site={ site } />
+									<DomainsCard site={ site } />
+								</>
+							) }
+						</VStack>
+					</>
+				) }
 			</HStack>
+			{ /* Divider re-ordered by CSS to appear above the HStack */ }
+			<Divider
+				className="site-overview-divider"
+				orientation="horizontal"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
 		</>
 	);
 }

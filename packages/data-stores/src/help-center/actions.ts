@@ -18,10 +18,17 @@ export function setHelpCenterRouterHistory(
 	} as const;
 }
 
-export const setNavigateToRoute = ( route?: string ) =>
+/**
+ * Set the navigate to route action.
+ * @param route - The route to navigate to.
+ * @param coalesceParams - Whether to coalesce the parameters with the existing parameters.
+ * @returns The action object.
+ */
+export const setNavigateToRoute = ( route?: string, coalesceParams = false ) =>
 	( {
 		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
 		route,
+		coalesceParams,
 	} ) as const;
 
 export const setUnreadCount = ( count: number ) =>

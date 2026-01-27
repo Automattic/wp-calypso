@@ -2642,7 +2642,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -2651,7 +2651,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Free support with faster response times' )
 				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
-			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_FREE_FAST_SUPPORT ]: {
 		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
@@ -2670,7 +2670,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate(
 						'Your support questions answered first by our expert, friendly Happiness team.'
 				  )
-				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
+				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_UPLOAD_VIDEO ]: {
 		getSlug: () => FEATURE_UPLOAD_VIDEO,
