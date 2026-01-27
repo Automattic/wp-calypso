@@ -175,9 +175,10 @@ const UserStepComponent: StepType = function UserStep( {
 					),
 				}
 			);
+			const tosParagraph = <p className="signup-form-social-first__tos-link-bottom">{ tosText }</p>;
 			stickyBottomBar = () => (
 				<Step.StickyBottomBar
-					centerElement={ tosText }
+					centerElement={ tosParagraph }
 					noBoxShadow
 					hasTransparentBackground
 					centerText

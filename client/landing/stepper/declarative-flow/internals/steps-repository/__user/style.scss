@@ -18,6 +18,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first__tos-link,
+	.signup-form-social-first__tos-link-bottom,
 	.signup-form-social-first__email-tos-link,
 	.signup-form-social-first__login-link {
 		color: var(--studio-gray-60, #646970);
@@ -34,9 +35,14 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first__tos-link,
+	.signup-form-social-first__tos-link-bottom,
 	.signup-form-social-first__login-link {
 		margin-bottom: 2rem;
 		text-align: center;
+	}
+
+	.signup-form-social-first__tos-link-bottom {
+		margin-bottom: 0;
 	}
 
 	.signup-form-social-first__login-link {
