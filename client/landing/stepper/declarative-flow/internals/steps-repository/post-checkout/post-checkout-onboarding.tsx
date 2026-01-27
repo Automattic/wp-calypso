@@ -38,14 +38,12 @@ const PostCheckoutOnboarding: StepType< {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
-
+	const eligibleForExperiment =
+		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
+		site?.plan?.features?.active?.includes( FEATURE_BIG_SKY );
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calyso_post_onboarding_big_sky_202601_v1',
-		{
-			isEligible:
-				isEnabled( 'onboarding/post-checkout-ai-step' ) &&
-				site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ),
-		}
+		{ isEligible: eligibleForExperiment }
 	);
 
 	const intent = useSelect(
@@ -133,7 +131,9 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				postCheckoutBigSkyVariation: experimentAssignment?.variationName,
+				...( eligibleForExperiment
+					? { postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control' }
+					: {} ),
 			};
 
 			if ( isJetpackOrAtomic ) {
