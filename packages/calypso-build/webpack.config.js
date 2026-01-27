@@ -111,6 +111,10 @@ function getWebpackConfig(
 				FileConfig.loader(),
 			],
 		},
+		cache: {
+			type: 'filesystem',
+			allowCollectingMemory: true,
+		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
