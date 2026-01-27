@@ -26,7 +26,7 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 	const shouldShowOffer =
 		isReferMode ||
 		( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) &&
-			! agency?.third_party?.pressable &&
+			! agency?.third_party?.pressable?.a4a_id &&
 			agency?.billing_system === 'billingdragon' );
 
 	const onToggleView = useCallback( () => {
