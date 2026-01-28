@@ -261,7 +261,9 @@ export default function AgentDock( {
 					let textData;
 					try {
 						textData = JSON.parse( firstContentText );
-					} catch {
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.error( '[AgentDock] Failed to parse tool message JSON:', error );
 						return [ message ];
 					}
 
