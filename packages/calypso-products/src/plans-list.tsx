@@ -2201,6 +2201,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
