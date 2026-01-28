@@ -9,7 +9,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -35,6 +35,7 @@ import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
+	UseSuggestionsHook,
 	SiteBuildUtils,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
@@ -52,6 +53,8 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
+	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
@@ -65,6 +68,7 @@ export default function AgentDock( {
 	useNavigationContinuation,
 	useAbilitiesSetup,
 	getChatComponent,
+	useSuggestions,
 	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
@@ -102,6 +106,7 @@ export default function AgentDock( {
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
+	const agentChatReturn = useAgentChat( agentConfig );
 	const {
 		addMessage,
 		messages,
@@ -112,7 +117,21 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 		clearSuggestions,
-	} = useAgentChat( agentConfig );
+		registerSuggestions,
+	} = agentChatReturn;
+
+	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
+	const dynamicSuggestions = useSuggestions?.();
+
+	// Register dynamic suggestions whenever they change
+	useEffect( () => {
+		if ( dynamicSuggestions?.suggestions && dynamicSuggestions.suggestions.length > 0 ) {
+			registerSuggestions?.( dynamicSuggestions.suggestions );
+		} else {
+			// Clear suggestions when there are none
+			clearSuggestions?.();
+		}
+	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,

@@ -53,6 +53,14 @@ export type AbilitiesSetupHook = ( actions: {
 	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
 
+/**
+ * Suggestions hook type - for providing dynamic suggestions based on context
+ * (e.g., selected block in editor). Returns an array of suggestions.
+ */
+export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
+	suggestions: Suggestion[];
+};
+
 export type SiteBuildUtils = {
 	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
 	groupSiteBuildMessages: ( messages: UIMessage[], thinkingMessage: string | null ) => UIMessage[];
@@ -84,6 +92,7 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
 }
@@ -111,6 +120,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
+	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 
 	for ( const moduleId of agentProviders ) {
@@ -140,6 +150,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
+			if ( module.useSuggestions ) {
+				mergedUseSuggestions = module.useSuggestions;
+			}
 			if ( module.getChatComponent ) {
 				mergedGetChatComponent = module.getChatComponent;
 			}
@@ -163,6 +176,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
 	};
