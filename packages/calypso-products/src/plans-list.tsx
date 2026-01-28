@@ -990,6 +990,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_FREE_PLUS,
+		FEATURE_CUSTOM_DOMAIN,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
