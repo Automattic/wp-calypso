@@ -75,13 +75,6 @@ button.follow-button {
 		}
 	}
 
-	.gridicon {
-		height: 18px;
-		padding-right: 6px;
-		top: 5px;
-		width: 18px;
-	}
-
 	&.is-disabled {
 		@include no-select();
 		color: $follow-button-gray-disabled;
@@ -153,9 +146,4 @@ button.follow-button {
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
-}
-
-// Override .button style
-.button.follow-button .gridicon:not(:last-child) {
-	margin-right: 0;
 }

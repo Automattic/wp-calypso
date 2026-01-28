@@ -85,7 +85,7 @@
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -298,7 +298,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 }
 
-.agents-manager-chat--docked {
+body:not(.modal-open) .agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -455,6 +455,14 @@ body.post-php.agents-manager-sidebar-container {
 				margin: 0;
 			}
 		}
+	}
+
+	.EmptyView-module_container .Suggestions-module_container {
+		padding: 0;
+	}
+
+	.Textarea-module_textarea {
+		line-height: 1.8;
 	}
 
 	.big-sky__chat-actions {
@@ -847,6 +855,11 @@ body.post-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.Messages-module_container.Messages-module_emptyState {
+		padding-bottom: 0;
+		padding-top: 0;
+	}
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&.is-active,

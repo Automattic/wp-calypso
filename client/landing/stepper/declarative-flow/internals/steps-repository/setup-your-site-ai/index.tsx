@@ -1,6 +1,6 @@
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { code } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,7 +13,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const translate = useTranslate();
 
 	const handleBuildWithAI = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_build_with_ai_click' );
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'build-with-ai',
+		} );
 
 		navigation.submit( {
 			setupChoice: 'build-with-ai',
@@ -23,21 +25,13 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	};
 
 	const handleBlankSite = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_blank_site_click' );
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'blank-site',
+		} );
 
 		navigation.submit( {
 			setupChoice: 'blank-site',
 			siteSlug,
-		} );
-	};
-
-	const handleMigrate = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_migrate_click' );
-
-		navigation.submit( {
-			setupChoice: 'migrate',
-			siteSlug,
-			siteId,
 		} );
 	};
 
@@ -57,13 +51,6 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				decoration={ <Icon icon={ code } /> }
 				onClick={ handleBlankSite }
 			/>
-			<Button
-				className="setup-your-site-ai__migrate-button"
-				variant="link"
-				onClick={ handleMigrate }
-			>
-				{ translate( 'Or migrate your site' ) }
-			</Button>
 		</VStack>
 	);
 

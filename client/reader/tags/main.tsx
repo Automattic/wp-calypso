@@ -21,7 +21,7 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 		<ReaderMain className="tags__main">
 			{ isLoggedIn && (
 				<NavigationHeader
-					title={ translate( 'All the Tags' ) }
+					title={ translate( 'Popular Tags' ) }
 					subtitle={ translate(
 						"For every one of your interests, there's a tag on WordPress.com."
 					) }

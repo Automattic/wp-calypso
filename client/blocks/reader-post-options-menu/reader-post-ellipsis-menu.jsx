@@ -267,7 +267,7 @@ class ReaderPostEllipsisMenu extends Component {
 			followSource,
 		} = this.props;
 
-		const { ID: postId, site_ID: siteId } = post;
+		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 
@@ -297,6 +297,8 @@ class ReaderPostEllipsisMenu extends Component {
 				{ this.props.showFollow && (
 					<ReaderFollowButton
 						tagName={ PopoverMenuItem }
+						feedId={ feedId }
+						siteId={ siteId }
 						siteUrl={ post.feed_URL || post.site_URL }
 						followSource={ followSource }
 						iconSize={ 24 }
