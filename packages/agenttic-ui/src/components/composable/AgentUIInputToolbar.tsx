@@ -37,6 +37,7 @@ export function AgentUIInputToolbar( {
 
 	const { refs, floatingStyles } = useFloating( {
 		placement: 'bottom-start',
+		transform: true,
 		middleware: [
 			offset( 8 ),
 			flip( {

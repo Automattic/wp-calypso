@@ -33,10 +33,9 @@
 	font-size: var(--text-sm);
 	font-family: inherit;
 	color: var(--color-foreground);
-	background: var(--color-background);
+	background: var(--color-popover-muted);
 	border: 1px solid var(--color-muted);
 	border-radius: calc(var(--radius) - 4px);
-	box-shadow: var(--shadow-sm);
 	padding: var(--spacing-2);
 	z-index: 1000;
 }
