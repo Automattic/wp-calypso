@@ -76,6 +76,7 @@ export interface UIMessage {
 	showIcon: boolean;
 	icon?: string;
 	actions?: UIMessageAction[];
+	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
 // Message action type for UI, resolved from condition and passed to the dumb component
@@ -532,6 +533,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 								archived: false,
 								showIcon: true,
 								icon: 'assistant',
+								reactKey: streamingMessageId, // Stable key for React rendering
 							};
 
 							setState( ( prev ) => ( {
@@ -562,7 +564,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						}
 					}
 
-					// Handle final update - replace streaming message with final message
+					// Handle final update - update message properties without changing ID
+					// Changing the ID causes React to unmount/remount (flicker)
 					if (
 						update.final &&
 						update.status?.message &&
@@ -577,12 +580,36 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						if ( finalMessage ) {
 							setState( ( prev ) => {
-								// Replace the streaming message with the final message
+								// Update to use server ID while keeping stable reactKey
+								// This prevents React flicker while maintaining ID consistency
 								const updatedMessages = prev.uiMessages.map(
-									( msg ) =>
-										msg.id === currentStreamingId
-											? finalMessage
-											: msg
+									( msg ) => {
+										if ( msg.id === currentStreamingId ) {
+											// Use server content if it's longer (final message may have complete text)
+											// Otherwise keep streamed content to avoid flicker
+											const useServerContent =
+												finalMessage.content.length >
+													0 &&
+												finalMessage.content[ 0 ]
+													?.text &&
+												msg.content[ 0 ]?.text &&
+												finalMessage.content[ 0 ].text
+													.length >
+													msg.content[ 0 ].text
+														.length;
+
+											return {
+												...finalMessage,
+												reactKey:
+													msg.reactKey ||
+													currentStreamingId, // Keep stable reactKey
+												content: useServerContent
+													? finalMessage.content
+													: msg.content,
+											};
+										}
+										return msg;
+									}
 								);
 
 								// Update client messages from conversation history
@@ -601,7 +628,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							} );
 						}
 
-						// Clear the streaming message ID after replacement
+						// Clear the streaming message ID after update
 						streamingMessageId = null;
 					}
 				}
