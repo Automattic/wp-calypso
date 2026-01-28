@@ -70,7 +70,7 @@ export default function AgentDock( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const useAgentsManager = useShouldUseUnifiedAgent();
+	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
 		hasLoaded: isStoreReady,
 		isOpen: isPersistedOpen = false,
@@ -225,7 +225,7 @@ export default function AgentDock( {
 
 		const options: ChatHeaderOptions = [ newChatMenuItem ];
 
-		if ( useAgentsManager ) {
+		if ( shouldUseAgentsManager ) {
 			options.push( newZDChatMenuItem );
 		}
 

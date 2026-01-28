@@ -18,11 +18,11 @@ interface Options {
 export default function useConversationList( { agentId, authProvider }: Options ) {
 	const botId = createOdieBotId( agentId );
 
-	const useAgentsManager = useShouldUseUnifiedAgent();
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
+	// Only fetch Zendesk conversations if the unified agent flag is enabled
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		// Only fetch Zendesk conversations if the unified agent flag is enabled
-		useGetZendeskConversations( !! useAgentsManager );
+		useGetZendeskConversations( !! shouldUseUnifiedAgent );
 
 	const {
 		data: conversations,
