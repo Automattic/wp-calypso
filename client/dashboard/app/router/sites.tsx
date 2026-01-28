@@ -23,6 +23,7 @@ import {
 	siteCurrentPlanQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
 	purchaseQuery,
@@ -975,6 +976,38 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	)
 );
 
+export const siteSettingsCrontabRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cron' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'crontab',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! isEnabled( 'hosting/crontab' ) ) {
+			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteCrontabsQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsTransferSiteRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1372,6 +1405,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsSftpSshRoute,
+		siteSettingsCrontabRoute,
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
 			siteSettingsRepositoriesConnectRoute,

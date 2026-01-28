@@ -1,0 +1,198 @@
+import {
+	SelectControl,
+	TextControl,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useMemo, useState, useEffect } from 'react';
+
+type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly' | 'custom';
+type CustomFrequency = 'h' | 'd' | 'w';
+
+interface ScheduleFieldProps {
+	value: string;
+	onChange: ( value: string ) => void;
+	disabled?: boolean;
+}
+
+const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
+	{ value: 'hourly', label: __( 'Every hour' ) },
+	{ value: 'twicedaily', label: __( 'Twice daily' ) },
+	{ value: 'daily', label: __( 'Daily' ) },
+	{ value: 'weekly', label: __( 'Weekly' ) },
+	{ value: 'custom', label: __( 'Custom\u2026' ) },
+];
+
+const FREQUENCY_OPTIONS: { value: CustomFrequency; label: string }[] = [
+	{ value: 'h', label: __( 'times per hour' ) },
+	{ value: 'd', label: __( 'times per day' ) },
+	{ value: 'w', label: __( 'times per week' ) },
+];
+
+const FREQUENCY_MAX: Record< CustomFrequency, number > = {
+	h: 12,
+	d: 24,
+	w: 7,
+};
+
+function parseScheduleValue( value: string ): {
+	scheduleType: ScheduleType;
+	customNumber: number;
+	customFrequency: CustomFrequency;
+} {
+	// Check if it's a predefined schedule
+	if ( [ 'hourly', 'twicedaily', 'daily', 'weekly' ].includes( value ) ) {
+		return {
+			scheduleType: value as ScheduleType,
+			customNumber: 1,
+			customFrequency: 'h',
+		};
+	}
+
+	// Check if it's shorthand notation (e.g., "2h", "6d", "3w")
+	const shorthandMatch = value.match( /^(\d+)([hdw])$/ );
+	if ( shorthandMatch ) {
+		return {
+			scheduleType: 'custom',
+			customNumber: parseInt( shorthandMatch[ 1 ], 10 ),
+			customFrequency: shorthandMatch[ 2 ] as CustomFrequency,
+		};
+	}
+
+	// Default to custom with raw value
+	return {
+		scheduleType: 'custom',
+		customNumber: 1,
+		customFrequency: 'h',
+	};
+}
+
+function formatSchedulePreview(
+	scheduleType: ScheduleType,
+	customNumber: number,
+	customFrequency: CustomFrequency
+): string {
+	if ( scheduleType === 'hourly' ) {
+		return __( 'Runs once every hour' );
+	}
+	if ( scheduleType === 'twicedaily' ) {
+		return __( 'Runs twice per day (every 12 hours)' );
+	}
+	if ( scheduleType === 'daily' ) {
+		return __( 'Runs once per day' );
+	}
+	if ( scheduleType === 'weekly' ) {
+		return __( 'Runs once per week' );
+	}
+
+	// Custom schedule
+	if ( customFrequency === 'h' ) {
+		if ( customNumber === 1 ) {
+			return __( 'Runs once per hour' );
+		}
+		const interval = Math.floor( 60 / customNumber );
+		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per hour' ) } (${ __(
+			'every'
+		) } ${ interval } ${ __( 'minutes' ) })`;
+	}
+	if ( customFrequency === 'd' ) {
+		if ( customNumber === 1 ) {
+			return __( 'Runs once per day' );
+		}
+		const interval = Math.floor( 24 / customNumber );
+		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per day' ) } (${ __(
+			'every'
+		) } ${ interval } ${ __( 'hours' ) })`;
+	}
+	if ( customFrequency === 'w' ) {
+		if ( customNumber === 1 ) {
+			return __( 'Runs once per week' );
+		}
+		const interval = Math.floor( 7 / customNumber );
+		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per week' ) } (${ __(
+			'every'
+		) } ${ interval } ${ __( 'days' ) })`;
+	}
+
+	return '';
+}
+
+export default function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
+	const parsed = useMemo( () => parseScheduleValue( value ), [ value ] );
+
+	const [ scheduleType, setScheduleType ] = useState< ScheduleType >( parsed.scheduleType );
+	const [ customNumber, setCustomNumber ] = useState< number >( parsed.customNumber );
+	const [ customFrequency, setCustomFrequency ] = useState< CustomFrequency >(
+		parsed.customFrequency
+	);
+
+	// Update parent when values change
+	useEffect( () => {
+		if ( scheduleType === 'custom' ) {
+			onChange( `${ customNumber }${ customFrequency }` );
+		} else {
+			onChange( scheduleType );
+		}
+	}, [ scheduleType, customNumber, customFrequency, onChange ] );
+
+	const preview = formatSchedulePreview( scheduleType, customNumber, customFrequency );
+
+	return (
+		<VStack spacing={ 3 }>
+			<SelectControl
+				__nextHasNoMarginBottom
+				label={ __( 'Schedule' ) }
+				value={ scheduleType }
+				options={ PREDEFINED_SCHEDULES }
+				onChange={ ( newValue ) => setScheduleType( newValue as ScheduleType ) }
+				disabled={ disabled }
+			/>
+			{ scheduleType === 'custom' && (
+				<HStack spacing={ 2 } alignment="bottom" justify="flex-start">
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ __( 'Custom schedule' ) }
+						hideLabelFromVision
+						value={ String( customNumber ) }
+						onChange={ ( newValue ) => {
+							const num = parseInt( newValue, 10 );
+							if ( ! isNaN( num ) && num >= 1 && num <= FREQUENCY_MAX[ customFrequency ] ) {
+								setCustomNumber( num );
+							} else if ( newValue === '' ) {
+								setCustomNumber( 1 );
+							}
+						} }
+						disabled={ disabled }
+						type="number"
+						min={ 1 }
+						max={ FREQUENCY_MAX[ customFrequency ] }
+						style={ { width: '80px' } }
+					/>
+					<SelectControl
+						__nextHasNoMarginBottom
+						label={ __( 'Frequency' ) }
+						hideLabelFromVision
+						value={ customFrequency }
+						options={ FREQUENCY_OPTIONS }
+						onChange={ ( newValue ) => {
+							const freq = newValue as CustomFrequency;
+							setCustomFrequency( freq );
+							// Clamp the number to the new max
+							if ( customNumber > FREQUENCY_MAX[ freq ] ) {
+								setCustomNumber( FREQUENCY_MAX[ freq ] );
+							}
+						} }
+						disabled={ disabled }
+					/>
+				</HStack>
+			) }
+			{ preview && (
+				<Text variant="muted" size="small">
+					{ preview }
+				</Text>
+			) }
+		</VStack>
+	);
+}
