@@ -43,7 +43,7 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
+import { isDashboardEnabled } from 'calypso/state/dashboard/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';

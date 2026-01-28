@@ -16,7 +16,7 @@ import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import normalizeInvite from './utils/normalize-invite';

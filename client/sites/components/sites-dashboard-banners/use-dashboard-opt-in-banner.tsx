@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useSelector } from 'react-redux';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
-import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
+import { isDashboardEnabled } from 'calypso/state/dashboard/selectors';
 
 export function useDashboardOptInBanner() {
 	const id = 'dashboard-opt-in';
