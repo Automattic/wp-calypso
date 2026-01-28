@@ -28,7 +28,7 @@ function ExternalLink( {
 	icon = false,
 	iconSize = 18,
 	showIconFirst = false,
-	iconClassName,
+	iconClassName = '',
 	iconComponent = null,
 	localizeUrl: shouldLocalizeUrl = true,
 	children,

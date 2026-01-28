@@ -22,7 +22,7 @@ import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderFeedHeaderFollow from './follow';
 import './style.scss';
 
-class FeedHeader extends Component {
+class ReaderFeedHeader extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		feed: PropTypes.object,
@@ -124,4 +124,4 @@ class FeedHeader extends Component {
 	}
 }
 
-export default localize( withDimensions( FeedHeader ) );
+export default localize( withDimensions( ReaderFeedHeader ) );
