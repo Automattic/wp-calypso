@@ -37,9 +37,9 @@
 		position: relative;
 		width: 300px;
 
-	@include breakpoint-deprecated( "<660px" ) {
-		width: 100%;
-	}
+		@include breakpoint-deprecated( "<660px" ) {
+			width: 100%;
+		}
 	}
 
 	.site-selector {

@@ -189,6 +189,7 @@ export class SiteSelector extends Component {
 				break;
 			case 'Enter':
 				if ( highlightedSiteId ) {
+					event.stopPropagation();
 					if ( highlightedSiteId === ALL_SITES ) {
 						this.onSiteSelect( event, ALL_SITES );
 					} else {
