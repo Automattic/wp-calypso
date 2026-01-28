@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-icon';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { Tag } from 'calypso/reader/list-manage/types';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
@@ -70,11 +68,8 @@ const BloganuaryHeader = () => {
 					<FollowButton
 						followLabel={ translate( 'Follow' ) }
 						followingLabel={ translate( 'Following' ) }
-						iconSize={ 24 }
 						following={ isFollowingBloganuary }
 						onFollowToggle={ toggleFollowBloganuary }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 						className="bloganuary-header__button"
 						disabled={ isFollowingBloganuary === undefined }
 					/>

@@ -1,8 +1,6 @@
 import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import Favicon from 'calypso/reader/components/favicon';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -65,12 +63,7 @@ export const SuggestedFollowItem = ( { site, followSource } ) => {
 						</span>
 					</a>
 					<span className="reader-suggested-follow-button">
-						<FollowButton
-							siteUrl={ site.URL }
-							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-							followSource={ followSource }
-						/>
+						<FollowButton siteUrl={ site.URL } followSource={ followSource } />
 					</span>
 				</>
 			) }
