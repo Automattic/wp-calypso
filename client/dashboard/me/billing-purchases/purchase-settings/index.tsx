@@ -59,7 +59,7 @@ import PageLayout from '../../../components/page-layout';
 import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
-import { formatDate, getRelativeTimeString } from '../../../utils/datetime';
+import { formatDate } from '../../../utils/datetime';
 import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -559,11 +559,7 @@ function getFields( {
 						isRenewing( purchase )
 					) {
 						if ( isInExpirationGracePeriod( purchase ) ) {
-							return sprintf(
-								// translators: expiry is relative time like "3 days ago"
-								__( 'Expired %(expiry)s: Pending renewal' ),
-								{ expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ) }
-							);
+							return __( 'Pending renewal' );
 						}
 						// translators: date is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {

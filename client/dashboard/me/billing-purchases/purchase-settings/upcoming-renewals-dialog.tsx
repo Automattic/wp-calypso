@@ -33,10 +33,7 @@ interface Props {
 function ExpiresText( { purchase }: { purchase: Purchase } ) {
 	if ( isRenewing( purchase ) ) {
 		if ( isInExpirationGracePeriod( purchase ) ) {
-			// translators: "expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"
-			return sprintf( __( 'Expired %(expiry)s: Pending renewal' ), {
-				expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-			} );
+			return __( 'pending renewal' );
 		}
 		// translators: "renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"
 		return sprintf( __( 'renews %(renewDate)s' ), {

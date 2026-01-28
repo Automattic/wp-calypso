@@ -11,8 +11,8 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
 import { getRelativeTimeString } from '../../../utils/datetime';
+import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
 	isIncludedWithPlan,

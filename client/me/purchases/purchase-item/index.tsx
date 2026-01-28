@@ -423,7 +423,11 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+	if (
+		isWithinIntroductoryOfferPeriod( purchase ) &&
+		isIntroductoryOfferFreeTrial( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	) {
 		if ( isRenewing( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
@@ -494,17 +498,7 @@ export function PurchaseItemStatus( {
 		}
 
 		if ( isInExpirationGracePeriod( purchase ) ) {
-			return (
-				<span className="purchase-item__is-error">
-					{ translate( 'Expired %(expiry)s: Pending renewal', {
-						args: {
-							expiry: expiry.fromNow(),
-						},
-						comment:
-							'expiry is relative to the present time and already localized, e.g. "3 days ago"',
-					} ) }
-				</span>
-			);
+			return <span className="purchase-item__is-error">{ translate( 'Pending renewal' ) }</span>;
 		}
 
 		if ( purchase.billPeriodDays ) {

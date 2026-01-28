@@ -41,11 +41,7 @@ function getExpiresText(
 ): TranslateResult {
 	if ( isRenewing( purchase ) ) {
 		if ( isInExpirationGracePeriod( purchase ) ) {
-			return translate( 'Expired %(expiry)s: Pending renewal', {
-				comment:
-					'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
-				args: { expiry: moment( purchase.expiryDate ).fromNow() },
-			} );
+			return translate( 'pending renewal' );
 		}
 
 		return translate( 'renews %(renewDate)s', {

@@ -137,7 +137,8 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		isRenewing( purchase )
+		isRenewing( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
 	) {
 		return createInterpolateElement(
 			sprintf(
@@ -161,7 +162,11 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if ( purchase.introductory_offer?.is_within_period && isIntroductoryOfferFreeTrial ) {
+	if (
+		purchase.introductory_offer?.is_within_period &&
+		isIntroductoryOfferFreeTrial &&
+		! isInExpirationGracePeriod( purchase )
+	) {
 		return (
 			<span>
 				{
@@ -197,17 +202,7 @@ export function PurchaseExpiryStatus( {
 	if ( isInExpirationGracePeriod( purchase ) ) {
 		if ( isRenewing( purchase ) ) {
 			// Auto-renew ON, renewal failing
-			return (
-				<Text intent="error">
-					{ sprintf(
-						// translators: expiry is relative to the present time and already localized, e.g. "3 days ago"
-						__( 'Expired %(expiry)s: Pending renewal' ),
-						{
-							expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-						}
-					) }
-				</Text>
-			);
+			return <Text intent="error">{ __( 'Pending renewal' ) }</Text>;
 		}
 
 		// Auto-renew OFF (isExpiring)
