@@ -441,7 +441,7 @@ body.post-php.agents-manager-sidebar-container {
 
 		// Past conversations: Fix margin-bottom for item picker components
 		.Message-module_message:has( .big-sky__item-picker__arrows ):has(
-				+ .Message-module_message:not( .big-sky__completed-plan )
+				+ .Message-module_message:not( :has( .big-sky__completed-plan ) )
 			) {
 			margin-bottom: 24px;
 		}

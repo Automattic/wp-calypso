@@ -250,7 +250,7 @@ export default function AgentDock( {
 						! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 				)
 				// Convert tool-related text to tool components
-				.flatMap( ( message: Message ) => {
+				.flatMap( ( message: Message, index, array ) => {
 					const firstContentText = message.content?.[ 0 ]?.text;
 
 					if ( message.role !== 'agent' || ! firstContentText ) {
@@ -277,26 +277,33 @@ export default function AgentDock( {
 							...message,
 							content: [
 								{
-									type: 'component',
+									type: 'component' as const,
 									component,
 									componentProps: { ...props, contentType },
 								},
 							],
 						};
 
+						// Avoid showing multiple next step buttons by only displaying it after the most recent item picker component
+						const isLastMessage = index === array.length - 1;
+						if ( ! isLastMessage || ! followUpTasks ) {
+							return [ componentMessage ];
+						}
+
 						const nextStepButton = getChatComponent?.( 'next-step-button' );
 						const nextStepButtonMessageId = `${ message.id }-next-step`;
-						const showNextStepButton =
-							followUpTasks && nextStepButton && ! deletedMessageIds.has( nextStepButtonMessageId );
+						if ( ! nextStepButton || deletedMessageIds.has( nextStepButtonMessageId ) ) {
+							return [ componentMessage ];
+						}
 
 						return [
 							componentMessage,
-							// Inject the next step button after the component message if applicable
-							showNextStepButton && {
+							{
+								...message,
 								id: nextStepButtonMessageId,
 								content: [
 									{
-										type: 'component',
+										type: 'component' as const,
 										component: nextStepButton,
 										componentProps: {
 											onClick: () => {
@@ -309,7 +316,7 @@ export default function AgentDock( {
 									},
 								],
 							},
-						].filter( Boolean );
+						];
 					}
 
 					// TODO: Handle `ai start_over` components...
