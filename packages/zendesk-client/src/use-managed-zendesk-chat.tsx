@@ -1,9 +1,15 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { ZendeskConversation } from './types';
@@ -203,6 +209,8 @@ export const useManagedZendeskChat = () => {
 			Smooch.createConversation( {
 				metadata: {
 					createdAt: Date.now(),
+					started_from: 'chat',
+					chat_session_id: 'b4c25634-fc63-4f46-a3b7-0128b17fbd4c',
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
@@ -214,26 +222,60 @@ export const useManagedZendeskChat = () => {
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
+	// TODO: Refactor into a utility function.
 	const agentticMessages = useMemo( () => {
 		const messages = conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
 		if ( currentTypingStatus ) {
-			return [
-				...messages,
-				{
-					id: 'thinking_message_' + messages.length,
-					role: 'agent',
-					content: [
-						{
-							type: 'component',
-							component: () => (
-								<div className="agents-manager-typing-placeholder">
-									<ThinkingMessage content={ __( 'Typing…', '__i18n_text_domain__' ) } />
+			messages.push( {
+				id: 'thinking_message_' + messages.length,
+				role: 'agent',
+				timestamp: new Date().getTime() / 1000,
+				archived: false,
+				showIcon: true,
+				content: [
+					{
+						type: 'component',
+						component: () => (
+							<div className="agents-manager-typing-placeholder">
+								<ThinkingMessage content={ __( 'Typing…', '__i18n_text_domain__' ) } />
+							</div>
+						),
+					},
+				],
+			} );
+		}
+		if (
+			conversation?.metadata?.started_from === 'chat' &&
+			conversation?.metadata?.chat_session_id
+		) {
+			messages.unshift( {
+				id: 'transfer_message',
+				role: 'agent',
+				timestamp: new Date().getTime() / 1000,
+				archived: false,
+				showIcon: true,
+				content: [
+					{
+						type: 'component',
+						component: () => (
+							<div className="agents-manager-transfer-message">
+								<div>
+									{ createInterpolateElement(
+										__( 'Started from <a>another chat</a>', '__i18n_text_domain__' ),
+										{
+											a: (
+												<Link
+													to={ `/chat?sessionId=${ conversation?.metadata?.chat_session_id }` }
+												/>
+											),
+										}
+									) }
 								</div>
-							),
-						},
-					],
-				},
-			];
+							</div>
+						),
+					},
+				],
+			} );
 		}
 		return messages;
 	}, [ conversation, currentTypingStatus ] );
