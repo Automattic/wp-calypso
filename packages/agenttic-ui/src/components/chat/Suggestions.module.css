@@ -17,7 +17,54 @@
   display: none;
 }
 
+/* New vertical style - stacked full-width buttons */
 .vertical {
+  position: static;
+  flex-direction: column;
+  overflow: visible;
+  gap: 0;
+  padding: 0;
+
+  .button {
+    width: 100%;
+    height: unset;
+    justify-content: start;
+    font-size: 13px;
+    line-height: 20px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-muted);
+    border-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+      background-color: color-mix(in srgb, var(--color-background) 50%, var(--color-muted));
+    }
+
+    &:focus-visible {
+      outline-offset: -3px;
+    }
+  }
+
+  > div + div .button {
+    margin-top: -1px;
+  }
+
+  > div:only-of-type .button {
+    border-radius: 8px;
+  }
+
+  > div:first-of-type:not( :only-of-type ) .button {
+    border-radius: 8px 8px 0 0;
+  }
+
+  > div:last-of-type:not( :only-of-type ) .button {
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+/* Floating style - appears behind compact state (old trunk vertical) */
+.floating {
   flex-direction: column;
   gap: var(--spacing-1);
   overflow: visible;
