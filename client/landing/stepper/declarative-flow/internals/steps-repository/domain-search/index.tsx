@@ -77,11 +77,13 @@ const DomainSearchStep: StepType< {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
-	const initialQuery = useQuery().get( 'new' ) ?? '';
-	const tldQuery = useQuery().get( 'tld' );
-	const source = useQuery().get( 'source' );
-	const backTo = useQuery().get( 'back_to' ) ?? '';
-	const sourceSlug = useQuery().get( 'sourceSlug' );
+	const queryParams = useQuery();
+	const initialQuery = queryParams.get( 'new' ) ?? '';
+	const tldQuery = queryParams.get( 'tld' );
+	const source = queryParams.get( 'source' );
+	const backTo = queryParams.get( 'back_to' ) ?? '';
+	const sourceSlug = queryParams.get( 'sourceSlug' );
+	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
@@ -148,6 +150,10 @@ const DomainSearchStep: StepType< {
 			onQueryChange: setQuery,
 			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer/other-site` ) );
+					return;
+				}
 				window.location.assign(
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
 				);
@@ -157,17 +163,32 @@ const DomainSearchStep: StepType< {
 					return;
 				}
 
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ siteSlug }` ) );
+					return;
+				}
+
 				window.location.assign( domainManagementList( siteSlug ) );
 			},
 			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
 				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
 			},
 			onCheckTransferStatusClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer` ) );
+					return;
+				}
 				window.location.assign(
 					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
 				);
 			},
 			onMapDomainClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign(
+						dashboardLink( `/domains/${ domainName }/domain-connection-setup` )
+					);
+					return;
+				}
 				window.location.assign( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
@@ -211,7 +232,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug, dashboard ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow

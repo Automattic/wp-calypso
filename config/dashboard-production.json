@@ -12,6 +12,7 @@
 	"features": {
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"cookie-banner": true,
 		"dashboard/v2": false,
 		"dashboard/v2/paginated-site-list": true,

@@ -1,6 +1,6 @@
-import { getUseUnifiedExperienceFromInlineData } from '@automattic/agents-manager';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { getUseUnifiedExperienceFromInlineData } from '../utils/load-external-providers';
 
 interface CalypsoPreferencesResponse {
 	calypso_preferences?: {

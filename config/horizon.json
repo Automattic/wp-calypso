@@ -20,6 +20,7 @@
 		"catch-js-errors": true,
 		"checkout/checkout-version": false,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
