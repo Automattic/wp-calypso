@@ -2180,7 +2180,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
 		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
-		getTitle: () => i18n.translate( 'Early onboarding calls for site setup' ),
+		getTitle: () => i18n.translate( 'One-on-one onboarding call' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Talk with a WordPress.com expert to set up your site.' )
@@ -3010,7 +3010,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Enhanced AI assistant and tools' )
+				? i18n.translate( 'AI assistant and design capabilities' )
 				: i18n.translate( 'AI Writer & Designer' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant

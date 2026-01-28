@@ -103,7 +103,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 							.get2023PlanComparisonFeatureOverrideForExperiment( {
 								isSummerSpecial,
 							} )
-							.slice()
+							.slice(),
+						isExperimentVariant
 					);
 				} else if (
 					// Check if there's a specific override for comparison
@@ -153,7 +154,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				) {
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice()
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice(),
+						isExperimentVariant
 					);
 				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
 					jetpackFeatures = getPlanFeaturesObject(
