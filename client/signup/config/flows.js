@@ -7,6 +7,7 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
@@ -103,10 +104,23 @@ function getLaunchDestination( dependencies ) {
 }
 
 function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
+	const isDashboardFlow = new URLSearchParams( window.location.search ).has( 'dashboard' );
+
 	if ( domainItem && cartItem && designType !== 'existing-site' ) {
+		if ( isDashboardFlow ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
+
 		return addQueryArgs( { siteId }, '/start/setup-site' );
 	} else if ( designType === 'existing-site' ) {
+		if ( isDashboardFlow ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
 		return `/checkout/thank-you/${ siteSlug }`;
+	}
+
+	if ( isDashboardFlow ) {
+		return dashboardLink( '/domains' );
 	}
 
 	// `getThankYouPageUrl` appends a receipt ID to this slug even if it doesn't contain the

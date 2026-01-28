@@ -146,6 +146,7 @@ const DomainSearchUI = (
 						addQueryArgs( '/setup/domain-transfer/intro', {
 							new: initialQuery,
 							search: 'yes',
+							dashboard,
 						} )
 					);
 				}
