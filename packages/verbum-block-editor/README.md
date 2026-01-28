@@ -16,22 +16,24 @@ Verbum Block Editor is a lightweight Gutenberg editor, tailored specifically for
 This package can be utilized in two primary ways:
 
 ### Directly In Calypso
+
 - The package is directly integrated into Calypso as a standard package.
 - No separate build process is required after modifications.
 - Direct file alterations are reflected immediately in Calypso.
 
 ### Via widgets.wp.com
+
 - The package publishes a bundle on widgets.wp.com for broader accessibility.
 - Development process:
-  1. Navigate to the package's directory: `cd package/verbum-block-editor`.
+  1. Navigate to the package's directory: `cd packages/verbum-block-editor`.
   2. Execute `yarn dev --sync`.
   3. Changes are synchronized to `/home/wpcom/public_html/widgets.wp.com/verbum-block-editor` on your sandbox.
   4. **This this version, `wp.i18n` global is expected to be present**.
 
-
 ### Deploying Changes
 
 To deploy modifications to the package:
+
 1. Ensure your sandbox is in a clean git state.
 2. Run `yarn upload`. This will upload the production-built files as well as the translations to your sandbox.
 3. Create a patch.
@@ -39,6 +41,6 @@ To deploy modifications to the package:
 
 ### Translations
 
-This project uses .org's GlotPress translations as a source. 
+This project uses .org's GlotPress translations as a source.
 
-To translate simply run `yarn translate`. 
+To translate simply run `yarn translate`.
