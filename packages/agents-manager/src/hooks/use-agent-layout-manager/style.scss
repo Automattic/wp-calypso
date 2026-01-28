@@ -85,7 +85,7 @@
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -101,7 +101,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		border: 1px solid $border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var( --masterbar-height ) + 1px );
+		height: calc( var(--masterbar-height) + 1px );
 	}
 
 	#adminmenuback,
@@ -186,7 +186,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var( --masterbar-height ) + 1px );
+			height: calc( var(--masterbar-height) + 1px );
 
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
@@ -298,7 +298,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 }
 
-body:not( .modal-open ) .agents-manager-chat--docked {
+body:not(.modal-open) .agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -553,7 +553,7 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 				&:hover {
 					color: $white;
 					background-color: #cc1818;
-					filter: brightness( 90% );
+					filter: brightness(90%);
 				}
 			}
 
@@ -595,13 +595,17 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 		max-width: 190px;
 	}
 
-	.big-sky__chat-actions::before:not( .has-confirmation-actions ),
-	.big-sky__chat-actions::after:not( .has-confirmation-actions ) {
-		backdrop-filter: blur( 8px );
-		content: '';
+	.big-sky__chat-actions::before:not(.has-confirmation-actions),
+	.big-sky__chat-actions::after:not(.has-confirmation-actions) {
+		backdrop-filter: blur(8px);
+		content: "";
 		height: 100%;
 		left: 0;
-		mask: linear-gradient( to left, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
+		mask: linear-gradient(
+			to left,
+			rgba(255, 255, 255, 0.1),
+			rgba(255, 255, 255, 1)
+		);
 		position: fixed;
 		top: 0;
 		width: 20px;
@@ -610,7 +614,11 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 	}
 
 	.big-sky__chat-actions::after {
-		mask: linear-gradient( to right, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
+		mask: linear-gradient(
+			to right,
+			rgba(255, 255, 255, 0.1),
+			rgba(255, 255, 255, 1)
+		);
 		left: auto;
 		right: 0;
 	}
