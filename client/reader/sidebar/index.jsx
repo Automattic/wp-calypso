@@ -198,15 +198,6 @@ export class ReaderSidebar extends Component {
 					</li>
 
 					<SidebarItem
-						className={ clsx( 'sidebar-streams__search', {
-							selected: path.startsWith( '/reader/search' ),
-						} ) }
-						label={ translate( 'Search' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
-						customIcon={ <ReaderSearchIcon /> }
-						link="/reader/search"
-					/>
-					<SidebarItem
 						className={ clsx( 'sidebar-streams__discover', {
 							selected: path.startsWith( '/discover' ),
 						} ) }
