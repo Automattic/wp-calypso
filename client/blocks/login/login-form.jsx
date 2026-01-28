@@ -912,10 +912,10 @@ export class LoginForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
-						qrLoginLink={ this.getQrLoginLink() }
-						isJetpack={ isJetpack }
-						allowedSocialServices={ this.props.allowedSocialServices }
-					/>
+							qrLoginLink={ this.getQrLoginLink() }
+							isJetpack={ isJetpack }
+							allowedSocialServices={ this.props.allowedSocialServices }
+						/>
 					</Fragment>
 				) }
 			</>
@@ -979,12 +979,12 @@ export default connect(
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
 			oauth2Client,
-		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-		allowedSocialServices: getPartnerAllowedSocialServices(
-			get( getCurrentQueryArguments( state ), 'from' ) ||
-				get( getInitialQueryArguments( state ), 'from' )
-		),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
+			allowedSocialServices: getPartnerAllowedSocialServices(
+				get( getCurrentQueryArguments( state ), 'from' ) ||
+					get( getInitialQueryArguments( state ), 'from' )
+			),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),
