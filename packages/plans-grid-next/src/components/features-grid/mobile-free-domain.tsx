@@ -5,6 +5,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 
@@ -18,6 +19,12 @@ const MobileFreeDomain = ( {
 	paidDomainName,
 }: MobileFreeDomainProps ) => {
 	const translate = useTranslate();
+	const { isVar1dVariant } = usePlansGridContext();
+
+	// For var1d, don't render the highlighted free domain - it appears in regular feature list
+	if ( isVar1dVariant ) {
+		return null;
+	}
 
 	if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;

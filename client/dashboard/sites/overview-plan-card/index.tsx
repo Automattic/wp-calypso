@@ -1,4 +1,4 @@
-import { DotcomPlans } from '@automattic/api-core';
+import { DotcomPlans, JetpackPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
@@ -218,7 +218,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 		return __( 'Upgrade to access all hosting features.' );
 	}
 
-	if ( site.plan?.product_slug === DotcomPlans.JETPACK_FREE ) {
+	if ( site.plan?.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
 		return getJetpackProductsForSite( site ).length > 0
 			? __( 'Manage subscriptions.' )
 			: __( 'Upgrade to access more Jetpack tools.' );

@@ -8,7 +8,7 @@ import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/s
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { MarketplaceTypeContext } from '../../context';
+import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 
 import './style.scss';
 
@@ -18,6 +18,7 @@ const ReferralToggle = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
 	const { guideModal, openGuide } = useReferralsGuide();
 
 	const guideModalSeen = useSelector( ( state ) => getPreference( state, PREFERENCE_NAME ) );
@@ -28,7 +29,8 @@ const ReferralToggle = () => {
 		toggleMarketplaceType();
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
-				purchase_mode: marketplaceType,
+				purchase_mode: marketplaceType === 'referral' ? 'regular' : 'referral',
+				term_pricing: termPricing,
 			} )
 		);
 	};

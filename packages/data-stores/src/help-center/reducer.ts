@@ -3,7 +3,7 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions, Preferences } from './types';
+import type { HelpCenterOptions } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -21,17 +21,6 @@ const typingConversationStatus: Reducer<
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_TYPING_STATUS':
 			return { ...state, [ action.conversationId ]: action.isTyping };
-	}
-	return state;
-};
-
-const helpCenterPreferences: Reducer< Preferences[ 'calypso_preferences' ], HelpCenterAction > = (
-	state = {},
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES':
-			return action.preferences;
 	}
 	return state;
 };
@@ -173,6 +162,15 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 
 const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
+		// Keep the existing parameters in the new route.
+		if ( action.coalesceParams ) {
+			const originalParams = new URLSearchParams( state );
+			const newParams = new URLSearchParams( action.route );
+			newParams.forEach( ( value, key ) => {
+				originalParams.set( key, value );
+			} );
+			return `${ action.route }?${ originalParams.toString() }`;
+		}
 		return action.route;
 	}
 	return state;
@@ -233,7 +231,6 @@ const reducer = combineReducers( {
 	showMessagingWidget,
 	zendeskConnectionStatus,
 	subject,
-	helpCenterPreferences,
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,

@@ -22,6 +22,7 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js', // dynamic filename
+			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
 		},
 		optimization: {
@@ -86,6 +87,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-customizer' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-logged-out' } ),
 		getIndividualConfig( {
 			env,
 			argv,

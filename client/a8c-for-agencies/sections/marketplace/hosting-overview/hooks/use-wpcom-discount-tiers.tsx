@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import wpcomBulkOptions from '../../lib/wpcom-bulk-options';
+import type { APIProductFamily } from 'calypso/a8c-for-agencies/types/products';
 
 export default function useWPCOMDiscountTiers() {
-	const { data: products } = useProductsQuery( false, true );
+	const { data: products } = useProductsQuery( true );
 
 	const wpcomProducts = products
 		? ( products.find(

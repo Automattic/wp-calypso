@@ -1,12 +1,20 @@
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import type { ReferralPurchase } from '../../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 const getProductName = ( purchase: ReferralPurchase, data: APIProductFamilyProduct[] ) => {
-	const product = data.find( ( product ) => product.product_id === purchase.product_id );
+	let productName = purchase.subscription?.product_name;
 
-	// Use product_name from subscription if available, otherwise fall back to product name from data
-	return purchase.subscription?.product_name || product?.name;
+	if ( ! productName ) {
+		const product = data?.find( ( product ) =>
+			[ product.monthly_product_id, product.yearly_product_id, product.product_id ].includes(
+				purchase.product_id
+			)
+		);
+		productName = product?.name;
+	}
+
+	return productName;
 };
 
 export default function ReferralProducts( {

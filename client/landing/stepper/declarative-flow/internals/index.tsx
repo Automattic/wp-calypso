@@ -1,3 +1,4 @@
+import { WooDashboardLogo } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -120,14 +121,21 @@ export const FlowRenderer: React.FC< {
 		state: AssertConditionState.SUCCESS,
 	};
 
-	const stepContainerV2Context = useMemo(
-		() => ( {
+	const stepContainerV2Context = useMemo( () => {
+		// Detect CIAB dashboard for Woo branding.
+		// Query params persist between step changes so this is stable.
+		const isWooDashboard =
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
+
+		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-		} ),
-		[ flow.name, currentStepRoute ]
-	);
+			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
+			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+		};
+	}, [ flow.name, currentStepRoute ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {

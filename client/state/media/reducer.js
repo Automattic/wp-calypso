@@ -20,7 +20,6 @@ import {
 	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_SET_QUERY,
-	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
@@ -157,8 +156,7 @@ export const queries = ( state = {}, action ) => {
 			const { siteId, mediaItem } = action;
 			return withQueryManager( state, siteId, ( m ) => m.receive( mediaItem, { patch: true } ) );
 		}
-		case MEDIA_SOURCE_CHANGE:
-		case MEDIA_CLEAR_SITE: {
+		case MEDIA_SOURCE_CHANGE: {
 			if ( ! action.siteId ) {
 				return state;
 			}

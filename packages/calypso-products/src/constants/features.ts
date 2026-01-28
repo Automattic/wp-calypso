@@ -362,6 +362,7 @@ export const FEATURE_ALWAYS_ONLINE = 'always-online';
 export const FEATURE_99_999_UPTIME = '99-999-uptime';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
+export const FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS = 'style-customization-fonts-colors';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
@@ -388,6 +389,10 @@ export const FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN = 'automated-backups-securi
 export const FEATURE_INTEGRATED_SHIPMENT_TRACKING = 'integrated-shipment-tracking';
 export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
 export const FEATURE_EMAIL_MARKETING = 'email-marketing';
+export const FEATURE_ADVANCED_JETPACK_FORMS = 'advanced-jetpack-forms';
+export const FEATURE_WORDPRESS_STUDIO_SYNC = 'wordpress-studio-sync';
+export const FEATURE_EARLY_ONBOARDING_CALLS = 'early-onboarding-calls';
+export const FEATURE_BASIC_FORMS = 'basic-forms';
 export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
 	'marketplace-sync-social-media-integration';
 export const FEATURE_BACK_IN_STOCK_NOTIFICATIONS = 'back-in-stock-notifications';
@@ -450,10 +455,12 @@ export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
 export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
 export const FEATURE_SUPPORT = 'support';
 export const FEATURE_SUPPORT_FROM_EXPERTS = 'support-from-experts';
+export const FEATURE_FREE_FAST_SUPPORT = 'free-fast-support';
 export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
 export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
 export const FEATURE_AI_ASSISTANT = 'ai-assistant';
+export const FEATURE_BIG_SKY = 'big-sky';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -530,6 +537,9 @@ export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus'
 export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
 export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
 export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
+
+// "Included in plan:" header for Free plan in stacked variants
+export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

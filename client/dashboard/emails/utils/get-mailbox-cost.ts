@@ -167,13 +167,14 @@ export const getMailboxCost = ( {
 			  __(
 					'Try free today - first renewal at %(firstRenewalPrice)s (excl. taxes) after your free trial ends on %(endDate)s, regular price %(cost)s per %(termLocalized)s (excl. taxes).'
 			  );
+		const renewalMonths = product.introductory_offer?.interval_unit === 'year' ? 12 : 9;
 		return {
 			amount: 0,
 			currency: product.currency_code,
 			message: sprintf( message, {
 				...placeholders,
 				firstRenewalPrice: formatCurrency(
-					( ( product.cost ?? 0 ) * 9 ) / 12,
+					( ( product.cost ?? 0 ) * renewalMonths ) / 12,
 					product.currency_code,
 					{ stripZeros: true }
 				),

@@ -11,14 +11,14 @@ import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/com
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
-import React, { useState, useEffect, useCallback } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import React, { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
-import type { MouseEvent, KeyboardEvent, FC } from 'react';
+import type { FC, MouseEvent } from 'react';
 import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mode.scss';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
@@ -67,9 +67,7 @@ export const Editor: FC< EditorProps > = ( {
 	// Listen for the content height changing and update the iframe height.
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 
-	const { selectBlock } = useDispatch( blockEditorStore );
-
-	const selectLastBlock = ( event?: MouseEvent | KeyboardEvent ) => {
+	const handleNewParagraphAfterNonTextBlock = ( event?: MouseEvent< HTMLDivElement > ): void => {
 		const lastBlock = editorContent[ editorContent.length - 1 ];
 		if ( lastBlock ) {
 			// If this is a click event only shift focus if the click is in the root.
@@ -81,25 +79,11 @@ export const Editor: FC< EditorProps > = ( {
 					if ( lastBlock.name !== 'core/paragraph' ) {
 						const newParagraph = createBlock( 'core/paragraph' );
 						handleContentUpdate( [ ...editorContent, newParagraph ] );
-						selectBlock( newParagraph.clientId );
 					}
-
-					selectBlock( lastBlock.clientId );
-				} else {
-					return;
 				}
 			}
-
-			selectBlock( lastBlock.clientId );
 		}
 	};
-
-	useEffect( () => {
-		// Select the first item in the editor when it loads.
-		selectLastBlock();
-		setIsEditing( true );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- we want to run this once
-	}, [] );
 
 	return (
 		<SlotFillProvider>
@@ -123,6 +107,7 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
+					<InitialBlockSelector onBlockSelect={ () => setIsEditing( true ) } />
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
@@ -147,7 +132,7 @@ export const Editor: FC< EditorProps > = ( {
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 								<div
 									className="editor__block-canvas-container wp-embed-responsive"
-									onClick={ selectLastBlock }
+									onClick={ handleNewParagraphAfterNonTextBlock }
 								>
 									{ contentResizeListener }
 									<BlockList renderAppender={ false } />
@@ -163,3 +148,32 @@ export const Editor: FC< EditorProps > = ( {
 		</SlotFillProvider>
 	);
 };
+
+/**
+ * Component to select the last block on initial load.
+ *
+ * NOTE: Must be rendered inside BlockEditorProvider to access the correct store context.
+ */
+function InitialBlockSelector( { onBlockSelect }: { onBlockSelect: () => void } ) {
+	const { selectBlock } = useDispatch( blockEditorStore );
+	const storeBlocks = useSelect( ( select ) => select( blockEditorStore ).getBlocks(), [] );
+	const hasInitialized = useRef( false );
+
+	useEffect( () => {
+		// To ensure we only run this useEffect once.
+		if ( hasInitialized.current ) {
+			return;
+		}
+
+		const lastBlock = storeBlocks[ storeBlocks.length - 1 ];
+		if ( ! lastBlock ) {
+			return;
+		}
+
+		hasInitialized.current = true;
+		selectBlock( lastBlock.clientId );
+		onBlockSelect();
+	}, [ selectBlock, storeBlocks, onBlockSelect ] );
+
+	return null;
+}

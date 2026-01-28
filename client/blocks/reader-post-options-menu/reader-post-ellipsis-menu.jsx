@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { edit, external, seen, unseen } from '@wordpress/icons';
+import { edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,7 +10,6 @@ import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -268,7 +267,7 @@ class ReaderPostEllipsisMenu extends Component {
 			followSource,
 		} = this.props;
 
-		const { ID: postId, site_ID: siteId } = post;
+		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 
@@ -298,6 +297,8 @@ class ReaderPostEllipsisMenu extends Component {
 				{ this.props.showFollow && (
 					<ReaderFollowButton
 						tagName={ PopoverMenuItem }
+						feedId={ feedId }
+						siteId={ siteId }
 						siteUrl={ post.feed_URL || post.site_URL }
 						followSource={ followSource }
 						iconSize={ 24 }
@@ -315,10 +316,7 @@ class ReaderPostEllipsisMenu extends Component {
 						post={ post }
 						followSource={ followSource }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
-						followingIcon={ ReaderFollowingConversationIcon( {
-							iconSize: 24,
-							className: 'reader-following-conversation',
-						} ) }
+						followingIcon={ <Icon className="reader-following-conversation" icon={ published } /> }
 					/>
 				) }
 

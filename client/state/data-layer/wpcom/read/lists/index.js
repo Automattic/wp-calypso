@@ -50,7 +50,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				if ( list?.owner && list?.slug ) {
 					return [
 						receiveCreateReaderList( { list } ),
-						() => page( `/read/list/${ list.owner }/${ list.slug }/edit` ),
+						() => page( `/read/list/${ list.owner }/${ list.slug }/edit/items` ),
 						successNotice( translate( 'List created successfully.' ), {
 							duration: DEFAULT_NOTICE_DURATION,
 						} ),

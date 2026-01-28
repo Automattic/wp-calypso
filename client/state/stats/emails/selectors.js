@@ -42,25 +42,6 @@ export function isRequestingEmailStats( state, siteId, postId, period, statType,
 }
 
 /**
- * Returns true if current requesting all time email stat for the specified site ID,
- * email ID, period and stat key, or * false otherwise.
- * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  postId Post Id
- * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
- * @returns {boolean}        Whether email stat is being requested
- */
-export function isRequestingAlltimeEmailStats( state, siteId, postId, statType ) {
-	return state.stats.emails
-		? get(
-				state.stats.emails.requests,
-				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType ), 'requesting' ],
-				false
-		  )
-		: false;
-}
-
-/**
  * Returns true if we should show a loading indicator
  * Returns false if we have data or if we are requesting data
  * @param  {Object}  state  Global state tree
@@ -83,17 +64,6 @@ export function shouldShowLoadingIndicator( state, siteId, postId, period, statT
 		return false;
 	}
 	return isRequestingEmailStats( state, siteId, postId, period, statType, date );
-}
-
-/**
- * Returns the stats for the specified site ID, postId
- * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  postId Email Id
- * @returns {Object}         Stats
- */
-export function getEmailStats( state, siteId, postId ) {
-	return state.stats.emails ? get( state.stats.emails.items, [ siteId, postId ], null ) : [];
 }
 
 /**
@@ -181,18 +151,4 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, stat
 				null
 		  )
 		: null;
-}
-
-/**
- * Returns the email stats for the specified site ID, post ID
- * This is for alltime stats
- * @param  {Object}  state   Global state tree
- * @param  {number}  siteId  Site ID
- * @param  {number}  postId  Email Id
- * @param  {string} statType Stat type
- */
-export function getAlltimeStats( state, siteId, postId, statType ) {
-	return state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, PERIOD_ALL_TIME, statType ], null )
-		: {};
 }

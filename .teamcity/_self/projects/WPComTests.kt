@@ -4,9 +4,11 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.*
+import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.Template
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -20,6 +22,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -67,7 +70,14 @@ object WPComTests : Project({
 	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
 
 	buildType(I18NTests);
-	buildType(P2E2ETests)
+	buildType(P2E2ETests);
+	buildType(GutenbergPlaywrightTests);
+
+	// Jetpack E2E Tests (Playwright)
+	template(JetpackE2ETestsBuildTemplate);
+	buildType(JetpackSimpleE2ETests);
+	buildType(JetpackAtomicE2ETests);
+	buildType(JetpackAtomicSmokeE2ETests);
 })
 
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
@@ -363,31 +373,19 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 	});
 }
 
+private object I18NTests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_i18n")
+	uuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f"
+	name = "I18N Tests"
+	description = "Runs tests related to i18n using Playwright Test"
 
-private object I18NTests : E2EBuildType(
-	buildId = "WPComTests_i18n",
-	buildUuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f",
-	buildName = "I18N Tests",
-	buildDescription = "Runs tests related to i18n",
-	testGroup = "i18n",
-	buildParams = {
-		text(
-			name = "env.CALYPSO_BASE_URL",
-			value = "https://wordpress.com",
-			label = "Test URL",
-			description = "URL to test against",
-			allowEmpty = false
-		)
-		text(
-			name = "env.LOCALES",
-			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
-			label = "Locales to use",
-			description = "Locales to use, separated by comma",
-			allowEmpty = false
-		)
-		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
+	params {
+		param("PROJECT", "i18n")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+	}
+
+	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -401,8 +399,9 @@ private object I18NTests : E2EBuildType(
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 3
@@ -414,19 +413,21 @@ private object I18NTests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
-)
+})
 
-object P2E2ETests : E2EBuildType(
-	buildId = "WPComTests_p2",
-	buildUuid = "086ed775-eee4-4cc0-abc4-bb497979ef48",
-	buildName = "P2 E2E Tests",
-	buildDescription = "Runs end-to-end tests against P2.",
-	testGroup = "p2",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-	},
-	buildFeatures = {
+private object P2E2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_p2")
+	uuid = "086ed775-eee4-4cc0-abc4-bb497979ef48"
+	name = "P2 E2E Tests"
+	description = "Runs end-to-end tests against P2 using Playwright Test"
+
+	params {
+		param("PROJECT", "p2")
+		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+	}
+
+	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -448,8 +449,9 @@ object P2E2ETests : E2EBuildType(
 			branchFilter = "trunk"
 			buildFailed = true
 		}
-	},
-	buildTriggers = {
+	}
+
+	triggers {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
@@ -460,4 +462,146 @@ object P2E2ETests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
-)
+})
+
+private object GutenbergPlaywrightTests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_GutenbergPlaywrightTests")
+	uuid = "acacb00f-151b-4fb4-9f45-922a0543dcf6"
+	name = "Gutenberg E2E Tests"
+	description = "Runs Gutenberg E2E tests using Playwright Test with matrix for viewport and site configuration"
+
+	params {
+		param("TEST_GROUP", "@gutenberg")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+			param("EXTRA_ENV_VARS", listOf(
+				value("", label = "Simple Production"),
+				value("GUTENBERG_EDGE=true", label = "Simple Edge"),
+				value("TEST_ON_ATOMIC=true,PW_WORKERS=1", label = "Atomic Production"),
+				value("TEST_ON_ATOMIC=true,GUTENBERG_EDGE=true,PW_WORKERS=1", label = "Atomic Edge"),
+				value("TEST_ON_ATOMIC=true,GUTENBERG_NIGHTLY=true,PW_WORKERS=1", label = "Atomic Nightly"),
+			))
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#gutenberg-e2e"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailed = true
+			buildFinishedSuccessfully = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 4
+			}
+			branchFilter = "+:trunk"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+})
+
+private object JetpackE2ETestsBuildTemplate : Template({
+	name = "Jetpack E2E Tests Build Template"
+	description = "Runs Jetpack WPCOM integration tests using Playwright Test runner"
+
+	params {
+		param("TEST_GROUP", "@jetpack-wpcom-integration")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("env.JETPACK_TARGET", "wpcom-deployment")
+	}
+
+	features {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#notif-test"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+})
+
+private object JetpackSimpleE2ETests : BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_JetpackSimpleE2ETests")
+	uuid = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d"
+	name = "Jetpack Simple E2E Tests"
+	description = "Runs Jetpack WPCOM integration tests on Simple sites"
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+	}
+})
+
+private object JetpackAtomicE2ETests : BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_JetpackAtomicE2ETests")
+	uuid = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+	name = "Jetpack Atomic E2E Tests"
+	description = "Runs Jetpack WPCOM integration tests on all Atomic variations"
+
+	params {
+		param("PROJECT", "desktop")
+		param("env.TEST_ON_ATOMIC", "true")
+		param("env.PW_WORKERS", "5")
+	}
+
+	features {
+		matrix {
+			param("env.ATOMIC_VARIATION", listOf(
+				value("default", label = "Default"),
+				value("php-old", label = "PHP Old"),
+				value("php-new", label = "PHP New"),
+				value("wp-beta", label = "WP Beta"),
+				value("wp-previous", label = "WP Previous"),
+				value("private", label = "Private"),
+				value("ecomm-plan", label = "Ecomm"),
+			))
+		}
+	}
+})
+
+private object JetpackAtomicSmokeE2ETests : BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id("WPComTests_JetpackAtomicSmokeE2ETests")
+	uuid = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+	name = "Jetpack Atomic E2E Tests - Mixed Variations"
+	description = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations"
+
+	params {
+		param("PROJECT", "desktop")
+		param("env.TEST_ON_ATOMIC", "true")
+		param("env.PW_WORKERS", "14")
+		param("env.ATOMIC_VARIATION", "mixed")
+	}
+})

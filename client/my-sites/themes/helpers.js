@@ -86,15 +86,6 @@ export function addOptionsToGetUrl( options, { tabFilter, tierFilter, styleVaria
 	);
 }
 
-/**
- * Creates the billing product slug for a given theme ID.
- * @param themeId Theme ID
- * @returns string
- */
-export function marketplaceThemeBillingProductSlug( themeId ) {
-	return `wp-mp-theme-${ themeId }`;
-}
-
 export function getSubjectsFromTermTable( filterToTermTable ) {
 	return Object.keys( filterToTermTable )
 		.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )

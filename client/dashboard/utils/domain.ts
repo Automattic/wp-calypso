@@ -57,10 +57,6 @@ export function isDomainRenewable( domain: DomainSummary ): boolean {
 	);
 }
 
-export function isDomainUpdatable( domain: DomainSummary ) {
-	return domain.domain_status.id !== DomainStatus.PENDING_TRANSFER && ! domain.expired;
-}
-
 export function isDomainInGracePeriod( domain: DomainSummary ) {
 	if ( domain.expiry === null ) {
 		return true;
@@ -122,6 +118,7 @@ export function canSetAsPrimary( {
 	return (
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
+		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR &&
 		! shouldUpgradeToMakeDomainPrimary( {
 			domain,
 			site,

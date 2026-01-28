@@ -18,16 +18,6 @@ export function overrideSanitizeSectionRoot( newRoot ) {
 }
 
 /**
- * Get the current root object
- *
- * This is need in order to sanitize the content on the server.
- * @returns {Object} window-like object used as root
- */
-export function getSanitizeSectionRoot() {
-	return root;
-}
-
-/**
  * Determine if a given tag is allowed
  *
  * This only looks at the name of the tag to

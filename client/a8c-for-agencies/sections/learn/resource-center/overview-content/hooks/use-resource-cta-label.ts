@@ -10,10 +10,10 @@ export function useResourceCtaLabel( format: string ): string {
 		case 'Video':
 			return __( 'Watch now' );
 		case 'PDF':
-			return __( 'Download Guide' );
+			return __( 'Download guide' );
 		case 'Slide Deck':
-			return __( 'View Deck' );
+			return __( 'View deck' );
 		default:
-			return __( 'Read more' );
+			return __( 'Learn more' );
 	}
 }

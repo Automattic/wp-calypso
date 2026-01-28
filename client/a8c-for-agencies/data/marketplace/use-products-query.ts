@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryResult, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -7,16 +8,16 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type {
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/a8c-for-agencies/types/products';
 
-function queryProducts(
-	isPublicFacing: boolean,
-	agencyId?: number
-): Promise< APIProductFamily[] > {
-	const productsAPIPath = isPublicFacing
-		? '/jetpack-licensing/public/manage-pricing'
+async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] > {
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+	const productsAPIPath = isTermPricingEnabled
+		? '/agency/products'
 		: '/jetpack-licensing/partner/product-families';
-
 	return wpcom.req
 		.get(
 			{
@@ -51,6 +52,10 @@ function queryProducts(
 							.map( ( product ) => ( {
 								...product,
 								family_slug: family.slug,
+								alternative_product_id:
+									product.alternative_product_id ||
+									product.monthly_alternative_product_id ||
+									product.yearly_alternative_product_id,
 							} ) ),
 					};
 				} )
@@ -60,20 +65,9 @@ function queryProducts(
 		} );
 }
 
-export function usePublicProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
-	return useProductsQuery( true );
-}
-
-const getProductsQueryKey = ( isPublicFacing: boolean, agencyId?: number ) => [
-	'a4a',
-	'marketplace',
-	'products',
-	isPublicFacing,
-	agencyId,
-];
+const getProductsQueryKey = ( agencyId?: number ) => [ 'a4a', 'marketplace', 'products', agencyId ];
 
 export default function useProductsQuery(
-	isPublicFacing = false,
 	includeRawData = false,
 	useStaleData = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {
@@ -82,7 +76,7 @@ export default function useProductsQuery(
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const queryClient = useQueryClient();
-	const data = queryClient.getQueryData( getProductsQueryKey( isPublicFacing, agencyId ) );
+	const data = queryClient.getQueryData( getProductsQueryKey( agencyId ) );
 
 	let staleTime = 0;
 
@@ -92,10 +86,10 @@ export default function useProductsQuery(
 	}
 
 	const query = useQuery( {
-		queryKey: getProductsQueryKey( isPublicFacing, agencyId ),
-		queryFn: () => queryProducts( isPublicFacing, agencyId ),
+		queryKey: getProductsQueryKey( agencyId ),
+		queryFn: () => queryProducts( agencyId ),
 		select: includeRawData ? getProductsRaw : selectAlphabeticallySortedProductOptions,
-		enabled: isPublicFacing || !! agencyId,
+		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 		staleTime,
 	} );

@@ -87,6 +87,10 @@ export default function HostingDashboardOptInForm() {
 		}
 	};
 
+	if ( savedPreference?.value === 'forced-opt-in' ) {
+		return null;
+	}
+
 	return (
 		<>
 			<SectionHeader label={ translate( 'Try the new Hosting Dashboard' ) } />

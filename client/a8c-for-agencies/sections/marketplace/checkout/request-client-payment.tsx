@@ -33,16 +33,17 @@ import {
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import NoticeSummary from './notice-summary';
-import type { ShoppingCartItem } from '../types';
+import type { ShoppingCartItem, TermPricingType } from '../types';
 interface Props {
 	checkoutItems: ShoppingCartItem[];
+	termPricing: TermPricingType;
 }
 
 type ValidationState = {
 	email?: string;
 };
 
-function RequestClientPayment( { checkoutItems }: Props ) {
+function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -92,9 +93,14 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const handleRequestPayment = useCallback(
 		( flowType: ReferralOrderFlowType ) => {
-			if ( ! hasCompletedForm ) {
+			if ( flowType === 'send' && ! hasCompletedForm ) {
 				return;
 			}
+
+			if ( flowType === 'copy' && ! email ) {
+				return;
+			}
+
 			if ( ! emailValidator.validate( email ) ) {
 				setValidationError( { email: translate( 'Please provide correct email address' ) } );
 				return;
@@ -103,7 +109,10 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				recordTracksEvent(
 					flowType === 'send'
 						? 'calypso_a4a_marketplace_referral_checkout_request_payment_click'
-						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click'
+						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
+					{
+						term_pricing: termPricing,
+					}
 				)
 			);
 			requestPayment(
@@ -242,7 +251,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				<Button
 					primary
 					onClick={ () => handleRequestPayment( 'copy' ) }
-					disabled={ ! hasCompletedForm || isUserUnverified }
+					disabled={ ! email || isUserUnverified }
 					busy={ isPending }
 				>
 					<Icon icon={ customLink } />

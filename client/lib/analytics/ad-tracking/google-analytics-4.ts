@@ -3,7 +3,6 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/cart-to-ga-purchase';
-import { GaItem } from '../utils/product-to-ga-item';
 import { TRACKING_IDS } from './constants';
 
 // Ensure setup has run.
@@ -41,15 +40,6 @@ export function fireEcommercePurchase( purchase: GaPurchase, ga4PropertyGtag: Ga
 	window.gtag( 'event', 'purchase', {
 		send_to: ga4Properties[ ga4PropertyGtag ],
 		...purchase,
-	} );
-}
-
-export function fireEcommerceAddToCart( item: GaItem, ga4PropertyGtag: Ga4PropertyGtag ) {
-	window.gtag( 'event', 'add_to_cart', {
-		send_to: ga4Properties[ ga4PropertyGtag ],
-		value: item.price,
-		currency: 'USD',
-		items: [ item ],
 	} );
 }
 

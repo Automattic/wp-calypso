@@ -381,11 +381,14 @@ const PlansFeaturesMain = ( {
 
 	const {
 		isLoading: isLoadingDifferentiatorsExperiment,
-		isStacked,
-		isLongSet,
-		isShortSet,
 		showDifferentiatorHeader,
 		variant: differentiatorsVariant,
+		useVar1Features,
+		useVar3Features,
+		useVar4Features,
+		useVar5Features,
+		isVar1dVariant,
+		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
@@ -462,9 +465,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useLongSetFeatures: isLongSet && ! isStacked,
-		useLongSetStackedFeatures: isLongSet && isStacked,
-		useShortSetStackedFeatures: ! isLongSet && isStacked,
+		useLongSetFeatures: useVar4Features,
+		useLongSetStackedFeatures: useVar3Features,
+		useShortSetStackedFeatures: useVar1Features,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -488,9 +494,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useLongSetFeatures: isLongSet && ! isStacked,
-		useLongSetStackedFeatures: isLongSet && isStacked,
-		useShortSetStackedFeatures: ! isLongSet && isStacked,
+		useLongSetFeatures: useVar4Features,
+		useLongSetStackedFeatures: useVar3Features,
+		useShortSetStackedFeatures: useVar1Features,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -735,14 +744,14 @@ const PlansFeaturesMain = ( {
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
 		? getWooExpressFeaturesGroupedForComparisonGrid()
-		: getPlanFeaturesGroupedForComparisonGrid();
+		: getPlanFeaturesGroupedForComparisonGrid( { isExperimentVariant } );
 
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( isLongSet || isShortSet ) {
+	} else if ( useVar3Features || useVar4Features || useVar1Features || useVar5Features ) {
 		// Experiment: stacked variants should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
@@ -902,7 +911,7 @@ const PlansFeaturesMain = ( {
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
 										className={ `plans-features-main__features-grid${
-											isLongSet || isShortSet ? ' is-plan-differentiators-experiment' : ''
+											isExperimentVariant ? ' is-plan-differentiators-experiment' : ''
 										}` }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
@@ -941,6 +950,7 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
+										isVar1dVariant={ isVar1dVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1005,6 +1015,7 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
+													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle
