@@ -264,7 +264,7 @@ export default function AgentDock( {
 						return [ message ];
 					}
 
-					// Safely parse tool message JSON; return original if not valid JSON
+					// The tool message is a JSON string. Try to parse it, falling back to the original if invalid.
 					let textData;
 					try {
 						textData = JSON.parse( firstContentText );
