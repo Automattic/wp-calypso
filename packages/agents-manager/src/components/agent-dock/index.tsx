@@ -319,7 +319,7 @@ export default function AgentDock( {
 						];
 					}
 
-					// TODO: Handle `ai start_over` components...
+					// TODO: Handle `start_over` components...
 
 					return [ message ];
 				} ),
