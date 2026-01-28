@@ -3,7 +3,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 test.describe(
 	'Domain: Upsell (Home)',
 	{
-		tag: [ tags.CALYPSO_PR ],
+		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
