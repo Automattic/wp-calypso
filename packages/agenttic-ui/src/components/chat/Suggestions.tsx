@@ -14,7 +14,7 @@ export interface SuggestionsProps {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
-	layout?: 'floating' | 'vertical';
+	layout?: 'horizontal' | 'vertical' | 'floating';
 	visible?: boolean;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
@@ -25,7 +25,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	className,
 	suggestions,
 	onSubmit,
-	layout = 'vertical',
+	layout = 'horizontal',
 	visible = true,
 	onMouseEnter,
 	onMouseLeave,
@@ -64,9 +64,11 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 				<motion.div
 					className={ cn(
 						styles.container,
-						layout === 'floating'
+						layout === 'vertical'
+							? styles.vertical
+							: layout === 'floating'
 							? styles.floating
-							: styles.vertical,
+							: '',
 						className
 					) }
 					initial={ { opacity: 0, y: '-80%' } }
@@ -96,14 +98,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 											internalSuggestions
 										);
 									} }
-									variant={
-										layout === 'floating'
-											? 'transparent'
-											: 'outline'
-									}
-									size={
-										layout === 'floating' ? 'lg' : undefined
-									}
+									variant="outline"
 									className={ styles.button }
 								>
 									{ suggestion.label }
