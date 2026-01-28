@@ -9,10 +9,8 @@ import type { User } from '@automattic/api-core';
 
 const defaultUser = {
 	ID: 1,
-	display_name: 'Test User',
 	username: 'testuser',
 	email: 'test@example.com',
-	primary_blog: 123,
 	language: 'en',
 } as User;
 
