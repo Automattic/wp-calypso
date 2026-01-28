@@ -191,6 +191,8 @@ export default function AgentDock( {
 		if ( conversation.is_zendesk ) {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
+			const sessionId = conversation.session_id || '';
+
 			abortCurrentRequest();
 			setSessionId( sessionId );
 			navigate( '/chat', { state: { sessionId } } );
