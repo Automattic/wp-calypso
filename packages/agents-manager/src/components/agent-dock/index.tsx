@@ -310,7 +310,7 @@ export default function AgentDock( {
 										component: nextStepButton,
 										componentProps: {
 											onClick: () => {
-												// Remove the button when clicked
+												// Remove the button after click
 												setDeletedMessageIds(
 													( prevIds ) => new Set( [ ...prevIds, nextStepButtonMessageId ] )
 												);
