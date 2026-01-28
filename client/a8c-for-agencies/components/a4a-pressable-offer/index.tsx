@@ -37,11 +37,11 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 	}, [] );
 
 	const onViewEligiblePlansClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'a4a_pressable_offer_view_eligible_plans_click' ) );
+		dispatch( recordTracksEvent( 'a4a_pressable_promo_offer_2026_view_eligible_plans_click' ) );
 	}, [ dispatch ] );
 
 	const onSeeFullTermClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'a4a_pressable_offer_see_full_terms_click' ) );
+		dispatch( recordTracksEvent( 'a4a_pressable_promo_offer_2026_see_full_terms_click' ) );
 	}, [ dispatch ] );
 
 	if ( ! shouldShowOffer ) {
