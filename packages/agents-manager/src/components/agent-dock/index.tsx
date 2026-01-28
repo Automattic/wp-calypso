@@ -172,7 +172,8 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
-		// This ensures the same session ID is used by the `runAgent` method of the Big Sky plugin
+		// This ensures the same session ID is used between Big Sky and Calypso agents,
+		// so that messages will be stored in the same conversation.
 		getSessionId: () => sessionId || getStoredSessionId(),
 	} );
 
@@ -287,7 +288,6 @@ export default function AgentDock( {
 						// Only show next step button after the most recent component message with follow-up tasks
 						const isLastMessage = index === array.length - 1;
 						const nextStepButton = getChatComponent?.( 'next-step-button' );
-
 						if ( ! isLastMessage || ! followUpTasks || ! nextStepButton ) {
 							return [ componentMessage ];
 						}
