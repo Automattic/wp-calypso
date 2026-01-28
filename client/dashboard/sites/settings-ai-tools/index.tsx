@@ -126,7 +126,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					</CardBody>
 					{ ! isEnabled && (
 						<CardFooter style={ { background: '#FAFAFA' } }>
-							<ul style={ { padding: 0, margin: 0 } }>
+							<VStack as="ul" spacing={ 1 } style={ { padding: 0, margin: 0 } }>
 								{ features.map( ( feature, i ) => (
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>
 										<Icon
@@ -134,10 +134,10 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 											fill="var(--dashboard__foreground-color-success"
 											style={ { flexShrink: 0, alignSelf: 'flex-start' } }
 										/>
-										<Text lineHeight="24px">{ feature }</Text>
+										<Text>{ feature }</Text>
 									</HStack>
 								) ) }
-							</ul>
+							</VStack>
 						</CardFooter>
 					) }
 				</Card>
