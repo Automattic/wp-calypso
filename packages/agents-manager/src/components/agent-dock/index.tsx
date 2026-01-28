@@ -19,7 +19,7 @@ import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
+import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -172,7 +172,8 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
-		getSessionId: () => sessionId,
+		// This ensures the same session ID is used by the `runAgent` method of the Big Sky plugin
+		getSessionId: () => sessionId || getStoredSessionId(),
 	} );
 
 	const handleNewChat = () => {
