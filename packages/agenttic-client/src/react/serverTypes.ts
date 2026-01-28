@@ -185,8 +185,7 @@ function isThinkToolMessage( msg: ServerMessage ): boolean {
 	try {
 		const content = JSON.parse( msg.content );
 		return content.tool_id === 'wpcom__think';
-	} catch ( error ) {
-		console.error( 'Failed to parse tool message content:', error );
+	} catch {
 		return false;
 	}
 }
@@ -201,19 +200,20 @@ export function serverChatToLoadResult(
 	allowToolMessages = false
 ): ServerLoadResult {
 	const filteredServerMessages = serverChat.messages.filter( ( msg ) => {
-		// Always filter out `wpcom__think` tool messages
-		if ( isThinkToolMessage( msg ) ) {
-			return false;
-		}
-
 		// Always filter out `tool_call` messages
 		if ( msg.role === 'tool_call' ) {
 			return false;
 		}
 
-		// When `allowToolMessages` is `false`, filter out `tool_result` messages
-		if ( ! allowToolMessages && msg.role === 'tool_result' ) {
-			return false;
+		// Handle `tool_result` messages
+		if ( msg.role === 'tool_result' ) {
+			// Always filter out `wpcom__think` tool results
+			if ( isThinkToolMessage( msg ) ) {
+				return false;
+			}
+
+			// Only keep other tool results if `allowToolMessages` is true
+			return allowToolMessages;
 		}
 
 		return true;
