@@ -292,6 +292,7 @@ export default function AgentDock( {
 							return [ componentMessage ];
 						}
 
+						// Add a "Next Step" button if available and not deleted
 						const nextStepButton = getChatComponent?.( 'next-step-button' );
 						const nextStepButtonMessageId = `${ message.id }-next-step`;
 						if ( ! nextStepButton || deletedMessageIds.has( nextStepButtonMessageId ) ) {
