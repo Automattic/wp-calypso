@@ -10,6 +10,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.buildCache
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComPlugins : Project({
@@ -71,10 +72,18 @@ object CalypsoApps: BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
+		// Webpack cache directory - managed by TeamCity's build cache feature.
+		// This directory is automatically restored at build start and published at build end.
+		param("env.WEBPACK_CACHE_DIR", ".webpack-cache")
 	}
 
 	features {
 		perfmon {
+		}
+		buildCache {
+			name = "Webpack Build Cache"
+			rules = "+:.webpack-cache"
+			publish = always()
 		}
 		pullRequests {
 			vcsRootExtId = "${Settings.WpCalypso.id}"

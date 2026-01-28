@@ -18,7 +18,10 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const cachePath = path.resolve( '.cache' );
+// Use persistent cache directory from env if available (e.g., in CI), otherwise use local .cache
+const cachePath = process.env.WEBPACK_CACHE_DIR
+	? path.resolve( process.env.WEBPACK_CACHE_DIR )
+	: path.resolve( '.cache' );
 const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK;
 
 /**
@@ -113,6 +116,7 @@ function getWebpackConfig(
 		},
 		cache: {
 			type: 'filesystem',
+			cacheDirectory: path.resolve( cachePath, 'webpack' ),
 			allowCollectingMemory: true,
 		},
 		resolve: {
