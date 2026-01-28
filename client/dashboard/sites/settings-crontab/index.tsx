@@ -20,7 +20,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import AddCrontabForm from './add-crontab-form';
+import { AddCrontabForm } from './add-crontab-form';
 import type { Crontab } from '@automattic/api-core';
 
 function formatSchedule( schedule: string ): string {

@@ -2,7 +2,7 @@ import { siteCrontabCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { TextControl, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -14,11 +14,11 @@ interface AddCrontabFormProps {
 	onCancel?: () => void;
 }
 
-export default function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormProps ) {
+export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormProps ) {
 	const [ schedule, setSchedule ] = useState( 'hourly' );
 	const [ command, setCommand ] = useState( '' );
 
-	const mutation = useMutation( {
+	const { mutate: createCrontab, isPending: isCreatingCrontab } = useMutation( {
 		...siteCrontabCreateMutation( siteId ),
 		meta: {
 			snackbar: {
@@ -28,16 +28,14 @@ export default function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCron
 		},
 	} );
 
-	const handleScheduleChange = useCallback( ( value: string ) => {
-		setSchedule( value );
-	}, [] );
-
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+
 		if ( ! command.trim() ) {
 			return;
 		}
-		mutation.mutate(
+
+		createCrontab(
 			{ schedule, command: command.trim() },
 			{
 				onSuccess: () => {
@@ -50,7 +48,6 @@ export default function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCron
 	};
 
 	const isValid = command.trim().length > 0;
-	const { isPending } = mutation;
 
 	return (
 		<Card>
@@ -66,8 +63,8 @@ export default function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCron
 						/>
 						<ScheduleField
 							value={ schedule }
-							onChange={ handleScheduleChange }
-							disabled={ isPending }
+							onChange={ setSchedule }
+							disabled={ isCreatingCrontab }
 						/>
 						<TextControl
 							__nextHasNoMarginBottom
@@ -77,19 +74,19 @@ export default function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCron
 							) }
 							value={ command }
 							onChange={ setCommand }
-							disabled={ isPending }
+							disabled={ isCreatingCrontab }
 						/>
 						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
-								isBusy={ isPending }
-								disabled={ isPending || ! isValid }
+								isBusy={ isCreatingCrontab }
+								disabled={ isCreatingCrontab || ! isValid }
 							>
 								{ __( 'Add scheduled job' ) }
 							</Button>
 							{ onCancel && (
-								<Button variant="tertiary" onClick={ onCancel } disabled={ isPending }>
+								<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
 									{ __( 'Cancel' ) }
 								</Button>
 							) }
