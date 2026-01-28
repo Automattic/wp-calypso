@@ -4,7 +4,11 @@ import type { AppState } from 'calypso/types';
 
 export const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
 
-export const isDashboardEnabled = ( state: AppState ): boolean => {
+/**
+ * Determine whether to display the dashboard toggle. Only users created
+ * before 22 December 2025 can manually opt in or out.
+ */
+export const isDashboardToggleEnabled = ( state: AppState ): boolean => {
 	if ( ! isEnabled( 'dashboard/v2' ) ) {
 		return false;
 	}
@@ -14,5 +18,5 @@ export const isDashboardEnabled = ( state: AppState ): boolean => {
 		return false;
 	}
 
-	return false;
+	return true;
 };
