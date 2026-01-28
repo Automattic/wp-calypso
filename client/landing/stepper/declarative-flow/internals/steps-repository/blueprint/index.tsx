@@ -32,7 +32,7 @@ export const BlueprintStep: StepType = ( { navigation, flow } ) => {
 					blueprint: getBlueprintLabelForTracking( query ),
 				} );
 
-				const blueprint = await resolveBlueprintFromURL( new URL( window.location.href ) );
+				const blueprint = await resolveBlueprintFromURL( new URL( window.location.href ), true );
 
 				if ( ! blueprint ) {
 					return;
@@ -62,7 +62,7 @@ export const BlueprintStep: StepType = ( { navigation, flow } ) => {
 		};
 
 		fetchBlueprint();
-	}, [] );
+	}, [ query, flow, setBlueprint, submit ] );
 
 	return (
 		<>
