@@ -432,8 +432,6 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 		&.Messages-module_emptyState {
 			justify-content: start;
-			padding-bottom: 0;
-			padding-top: 0;
 		}
 
 		.EmptyView-module_container {
@@ -857,6 +855,12 @@ body:not(.modal-open) .agents-manager-chat--docked {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.Messages-module_container.Messages-module_emptyState {
+		justify-content: start;
+		padding-bottom: 0;
+		padding-top: 0;
+	}
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&.is-active,
