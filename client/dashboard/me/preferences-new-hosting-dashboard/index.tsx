@@ -12,6 +12,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
@@ -49,9 +50,13 @@ const fields: Field< OptInFormData >[] = [
 	},
 ];
 
+// See client/state/dashboard/selectors/is-dashboard-toggle-enabled.ts
+const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
+
 export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
@@ -98,7 +103,8 @@ export default function PreferencesOptInForm() {
 		);
 	};
 
-	if ( optIn.value === 'forced-opt-in' ) {
+	// Only users created before 22 December 2025 can manually opt in or out.
+	if ( user.ID > OLDEST_ELIGIBLE_USER ) {
 		return null;
 	}
 

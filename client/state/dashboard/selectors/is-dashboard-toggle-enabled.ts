@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 
-export const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
+const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
 
 /**
  * Determine whether to display the dashboard toggle. Only users created
