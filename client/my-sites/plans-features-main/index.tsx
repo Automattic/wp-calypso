@@ -970,6 +970,7 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isVar1dVariant={ isVar1dVariant }
+										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
