@@ -57,6 +57,8 @@ import {
 	resolveFeatureGroupsForComparisonGrid,
 	resolveFeatureGroupsForFeaturesGrid,
 	resolveWooExpressFeatureGroupsForComparisonGrid,
+	resolveWooHostedFeatureGroupsForFeaturesGrid,
+	resolveWooHostedFeatureGroupsForComparisonGrid,
 	resolveWordPressHostingFeatureGroupsForFeaturesGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
@@ -112,6 +114,14 @@ export function getWordPressHostingFeaturesGroupedForFeaturesGrid(): Partial< Fe
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
 	return resolveWooExpressFeatureGroupsForComparisonGrid();
+}
+
+export function getWooHostedFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForFeaturesGrid();
+}
+
+export function getWooHostedFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {

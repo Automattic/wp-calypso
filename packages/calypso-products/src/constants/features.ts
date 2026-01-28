@@ -490,6 +490,15 @@ export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted 
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
 
+// Woo Hosted Features
+export const FEATURE_WOO_HOSTED_PACKAGE = 'woo-hosted-package';
+export const FEATURE_WOO_HOSTED_AI_BUILDER = 'woo-hosted-ai-builder';
+export const FEATURE_WOO_HOSTED_MARKETING_TOOLS = 'woo-hosted-marketing-tools';
+export const FEATURE_WOO_HOSTED_BASIC_MAILPOET = 'woo-hosted-basic-mailpoet';
+export const FEATURE_WOO_HOSTED_PRO_MAILPOET = 'woo-hosted-pro-mailpoet';
+export const FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS = 'woo-hosted-basic-admin-users';
+export const FEATURE_WOO_HOSTED_PRO_ADMIN_USERS = 'woo-hosted-pro-admin-users';
+
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
 export const FEATURE_SENSEI_UNLIMITED = 'sensei-unlimited';
