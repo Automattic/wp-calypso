@@ -85,7 +85,7 @@
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -298,7 +298,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 }
 
-.agents-manager-chat--docked {
+body:not(.modal-open) .agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
