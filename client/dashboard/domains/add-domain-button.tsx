@@ -7,11 +7,9 @@ import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../util
 export function AddDomainButton( {
 	siteSlug,
 	domainConnectionSetupUrl,
-	redirectTo,
 }: {
 	siteSlug?: string;
 	domainConnectionSetupUrl?: string;
-	redirectTo?: string;
 } ) {
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
@@ -20,9 +18,6 @@ export function AddDomainButton( {
 		}
 		if ( domainConnectionSetupUrl ) {
 			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
-		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
 		}
 
 		queryArgs.dashboard = getCurrentDashboard();
