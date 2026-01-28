@@ -53,6 +53,7 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
@@ -78,7 +79,13 @@ export const sitesRoute = createRoute( {
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
 		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+			queryClient.prefetchQuery(
+				context.config.queries.sitesQuery( {
+					source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
+					site_visibility: 'visible',
+					include_a8c_owned: false,
+				} )
+			);
 		}
 
 		await Promise.all( [

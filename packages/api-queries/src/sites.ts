@@ -11,11 +11,13 @@ export const sitesQueryKey = [ 'sites', SITE_FIELDS, SITE_OPTIONS ];
 export const sitesQuery = (
 	siteFilters: FetchSiteTypes,
 	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible', include_a8c_owned: false }
-) =>
-	queryOptions( {
-		queryKey: [ ...sitesQueryKey, siteFilters, fetchSitesOptions ],
+) => {
+	const { source, ...fetchSitesOptionsKey } = fetchSitesOptions;
+	return queryOptions( {
+		queryKey: [ ...sitesQueryKey, siteFilters, fetchSitesOptionsKey ],
 		queryFn: () => fetchSites( siteFilters, fetchSitesOptions ),
 	} );
+};
 
 export const paginatedSitesQuery = (
 	siteFilters: FetchSiteTypes,
@@ -23,10 +25,12 @@ export const paginatedSitesQuery = (
 		site_visibility: 'visible',
 		include_a8c_owned: false,
 	}
-) =>
-	queryOptions( {
-		queryKey: [ ...sitesQueryKey, 'paginated', siteFilters, fetchSitesOptions ],
+) => {
+	const { source, ...fetchSitesOptionsKey } = fetchSitesOptions;
+	return queryOptions( {
+		queryKey: [ ...sitesQueryKey, 'paginated', siteFilters, fetchSitesOptionsKey ],
 		queryFn: () => fetchPaginatedSites( siteFilters, fetchSitesOptions ),
 	} );
+};
 
 export const allSitesQuery = () => sitesQuery( 'all' );
