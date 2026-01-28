@@ -1,4 +1,5 @@
 import path from 'path';
+import { envVariables } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 const TEST_SUBSTACK_EXPORT_FILE_PATH = path.join( __dirname, 'import-files', 'substackexport.zip' );
@@ -14,6 +15,11 @@ test.describe(
 		},
 	},
 	() => {
+		test.skip(
+			envVariables.MAILOSAUR_LIMIT_REACHED,
+			'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+		);
+
 		const substackSiteURL = 'https://test.substack.com/';
 		const substackSiteName = 'Testing Product';
 

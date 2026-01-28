@@ -1,4 +1,4 @@
-import { DomainsPage } from '@automattic/calypso-e2e';
+import { DomainsPage, envVariables } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
@@ -7,6 +7,11 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		test.skip(
+			envVariables.MAILOSAUR_LIMIT_REACHED,
+			'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+		);
+
 		test( 'As a user, I can add a domain to my existing site', async ( {
 			componentDomainSearch,
 			componentSidebar,

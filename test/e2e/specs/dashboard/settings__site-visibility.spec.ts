@@ -1,6 +1,12 @@
+import { envVariables } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR ] }, () => {
+	test.skip(
+		envVariables.MAILOSAUR_LIMIT_REACHED,
+		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+	);
+
 	test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
 		pageDashboard,
 		pageDashboardVisibilitySettings,
