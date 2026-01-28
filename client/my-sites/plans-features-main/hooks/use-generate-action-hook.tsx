@@ -15,6 +15,7 @@ import {
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
+	isWooHostedPlan,
 	isBusinessTrial,
 	getPlan,
 } from '@automattic/calypso-products';
@@ -592,12 +593,12 @@ function getLoggedInPlansAction( {
 		);
 	}
 
+	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 	if (
 		sitePlanSlug &&
 		getPlanClass( planSlug ) === getPlanClass( sitePlanSlug ) &&
 		! isTrialPlan
 	) {
-		// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return createLoggedInPlansAction( translate( 'Upgrade to Triennial' ) );
 		}
@@ -611,14 +612,13 @@ function getLoggedInPlansAction( {
 		}
 	}
 
-	if ( isWooExpressMediumPlan( planSlug ) && ! isWooExpressMediumPlan( sitePlanSlug || '' ) ) {
-		return createLoggedInPlansAction( translate( 'Get Performance', { textOnly: true } ) );
-	}
-	if ( isWooExpressSmallPlan( planSlug ) && ! isWooExpressSmallPlan( sitePlanSlug || '' ) ) {
-		return createLoggedInPlansAction( translate( 'Get Essential', { textOnly: true } ) );
-	}
-
-	if ( isBusinessTrial( sitePlanSlug || '' ) ) {
+	// Some flows prefer to have the CTA read "Get {plan name} plan".
+	if (
+		isBusinessTrial( sitePlanSlug || '' ) ||
+		isWooHostedPlan( sitePlanSlug || '' ) ||
+		isWooExpressMediumPlan( sitePlanSlug || '' ) ||
+		isWooExpressSmallPlan( sitePlanSlug || '' )
+	) {
 		return createLoggedInPlansAction(
 			translate( 'Get %(plan)s', {
 				textOnly: true,
