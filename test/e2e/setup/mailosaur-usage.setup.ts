@@ -1,5 +1,5 @@
-import { test as setup } from '@playwright/test';
 import { SecretsManager } from '@automattic/calypso-e2e';
+import { test as setup } from '@playwright/test';
 
 setup( 'check mailosaur daily email limit', async ( { request } ) => {
 	const apiKey = SecretsManager.secrets.mailosaur.apiKey;
