@@ -13,7 +13,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const translate = useTranslate();
 
 	const handleBuildWithAI = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_build_with_ai_click' );
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'build-with-ai',
+		} );
 
 		navigation.submit( {
 			setupChoice: 'build-with-ai',
@@ -23,7 +25,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	};
 
 	const handleBlankSite = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_blank_site_click' );
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'blank-site',
+		} );
 
 		navigation.submit( {
 			setupChoice: 'blank-site',
