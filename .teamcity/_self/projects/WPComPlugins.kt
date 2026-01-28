@@ -82,8 +82,10 @@ object CalypsoApps: BuildType({
 		}
 		buildCache {
 			name = "Webpack Build Cache"
-			rules = "+:.webpack-cache"
-			publish = always()
+			rules = ".webpack-cache"
+			publish = true
+			use = true
+			publishOnlyChanged = false
 		}
 		pullRequests {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
