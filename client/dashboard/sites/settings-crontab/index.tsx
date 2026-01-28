@@ -77,7 +77,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
 
-	const { data: crontabs, isLoading } = useQuery( {
+	const { data: crontabs = [], isLoading: isLoadingCrontabs } = useQuery( {
 		...siteCrontabsQuery( site.ID ),
 		enabled: hasSshFeature,
 	} );
@@ -116,7 +116,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		}
 	};
 
-	const totalItems = crontabs?.length ?? 0;
+	const totalItems = crontabs.length;
 
 	const fields =
 		totalItems > 0
@@ -224,11 +224,11 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				<DataViewsCard>
 					<DataViews< Crontab >
 						getItemId={ ( item ) => String( item.cron_id ) }
-						data={ crontabs ?? [] }
-						fields={ totalItems > 0 ? fields : [] }
+						data={ crontabs }
+						fields={ fields }
 						actions={ actions }
 						view={ view }
-						isLoading={ isLoading }
+						isLoading={ isLoadingCrontabs }
 						onChangeView={ () => {} }
 						defaultLayouts={ { table: {} } }
 						paginationInfo={ { totalItems, totalPages: 1 } }
