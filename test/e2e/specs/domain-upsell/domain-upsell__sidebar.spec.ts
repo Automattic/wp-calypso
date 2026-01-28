@@ -1,6 +1,12 @@
+import { envVariables } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
+	test.skip(
+		envVariables.MAILOSAUR_LIMIT_REACHED,
+		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+	);
+
 	const planName = 'Premium';
 
 	test( `As a user, I can use the sidebar domain upsell to add a domain and a ${ planName } plan to cart`, async ( {
