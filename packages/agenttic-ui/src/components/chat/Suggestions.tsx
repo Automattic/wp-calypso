@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import type { Suggestion } from '../../types';
 import { cn } from '../../utils/classNames';
 import { Button } from '../ui/button';
@@ -13,7 +14,7 @@ export interface SuggestionsProps {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
-	layout?: 'horizontal' | 'vertical';
+	layout?: 'horizontal' | 'vertical' | 'floating';
 	visible?: boolean;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
@@ -30,6 +31,15 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	onMouseLeave,
 	translateY = '-100%',
 } ) => {
+	const { variant } = useAgentUIContext();
+
+	// Limit suggestions for floating layout to prevent overflow
+	const internalSuggestions = useMemo(
+		() =>
+			variant === 'floating' ? suggestions?.slice( 0, 3 ) : suggestions,
+		[ suggestions, variant ]
+	);
+
 	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
@@ -44,17 +54,21 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 		}
 	};
 
-	if ( ! suggestions || suggestions.length === 0 ) {
+	if ( ! internalSuggestions || internalSuggestions.length === 0 ) {
 		return null;
 	}
 
 	return (
 		<AnimatePresence>
-			{ suggestions && suggestions.length > 0 && visible && (
+			{ visible && (
 				<motion.div
 					className={ cn(
 						styles.container,
-						layout === 'vertical' ? styles.vertical : '',
+						layout === 'vertical'
+							? styles.vertical
+							: layout === 'floating'
+							? styles.floating
+							: '',
 						className
 					) }
 					initial={ { opacity: 0, y: '-80%' } }
@@ -64,7 +78,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 					onMouseEnter={ onMouseEnter }
 					onMouseLeave={ onMouseLeave }
 				>
-					{ suggestions.map(
+					{ internalSuggestions.map(
 						( suggestion: Suggestion, index: number ) => (
 							<motion.div
 								key={ suggestion.id }
@@ -81,17 +95,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 										e.stopPropagation();
 										handleSuggestionClick(
 											suggestion,
-											suggestions
+											internalSuggestions
 										);
 									} }
-									variant={
-										layout === 'vertical'
-											? 'transparent'
-											: 'outline'
-									}
-									size={
-										layout === 'vertical' ? 'lg' : undefined
-									}
+									variant="outline"
 									className={ styles.button }
 								>
 									{ suggestion.label }

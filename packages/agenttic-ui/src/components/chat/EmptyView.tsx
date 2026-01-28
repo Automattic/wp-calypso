@@ -35,6 +35,7 @@ export const EmptyView: React.FC< EmptyViewProps > = ( {
 						suggestions={ suggestions }
 						onSubmit={ onSuggestionClick }
 						translateY={ 0 }
+						layout="vertical"
 					/>
 				</div>
 			) }

@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import EmbeddedDemo from './EmbeddedDemo';
 import FloatingDemo from './FloatingDemo';
 import FloatingCompactDemo from './FloatingCompactDemo';
+import SiteSpecDemo from './SiteSpecDemo';
 
 const App: React.FC = () => {
 	const [ currentDemo, setCurrentDemo ] = useState<
-		'embedded' | 'floating' | 'floating-compact'
+		'embedded' | 'floating' | 'floating-compact' | 'site-spec'
 	>( () => {
 		// Get saved demo from localStorage or default to 'embedded'
 		const saved = localStorage.getItem( 'selectedDemo' );
-		if ( saved === 'floating' || saved === 'floating-compact' ) {
-			return saved as 'floating' | 'floating-compact';
+		if ( saved === 'floating' || saved === 'floating-compact' || saved === 'site-spec' ) {
+			return saved as 'floating' | 'floating-compact' | 'site-spec';
 		}
 		return 'embedded';
 	} );
@@ -83,6 +84,21 @@ const App: React.FC = () => {
 				>
 					Compact
 				</button>
+				<button
+					onClick={ () => setCurrentDemo( 'site-spec' ) }
+					style={ {
+						padding: '8px 10px',
+						background:
+							currentDemo === 'site-spec' ? '#000' : 'white',
+						color: currentDemo === 'site-spec' ? 'white' : '#000',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Site Spec
+				</button>
 				<div style={ { marginLeft: '30px' } }>
 					<button
 						onClick={ () => setCurrentTheme( 'dark' ) }
@@ -129,6 +145,7 @@ const App: React.FC = () => {
 			{ currentDemo === 'embedded' && <EmbeddedDemo currentTheme={ currentTheme } /> }
 			{ currentDemo === 'floating' && <FloatingDemo currentTheme={ currentTheme }  /> }
 			{ currentDemo === 'floating-compact' && <FloatingCompactDemo currentTheme={ currentTheme } /> }
+			{ currentDemo === 'site-spec' && <SiteSpecDemo currentTheme={ currentTheme } /> }
 		</>
 	);
 };
