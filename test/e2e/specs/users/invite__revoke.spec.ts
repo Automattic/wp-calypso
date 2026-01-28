@@ -62,7 +62,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {
-				await pagePeople.expectInvitation( testEmailAddress );
+				await pagePeople.waitForInvitation( testEmailAddress );
 			} );
 
 			await test.step( 'When I select the invited user', async function () {

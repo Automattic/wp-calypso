@@ -1,9 +1,7 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
+import { HelpCenterDispatch, HelpCenterSelect } from '@automattic/data-stores';
+import { dispatch, useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
 import { useState, useEffect, useLayoutEffect } from 'react';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
@@ -118,27 +116,12 @@ class MemoryHistory {
 		const event = { action, location: this.location };
 		this.listeners.forEach( ( listener ) => listener( event ) );
 
-		if ( canAccessWpcomApis() ) {
-			wpcomRequest( {
-				path: '/me/preferences',
-				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-				body: {
-					calypso_preferences: {
-						help_center_router_history: { entries: this.entries, index: this.index },
-					},
-				},
-			} ).catch( () => {} );
-		} else {
-			apiFetch( {
-				global: true,
-				path: '/help-center/open-state',
-				method: 'PUT',
-				data: {
-					help_center_router_history: { entries: this.entries, index: this.index },
-				},
-			} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
-		}
+		(
+			dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ]
+		 ).setHelpCenterRouterHistory( {
+			entries: this.entries,
+			index: this.index,
+		} );
 	}
 }
 

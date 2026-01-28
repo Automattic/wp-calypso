@@ -4,7 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
-import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
+import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
@@ -47,7 +47,7 @@ interface CancelPurchaseFormProps {
 	downgradePlan?: PlanProduct;
 	downgradePlanToMonthlyPrice?: number;
 	downgradePlanToPersonalPrice?: number;
-	flowType?: string;
+	flowType?: CancelFlowType;
 	freeMonthOfferClick?: () => void;
 	allSteps: string[];
 	hasBackupsFeature?: boolean;

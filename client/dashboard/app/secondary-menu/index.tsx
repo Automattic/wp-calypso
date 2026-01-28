@@ -1,5 +1,5 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
-import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -56,7 +56,7 @@ function Help() {
 	const isUnifiedAgentEnabled = useShouldUseUnifiedAgent();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover_v2'
+		'calypso_help_center_menu_popover_increase_exposure'
 	);
 	const isMenuPanelExperimentEnabled =
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';

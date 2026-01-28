@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
@@ -8,15 +7,18 @@ import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-conf
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
-import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
+import {
+	MarketplaceTypeContext,
+	TermPricingContext,
+} from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import WPCOMPlanSlider from '../wpcom-plan-selector/slider';
 import WPCOMPlanSelector from './wpcom-plan-selector';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -59,6 +61,8 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMode = marketplaceType === 'referral';
 
+	const { termPricing } = useContext( TermPricingContext );
+
 	const ownedPlans = useMemo( () => {
 		if ( isReferralMode ) {
 			return 0;
@@ -94,6 +98,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							quantity={ displayQuantity }
 							onChange={ setQuantity }
 							ownedPlans={ ownedPlans }
+							plan={ plan }
 						/>
 					</HostingPlanSection.Banner>
 				) }
@@ -107,6 +112,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 							isReferralMode={ isReferralMode }
 							quantity={ displayQuantity }
 							setQuantity={ setQuantity }
+							termPricing={ termPricing }
 						/>
 					) : (
 						<WPCOMPlanSelector.Placeholder />
@@ -142,33 +148,31 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 					/>
 				</HostingPlanSection.Details>
 
-				{ ! isEnabled( 'a4a-bd-checkout' ) && (
-					<HostingPlanSection.Aside
-						heading={ translate( 'Start building for free' ) }
-						cta={ {
-							label: translate( 'Create a development site' ),
-							variant: 'secondary',
-							icon: arrowRight,
-							disabled: ! availableDevSites,
-							onClick: onClickCreateWPCOMDevSite,
-						} }
-					>
-						<p>
-							{ translate(
-								'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
-							) }
-						</p>
+				<HostingPlanSection.Aside
+					heading={ translate( 'Start building for free' ) }
+					cta={ {
+						label: translate( 'Create a development site' ),
+						variant: 'secondary',
+						icon: arrowRight,
+						disabled: ! availableDevSites,
+						onClick: onClickCreateWPCOMDevSite,
+					} }
+				>
+					<p>
+						{ translate(
+							'Included in your membership to Automattic for Agencies. Develop up to 5 WordPress.com sites with free development licenses. Only pay when you launch.'
+						) }
+					</p>
 
-						<i>
-							{ translate( '%(pendingSites)d of 5 free licenses available', {
-								args: {
-									pendingSites: availableDevSites,
-								},
-								comment: '%(pendingSites)s is the number of free licenses available.',
-							} ) }
-						</i>
-					</HostingPlanSection.Aside>
-				) }
+					<i>
+						{ translate( '%(pendingSites)d of 5 free licenses available', {
+							args: {
+								pendingSites: availableDevSites,
+							},
+							comment: '%(pendingSites)s is the number of free licenses available.',
+						} ) }
+					</i>
+				</HostingPlanSection.Aside>
 			</HostingPlanSection>
 
 			{ showWPCOMDevSiteConfigurationsModal && (

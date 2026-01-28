@@ -1,5 +1,5 @@
 export type ResourceItem = {
-	id: string;
+	id: number;
 	name: string;
 	description: string;
 	externalUrl: string;

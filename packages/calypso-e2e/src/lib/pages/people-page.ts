@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from 'playwright/test';
+import { Page, Locator } from 'playwright';
 import { clickNavTab } from '../../element-helper';
 
 export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
@@ -77,13 +77,23 @@ export class PeoplePage {
 	/**
 	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
 	 * @param emailaddress Email address of the invited user.
+	 * @param timeout Maximum time to wait in milliseconds (default: 60000).
 	 */
-	async expectInvitation( emailaddress: string ): Promise< void > {
+	async waitForInvitation( emailaddress: string, timeout = 60000 ): Promise< void > {
 		await this.clickViewAllIfAvailable();
-		await expect( async () => {
+		const invitationLocator = this.page.getByTitle( emailaddress );
+		const startTime = Date.now();
+
+		while ( Date.now() - startTime < timeout ) {
+			if ( await invitationLocator.isVisible() ) {
+				return;
+			}
 			await this.page.reload();
-			await expect( this.page.getByTitle( emailaddress ) ).toBeVisible();
-		} ).toPass( { timeout: 60000 } );
+			await this.page.waitForLoadState( 'domcontentloaded' );
+		}
+
+		// Final wait that will throw if not visible
+		await invitationLocator.waitFor( { state: 'visible', timeout: 5000 } );
 	}
 
 	/**
@@ -100,22 +110,19 @@ export class PeoplePage {
 	 */
 	async clearUserInvitation(): Promise< void > {
 		await this.clearUserButton.click();
-		await expect(
-			this.page.getByText( 'Invite deleted' ),
-			'Invite deleted notice should be visible'
-		).toBeVisible();
+		await this.page.getByText( 'Invite deleted' ).waitFor( { state: 'visible' } );
 	}
 
 	/**
 	 * Removes a user from site.
+	 * @param username Username of the user to remove.
 	 */
 	async removeUserFromSite( username: string ): Promise< void > {
 		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
 		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
-		await expect(
-			this.page.getByText( `Successfully removed @${ username }` ),
-			'User removed notice should be visible'
-		).toBeVisible();
+		await this.page
+			.getByText( `Successfully removed @${ username }` )
+			.waitFor( { state: 'visible' } );
 	}
 
 	/**
@@ -137,14 +144,11 @@ export class PeoplePage {
 	 */
 	async revokeInvite(): Promise< void > {
 		await this.revokeInviteButton.click();
-		await expect(
-			this.page.getByText( 'Invite deleted' ),
-			'Invite deleted notice should be visible'
-		).toBeVisible();
+		await this.page.getByText( 'Invite deleted' ).waitFor( { state: 'visible' } );
 	}
 
 	/**
-	 * Navigates to the team member user details page with a direct URL. Verifies that the page is loaded by checking the presence of the Remove button.
+	 * Navigates to the team member user details page with a direct URL. Waits for the page to load by checking the presence of the Remove button.
 	 * @param baseURL Calypso URL.
 	 * @param siteURL User's primary site URL.
 	 * @param username Username of the team member.
@@ -154,11 +158,17 @@ export class PeoplePage {
 		siteURL: string,
 		username: string
 	): Promise< void > {
-		expect( baseURL, 'Base URL should be defined' ).toBeDefined();
-		expect( siteURL, 'Site URL should be defined' ).toBeDefined();
-		expect( username, 'Username should be defined' ).toBeDefined();
-		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
+		if ( ! baseURL ) {
+			throw new Error( 'baseURL is required' );
+		}
+		if ( ! siteURL ) {
+			throw new Error( 'siteURL is required' );
+		}
+		if ( ! username ) {
+			throw new Error( 'username is required' );
+		}
 
-		await expect( this.page.getByRole( 'button', { name: 'Remove' } ) ).toBeVisible();
+		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
+		await this.page.getByRole( 'button', { name: 'Remove' } ).waitFor( { state: 'visible' } );
 	}
 }

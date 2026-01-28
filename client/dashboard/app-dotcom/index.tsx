@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import {
 	sitesQuery,
-	dashboardSiteListQuery,
+	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
@@ -9,7 +9,7 @@ import boot from '../app/boot';
 import Logo from './logo';
 import type {
 	FetchSitesOptions,
-	FetchDashboardSiteListParams,
+	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import './style.scss';
@@ -20,24 +20,7 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
-		sites: {
-			deployments: true,
-			performance: true,
-			monitoring: true,
-			logs: true,
-			backups: true,
-			scan: true,
-			domains: true,
-			emails: true,
-			settings: {
-				general: {
-					redirect: true,
-				},
-				server: true,
-				security: true,
-				experimental: true,
-			},
-		},
+		sites: true,
 		domains: true,
 		emails: true,
 		themes: true,
@@ -64,8 +47,8 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 	},

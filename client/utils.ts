@@ -36,22 +36,6 @@ export function redirectToLaunchpad(
 	window.location.replace( launchpadRedirectionURL );
 }
 
-/**
- * The function calculates does the user fall into
- * the provided percentage of people for product sampling?
- * @param userId Number
- * @param percentage Number
- * @returns {boolean}
- */
-export function isEligibleForProductSampling( userId: number, percentage: number ) {
-	if ( percentage >= 100 ) {
-		return true;
-	}
-	const userSegment = userId % 100;
-
-	return userSegment < percentage;
-}
-
 export function getRouteFromContext( context: Context ) {
 	let route = context.path;
 	for ( const [ key, value ] of Object.entries( context.params ) ) {

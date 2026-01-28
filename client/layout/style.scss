@@ -7,13 +7,6 @@ body.is-focus-sites {
 	overflow: hidden;
 }
 
-html.command-palette-modal-open {
-	overflow: visible;
-}
-body.command-palette-modal-open {
-	overflow: hidden;
-}
-
 /**
  * /*
  * 	Layout Elements
@@ -31,14 +24,16 @@ body.command-palette-modal-open {
 .layout__secondary,
 .layout__secondary .sidebar,
 .layout__secondary .site-selector {
-	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+	transition:
+		transform 0.15s ease-in-out,
+		opacity 0.15s ease-out;
 }
 
 .layout__header-section-content {
 	box-sizing: border-box;
 	padding: 79px 32px 32px 32px;
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		padding: 71px 24px 24px 24px;
 	}
 }
@@ -49,7 +44,7 @@ body.command-palette-modal-open {
 	@include clear-fix;
 	position: relative;
 	margin: 0;
-	padding: 79px 32px 32px calc(var(--sidebar-width-max) + 32px + 1px);
+	padding: 79px 32px 32px calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -78,7 +73,7 @@ body.command-palette-modal-open {
 	.is-section-themes.has-no-sidebar &,
 	.theme-default .layout.is-section-theme.has-no-sidebar &,
 	.theme-default .layout.is-section-themes.has-no-sidebar &,
-	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
+	.theme-default .layout.is-section-themes:not( .is-logged-in ) & {
 		padding: 0;
 		margin: 0;
 	}
@@ -90,14 +85,14 @@ body.command-palette-modal-open {
 
 	.is-section-theme & {
 		.sites.main {
-			padding-top: calc(79px - var(--masterbar-height));
+			padding-top: calc( 79px - var( --masterbar-height ) );
 		}
 	}
 
 	.is-section-plugins.is-logged-in & {
 		// The plugins site view needs the header to be full width, so the padding
 		// is added on the header and .plugins-browser__content-wrapper instead
-		padding: 47px 0 32px calc(var(--sidebar-width-max) + 1px);
+		padding: 47px 0 32px calc( var( --sidebar-width-max ) + 1px );
 	}
 
 	.is-section-plugins.is-logged-in.has-no-sidebar & {
@@ -105,8 +100,8 @@ body.command-palette-modal-open {
 	}
 
 	// Tablets
-	@include breakpoint-deprecated( "<960px" ) {
-		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 24px + 1px);
+	@include breakpoint-deprecated( '<960px' ) {
+		padding: 71px 24px 24px calc( var( --sidebar-width-min ) + 24px + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;
@@ -128,17 +123,17 @@ body.command-palette-modal-open {
 	}
 
 	// Mobile (Full Width)
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
-		padding-top: calc(var(--masterbar-height) + 1px);
+		padding-top: calc( var( --masterbar-height ) + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
 
 		.is-section-plugins.has-no-sidebar.is-logged-in & {
-			padding: calc(var(--masterbar-height) + 1px) 0 0;
+			padding: calc( var( --masterbar-height ) + 1px ) 0 0;
 		}
 	}
 }
@@ -149,7 +144,7 @@ body.command-palette-modal-open {
 	// The height is set to 100% in /sites page so we want to ensure that padding doesn't take us over 100% total height.
 	box-sizing: border-box;
 	padding-bottom: 88px;
-	@include breakpoint-deprecated( ">1400px" ) {
+	@include breakpoint-deprecated( '>1400px' ) {
 		padding-bottom: 0;
 	}
 }
@@ -167,22 +162,22 @@ body.is-mobile-app-view {
 // the site-selector elements.
 .layout__secondary {
 	position: fixed;
-	top: var(--masterbar-height);
+	top: var( --masterbar-height );
 	left: 0;
 	bottom: 0;
-	color: var(--color-sidebar-text);
-	background: var(--color-sidebar-background);
-	width: var(--sidebar-width-max);
+	color: var( --color-sidebar-text );
+	background: var( --color-sidebar-background );
+	width: var( --sidebar-width-max );
 	overflow: hidden;
 	// Ensure that the sidebar always remains on top.
 	// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
-	z-index: z-index("root", ".layout__secondary");
+	z-index: z-index( 'root', '.layout__secondary' );
 
-	@include breakpoint-deprecated( "<960px" ) {
-		width: var(--sidebar-width-min);
+	@include breakpoint-deprecated( '<960px' ) {
+		width: var( --sidebar-width-min );
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 
@@ -197,11 +192,11 @@ body.is-mobile-app-view {
 
 	// Secondary Layout overrides
 	.site__title {
-		color: var(--color-sidebar-text);
+		color: var( --color-sidebar-text );
 	}
 
 	.site__domain {
-		color: var(--color-sidebar-text-alternative);
+		color: var( --color-sidebar-text-alternative );
 	}
 
 	.site__title::after,
@@ -218,42 +213,42 @@ body.is-mobile-app-view {
 		bottom: 0;
 		left: 0;
 		pointer-events: none;
-		transform: translateX(calc(-1 * var(--sidebar-width-max)));
-		height: calc(100vh - var(--masterbar-height));
+		transform: translateX( calc( -1 * var( --sidebar-width-max ) ) );
+		height: calc( 100vh - var( --masterbar-height ) );
 
 		&.is-large .site-selector__sites {
-			border-color: var(--color-sidebar-border);
+			border-color: var( --color-sidebar-border );
 		}
 
 		&__sites {
-			background: var(--color-sidebar-background);
+			background: var( --color-sidebar-background );
 		}
 
 		&__add-new-site {
-			border-color: var(--color-sidebar-border);
+			border-color: var( --color-sidebar-border );
 
 			.button {
-				color: var(--color-sidebar-text-alternative);
+				color: var( --color-sidebar-text-alternative );
 				&:hover {
-					color: var(--color-sidebar-text);
+					color: var( --color-sidebar-text );
 				}
 			}
 		}
 
 		&__recent {
-			border-color: var(--color-sidebar-border);
+			border-color: var( --color-sidebar-border );
 		}
 
 		&__no-results {
-			color: var(--color-sidebar-text-alternative);
+			color: var( --color-sidebar-text-alternative );
 		}
 
 		&__list-bottom-adornment {
-			color: var(--color-sidebar-text);
+			color: var( --color-sidebar-text );
 		}
 
 		.all-sites {
-			border-color: var(--color-sidebar-border);
+			border-color: var( --color-sidebar-border );
 		}
 
 		.site,
@@ -266,20 +261,22 @@ body.is-mobile-app-view {
 			}
 		}
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			-webkit-overflow-scrolling: touch;
-			transform: translateX(-100%);
+			transform: translateX( -100% );
 			height: auto;
 		}
 	}
 
 	.all-sites .count {
-		color: var(--color-sidebar-text);
-		border-color: var(--color-sidebar-text);
+		color: var( --color-sidebar-text );
+		border-color: var( --color-sidebar-text );
 	}
 
 	.app-promo {
-		box-shadow: 0 0 0 1px var(--color-sidebar-border), 0 1px 2px var(--color-sidebar-border);
+		box-shadow:
+			0 0 0 1px var( --color-sidebar-border ),
+			0 1px 2px var( --color-sidebar-border );
 	}
 }
 
@@ -294,14 +291,14 @@ body.is-mobile-app-view {
 .layout.focus-sites,
 .layout.focus-sidebar {
 	.layout__primary .main {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			pointer-events: none;
 			overflow: hidden;
-			max-height: calc(100vh - 47px);
+			max-height: calc( 100vh - 47px );
 
 			// Removing this transform could have unintended side-affects
 			// related to z-index and elements showing through on mobile.
-			transform: translateX(100%);
+			transform: translateX( 100% );
 		}
 	}
 }
@@ -310,20 +307,20 @@ body.is-mobile-app-view {
 .layout.focus-sites {
 	.layout__secondary .site-selector {
 		pointer-events: auto;
-		transform: translateX(0);
+		transform: translateX( 0 );
 	}
 
 	.layout__secondary .sidebar {
 		pointer-events: none;
-		transform: translateX(var(--sidebar-width-max));
+		transform: translateX( var( --sidebar-width-max ) );
 
-		@include breakpoint-deprecated( "<660px" ) {
-			transform: translateX(100%);
+		@include breakpoint-deprecated( '<660px' ) {
+			transform: translateX( 100% );
 		}
 	}
 
 	.layout__primary .main {
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			pointer-events: none;
 			opacity: 0.25;
 		}
@@ -333,14 +330,14 @@ body.is-mobile-app-view {
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content .layout__secondary {
-	@media only screen and (max-width: 781px) {
-		transform: translateX(-100%);
+	@media only screen and ( max-width: 781px ) {
+		transform: translateX( -100% );
 	}
 }
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;
@@ -362,7 +359,7 @@ body.is-mobile-app-view {
 		padding: 8px;
 
 		/* This is the breakpoint we're using in client/components/global-notices/style.scss */
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 0;
 		}
 	}
@@ -401,7 +398,7 @@ body.is-mobile-app-view {
 // Ensure sidebar is visually separate from the content in the Contrast color scheme
 .theme-default.is-contrast {
 	.layout__secondary {
-		outline: 1px solid var(--color-sidebar-border);
+		outline: 1px solid var( --color-sidebar-border );
 	}
 }
 
@@ -410,7 +407,7 @@ body.is-mobile-app-view {
 	min-height: 100vh;
 
 	&.has-header-section {
-		background: var(--studio-white);
+		background: var( --studio-white );
 	}
 	.section-header.card {
 		box-shadow: none;
@@ -423,7 +420,7 @@ body.is-mobile-app-view {
 			line-height: 26px;
 		}
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin: 0 16px;
 		}
 	}
@@ -508,7 +505,7 @@ body.is-mobile-app-view {
 
 	&.is-section-checkout {
 		.cost-overrides-list-item__reason--is-discount {
-			color: #1d4fc4;;
+			color: #1d4fc4;
 		}
 
 		.checkout-payment-methods .is-checked:not( .has-highlight ) {
@@ -532,5 +529,5 @@ body.is-mobile-app-view {
 
 // Universal header
 .layout.has-universal-header .lpc-header-nav-wrapper {
-	padding-top: var(--masterbar-height);
+	padding-top: var( --masterbar-height );
 }

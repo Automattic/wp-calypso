@@ -1,7 +1,5 @@
-import { DotcomFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -16,7 +14,6 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { hasPlanFeature } from '../../utils/site-features';
 import type { SiteSettings } from '@automattic/api-core';
 import type { Field, FormField } from '@wordpress/dataviews';
 
@@ -54,10 +51,6 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	const [ formData, setFormData ] = useState( {
 		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
 	} );
-
-	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
-		throw notFound();
-	}
 
 	const isDirty = Object.entries( formData ).some(
 		( [ key, value ] ) => data[ key as keyof SiteSettings ] !== value

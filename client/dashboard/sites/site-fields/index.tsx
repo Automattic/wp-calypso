@@ -19,7 +19,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import SiteIcon, { SiteIconRenderer } from '../../components/site-icon';
+import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
@@ -28,15 +28,14 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteStatus } from '../../utils/site-status';
 import { getSiteFormattedUrl } from '../../utils/site-url';
-import { getSiteVisibilityLabel } from '../../utils/site-visibility';
-import { canManageSite, canManageSite__ES } from '../features';
+import { getVisibilityLabels } from '../../utils/site-visibility';
+import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
-import type { SiteBadge } from '../../types';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
+import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
+import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -60,19 +59,6 @@ function getSiteManagementUrl( site: Site ) {
 	return site.options?.admin_url;
 }
 
-function getSiteManagementUrl__ES( site: DashboardSiteListSite ) {
-	if ( canManageSite__ES( site ) ) {
-		const path = `/sites/${ site.slug }`;
-
-		if ( isDashboardBackport() ) {
-			return addTransientViewPropertiesToQueryParams( path );
-		}
-
-		return path;
-	}
-	return `${ site.url?.with_scheme }/wp-admin`;
-}
-
 export const titleFieldTextOverflowStyles = {
 	overflowX: 'hidden',
 	textOverflow: 'ellipsis',
@@ -85,22 +71,6 @@ export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { 
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
-		/>
-	);
-}
-
-export function SiteLink__ES( {
-	site,
-	...props
-}: ComponentProps< typeof Link > & { site: DashboardSiteListSite } ) {
-	// TODO: Get the correct site management url based on permissions and backport.
-	return (
-		<Link
-			{ ...props }
-			to={ getSiteManagementUrl__ES( site ) }
-			disabled={ site.deleted }
-			preload="viewport"
 			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
 		/>
 	);
@@ -155,31 +125,13 @@ export function NameRenderer( {
 }
 
 export function URL( { site, value }: { site: Site; value: string } ) {
-	return (
-		<URLRenderer
-			disabled={ site.is_deleted }
-			href={ getSiteFormattedUrl( site ) }
-			value={ value }
-		/>
-	);
-}
-
-export function URLRenderer( {
-	disabled,
-	href,
-	value,
-}: {
-	disabled: boolean;
-	href: string;
-	value: string;
-} ) {
-	return disabled ? (
+	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ href }
+			href={ getSiteFormattedUrl( site ) }
 		>
 			{ value }
 		</ExternalLink>
@@ -226,48 +178,6 @@ export function Preview( { site }: { site: Site } ) {
 			) }
 			{ width && ! iframeDisabled && (
 				<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
-			) }
-		</div>
-	);
-}
-
-export function Preview__ES( { site }: { site: DashboardSiteListSite } ) {
-	const [ resizeListener, { width } ] = useResizeObserver();
-
-	// If the site is a private A8C site, X-Frame-Options is set to same
-	// origin.
-	const iframeDisabled = site.deleted || ( site.is_a8c && site.private );
-	return (
-		<div
-			style={ {
-				display: 'block',
-				height: '100%',
-				width: '100%',
-				borderRadius: 'inherit',
-				overflow: 'hidden',
-			} }
-		>
-			{ resizeListener }
-			{ iframeDisabled && (
-				<div
-					style={ {
-						fontSize: '24px',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						height: '100%',
-					} }
-				>
-					<SiteIconRenderer
-						alt={ site.name ?? '' }
-						fallbackInitial={ site.name?.charAt( 0 ) ?? '' }
-						icon={ site.icon ?? undefined }
-						isMigration={ false }
-					/>
-				</div>
-			) }
-			{ width && ! iframeDisabled && (
-				<SitePreview url={ site.url?.with_scheme ?? '' } scale={ width / 1200 } height={ 1200 } />
 			) }
 		</div>
 	);
@@ -383,14 +293,6 @@ export function PHPVersion( { site }: { site: Site } ) {
 	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
 }
 
-export function PHPVersion__ES( { site }: { site: DashboardSiteListSite } ) {
-	return site.php_version ? (
-		site.php_version.split( '.' ).slice( 0, 2 ).join( '.' ) // Drop patch version.
-	) : (
-		<IneligibleIndicator />
-	);
-}
-
 export function MediaStorage( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
@@ -418,7 +320,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	return <span ref={ ref }>{ renderContent() }</span>;
 }
 
-function SiteLaunchNag( { site }: { site: Site } ) {
+function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
@@ -427,7 +329,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
 			<ExternalLink
-				href={ wpcomLink( `/home/${ site.slug }` ) }
+				href={ wpcomLink( `/home/${ siteSlug }` ) }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }
@@ -467,13 +369,23 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 	);
 }
 
-export function Visibility( { site }: { site: Site } ) {
-	const status = getSiteStatus( site );
+export function Visibility( {
+	siteSlug,
+	visibility,
+	status,
+	isLaunched,
+}: {
+	siteSlug: string;
+	visibility: SiteVisibility;
+	status: SiteBlockingStatus;
+	isLaunched?: boolean;
+} ) {
+	const visibilityLabels = getVisibilityLabels();
 	return (
 		<VStack spacing={ 1 }>
-			<span>{ getSiteVisibilityLabel( site ) }</span>
+			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && site.launch_status === 'unlaunched' && <SiteLaunchNag site={ site } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
 		</VStack>
 	);
 }

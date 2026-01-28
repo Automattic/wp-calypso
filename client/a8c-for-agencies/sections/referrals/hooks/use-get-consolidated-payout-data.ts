@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getEstimatedCommission } from '../lib/get-estimated-commission';
 import {
 	getCurrentCycleActivityWindow,
 	getNextPayoutDateActivityWindow,
 } from '../lib/get-next-payout-date';
 import { Referral } from '../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 export default function useGetConsolidatedPayoutData(
 	referrals: Referral[],

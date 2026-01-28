@@ -1,7 +1,6 @@
 /**
  * Utility functions shared across data stores
  */
-
 declare const helpCenterData:
 	| { isProxied: boolean; isSU: boolean; isSSP: boolean; currentUser: { ID: number } }
 	| undefined;
@@ -31,17 +30,4 @@ export const isInSupportSession = () => {
 		);
 	}
 	return false;
-};
-
-/**
- * Check if the user is logged in in a synchronous way. Works in wp-admin and Calypso.
- * @returns True if the user is logged in, false otherwise.
- */
-export const isLoggedInHCUser = () => {
-	return (
-		// Calypso
-		( typeof window !== 'undefined' && !! window.currentUser?.ID ) ||
-		// wp-admin and Gutenberg
-		( typeof helpCenterData !== 'undefined' && !! helpCenterData?.currentUser?.ID )
-	);
 };

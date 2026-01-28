@@ -5,6 +5,7 @@
  */
 
 import debugFactory from 'debug';
+import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
 import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:ebanx-vgs-tokenization' );
@@ -51,6 +52,67 @@ export interface EbanxCardDetails {
 	country: string; // ISO country code
 	name: string; // Plain text cardholder name
 	vgsTokens: VgsTokens; // VGS secure tokens
+}
+
+/**
+ * EBANX SDK configuration response from the API
+ */
+interface EbanxConfiguration {
+	js_url: string;
+	environment: string;
+	public_key: string;
+}
+
+/**
+ * EBANX SDK interface (minimal typing for the parts we use)
+ */
+interface EbanxSdk {
+	config: {
+		setMode: ( mode: string ) => void;
+		setPublishableKey: ( key: string ) => void;
+		setCountry: ( country: string ) => void;
+	};
+	deviceFingerprint: {
+		setup: ( callback: ( deviceId: string ) => void ) => void;
+	};
+}
+
+/**
+ * Gets the EBANX device fingerprint using the EBANX SDK
+ * This is used for fraud detection and is required by EBANX for transactions
+ * @param country - ISO country code (e.g., 'BR')
+ * @param requestType - Type of request for configuration (e.g., 'new_purchase')
+ * @returns Promise resolving to device fingerprint ID, or undefined if it fails
+ */
+async function getEbanxDeviceFingerprint(
+	country: string,
+	requestType: string
+): Promise< string | undefined > {
+	try {
+		debug( 'fetching ebanx configuration for device fingerprint' );
+
+		const configuration: EbanxConfiguration = await wpcom.req.get( '/me/ebanx-configuration', {
+			request_type: requestType,
+		} );
+
+		debug( 'loading ebanx sdk for device fingerprint' );
+		const ebanx: EbanxSdk = await paymentGatewayLoader.ready( configuration.js_url, 'EBANX' );
+
+		ebanx.config.setMode( configuration.environment );
+		ebanx.config.setPublishableKey( configuration.public_key );
+		ebanx.config.setCountry( country.toLowerCase() );
+
+		return new Promise( ( resolve ) => {
+			ebanx.deviceFingerprint.setup( ( deviceId: string ) => {
+				debug( 'device fingerprint obtained', { deviceId } );
+				resolve( deviceId );
+			} );
+		} );
+	} catch ( error ) {
+		// Device fingerprint is optional, so we log the error but don't fail the transaction
+		debug( 'failed to get device fingerprint, continuing without it', error );
+		return undefined;
+	}
 }
 
 /**
@@ -108,10 +170,13 @@ export async function createEbanxTokenVgs(
 			status: apiResponse.status,
 		} );
 
+		// Get device fingerprint using EBANX SDK (for fraud detection)
+		const deviceId = await getEbanxDeviceFingerprint( cardDetails.country, requestType );
+
 		// Normalize the response to match the expected structure
 		const normalizedResponse: EbanxTokenizeResponse = {
 			token: apiResponse.token,
-			deviceId: undefined, // VGS flow doesn't provide deviceId
+			deviceId,
 			paymentTypeCode: apiResponse.payment_type_code,
 		};
 

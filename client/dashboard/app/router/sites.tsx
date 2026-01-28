@@ -38,21 +38,32 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
+import {
+	createLazyRoute,
+	createRoute,
+	lazyRouteComponent,
+	notFound,
+	redirect,
+} from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
+	canManageSite,
+	canTransferSite,
 	canViewHundredYearPlanSettings,
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { AUTH_QUERY_KEY } from '../auth';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
-import type { DifmWebsiteContentResponse, Site } from '@automattic/api-core';
+import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const sitesRoute = createRoute( {
@@ -67,8 +78,14 @@ export const sitesRoute = createRoute( {
 	path: 'sites',
 	loader: async ( { context } ) => {
 		// Preload the default sites list response without blocking.
-		if ( ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
-			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
+			queryClient.prefetchQuery(
+				context.config.queries.sitesQuery( {
+					source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
+					site_visibility: 'visible',
+					include_a8c_owned: false,
+				} )
+			);
 		}
 
 		await Promise.all( [
@@ -89,6 +106,10 @@ export const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		let site;
 		try {
 			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
@@ -97,13 +118,13 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		const overviewUrl = `/sites/${ siteSlug }`;
-		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
-			throw redirect( { to: overviewUrl } );
+		if ( ! canManageSite( site ) ) {
+			throw notFound();
 		}
 
-		if ( cause !== 'enter' ) {
-			return;
+		const overviewUrl = `/sites/${ siteSlug }`;
+		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
+			throw redirectAsNotAllowed( { to: overviewUrl } );
 		}
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
@@ -124,6 +145,15 @@ export const siteRoute = createRoute( {
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
 			throw redirect( { to: migrationUrl } );
+		}
+
+		// Check site type support for matched routes
+		const siteTypeSupports = getSiteTypeFeatureSupports( site );
+		for ( const match of matches ) {
+			const required = match.staticData?.requiresSiteTypeSupport;
+			if ( required && ! siteTypeSupports[ required ] ) {
+				throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+			}
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -183,6 +213,7 @@ export const siteOverviewRoute = createRoute( {
 );
 
 export const siteDeploymentsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'deployments' },
 	head: () => ( {
 		meta: [
 			{
@@ -192,12 +223,6 @@ export const siteDeploymentsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -222,6 +247,7 @@ export const siteDeploymentsListRoute = createRoute( {
 );
 
 export const siteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
 	head: () => ( {
 		meta: [
 			{
@@ -231,12 +257,6 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -246,6 +266,7 @@ export const siteMonitoringRoute = createRoute( {
 );
 
 export const siteLogsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'logs' },
 	head: () => ( {
 		meta: [
 			{
@@ -255,12 +276,6 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -338,6 +353,7 @@ export const siteLogsActivityRoute = createRoute( {
 );
 
 export const siteScanRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'scan' },
 	head: () => ( {
 		meta: [
 			{
@@ -347,12 +363,6 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
@@ -408,6 +418,7 @@ export const siteScanHistoryRoute = createRoute( {
 );
 
 export const siteBackupsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'backups' },
 	head: () => ( {
 		meta: [
 			{
@@ -417,12 +428,6 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
@@ -536,6 +541,7 @@ export const siteDomainsRoute = createRoute( {
 );
 
 export const sitePerformanceRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'performance' },
 	head: () => ( {
 		meta: [
 			{
@@ -545,12 +551,6 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( isCommerceGarden( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -560,6 +560,7 @@ export const sitePerformanceRoute = createRoute( {
 );
 
 export const siteSettingsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settings' },
 	head: () => ( {
 		meta: [
 			{
@@ -593,6 +594,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -602,10 +604,14 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! canViewSiteVisibilitySettings( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -628,6 +634,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 );
 
 export const siteSettingsRedirectRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralRedirect' },
 	head: () => ( {
 		meta: [
 			{
@@ -653,6 +660,7 @@ export const siteSettingsRedirectRoute = createRoute( {
 );
 
 export const siteSettingsSubscriptionGiftingRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -662,6 +670,16 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'subscription-gifting',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
@@ -675,6 +693,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 );
 
 export const siteSettingsWordPressRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -699,6 +718,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 );
 
 export const siteSettingsPHPRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -723,6 +743,7 @@ export const siteSettingsPHPRoute = createRoute( {
 );
 
 export const siteSettingsDatabaseRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -741,6 +762,7 @@ export const siteSettingsDatabaseRoute = createRoute( {
 );
 
 export const siteSettingsAgencyRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -750,6 +772,19 @@ export const siteSettingsAgencyRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'agency',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( site.is_wpcom_atomic ) {
+			const agencyBlog = await queryClient.ensureQueryData( siteAgencyBlogQuery( site.ID ) );
+			if ( ! agencyBlog ) {
+				throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+			}
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( site.is_wpcom_atomic ) {
@@ -765,6 +800,7 @@ export const siteSettingsAgencyRoute = createRoute( {
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
 	head: () => ( {
 		meta: [
 			{
@@ -774,11 +810,19 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'hundred-year-plan',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! canViewHundredYearPlanSettings( site ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canViewHundredYearPlanSettings( site ) ) {
-			await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-		}
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-hundred-year-plan' ).then( ( d ) =>
@@ -789,6 +833,7 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 );
 
 export const siteSettingsPrimaryDataCenterRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -799,7 +844,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: 'primary-data-center',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
+		if ( cause === 'preload' ) {
 			return;
 		}
 
@@ -813,13 +858,11 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 			}
 		}
 
-		throw redirect( { to: `/sites/${ siteSlug }/settings` } );
+		throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
-			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
-		}
+		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-primary-data-center' ).then( ( d ) =>
@@ -830,6 +873,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 );
 
 export const siteSettingsStaticFile404Route = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -854,6 +898,7 @@ export const siteSettingsStaticFile404Route = createRoute( {
 );
 
 export const siteSettingsCachingRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -878,6 +923,7 @@ export const siteSettingsCachingRoute = createRoute( {
 );
 
 export const siteSettingsDefensiveModeRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -902,6 +948,7 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -938,6 +985,17 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'transfer-site',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! user || ! canTransferSite( site, user ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
@@ -949,6 +1007,7 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -976,6 +1035,7 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 );
 
 export const siteSettingsWpcomLoginRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
 		meta: [
 			{
@@ -1003,6 +1063,7 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 );
 
 export const siteSettingsExperimentalRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsExperimental' },
 	head: () => ( {
 		meta: [
 			{
@@ -1023,6 +1084,7 @@ export const siteSettingsExperimentalRoute = createRoute( {
 	)
 );
 export const siteSettingsRepositoriesRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
 		meta: [
 			{
@@ -1117,13 +1179,13 @@ export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
+		if ( cause === 'preload' ) {
 			return;
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! hasSiteTrialEnded( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
+			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 } ).lazy( () =>
@@ -1147,13 +1209,13 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'site-building-in-progress',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
+		if ( cause === 'preload' ) {
 			return;
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! site.options?.is_difm_lite_in_progress ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
+			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -1201,13 +1263,13 @@ export const siteMigrationOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'migration-overview',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause !== 'enter' ) {
+		if ( cause === 'preload' ) {
 			return;
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! isSiteMigrationInProgress( site ) ) {
-			throw redirect( { to: `/sites/${ siteSlug }` } );
+			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 
 		return {
@@ -1270,111 +1332,68 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteMigrationOverviewRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
+		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
+		sitePerformanceRoute,
+		siteMonitoringRoute,
+		siteLogsRoute.addChildren( [
+			siteLogsIndexRoute,
+			siteLogsPhpRoute,
+			siteLogsServerRoute,
+			siteLogsActivityRoute,
+		] ),
+		siteBackupsRoute.addChildren( [
+			siteBackupsIndexRoute,
+			siteBackupDetailRoute.addChildren( [
+				siteBackupDetailIndexRoute,
+				siteBackupRestoreRoute,
+				siteBackupDownloadRoute,
+			] ),
+		] ),
+		siteScanRoute.addChildren( [
+			siteScanIndexRoute,
+			siteScanActiveThreatsRoute,
+			siteScanHistoryRoute,
+		] ),
+		siteDomainsRoute,
 	];
 
-	if ( config.supports.sites.deployments ) {
-		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
+	const settingsRoutes: AnyRoute[] = [
+		siteSettingsIndexRoute,
+		siteSettingsTransferSiteRoute,
+
+		// General
+		siteSettingsSiteVisibilityRoute,
+		siteSettingsSubscriptionGiftingRoute,
+		siteSettingsAgencyRoute,
+		siteSettingsHundredYearPlanRoute,
+		siteSettingsRedirectRoute,
+
+		// Server
+		siteSettingsWordPressRoute,
+		siteSettingsPHPRoute,
+		siteSettingsSftpSshRoute,
+		siteSettingsRepositoriesRoute.addChildren( [
+			siteSettingsRepositoriesIndexRoute,
+			siteSettingsRepositoriesConnectRoute,
+			siteSettingsRepositoriesManageRoute,
+		] ),
+		siteSettingsDatabaseRoute,
+		siteSettingsPrimaryDataCenterRoute,
+		siteSettingsStaticFile404Route,
+		siteSettingsCachingRoute,
+
+		// Security
+		siteSettingsWebApplicationFirewallRoute,
+		siteSettingsWpcomLoginRoute,
+		siteSettingsDefensiveModeRoute,
+	];
+
+	// Experimental
+	if ( isEnabled( 'wordpress-ai-assistant' ) ) {
+		settingsRoutes.push( siteSettingsExperimentalRoute );
 	}
 
-	if ( config.supports.sites.performance ) {
-		siteRoutes.push( sitePerformanceRoute );
-	}
-
-	if ( config.supports.sites.monitoring ) {
-		siteRoutes.push( siteMonitoringRoute );
-	}
-
-	if ( config.supports.sites.logs ) {
-		siteRoutes.push(
-			siteLogsRoute.addChildren( [
-				siteLogsIndexRoute,
-				siteLogsPhpRoute,
-				siteLogsServerRoute,
-				siteLogsActivityRoute,
-			] )
-		);
-	}
-
-	if ( config.supports.sites.backups ) {
-		siteRoutes.push(
-			siteBackupsRoute.addChildren( [
-				siteBackupsIndexRoute,
-				siteBackupDetailRoute.addChildren( [
-					siteBackupDetailIndexRoute,
-					siteBackupRestoreRoute,
-					siteBackupDownloadRoute,
-				] ),
-			] )
-		);
-	}
-
-	if ( config.supports.sites.scan ) {
-		siteRoutes.push(
-			siteScanRoute.addChildren( [
-				siteScanIndexRoute,
-				siteScanActiveThreatsRoute,
-				siteScanHistoryRoute,
-			] )
-		);
-	}
-
-	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute );
-	}
-
-	if ( config.supports.sites.settings ) {
-		const settingsRoutes: AnyRoute[] = [ siteSettingsIndexRoute, siteSettingsTransferSiteRoute ];
-
-		if ( config.supports.sites.settings.general ) {
-			const settingsGeneralRoutes: AnyRoute[] = [
-				siteSettingsSiteVisibilityRoute,
-				siteSettingsSubscriptionGiftingRoute,
-				siteSettingsAgencyRoute,
-				siteSettingsHundredYearPlanRoute,
-			];
-
-			if ( config.supports.sites.settings.general.redirect ) {
-				settingsGeneralRoutes.push( siteSettingsRedirectRoute );
-			}
-
-			settingsRoutes.push( ...settingsGeneralRoutes );
-		}
-
-		if ( config.supports.sites.settings.server ) {
-			settingsRoutes.push(
-				...[
-					siteSettingsWordPressRoute,
-					siteSettingsPHPRoute,
-					siteSettingsSftpSshRoute,
-					siteSettingsRepositoriesRoute.addChildren( [
-						siteSettingsRepositoriesIndexRoute,
-						siteSettingsRepositoriesConnectRoute,
-						siteSettingsRepositoriesManageRoute,
-					] ),
-					siteSettingsDatabaseRoute,
-					siteSettingsPrimaryDataCenterRoute,
-					siteSettingsStaticFile404Route,
-					siteSettingsCachingRoute,
-				]
-			);
-		}
-
-		if ( config.supports.sites.settings.security ) {
-			settingsRoutes.push(
-				...[
-					siteSettingsWebApplicationFirewallRoute,
-					siteSettingsWpcomLoginRoute,
-					siteSettingsDefensiveModeRoute,
-				]
-			);
-		}
-
-		if ( config.supports.sites.settings.experimental && isEnabled( 'wordpress-ai-assistant' ) ) {
-			settingsRoutes.push( siteSettingsExperimentalRoute );
-		}
-
-		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
-	}
+	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 
 	return [
 		sitesRoute.lazy( () =>
@@ -1392,4 +1411,18 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
+}
+
+function redirectAsNotAllowed( options: {
+	to: string;
+	params?: Record< string, string >;
+	search?: Record< string, unknown >;
+} ) {
+	return redirect( {
+		...options,
+		search: {
+			...options.search,
+			flash: 'route-not-allowed',
+		},
+	} );
 }

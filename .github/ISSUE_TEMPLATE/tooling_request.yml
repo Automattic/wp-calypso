@@ -1,7 +1,7 @@
 name: Tooling Request
 description: Bug or feature request related to scripts, tooling, DevX, etc.
 title: 'Tooling:'
-labels: '[Type] Tooling'
+labels: 'Enhancement'
 type: 'Enhancement'
 body:
   - type: markdown

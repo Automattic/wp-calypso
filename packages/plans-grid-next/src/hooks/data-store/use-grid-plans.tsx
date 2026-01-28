@@ -180,7 +180,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_BUSINESS ];
 			break;
 		case 'plans-ai-assembler-free-trial':
-			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
@@ -306,6 +306,7 @@ const useGridPlans: UseGridPlansType = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	isExperimentVariant,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -352,6 +353,7 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
+		isExperimentVariant,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package

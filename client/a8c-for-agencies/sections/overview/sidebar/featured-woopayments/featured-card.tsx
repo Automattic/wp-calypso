@@ -51,7 +51,7 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onClick }: Props ) => {
 				href={ A4A_WOOPAYMENTS_OVERVIEW_LINK }
 				onClick={ onClick }
 			>
-				{ translate( 'View details and start earning' ) }
+				{ translate( 'Earn revenue share' ) }
 			</Button>
 		</Card>
 	);

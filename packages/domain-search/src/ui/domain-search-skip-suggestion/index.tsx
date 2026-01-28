@@ -5,7 +5,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useDomainSearchEscapeHatch } from '../../hooks/use-escape-hatch';
 import { DomainSearchSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSearchSkipSuggestionSkeleton } from './index.skeleton';
 
@@ -26,8 +25,6 @@ const DomainSearchSkipSuggestion = ( {
 	disabled,
 	isBusy,
 }: Props ) => {
-	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
-
 	let title;
 	let subtitle;
 	let buttonText = __( 'Skip purchase' );
@@ -51,41 +48,9 @@ const DomainSearchSkipSuggestion = ( {
 			}
 		);
 	} else if ( freeSuggestion ) {
-		const [ domain, ...tld ] = freeSuggestion.split( '.' );
-
-		if (
-			! isLoadingExperiment &&
-			experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
-		) {
-			title = __( 'Prefer to skip for now?' );
-			buttonText = __( 'Skip this step' );
-		} else if (
-			! isLoadingExperiment &&
-			[
-				'treatment_paid_domain_area_free_emphasis',
-				'treatment_paid_domain_area_free_emphasis_extra_cta',
-			].includes( experimentVariation as string )
-		) {
-			title = __( 'Start free with a WordPress.com subdomain' );
-			subtitle = __( 'Upgrade to a custom domain name anytime.' );
-			buttonText = __( 'Start Free' );
-		} else {
-			title = __( 'WordPress.com subdomain' );
-			subtitle = createInterpolateElement(
-				sprintf(
-					// translators: %(domain)s is the domain name, %(tld)s is the top-level domain
-					__( '<domain>%(domain)s<tld>.%(tld)s</tld></domain> is included' ),
-					{
-						domain,
-						tld: tld.join( '.' ),
-					}
-				),
-				{
-					domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-					tld: <strong style={ { whiteSpace: 'nowrap' } } />,
-				}
-			);
-		}
+		title = __( 'Start free with a WordPress.com subdomain' );
+		subtitle = __( 'Upgrade to a custom domain name anytime.' );
+		buttonText = __( 'Start Free' );
 	}
 
 	if ( ! title ) {

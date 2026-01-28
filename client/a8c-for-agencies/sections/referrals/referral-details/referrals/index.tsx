@@ -26,11 +26,7 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 	const { handleResendReferralEmail, isPending: isResendingReferralEmail } =
 		useHandleReferralResend();
 
-	const { data: productsData, isFetching: isFetchingProducts } = useProductsQuery(
-		false,
-		false,
-		true
-	);
+	const { data: productsData, isFetching: isFetchingProducts } = useProductsQuery( false, true );
 
 	const referralActions = [
 		{

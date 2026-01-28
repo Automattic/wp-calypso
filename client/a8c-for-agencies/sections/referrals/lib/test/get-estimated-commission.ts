@@ -50,11 +50,11 @@ describe( 'get-estimated-commission', () => {
 		};
 		const mockProduct: APIProductFamilyProduct = {
 			product_id: 1,
-			family_slug: 'jetpack-backup',
+			family_slug: 'jetpack-scan',
 			price_per_unit: 100,
 			supported_bundles: [],
-			name: 'Mock Product',
-			slug: 'mock-product',
+			name: 'Jetpack Scan',
+			slug: 'jetpack-scan',
 			currency: 'USD',
 			amount: '100',
 			price_interval: 'month',

@@ -2,6 +2,7 @@ export type AgencyTier =
 	| 'emerging-partner'
 	| 'agency-partner'
 	| 'pro-agency-partner'
+	| 'vip-pro-agency-partner'
 	| 'premier-partner';
 
 export interface AgencyTierCelebrationModal {

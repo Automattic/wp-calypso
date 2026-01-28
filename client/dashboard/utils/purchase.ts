@@ -25,7 +25,8 @@ export const CANCEL_FLOW_TYPE = {
 	// When users effectively cancelling the auto-renewal by
 	// cancelling a subscription out of the refund window
 	CANCEL_AUTORENEW: 'cancel_autorenew',
-};
+} as const;
+export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
@@ -306,7 +307,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site Plan' );
+		return __( 'Site plan' );
 	}
 
 	if ( purchase.is_domain_registration ) {
@@ -446,6 +447,14 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 	return checkoutProductSlug;
 }
 
+function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		// Akismet checkout never uses a site slug.
+		return '';
+	}
+	return purchase.site_slug || '';
+}
+
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
@@ -464,7 +473,8 @@ export function getRenewUrlForPurchases(
 	const checkoutProductSlug = purchases
 		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
 		.join( ',' );
-	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
+	const checkoutSiteSlug =
+		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
 	const backUrl = redirectToDashboardLink();
@@ -580,7 +590,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 /**
  * Returns the purchase cancellation flow.
  */
-export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
+export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 

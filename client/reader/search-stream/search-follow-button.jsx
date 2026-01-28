@@ -4,8 +4,6 @@ import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing, urlToDomainAndPath } from 'calypso/lib/url';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import './style.scss';
@@ -112,8 +110,6 @@ class SearchFollowButton extends Component {
 						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
 					} ) }
 					siteUrl={ addSchemeIfMissing( followUrl, 'http' ) }
-					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 				/>
 			</div>
 		);

@@ -64,7 +64,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I can see the invite is pending', async function () {
-			await pagePeople.expectInvitation( testUser.email );
+			await pagePeople.waitForInvitation( testUser.email );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {

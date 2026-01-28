@@ -6,7 +6,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -112,7 +111,6 @@ function FollowingStream( { ...props } ) {
 								contentExpandedStyle={ { maxHeight: '800px' } }
 								useInert
 								onOpen={ () => {
-									focusEditor();
 									recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
 								} }
 								onClose={ () => {

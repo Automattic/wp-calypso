@@ -5,12 +5,13 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { wpcomLink } from '../../../utils/link';
+import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -247,9 +248,10 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = wpcomLink(
-				`/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug ?? '' }`
-			);
+			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+				siteSlug: purchase.site_slug ?? '',
+				dashboard: getCurrentDashboard(),
+			} );
 			return;
 		}
 

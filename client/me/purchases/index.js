@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as billingController from 'calypso/me/purchases/billing-history/controller';
@@ -11,6 +16,8 @@ import * as paths from './paths';
 export default ( router ) => {
 	router(
 		paths.paymentMethods,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods' ),
 		sidebar,
 		paymentMethodsController.paymentMethods,
 		makeLayout,
@@ -19,23 +26,43 @@ export default ( router ) => {
 
 	router(
 		paths.addNewPaymentMethod,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
 		sidebar,
 		controller.addNewPaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
-	router( paths.addCreditCard, sidebar, controller.addNewPaymentMethod, makeLayout, clientRender );
+	router(
+		paths.addCreditCard,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/add' ),
+		sidebar,
+		controller.addNewPaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
 	// redirect legacy urls
 	router( '/payment-methods/add-credit-card', () => {
 		page.redirect( paths.addCreditCard );
 	} );
 
-	router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
+	router(
+		paths.vatDetails,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/payment-methods/tax-details' ),
+		sidebar,
+		controller.vatDetails,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		paths.billingHistory,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/history' ),
 		sidebar,
 		billingController.billingHistory,
 		makeLayout,
@@ -44,6 +71,10 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/monetize-subscriptions/${ params.subscriptionId }`
+		),
 		sidebar,
 		membershipsController.subscription,
 		makeLayout,
@@ -52,6 +83,10 @@ export default ( router ) => {
 
 	router(
 		paths.purchasesRoot + '/crm-downloads/:subscription',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/monetize-subscriptions/${ params.subscription }`
+		),
 		sidebar,
 		controller.crmDownloads,
 		makeLayout,
@@ -82,13 +117,23 @@ export default ( router ) => {
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( ( params ) => `/me/billing/history/${ params.receiptId }` ),
 		sidebar,
 		billingController.transaction,
 		makeLayout,
 		clientRender
 	);
 
-	router( paths.purchasesRoot, sidebar, controller.list, makeLayout, clientRender );
+	router(
+		paths.purchasesRoot,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/billing/purchases' ),
+		sidebar,
+		controller.list,
+		makeLayout,
+		clientRender
+	);
 
 	/**
 	 * The siteSelection middleware has been removed from this route.
@@ -96,6 +141,10 @@ export default ( router ) => {
 	 */
 	router(
 		paths.managePurchase( ':site', ':purchaseId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }`
+		),
 		sidebar,
 		controller.managePurchase,
 		makeLayout,
@@ -116,6 +165,10 @@ export default ( router ) => {
 	 */
 	router(
 		paths.cancelPurchase( ':site', ':purchaseId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
+		),
 		sidebar,
 		controller.cancelPurchase,
 		makeLayout,
@@ -132,6 +185,10 @@ export default ( router ) => {
 
 	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }/cancel`
+		),
 		sidebar,
 		siteSelection,
 		controller.confirmCancelDomain,
@@ -145,6 +202,10 @@ export default ( router ) => {
 	 */
 	router(
 		paths.addPaymentMethod( ':site', ':purchaseId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `/me/billing/purchases/${ params.purchaseId }/payment-method/change`
+		),
 		sidebar,
 		controller.changePaymentMethod,
 		makeLayout,
@@ -157,6 +218,10 @@ export default ( router ) => {
 	 */
 	router(
 		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params ) => `me/billing/purchases/${ params.purchaseId }/payment-method/change`
+		),
 		sidebar,
 		controller.changePaymentMethod,
 		makeLayout,

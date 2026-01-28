@@ -1,4 +1,5 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
+import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -10,7 +11,7 @@ import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -22,7 +23,14 @@ const requiresPlanUpgrade = ( site: Site ) => {
 };
 
 const useDomainSuggestion = ( site: Site ) => {
-	const search = site.slug.split( '.' )[ 0 ];
+	// Temporary debugging. See: https://github.com/Automattic/wp-calypso/pull/108256
+	if ( site.slug === undefined ) {
+		captureException( new Error( 'site.slug is undefined in useDomainSuggestion()' ), {
+			extra: { site },
+		} );
+	}
+
+	const search = site.slug?.split( '.' )[ 0 ] ?? '';
 	const { data: allDomainSuggestions } = useQuery(
 		domainSuggestionsQuery( search, {
 			vendor: 'domain-upsell',
@@ -80,6 +88,7 @@ const DomainUpsellCardContent = ( {
 			window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
 				cancel_to: backUrl,
 				redirect_to: backUrl,
+				dashboard: getCurrentDashboard(),
 			} );
 		}
 	};

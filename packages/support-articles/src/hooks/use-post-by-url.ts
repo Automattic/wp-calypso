@@ -22,12 +22,15 @@ export function usePostByUrl( url: string, sectionName: string ) {
 		enabled: !! url,
 		refetchOnWindowFocus: false,
 		staleTime: 12 * 3600, // 12 hours
-		throwOnError: () => {
+		throwOnError: ( error: any ) => {
 			const tracksData = {
 				force_site_id: true,
 				location: 'help-center',
 				section: sectionName,
 				post_url: url,
+				error_message: error?.message || ( typeof error === 'string' ? error : 'unknown' ),
+				error_code: error?.code || error?.error || 'unknown',
+				error_status: error?.status || error?.statusCode || 0,
 			};
 
 			recordTracksEvent( 'calypso_helpcenter_post_by_url_error', tracksData );

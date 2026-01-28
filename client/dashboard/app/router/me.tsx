@@ -35,7 +35,13 @@ import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
-import { isTemporarySitePurchase, getTitleForDisplay, isDotcomPlan } from '../../utils/purchase';
+import {
+	isTemporarySitePurchase,
+	getTitleForDisplay,
+	getPurchaseCancellationFlowType,
+	isDotcomPlan,
+	CANCEL_FLOW_TYPE,
+} from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -349,26 +355,35 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Cancel' ),
-			},
-		],
-	} ),
+	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
+		const purchase = loaderData?.purchase;
+		const title =
+			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
+				? __( 'Remove' )
+				: __( 'Cancel' );
+		return {
+			meta: [
+				{
+					title,
+				},
+			],
+		};
+	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
 	loader: async ( { parentMatchPromise } ) => {
 		const parentMatch = await parentMatchPromise;
-		const { purchase } = parentMatch.loaderData ?? {};
-		if ( purchase ) {
-			await Promise.all( [
-				queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
-				queryClient.ensureQueryData( productsQuery() ),
-				queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
-				queryClient.ensureQueryData( plansQuery() ),
-			] );
+		const purchase = parentMatch.loaderData?.purchase;
+		if ( ! purchase ) {
+			return { purchase: undefined };
 		}
+		await Promise.all( [
+			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			queryClient.ensureQueryData( productsQuery() ),
+			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+			queryClient.ensureQueryData( plansQuery() ),
+		] );
+		return { purchase };
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>

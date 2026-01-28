@@ -92,7 +92,7 @@ If you feel yourself waiting for someone to review a PR, don’t hesitate to per
 
 ### We’re Here To Help
 
-We encourage you to ask for help at any point. We want your first experience with Calypso to be a good one, so don’t be shy. If you’re wondering why something is the way it is, or how a decision was made, you can tag issues with **<span class="label type-question">[Type] Question</span>** or prefix them with “Question:”.
+We encourage you to ask for help at any point. We want your first experience with Calypso to be a good one, so don’t be shy. If you’re wondering why something is the way it is, or how a decision was made, you can tag issues with **<span class="label type-question">Question</span>** or prefix them with “Question:”.
 
 ## License
 

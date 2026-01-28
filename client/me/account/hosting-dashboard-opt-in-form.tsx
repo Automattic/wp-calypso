@@ -87,6 +87,10 @@ export default function HostingDashboardOptInForm() {
 		}
 	};
 
+	if ( savedPreference?.value === 'forced-opt-in' ) {
+		return null;
+	}
+
 	return (
 		<>
 			<SectionHeader label={ translate( 'Try the new Hosting Dashboard' ) } />
@@ -125,7 +129,7 @@ export default function HostingDashboardOptInForm() {
 										components: {
 											surveyLink: (
 												<ExternalLink
-													href="https://automattic.survey.fm/msd-survey-for-opt-in-opt-out"
+													href="https://automattic.survey.fm/msd-survey-for-opt-out"
 													icon
 													onClick={ () =>
 														dispatch(

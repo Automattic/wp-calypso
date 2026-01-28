@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Layout configuration for action/suffix positioning
+ */
+export type ItemLayout = 'inline' | 'stacked';
+
 export interface IconListItemProps {
 	/**
 	 * The main label that identifies the item.
@@ -23,6 +28,23 @@ export interface IconListItemProps {
 	 * Optional CSS class name(s) to apply to the item.
 	 */
 	className?: string;
+	/**
+	 * Controls the overall visual density of the item, including spacing
+	 * between the decoration/icon and the content, as well as the spacing
+	 * between the title and description text. When set to `'low'`, it also
+	 * adjusts the title typography (e.g., a smaller title font size) to
+	 * match the denser layout.
+	 * @default 'medium'
+	 */
+	density?: 'low' | 'medium' | 'high';
+
+	/**
+	 * Controls the layout of the suffix relative to content.
+	 * - 'inline': Suffix appears horizontally next to content (default)
+	 * - 'stacked': Suffix appears below content in a vertical stack
+	 * @default 'inline'
+	 */
+	layout?: ItemLayout;
 }
 
 export interface IconListProps {

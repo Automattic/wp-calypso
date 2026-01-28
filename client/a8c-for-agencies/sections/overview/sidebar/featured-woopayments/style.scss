@@ -1,9 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
 $woocommerce-purple-50: #720EEC;
 
 .overview__featured-woopayments {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
 	background: $woocommerce-purple-50 url( calypso/assets/images/a8c-for-agencies/woo-product-card-bg.svg ) no-repeat bottom right;
 	border-color: $woocommerce-purple-50;
 	border-radius: 4px;
@@ -66,4 +70,12 @@ $woocommerce-purple-50: #720EEC;
 .overview__featured-woopayments-description {
 	@include body-large;
 	margin-block-end: 12px;
+}
+
+.components-button.is-primary.overview__featured-woopayments-button {
+	align-self: stretch;
+
+	@include break-wide {
+		align-self: flex-start;
+	}
 }

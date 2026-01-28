@@ -1,4 +1,4 @@
-import { DashboardDataError, INACCESSIBLE_JETPACK_ERROR_CODE } from '@automattic/api-core';
+import { isInaccessibleJetpackError } from '@automattic/api-core';
 import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
@@ -17,7 +17,7 @@ function isBenignError( error: Error ) {
 
 	// Ignore errors related to inaccessible Jetpack sites.
 	// The user is expected to debug their Jetpack sites.
-	if ( error instanceof DashboardDataError && error.code === INACCESSIBLE_JETPACK_ERROR_CODE ) {
+	if ( isInaccessibleJetpackError( error ) ) {
 		return true;
 	}
 

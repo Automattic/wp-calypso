@@ -24,6 +24,7 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		currentUrlPath.includes( '/checkout/unified' ) && isLoggedOutCart;
 	const isA4ASitelessCheckout =
 		isA8CForAgencies() &&
+		! selectedSite &&
 		( currentUrlPath.includes( '/marketplace/checkout' ) ||
 			currentUrlPath.includes( '/client/checkout' ) );
 	const isNoSiteCart =
