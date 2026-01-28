@@ -1,6 +1,5 @@
 import path from 'path';
-import { envVariables } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 const TEST_WORDPRESS_EXPORT_FILE_PATH = path.join(
 	__dirname,
@@ -19,10 +18,7 @@ test.describe(
 		},
 	},
 	() => {
-		test.skip(
-			envVariables.MAILOSAUR_LIMIT_REACHED,
-			'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
-		);
+		skipIfMailosaurLimitReached();
 
 		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "WordPress Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {
 			pageImportContentFromWordPress,

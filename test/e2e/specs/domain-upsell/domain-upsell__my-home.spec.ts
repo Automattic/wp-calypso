@@ -1,5 +1,4 @@
-import { envVariables } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Domain: Upsell (Home)',
@@ -7,10 +6,7 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
-		test.skip(
-			envVariables.MAILOSAUR_LIMIT_REACHED,
-			'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
-		);
+		skipIfMailosaurLimitReached();
 
 		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
 			helperData,
