@@ -1,15 +1,15 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 
-const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
+const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
 
 /**
  * Determine whether to display the dashboard toggle. Only users created
  * before 22 December 2025 can manually opt in or out.
  */
 export const isDashboardToggleEnabled = ( state: AppState ): boolean => {
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
+	if ( ! config.isEnabled( 'dashboard/v2' ) ) {
 		return false;
 	}
 

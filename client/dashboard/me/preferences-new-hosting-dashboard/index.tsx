@@ -1,4 +1,5 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -50,8 +51,7 @@ const fields: Field< OptInFormData >[] = [
 	},
 ];
 
-// See client/state/dashboard/selectors/is-dashboard-toggle-enabled.ts
-const OLDEST_ELIGIBLE_USER = 275231967; // Cut-off on 22 December 2025
+const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
 
 export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
