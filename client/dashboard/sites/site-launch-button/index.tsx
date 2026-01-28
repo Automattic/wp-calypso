@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -80,6 +80,7 @@ export function SiteLaunchButton( {
 			new: site.name,
 			hide_initial_query: 'yes',
 			back_to: redirectToDashboardLink( { supportBackport: true } ),
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 

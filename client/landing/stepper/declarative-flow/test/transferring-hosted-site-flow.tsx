@@ -21,6 +21,9 @@ const mockSite = {
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isAdminInterfaceWPAdmin: jest.fn( () => mockIsAdminInterfaceWPAdminMock ),
 } ) );
+jest.mock( 'calypso/dashboard/utils/link', () => ( {
+	dashboardLink: jest.fn( ( path: string ) => `https://my.wordpress.com${ path }` ),
+} ) );
 jest.mock( '../../hooks/use-site', () => ( {
 	useSite: jest.fn( () => mockSite ),
 } ) );
@@ -80,14 +83,16 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( 'https://mysite.com/wp-admin' );
 		} );
 
-		it( 'redirects the user to the /home when is not wp-admin', async () => {
+		it( 'redirects the user to the dashboard when is not wp-admin', async () => {
 			mockIsAdminInterfaceWPAdminMock = false;
 
 			runUseStepNavigationSubmit( {
 				currentStep: 'processing',
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/home/' + mockSiteId );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://my.wordpress.com/sites/mysite.com'
+			);
 		} );
 
 		it( 'redirects the user to the redirectTo when it is provided', async () => {

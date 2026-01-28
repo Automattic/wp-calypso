@@ -33,14 +33,95 @@ export function a4aLink( path: string ) {
 }
 
 /**
+ * Dashboard type identifier.
+ * undefined represents the default (main MSD dashboard).
+ */
+export type DashboardType = 'ciab' | undefined;
+
+/**
+ * Returns the dashboard type from URL query params.
+ * Used when in Stepper to know which dashboard the user came from.
+ */
+function getDashboardFromQuery(): DashboardType | null {
+	const params = new URLSearchParams( window.location.search );
+	const dashboard = params.get( 'dashboard' );
+	if ( dashboard === 'ciab' ) {
+		return 'ciab';
+	}
+	return null;
+}
+
+/**
+ * Returns the dashboard type from the current path.
+ * Only detects ciab (which has a distinctive /ciab prefix).
+ * Returns null for all other paths, falling through to default.
+ */
+function getDashboardFromPath(): DashboardType | null {
+	if ( window.location.pathname.startsWith( '/ciab' ) ) {
+		return 'ciab';
+	}
+	return null;
+}
+
+/**
+ * Returns the dashboard type from the referrer.
+ * Fallback when query param and path don't indicate dashboard.
+ */
+function getDashboardFromReferrer(): DashboardType | null {
+	if ( ! document.referrer ) {
+		return null;
+	}
+	try {
+		const referrerUrl = new URL( document.referrer );
+		if ( referrerUrl.pathname.startsWith( '/ciab' ) ) {
+			return 'ciab';
+		}
+		return null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Detects the current dashboard context.
+ * Priority: query param → current path → referrer → default (undefined = main MSD)
+ */
+export function getCurrentDashboard(): DashboardType {
+	return (
+		getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? undefined
+	);
+}
+
+/**
+ * Returns the dashboard origin based on environment.
+ */
+function getDashboardOrigin(): string {
+	if ( config( 'env' ) === 'development' ) {
+		return 'http://my.localhost:3000';
+	}
+	return 'https://my.wordpress.com';
+}
+
+/**
  * This function returns the link to the dashboard.
+ * Context-aware: automatically uses correct base path (/ciab for CIAB, root for default).
  */
 export function dashboardLink( path: string = '' ) {
-	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.localhost:3000' ).href;
+	const origin = getDashboardOrigin();
+
+	// If path already has /ciab base, use as-is
+	if ( path.startsWith( '/ciab' ) ) {
+		return new URL( path, origin ).href;
 	}
 
-	return new URL( path, 'https://my.wordpress.com' ).href;
+	// Detect dashboard context and add /ciab prefix if needed
+	const dashboard = getCurrentDashboard();
+	if ( dashboard === 'ciab' ) {
+		return new URL( `/ciab${ path }`, origin ).href;
+	}
+
+	// Default dashboard uses root path (no prefix)
+	return new URL( path, origin ).href;
 }
 
 /**

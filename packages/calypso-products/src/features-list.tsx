@@ -2755,7 +2755,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Unlimited products' )
 				: i18n.translate( 'List unlimited products' ),
-		getDescription: () => '',
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
 	},
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,

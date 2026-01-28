@@ -8,6 +8,7 @@ import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/woocommerce-product-slug-mapping';
 import { MarketplaceTypeContext } from '../context';
+import usePressableOwnershipType from '../hosting-overview/hooks/use-pressable-ownership-type';
 import type { TermPricingType } from '../types';
 import type {
 	APIProductFamily,
@@ -159,6 +160,8 @@ export const useGetProductPricingInfo = (
 	);
 	const { count } = useWPCOMOwnedSites();
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const pressableOwnership = usePressableOwnershipType();
+	const isReferralMode = marketplaceType === 'referral';
 	const ownedPlans = useMemo( () => {
 		// We don't count ownded plans when referring products
 		if ( marketplaceType === 'referral' ) {
@@ -232,12 +235,44 @@ export const useGetProductPricingInfo = (
 		if ( isTermPricingEnabled ) {
 			// TODO: When we enable BD for all the agencies, we will only keep this logic for all the products, remove the rest of the logic.
 			const isDailyPricing = product.price_interval === 'day';
-			const actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
-			const discountedCost = productPrice || 0;
 
-			const discountPercentage = discountedCost
-				? Math.round( ( ( actualCost - discountedCost ) / actualCost ) * 100 )
-				: 100;
+			// Check for introductory pricing
+			const introductoryPrice =
+				termPricing === 'yearly'
+					? product.yearly_introductory_price
+					: product.monthly_introductory_price;
+			const regularTermPrice =
+				termPricing === 'yearly' ? product.yearly_price : product.monthly_price;
+
+			// Determine if intro pricing should be applied for this product
+			const shouldApplyIntroPricing = () => {
+				const isPressableProduct = product.family_slug === 'pressable-hosting';
+				if ( isPressableProduct ) {
+					// Only show intro pricing for Pressable if user has no active plan OR is in referral mode
+					return pressableOwnership !== 'agency' || isReferralMode;
+				}
+				return true; // Non-Pressable products always apply intro pricing if available
+			};
+
+			const hasIntroductoryPricing =
+				introductoryPrice !== undefined && introductoryPrice !== null && shouldApplyIntroPricing();
+
+			let actualCost: number;
+			let discountedCost: number;
+
+			if ( hasIntroductoryPricing && regularTermPrice ) {
+				// Use introductory pricing: introductory price is the discounted cost
+				actualCost = regularTermPrice * quantity;
+				discountedCost = introductoryPrice * quantity;
+			} else {
+				actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
+				discountedCost = productPrice || 0;
+			}
+
+			const discountPercentage =
+				actualCost > 0 && actualCost > discountedCost
+					? calculateDiscountPercentage( actualCost, discountedCost )
+					: 0;
 
 			return {
 				actualCost,

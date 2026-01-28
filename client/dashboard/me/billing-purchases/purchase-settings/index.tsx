@@ -60,7 +60,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -133,7 +133,10 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 	}
 
 	if ( purchase.is_woo_hosted_product ) {
-		return wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug }` );
+		return addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+			siteSlug: purchase.site_slug,
+			dashboard: getCurrentDashboard(),
+		} );
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -160,6 +163,7 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
+		dashboard: getCurrentDashboard(),
 	} );
 }
 
