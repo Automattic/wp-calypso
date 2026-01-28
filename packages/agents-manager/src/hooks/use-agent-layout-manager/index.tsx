@@ -27,7 +27,6 @@ interface Options {
 
 interface ReturnValue {
 	isDocked: boolean;
-	isDesktop: boolean;
 	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
@@ -196,11 +195,11 @@ export default function useAgentLayoutManager( {
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( true );
 
-		if ( isDesktop ) {
+		if ( isDesktop && hasEnoughHeight ) {
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ container, isReady, handleOpenSidebar, isDesktop ] );
+	}, [ container, isReady, handleOpenSidebar, isDesktop, hasEnoughHeight ] );
 
 	const undock = useCallback( () => {
 		if ( ! isReady || ! container ) {
@@ -239,7 +238,6 @@ export default function useAgentLayoutManager( {
 
 	return {
 		isDocked: !! shouldRenderSidebar,
-		isDesktop,
 		canDock: isDesktop && hasEnoughHeight,
 		dock,
 		undock,
