@@ -439,10 +439,10 @@ body.post-php.agents-manager-sidebar-container {
 			padding-block: 8px;
 		}
 
-		// Past conversations: Fix margin-bottom for variation picker components
-		.Message-module_message:has(
-				.big-sky__dock__menu__variation-picker .big-sky__item-picker__arrows
-			):has( + .Message-module_message:not( .big-sky__completed-plan ) ) {
+		// Past conversations: Fix margin-bottom for item picker components
+		.Message-module_message:has( .big-sky__item-picker__arrows ):has(
+				+ .Message-module_message:not( .big-sky__completed-plan )
+			) {
 			margin-bottom: 24px;
 		}
 	}
@@ -552,7 +552,7 @@ body.post-php.agents-manager-sidebar-container {
 				&:hover {
 					color: $white;
 					background-color: #cc1818;
-					filter: brightness(90%);
+					filter: brightness( 90% );
 				}
 			}
 
@@ -594,17 +594,13 @@ body.post-php.agents-manager-sidebar-container {
 		max-width: 190px;
 	}
 
-	.big-sky__chat-actions::before:not(.has-confirmation-actions),
-	.big-sky__chat-actions::after:not(.has-confirmation-actions) {
-		backdrop-filter: blur(8px);
-		content: "";
+	.big-sky__chat-actions::before:not( .has-confirmation-actions ),
+	.big-sky__chat-actions::after:not( .has-confirmation-actions ) {
+		backdrop-filter: blur( 8px );
+		content: '';
 		height: 100%;
 		left: 0;
-		mask: linear-gradient(
-			to left,
-			rgba(255, 255, 255, 0.1),
-			rgba(255, 255, 255, 1)
-		);
+		mask: linear-gradient( to left, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
 		position: fixed;
 		top: 0;
 		width: 20px;
@@ -613,11 +609,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 
 	.big-sky__chat-actions::after {
-		mask: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0.1),
-			rgba(255, 255, 255, 1)
-		);
+		mask: linear-gradient( to right, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
 		left: auto;
 		right: 0;
 	}
