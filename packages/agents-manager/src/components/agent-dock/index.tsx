@@ -284,16 +284,11 @@ export default function AgentDock( {
 							],
 						};
 
-						// Avoid showing multiple next step buttons by only displaying it after the most recent item picker component
+						// Only show next step button after the most recent component message with follow-up tasks
 						const isLastMessage = index === array.length - 1;
-						if ( ! isLastMessage || ! followUpTasks ) {
-							return [ componentMessage ];
-						}
-
-						// Add a "Next Step" button if available and not deleted
 						const nextStepButton = getChatComponent?.( 'next-step-button' );
-						const nextStepButtonMessageId = `${ message.id }-next-step`;
-						if ( ! nextStepButton || deletedMessageIds.has( nextStepButtonMessageId ) ) {
+
+						if ( ! isLastMessage || ! followUpTasks || ! nextStepButton ) {
 							return [ componentMessage ];
 						}
 
@@ -301,19 +296,11 @@ export default function AgentDock( {
 							componentMessage,
 							{
 								...message,
-								id: nextStepButtonMessageId,
+								id: `${ message.id }-next-step`,
 								content: [
 									{
 										type: 'component' as const,
 										component: nextStepButton,
-										componentProps: {
-											onClick: () => {
-												// Remove the button after click
-												setDeletedMessageIds(
-													( prevIds ) => new Set( [ ...prevIds, nextStepButtonMessageId ] )
-												);
-											},
-										},
 									},
 								],
 							},
