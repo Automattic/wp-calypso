@@ -185,7 +185,8 @@ function isThinkToolMessage( msg: ServerMessage ): boolean {
 	try {
 		const content = JSON.parse( msg.content );
 		return content.tool_id === 'wpcom__think';
-	} catch {
+	} catch ( error ) {
+		console.error( 'Failed to parse tool message content:', error );
 		return false;
 	}
 }
