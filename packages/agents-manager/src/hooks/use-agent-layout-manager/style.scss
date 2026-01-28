@@ -457,6 +457,14 @@ body:not(.modal-open) .agents-manager-chat--docked {
 		}
 	}
 
+	.EmptyView-module_container .Suggestions-module_container {
+		padding: 0;
+	}
+
+	.Textarea-module_textarea {
+		line-height: 1.8;
+	}
+
 	.big-sky__chat-actions {
 		width: 100%;
 		margin-top: auto;
@@ -847,6 +855,11 @@ body:not(.modal-open) .agents-manager-chat--docked {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	.Messages-module_container.Messages-module_emptyState {
+		padding-bottom: 0;
+		padding-top: 0;
+	}
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&.is-active,
