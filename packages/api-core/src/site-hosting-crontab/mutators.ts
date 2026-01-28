@@ -19,7 +19,8 @@ export async function createCrontab(
 }
 
 export async function deleteCrontab( siteId: number, cronId: number ): Promise< void > {
-	await wpcom.req.del( {
+	await wpcom.req.post( {
+		method: 'DELETE',
 		path: `/sites/${ siteId }/hosting/crontab/${ cronId }`,
 		apiNamespace: 'wpcom/v2',
 	} );
