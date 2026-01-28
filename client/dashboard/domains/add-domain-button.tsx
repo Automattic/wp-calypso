@@ -7,11 +7,9 @@ import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../util
 export function AddDomainButton( {
 	siteSlug,
 	domainConnectionSetupUrl,
-	redirectTo,
 }: {
 	siteSlug?: string;
 	domainConnectionSetupUrl?: string;
-	redirectTo?: string;
 } ) {
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
@@ -21,23 +19,15 @@ export function AddDomainButton( {
 		if ( domainConnectionSetupUrl ) {
 			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
-		}
 
-		const dashboard = getCurrentDashboard();
-		if ( dashboard ) {
-			queryArgs.dashboard = dashboard;
-		}
+		queryArgs.dashboard = getCurrentDashboard();
 		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug
-			? addQueryArgs( urlWithSite, queryArgs )
-			: addQueryArgs( urlWithoutSite, queryArgs );
+		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
 		return false;
 	};
 
