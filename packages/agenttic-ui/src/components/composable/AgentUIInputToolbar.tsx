@@ -1,4 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {
+	useFloating,
+	flip,
+	offset,
+	shift,
+	autoUpdate,
+} from '@floating-ui/react-dom';
 import styles from './AgentUIInputToolbar.module.css';
 
 export interface AgentUIInputToolbarProps {
@@ -18,8 +25,6 @@ export function AgentUIInputToolbar( {
 }: AgentUIInputToolbarProps = {} ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
-	const buttonRef = useRef< HTMLButtonElement >( null );
-	const dropdownRef = useRef< HTMLDivElement >( null );
 	const dropdownId = React.useId();
 
 	const toggleDropdown = () => {
@@ -29,6 +34,26 @@ export function AgentUIInputToolbar( {
 	const closeDropdown = () => {
 		setIsOpen( false );
 	};
+
+	const { refs, floatingStyles } = useFloating( {
+		placement: 'bottom-start',
+		transform: true,
+		middleware: [
+			offset( 8 ),
+			flip( {
+				fallbackPlacements: [
+					'bottom',
+					'bottom-end',
+					'top-start',
+					'top',
+					'top-end',
+				],
+				fallbackStrategy: 'bestFit',
+			} ),
+			shift( { padding: 8 } ),
+		],
+		whileElementsMounted: autoUpdate,
+	} );
 
 	// Handle click outside to close dropdown
 	useEffect( () => {
@@ -61,7 +86,7 @@ export function AgentUIInputToolbar( {
 				event.preventDefault();
 				closeDropdown();
 				// Return focus to button
-				buttonRef.current?.focus();
+				( refs.reference?.current as HTMLElement )?.focus();
 			}
 		};
 
@@ -75,9 +100,9 @@ export function AgentUIInputToolbar( {
 
 	// Focus management: focus dropdown when it opens
 	useEffect( () => {
-		if ( isOpen && dropdownRef.current ) {
+		if ( isOpen && refs.floating?.current ) {
 			// Focus the dropdown container for keyboard navigation
-			dropdownRef.current.focus();
+			( refs.floating?.current as HTMLElement )?.focus();
 		}
 	}, [ isOpen ] );
 
@@ -96,7 +121,7 @@ export function AgentUIInputToolbar( {
 		<div ref={ containerRef } className={ className }>
 			<div className={ styles.container }>
 				<button
-					ref={ buttonRef }
+					ref={ refs.setReference }
 					type="button"
 					onClick={ toggleDropdown }
 					onKeyDown={ handleButtonKeyDown }
@@ -129,12 +154,13 @@ export function AgentUIInputToolbar( {
 				</button>
 				{ isOpen && (
 					<div
-						ref={ dropdownRef }
+						ref={ refs.setFloating }
 						id={ dropdownId }
 						className={ styles.dropdown }
 						role="dialog"
 						aria-label={ toolbarLabel }
 						tabIndex={ -1 }
+						style={ floatingStyles }
 					>
 						{ children }
 					</div>
