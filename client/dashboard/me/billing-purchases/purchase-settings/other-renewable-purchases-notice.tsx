@@ -17,6 +17,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewUrlForPurchases,
+	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { ExpiringLaterText } from './purchase-expiring-notice';
 import { shouldShowCardExpiringWarning } from './purchase-notice';
@@ -53,9 +54,15 @@ export function shouldShowOtherRenewablePurchasesNotice(
 	}
 
 	// Calculate purchase states once
-	const currentPurchaseIsExpiring = isExpiring( currentPurchase ) || isExpired( currentPurchase );
+	const currentPurchaseIsExpiring =
+		isExpiring( currentPurchase ) ||
+		isExpired( currentPurchase ) ||
+		isInExpirationGracePeriod( currentPurchase );
 	const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-		( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase )
+		( otherPurchase ) =>
+			isExpiring( otherPurchase ) ||
+			isExpired( otherPurchase ) ||
+			isInExpirationGracePeriod( otherPurchase )
 	);
 
 	// Special case: centennial plans with no expiring purchases don't show notices
@@ -181,9 +188,15 @@ export function OtherRenewablePurchasesNotice( {
 	const currentPurchaseNeedsToRenewSoon = needsToRenewSoon( currentPurchase );
 	const currentPurchaseCreditCardExpiresBeforeSubscription =
 		isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
-	const currentPurchaseIsExpiring = isExpiring( currentPurchase ) || isExpired( currentPurchase );
+	const currentPurchaseIsExpiring =
+		isExpiring( currentPurchase ) ||
+		isExpired( currentPurchase ) ||
+		isInExpirationGracePeriod( currentPurchase );
 	const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-		( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase )
+		( otherPurchase ) =>
+			isExpiring( otherPurchase ) ||
+			isExpired( otherPurchase ) ||
+			isInExpirationGracePeriod( otherPurchase )
 	);
 
 	// Other information needed by some of the messages.
@@ -199,9 +212,16 @@ export function OtherRenewablePurchasesNotice( {
 			'days'
 		)
 	);
-	const anotherPurchaseIsExpired = otherRenewableSitePurchases.some( isExpired );
+	const anotherPurchaseIsExpired = otherRenewableSitePurchases.some(
+		( otherPurchase ) => isExpired( otherPurchase ) || isInExpirationGracePeriod( otherPurchase )
+	);
 	const expiringPurchases = otherRenewableSitePurchases
-		.filter( ( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase ) )
+		.filter(
+			( otherPurchase ) =>
+				isExpiring( otherPurchase ) ||
+				isExpired( otherPurchase ) ||
+				isInExpirationGracePeriod( otherPurchase )
+		)
 		.sort( ( a, b ) => new Date( a.expiry_date ).getTime() - new Date( b.expiry_date ).getTime() );
 	const earliestOtherExpiringPurchase: Purchase | undefined =
 		expiringPurchases.length > 0 ? expiringPurchases[ 0 ] : undefined;
@@ -233,7 +253,7 @@ export function OtherRenewablePurchasesNotice( {
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		const noticeActionText = __( 'Renew all' );
 
-		if ( isExpired( currentPurchase ) ) {
+		if ( isInExpirationGracePeriod( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
@@ -400,7 +420,7 @@ export function OtherRenewablePurchasesNotice( {
 		let noticeText: React.ReactNode;
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
-		if ( isExpired( currentPurchase ) ) {
+		if ( isInExpirationGracePeriod( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
@@ -749,20 +769,71 @@ export function OtherRenewablePurchasesNotice( {
 		currentPurchaseIsExpiring &&
 		! anotherPurchaseIsExpiring
 	) {
-		const noticeText =
-			currentPurchase.is_plan && purchaseIsIncludedInPlan ? (
-				createInterpolateElement(
+		const noticeText = ( () => {
+			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
+			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+				if ( currentPurchase.is_domain_registration ) {
+					return createInterpolateElement(
+						sprintf(
+							// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+							__(
+								'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+							),
+							{ purchaseName, expiry }
+						),
+						{ link }
+					);
+				}
+				if ( currentPurchase.is_plan ) {
+					if ( purchaseIsIncludedInPlan ) {
+						return createInterpolateElement(
+							sprintf(
+								// translators: purchaseName is the name of the product, expiry is a string like "3 days ago", includedPurchaseName is the name of another product
+								__(
+									'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action. You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+								),
+								{ purchaseName, expiry, includedPurchaseName }
+							),
+							{ link, managePurchase }
+						);
+					}
+					return createInterpolateElement(
+						sprintf(
+							// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+							__(
+								'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action. You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+							),
+							{ purchaseName, expiry }
+						),
+						{ link }
+					);
+				}
+				return createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+						__(
+							'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action. You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+						),
+						{ purchaseName, expiry }
+					),
+					{ link }
+				);
+			}
+			if ( currentPurchase.is_plan && purchaseIsIncludedInPlan ) {
+				return createInterpolateElement(
 					__(
 						'You have <link>other upgrades</link> on this site that are scheduled to renew soon.'
 					),
 					{ link }
-				)
-			) : (
+				);
+			}
+			return (
 				<ExpiringLaterText
 					purchase={ purchase }
 					autoRenewingUpgradesAction={ openUpcomingRenewalsDialog }
 				/>
 			);
+		} )();
 
 		return (
 			<NoticeContent
