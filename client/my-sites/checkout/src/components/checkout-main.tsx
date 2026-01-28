@@ -27,7 +27,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
@@ -136,9 +136,16 @@ export default function CheckoutMain( {
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
+	const isCommerceGarden =
+		useSelector( ( state ) => siteId && isCommerceGardenSite( state, siteId ) ) || false;
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
-			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+			return (
+				siteId &&
+				isJetpackSite( state, siteId ) &&
+				! isAtomicSite( state, siteId ) &&
+				! isCommerceGarden
+			);
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
@@ -571,19 +578,18 @@ export default function CheckoutMain( {
 	// Woo Hosted sites are technically Jetpack, but are supposed to default to
 	// WPcom colors. We should update this once we have a better way to identify
 	// Garden sites outside of the Hosting Dashboard.
-	const jetpackColors =
-		isJetpackNotAtomic && ! updatedSiteSlug?.endsWith( '.commerce-garden.com' )
-			? {
-					primary: colors[ 'Jetpack Green' ],
-					primaryBorder: colors[ 'Jetpack Green 80' ],
-					primaryOver: colors[ 'Jetpack Green 60' ],
-					success: colors[ 'Jetpack Green' ],
-					discount: colors[ 'Jetpack Green' ],
-					highlight: colors[ 'WordPress Blue 50' ],
-					highlightBorder: colors[ 'WordPress Blue 80' ],
-					highlightOver: colors[ 'WordPress Blue 60' ],
-			  }
-			: {};
+	const jetpackColors = isJetpackNotAtomic
+		? {
+				primary: colors[ 'Jetpack Green' ],
+				primaryBorder: colors[ 'Jetpack Green 80' ],
+				primaryOver: colors[ 'Jetpack Green 60' ],
+				success: colors[ 'Jetpack Green' ],
+				discount: colors[ 'Jetpack Green' ],
+				highlight: colors[ 'WordPress Blue 50' ],
+				highlightBorder: colors[ 'WordPress Blue 80' ],
+				highlightOver: colors[ 'WordPress Blue 60' ],
+		  }
+		: {};
 
 	// A4A Theme
 	const a4aColors =
