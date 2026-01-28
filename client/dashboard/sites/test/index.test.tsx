@@ -69,13 +69,9 @@ describe( 'Sites', () => {
 			} as User,
 		} );
 
-		await waitFor( () => {
-			const table = screen.getByRole( 'table' );
-			const rows = within( table ).getAllByRole( 'row' );
-			expect( rows ).toHaveLength( 3 );
-		} );
+		const table = await screen.findByRole( 'table' );
+		await waitFor( () => expect( within( table ).getAllByRole( 'row' ) ).toHaveLength( 3 ) );
 
-		const table = screen.getByRole( 'table' );
 		const rows = within( table ).getAllByRole( 'row' );
 
 		const header = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
@@ -89,7 +85,7 @@ describe( 'Sites', () => {
 		expect( row1[ 0 ] ).toHaveTextContent( 'My First Site' );
 		expect( row1[ 0 ] ).toHaveTextContent( 'my-first-site.wordpress.com' );
 		expect( row1[ 1 ] ).toHaveTextContent( 'Public' );
-		expect( row1[ 2 ] ).toHaveAccessibleName( '' ); // async-loading
+		expect( row1[ 2 ] ).toHaveAccessibleName( '' ); // empty because it's async-loaded
 		expect( row1[ 3 ] ).toHaveTextContent( '123' );
 		expect( row1[ 4 ] ).toHaveTextContent( 'Business' );
 
@@ -97,7 +93,7 @@ describe( 'Sites', () => {
 		expect( row2[ 0 ] ).toHaveTextContent( 'My Second Site' );
 		expect( row2[ 0 ] ).toHaveTextContent( 'my-second-site.wordpress.com' );
 		expect( row2[ 1 ] ).toHaveTextContent( 'Coming soon' );
-		expect( row2[ 2 ] ).toHaveAccessibleName( '' ); // async-loading
+		expect( row2[ 2 ] ).toHaveAccessibleName( '' ); // empty because it's async-loaded
 		expect( row2[ 3 ] ).toHaveTextContent( '456' );
 		expect( row2[ 4 ] ).toHaveTextContent( 'Free' );
 	} );
