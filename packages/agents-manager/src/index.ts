@@ -18,3 +18,5 @@ export type {
 	ContextEntry,
 	Suggestion,
 } from './types';
+
+export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';

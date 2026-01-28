@@ -26,6 +26,7 @@ class SocialLoginForm extends Component {
 		lastUsedAuthenticationMethod: PropTypes.string,
 		resetLastUsedAuthenticationMethod: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 	};
 
 	socialLoginButtons = [
@@ -100,23 +101,57 @@ class SocialLoginForm extends Component {
 		},
 	];
 
-	renderSocialButton( { service, enabled, button } ) {
-		const { isSocialFirst, lastUsedAuthenticationMethod } = this.props;
+	/**
+	 * Returns the final array of social login buttons to render.
+	 * Handles filtering by allowedSocialServices, enabled state, and
+	 * replacing/appending UsernameOrEmailButton for lastUsedAuthenticationMethod.
+	 */
+	getSocialButtons() {
+		const { allowedSocialServices, isSocialFirst, lastUsedAuthenticationMethod } = this.props;
 
-		if ( ! enabled ) {
-			return null;
-		}
+		// Filter by allowedSocialServices if provided, otherwise use all buttons
+		const buttons = allowedSocialServices
+			? allowedSocialServices
+					.map( ( service ) => this.socialLoginButtons.find( ( btn ) => btn.service === service ) )
+					.filter( Boolean )
+			: this.socialLoginButtons;
 
-		if ( isSocialFirst && service === lastUsedAuthenticationMethod ) {
-			return (
+		// Filter out disabled buttons and transform to rendered elements
+		const renderedButtons = buttons
+			.filter( ( { enabled } ) => enabled )
+			.map( ( { service, button } ) => {
+				// Replace lastUsedAuthenticationMethod with UsernameOrEmailButton
+				if ( isSocialFirst && service === lastUsedAuthenticationMethod ) {
+					return (
+						<UsernameOrEmailButton
+							key="social-login-button-username-or-email"
+							onClick={ this.props.resetLastUsedAuthenticationMethod }
+						/>
+					);
+				}
+				return button;
+			} );
+
+		// Append fallback UsernameOrEmailButton if lastUsedAuthenticationMethod
+		// is not in the allowed list. This handles the case where a user logged in
+		// via a social option on another page (e.g., Google) and then visits a
+		// partner login page (e.g., PayPal) that excludes that social option.
+		const needsFallbackButton =
+			isSocialFirst &&
+			lastUsedAuthenticationMethod &&
+			allowedSocialServices &&
+			! allowedSocialServices.includes( lastUsedAuthenticationMethod );
+
+		if ( needsFallbackButton ) {
+			renderedButtons.push(
 				<UsernameOrEmailButton
-					key="social-login-button-username-or-email"
+					key="social-login-button-username-or-email-fallback"
 					onClick={ this.props.resetLastUsedAuthenticationMethod }
 				/>
 			);
 		}
 
-		return button;
+		return renderedButtons;
 	}
 
 	render() {
@@ -127,9 +162,7 @@ class SocialLoginForm extends Component {
 				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
 			>
 				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">
-						{ this.socialLoginButtons.map( this.renderSocialButton.bind( this ) ) }
-					</div>
+					<div className="auth-form__social-buttons-container">{ this.getSocialButtons() }</div>
 				</div>
 			</Card>
 		);

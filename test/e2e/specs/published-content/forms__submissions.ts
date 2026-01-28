@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","disableGoBack":false,"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
+		const postContent = `<!-- wp:jetpack/contact-form {"emailNotifications":false,"subject":"A new registration from your website","to":"","disableGoBack":false,"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
 						<div class="wp-block-jetpack-contact-form" style="padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px"><!-- wp:jetpack/field-name {"required":true,"requiredText":"(required)"} /-->
 
 						<!-- wp:jetpack/field-email {"required":true,"requiredText":"(required)"} /-->
