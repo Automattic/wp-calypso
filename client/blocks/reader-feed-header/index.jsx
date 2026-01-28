@@ -31,10 +31,6 @@ class FeedHeader extends Component {
 		hasOrganization: PropTypes.bool,
 	};
 
-	state = {
-		isSuggestedFollowsModalOpen: false,
-	};
-
 	render() {
 		const { site, feed, streamKey, translate, width } = this.props;
 		const followerCount = getFollowerCount( feed, site );
