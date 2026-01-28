@@ -7,33 +7,44 @@ const HELP_CENTER_STORE = HelpCenter.register();
 export const useLoggedOutSession = () => {
 	const location = useLocation();
 	const params = new URLSearchParams( location.search );
-	// We use these values to identify the logged out chat, not the ones from the data store, to keep the router in charge of the state.
-	const loggedOutOdieChatId = params.get( 'chatId' );
-	const loggedOutOdieSessionId = params.get( 'sessionId' );
-	const loggedOutOdieBotSlug = params.get( 'botSlug' );
 
-	const currentUser = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentUser(),
-		[]
-	);
+	// Primary: URL params (for active sessions where router is in control)
+	const urlChatId = params.get( 'chatId' );
+	const urlSessionId = params.get( 'sessionId' );
+	const urlBotSlug = params.get( 'botSlug' );
+
+	// Fallback: persisted store (for session restoration after Help Center is reopened)
+	const { currentUser, persistedLoggedOutOdieChat } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			currentUser: store.getCurrentUser(),
+			persistedLoggedOutOdieChat: store.getLoggedOutOdieChat(),
+		};
+	}, [] );
+
 	const isLoggedIn = !! currentUser?.ID;
+
+	// Use URL params if available, otherwise fall back to persisted session
+	const loggedOutOdieChatId = urlChatId || persistedLoggedOutOdieChat?.odieId?.toString() || null;
+	const loggedOutOdieSessionId = urlSessionId || persistedLoggedOutOdieChat?.sessionId || null;
+	const loggedOutOdieBotSlug = urlBotSlug || persistedLoggedOutOdieChat?.botSlug || null;
 
 	const isLoggedOutSession =
 		! isLoggedIn || ( loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug );
 
-	if ( ! isLoggedOutSession ) {
+	if ( isLoggedOutSession ) {
 		return {
-			isLoggedOutSession: false,
-			odieId: undefined,
-			sessionId: undefined,
-			botSlug: undefined,
+			isLoggedOutSession: true,
+			loggedOutOdieChatId: loggedOutOdieChatId,
+			sessionId: loggedOutOdieSessionId,
+			botSlug: loggedOutOdieBotSlug,
 		};
 	}
 
 	return {
-		isLoggedOutSession: true,
-		loggedOutOdieChatId: loggedOutOdieChatId,
-		sessionId: loggedOutOdieSessionId,
-		botSlug: loggedOutOdieBotSlug,
+		isLoggedOutSession: false,
+		odieId: undefined,
+		sessionId: undefined,
+		botSlug: undefined,
 	};
 };
