@@ -8,14 +8,10 @@ import { useMutation } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
 import { createBlock, parse, serialize, unregisterBlockType } from '@wordpress/blocks';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -44,7 +40,6 @@ export default function QuickPost(): JSX.Element | null {
 		return localStorage.getItem( STORAGE_KEY ) || getInitialPostContent();
 	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
-	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -176,52 +171,48 @@ export default function QuickPost(): JSX.Element | null {
 
 	return (
 		<div className="quick-post">
-			<VStack spacing={ 4 }>
-				<SitesDropdown
-					selectedSiteId={ siteId }
-					onSiteSelect={ handleSiteSelect }
-					isPlaceholder={ ! hasLoaded }
+			<SitesDropdown
+				selectedSiteId={ siteId }
+				onSiteSelect={ handleSiteSelect }
+				isPlaceholder={ ! hasLoaded }
+			/>
+
+			<div className="verbum-editor-wrapper">
+				<Editor
+					key={ editorKey }
+					initialContent={ postContent }
+					onChange={ setPostContent }
+					isRTL={ isLocaleRtl( locale ) ?? false }
+					isDarkMode={ false }
+					customStyles={ `
+					div.is-root-container.block-editor-block-list__layout {
+						padding-bottom: 20px;
+					}
+				` }
 				/>
+			</div>
 
-				<div className="verbum-editor-wrapper" ref={ editorRef }>
-					<Editor
-						key={ editorKey }
-						initialContent={ postContent }
-						onChange={ setPostContent }
-						isRTL={ isLocaleRtl( locale ) ?? false }
-						isDarkMode={ false }
-						customStyles={ `
-							div.is-root-container.block-editor-block-list__layout {
-								padding-bottom: 20px;
-							}
-						` }
-					/>
-				</div>
+			<HStack className="quick-post-actions" justify="flex-end">
+				<Button
+					variant="tertiary"
+					onClick={ handleFullEditorClick }
+					title={ translate( 'Edit using the full editor.' ) }
+					disabled={ isPublishing }
+					isBusy={ isSavingDraft }
+				>
+					<span>{ isSavingDraft ? translate( 'Saving…' ) : translate( 'Edit' ) }</span>
+					<span>{ isLocaleRtl( locale ) ? '\u2196' : '\u2197' }</span>
+				</Button>
 
-				<HStack justify="flex-end">
-					<Button
-						variant="tertiary"
-						onClick={ handleFullEditorClick }
-						title={ translate( 'Edit using the full editor.' ) }
-						disabled={ isPublishing }
-						isBusy={ isSavingDraft }
-					>
-						<HStack spacing={ 2 }>
-							<span>{ isSavingDraft ? translate( 'Saving…' ) : translate( 'Edit' ) }</span>{ ' ' }
-							<span>{ isLocaleRtl( locale ) ? '\u2196' : '\u2197' }</span>
-						</HStack>
-					</Button>
-
-					<Button
-						variant="primary"
-						onClick={ handlePublish }
-						disabled={ isPublishing || isSavingDraft }
-						isBusy={ isPublishing }
-					>
-						{ isPublishing ? translate( 'Posting…' ) : translate( 'Post' ) }
-					</Button>
-				</HStack>
-			</VStack>
+				<Button
+					variant="primary"
+					onClick={ handlePublish }
+					disabled={ isPublishing || isSavingDraft }
+					isBusy={ isPublishing }
+				>
+					{ isPublishing ? translate( 'Posting…' ) : translate( 'Post' ) }
+				</Button>
+			</HStack>
 		</div>
 	);
 }

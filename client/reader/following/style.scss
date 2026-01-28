@@ -71,4 +71,8 @@
 
 .following-stream__quick-post-card {
 	margin-block-end: 20px;
+
+	&.components-card {
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+	}
 }
