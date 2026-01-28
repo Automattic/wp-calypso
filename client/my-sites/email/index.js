@@ -62,11 +62,18 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		paths.getEmailManagementPath( ':site' ),
+		...commonHandlers,
+		controller.emailManagement,
+		makeLayout,
+		clientRender
+	);
+
 	registerMultiPage( {
 		paths: [
 			paths.getEmailManagementPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.getEmailManagementPath( ':site', ':domain' ),
-			paths.getEmailManagementPath( ':site' ),
 		],
 		handlers: [
 			setupPreferences,
