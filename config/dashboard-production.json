@@ -14,8 +14,11 @@
 		"ciab/allow-domain-features": true,
 		"cookie-banner": true,
 		"dashboard/v2": false,
+		"dashboard/v2/paginated-site-list": true,
 		"domain-transfer-redesign": true,
-		"marketplace-redesign": true
+		"marketplace-redesign": true,
+		"mcp-settings": true,
+		"wordpress-ai-tools": false
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

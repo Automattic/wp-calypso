@@ -4,7 +4,6 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
-import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -42,10 +41,6 @@ function overview( context: PageJSContext, next: () => void ) {
 export function redirectToSiteOverview( context: PageJSContext ) {
 	const { dispatch, getState } = context.store;
 	const path = `/sites/${ context.params.site }`;
-
-	if ( ! isDashboardEnabled( getState() ) ) {
-		return page.redirect( path );
-	}
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {

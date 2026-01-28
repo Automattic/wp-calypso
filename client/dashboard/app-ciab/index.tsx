@@ -2,7 +2,6 @@
 import {
 	sitesQuery,
 	paginatedSitesQuery,
-	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
@@ -11,7 +10,6 @@ import './translations';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
-	FetchDashboardSiteListParams,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import './style.scss';
@@ -52,8 +50,6 @@ boot( {
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		paginatedSitesQuery: ( fetchSitesOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( [ 'commerce-garden' ], fetchDashboardSiteListParams ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
 	},

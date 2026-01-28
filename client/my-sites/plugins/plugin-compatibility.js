@@ -24,7 +24,6 @@ const incompatiblePlugins = new Set( [
 	'reset-wp',
 	'reset',
 	'secure-file-manager',
-	'super-blank',
 	'ultimate-reset',
 	'ultimate-wp-reset',
 	'vamtam-offline-jetpack',

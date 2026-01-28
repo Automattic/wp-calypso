@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { formatCurrency } from '@automattic/number-formatters';
 import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -7,8 +6,8 @@ import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
-import { MarketplaceTypeContext } from '../../context';
-import { useTotalInvoiceValue } from '../../hooks/use-total-invoice-value';
+import { MarketplaceTypeContext, TermPricingContext } from '../../context';
+import { useTotalInvoiceValue } from '../../hooks/use-marketplace';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -24,10 +23,15 @@ type Props = {
 export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
 	const translate = useTranslate();
 
-	const userProducts = useSelector( getProductsList );
-	const { getTotalInvoiceValue } = useTotalInvoiceValue();
-	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
+
+	const userProducts = useSelector( getProductsList );
+	const { getTotalInvoiceValue } = useTotalInvoiceValue(
+		termPricing,
+		items[ 0 ]?.currency ?? 'USD'
+	);
+	const { totalDiscountedCostFormattedText } = getTotalInvoiceValue( userProducts, items );
 
 	return (
 		<Popover
@@ -57,6 +61,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 							key={ `shopping-cart-item-${ item.product_id }-${ item.quantity }` }
 							item={ item }
 							onRemoveItem={ onRemoveItem }
+							termPricing={ termPricing }
 						/>
 					) ) }
 				</ul>
@@ -68,14 +73,13 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 								? translate( 'Total:' )
 								: translate( 'Total your client will pay:' ) }
 						</span>
-						<span>
-							{ translate( '%(total)s/mo', {
-								args: { total: formatCurrency( discountedCost, items[ 0 ]?.currency ?? 'USD' ) },
-							} ) }
-						</span>
+
+						<span>{ totalDiscountedCostFormattedText }</span>
 					</div>
 
-					{ marketplaceType === 'referral' && <CommissionsInfo items={ items } /> }
+					{ marketplaceType === 'referral' && (
+						<CommissionsInfo items={ items } termPricing={ termPricing } />
+					) }
 
 					<Button
 						className="shopping-cart__menu-checkout-button"
