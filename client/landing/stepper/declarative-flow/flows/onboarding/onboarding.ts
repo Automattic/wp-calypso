@@ -1,10 +1,5 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import {
-	clearStepPersistedState,
-	ONBOARDING_FLOW,
-	SITE_MIGRATION_FLOW,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
@@ -219,17 +214,6 @@ const onboarding: FlowV2< typeof initialize > = {
 							return;
 						case 'blank-site':
 							window.location.replace( `/sites/${ siteSlug }` );
-							return;
-						case 'migrate':
-							window.location.assign(
-								addQueryArgs(
-									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
-									{
-										siteSlug,
-										siteId,
-									}
-								)
-							);
 							return;
 						default:
 							return;
