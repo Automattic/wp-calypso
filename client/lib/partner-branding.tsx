@@ -57,10 +57,10 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		compactLogo: {
 			src: wooLogo,
 			alt: 'Woo',
-		width: 72,
-		height: 24,
-	},
-	ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
+			width: 72,
+			height: 24,
+		},
+		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 	},
 };
 
