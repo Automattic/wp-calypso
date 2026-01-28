@@ -73,11 +73,13 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	onFocusOutside( event ) {
+		const { relatedTarget } = event;
+
 		// relatedTarget is the element receiving focus. If it's outside the container, close the dropdown.
 		if (
 			this.state.open &&
-			this.componentRef.current &&
-			! this.componentRef.current.contains( event.relatedTarget )
+			relatedTarget &&
+			! this.componentRef.current?.contains( relatedTarget )
 		) {
 			this.onClose( event );
 		}
