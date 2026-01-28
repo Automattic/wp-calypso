@@ -136,15 +136,11 @@ export default function CheckoutMain( {
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
-	const isCommerceGarden =
-		useSelector( ( state ) => siteId && isCommerceGardenSite( state, siteId ) ) || false;
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
+			const isCommerce = siteId && isCommerceGardenSite( state, siteId );
 			return (
-				siteId &&
-				isJetpackSite( state, siteId ) &&
-				! isAtomicSite( state, siteId ) &&
-				! isCommerceGarden
+				siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) && ! isCommerce
 			);
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
@@ -575,9 +571,6 @@ export default function CheckoutMain( {
 	}
 
 	// Jetpack Theme
-	// Woo Hosted sites are technically Jetpack, but are supposed to default to
-	// WPcom colors. We should update this once we have a better way to identify
-	// Garden sites outside of the Hosting Dashboard.
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
