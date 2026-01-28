@@ -465,8 +465,6 @@ import {
 	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
-	FEATURE_AI_WEBSITE_BUILDER,
-	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_INCLUDED_IN_PLAN,
@@ -951,7 +949,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		// Base features (from Free)
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
@@ -963,7 +960,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EVERYTHING_IN_FREE_PLUS,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 		FEATURE_AI_WRITER_DESIGNER_LIMITED,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_STATS_BASIC_20250206,
@@ -986,7 +982,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_FREE_PLUS,
-		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
@@ -1032,7 +1027,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_AI_ASSISTANT,
-			FEATURE_AI_WEBSITE_BUILDER,
 		];
 
 		let features = baseFeatures;
@@ -1068,7 +1062,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				: i18n.translate( 'Support from our expert\u00A0team' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
-				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
 			} ),
 		};
 
@@ -1258,7 +1251,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getLongSetSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_PREMIUM_STORE_THEMES,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
@@ -1363,7 +1355,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_AI_ASSISTANT,
-			FEATURE_AI_WEBSITE_BUILDER,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
@@ -1412,7 +1403,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
-				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
 			} ),
 		};
 
@@ -1815,7 +1805,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getLongSetSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_ADVANCED_20250206,
@@ -1893,7 +1882,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
-			FEATURE_AI_WEBSITE_BUILDER,
 		];
 
 		let features = baseFeatures;
@@ -1932,11 +1920,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				? i18n.translate( 'Free support with faster response times' )
 				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 			// AI features show "(limited)" text for Premium plan
-			[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: i18n.translate( 'Limited' ),
 			[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: i18n.translate( 'Limited' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Usage limits apply' ),
-				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Usage limits apply' ),
 			} ),
 		};
 
@@ -2128,7 +2114,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getLongSetSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_AI_WEBSITE_BUILDER,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
@@ -2144,7 +2129,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Stacked variant: only incremental features (matching screenshot order)
 	getLongSetStackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_AI_WRITER_DESIGNER,
@@ -2163,7 +2147,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Short set stacked: incremental features from Premium
 	getShortSetStackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_AI_WRITER_DESIGNER,
@@ -2182,7 +2165,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
@@ -2256,7 +2238,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_AI_ASSISTANT,
-			FEATURE_AI_WEBSITE_BUILDER,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
@@ -2334,7 +2315,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				: i18n.translate( 'Priority 24/7 support from our expert team' ),
 			...( isExperimentVariant && {
 				[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Enhanced' ),
-				[ FEATURE_AI_WEBSITE_BUILDER ]: i18n.translate( 'Enhanced' ),
 			} ),
 		};
 

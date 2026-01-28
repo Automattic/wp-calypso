@@ -25,7 +25,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import ReferralToggle from '../common/referral-toggle';
 import TermPricingToggle from '../common/term-pricing-toggle';
 import { PRODUCT_FILTER_KEY_CATEGORIES } from '../constants';
-import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
+import { MarketplaceTypeContext, ShoppingCartContext, TermPricingContext } from '../context';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
@@ -84,6 +84,8 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMode = marketplaceType === 'referral';
 
+	const { termPricing } = useContext( TermPricingContext );
+
 	const {
 		selectedSize: selectedBundleSize,
 		availableSizes: availableBundleSizes,
@@ -128,7 +130,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 	const productListingStickyTopOffset =
 		actionPanelStickyTopOffset + ( actionPanelRef.current?.offsetHeight ?? 0 );
 
-	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' );
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	return (
 		<Layout
@@ -229,6 +231,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 						isReferralMode={ isReferralMode }
 						selectedBundleSize={ selectedBundleSize }
 						selectedFilters={ selectedFilters }
+						termPricing={ termPricing }
 					/>
 				}
 			</ShoppingCartContext.Provider>

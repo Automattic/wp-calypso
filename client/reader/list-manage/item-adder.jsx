@@ -1,27 +1,17 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
-import { resemblesUrl } from 'calypso/lib/url';
-import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import FeedUrlAdder from './feed-url-adder';
 import ListItem from './list-item';
 
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
-
 	const [ query, updateQuery ] = useState( '' );
-	const queryIsUrl = resemblesUrl( query );
-	const followResults = useSelector( ( state ) =>
-		filterFollowsByQuery( query, getReaderFollows( state ) ).slice( 0, 7 )
-	);
-
 	const feedResults = useSelector( ( state ) =>
 		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);
@@ -40,31 +30,20 @@ export default function ItemAdder( props ) {
 					placeholder={ translate( 'Search or enter URL to follow…' ) }
 					value={ query }
 				/>
-				{ queryIsUrl && <FeedUrlAdder list={ props.list } query={ query } /> }
 			</Card>
 
 			{ ! feedResults && query && (
-				<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
+				<>
+					<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
+					<Spinner />
+				</>
 			) }
 
 			<SyncReaderFollows />
 
 			{ query &&
-				! queryIsUrl &&
-				followResults?.map( ( item ) => (
-					<ListItem
-						hideIfInList
-						isFollowed
-						item={ item }
-						key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
-						list={ props.list }
-						owner={ props.owner }
-					/>
-				) ) }
-			{ ! queryIsUrl &&
 				feedResults?.map( ( item ) => (
 					<ListItem
-						hideIfInList
 						item={ item }
 						key={ item.feed_ID || item.feed_URL }
 						list={ props.list }

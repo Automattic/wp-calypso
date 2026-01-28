@@ -16,7 +16,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
 import type { Site } from '@automattic/api-core';
@@ -111,6 +111,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 										{
 											cancel_to: backUrl,
 											redirect_to: backUrl,
+											dashboard: getCurrentDashboard(),
 										}
 									) }
 								/>

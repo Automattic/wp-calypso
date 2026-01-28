@@ -1,22 +1,26 @@
-import { formatCurrency } from '@automattic/number-formatters';
+import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
+import withMarketplaceProviders from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-providers';
+import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import { useSelector } from 'calypso/state';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
+import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
 interface Props {
+	termPricing?: TermPricingType;
 	product: APIProductFamilyProduct;
 	hideDiscount?: boolean;
 	quantity?: number;
 	compact?: boolean;
 }
 
-export default function ProductPriceWithDiscount( {
+function ProductPriceWithDiscount( {
+	termPricing,
 	product,
 	hideDiscount,
 	quantity = 1,
@@ -30,13 +34,17 @@ export default function ProductPriceWithDiscount( {
 
 	const isBundle = quantity > 1;
 
-	const { actualCost, discountedCost, discountPercentage } = getProductPricingInfo(
-		userProducts,
-		product,
-		quantity
+	const { getProductPricingInfo, termPricingPriceInfo } = useGetProductPricingInfo(
+		termPricing,
+		product.currency
 	);
 
-	const isFree = actualCost === 0;
+	const { discountedCostFormatted, actualCostFormatted, discountPercentage, isFree } =
+		getProductPricingInfo( userProducts, product, quantity );
+
+	const { priceInterval: termPriceInterval } = termPricingPriceInfo( product );
+
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	if ( isFree ) {
 		return (
@@ -50,17 +58,30 @@ export default function ProductPriceWithDiscount( {
 		);
 	}
 
+	const priceInterval = () => {
+		if ( isTermPricingEnabled ) {
+			return termPriceInterval;
+		}
+		if ( isDailyPricing ) {
+			return isBundle ? translate( 'per bundle per day' ) : translate( 'per license per day' );
+		}
+		if ( product.price_interval === 'month' ) {
+			return isBundle ? translate( 'per bundle per month' ) : translate( 'per license per month' );
+		}
+		return '';
+	};
+
 	return (
 		<div>
 			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
-				{ formatCurrency( discountedCost, product.currency ) }
+				{ discountedCostFormatted }
 				{
 					// Display discount info only if there is a discount
 					discountPercentage > 0 && ! hideDiscount && (
 						<>
 							{ compact && (
 								<span className="product-price-with-discount__price-old">
-									{ formatCurrency( actualCost, product.currency ) }
+									{ actualCostFormatted }
 								</span>
 							) }
 
@@ -75,7 +96,7 @@ export default function ProductPriceWithDiscount( {
 							{ ! compact && (
 								<div>
 									<span className="product-price-with-discount__price-old">
-										{ formatCurrency( actualCost, product.currency ) }
+										{ actualCostFormatted }
 									</span>
 								</div>
 							) }
@@ -83,14 +104,9 @@ export default function ProductPriceWithDiscount( {
 					)
 				}
 			</div>
-			<div className="product-price-with-discount__price-interval">
-				{ isDailyPricing &&
-					( isBundle ? translate( 'per bundle per day' ) : translate( 'per license per day' ) ) }
-				{ product.price_interval === 'month' &&
-					( isBundle
-						? translate( 'per bundle per month' )
-						: translate( 'per license per month' ) ) }
-			</div>
+			<div className="product-price-with-discount__price-interval">{ priceInterval() }</div>
 		</div>
 	);
 }
+
+export default withMarketplaceProviders( ProductPriceWithDiscount );

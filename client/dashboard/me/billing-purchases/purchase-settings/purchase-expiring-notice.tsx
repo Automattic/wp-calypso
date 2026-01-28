@@ -230,7 +230,7 @@ export function ExpiringLaterText( {
 	}
 
 	if ( purchase.payment_type ) {
-		if ( purchase.is_rechargable ) {
+		if ( purchase.is_rechargeable ) {
 			if ( autoRenewingUpgradesAction ) {
 				return createInterpolateElement(
 					sprintf(

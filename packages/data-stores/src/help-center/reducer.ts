@@ -162,6 +162,15 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 
 const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
+		// Keep the existing parameters in the new route.
+		if ( action.coalesceParams ) {
+			const originalParams = new URLSearchParams( state );
+			const newParams = new URLSearchParams( action.route );
+			newParams.forEach( ( value, key ) => {
+				originalParams.set( key, value );
+			} );
+			return `${ action.route }?${ originalParams.toString() }`;
+		}
 		return action.route;
 	}
 	return state;

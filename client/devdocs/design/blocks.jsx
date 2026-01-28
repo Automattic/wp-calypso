@@ -5,7 +5,6 @@ import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AppPromo from 'calypso/blocks/app-promo/docs/example';
-import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
@@ -130,7 +129,6 @@ export default class AppComponents extends Component {
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
-					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<PlanPrice />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />

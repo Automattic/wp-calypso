@@ -226,7 +226,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
-				await feedbackInboxPage.clickResponseRowByText( formData1.name );
+				await feedbackInboxPage.viewResponseRowByText( formData1.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
@@ -240,7 +240,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Validate first response data', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.email );
 			await feedbackInboxPage.validateTextInSubmission( formData1.phone );
@@ -283,30 +283,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click second response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData2.name );
-		} );
-
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
+				await feedbackInboxPage.viewResponseRowByText( formData2.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
 
-		it( 'Navigate to Inbox tab', async function () {
+		it( 'Navigate to Inbox tab if needed', async function () {
+			// if it's not in spam, we should already be in the inbox tab as per
+			// find and click on the search step above.
 			if ( isInSpam ) {
-				// Clear search first to show all responses
-				await feedbackInboxPage.clearSearch( true );
 				await feedbackInboxPage.clickFolderTab( 'Inbox' );
-				// Wait for folder change to complete
-				await page.waitForTimeout( 1000 );
-				// Search again for the second response in Inbox
-				await feedbackInboxPage.searchResponses( formData2.name );
-				await feedbackInboxPage.clickResponseRowByText( formData2.name );
 			}
 		} );
 
 		it( 'Validate second response data', async () => {
+			await feedbackInboxPage.viewResponseRowByText( formData2.name );
 			await feedbackInboxPage.validateTextInSubmission( formData2.name );
 			await feedbackInboxPage.validateTextInSubmission( formData2.email );
 			await feedbackInboxPage.validateTextInSubmission( formData2.phone );
@@ -327,7 +320,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Click on first response', async function () {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 		} );
 
 		it( 'Verify first response data is visible', async function () {
@@ -376,8 +369,9 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.verifyActionExistsInMenu( formData1.name, 'Trash' );
 		} );
 
-		it( 'Ensure first response is selected', async function () {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+		// This step ensures the response is opened so actions can be performed on its view
+		it( 'Ensure first response is opened', async function () {
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 		} );
 
 		it( 'Mark first response as unread', async function () {
@@ -386,13 +380,11 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Mark first response as read', async function () {
 			// Re-select the response after the action
-			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.clickMarkAsReadAction();
 		} );
 
 		it( 'Mark first response as spam', async function () {
 			// Re-select the response after the action
-			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.clickMarkAsSpamAction();
 		} );
 
@@ -402,7 +394,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is in Spam', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -416,7 +408,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is back in Inbox', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -430,7 +422,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is in Trash', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -444,7 +436,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is restored in Inbox', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 	} );

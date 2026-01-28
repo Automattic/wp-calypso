@@ -1,6 +1,6 @@
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { code } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -31,16 +31,6 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleMigrate = () => {
-		recordTracksEvent( 'calypso_setup_your_site_ai_migrate_click' );
-
-		navigation.submit( {
-			setupChoice: 'migrate',
-			siteSlug,
-			siteId,
-		} );
-	};
-
 	const stepContent = (
 		<VStack alignment="top" spacing={ 3 }>
 			<SummaryButton
@@ -57,13 +47,6 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				decoration={ <Icon icon={ code } /> }
 				onClick={ handleBlankSite }
 			/>
-			<Button
-				className="setup-your-site-ai__migrate-button"
-				variant="link"
-				onClick={ handleMigrate }
-			>
-				{ translate( 'Or migrate your site' ) }
-			</Button>
 		</VStack>
 	);
 

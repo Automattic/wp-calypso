@@ -127,7 +127,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			<>
 				<div
 					className={ clx( 'chatbox-loading-chat__spinner', {
-						'is-visible': chat.status === 'loading' || isScrolling,
+						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
 					<Spinner />

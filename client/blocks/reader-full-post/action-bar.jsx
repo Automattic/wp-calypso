@@ -23,6 +23,8 @@ const ReaderFullPostActionBar = ( {
 	const canEdit = site && userCan( 'edit_post', post );
 	const showLikes = shouldShowLikes( post );
 	const followUrl = feedUrl || siteUrl;
+	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
+	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
 
 	return (
 		<div className="reader-full-post__action-bar">
@@ -40,7 +42,7 @@ const ReaderFullPostActionBar = ( {
 
 				{ showLikes && (
 					<LikeButton
-						siteId={ +post.site_ID }
+						siteId={ siteId }
 						postId={ +post.ID }
 						fullPost
 						tagName="div"
@@ -58,6 +60,8 @@ const ReaderFullPostActionBar = ( {
 				) }
 				{ followUrl && (
 					<ReaderFollowButton
+						feedId={ feedId }
+						siteId={ siteId }
 						siteUrl={ followUrl }
 						onFollowToggle={ onFollowToggle }
 						railcar={ post?.railcar }

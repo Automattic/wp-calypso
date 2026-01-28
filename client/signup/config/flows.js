@@ -13,23 +13,6 @@ import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
-function getOnboardingPmUrls( dependencies, localeSlug, flowName ) {
-	const [ onboardingPmPostCheckoutDestination ] = getOnboardingPostCheckoutDestination( {
-		flowName,
-		locale: localeSlug,
-		siteSlug: dependencies.siteSlug,
-	} );
-
-	const onboardingPmPostCheckoutBackUrl = isURL( onboardingPmPostCheckoutDestination )
-		? onboardingPmPostCheckoutDestination
-		: new URL( onboardingPmPostCheckoutDestination, window.location.origin );
-
-	return {
-		redirectTo: onboardingPmPostCheckoutDestination,
-		checkoutBackUrl: onboardingPmPostCheckoutBackUrl,
-	};
-}
-
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
@@ -40,12 +23,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
-	const isOnboardingPmFlow = flowName === 'onboarding-pm';
-
-	// Calculate onboarding PM URLs only once if needed
-	const onboardingPmUrls = isOnboardingPmFlow
-		? getOnboardingPmUrls( dependencies, localeSlug, flowName )
-		: null;
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
@@ -64,8 +41,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
-	const redirectTo = onboardingPmUrls?.redirectTo ?? destination;
-
 	return addQueryArgs(
 		{
 			signup: 1,
@@ -73,9 +48,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
 			...( isGravatarDomain && { isGravatarDomain: 1 } ),
-			checkoutBackUrl: onboardingPmUrls?.checkoutBackUrl ?? finalCheckoutBackUrl,
+			checkoutBackUrl: finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
-			...( redirectTo && { redirect_to: redirectTo } ),
+			...( destination && { redirect_to: destination } ),
 		},
 		checkoutURL
 	);
@@ -104,7 +79,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, redirect_to } ) {
+function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } ) {
 	// If a redirect_to parameter is provided, use it as the destination
 	if ( redirect_to ) {
 		return redirect_to;
@@ -113,22 +88,14 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, red
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug, siteId };
-	if ( domainItem ) {
-		// If the user is purchasing a domain then the site's primary url might change from
-		// `siteSlug` to something else during the checkout process, which means the
-		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
-		// case we use the ID because we know it won't change depending on whether the user
-		// successfully completes the checkout process or not.
-		queryParam = { siteId };
-	}
 
-	// Add referral param to query args
-	if ( refParameter ) {
-		queryParam.ref = refParameter;
-	}
+	const [ redirectTo ] = getOnboardingPostCheckoutDestination( {
+		flowName,
+		locale: localeSlug,
+		siteSlug,
+	} );
 
-	return addQueryArgs( queryParam, '/setup/site-setup' );
+	return redirectTo;
 }
 
 function getLaunchDestination( dependencies ) {

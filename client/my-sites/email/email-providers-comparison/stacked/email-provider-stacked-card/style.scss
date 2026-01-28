@@ -120,6 +120,10 @@ $width-left-panel-card: 55%;
 	@include break-medium {
 		padding-top: 36px;
 
+		&.card {
+			padding-top: 36px;
+		}
+
 		&.action-panel {
 			padding-bottom: 36px;
 		}

@@ -17,11 +17,12 @@ import getPressablePlan, {
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
 import PremiumPlanSection from './premium-plan-section';
 import RegularPlanCardContent from './regular-plan-card-content';
+import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -32,6 +33,7 @@ type Props = {
 	existingPlan: APIProductFamilyProduct | null;
 	existingPlanInfo: PressablePlan | null;
 	isFetching?: boolean;
+	termPricing: TermPricingType;
 };
 
 const getSelectedTab = (
@@ -67,6 +69,7 @@ export default function PressablePlanSection( {
 	existingPlan,
 	existingPlanInfo,
 	isFetching,
+	termPricing,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -210,6 +213,7 @@ export default function PressablePlanSection( {
 						onSelect={ onPlanAddToCart }
 						isReferralMode={ isReferralMode }
 						pressableOwnership={ pressableOwnership }
+						termPricing={ termPricing }
 					/>
 				) }
 			</HostingPlanSection.Card>

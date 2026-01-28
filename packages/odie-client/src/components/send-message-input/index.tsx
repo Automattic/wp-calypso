@@ -36,16 +36,15 @@ export const OdieSendMessageButton = () => {
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ searchParams ] = useSearchParams();
-	const initialQuery = searchParams.get( 'query' ) || '';
+	const queryFromParam = searchParams.get( 'query' ) || '';
+	const [ initialQuery, setInitialQuery ] = useState( queryFromParam );
 	const [ inputValue, setInputValue ] = useState( initialQuery );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
 	useEffect( () => {
-		if ( initialQuery ) {
-			setInputValue( initialQuery );
-		}
-	}, [ initialQuery ] );
+		setInitialQuery( queryFromParam );
+	}, [ queryFromParam ] );
 
 	// I'm only using adjustHeight from agenttic-ui
 	const { textareaRef } = useInput( {
@@ -140,6 +139,23 @@ export const OdieSendMessageButton = () => {
 	const isDisabled = !! messageSizeNotice || ( isInputEmpty && ! hasAttachments );
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
+
+	useEffect( () => {
+		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
+			setInputValue( initialQuery );
+			setInitialQuery( '' );
+			if ( chat.messages.length === 0 ) {
+				sendMessageHandler();
+			}
+		}
+	}, [
+		initialQuery,
+		sendMessageHandler,
+		isProcessing,
+		isDisabled,
+		chat.messages.length,
+		chat.status,
+	] );
 
 	return (
 		<>

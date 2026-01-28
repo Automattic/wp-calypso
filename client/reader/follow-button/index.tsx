@@ -11,14 +11,16 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 interface ReaderFollowButtonProps {
+	className?: string;
+	feedId?: number;
+	followSource?: string;
 	hasButtonStyle?: boolean;
 	iconSize?: number;
 	isButtonOnly?: boolean;
 	onFollowToggle?: ( isFollowing: boolean ) => void;
 	railcar?: Railcar;
-	followSource?: string;
+	siteId?: number;
 	siteUrl: string;
-	className?: string;
 }
 
 export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JSX.Element {

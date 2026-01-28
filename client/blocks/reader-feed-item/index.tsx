@@ -230,62 +230,50 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	}
 
 	return (
-		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>
-			<VStack className="reader-feed-item__site-preview-v-stack">
-				<HStack>
-					<HStack className="reader-feed-item__site-preview-h-stack" spacing={ 3 }>
-						{ ! isWpcomFeed ? (
-							<ExternalLink
-								className="reader-feed-item__icon"
-								href={ feedUrl }
-								onClick={ onIconClick }
-								target="_blank"
-							>
-								<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
-							</ExternalLink>
-						) : (
-							<a className="reader-feed-item__icon" href={ feedUrl } onClick={ onIconClick }>
-								<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
-							</a>
-						) }
-						<VStack className="reader-feed-item__title-with-url-v-stack" spacing={ 0 }>
-							{ ! isWpcomFeed ? (
-								<ExternalLink
-									className="reader-feed-item__title"
-									href={ feedUrl }
-									target="_blank"
-									onClick={ onTitleClick }
-								>
-									{ title ? title : filteredDisplayUrl }
-								</ExternalLink>
-							) : (
-								<a className="reader-feed-item__title" href={ feedUrl } onClick={ onTitleClick }>
-									{ title ? title : filteredDisplayUrl }
-								</a>
-							) }
-							<ExternalLink
-								className="reader-feed-item__url"
-								href={ displayUrl }
-								target="_blank"
-								onClick={ onDisplayUrlClick }
-							>
-								{ filteredDisplayUrl }
-							</ExternalLink>
-						</VStack>
-					</HStack>
-					<div className="reader-feed-item__description">{ description }</div>
+		<li className="reader-feed-item">
+			<HStack className="reader-feed-item__site-preview-h-stack" spacing={ 3 }>
+				{ ! isWpcomFeed ? (
+					<ExternalLink
+						className="reader-feed-item__icon"
+						href={ feedUrl }
+						onClick={ onIconClick }
+						target="_blank"
+					>
+						<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+					</ExternalLink>
+				) : (
+					<a className="reader-feed-item__icon" href={ feedUrl } onClick={ onIconClick }>
+						<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+					</a>
+				) }
+				<VStack className="reader-feed-item__title-with-url-v-stack" spacing={ 0 }>
+					{ ! isWpcomFeed ? (
+						<ExternalLink
+							className="reader-feed-item__title"
+							href={ feedUrl }
+							target="_blank"
+							onClick={ onTitleClick }
+						>
+							{ title ? title : filteredDisplayUrl }
+						</ExternalLink>
+					) : (
+						<a className="reader-feed-item__title" href={ feedUrl } onClick={ onTitleClick }>
+							{ title ? title : filteredDisplayUrl }
+						</a>
+					) }
+					<ExternalLink
+						className="reader-feed-item__url"
+						href={ displayUrl }
+						target="_blank"
+						onClick={ onDisplayUrlClick }
+					>
+						{ filteredDisplayUrl }
+					</ExternalLink>
+				</VStack>
+			</HStack>
+			<div className="reader-feed-item__description">{ description }</div>
 
-					<div className="reader-feed-item__subscribe-button">
-						<SubscribeButton />
-					</div>
-				</HStack>
-				<div className="reader-feed-item__mobile-description" aria-hidden="true">
-					{ description }
-				</div>
-				<div className="reader-feed-item__mobile-subscribe-button">
-					<SubscribeButton />
-				</div>
-			</VStack>
-		</HStack>
+			<SubscribeButton />
+		</li>
 	);
 }

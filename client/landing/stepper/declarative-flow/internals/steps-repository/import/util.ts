@@ -8,10 +8,6 @@ export function updateQueryParams( queryParams: string ) {
 	window.history.pushState( { path }, '', path );
 }
 
-export function removeTrailingSlash( str: string ) {
-	return str.replace( /\/+$/, '' );
-}
-
 export function removeLeadingSlash( str: string ) {
 	return str.replace( /^\/+/, '' );
 }

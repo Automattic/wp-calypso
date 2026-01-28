@@ -20,7 +20,7 @@ import withProductLightbox, {
 import ProductBadges from '../product-badges';
 import useCustomProductCard from './hooks/use-custom-product-card';
 import ProductPriceWithDiscount from './product-price-with-discount-info';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -36,6 +36,7 @@ type Props = WithProductLightboxProps &
 function ProductCard( props: Props ) {
 	const {
 		asReferral,
+		termPricing,
 		products,
 		isSelected,
 		isDisabled,
@@ -170,6 +171,7 @@ function ProductCard( props: Props ) {
 									<ProductBadges product={ currentProduct } />
 									<div className="product-card__pricing is-compact">
 										<ProductPriceWithDiscount
+											termPricing={ termPricing }
 											product={ currentProduct }
 											hideDiscount={ hideDiscount }
 											quantity={ quantity }

@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	// Domain actions
 	addDomainButton: '.button:text("Add new domain")',
-	searchForDomainButton: 'a:text-matches("search", "i")',
+	searchForDomainButton: '.button:text("Just search for a domain")',
 	useADomainIOwnButton: 'text=Use a domain I own',
 
 	// Purchased domains
@@ -31,7 +31,14 @@ export class DomainsPage {
 	 * Clicks on the button to add a domain to the site.
 	 */
 	async addDomain(): Promise< void > {
-		await Promise.all( [ this.page.click( selectors.addDomainButton ) ] );
+		await this.page.click( selectors.addDomainButton );
+	}
+
+	/**
+	 * Clicks on the button to just search for a domain.
+	 */
+	async clickSearchForDomain(): Promise< void > {
+		await this.page.click( selectors.searchForDomainButton );
 	}
 
 	/**
