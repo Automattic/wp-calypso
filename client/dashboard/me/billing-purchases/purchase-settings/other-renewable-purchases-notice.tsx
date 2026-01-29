@@ -254,7 +254,15 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeActionText = __( 'Renew all' );
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( currentPurchase.is_domain_registration ) {
+			if ( isRenewing( currentPurchase ) ) {
+				// Auto-renew ON but renewal failed - use simplified message
+				noticeText = createInterpolateElement(
+					__(
+						'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
+					),
+					{ link }
+				);
+			} else if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, expiry is a string like "3 months ago"
@@ -421,7 +429,15 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( currentPurchase.is_domain_registration ) {
+			if ( isRenewing( currentPurchase ) ) {
+				// Auto-renew ON but renewal failed - use simplified message
+				noticeText = createInterpolateElement(
+					__(
+						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
+					),
+					{ link }
+				);
+			} else if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, expiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -772,6 +788,15 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeText = ( () => {
 			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+				if ( isRenewing( currentPurchase ) ) {
+					// Auto-renew ON but renewal failed - use simplified message
+					return createInterpolateElement(
+						__(
+							'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
+						),
+						{ link }
+					);
+				}
 				if ( currentPurchase.is_domain_registration ) {
 					return createInterpolateElement(
 						sprintf(

@@ -536,7 +536,13 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-expire-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				if ( isDomainRegistration( currentPurchase ) ) {
+				if ( isRenewing( currentPurchase ) ) {
+					// Auto-renew ON but renewal failed - use simplified message
+					noticeText = translate(
+						'There was a problem processing your renewal. You have {{link}}other upgrades{{/link}} on this site that may also be affected. Please renew now to avoid disruption to your service.',
+						translateOptions
+					);
+				} else if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
 						translateOptions
@@ -618,7 +624,13 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-renew-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				if ( isDomainRegistration( currentPurchase ) ) {
+				if ( isRenewing( currentPurchase ) ) {
+					// Auto-renew ON but renewal failed - use simplified message
+					noticeText = translate(
+						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
+						translateOptions
+					);
+				} else if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
@@ -798,7 +810,13 @@ class PurchaseNotice extends Component<
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 
-				if ( isDomainRegistration( currentPurchase ) ) {
+				if ( isRenewing( currentPurchase ) ) {
+					// Auto-renew ON but renewal failed - use simplified message
+					noticeText = translate(
+						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
+						translateOptions
+					);
+				} else if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 						translateOptions
