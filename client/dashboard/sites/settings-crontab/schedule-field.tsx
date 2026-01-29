@@ -21,7 +21,7 @@ const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
 	{ value: 'hourly', label: __( 'Every hour' ) },
 	{ value: 'daily', label: __( 'Daily' ) },
 	{ value: 'weekly', label: __( 'Weekly' ) },
-	{ value: 'custom', label: __( 'Custom\u2026' ) },
+	{ value: 'custom', label: __( 'Custom' ) },
 ];
 
 const FREQUENCY_OPTIONS: { value: CustomFrequency; label: string }[] = [
