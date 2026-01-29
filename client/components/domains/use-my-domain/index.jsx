@@ -173,9 +173,12 @@ function UseMyDomain( props ) {
 			return wpcomAvailabilityErrors;
 		}
 
+		// `blog_id` is needed when a user arrives from a CIAB store, in which case `selectedSite` is not loaded yet
+		const blogId = selectedSite?.ID ?? getQueryArgs( stepLocation.search )?.blog_id;
+
 		const availabilityData = await wpcom
 			.domain( filteredDomainName )
-			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
+			.isAvailable( { apiVersion: '1.3', blog_id: blogId, is_cart_pre_check: false } );
 
 		return {
 			availabilityData,
