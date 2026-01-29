@@ -490,6 +490,13 @@ import {
 	WPCOM_FEATURES_LOGS,
 	WPCOM_FEATURES_MONITORING,
 	WPCOM_FEATURES_PERFORMANCE,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
@@ -1596,16 +1603,6 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 		),
 } );
 
-const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanWooExpressMediumDetails(),
-	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
-		),
-} );
-
 const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
@@ -1639,13 +1636,47 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 } );
 
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanWooExpressSmallDetails(),
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_WOO_HOSTED_PACKAGE,
+		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_WOO_HOSTED_PACKAGE,
+		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getStorageFeature: () => FEATURE_200GB_STORAGE,
+	getTitle: () => i18n.translate( 'Pro' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
 		),
 } );
 
