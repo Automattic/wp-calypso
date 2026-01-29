@@ -3,7 +3,7 @@ import { siteCrontabsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -37,7 +37,7 @@ export default function CrontabSettingsSummary( {
 				crontabCount > 0
 					? sprintf(
 							/* translators: %d is the number of scheduled jobs */
-							__( '%d scheduled jobs' ),
+							_n( '%d scheduled job', '%d scheduled jobs', crontabCount ),
 							crontabCount
 					  )
 					: __( 'No scheduled jobs' ),
