@@ -21,7 +21,7 @@
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"wordpress-ai-assistant": true,
-		"wordpress-ai-tools": false
+		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
