@@ -35,6 +35,17 @@ const siteVisibilityRoute = createRoute( {
 	)
 );
 
+const aiToolsRoute = createRoute( {
+	...appRouterSites.siteSettingsAIToolsRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
+		createLazyRoute( 'ai-tools' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const subscriptionGiftingRoute = createRoute( {
 	...appRouterSites.siteSettingsSubscriptionGiftingRoute.options,
 	getParentRoute: () => settingsRoute,
@@ -208,6 +219,7 @@ const createRouteTree = () =>
 			settingsRoute.addChildren( [
 				settingsIndexRoute,
 				siteVisibilityRoute,
+				aiToolsRoute,
 				subscriptionGiftingRoute,
 				wordpressRoute,
 				phpRoute,

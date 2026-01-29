@@ -490,6 +490,7 @@ import {
 	WPCOM_FEATURES_LOGS,
 	WPCOM_FEATURES_MONITORING,
 	WPCOM_FEATURES_PERFORMANCE,
+	WPCOM_FEATURES_BIG_SKY,
 	FEATURE_WOO_HOSTED_PACKAGE,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
 	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
@@ -1464,6 +1465,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_LOGS,
 		WPCOM_FEATURES_MONITORING,
 		WPCOM_FEATURES_PERFORMANCE,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -2424,6 +2426,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_LOGS,
 		WPCOM_FEATURES_MONITORING,
 		WPCOM_FEATURES_PERFORMANCE,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getSenseiFeatures: ( term ) => () =>
