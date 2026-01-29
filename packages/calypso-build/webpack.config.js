@@ -118,6 +118,15 @@ function getWebpackConfig(
 			type: 'filesystem',
 			cacheDirectory: path.resolve( cachePath, 'webpack' ),
 			allowCollectingMemory: true,
+			// Enable build dependencies tracking for better cache invalidation
+			buildDependencies: {
+				config: [ __filename ],
+			},
+		},
+		// Log cache hit/miss information in CI
+		infrastructureLogging: {
+			level: process.env.IS_CI ? 'verbose' : 'info',
+			debug: process.env.IS_CI ? /webpack\.cache/ : false,
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
