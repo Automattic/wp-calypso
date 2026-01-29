@@ -14,8 +14,8 @@ import ScheduleField from './schedule-field';
 
 interface AddCrontabFormProps {
 	siteId: number;
-	onSuccess?: () => void;
-	onCancel?: () => void;
+	onSuccess: () => void;
+	onCancel: () => void;
 }
 
 export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormProps ) {
@@ -45,7 +45,7 @@ export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormP
 				onSuccess: () => {
 					setSchedule( 'hourly' );
 					setCommand( '' );
-					onSuccess?.();
+					onSuccess();
 				},
 			}
 		);
@@ -81,11 +81,9 @@ export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormP
 							disabled={ isCreatingCrontab }
 						/>
 						<HStack justify="flex-end">
-							{ onCancel && (
-								<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
-									{ __( 'Cancel' ) }
-								</Button>
-							) }
+							<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
+								{ __( 'Cancel' ) }
+							</Button>
 							<Button
 								variant="primary"
 								type="submit"
