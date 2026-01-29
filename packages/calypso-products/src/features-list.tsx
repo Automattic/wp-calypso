@@ -2180,7 +2180,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
 		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
-		getTitle: () => i18n.translate( 'Early onboarding calls for site setup' ),
+		getTitle: () => i18n.translate( 'One-on-one onboarding call' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Talk with a WordPress.com expert to set up your site.' )
@@ -2721,7 +2721,9 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'AI assistant and tools' )
 				: i18n.translate( 'AI Assistant' ),
 		getDescription: () =>
-			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
+			i18n.translate(
+				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+			),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -3010,7 +3012,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Enhanced AI assistant and tools' )
+				? i18n.translate( 'AI assistant and design capabilities' )
 				: i18n.translate( 'AI Writer & Designer' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
