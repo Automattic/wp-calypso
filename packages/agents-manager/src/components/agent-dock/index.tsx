@@ -106,7 +106,6 @@ export default function AgentDock( {
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
-	const agentChatReturn = useAgentChat( agentConfig );
 	const {
 		addMessage,
 		messages,
@@ -118,15 +117,17 @@ export default function AgentDock( {
 		abortCurrentRequest,
 		clearSuggestions,
 		registerSuggestions,
-	} = agentChatReturn;
+	} = useAgentChat( agentConfig );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
 
 	// Register dynamic suggestions whenever they change
 	useEffect( () => {
-		if ( dynamicSuggestions?.suggestions && dynamicSuggestions.suggestions.length > 0 ) {
-			registerSuggestions?.( dynamicSuggestions.suggestions );
+		const suggestions = dynamicSuggestions?.suggestions;
+
+		if ( suggestions && suggestions.length > 0 ) {
+			registerSuggestions?.( suggestions );
 		} else {
 			// Clear suggestions when there are none
 			clearSuggestions?.();

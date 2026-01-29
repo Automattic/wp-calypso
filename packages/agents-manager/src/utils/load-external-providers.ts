@@ -87,7 +87,8 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	suggestions?: Suggestion[];
+	/** Function to get empty view suggestions. Called when component is ready. */
+	getEmptyViewSuggestions?: () => Suggestion[];
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
@@ -114,7 +115,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedContextProvider: ContextProvider | undefined;
-	let mergedSuggestions: Suggestion[] | undefined;
+	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
@@ -135,8 +136,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.contextProvider ) {
 				mergedContextProvider = module.contextProvider;
 			}
-			if ( module.suggestions ) {
-				mergedSuggestions = module.suggestions;
+			if ( module.getEmptyViewSuggestions ) {
+				mergedGetEmptyViewSuggestions = module.getEmptyViewSuggestions;
 			}
 			if ( module.markdownComponents ) {
 				mergedMarkdownComponents = module.markdownComponents;
@@ -171,7 +172,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	return {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
-		suggestions: mergedSuggestions,
+		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,

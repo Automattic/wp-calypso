@@ -228,7 +228,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
+			emptyViewSuggestions={ loadedProviders.getEmptyViewSuggestions?.() || defaultSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
