@@ -420,13 +420,16 @@ const domain: FlowV2< typeof initialize > = {
 							`/sites/${ providedDependencies.siteSlug }/domains`
 						);
 
-						persistSignupDestination( destination );
-						setSignupCompleteFlowName( this.name );
-						setSignupCompleteSlug( providedDependencies.siteSlug );
-
+						// When going to checkout, rely on the redirect_to param instead of
+						// the signup destination cookie. Setting signupFlowName to 'domain'
+						// causes checkout to incorrectly append receipt ID to the cookie URL.
 						if ( providedDependencies.goToCheckout ) {
 							return goToCheckout( providedDependencies.siteSlug as string );
 						}
+
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( this.name );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );

@@ -5,16 +5,27 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext } from 'react';
-import { TermPricingContext } from '../../context';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 
 export default function TermPricingToggle() {
+	const dispatch = useDispatch();
+
 	const { termPricing, toggleTermPricing } = useContext( TermPricingContext );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const isChecked = termPricing === 'yearly';
 
 	const handleToggle = () => {
 		toggleTermPricing();
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_term_pricing_toggle', {
+				term_pricing: isChecked ? 'monthly' : 'yearly',
+				purchase_mode: marketplaceType,
+			} )
+		);
 	};
-
-	const isChecked = termPricing === 'yearly';
 
 	return (
 		<HStack className="a4a-marketplace__term-pricing-toggle" justify="flex-start" spacing={ 0 }>

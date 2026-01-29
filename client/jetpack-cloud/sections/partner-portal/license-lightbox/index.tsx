@@ -13,6 +13,8 @@ import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info'
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
 import LicenseLightboxJetpackManageLicense from './license-lightbox-jetpack-manage-license';
+import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
+import type { APIProductFamilyProduct as APIProductFamilyProductA4A } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -20,9 +22,9 @@ export type LicenseLightBoxProps = {
 	ctaLabel: string;
 	isCTAPrimary?: boolean;
 	isDisabled?: boolean;
-	onActivate: ( product: APIProductFamilyProduct ) => void;
+	onActivate: ( product: APIProductFamilyProduct | APIProductFamilyProductA4A ) => void;
 	onClose: () => void;
-	product: APIProductFamilyProduct;
+	product: APIProductFamilyProduct | APIProductFamilyProductA4A;
 	extraAsideContent?: JSX.Element;
 	secondaryAsideContent?: JSX.Element;
 	className?: string;
@@ -34,6 +36,7 @@ export type LicenseLightBoxProps = {
 	customDescription?: ReactNode;
 	customFooter?: ReactNode;
 	vendor?: VendorInfo | null;
+	termPricing?: TermPricingType;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -54,6 +57,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	customDescription,
 	customFooter,
 	vendor,
+	termPricing,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -90,7 +94,11 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 
 			<JetpackLightboxAside ref={ sidebarRef }>
 				{ showPaymentPlan && (
-					<LicenseLightboxJetpackManageLicense product={ product } quantity={ quantity } />
+					<LicenseLightboxJetpackManageLicense
+						product={ product }
+						quantity={ quantity }
+						termPricing={ termPricing }
+					/>
 				) }
 
 				<Button

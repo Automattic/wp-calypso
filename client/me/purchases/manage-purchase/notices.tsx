@@ -44,6 +44,7 @@ import {
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	isMonthlyPurchase,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -256,11 +257,14 @@ class PurchaseNotice extends Component<
 			);
 		}
 
-		return (
-			! isRechargeable( purchase ) && (
-				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
-			)
-		);
+		if (
+			! isRechargeable( purchase ) ||
+			( canExplicitRenew( purchase ) && isInExpirationGracePeriod( purchase ) )
+		) {
+			return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		}
+
+		return null;
 	}
 
 	trackImpression( warning: string ) {
@@ -342,7 +346,8 @@ class PurchaseNotice extends Component<
 		if (
 			! isExpiring( currentPurchase ) ||
 			EXCLUDED_PRODUCTS.includes( currentPurchase?.productSlug ) ||
-			isAkismetFreeProduct( currentPurchase )
+			isAkismetFreeProduct( currentPurchase ) ||
+			isInExpirationGracePeriod( currentPurchase )
 		) {
 			return null;
 		}
@@ -452,9 +457,15 @@ class PurchaseNotice extends Component<
 		const currentPurchaseNeedsToRenewSoon = needsToRenewSoon( currentPurchase );
 		const currentPurchaseCreditCardExpiresBeforeSubscription =
 			isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
-		const currentPurchaseIsExpiring = isExpiring( currentPurchase ) || isExpired( currentPurchase );
+		const currentPurchaseIsExpiring =
+			isExpiring( currentPurchase ) ||
+			isExpired( currentPurchase ) ||
+			isInExpirationGracePeriod( currentPurchase );
 		const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-			( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase )
+			( otherPurchase ) =>
+				isExpiring( otherPurchase ) ||
+				isExpired( otherPurchase ) ||
+				isInExpirationGracePeriod( otherPurchase )
 		);
 
 		// Other information needed by some of the messages.
@@ -466,10 +477,15 @@ class PurchaseNotice extends Component<
 		const anotherPurchaseIsCloseToExpiration = otherRenewableSitePurchases.some(
 			( otherPurchase ) => moment( otherPurchase.expiryDate ).diff( Date.now(), 'months' ) < 1
 		);
-		const anotherPurchaseIsExpired = otherRenewableSitePurchases.some( isExpired );
+		const anotherPurchaseIsExpired = otherRenewableSitePurchases.some(
+			( otherPurchase ) => isExpired( otherPurchase ) || isInExpirationGracePeriod( otherPurchase )
+		);
 		const earliestOtherExpiringPurchase = minBy(
 			otherRenewableSitePurchases.filter(
-				( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase )
+				( otherPurchase ) =>
+					isExpiring( otherPurchase ) ||
+					isExpired( otherPurchase ) ||
+					isInExpirationGracePeriod( otherPurchase )
 			),
 			( otherPurchase ) => moment( otherPurchase.expiryDate ).format( 'X' )
 		);
@@ -519,7 +535,7 @@ class PurchaseNotice extends Component<
 			noticeActionText = translate( 'Renew all' );
 			noticeImpressionName = 'current-expires-soon-others-expire-soon';
 
-			if ( isExpired( currentPurchase ) ) {
+			if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
@@ -601,7 +617,7 @@ class PurchaseNotice extends Component<
 			noticeStatus = suppressErrorStylingForCurrentPurchase ? 'is-info' : 'is-error';
 			noticeImpressionName = 'current-expires-soon-others-renew-soon';
 
-			if ( isExpired( currentPurchase ) ) {
+			if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
@@ -717,7 +733,7 @@ class PurchaseNotice extends Component<
 			! anotherPurchaseIsExpiring
 		) {
 			if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
-				noticeStatus = 'is-success';
+				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 				noticeIcon = 'info';
 				noticeImpressionName = 'current-renews-soon-others-renew-soon';
 				noticeText = translate(
@@ -779,7 +795,33 @@ class PurchaseNotice extends Component<
 			noticeStatus = 'is-info';
 			noticeImpressionName = 'current-expires-later-others-renew-soon';
 
-			if ( isPlan( currentPurchase ) && purchaseIsIncludedInPlan ) {
+			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
+
+				if ( isDomainRegistration( currentPurchase ) ) {
+					noticeText = translate(
+						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					);
+				} else if ( isPlan( currentPurchase ) ) {
+					if ( purchaseIsIncludedInPlan ) {
+						noticeText = translate(
+							'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
+					} else {
+						noticeText = translate(
+							'Your %(purchaseName)s plan expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+							translateOptions
+						);
+					}
+				} else {
+					noticeText = translate(
+						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
+						translateOptions
+					);
+				}
+			} else if ( isPlan( currentPurchase ) && purchaseIsIncludedInPlan ) {
 				noticeText = translate(
 					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
@@ -990,12 +1032,31 @@ class PurchaseNotice extends Component<
 			usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 		const includedPurchase = purchase;
 
-		if ( ! isExpired( currentPurchase ) ) {
+		if ( ! isExpired( currentPurchase ) && ! isInExpirationGracePeriod( currentPurchase ) ) {
+			return null;
+		}
+
+		if ( isAkismetFreeProduct( currentPurchase ) ) {
 			return null;
 		}
 
 		if ( isRenewable( purchase ) ) {
-			const noticeText = translate( 'This purchase has expired and is no longer in use.' );
+			const noticeText = ( () => {
+				if ( isInExpirationGracePeriod( purchase ) ) {
+					const purchaseName = getName( purchase );
+					const expiry = moment( purchase.expiryDate ).fromNow();
+					return translate(
+						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.',
+						{
+							args: { purchaseName, expiry },
+							comment:
+								'expiry is a relative time string like "3 days ago", purchaseName is the name of the product',
+						}
+					);
+				}
+				return translate( 'This purchase has expired and is no longer in use.' );
+			} )();
+
 			return (
 				<Notice showDismiss={ false } status="is-error" text={ noticeText }>
 					{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
@@ -1126,9 +1187,10 @@ class PurchaseNotice extends Component<
 		};
 
 		const expiry = moment.utc( purchase.expiryDate );
-		const daysToExpiry = isExpired( purchase )
-			? 0
-			: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
+		const daysToExpiry =
+			isExpired( purchase ) || isInExpirationGracePeriod( purchase )
+				? 0
+				: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
 		const productType =
 			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
 				? translate( 'ecommerce' )

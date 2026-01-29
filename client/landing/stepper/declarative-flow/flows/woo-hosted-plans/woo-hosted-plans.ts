@@ -47,7 +47,7 @@ async function initialize() {
 	const hasAccess = await checkUserHasAccess();
 
 	if ( ! hasAccess ) {
-		window.location.assign( dashboardLink( '/ciab/sites' ) );
+		window.location.assign( dashboardLink( '/sites' ) );
 		return false;
 	}
 
@@ -67,7 +67,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external
-		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : dashboardLink( '/ciab/sites' );
+		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : dashboardLink( '/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -77,7 +77,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 				// This is NOT a signup flow - use logged-in behavior for current plans
 				isInSignup: false,
 
-				// Provide a custom back handler that goes to back_to or /ciab/sites
+				// Provide a custom back handler that goes to back_to or the dashboard sites list
 				wrapperProps: {
 					goBack: () => {
 						window.location.assign( safeBackTo );
@@ -86,6 +86,9 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 
 				// Woo Hosted only supports monthly and yearly plans
 				displayedIntervals: [ 'monthly', 'yearly' ],
+
+				// Hide the logo on the plans page
+				hideLogo: true,
 			},
 		};
 	},
@@ -111,7 +114,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const finalUrl = addQueryArgs( checkoutUrl, {
-								redirect_to: redirectTo || dashboardLink( '/ciab/sites' ),
+								redirect_to: redirectTo || dashboardLink( '/sites' ),
 								cancel_to: currentPath,
 							} );
 
@@ -121,7 +124,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 					}
 
 					// If no cart items, something went wrong - redirect to sites
-					window.location.assign( dashboardLink( '/ciab/sites' ) );
+					window.location.assign( dashboardLink( '/sites' ) );
 					break;
 				}
 			}

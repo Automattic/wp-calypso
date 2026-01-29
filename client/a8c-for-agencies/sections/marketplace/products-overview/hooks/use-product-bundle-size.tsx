@@ -1,7 +1,7 @@
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 const BUNDLE_SIZE_PARAM_KEY = 'bundle_size';
 
@@ -24,8 +24,8 @@ export const getSupportedBundleSizes = ( products?: APIProductFamilyProduct[] ) 
 	return [ ...supported ];
 };
 
-export function useProductBundleSize( isPublicFacing = false ) {
-	const { data: products } = useProductsQuery( isPublicFacing );
+export function useProductBundleSize() {
+	const { data: products } = useProductsQuery();
 
 	const supportedBundleSizes = getSupportedBundleSizes( products );
 

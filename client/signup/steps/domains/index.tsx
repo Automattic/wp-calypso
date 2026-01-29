@@ -75,6 +75,7 @@ const DomainSearchUI = (
 
 	const siteSlug = queryObject.siteSlug;
 	const siteId = queryObject.siteId;
+	const dashboard = queryObject.dashboard;
 	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
@@ -105,6 +106,10 @@ const DomainSearchUI = (
 				return product;
 			},
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer/other-site` ) );
+					return;
+				}
 				page( domainManagementTransferToOtherSite( otherSiteDomain, domainName ) );
 			},
 			onMakePrimaryAddressClick: () => {
@@ -118,11 +123,21 @@ const DomainSearchUI = (
 				page( domainAddNew( otherSiteDomain, domainName ) );
 			},
 			onCheckTransferStatusClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer` ) );
+					return;
+				}
 				page(
 					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
 				);
 			},
 			onMapDomainClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign(
+						dashboardLink( `/domains/${ domainName }/domain-connection-setup` )
+					);
+					return;
+				}
 				page( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick( initialQuery?: string ) {
@@ -219,6 +234,7 @@ const DomainSearchUI = (
 		isDomainOnlyFlow,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
+		dashboard,
 	] );
 
 	const allowedTldParam = queryObject.tld;

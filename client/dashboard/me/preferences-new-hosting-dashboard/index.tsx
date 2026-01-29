@@ -98,6 +98,10 @@ export default function PreferencesOptInForm() {
 		);
 	};
 
+	if ( optIn.value === 'forced-opt-in' ) {
+		return null;
+	}
+
 	return (
 		<Card>
 			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />

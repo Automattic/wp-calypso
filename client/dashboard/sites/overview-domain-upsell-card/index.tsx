@@ -11,7 +11,7 @@ import { getDomainAndPlanUpsellUrl } from 'calypso/lib/domains';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -88,6 +88,7 @@ const DomainUpsellCardContent = ( {
 			window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
 				cancel_to: backUrl,
 				redirect_to: backUrl,
+				dashboard: getCurrentDashboard(),
 			} );
 		}
 	};

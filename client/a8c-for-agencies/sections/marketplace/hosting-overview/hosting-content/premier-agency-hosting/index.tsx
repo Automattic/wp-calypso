@@ -17,10 +17,9 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
-import { MarketplaceTypeContext } from '../../../context';
+import { MarketplaceTypeContext, TermPricingContext } from '../../../context';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
 import getPressablePlan from '../../../pressable-overview/lib/get-pressable-plan';
 import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
@@ -28,6 +27,7 @@ import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';
 import PressableUsageSection from './pressable-usage-section';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
@@ -44,6 +44,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	};
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
+
 	const pressableOwnership = usePressableOwnershipType();
 
 	const isReferralMode = marketplaceType === 'referral';
@@ -79,6 +81,19 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 		);
 	}, [ existingPlanInfo, isReferralMode ] );
 
+	// Determine effective ownership for UI purposes.
+	// 'regular' means the agency has a Pressable account (e.g. from a referral) but no active
+	// A4A subscription — treat as 'none' so intro pricing UI is shown.
+	const effectiveOwnership = ( () => {
+		if ( isReferralMode || agencyPressablePlan ) {
+			return 'agency';
+		}
+		if ( pressableOwnership === 'regular' ) {
+			return 'none';
+		}
+		return pressableOwnership;
+	} )();
+
 	return (
 		<div className="premier-agency-hosting">
 			{ agencyPressablePlan && ! isReferralMode && (
@@ -87,16 +102,11 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
-				pressableOwnership={
-					isReferralMode ||
-					agencyPressablePlan ||
-					( pressableOwnership === 'regular' && ! agencyPressablePlan ) // Agency has an existing Pressable account, but no active subscription.
-						? 'agency'
-						: pressableOwnership
-				}
+				pressableOwnership={ effectiveOwnership }
 				existingPlan={ agencyPressablePlan }
 				existingPlanInfo={ existingPlanInfo }
 				isFetching={ isExistingPlanFetched }
+				termPricing={ termPricing }
 			/>
 
 			<HostingFeatures

@@ -30,6 +30,7 @@
 		"catch-js-errors": true,
 		"checkout/checkout-version": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
@@ -168,6 +169,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": true,
+		"wordpress-ai-tools": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

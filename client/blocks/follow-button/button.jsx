@@ -1,7 +1,8 @@
-import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 import './style.scss';
 
@@ -68,12 +69,8 @@ class FollowButton extends Component {
 			menuClasses.push( 'has-button-style' );
 		}
 
-		const followingIcon = this.props.followingIcon || (
-			<Gridicon key="following" icon="reader-following" size={ iconSize } />
-		);
-		const followIcon = this.props.followIcon || (
-			<Gridicon key="follow" icon="reader-follow" size={ iconSize } />
-		);
+		const followingIcon = this.props.followingIcon || ReaderFollowingFeedIcon( { iconSize } );
+		const followIcon = this.props.followIcon || ReaderFollowFeedIcon( { iconSize } );
 		const followLabelElement = ! this.props.isButtonOnly && (
 			<span key="label" className="follow-button__label">
 				{ label }

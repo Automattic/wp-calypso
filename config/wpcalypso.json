@@ -33,6 +33,7 @@
 		"checkout/checkout-version": true,
 		"help-center/logged-out": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"checkout/razorpay": true,
 		"checkout/vgs-ebanx": true,
 		"current-site/domain-warning": false,
@@ -173,6 +174,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": false,
+		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

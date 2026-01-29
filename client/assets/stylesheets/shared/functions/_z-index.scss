@@ -239,7 +239,6 @@ $z-layers: (
 	),
 	".reader-full-post__sidebar-comment-like": (
 		".reader-full-post .back-button": 2,
-		".author-compact-profile__follow .follow-button": 2,
 		".reader-full-post__visit-site-container": 2,
 	),
 	".reader-related-card.card": (
@@ -300,8 +299,7 @@ $z-layers: (
 		".follow-button": 1,
 	),
 	"user-profile-header": (
-		".user-profile-header__bio-desc-fader": 1,
-		".user-profile-header__bio-desc-link": 2,
+		".user-profile-header__bio-desc-link": 1,
 	),
 );
 

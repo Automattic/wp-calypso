@@ -31,7 +31,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
-	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feed?.feed_ID );
+	const feedId = feed?.feed_ID;
+	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feedId );
 	const owner = useSelector( getCurrentUserName );
 	const isRequestingRecommendedBlogs = useSelector( ( state ) =>
 		isRequestingUserRecommendedBlogs( state, owner )
@@ -106,6 +107,8 @@ export default function ReaderFeedHeaderFollow( props ) {
 					<div className="reader-feed-header__follow-button">
 						<div className="reader-feed-header__follow-button-and-settings">
 							<ReaderFollowButton
+								feedId={ feedId }
+								siteId={ siteId }
 								siteUrl={ feed?.feed_URL || siteUrl }
 								hasButtonStyle
 								iconSize={ 24 }

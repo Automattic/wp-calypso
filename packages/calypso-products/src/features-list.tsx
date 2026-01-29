@@ -359,6 +359,13 @@ import {
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_GROUP_WORDADS,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2642,7 +2649,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -2651,7 +2658,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Free support with faster response times' )
 				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
-			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_FREE_FAST_SUPPORT ]: {
 		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
@@ -2670,7 +2677,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate(
 						'Your support questions answered first by our expert, friendly Happiness team.'
 				  )
-				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
+				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_UPLOAD_VIDEO ]: {
 		getSlug: () => FEATURE_UPLOAD_VIDEO,
@@ -2755,7 +2762,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Unlimited products' )
 				: i18n.translate( 'List unlimited products' ),
-		getDescription: () => '',
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
 	},
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,
@@ -2865,6 +2875,44 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => '',
 	},
 	/* END: Woo Express Features */
+
+	/* START: Woo Hosted (CIAB) Features */
+	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
+		getTitle: () => 'All-in-one solution to build and manage your ecommerce store',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
+		getTitle: () => 'Build your store quickly with our AI-powered site-building tool',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		getTitle: () => 'Build your business with included marketing tools',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		getTitle: () => 'Send up to 5,000 emails/month',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		getTitle: () => 'Send up to 250,000 emails/month',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		getTitle: () => 'One store admin account',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		getTitle: () => 'Unlimited store admin accounts',
+		getDescription: () => '',
+	},
+	/* END: Woo Hosted (CIAB) Features */
 
 	/* START: Sensei Features */
 	[ FEATURE_SENSEI_SUPPORT ]: {

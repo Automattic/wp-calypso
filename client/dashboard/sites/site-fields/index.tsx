@@ -31,7 +31,7 @@ import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
-import { isSitePlanTrial } from '../plans';
+import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -125,31 +125,13 @@ export function NameRenderer( {
 }
 
 export function URL( { site, value }: { site: Site; value: string } ) {
-	return (
-		<URLRenderer
-			disabled={ site.is_deleted }
-			href={ getSiteFormattedUrl( site ) }
-			value={ value }
-		/>
-	);
-}
-
-export function URLRenderer( {
-	disabled,
-	href,
-	value,
-}: {
-	disabled: boolean;
-	href: string;
-	value: string;
-} ) {
-	return disabled ? (
+	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ href }
+			href={ getSiteFormattedUrl( site ) }
 		>
 			{ value }
 		</ExternalLink>
@@ -361,6 +343,9 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isTrial = isSitePlanTrial( site );
+	const upgradeLink = isSitePlanWooHosted( site )
+		? wpcomLink( `/setup/woo-hosted-plans/${ site.slug }` )
+		: wpcomLink( `/plans/${ site.slug }` );
 
 	return (
 		<>
@@ -371,7 +356,7 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			<ExternalLink
 				href={
 					isTrial
-						? wpcomLink( `/plans/${ site.slug }` )
+						? upgradeLink
 						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {

@@ -293,7 +293,12 @@ $blueberry-color: #3858e9;
 			margin-top: 8px;
 
 			.components-external-link {
-				color: var( --studio-gray-20 );
+				color: var( --studio-gray-60 );
+			}
+
+			.components-external-link__icon {
+
+				display: none;
 			}
 		}
 	}
