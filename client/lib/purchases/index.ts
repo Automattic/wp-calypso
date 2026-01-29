@@ -27,6 +27,7 @@ import {
 	isJetpackStatsPaidProductSlug,
 	isAkismetPro500,
 	getAkismetPro500ProductDisplayName,
+	isAkismetFreeProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
@@ -527,6 +528,30 @@ export function isExpiring( purchase: Purchase ) {
 	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiryDate ) {
+		return false;
+	}
+
+	if ( ! moment( purchase.expiryDate ).isBefore( moment() ) ) {
+		return false;
+	}
+
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
+}
+
 export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiryStatus;
 }
@@ -611,7 +636,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 		return false;
 	}
 
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiryDate ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 /**

@@ -1,9 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 
 export const getPHPVersions = ( siteId ) => {
-	// 1% of sites will have a recommended PHP version of 8.4. These sites are transferring to 8.4 by default.
+	// 25% of sites will have a recommended PHP version of 8.4. These sites are transferring to 8.4 by default.
 	// 251762970 is the first site of the list.
-	const isPhp84Default = siteId && siteId >= 251762970 && siteId % 100 === 0;
+	const isPhp84Default = siteId && siteId >= 251762970 && siteId % 4 === 0;
 
 	// PHP 8.3 is the default recommended version, 8.4 is the new recommended version for some sites.
 	const recommendedValue = isPhp84Default ? '8.4' : '8.3';

@@ -28,7 +28,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
 	newInteractionsBotSlug: string,
-	loggedOutOdieBotSlug = 'wpcom-chat-loggedout',
+	loggedOutOdieBotSlug = 'wpcom-workflow-chat_loggedout',
 	isLoggedOutSession: boolean
 ): string {
 	if ( supportInteraction ) {

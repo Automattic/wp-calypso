@@ -48,6 +48,7 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
+	dashboard,
 	isSignupStep,
 	onConnect,
 	onSkip,
@@ -181,7 +182,15 @@ export function getOptionInfo( {
 			};
 			break;
 		default: {
-			const availabilityNotice = getAvailabilityNotice( domain, availability.status );
+			const availabilityNotice = getAvailabilityNotice(
+				domain,
+				availability.status,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				dashboard
+			);
 			transferContent = {
 				...optionInfo.transferNotSupported,
 				topText: availabilityNotice.message,

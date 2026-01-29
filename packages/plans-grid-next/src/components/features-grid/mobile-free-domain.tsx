@@ -4,6 +4,7 @@ import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
@@ -19,7 +20,7 @@ const MobileFreeDomain = ( {
 	paidDomainName,
 }: MobileFreeDomainProps ) => {
 	const translate = useTranslate();
-	const { isVar1dVariant } = usePlansGridContext();
+	const { isVar1dVariant, isVar4Variant, isExperimentVariant } = usePlansGridContext();
 
 	// For var1d, don't render the highlighted free domain - it appears in regular feature list
 	if ( isVar1dVariant ) {
@@ -44,11 +45,19 @@ const MobileFreeDomain = ( {
 		  } )
 		: translate( 'Free domain for one year' );
 
+	// Apply green styling for experiment variants (which use "Everything in X, plus:" features)
+	// but not for var1d, var4, or control experience
+	const shouldHighlightDomain = isExperimentVariant && ! isVar4Variant && paidDomainName;
+
+	const titleClasses = clsx( 'plan-features-2023-grid__item-title', 'is-bold', {
+		'is-domain-included-highlight': shouldHighlightDomain,
+	} );
+
 	return (
 		<div className="plan-features-2023-grid__highlighted-feature">
 			<PlanFeaturesItem>
 				<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
-					<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
+					<span className={ titleClasses }>{ displayText }</span>
 				</span>
 			</PlanFeaturesItem>
 		</div>

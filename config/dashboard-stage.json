@@ -12,6 +12,7 @@
 	"features": {
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"cookie-banner": false,
 		"dashboard/v2": false,
 		"dashboard/v2/paginated-site-list": true,
@@ -21,7 +22,7 @@
 		"mcp-settings": true,
 		"hosting/crontab": true,
 		"wordpress-ai-assistant": true,
-		"wordpress-ai-tools": false
+		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
