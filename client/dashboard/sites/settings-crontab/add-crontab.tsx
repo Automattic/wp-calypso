@@ -1,33 +1,37 @@
 import { siteBySlugQuery, siteCrontabCreateMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	TextControl,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
+import { DataForm, type Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
 	siteSettingsCrontabAddRoute,
 	siteSettingsCrontabRoute,
 } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import ScheduleField from './schedule-field';
 
+interface AddCrontabFormData {
+	schedule: string;
+	command: string;
+}
+
 export default function AddCrontab() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: siteSettingsCrontabAddRoute.fullPath } );
 
-	const [ schedule, setSchedule ] = useState( 'hourly' );
-	const [ command, setCommand ] = useState( '' );
+	const [ formData, setFormData ] = useState< AddCrontabFormData >( {
+		schedule: 'hourly',
+		command: '',
+	} );
 
 	const { mutate: createCrontab, isPending: isCreatingCrontab } = useMutation( {
 		...siteCrontabCreateMutation( site.ID ),
@@ -49,12 +53,12 @@ export default function AddCrontab() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		if ( ! command.trim() ) {
+		if ( ! formData.command.trim() ) {
 			return;
 		}
 
 		createCrontab(
-			{ schedule, command: command.trim() },
+			{ schedule: formData.schedule, command: formData.command.trim() },
 			{
 				onSuccess: () => {
 					navigate( {
@@ -66,7 +70,51 @@ export default function AddCrontab() {
 		);
 	};
 
-	const isValidCommand = command.trim().length > 0;
+	const isValidCommand = formData.command.trim().length > 0;
+
+	const fields: Field< AddCrontabFormData >[] = useMemo(
+		() => [
+			{
+				id: 'schedule',
+				label: __( 'Schedule' ),
+				type: 'text' as const,
+				Edit: ( props ) => (
+					<ScheduleField
+						value={ props.field.getValue?.( { item: props.data } ) ?? 'hourly' }
+						onChange={ ( newValue ) => props.onChange( { [ props.field.id ]: newValue } ) }
+						disabled={ isCreatingCrontab }
+					/>
+				),
+			},
+			{
+				id: 'command',
+				label: __( 'Command' ),
+				type: 'text' as const,
+				description: __(
+					'The command to execute (e.g., wp custom sync-products or bash custom-script.sh).'
+				),
+				Edit: ( props ) => (
+					<TextControl
+						__nextHasNoMarginBottom
+						label={ props.field.label }
+						help={ props.field.description }
+						value={ props.field.getValue?.( { item: props.data } ) ?? '' }
+						onChange={ ( newValue ) => props.onChange( { [ props.field.id ]: newValue } ) }
+						disabled={ isCreatingCrontab }
+					/>
+				),
+			},
+		],
+		[ isCreatingCrontab ]
+	);
+
+	const form = useMemo(
+		() => ( {
+			layout: { type: 'regular' as const },
+			fields: [ 'schedule', 'command' ],
+		} ),
+		[]
+	);
 
 	return (
 		<PageLayout
@@ -92,22 +140,15 @@ export default function AddCrontab() {
 								) }
 								level={ 3 }
 							/>
-							<ScheduleField
-								value={ schedule }
-								onChange={ setSchedule }
-								disabled={ isCreatingCrontab }
+							<DataForm< AddCrontabFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< AddCrontabFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
 							/>
-							<TextControl
-								__nextHasNoMarginBottom
-								label={ __( 'Command' ) }
-								help={ __(
-									'The command to execute (e.g., wp custom sync-products or bash custom-script.sh).'
-								) }
-								value={ command }
-								onChange={ setCommand }
-								disabled={ isCreatingCrontab }
-							/>
-							<HStack justify="flex-end">
+							<ButtonStack justify="flex-end">
 								<Button variant="tertiary" onClick={ handleCancel } disabled={ isCreatingCrontab }>
 									{ __( 'Cancel' ) }
 								</Button>
@@ -120,7 +161,7 @@ export default function AddCrontab() {
 								>
 									{ __( 'Add scheduled job' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>
