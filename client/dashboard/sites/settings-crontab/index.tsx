@@ -169,7 +169,6 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		},
 		{
 			id: 'delete',
-			isPrimary: true,
 			isDestructive: true,
 			icon: <Icon icon={ trash } />,
 			label: __( 'Delete' ),
