@@ -193,7 +193,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								} }
 							/>
 							<SummaryButton
-								href={ `${ site.options?.admin_url }upload.php?action=image-studio` }
+								href={ `${ site.options?.admin_url }upload.php?image-studio` }
 								title={ __( 'Create beautiful images' ) }
 								decoration={ <Icon icon={ image } /> }
 								onClick={ () => {
