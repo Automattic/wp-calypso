@@ -78,11 +78,22 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
-		if ( navigateToRoute ) {
+		if ( navigateToRoute?.route ) {
+			const { route, coalesceParams } = navigateToRoute;
 			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
-			// On navigate once to keep the back button responsive.
-			if ( fullLocation !== navigateToRoute ) {
-				navigate( navigateToRoute );
+			// Only navigate once to keep the back button responsive.
+			if ( fullLocation !== route ) {
+				if ( coalesceParams ) {
+					const url = new URL( route, window.location.origin );
+					const originalParams = new URLSearchParams( location.search );
+					const newParams = new URLSearchParams( url.search );
+					newParams.forEach( ( value, key ) => {
+						originalParams.set( key, value );
+					} );
+					navigate( { pathname: url.pathname, search: originalParams.toString() } );
+				} else {
+					navigate( route );
+				}
 			}
 			setNavigateToRoute( null );
 		}

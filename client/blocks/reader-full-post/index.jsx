@@ -144,15 +144,16 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		const scrollableContainer =
-			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
-			document.querySelector( '#primary > div > div' ); // for Recent Feed in Stream
+		const scrollableContainer = this.findScrollableContainer();
 		if ( scrollableContainer ) {
 			this.scrollableContainer = scrollableContainer;
-			this.scrollTracker.setContainer( scrollableContainer );
+			if ( scrollableContainer !== window ) {
+				this.scrollTracker.setContainer( scrollableContainer );
+			}
 			this.resetScroll();
 		}
 	}
+
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
@@ -212,6 +213,35 @@ export class FullPostView extends Component {
 		this.scrollTracker.cleanup();
 		this.clearResetScrollTimeout();
 	}
+
+	findScrollableContainer = () => {
+		if ( ! this.readerMainWrapper.current ) {
+			return null;
+		}
+
+		let element = this.readerMainWrapper.current;
+
+		// Traverse up the DOM tree to find the first scrollable container
+		while ( element && element !== document.body ) {
+			const style = window.getComputedStyle( element );
+			const overflowY = style.overflowY || style.overflow;
+			const hasScrollableContent = element.scrollHeight > element.clientHeight;
+
+			// Check if element is scrollable
+			if (
+				overflowY === 'auto' ||
+				overflowY === 'scroll' ||
+				( hasScrollableContent && element.scrollTop !== undefined )
+			) {
+				return element;
+			}
+
+			element = element.parentElement;
+		}
+
+		// Fall back to window if no scrollable container found
+		return window;
+	};
 
 	setReadingStartTime = () => {
 		this.readingStartTime = new Date().getTime();
@@ -295,12 +325,28 @@ export class FullPostView extends Component {
 	resetScroll = () => {
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
-			this.scrollableContainer.scrollTo( {
-				top: 0,
-				left: 0,
-				behavior: 'instant',
-			} );
-			this.scrollTracker.resetMaxScrollDepth();
+			if ( ! this.scrollableContainer ) {
+				return;
+			}
+
+			if ( this.scrollableContainer === window ) {
+				window.scrollTo( {
+					top: 0,
+					left: 0,
+					behavior: 'instant',
+				} );
+			} else {
+				this.scrollableContainer.scrollTo( {
+					top: 0,
+					left: 0,
+					behavior: 'instant',
+				} );
+			}
+
+			// Only reset scroll depth if we have a container element (not window)
+			if ( this.scrollableContainer !== window ) {
+				this.scrollTracker.resetMaxScrollDepth();
+			}
 		}, 0 ); // Defer until after the DOM update
 	};
 

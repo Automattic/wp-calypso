@@ -17,6 +17,7 @@ import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
@@ -69,6 +70,7 @@ export default function AgentDock( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
 		hasLoaded: isStoreReady,
 		isOpen: isPersistedOpen = false,
@@ -221,7 +223,11 @@ export default function AgentDock( {
 			},
 		};
 
-		const options: ChatHeaderOptions = [ newChatMenuItem, newZDChatMenuItem ];
+		const options: ChatHeaderOptions = [ newChatMenuItem ];
+
+		if ( shouldUseAgentsManager ) {
+			options.push( newZDChatMenuItem );
+		}
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );

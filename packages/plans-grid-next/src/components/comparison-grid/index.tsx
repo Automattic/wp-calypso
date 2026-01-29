@@ -72,10 +72,14 @@ const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
 
 const JetpackIconContainer = styled.div`
-	padding-inline-start: 6px;
+	padding-inline-start: 3px;
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
+`;
+
+const TitlePreventOrphans = styled.span`
+	white-space: nowrap;
 `;
 
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
@@ -810,27 +814,47 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle() }
-									{ footnote && (
-										<FeatureFootnote>
-											<sup>{ footnote }</sup>
-										</FeatureFootnote>
+									{ typeof title === 'string' ? (
+										<>
+											{ title.split( ' ' ).slice( 0, -1 ).join( ' ' ) }
+											{ title.includes( ' ' ) ? ' ' : null }
+											<TitlePreventOrphans>
+												{ title.split( ' ' ).slice( -1 ) }
+												{ footnote && (
+													<FeatureFootnote>
+														<sup>{ footnote }</sup>
+													</FeatureFootnote>
+												) }
+												{ allJetpackFeatures.has( feature.getSlug() ) ? (
+													<>
+														{ '\u00A0' }
+														<JetpackIconContainer>
+															<Plans2023Tooltip
+																text={ translate(
+																	'Security, performance, and growth tools—powered by Jetpack.'
+																) }
+																setActiveTooltipId={ setActiveTooltipId }
+																activeTooltipId={ activeTooltipId }
+																id={ `jp-${ tooltipId }` }
+															>
+																<JetpackLogo size={ 16 } />
+															</Plans2023Tooltip>
+														</JetpackIconContainer>
+													</>
+												) : null }
+											</TitlePreventOrphans>
+										</>
+									) : (
+										<>
+											{ feature.getTitle() }
+											{ footnote && (
+												<FeatureFootnote>
+													<sup>{ footnote }</sup>
+												</FeatureFootnote>
+											) }
+										</>
 									) }
 								</Plans2023Tooltip>
-								{ allJetpackFeatures.has( feature.getSlug() ) ? (
-									<JetpackIconContainer>
-										<Plans2023Tooltip
-											text={ translate(
-												'Security, performance, and growth tools—powered by Jetpack.'
-											) }
-											setActiveTooltipId={ setActiveTooltipId }
-											activeTooltipId={ activeTooltipId }
-											id={ `jp-${ tooltipId }` }
-										>
-											<JetpackLogo size={ 16 } />
-										</Plans2023Tooltip>
-									</JetpackIconContainer>
-								) : null }
 							</>
 						) }
 					</>
