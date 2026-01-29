@@ -72,8 +72,8 @@ object CalypsoApps: BuildType({
 			unchecked = "false"
 		)
 		// Webpack cache directory - persists on the agent outside the checkout directory.
-		// Uses agent home dir which is not subject to TeamCity's automatic cleanup.
-		param("env.WEBPACK_CACHE_DIR", "%teamcity.agent.home.dir%/caches/calypso-webpack-cache")
+		// Uses the build user's home directory with agent name to prevent collisions.
+		param("env.WEBPACK_CACHE_DIR", "%env.HOME%/.cache/calypso-webpack-cache/%teamcity.agent.name%")
 	}
 
 	features {
