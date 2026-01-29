@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 
 /**
  * Get reader last path selected

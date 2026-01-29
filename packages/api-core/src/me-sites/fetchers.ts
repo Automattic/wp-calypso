@@ -11,6 +11,7 @@ export type FetchSiteType = 'atomic' | 'jetpack' | 'wpcom' | 'jetpack-full' | 'c
 export type FetchSiteTypes = 'all' | FetchSiteType[];
 
 export interface FetchSitesOptions {
+	source?: string;
 	site_visibility: 'all' | 'visible' | 'hidden' | 'deleted';
 	include_a8c_owned: boolean;
 }
@@ -32,7 +33,7 @@ export interface FetchPaginatedSitesResponse {
 
 export async function fetchSites(
 	site_types: FetchSiteTypes,
-	{ site_visibility, include_a8c_owned }: FetchSitesOptions
+	{ source, site_visibility, include_a8c_owned }: FetchSitesOptions
 ): Promise< Site[] > {
 	const { sites } = await wpcom.req.get(
 		{
@@ -42,6 +43,7 @@ export async function fetchSites(
 		{
 			fields: JOINED_SITE_FIELDS,
 			options: JOINED_SITE_OPTIONS,
+			source,
 			site_activity: 'active',
 			site_visibility,
 			include_a8c_owned,
@@ -55,6 +57,7 @@ export async function fetchSites(
 export async function fetchPaginatedSites(
 	site_types: FetchSiteTypes,
 	{
+		source,
 		site_visibility,
 		include_a8c_owned,
 		search,
@@ -74,6 +77,7 @@ export async function fetchPaginatedSites(
 		{
 			fields: JOINED_SITE_FIELDS,
 			options: JOINED_SITE_OPTIONS,
+			source,
 			site_activity: 'active',
 			site_visibility,
 			include_a8c_owned,

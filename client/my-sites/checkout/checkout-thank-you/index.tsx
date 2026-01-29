@@ -59,6 +59,7 @@ import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgra
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
@@ -135,6 +136,7 @@ export interface CheckoutThankYouConnectedProps {
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
 	fetchSitePlans: ( siteId: number ) => void;
+	fetchSiteDomains: ( siteId: number ) => void;
 	refreshSitePlans: ( siteId: number ) => void;
 	recordStartTransferClickInThankYou: ( domainName: string ) => void;
 	requestThenActivate: (
@@ -195,6 +197,7 @@ export class CheckoutThankYou extends Component<
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite.ID );
+			this.refreshDomainsIfNeeded( selectedSite.ID );
 		} else if ( selectedSite && shouldFetchSitePlans( sitePlans ) ) {
 			this.props.fetchSitePlans( selectedSite.ID );
 		}
@@ -270,6 +273,7 @@ export class CheckoutThankYou extends Component<
 		) {
 			if ( this.props.selectedSite ) {
 				this.props.refreshSitePlans( this.props.selectedSite.ID );
+				this.refreshDomainsIfNeeded( this.props.selectedSite.ID );
 			}
 
 			if ( this.props.domainOnlySiteFlow ) {
@@ -280,6 +284,7 @@ export class CheckoutThankYou extends Component<
 
 				if ( domainOnlyPurchase?.blogId ) {
 					this.props.requestSite( domainOnlyPurchase.blogId );
+					this.refreshDomainsIfNeeded( domainOnlyPurchase.blogId );
 				}
 			}
 		}
@@ -305,6 +310,13 @@ export class CheckoutThankYou extends Component<
 		return getPurchases( this.props ).some(
 			( purchase ) => isPlan( purchase ) || isDomainProduct( purchase )
 		);
+	};
+
+	refreshDomainsIfNeeded = ( siteId: number ) => {
+		const purchases = getPurchases( this.props );
+		if ( purchases.some( isDomainProduct ) ) {
+			this.props.fetchSiteDomains( siteId );
+		}
 	};
 
 	renderConfirmationNotice = () => {
@@ -734,6 +746,7 @@ export default connect(
 		fetchSitePlugins,
 		fetchReceipt,
 		fetchSitePlans,
+		fetchSiteDomains,
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
 		requestThenActivate,

@@ -215,5 +215,6 @@
 	"site_spec": {
 		"script_url": "https://widgets.wp.com/site-spec/v1.3.13/index.js",
 		"css_url": "https://widgets.wp.com/site-spec/v1.3.13/style.css"
-	}
+	},
+	"dashboard_opt_in_oldest_eligible_user": 275231967
 }

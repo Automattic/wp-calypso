@@ -1,5 +1,5 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
-import { useShouldUseUnifiedAgent } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {

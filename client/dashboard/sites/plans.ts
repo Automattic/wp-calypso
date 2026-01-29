@@ -66,3 +66,8 @@ export function isSitePlanTrial( site: Pick< Site, 'plan' > ) {
 
 	return trialPlans.includes( site.plan?.product_slug as StorePlanSlug );
 }
+
+export function isSitePlanWooHosted( site: Pick< Site, 'plan' > ) {
+	const wooHostedPlans = Object.values( WooHostedPlans ) as StorePlanSlug[];
+	return wooHostedPlans.includes( site.plan?.product_slug as StorePlanSlug );
+}

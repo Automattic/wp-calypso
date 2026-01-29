@@ -1,6 +1,8 @@
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
-test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_PR ] }, () => {
+test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
+	skipIfMailosaurLimitReached();
+
 	const planName = 'Premium';
 
 	test( `As a user, I can use the sidebar domain upsell to add a domain and a ${ planName } plan to cart`, async ( {

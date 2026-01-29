@@ -30,7 +30,7 @@ import {
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -496,7 +496,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) => {
 	const state = context.store.getState();
 	if ( hasDashboardForcedOptIn( state ) ) {
-		const redirectUrl = typeof path === 'function' ? path( context.params ) : path;
+		const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
 		return navigate( dashboardLink( redirectUrl ?? context.path ) );
 	}
 

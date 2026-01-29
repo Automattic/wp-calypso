@@ -2,16 +2,14 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../utils/link';
 
 export function AddDomainButton( {
 	siteSlug,
 	domainConnectionSetupUrl,
-	redirectTo,
 }: {
 	siteSlug?: string;
 	domainConnectionSetupUrl?: string;
-	redirectTo?: string;
 } ) {
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
@@ -21,17 +19,15 @@ export function AddDomainButton( {
 		if ( domainConnectionSetupUrl ) {
 			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
 		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
-		}
 
+		queryArgs.dashboard = getCurrentDashboard();
 		queryArgs.back_to = redirectToDashboardLink();
 		return queryArgs;
 	};
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug ? addQueryArgs( urlWithSite, queryArgs ) : urlWithoutSite;
+		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
 		return false;
 	};
 
@@ -39,7 +35,10 @@ export function AddDomainButton( {
 		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+		navigateTo(
+			wpcomLink( '/setup/domain/use-my-domain' ),
+			wpcomLink( '/setup/domain/use-my-domain' )
+		);
 
 	return (
 		<Dropdown
@@ -61,7 +60,7 @@ export function AddDomainButton( {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						{ __( 'Use a domain name I own' ) }
 					</MenuItem>
 				</>
 			) }

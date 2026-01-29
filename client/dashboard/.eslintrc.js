@@ -31,8 +31,8 @@ module.exports = {
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
-							// Please do not add exceptions unless agreed on
-							// with the #architecture group.
+							// Please do not add exceptions which pull in Calypso code/concepts.
+							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from calypso/ is not allowed in the dashboard folder.',
 					},
@@ -60,6 +60,7 @@ module.exports = {
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
+							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
 							'!@automattic/load-script',
@@ -73,8 +74,8 @@ module.exports = {
 							'!@automattic/urls',
 							'!@automattic/js-utils',
 							'!@automattic/viewport',
-							// Please do not add exceptions unless agreed on
-							// with the #architecture group.
+							// Please do not add exceptions which pull in Calypso code/concepts.
+							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},

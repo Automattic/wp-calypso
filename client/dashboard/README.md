@@ -28,6 +28,7 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 - [Entry Points](./docs/entry-points.md) - Documentation for the entry points and how to define new ones (a4a, WordPress.com, etc.)
 - [Internationalization](./docs/i18n.md) - Documentation for internationalization and translation practices
 - [Typography and Copy](./docs/typography-and-copy.md) - Documentation for typography guidelines and copy standards
+- [Package Imports](./docs/package-imports.md) - Documentation for package import restrictions and policy
 
 ## Bugs
 

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.a4a-migration-offer-v3 {
+.a4a-pressable-offer {
 	display: flex;
 	flex-direction: row;
 	gap: 16px;
@@ -21,7 +21,7 @@
 	}
 }
 
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle {
+.theme-a8c-for-agencies .components-button.a4a-pressable-offer__view-toggle {
 	display: none;
 
 	@include break-medium {
@@ -29,13 +29,13 @@
 	}
 }
 
-.a4a-migration-offer-v3__main {
+.a4a-pressable-offer__main {
 	flex-direction: column;
 	gap: 8px;
 	flex-grow: 1;
 }
 
-.a4a-migration-offer-v3__title {
+.a4a-pressable-offer__title {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -49,7 +49,7 @@
 	}
 }
 
-.a4a-migration-offer-v3__body {
+.a4a-pressable-offer__body {
 	display: flex;
 	gap: 24px;
 	align-content: center;
@@ -66,7 +66,7 @@
 	}
 }
 
-.a4a-migration-offer-v3__body-actions {
+.a4a-pressable-offer__body-actions {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -77,11 +77,11 @@
 	}
 }
 
-.a4a-migration-offer-v3__body-actions-footnote {
+.a4a-pressable-offer__body-actions-footnote {
 	@include body-small;
 }
 
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle-mobile {
+.theme-a8c-for-agencies .components-button.a4a-pressable-offer__view-toggle-mobile {
 	display: block;
 
 	@include break-medium {
@@ -89,8 +89,8 @@
 	}
 }
 
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle,
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v3__view-toggle-mobile {
+.theme-a8c-for-agencies .components-button.a4a-pressable-offer__view-toggle,
+.theme-a8c-for-agencies .components-button.a4a-pressable-offer__view-toggle-mobile {
 	&,
 	&:hover,
 	&:focus,
@@ -108,9 +108,9 @@
 	}
 }
 
-.a4a-migration-offer-v3.is-expanded {
-	.components-button.a4a-migration-offer-v3__view-toggle svg,
-	.components-button.a4a-migration-offer-v3__view-toggle-mobile svg {
+.a4a-pressable-offer.is-expanded {
+	.components-button.a4a-pressable-offer__view-toggle svg,
+	.components-button.a4a-pressable-offer__view-toggle-mobile svg {
 		transform: rotate(180deg);
 	}
 }

@@ -6,8 +6,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 document.addEventListener( 'help-center-ready-to-load', () => {
 	const input = document.getElementById( 'support-search-input' );
 	const formContainer = document.querySelector( '.support-search-form-container' );
-	formContainer.removeAttribute( 'disabled' );
-	input.placeholder = input.dataset.postLoadingText;
+	formContainer?.removeAttribute( 'disabled' );
+	if ( input ) {
+		input.placeholder = input?.dataset?.postLoadingText;
+	}
 } );
 
 document.addEventListener( 'DOMContentLoaded', function () {
@@ -19,8 +21,10 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	// Wait until the Help Center is loaded then enable the form.
 	const unsubscribe = window.wp?.data?.subscribe( () => {
-		formContainer.removeAttribute( 'disabled' );
-		input.placeholder = input.dataset.postLoadingText;
+		formContainer?.removeAttribute( 'disabled' );
+		if ( input ) {
+			input.placeholder = input?.dataset?.postLoadingText;
+		}
 		unsubscribe();
 	}, 'automattic/help-center' );
 
