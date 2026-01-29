@@ -17,6 +17,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
 import {
 	MenuItem,
 	Dropdown,
@@ -26,6 +27,7 @@ import {
 	privateApis,
 } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { select, dispatch } from '@wordpress/data';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { hasQueryArg } from '@wordpress/url';
@@ -133,6 +135,7 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 );
 
 const { Badge } = unlock( privateApis );
+const { cleanEmptyObject } = unlock( blockEditorPrivateApis );
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -332,6 +335,7 @@ class ThemeSheet extends Component {
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
+	// aquí és l'on click de calypos quan tries style variation
 	onStyleVariationClick = ( variation ) => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_style_variation_click', {
 			theme_name: this.props.themeId,
@@ -349,6 +353,39 @@ class ThemeSheet extends Component {
 			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
 			page( `${ window.location.pathname }${ paramsString }` );
 		}
+	};
+
+	setConfig = async ( callbackOrObject, options = {} ) => {
+		const globalStylesId = await dispatch( 'core' ).getGlobalStylesId(
+			this.props.siteId,
+			this.props.themeId
+		);
+
+		// comprovar que el valor és el mateix que a gutenberg
+		// console.debug( 'globalStylesId', globalStylesId );
+
+		const record = select( 'core' ).getEditedEntityRecord( 'root', 'globalStyles', globalStylesId );
+
+		const currentConfig = {
+			styles: record?.styles ?? {},
+			settings: record?.settings ?? {},
+			_links: record?._links ?? {},
+		};
+
+		const updatedConfig =
+			typeof callbackOrObject === 'function' ? callbackOrObject( currentConfig ) : callbackOrObject;
+
+		dispatch( 'core' ).editEntityRecord(
+			'root',
+			'globalStyles',
+			globalStylesId,
+			{
+				styles: cleanEmptyObject( updatedConfig.styles ) || {},
+				settings: cleanEmptyObject( updatedConfig.settings ) || {},
+				_links: cleanEmptyObject( updatedConfig._links ) || {},
+			},
+			options
+		);
 	};
 
 	getValidSections = () => {
