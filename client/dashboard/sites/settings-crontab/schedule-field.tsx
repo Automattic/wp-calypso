@@ -6,7 +6,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 
 type ScheduleType = 'hourly' | 'daily' | 'weekly' | 'custom';
 type CustomFrequency = 'h' | 'd' | 'w';
@@ -127,20 +127,7 @@ function formatSchedulePreview(
 export default function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
 	const parsed = useMemo( () => parseScheduleValue( value ), [ value ] );
 
-	const [ scheduleType, setScheduleType ] = useState< ScheduleType >( parsed.scheduleType );
-	const [ customNumber, setCustomNumber ] = useState< number >( parsed.customNumber );
-	const [ customFrequency, setCustomFrequency ] = useState< CustomFrequency >(
-		parsed.customFrequency
-	);
-
-	// Update parent when values change
-	useEffect( () => {
-		if ( scheduleType === 'custom' ) {
-			onChange( `${ customNumber }${ customFrequency }` );
-		} else {
-			onChange( scheduleType );
-		}
-	}, [ scheduleType, customNumber, customFrequency, onChange ] );
+	const { scheduleType, customNumber, customFrequency } = parsed;
 
 	const preview = formatSchedulePreview( scheduleType, customNumber, customFrequency );
 
@@ -151,7 +138,14 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 				label={ __( 'Schedule' ) }
 				value={ scheduleType }
 				options={ PREDEFINED_SCHEDULES }
-				onChange={ ( newValue ) => setScheduleType( newValue as ScheduleType ) }
+				onChange={ ( newValue ) => {
+					const newScheduleType = newValue as ScheduleType;
+					if ( newScheduleType === 'custom' ) {
+						onChange( `${ customNumber }${ customFrequency }` );
+					} else {
+						onChange( newScheduleType );
+					}
+				} }
 				disabled={ disabled }
 			/>
 			{ scheduleType === 'custom' && (
@@ -164,9 +158,9 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 						onChange={ ( newValue ) => {
 							const num = parseInt( newValue, 10 );
 							if ( ! isNaN( num ) && num >= 1 && num <= FREQUENCY_MAX[ customFrequency ] ) {
-								setCustomNumber( num );
+								onChange( `${ num }${ customFrequency }` );
 							} else if ( newValue === '' ) {
-								setCustomNumber( 1 );
+								onChange( `1${ customFrequency }` );
 							}
 						} }
 						disabled={ disabled }
@@ -183,11 +177,10 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 						options={ FREQUENCY_OPTIONS }
 						onChange={ ( newValue ) => {
 							const freq = newValue as CustomFrequency;
-							setCustomFrequency( freq );
 							// Clamp the number to the new max
-							if ( customNumber > FREQUENCY_MAX[ freq ] ) {
-								setCustomNumber( FREQUENCY_MAX[ freq ] );
-							}
+							const clampedNumber =
+								customNumber > FREQUENCY_MAX[ freq ] ? FREQUENCY_MAX[ freq ] : customNumber;
+							onChange( `${ clampedNumber }${ freq }` );
 						} }
 						disabled={ disabled }
 					/>
