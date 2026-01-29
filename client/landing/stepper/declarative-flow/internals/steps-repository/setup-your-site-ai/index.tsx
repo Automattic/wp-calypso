@@ -71,9 +71,13 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			heading={
 				<Step.Heading
 					text={ translate( 'Set up your site' ) }
-					subText={ translate(
-						"No matter what you want to do, there's an easy way to get started."
-					) }
+					subText={ i18n.fixMe( {
+						text: "Whatever you're making, there's an easy way to get started.",
+						newCopy: translate( "Whatever you're making, there's an easy way to get started." ),
+						oldCopy: translate(
+							"No matter what you want to do, there's an easy way to get started."
+						),
+					} ) }
 				/>
 			}
 		>
