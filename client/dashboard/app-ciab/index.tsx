@@ -42,6 +42,7 @@ boot( {
 	},
 	optIn: false,
 	components: {
+		addDomainButton: () => import( '../domains-ciab/add-domain-button' ),
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},

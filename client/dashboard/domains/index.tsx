@@ -2,6 +2,7 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { lazy, Suspense, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -11,7 +12,6 @@ import { DataViews, DataViewsCard } from '../components/dataviews';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { AddDomainButton } from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
 	useActions,
@@ -39,7 +39,8 @@ const defaultView = {
 
 function Domains() {
 	const { user } = useAuth();
-	const { queries } = useAppContext();
+	const { queries, components } = useAppContext();
+	const AddDomainButton = useMemo( () => lazy( components.addDomainButton ), [ components ] );
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -67,39 +68,41 @@ function Domains() {
 	const hasDomains = !! domains && domains.length > 0;
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={ ! hasDomains ? null : <AddDomainButton /> }
-				/>
-			}
-			notices={
-				<>
-					<OptInWelcome tracksContext="domains" />
-					<BulkActionsProgressNotice />
-				</>
-			}
-		>
-			{ ! hasDomains ? (
-				<EmptyDomainsState />
-			) : (
-				<DataViewsCard>
-					<DataViews< DomainSummary >
-						data={ filteredData || [] }
-						fields={ fields }
-						onChangeView={ updateView }
-						onResetView={ resetView }
-						view={ view }
-						actions={ actions }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ getDomainId }
-						defaultLayouts={ DEFAULT_LAYOUTS }
+		<Suspense fallback={ null }>
+			<PageLayout
+				header={
+					<PageHeader
+						title={ __( 'Domains' ) }
+						actions={ ! hasDomains ? null : <AddDomainButton /> }
 					/>
-				</DataViewsCard>
-			) }
-		</PageLayout>
+				}
+				notices={
+					<>
+						<OptInWelcome tracksContext="domains" />
+						<BulkActionsProgressNotice />
+					</>
+				}
+			>
+				{ ! hasDomains ? (
+					<EmptyDomainsState />
+				) : (
+					<DataViewsCard>
+						<DataViews< DomainSummary >
+							data={ filteredData || [] }
+							fields={ fields }
+							onChangeView={ updateView }
+							onResetView={ resetView }
+							view={ view }
+							actions={ actions }
+							search
+							paginationInfo={ paginationInfo }
+							getItemId={ getDomainId }
+							defaultLayouts={ DEFAULT_LAYOUTS }
+						/>
+					</DataViewsCard>
+				) }
+			</PageLayout>
+		</Suspense>
 	);
 }
 

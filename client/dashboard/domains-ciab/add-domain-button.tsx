@@ -24,17 +24,15 @@ export default function AddDomainButton() {
 		return queryArgs;
 	};
 
-	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
+	const navigateTo = ( url: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
+		window.location.href = addQueryArgs( url, queryArgs );
 		return false;
 	};
 
-	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
+	const onSearchClick = () => navigateTo( wpcomLink( '/setup/domain' ) );
 
-	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+	const onTransferOrConnectClick = () => navigateTo( wpcomLink( '/setup/domain/use-my-domain' ) );
 
 	return (
 		<Dropdown
@@ -56,7 +54,7 @@ export default function AddDomainButton() {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						{ __( 'Use a domain name I own' ) }
 					</MenuItem>
 				</>
 			) }
