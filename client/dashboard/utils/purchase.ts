@@ -11,6 +11,7 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { isAfter, parseISO, startOfDay } from 'date-fns';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
@@ -144,19 +145,17 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 
 	// Use payment_expiry_date if available for more accurate expiry checking
 	if ( purchase.payment_expiry_date ) {
-		return (
-			new Date( purchase.expiry_date ).getTime() >
-			new Date( purchase.payment_expiry_date ).getTime()
-		);
+		// Both dates are in UTC (YYYY-MM-DD format), parse and compare them
+		return isAfter( parseISO( purchase.expiry_date ), parseISO( purchase.payment_expiry_date ) );
 	}
 
 	// Fall back to payment_expiry for backward compatibility
 	if ( ! purchase.payment_expiry ) {
 		return false;
 	}
-	return (
-		new Date( purchase.expiry_date ).getTime() >
-		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
+	return isAfter(
+		parseISO( purchase.expiry_date ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
 	);
 }
 
@@ -176,14 +175,18 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 
 	// Use payment_expiry_date if available for more accurate expiry checking
 	if ( purchase.payment_expiry_date ) {
-		return new Date().getTime() > new Date( purchase.payment_expiry_date ).getTime();
+		// Compare current UTC date with payment expiry date (both YYYY-MM-DD in UTC)
+		return isAfter( startOfDay( new Date() ), parseISO( purchase.payment_expiry_date ) );
 	}
 
 	// Fall back to payment_expiry for backward compatibility
 	if ( ! purchase.payment_expiry ) {
 		return false;
 	}
-	return new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime();
+	return isAfter(
+		startOfDay( new Date() ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function isTransferredOwnership(
