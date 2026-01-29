@@ -129,7 +129,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -141,17 +141,27 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	) {
 		return false;
 	}
-	if (
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		return (
+			new Date( purchase.expiry_date ).getTime() >
+			new Date( purchase.payment_expiry_date ).getTime()
+		);
+	}
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return (
 		new Date( purchase.expiry_date ).getTime() >
 		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
-	) {
-		return true;
-	}
-	return false;
+	);
 }
 
 export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -163,10 +173,17 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		return new Date().getTime() > new Date( purchase.payment_expiry_date ).getTime();
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime();
 }
 
 export function isTransferredOwnership(
