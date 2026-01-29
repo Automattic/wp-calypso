@@ -10,6 +10,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.buildCache
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComPlugins : Project({
@@ -71,13 +72,21 @@ object CalypsoApps: BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
-		// Webpack cache directory - persists on the agent outside the checkout directory.
-		// Uses /dev/shm (RAM-backed tmpfs) which is writable and fast. Cleared on reboot.
-		param("env.WEBPACK_CACHE_DIR", "/dev/shm/calypso-webpack-cache/%teamcity.agent.name%")
+		// Webpack cache directory - managed by TeamCity's build cache feature.
+		// Uses absolute path so all apps share the same cache regardless of working directory.
+		// This directory is automatically restored at build start and published at build end.
+		param("env.WEBPACK_CACHE_DIR", "%teamcity.build.checkoutDir%/.webpack-cache")
 	}
 
 	features {
 		perfmon {
+		}
+		buildCache {
+			name = "Webpack Build Cache"
+			rules = ".webpack-cache"
+			publish = true
+			use = true
+			publishOnlyChanged = false
 		}
 		pullRequests {
 			vcsRootExtId = "${Settings.WpCalypso.id}"
@@ -142,35 +151,6 @@ object CalypsoApps: BuildType({
 			"""
 		}
 
-		// Log webpack cache status before the build and ensure directory exists
-		bashNodeScript {
-			name = "Check webpack cache status (before build)"
-			scriptContent = """
-				echo "=== Webpack Cache Status (Before Build) ==="
-				CACHE_DIR="%env.WEBPACK_CACHE_DIR%"
-				echo "Cache directory: ${'$'}CACHE_DIR"
-
-				if [ -d "${'$'}CACHE_DIR" ]; then
-					echo "✓ Cache directory EXISTS (warm cache)"
-					echo "Cache size: ${'$'}(du -sh "${'$'}CACHE_DIR" 2>/dev/null | cut -f1)"
-					echo "Cache contents:"
-					ls -la "${'$'}CACHE_DIR" 2>/dev/null || echo "  (empty or inaccessible)"
-					if [ -d "${'$'}CACHE_DIR/webpack" ]; then
-						echo "Webpack cache files: ${'$'}(find "${'$'}CACHE_DIR/webpack" -type f 2>/dev/null | wc -l | tr -d ' ')"
-					fi
-					if [ -d "${'$'}CACHE_DIR/babel" ]; then
-						echo "Babel cache files: ${'$'}(find "${'$'}CACHE_DIR/babel" -type f 2>/dev/null | wc -l | tr -d ' ')"
-					fi
-				else
-					echo "✗ Cache directory does NOT exist (cold start - first build on this agent)"
-					echo "Creating cache directory..."
-					mkdir -p "${'$'}CACHE_DIR"
-					echo "✓ Cache directory created"
-				fi
-				echo "==========================================="
-			"""
-		}
-
 		// Automatically generate a list of apps to build by scanning the directories,
 		// then build every app in parallel using xargs for proper error handling.
 		bashNodeScript {
@@ -197,32 +177,6 @@ object CalypsoApps: BuildType({
 					echo "Building {}"
 					yarn workspace "{}" run teamcity:build-app || exit 1
 				'
-			"""
-		}
-
-		// Log webpack cache status after the build
-		bashNodeScript {
-			name = "Check webpack cache status (after build)"
-			scriptContent = """
-				echo "=== Webpack Cache Status (After Build) ==="
-				CACHE_DIR="%env.WEBPACK_CACHE_DIR%"
-				echo "Cache directory: ${'$'}CACHE_DIR"
-
-				if [ -d "${'$'}CACHE_DIR" ]; then
-					echo "✓ Cache directory EXISTS"
-					echo "Total cache size: ${'$'}(du -sh "${'$'}CACHE_DIR" 2>/dev/null | cut -f1)"
-					if [ -d "${'$'}CACHE_DIR/webpack" ]; then
-						echo "Webpack cache size: ${'$'}(du -sh "${'$'}CACHE_DIR/webpack" 2>/dev/null | cut -f1)"
-						echo "Webpack cache files: ${'$'}(find "${'$'}CACHE_DIR/webpack" -type f 2>/dev/null | wc -l | tr -d ' ')"
-					fi
-					if [ -d "${'$'}CACHE_DIR/babel" ]; then
-						echo "Babel cache size: ${'$'}(du -sh "${'$'}CACHE_DIR/babel" 2>/dev/null | cut -f1)"
-						echo "Babel cache files: ${'$'}(find "${'$'}CACHE_DIR/babel" -type f 2>/dev/null | wc -l | tr -d ' ')"
-					fi
-				else
-					echo "✗ Cache directory was NOT created (unexpected)"
-				fi
-				echo "==========================================="
 			"""
 		}
 

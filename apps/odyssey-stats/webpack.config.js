@@ -24,11 +24,6 @@ const outBasePath = process.env.STATS_PACKAGE_PATH ? process.env.STATS_PACKAGE_P
 const outputPath = path.join( outBasePath, 'dist' );
 const sourceMap = isDevelopment ? 'source-map' : false;
 
-const defaultBrowserslistEnv = 'evergreen';
-const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
-const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
-const cachePath = path.resolve( '.cache', extraPath );
-
 const excludedPackages = [
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
 	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
@@ -37,6 +32,11 @@ const excludedPackages = [
 	/^calypso\/components\/data\/query-site-keyrings$/,
 	/^calypso\/components\/data\/query-preferences$/,
 ];
+
+// Use persistent cache directory from env if available (e.g., in CI), otherwise use local .cache
+const cachePath = process.env.WEBPACK_CACHE_DIR
+	? path.resolve( process.env.WEBPACK_CACHE_DIR )
+	: path.resolve( '.cache' );
 
 const excludedPackagePlugins = excludedPackages.map(
 	// Note: apparently the word "package" is a reserved keyword here for some reason
@@ -65,6 +65,20 @@ module.exports = {
 		concatenateModules: ! shouldEmitStats,
 		minimizer: Minify(),
 		splitChunks: false,
+	},
+	cache: {
+		type: 'filesystem',
+		cacheDirectory: path.resolve( cachePath, 'webpack' ),
+		allowCollectingMemory: true,
+		// Enable build dependencies tracking for better cache invalidation
+		buildDependencies: {
+			config: [ __filename ],
+		},
+	},
+	// Log cache hit/miss information in CI
+	infrastructureLogging: {
+		level: process.env.IS_CI ? 'verbose' : 'info',
+		debug: process.env.IS_CI ? /webpack\.cache/ : false,
 	},
 	module: {
 		strictExportPresence: true,
