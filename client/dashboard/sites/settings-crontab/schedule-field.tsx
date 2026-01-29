@@ -5,10 +5,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, useState, useEffect } from 'react';
 
-type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly' | 'custom';
+type ScheduleType = 'hourly' | 'daily' | 'weekly' | 'custom';
 type CustomFrequency = 'h' | 'd' | 'w';
 
 interface ScheduleFieldProps {
@@ -19,7 +19,6 @@ interface ScheduleFieldProps {
 
 const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
 	{ value: 'hourly', label: __( 'Every hour' ) },
-	{ value: 'twicedaily', label: __( 'Twice daily' ) },
 	{ value: 'daily', label: __( 'Daily' ) },
 	{ value: 'weekly', label: __( 'Weekly' ) },
 	{ value: 'custom', label: __( 'Custom\u2026' ) },
@@ -43,7 +42,7 @@ function parseScheduleValue( value: string ): {
 	customFrequency: CustomFrequency;
 } {
 	// Check if it's a predefined schedule
-	if ( [ 'hourly', 'twicedaily', 'daily', 'weekly' ].includes( value ) ) {
+	if ( [ 'hourly', 'daily', 'weekly' ].includes( value ) ) {
 		return {
 			scheduleType: value as ScheduleType,
 			customNumber: 1,
@@ -77,9 +76,6 @@ function formatSchedulePreview(
 	if ( scheduleType === 'hourly' ) {
 		return __( 'Runs once every hour' );
 	}
-	if ( scheduleType === 'twicedaily' ) {
-		return __( 'Runs twice per day (every 12 hours)' );
-	}
 	if ( scheduleType === 'daily' ) {
 		return __( 'Runs once per day' );
 	}
@@ -93,27 +89,36 @@ function formatSchedulePreview(
 			return __( 'Runs once per hour' );
 		}
 		const interval = Math.floor( 60 / customNumber );
-		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per hour' ) } (${ __(
-			'every'
-		) } ${ interval } ${ __( 'minutes' ) })`;
+		return sprintf(
+			/* translators: %1$d is the number of times, %2$d is the interval in minutes */
+			__( 'Runs %1$d times per hour (every %2$d minutes)' ),
+			customNumber,
+			interval
+		);
 	}
 	if ( customFrequency === 'd' ) {
 		if ( customNumber === 1 ) {
 			return __( 'Runs once per day' );
 		}
 		const interval = Math.floor( 24 / customNumber );
-		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per day' ) } (${ __(
-			'every'
-		) } ${ interval } ${ __( 'hours' ) })`;
+		return sprintf(
+			/* translators: %1$d is the number of times, %2$d is the interval in hours */
+			__( 'Runs %1$d times per day (every %2$d hours)' ),
+			customNumber,
+			interval
+		);
 	}
 	if ( customFrequency === 'w' ) {
 		if ( customNumber === 1 ) {
 			return __( 'Runs once per week' );
 		}
 		const interval = Math.floor( 7 / customNumber );
-		return `${ __( 'Runs' ) } ${ customNumber } ${ __( 'times per week' ) } (${ __(
-			'every'
-		) } ${ interval } ${ __( 'days' ) })`;
+		return sprintf(
+			/* translators: %1$d is the number of times, %2$d is the interval in days */
+			__( 'Runs %1$d times per week (every %2$d days)' ),
+			customNumber,
+			interval
+		);
 	}
 
 	return '';

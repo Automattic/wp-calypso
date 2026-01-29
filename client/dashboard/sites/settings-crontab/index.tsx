@@ -28,9 +28,6 @@ function formatSchedule( schedule: string ): string {
 	if ( schedule === 'hourly' ) {
 		return __( 'Every hour' );
 	}
-	if ( schedule === 'twicedaily' ) {
-		return __( 'Twice daily' );
-	}
 	if ( schedule === 'daily' ) {
 		return __( 'Daily' );
 	}
