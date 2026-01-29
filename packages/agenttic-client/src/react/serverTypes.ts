@@ -212,7 +212,7 @@ export function serverChatToLoadResult(
 				return false;
 			}
 
-			// Only keep other tool results if `allowToolMessages` is true
+			// Only keep other tool results if `allowToolMessages` is `true`
 			return allowToolMessages;
 		}
 
