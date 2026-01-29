@@ -176,13 +176,13 @@ function AgentSetup( {
 								  }
 								: pluginContext;
 
-						// Merge in agent version via constructorArguments
+						// Merge in agent version via constructorArguments (only if specified)
 						// TODO: Remove once agenttic-client supports top-level constructorArguments
 						return {
 							...resolvedContext,
 							constructorArguments: {
 								...( resolvedContext.constructorArguments || {} ),
-								version,
+								...( version && { version } ),
 							},
 						};
 					},
@@ -195,11 +195,9 @@ function AgentSetup( {
 						pathname: currentRoute || window.location.pathname,
 						search: window.location.search,
 						environment: 'calypso',
-						// Pass agent version via clientContext for backend compatibility
+						// Pass agent version via clientContext for backend compatibility (only if specified)
 						// TODO: Remove once agenttic-client supports top-level constructorArguments
-						constructorArguments: {
-							version,
-						},
+						...( version && { constructorArguments: { version } } ),
 					} ),
 				};
 			}
