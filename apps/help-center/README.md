@@ -94,3 +94,4 @@ In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blo
 ```
 
 Tailored articles have priority in the results, meaning they appear on top. If any search query is provided by the user, tailored articles are not considered.
+
