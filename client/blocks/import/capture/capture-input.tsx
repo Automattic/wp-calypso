@@ -26,6 +26,7 @@ interface Props {
 	onInputEnter: OnInputEnter;
 	placeholder?: string;
 	skipInitialChecking?: boolean;
+	customInfoContent?: React.ReactNode;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -39,6 +40,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		dontHaveSiteAddressLabel,
 		hideImporterListLink = false,
 		nextLabelText,
+		customInfoContent,
 	} = props;
 
 	const translate = useTranslate();
@@ -47,6 +49,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ validationMessage, setValidationMessage ] = useState( '' );
 	const lastInvalidValue = useRef< string | undefined >();
+	const errorRef = useRef< HTMLDivElement >( null );
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -88,15 +91,46 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
-		isValid && onInputEnter( urlValue );
-		setSubmitted( true );
 
-		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
-			lastInvalidValue.current = urlValue;
-			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
-				url: urlValue,
-			} );
+		if ( ! isValid ) {
+			// Move focus to error for accessibility
+			errorRef.current?.focus();
+			setSubmitted( true );
+
+			if ( urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+				lastInvalidValue.current = urlValue;
+				recordTracksEvent( 'calypso_importer_capture_input_invalid', {
+					url: urlValue,
+				} );
+			}
+			return;
 		}
+
+		onInputEnter( urlValue );
+		setSubmitted( true );
+	}
+
+	function renderError() {
+		if ( ! showValidationMsg ) {
+			return null;
+		}
+
+		return (
+			<div className="capture-input__error" role="alert" aria-live="assertive" ref={ errorRef }>
+				<Icon icon={ info } size={ 20 } />{ ' ' }
+				{ validationMessage
+					? validationMessage
+					: translate( 'Please enter a valid website address. You can copy and paste.' ) }
+			</div>
+		);
+	}
+
+	function renderInfoContent() {
+		if ( ! customInfoContent ) {
+			return null;
+		}
+
+		return <div className="capture-input__info">{ customInfoContent }</div>;
 	}
 
 	return (
@@ -117,20 +151,10 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					value={ urlValue }
 					placeholder={ placeholder }
 					onChange={ onChange }
+					aria-describedby={ customInfoContent ? 'wpcom-info-message' : undefined }
 				/>
 
-				<FormSettingExplanation>
-					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
-						{ showValidationMsg && (
-							<>
-								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ validationMessage
-									? validationMessage
-									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
-							</>
-						) }
-					</span>
-				</FormSettingExplanation>
+				<FormSettingExplanation>{ renderError() }</FormSettingExplanation>
 			</FormFieldset>
 
 			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>
@@ -149,6 +173,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						}
 					) }
 			</div>
+
+			{ renderInfoContent() }
 		</form>
 	);
 };

@@ -1,15 +1,18 @@
 import { FormLabel } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useEffect } from 'react';
+import { FC, useState } from 'react';
 import { Control, Controller, FieldError, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { logToLogstash } from 'calypso/lib/logstash';
+import wp from 'calypso/lib/wp';
 import {
 	type TicketMigrationData,
 	useMigrationTicketMutation,
@@ -89,18 +92,68 @@ interface FormProps {
 	onComplete: () => void;
 }
 
+const extractDomainFromUrl = ( url: string ) => {
+	try {
+		const parsedUrl = new URL( url );
+		return parsedUrl.hostname;
+	} catch {
+		return url;
+	}
+};
+
+interface SiteInfo {
+	ID: number;
+}
+
+interface Domain {
+	domain: string;
+	wpcom_domain: boolean;
+	is_wpcom_staging_domain: boolean;
+}
+
+interface DomainsResponse {
+	domains: Domain[];
+}
+
+/**
+ * Looks up the wpcom subdomain (e.g., "markbiekorg.wordpress.com") for a given domain.
+ * This is needed because the ticket creation API stores tickets by the wpcom subdomain,
+ * not by custom domains.
+ */
+const getWpcomSubdomain = async ( domain: string ): Promise< string > => {
+	// First, get site info to retrieve the site ID
+	const siteInfo: SiteInfo = await wp.req.get( {
+		path: `/sites/${ encodeURIComponent( domain ) }`,
+		apiVersion: '1.1',
+	} );
+
+	// Then, get domains list to find the wpcom subdomain
+	const domainsResponse: DomainsResponse = await wp.req.get( {
+		path: `/sites/${ siteInfo.ID }/domains`,
+		apiVersion: '1.1',
+	} );
+
+	// Find the wpcom subdomain (not the staging domain)
+	const wpcomDomain = domainsResponse.domains.find(
+		( d ) => d.wpcom_domain && ! d.is_wpcom_staging_domain
+	);
+
+	return wpcomDomain?.domain ?? domain;
+};
+
 const Form: FC< FormProps > = ( { onComplete } ) => {
 	const translate = useTranslate();
-	const siteSlug = useSiteSlugParam() ?? '';
+	const locale = useLocale();
+	const siteSlug = useSiteSlugParam();
 	const [ queryParams ] = useSearchParams();
 	const from = queryParams.get( 'from' );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
-	const {
-		mutate: createTicket,
-		isSuccess,
-		error,
-		isPending,
-	} = useMigrationTicketMutation( siteSlug );
+	// Use the destination siteSlug if available, otherwise extract domain from the source wpcom site URL
+	const targetSiteSlug = siteSlug || ( from ? extractDomainFromUrl( from ) : '' );
+
+	const { sendTicketAsync: createZendeskTicket } = useSubmitMigrationTicket();
+	const { mutateAsync: createSurveyTicket } = useMigrationTicketMutation( targetSiteSlug );
 
 	const {
 		control,
@@ -109,7 +162,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 		setError,
 		formState: { errors },
 	} = useForm< TicketMigrationData >( {
-		disabled: isPending,
+		disabled: isSubmitting,
 		defaultValues: {
 			intents: [],
 			otherDetails: '',
@@ -119,32 +172,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const isOtherChecked = intents.includes( 'other' );
 	const errorMessage = errors?.root?.message ?? errors?.intents?.message;
 
-	useEffect( () => {
-		if ( error ) {
-			setError( 'root', {
-				type: 'manual',
-				message: translate( 'Something went wrong. Please try again.' ),
-			} );
-			logToLogstash( {
-				message: 'Error submitting migration ticket',
-				feature: 'calypso_client',
-				extra: {
-					siteSlug,
-					step: 'site-migration-already-wpcom',
-					from,
-					error: error.message,
-				},
-			} );
-		}
-	}, [ error, setError, translate ] );
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			onComplete();
-		}
-	}, [ isSuccess, onComplete ] );
-
-	const onSubmit = handleSubmit( ( data: TicketMigrationData ) => {
+	const onSubmit = handleSubmit( async ( data: TicketMigrationData ) => {
 		if ( data.intents.length === 0 ) {
 			setError( 'intents', {
 				type: 'manual',
@@ -152,10 +180,46 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 			} );
 			return;
 		}
-		createTicket( {
-			intents: data.intents,
-			otherDetails: data.otherDetails,
-		} );
+
+		setIsSubmitting( true );
+
+		try {
+			// Look up the wpcom subdomain for ticket creation
+			// The ticket API stores tickets by wpcom subdomain, not custom domains
+			const wpcomSiteSlug = await getWpcomSubdomain( targetSiteSlug );
+
+			// Create ZenDesk ticket (required before survey can be submitted)
+			await createZendeskTicket( {
+				locale,
+				from_url: from ?? '',
+				blog_url: wpcomSiteSlug,
+			} );
+
+			// Submit survey
+			await createSurveyTicket( {
+				intents: data.intents,
+				otherDetails: data.otherDetails,
+			} );
+
+			onComplete();
+		} catch ( submitError ) {
+			setError( 'root', {
+				type: 'manual',
+				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+			logToLogstash( {
+				message: 'Error submitting migration survey',
+				feature: 'calypso_client',
+				extra: {
+					siteSlug: targetSiteSlug,
+					step: 'site-migration-already-wpcom',
+					from,
+					error: submitError instanceof Error ? submitError.message : String( submitError ),
+				},
+			} );
+		} finally {
+			setIsSubmitting( false );
+		}
 	} );
 
 	return (
@@ -206,7 +270,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						/>
 					) }
 				</div>
-				<NextButton disabled={ isPending } type="submit">
+				<NextButton disabled={ isSubmitting } type="submit">
 					{ translate( 'Continue' ) }
 				</NextButton>
 			</form>

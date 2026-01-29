@@ -71,3 +71,22 @@
 		}
 	}
 }
+
+.capture-input__error {
+	margin-top: 8px;
+	padding: 8px 12px;
+	color: var(--color-error);
+	background-color: var(--color-error-light);
+	border-radius: 4px;
+	font-size: 14px;
+
+	&:focus {
+		outline: 2px solid var(--color-error);
+		outline-offset: 2px;
+	}
+}
+
+.capture-input__info {
+	margin-top: 8px;
+	// Info content provides its own styling
+}
