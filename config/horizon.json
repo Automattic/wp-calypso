@@ -30,6 +30,7 @@
 		"current-site/notice": true,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
+		"dashboard/v2/paginated-site-list": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-transfer-redesign": true,

@@ -56,6 +56,7 @@
 		"current-site/notice": true,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
+		"dashboard/v2/paginated-site-list": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,
 		"dev/auth-helper": true,
