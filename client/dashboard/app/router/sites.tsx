@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
@@ -628,6 +629,38 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI tools' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'ai-tools',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		if ( ! isEnabled( 'wordpress-ai-tools' ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1363,6 +1396,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
+		siteSettingsAIToolsRoute,
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,

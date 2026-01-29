@@ -21,6 +21,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
@@ -36,6 +37,12 @@ const HeadingLogo = ( { isJetpack }: Props ) => {
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
 	const isPassport = useSelector( getIsPassport );
+	const { hasCustomBranding } = usePartnerBranding();
+
+	// If partner has custom top-left branding, don't show center logo
+	if ( hasCustomBranding ) {
+		return null;
+	}
 
 	let logo = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {

@@ -19,6 +19,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
+	'ai-tools': {
+		link: 'https://wordpress.com/support/ai-website-builder/',
+		post_id: 404989,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
 		post_id: 267092,

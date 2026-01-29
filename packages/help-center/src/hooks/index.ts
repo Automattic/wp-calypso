@@ -3,7 +3,6 @@ export { useStillNeedHelpURL } from './use-still-need-help-url';
 export { default as useTyper } from './use-typer';
 export { default as useChatStatus } from './use-chat-status';
 export { useShouldUseWapuu } from './use-should-use-wapuu';
-export { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 export { useActionHooks } from './use-action-hooks';
 export { useOpenArticleInHelpCenter } from './use-open-article-in-help-center';
 export { useProductsWithPremiumSupport } from './use-products-with-premium-support';

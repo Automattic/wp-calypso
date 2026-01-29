@@ -43,6 +43,7 @@ export { default as hasJetpackSiteCustomDomain } from './has-jetpack-site-custom
 export { default as hasSiteProduct } from './has-site-product';
 export { default as isAdminInterfaceWPAdmin } from './is-admin-interface-wp-admin';
 export { default as isBackupPluginActive } from './is-backup-plugin-active';
+export { default as isCommerceGardenSite } from './is-commerce-garden-site';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
 export { default as isCurrentSitePlan } from './is-current-site-plan';
 export { default as isJetpackCloudCartEnabled } from './is-jetpack-cloud-cart-enabled';

@@ -15,8 +15,11 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForComparisonGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
+	isWooHostedPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -388,6 +391,7 @@ const PlansFeaturesMain = ( {
 		useVar4Features,
 		useVar5Features,
 		isVar1dVariant,
+		isVar4Variant,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
@@ -738,16 +742,32 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
+	// Check to see if we have at least one Woo Hosted plan we're comparing.
+	const hasWooHostedFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooHostedPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
+
 	// Get summer special status
 	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
-		? getWooExpressFeaturesGroupedForComparisonGrid()
-		: getPlanFeaturesGroupedForComparisonGrid( { isExperimentVariant } );
+	// Determine feature groups for comparison grid
+	let featureGroupMapForComparisonGrid;
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForComparisonGrid = getWooHostedFeaturesGroupedForComparisonGrid();
+	} else if ( hasWooExpressFeatures ) {
+		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
+	} else {
+		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
+			isExperimentVariant,
+		} );
+	}
 
 	let featureGroupMapForFeaturesGrid;
-	if ( hasWooExpressFeatures ) {
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForFeaturesGrid = getWooHostedFeaturesGroupedForFeaturesGrid();
+	} else if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
@@ -951,6 +971,8 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isVar1dVariant={ isVar1dVariant }
+										isVar4Variant={ isVar4Variant }
+										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
