@@ -391,6 +391,7 @@ const PlansFeaturesMain = ( {
 		useVar4Features,
 		useVar5Features,
 		isVar1dVariant,
+		isVar4Variant,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
@@ -970,6 +971,8 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isVar1dVariant={ isVar1dVariant }
+										isVar4Variant={ isVar4Variant }
+										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
