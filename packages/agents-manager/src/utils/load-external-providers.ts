@@ -59,8 +59,6 @@ type ChatComponentType =
 	| 'font-picker'
 	| 'color-picker'
 	| 'pattern-picker'
-	| 'completed-plan'
-	| 'product-card'
 	| 'chat-suggestions'
 	| 'next-step-button';
 
