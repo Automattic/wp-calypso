@@ -1,11 +1,10 @@
 import { ServerConversationListItem } from '@automattic/agenttic-client';
+import type { getAgentManager } from '@automattic/agenttic-client';
 import type Smooch from 'smooch';
 
 /**
  * Common types used across the agents-manager package.
  */
-
-import type { getAgentManager } from '@automattic/agenttic-client';
 
 export type {
 	Ability,
