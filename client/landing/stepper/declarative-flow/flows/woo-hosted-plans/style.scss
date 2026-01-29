@@ -1,6 +1,5 @@
-.is-section-stepper .woo-hosted-plans {
-	.step-container-v2__top-bar-wordpress-logo-wrapper,
-	.step-container-v2__top-bar-divider {
-		display: none;
-	}
+.is-section-stepper .woo-hosted-plans .wp-brand-font,
+.is-section-stepper .woo-hosted-plans .plan-features-2023-grid__header-title,
+.is-section-stepper .woo-hosted-plans .plan-price {
+	font-family: $default-font;
 }

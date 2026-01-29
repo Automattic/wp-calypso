@@ -5,6 +5,7 @@ import { resemblesUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const getAllowedHosts = ( siteSlug?: string ) => {
 	const basicHosts = [
@@ -29,6 +30,8 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 	const jetpackSite = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
+	const site = useSelector( getSelectedSite );
+	const isCommerce = site?.is_garden && site.garden_name === 'commerce';
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
 			// For akismet specific checkout, if navigated with direct link
@@ -39,7 +42,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 			}
 			// For Jetpack specific checkout, if navigated with direct link
 			// We should redirect to the jetpack pricing page
-			if ( jetpackSite ) {
+			if ( jetpackSite && ! isCommerce ) {
 				return 'https://cloud.jetpack.com/pricing/' + ( siteSlug || '' );
 			}
 			return undefined;

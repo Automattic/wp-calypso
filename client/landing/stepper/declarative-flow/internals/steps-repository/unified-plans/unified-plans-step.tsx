@@ -34,7 +34,7 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
 	saveSignupStep as saveSignupStepAction,
@@ -119,6 +119,7 @@ export interface UnifiedPlansStepProps {
 		isExtraWideLayout: boolean;
 	};
 
+	hideLogo?: boolean;
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
 	onIntentChange?: ( intent: PlansIntent ) => void;
@@ -219,6 +220,7 @@ function UnifiedPlansStep( {
 	step,
 	signupDependencies,
 	displayedIntervals,
+	hideLogo,
 	headerText,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
@@ -598,6 +600,7 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
+							hideLogo={ hideLogo }
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>

@@ -11,7 +11,7 @@ import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation, sites } from 'calypso/my-sites/controller';
 import PluginsSidebar from 'calypso/my-sites/plugins/sidebar';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';

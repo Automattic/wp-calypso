@@ -82,6 +82,8 @@ import {
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
 	isWpcomFlexSubscription,
+	isAkismetFreeProduct,
+	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -556,6 +558,9 @@ function getFields( {
 						Boolean( purchase.renew_date ) &&
 						isRenewing( purchase )
 					) {
+						if ( isInExpirationGracePeriod( purchase ) ) {
+							return __( 'Pending renewal' );
+						}
 						// translators: date is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
@@ -1100,6 +1105,9 @@ export default function PurchaseSettings() {
 		if ( isExpired( purchase ) ) {
 			return __( 'Expired' );
 		}
+		if ( isInExpirationGracePeriod( purchase ) ) {
+			return __( 'Expired' );
+		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return __( 'Paid until' );
 		}
@@ -1160,8 +1168,11 @@ export default function PurchaseSettings() {
 						icon={ calendar }
 						title={ expiryDateTitle }
 						heading={ ( () => {
-							if ( isOneTimePurchase( purchase ) ) {
+							if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
 								return __( 'Never expires' );
+							}
+							if ( isInExpirationGracePeriod( purchase ) ) {
+								return formattedExpiry;
 							}
 							if ( willRenew ) {
 								return formattedRenewal;
@@ -1172,6 +1183,9 @@ export default function PurchaseSettings() {
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
+							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
+								return __( 'Pending renewal' );
+							}
 							if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
 								return __( 'Auto-renew is enabled' );
 							}
@@ -1185,7 +1199,7 @@ export default function PurchaseSettings() {
 									</Link>
 								);
 							}
-							if ( purchase.is_trial_plan ) {
+							if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
 								return undefined;
 							}
 							if ( purchase.is_auto_renew_enabled ) {

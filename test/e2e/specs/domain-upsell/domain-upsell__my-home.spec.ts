@@ -1,4 +1,4 @@
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Domain: Upsell (Home)',
@@ -6,6 +6,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfMailosaurLimitReached();
+
 		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
 			helperData,
 			page,

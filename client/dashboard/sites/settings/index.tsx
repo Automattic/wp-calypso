@@ -51,7 +51,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
 						<SiteVisibilitySettingsSummary site={ site } />
-						{ isEnabled( 'wordpress-ai-tools' ) ? (
+						{ isEnabled( 'wordpress-ai-tools' ) && siteTypeSupports.settingsGeneralAITools ? (
 							<AISiteToolsSettingsSummary site={ site } />
 						) : null }
 						{ siteTypeSupports.settingsGeneralRedirect ? (

@@ -1,8 +1,8 @@
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
-import { code } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { layout } from '@wordpress/icons';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import type { Step as StepType } from '../../types';
@@ -39,16 +39,24 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		<VStack alignment="top" spacing={ 3 }>
 			<SummaryButton
 				title={ translate( 'Build with AI' ) }
-				description={ translate( 'Prompt, edit, and launch a site in just a few clicks.' ) }
+				description={ i18n.fixMe( {
+					text: 'Describe your idea and let AI help you refine your site.',
+					newCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
+					oldCopy: translate( 'Prompt, edit, and launch a site in just a few clicks.' ),
+				} ) }
 				decoration={ <BigSkyLogo.CentralLogo heartless /> }
 				onClick={ handleBuildWithAI }
 			/>
 			<SummaryButton
-				title={ translate( 'Start with a blank site' ) }
+				title={ i18n.fixMe( {
+					text: 'Manual setup',
+					newCopy: translate( 'Manual setup' ),
+					oldCopy: translate( 'Start with a blank site' ),
+				} ) }
 				description={ translate(
 					'Get started instantly with a simple, ready-to-go WordPress site.'
 				) }
-				decoration={ <Icon icon={ code } /> }
+				decoration={ <Icon icon={ layout } /> }
 				onClick={ handleBlankSite }
 			/>
 		</VStack>
@@ -63,9 +71,13 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			heading={
 				<Step.Heading
 					text={ translate( 'Set up your site' ) }
-					subText={ translate(
-						"No matter what you want to do, there's an easy way to get started."
-					) }
+					subText={ i18n.fixMe( {
+						text: "Whatever you're making, there's an easy way to get started.",
+						newCopy: translate( "Whatever you're making, there's an easy way to get started." ),
+						oldCopy: translate(
+							"No matter what you want to do, there's an easy way to get started."
+						),
+					} ) }
 				/>
 			}
 		>

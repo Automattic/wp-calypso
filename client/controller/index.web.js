@@ -30,7 +30,7 @@ import {
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,

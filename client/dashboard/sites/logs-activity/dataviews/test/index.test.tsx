@@ -15,12 +15,6 @@ const mockNavigate = jest.fn();
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
