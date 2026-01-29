@@ -1,7 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { bigSkyPluginMutation, bigSkyPluginQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,7 +15,6 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
-import { siteSettingsAIToolsRoute } from '../../app/router/sites';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -36,9 +34,7 @@ const features = [
 ];
 
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
-	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
-	const currentSearchParams = siteSettingsAIToolsRoute.useSearch();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
 
@@ -48,7 +44,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
 
-	const { setShowHelpCenter } = useHelpCenter();
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
@@ -166,13 +162,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								decoration={ <Icon icon={ help } /> }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
-									navigate( {
-										search: {
-											...currentSearchParams,
-											'help-center': 'wapuu',
-										},
-										replace: true,
-									} );
+									setNavigateToRoute( '/odie' );
 									setShowHelpCenter( true );
 								} }
 							/>
