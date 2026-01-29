@@ -18,10 +18,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
-// Use persistent cache directory from env if available (e.g., in CI), otherwise use local .cache
-const cachePath = process.env.WEBPACK_CACHE_DIR
-	? path.resolve( process.env.WEBPACK_CACHE_DIR )
-	: path.resolve( '.cache' );
+const cachePath = path.resolve( '.cache' );
 const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK;
 
 /**
@@ -113,20 +110,6 @@ function getWebpackConfig(
 				} ),
 				FileConfig.loader(),
 			],
-		},
-		cache: {
-			type: 'filesystem',
-			cacheDirectory: path.resolve( cachePath, 'webpack' ),
-			allowCollectingMemory: true,
-			// Enable build dependencies tracking for better cache invalidation
-			buildDependencies: {
-				config: [ __filename ],
-			},
-		},
-		// Log cache hit/miss information in CI
-		infrastructureLogging: {
-			level: process.env.IS_CI ? 'verbose' : 'info',
-			debug: process.env.IS_CI ? /webpack\.cache/ : false,
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
