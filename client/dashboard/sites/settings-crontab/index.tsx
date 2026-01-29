@@ -7,7 +7,7 @@ import {
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Icon, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { scheduled, trash, copy } from '@wordpress/icons';
@@ -22,6 +22,7 @@ import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { AddCrontabForm } from './add-crontab-form';
 import type { Crontab } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
 function formatSchedule( schedule: string ): string {
 	// Handle predefined schedules
@@ -67,6 +68,14 @@ function formatSchedule( schedule: string ): string {
 	return schedule;
 }
 
+const DEFAULT_VIEW: View = {
+	type: 'table',
+	perPage: 25,
+	page: 1,
+	fields: [ 'command' ],
+	titleField: 'schedule',
+};
+
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -83,6 +92,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const [ selectedCrontabToRemove, setSelectedCrontabToRemove ] = useState< Crontab | null >(
 		null
 	);
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
 	const { mutate: deleteCrontab, isPending: isDeletingCrontab } = useMutation(
 		siteCrontabDeleteMutation( site.ID )
@@ -113,70 +123,63 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		}
 	};
 
-	const totalItems = crontabs.length;
+	const fields = [
+		{
+			id: 'schedule',
+			label: __( 'Schedule' ),
+			getValue: ( { item }: { item: Crontab } ) => formatSchedule( item.schedule ),
+			render: ( { item }: { item: Crontab } ) => (
+				<span title={ item.schedule }>{ formatSchedule( item.schedule ) }</span>
+			),
+			enableGlobalSearch: true,
+		},
+		{
+			id: 'command',
+			label: __( 'Command' ),
+			getValue: ( { item }: { item: Crontab } ) => item.command,
+			render: ( { item }: { item: Crontab } ) => (
+				<code
+					style={ {
+						maxWidth: '300px',
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+						display: 'block',
+					} }
+					title={ item.command }
+				>
+					{ item.command }
+				</code>
+			),
+			enableGlobalSearch: true,
+		},
+	];
 
-	const fields =
-		totalItems > 0
-			? [
-					{
-						id: 'schedule',
-						label: __( 'Schedule' ),
-						getValue: ( { item }: { item: Crontab } ) => formatSchedule( item.schedule ),
-						render: ( { item }: { item: Crontab } ) => (
-							<span title={ item.schedule }>{ formatSchedule( item.schedule ) }</span>
-						),
-					},
-					{
-						id: 'command',
-						label: __( 'Command' ),
-						getValue: ( { item }: { item: Crontab } ) => item.command,
-						render: ( { item }: { item: Crontab } ) => (
-							<code
-								style={ {
-									maxWidth: '300px',
-									overflow: 'hidden',
-									textOverflow: 'ellipsis',
-									whiteSpace: 'nowrap',
-									display: 'block',
-								} }
-								title={ item.command }
-							>
-								{ item.command }
-							</code>
-						),
-					},
-			  ]
-			: [];
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( crontabs, view, fields );
 
-	const view = {
-		type: 'table' as const,
-		titleField: 'schedule',
-		...( totalItems > 0 ? { fields: [ 'command' ] } : {} ),
-	};
+	const actions = [
+		{
+			id: 'copy-command',
+			label: __( 'Copy command' ),
+			icon: <Icon icon={ copy } />,
+			callback: ( items: Crontab[] ) => {
+				handleCopyCommand( items[ 0 ].command );
+			},
+		},
+		{
+			id: 'delete',
+			isPrimary: true,
+			isDestructive: true,
+			icon: <Icon icon={ trash } />,
+			label: __( 'Delete' ),
+			callback: ( items: Crontab[] ) => {
+				setSelectedCrontabToRemove( items[ 0 ] );
+			},
+		},
+	];
 
-	const actions =
-		totalItems > 0
-			? [
-					{
-						id: 'copy-command',
-						label: __( 'Copy command' ),
-						icon: <Icon icon={ copy } />,
-						callback: ( items: Crontab[] ) => {
-							handleCopyCommand( items[ 0 ].command );
-						},
-					},
-					{
-						id: 'delete',
-						isPrimary: true,
-						isDestructive: true,
-						icon: <Icon icon={ trash } />,
-						label: __( 'Delete' ),
-						callback: ( items: Crontab[] ) => {
-							setSelectedCrontabToRemove( items[ 0 ] );
-						},
-					},
-			  ]
-			: [];
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+	const emptyTitle = hasFilterOrSearch ? __( 'No jobs found' ) : __( 'No jobs scheduled.' );
 
 	return (
 		<PageLayout
@@ -221,18 +224,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				<DataViewsCard>
 					<DataViews< Crontab >
 						getItemId={ ( item ) => String( item.cron_id ) }
-						data={ crontabs }
+						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
 						view={ view }
+						onChangeView={ setView }
 						isLoading={ isLoadingCrontabs }
-						onChangeView={ () => {} }
 						defaultLayouts={ { table: {} } }
-						paginationInfo={ { totalItems, totalPages: 1 } }
-						empty={ <p>{ __( 'No jobs scheduled.' ) }</p> }
-					>
-						<DataViews.Layout />
-					</DataViews>
+						paginationInfo={ paginationInfo }
+						empty={ <p>{ emptyTitle }</p> }
+					/>
 				</DataViewsCard>
 			</HostingFeatureGatedWithCallout>
 			<ConfirmModal
