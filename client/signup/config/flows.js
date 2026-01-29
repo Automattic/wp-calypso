@@ -103,10 +103,10 @@ function getLaunchDestination( dependencies ) {
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { domainItem, cartItems, siteId, designType, siteSlug } ) {
 	const isDashboardFlow = new URLSearchParams( window.location.search ).has( 'dashboard' );
 
-	if ( domainItem && cartItem && designType !== 'existing-site' ) {
+	if ( domainItem && cartItems && cartItems.length > 0 && designType !== 'existing-site' ) {
 		if ( isDashboardFlow ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
