@@ -1,9 +1,13 @@
 import { siteCrontabCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { TextControl, __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	TextControl,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import ScheduleField from './schedule-field';
@@ -53,7 +57,7 @@ export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormP
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 4 }>
+					<VStack spacing={ 6 }>
 						<SectionHeader
 							title={ __( 'Add scheduled job' ) }
 							description={ __(
@@ -76,21 +80,22 @@ export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormP
 							onChange={ setCommand }
 							disabled={ isCreatingCrontab }
 						/>
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isCreatingCrontab }
-								disabled={ isCreatingCrontab || ! isValid }
-							>
-								{ __( 'Add scheduled job' ) }
-							</Button>
+						<HStack justify="flex-end">
 							{ onCancel && (
 								<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
 									{ __( 'Cancel' ) }
 								</Button>
 							) }
-						</ButtonStack>
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ isCreatingCrontab }
+								disabled={ isCreatingCrontab || ! isValid }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add scheduled job' ) }
+							</Button>
+						</HStack>
 					</VStack>
 				</form>
 			</CardBody>
