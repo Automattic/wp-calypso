@@ -4,6 +4,19 @@ import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
 import { hasTouch } from '../lib/touch-detect';
 
+/**
+ * Prevents widows by replacing the last space with a non-breaking space.
+ * @param text - The text to process
+ * @returns The text with the last space replaced with a non-breaking space
+ */
+const preventWidows = ( text: TranslateResult ): TranslateResult => {
+	if ( typeof text !== 'string' ) {
+		return text;
+	}
+	// Replace the last space with a non-breaking space to prevent widows
+	return text.replace( /\s+(\S+)$/, '\u00A0$1' );
+};
+
 const HoverAreaContainer = styled.span``;
 
 const StyledTooltip = styled( Tooltip )`
@@ -11,7 +24,7 @@ const StyledTooltip = styled( Tooltip )`
 		background: var( --color-masterbar-background );
 		text-align: start;
 		border-radius: 4px;
-		min-height: 32px;
+		min-height: 16px;
 		width: 210px;
 		align-items: center;
 		font-style: normal;
@@ -56,6 +69,7 @@ export const Plans2023Tooltip = ( {
 	};
 
 	const isVisible = activeTooltipId === id;
+	const processedText = preventWidows( text );
 
 	return (
 		<>
@@ -76,7 +90,7 @@ export const Plans2023Tooltip = ( {
 				hideArrow
 				showOnMobile={ showOnMobile }
 			>
-				{ text }
+				{ processedText }
 			</StyledTooltip>
 		</>
 	);
