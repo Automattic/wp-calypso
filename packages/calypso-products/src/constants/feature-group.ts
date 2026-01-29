@@ -26,6 +26,10 @@ export const FEATURE_GROUP_MARKETING_EMAIL = 'feature-group-marketing-email';
 export const FEATURE_GROUP_SHIPPING = 'feature-group-shipping';
 /* END: Woo Express Feature Groups */
 
+/* START: Woo Hosted Feature Groups */
+export const FEATURE_GROUP_WOO_HOSTED = 'feature-group-woo-hosted';
+/* END: Woo Hosted Feature Groups */
+
 export const FEATURE_GROUP_STORAGE = 'feature-group-storage';
 export const FEATURE_GROUP_ALL_FEATURES = 'feature-group-all-freatures';
 

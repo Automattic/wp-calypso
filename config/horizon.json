@@ -30,6 +30,7 @@
 		"current-site/notice": true,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
+		"dashboard/v2/paginated-site-list": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-transfer-redesign": true,
@@ -136,7 +137,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wordpress-ai-assistant": false,
-		"wordpress-ai-tools": false,
+		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",

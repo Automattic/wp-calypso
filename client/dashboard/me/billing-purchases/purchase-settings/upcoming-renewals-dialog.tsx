@@ -12,7 +12,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { getRelativeTimeString } from '../../../utils/datetime';
-import { getSubtitleForDisplay, isExpired, isRenewing } from '../../../utils/purchase';
+import {
+	getSubtitleForDisplay,
+	isExpired,
+	isRenewing,
+	isInExpirationGracePeriod,
+} from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 import type { Field, View, Action } from '@wordpress/dataviews';
 
@@ -27,12 +32,15 @@ interface Props {
 
 function ExpiresText( { purchase }: { purchase: Purchase } ) {
 	if ( isRenewing( purchase ) ) {
+		if ( isInExpirationGracePeriod( purchase ) ) {
+			return __( 'pending renewal' );
+		}
 		// translators: "renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"
 		return sprintf( __( 'renews %(renewDate)s' ), {
 			renewDate: getRelativeTimeString( new Date( purchase.renew_date ) ),
 		} );
 	}
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		// translators: "expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"
 		return sprintf( __( 'expired %(expiry)s' ), {
 			expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
