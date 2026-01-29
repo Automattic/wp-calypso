@@ -8,6 +8,7 @@ export interface Suggestion {
 	label: string;
 	prompt?: string;
 	action?: () => boolean | Promise< boolean >;
+	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM
 }
 
 export interface Message {
@@ -46,7 +47,7 @@ export interface AgentUIProps {
 	messages: Message[];
 	isProcessing: boolean;
 	error?: string | null;
-	onSubmit: ( message: string ) => void;
+	onSubmit: ( message: string ) => void | Promise< void >;
 
 	// UI-specific props
 	className?: string;
