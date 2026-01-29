@@ -859,14 +859,14 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ) {
 	if (
 		! isPaidWithCreditCard( purchase ) ||
 		! hasCreditCardData( purchase ) ||
-		! ( ! is100Year( purchase ) || isCloseToExpiration( purchase ) )
+		( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 	) {
 		return false;
 	}
 
 	// Use paymentExpiryDate if available for more accurate expiry checking
 	if ( purchase.paymentExpiryDate ) {
-		return moment( purchase.paymentExpiryDate ).isBefore( purchase.expiryDate );
+		return moment( purchase.paymentExpiryDate ).isBefore( purchase.expiryDate, 'day' );
 	}
 
 	// Fall back to credit card expiry date for backward compatibility
@@ -880,17 +880,17 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 		return false;
 	}
 
-	if ( ! ( ! is100Year( purchase ) || isCloseToExpiration( purchase ) ) ) {
+	if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
 		return false;
 	}
 
 	// Use paymentExpiryDate if available for more accurate expiry checking
 	if ( purchase.paymentExpiryDate ) {
-		return moment( purchase.paymentExpiryDate ).isBefore( moment() );
+		return moment( purchase.paymentExpiryDate ).isBefore( moment(), 'day' );
 	}
 
 	// Fall back to credit card expiry date for backward compatibility
-	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' );
+	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
 }
 
 export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
