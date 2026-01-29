@@ -115,12 +115,12 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 			aria-busy={ isLoading }
 		>
 			<button
-				{ ...( config?.tooltip && { 'data-tooltip': config.tooltip } ) }
+				data-tooltip={ config?.tooltip || config?.label }
 				aria-label={ config?.label }
 				onClick={ handleClick }
 				disabled={ ! isEligible || isLoading || isSuggestionSuccess }
 				className={ clsx( 'freshly-pressed__button', {
-					'freshly-pressed__button--has-tooltip': config?.tooltip,
+					'freshly-pressed__button--has-tooltip': config?.tooltip || config?.label,
 				} ) }
 			>
 				{ statusIcon && <Icon size={ 24 } icon={ statusIcon } /> }

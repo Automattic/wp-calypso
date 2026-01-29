@@ -58,7 +58,7 @@
 		.freshly-pressed__button-label {
 			display: none;
 
-			@include break-medium {
+			@include break-xlarge {
 				display: inline;
 			}
 		}
