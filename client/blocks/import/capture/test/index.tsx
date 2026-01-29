@@ -88,6 +88,55 @@ describe( 'CaptureInput', () => {
 	} );
 } );
 
+describe( 'CaptureInput - custom info content', () => {
+	it( 'should render custom info content when provided', () => {
+		const customInfo = <div data-testid="custom-info">Custom info message</div>;
+
+		render(
+			<MemoryRouter>
+				<CaptureInput customInfoContent={ customInfo } onInputEnter={ jest.fn() } />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByTestId( 'custom-info' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should associate info with input via aria-describedby', () => {
+		const customInfo = <div id="wpcom-info-message">Info</div>;
+
+		render(
+			<MemoryRouter>
+				<CaptureInput customInfoContent={ customInfo } onInputEnter={ jest.fn() } />
+			</MemoryRouter>
+		);
+
+		const input = screen.getByLabelText( /Enter the URL/i );
+		expect( input ).toHaveAttribute( 'aria-describedby', 'wpcom-info-message' );
+	} );
+} );
+
+describe( 'CaptureInput - backward compatibility', () => {
+	it( 'should work without customInfoContent prop', () => {
+		const { container } = render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ jest.fn() } />
+			</MemoryRouter>
+		);
+
+		expect( container.querySelector( '.capture-input__info' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render default error when hasError=true without custom content', () => {
+		render(
+			<MemoryRouter>
+				<CaptureInput hasError onInputEnter={ jest.fn() } />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByText( /Please enter a valid website address/i ) ).toBeInTheDocument();
+	} );
+} );
+
 describe( 'URL Validation', () => {
 	it.each( [
 		{
@@ -147,5 +196,18 @@ describe( 'URL Validation', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
 		expect( screen.getByText( error ) ).toBeInTheDocument();
+	} );
+
+	it( 'should have proper ARIA attributes on error', async () => {
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput hasError onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		const errorElement = screen.getByRole( 'alert' );
+		expect( errorElement ).toBeInTheDocument();
+		expect( errorElement ).toHaveAttribute( 'aria-live', 'assertive' );
 	} );
 } );
