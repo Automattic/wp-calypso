@@ -73,8 +73,9 @@ object CalypsoApps: BuildType({
 			unchecked = "false"
 		)
 		// Webpack cache directory - managed by TeamCity's build cache feature.
+		// Uses absolute path so all apps share the same cache regardless of working directory.
 		// This directory is automatically restored at build start and published at build end.
-		param("env.WEBPACK_CACHE_DIR", ".webpack-cache")
+		param("env.WEBPACK_CACHE_DIR", "%teamcity.build.checkoutDir%/.webpack-cache")
 	}
 
 	features {
