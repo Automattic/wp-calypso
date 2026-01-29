@@ -31,6 +31,7 @@
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/ui": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/data": "^10.23.0",

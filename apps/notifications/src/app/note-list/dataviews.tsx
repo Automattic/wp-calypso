@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
@@ -14,7 +15,9 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import { html } from '../../panel/indices-to-html';
+import getIsNoteNeedApproval from '../../panel/state/selectors/get-is-note-need-approval';
 import NoteIcon from '../note-icon';
 import type { Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
@@ -105,12 +108,21 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'info',
 			label: __( 'Info' ),
-			render: ( { item } ) => {
+			render: function NoteInfo( { item } ) {
+				const isNeedApproval = useSelector(
+					( state ) => item && getIsNoteNeedApproval( state, item )
+				);
+
 				return (
 					<HStack spacing={ 1 }>
 						<RelativeDate timestamp={ item.timestamp } />
 						<span>•</span>
 						<span>{ item.title }</span>
+						{ isNeedApproval && (
+							<Badge intent="warning" style={ { marginInlineStart: '4px' } }>
+								{ __( 'Needs approval' ) }
+							</Badge>
+						) }
 					</HStack>
 				);
 			},

@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import {
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
@@ -8,7 +9,7 @@ import {
 	Navigator,
 	useNavigator,
 } from '@wordpress/components';
-import { isRTL } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
@@ -18,6 +19,7 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNoteNeedApproval from '../../panel/state/selectors/get-is-note-need-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { getFilters } from '../../panel/templates/filters';
 import ActionDropdown from '../templates/action-dropdown';
@@ -84,6 +86,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
+	const isNeedApproval = useSelector( ( state ) => note && getIsNoteNeedApproval( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
 
 	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note } );
@@ -110,6 +113,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>
+						{ isNeedApproval && <Badge intent="warning">{ __( 'Needs approval' ) }</Badge> }
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto' } }>
 						<ActionDropdown note={ note } goBack={ goBack } />

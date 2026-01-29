@@ -1772,6 +1772,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/ui": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@wordpress/components": "npm:^30.9.0"
