@@ -142,7 +142,7 @@ object CalypsoApps: BuildType({
 			"""
 		}
 
-		// Log webpack cache status before the build
+		// Log webpack cache status before the build and ensure directory exists
 		bashNodeScript {
 			name = "Check webpack cache status (before build)"
 			scriptContent = """
@@ -151,7 +151,7 @@ object CalypsoApps: BuildType({
 				echo "Cache directory: ${'$'}CACHE_DIR"
 
 				if [ -d "${'$'}CACHE_DIR" ]; then
-					echo "✓ Cache directory EXISTS"
+					echo "✓ Cache directory EXISTS (warm cache)"
 					echo "Cache size: ${'$'}(du -sh "${'$'}CACHE_DIR" 2>/dev/null | cut -f1)"
 					echo "Cache contents:"
 					ls -la "${'$'}CACHE_DIR" 2>/dev/null || echo "  (empty or inaccessible)"
@@ -163,6 +163,9 @@ object CalypsoApps: BuildType({
 					fi
 				else
 					echo "✗ Cache directory does NOT exist (cold start - first build on this agent)"
+					echo "Creating cache directory..."
+					mkdir -p "${'$'}CACHE_DIR"
+					echo "✓ Cache directory created"
 				fi
 				echo "==========================================="
 			"""
