@@ -136,7 +136,7 @@ export default function AddCrontab() {
 							<SectionHeader
 								title={ __( 'Configure schedule and command' ) }
 								description={ __(
-									'Choose when the command should run and specify the exact command to execute.'
+									'Choose a command to run and specify how often it should be executed.'
 								) }
 								level={ 3 }
 							/>
