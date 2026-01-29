@@ -5,6 +5,7 @@ import {
 	siteCrontabDeleteMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Icon, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -14,13 +15,13 @@ import { scheduled, trash, copy } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { AddCrontabForm } from './add-crontab-form';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -77,6 +78,7 @@ const DEFAULT_VIEW: View = {
 };
 
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
+	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -88,7 +90,6 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		enabled: hasSshFeature,
 	} );
 
-	const [ showAddForm, setShowAddForm ] = useState( false );
 	const [ selectedCrontabToRemove, setSelectedCrontabToRemove ] = useState< Crontab | null >(
 		null
 	);
@@ -192,12 +193,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 						'Schedule commands to run automatically at specified intervals on your site.'
 					) }
 					actions={
-						hasSshFeature &&
-						! showAddForm && (
+						hasSshFeature && (
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
-								onClick={ () => setShowAddForm( true ) }
+								onClick={ () =>
+									router.navigate( {
+										to: siteSettingsCrontabAddRoute.fullPath,
+										params: { siteSlug },
+									} )
+								}
 							>
 								{ __( 'Add scheduled job' ) }
 							</Button>
@@ -214,13 +219,6 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				upsellTitle={ __( 'Automate tasks with cron jobs' ) }
 				upsellDescription={ __( 'Schedule commands to run automatically at specified intervals.' ) }
 			>
-				{ showAddForm && (
-					<AddCrontabForm
-						siteId={ site.ID }
-						onSuccess={ () => setShowAddForm( false ) }
-						onCancel={ () => setShowAddForm( false ) }
-					/>
-				) }
 				<DataViewsCard>
 					<DataViews< Crontab >
 						getItemId={ ( item ) => String( item.cron_id ) }

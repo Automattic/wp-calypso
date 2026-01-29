@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import ScheduleField from './schedule-field';
 
@@ -54,49 +53,41 @@ export function AddCrontabForm( { siteId, onSuccess, onCancel }: AddCrontabFormP
 	const isValid = command.trim().length > 0;
 
 	return (
-		<Card>
-			<CardBody>
-				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 6 }>
-						<SectionHeader
-							title={ __( 'Add scheduled job' ) }
-							description={ __(
-								'Schedule a command to run automatically at specified intervals.'
-							) }
-							level={ 3 }
-						/>
-						<ScheduleField
-							value={ schedule }
-							onChange={ setSchedule }
-							disabled={ isCreatingCrontab }
-						/>
-						<TextControl
-							__nextHasNoMarginBottom
-							label={ __( 'Command' ) }
-							help={ __(
-								'The command to execute (e.g., wp custom sync-products or bash custom-script.sh).'
-							) }
-							value={ command }
-							onChange={ setCommand }
-							disabled={ isCreatingCrontab }
-						/>
-						<HStack justify="flex-end">
-							<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isCreatingCrontab }
-								disabled={ isCreatingCrontab || ! isValid }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add scheduled job' ) }
-							</Button>
-						</HStack>
-					</VStack>
-				</form>
-			</CardBody>
-		</Card>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 6 }>
+				<SectionHeader
+					title={ __( 'Configure schedule and command' ) }
+					description={ __(
+						'Choose when the command should run and specify the exact command to execute.'
+					) }
+					level={ 3 }
+				/>
+				<ScheduleField value={ schedule } onChange={ setSchedule } disabled={ isCreatingCrontab } />
+				<TextControl
+					__nextHasNoMarginBottom
+					label={ __( 'Command' ) }
+					help={ __(
+						'The command to execute (e.g., wp custom sync-products or bash custom-script.sh).'
+					) }
+					value={ command }
+					onChange={ setCommand }
+					disabled={ isCreatingCrontab }
+				/>
+				<HStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onCancel } disabled={ isCreatingCrontab }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ isCreatingCrontab }
+						disabled={ isCreatingCrontab || ! isValid }
+						__next40pxDefaultSize
+					>
+						{ __( 'Add scheduled job' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</form>
 	);
 }

@@ -994,6 +994,11 @@ export const siteSettingsCrontabRoute = createRoute( {
 			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
+} );
+
+export const siteSettingsCrontabIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
@@ -1004,6 +1009,24 @@ export const siteSettingsCrontabRoute = createRoute( {
 	import( '../../sites/settings-crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsCrontabAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Scheduled Job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-add' )( {
+			component: d.default,
 		} )
 	)
 );
@@ -1405,7 +1428,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsSftpSshRoute,
-		siteSettingsCrontabRoute,
+		siteSettingsCrontabRoute.addChildren( [
+			siteSettingsCrontabIndexRoute,
+			siteSettingsCrontabAddRoute,
+		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
 			siteSettingsRepositoriesConnectRoute,
