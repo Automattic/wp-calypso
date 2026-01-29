@@ -72,8 +72,8 @@ object CalypsoApps: BuildType({
 			unchecked = "false"
 		)
 		// Webpack cache directory - persists on the agent outside the checkout directory.
-		// Uses the build user's home directory with agent name to prevent collisions.
-		param("env.WEBPACK_CACHE_DIR", "%env.HOME%/.cache/calypso-webpack-cache/%teamcity.agent.name%")
+		// Uses /dev/shm (RAM-backed tmpfs) which is writable and fast. Cleared on reboot.
+		param("env.WEBPACK_CACHE_DIR", "/dev/shm/calypso-webpack-cache/%teamcity.agent.name%")
 	}
 
 	features {
