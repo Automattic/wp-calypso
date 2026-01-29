@@ -103,10 +103,11 @@ function getLaunchDestination( dependencies ) {
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItems, siteId, designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 	const isDashboardFlow = new URLSearchParams( window.location.search ).has( 'dashboard' );
 
-	if ( domainItem && cartItems && cartItems.length > 0 && designType !== 'existing-site' ) {
+	// This designType represents a new site.
+	if ( designType === 'page' ) {
 		if ( isDashboardFlow ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
