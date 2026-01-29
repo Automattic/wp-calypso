@@ -104,23 +104,24 @@ function getLaunchDestination( dependencies ) {
 }
 
 function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
-	const isDashboardFlow = new URLSearchParams( window.location.search ).has( 'dashboard' );
+	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
 
 	// This designType represents a new site.
 	if ( designType === 'page' ) {
-		if ( isDashboardFlow ) {
+		if ( dashboardType ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
 
 		return addQueryArgs( { siteId }, '/start/setup-site' );
 	} else if ( designType === 'existing-site' ) {
-		if ( isDashboardFlow ) {
+		if ( dashboardType ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
+
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	if ( isDashboardFlow ) {
+	if ( dashboardType ) {
 		return dashboardLink( '/domains' );
 	}
 
