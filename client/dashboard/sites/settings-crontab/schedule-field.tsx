@@ -5,7 +5,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 
 type ScheduleType = 'hourly' | 'daily' | 'weekly' | 'custom';
@@ -24,11 +24,22 @@ const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
 	{ value: 'custom', label: __( 'Custom' ) },
 ];
 
-const FREQUENCY_OPTIONS: { value: CustomFrequency; label: string }[] = [
-	{ value: 'h', label: __( 'times per hour' ) },
-	{ value: 'd', label: __( 'times per day' ) },
-	{ value: 'w', label: __( 'times per week' ) },
-];
+function getFrequencyOptions( number: number ): { value: CustomFrequency; label: string }[] {
+	return [
+		{
+			value: 'h',
+			label: _n( 'time per hour', 'times per hour', number ),
+		},
+		{
+			value: 'd',
+			label: _n( 'time per day', 'times per day', number ),
+		},
+		{
+			value: 'w',
+			label: _n( 'time per week', 'times per week', number ),
+		},
+	];
+}
 
 const FREQUENCY_MAX: Record< CustomFrequency, number > = {
 	h: 12,
@@ -131,6 +142,8 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 
 	const preview = formatSchedulePreview( scheduleType, customNumber, customFrequency );
 
+	const frequencyOptions = useMemo( () => getFrequencyOptions( customNumber ), [ customNumber ] );
+
 	return (
 		<VStack spacing={ 3 }>
 			<SelectControl
@@ -174,7 +187,7 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 						label={ __( 'Frequency' ) }
 						hideLabelFromVision
 						value={ customFrequency }
-						options={ FREQUENCY_OPTIONS }
+						options={ frequencyOptions }
 						onChange={ ( newValue ) => {
 							const freq = newValue as CustomFrequency;
 							// Clamp the number to the new max
