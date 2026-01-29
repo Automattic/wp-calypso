@@ -34,8 +34,6 @@ function AgentsManagerInner( {
  *
  * Wraps children with AgentsManagerContextProvider to make user, site,
  * and section data available throughout the component tree.
- *
- * This follows the same pattern as Help Center's ContextualizedHelpCenter.
  */
 export default function AgentsManager( {
 	sectionName,
