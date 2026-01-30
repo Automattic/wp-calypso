@@ -4,7 +4,7 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -15,6 +15,13 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
+import {
+	ActionButtons,
+	BrandHeader,
+	ConsentText,
+	ScreenLayout,
+	UserCard,
+} from 'calypso/components/connect-screen';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -23,12 +30,15 @@ import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Main from 'calypso/components/main';
+import { Layout } from 'calypso/dashboard/emails/layout';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import { clearStore, disablePersistence } from 'calypso/lib/user/store';
+import PermissionsList from 'calypso/oauth2/components/permissions-list';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -1220,7 +1230,7 @@ export class JetpackAuthorize extends Component {
 		const actionButton = (
 			<Button
 				primary
-				disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+				disabled={  }
 				onClick={ this.handleSubmit }
 			>
 				{ this.getButtonText() }
@@ -1242,10 +1252,18 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
 			return (
-				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
-					{ actionButton }
-					<div className="jetpack-connect__action--onboarding-disclaimer">{ disclaimer }</div>
-				</LoggedOutFormFooter>
+				<>
+				<ConsentText text={ translate(
+				'By clicking Connect to WordPress.com, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.',
+				{
+					components: {
+						termsOfServiceLink,
+						syncDataLink,
+					},
+				}
+			)}/>
+				<ActionButtons primaryLabel={ this.getButtonText() } primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError} />
+				</>
 			);
 		}
 
@@ -1281,6 +1299,43 @@ export class JetpackAuthorize extends Component {
 				</Modal>
 			);
 		}
+
+		const maybeRender = (
+			<MainWrapper
+				className={ clsx( {
+					'jetpack-connect__authorize-form-wrapper--onboarding':
+						isFromJetpackOnboarding || isFromMyJetpack,
+				} ) }
+				isWooJPC={ this.isWooJPC() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+				useCompactLogo={ isFromJetpackOnboarding || isFromMyJetpack }
+				pageTitle={
+					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
+				}
+			>
+				<QuerySiteFeatures siteIds={ [ authSiteId ] } />
+				<QuerySitePurchases siteId={ authSiteId } />
+				<QueryUserConnection
+					siteId={ authSiteId }
+					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+				/>
+				<ScreenLayout>
+					<BrandHeader
+						title="Now let's connect your account"
+						description="atelieraura.com connects to Jetpack’s cloud to offload the heavy work, helping it run faster and deliver powerful features."
+					/>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+					<ActionButtons primaryLabel="Connect" />
+				</ScreenLayout>
+			</MainWrapper>
+		);
 
 		return (
 			<MainWrapper
