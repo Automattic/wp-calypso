@@ -219,9 +219,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						initialMode: 'transfer-domain',
 						dashboard: getCurrentDashboard(),
 						back_to: redirectToDashboardLink(),
-						// this is needed because when the user arrives on `/setup/domain/use-my-domain`,
-						// the `selectedSite` property is not loaded yet and there's no blog ID to check
-						blog_id: domain.blog_id.toString(),
 					};
 
 					if ( siteSlug ) {
