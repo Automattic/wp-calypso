@@ -697,6 +697,11 @@ describe( 'ResultsPage', () => {
 				} ),
 			} );
 
+			const freeSuggestionQuery = mockGetFreeSuggestionQuery( {
+				params: { query: 'test.com' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'testcom.wordpress.com' } ),
+			} );
+
 			render(
 				<TestDomainSearch config={ { skippable: true } } query="test.com">
 					<ResultsPage />
@@ -704,9 +709,11 @@ describe( 'ResultsPage', () => {
 			);
 
 			expect( await screen.findByTitle( 'test.com' ) ).toBeInTheDocument();
+			// Ensure the free suggestion query does not get triggered
+			expect( freeSuggestionQuery.isDone() ).toBe( false );
 			expect( screen.queryByLabelText( 'Loading free domain suggestion' ) ).not.toBeInTheDocument();
 			expect(
-				screen.queryByRole( 'button', { name: /Skip purchase and continue/i } )
+				screen.queryByLabelText( 'Skip purchase and continue with testcom.wordpress.com' )
 			).not.toBeInTheDocument();
 		} );
 	} );
