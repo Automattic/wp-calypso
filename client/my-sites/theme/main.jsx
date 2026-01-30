@@ -66,7 +66,11 @@ import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getGlobalStylesId, updateGlobalStyles } from 'calypso/state/global-styles/actions';
+import {
+	getGlobalStylesId,
+	updateGlobalStyles,
+	getGlobalStyles,
+} from 'calypso/state/global-styles/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -191,6 +195,7 @@ class ThemeSheet extends Component {
 		themeInstallId: PropTypes.string,
 		getGlobalStylesId: PropTypes.func,
 		updateGlobalStyles: PropTypes.func,
+		getGlobalStyles: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -209,6 +214,8 @@ class ThemeSheet extends Component {
 		isSiteSelectorModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
 		styleVariation: null,
+		currentGlobalStyles: null,
+		globalStylesId: null,
 	};
 
 	// This is a plain instance property because we only want to know the state of the
@@ -236,6 +243,7 @@ class ThemeSheet extends Component {
 		} );
 
 		this.maybeAutoActivate();
+		this.fetchCurrentGlobalStyles();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -270,6 +278,25 @@ class ThemeSheet extends Component {
 	componentWillUnmount() {
 		this.unsubscribeBreakpoint();
 	}
+
+	fetchCurrentGlobalStyles = async () => {
+		const {
+			getGlobalStylesId: dispatchGetGlobalStylesId,
+			getGlobalStyles: dispatchGetGlobalStyles,
+			siteId,
+			themeId,
+		} = this.props;
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		const globalStylesId = await dispatchGetGlobalStylesId( siteId, themeId );
+		this.setState( { globalStylesId } );
+
+		const currentGlobalStyles = await dispatchGetGlobalStyles( siteId, globalStylesId );
+		this.setState( { currentGlobalStyles } );
+	};
 
 	maybeAutoActivate() {
 		const { defaultOption } = this.props;
@@ -340,18 +367,18 @@ class ThemeSheet extends Component {
 
 	onStyleVariationClick = async ( variation ) => {
 		// eslint-disable-next-line no-unused-vars -- We want inline_css out of the styleVariation
-		const { slug, inline_css, ...styleVariation } = variation;
+		const { inline_css, ...styleVariation } = variation;
 		this.setState( { styleVariation } );
 
 		this.props.recordTracksEvent( 'calypso_theme_sheet_style_variation_click', {
 			theme_name: this.props.themeId,
-			style_variation: slug,
+			style_variation: variation.slug,
 		} );
 
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
-			if ( slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
-				params.set( 'style_variation', slug );
+			if ( variation.slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
+				params.set( 'style_variation', variation.slug );
 			} else {
 				params.delete( 'style_variation' );
 			}
@@ -362,24 +389,19 @@ class ThemeSheet extends Component {
 	};
 
 	setStyleVariation = async () => {
-		const {
-			getGlobalStylesId: dispatchGetGlobalStylesId,
-			updateGlobalStyles: dispatchUpdateGlobalStyles,
-			siteId,
-			themeId,
-		} = this.props;
-		const { styleVariation } = this.state;
+		const { updateGlobalStyles: dispatchUpdateGlobalStyles, siteId } = this.props;
+		const { globalStylesId, styleVariation } = this.state;
 
 		if ( ! styleVariation ) {
 			return;
 		}
 
-		const { styles, settings } = styleVariation;
-		const globalStylesId = await dispatchGetGlobalStylesId( siteId, themeId );
+		const { _links, settings, styles } = styleVariation;
 
 		await dispatchUpdateGlobalStyles( siteId, globalStylesId, {
-			styles: cleanEmptyObject( styles ) || {},
 			settings: cleanEmptyObject( settings ) || {},
+			styles: cleanEmptyObject( styles ) || {},
+			_links: cleanEmptyObject( _links ) || {},
 		} );
 	};
 
@@ -1115,9 +1137,70 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	/**
+	 * Helper function to check if two style objects match
+	 * Compares color palettes and font families as primary indicators
+	 */
+	doStylesMatch = ( globalStyles, variation ) => {
+		if ( ! globalStyles || ! variation ) {
+			return false;
+		}
+
+		// Extract color palettes
+		const globalColors = globalStyles.settings?.color?.palette?.theme || [];
+		const variationColors = variation.settings?.color?.palette?.theme || [];
+
+		// Extract font families
+		const globalFonts = globalStyles.settings?.typography?.fontFamilies?.theme || [];
+		const variationFonts = variation.settings?.typography?.fontFamilies?.theme || [];
+
+		// Compare color palettes by checking if the first 3 colors match (base, contrast, accent-1)
+		const colorsMatch =
+			globalColors.length === variationColors.length &&
+			globalColors.slice( 0, 3 ).every( ( color, index ) => {
+				const varColor = variationColors[ index ];
+				return color?.slug === varColor?.slug && color?.color === varColor?.color;
+			} );
+
+		// Compare font families by checking if the font slugs match
+		const fontsMatch =
+			globalFonts.length === variationFonts.length &&
+			globalFonts.every( ( font, index ) => {
+				const varFont = variationFonts[ index ];
+				return font?.slug === varFont?.slug;
+			} );
+
+		return colorsMatch && fontsMatch;
+	};
+
 	getSelectedStyleVariation = () => {
 		const { selectedStyleVariationSlug, styleVariations } = this.props;
-		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
+		const { currentGlobalStyles } = this.state;
+
+		// First, try to match by URL slug (user's selection)
+		if ( selectedStyleVariationSlug ) {
+			const variationBySlug = styleVariations.find(
+				( variation ) => variation.slug === selectedStyleVariationSlug
+			);
+			if ( variationBySlug ) {
+				return variationBySlug;
+			}
+		}
+
+		// If we have current global styles from the API, try to match by comparing styles
+		if ( currentGlobalStyles ) {
+			const matchingVariation = styleVariations.find( ( variation ) =>
+				this.doStylesMatch( currentGlobalStyles, variation )
+			);
+			if ( matchingVariation ) {
+				return matchingVariation;
+			}
+		}
+
+		// Fall back to default variation
+		return styleVariations.find( ( variation ) =>
+			isDefaultGlobalStylesVariationSlug( variation.slug )
+		);
 	};
 
 	getBackLink = () => {
@@ -1558,6 +1641,7 @@ export default connect(
 		errorNotice,
 		getGlobalStylesId,
 		updateGlobalStyles,
+		getGlobalStyles,
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(

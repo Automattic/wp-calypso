@@ -43,10 +43,22 @@ export function updateGlobalStyles(
 			body: {
 				id: globalStylesId,
 				settings: globalStyles.settings ?? {},
+				slug: globalStyles.slug ?? {},
 				styles: globalStyles.styles ?? {},
 			},
 		} );
 
 		return updatedGlobalStyles;
+	};
+}
+
+export function getGlobalStyles( siteIdOrSlug: number | string, globalStylesId: number ) {
+	return async () => {
+		const globalStyles: GlobalStyles = await wpcom.req.get( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
+			apiNamespace: 'wp/v2',
+		} );
+
+		return globalStyles;
 	};
 }
