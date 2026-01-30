@@ -15,6 +15,7 @@ const noop = () => {};
 
 export class SitesDropdown extends PureComponent {
 	componentRef = createRef();
+	isMouseEvent = false;
 
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
@@ -65,22 +66,26 @@ export class SitesDropdown extends PureComponent {
 	onClickOutside( event ) {
 		if (
 			this.state.open &&
-			this.componentRef.current &&
-			! this.componentRef.current.contains( event.target ) // Check if click is outside the container.
+			! this.componentRef.current?.contains( event.target ) // Check if click is outside the container.
 		) {
 			this.onClose( event );
 		}
 	}
 
+	/**
+	 * Handle closing the dropdown when focus moves outside using Keyboard navigation.
+	 */
 	onFocusOutside( event ) {
-		const { relatedTarget } = event;
+		// If its a mouse event, don't do anything.
+		// This fixes an issue where blur fires before click in modal contexts.
+		if ( this.isMouseEvent ) {
+			this.isMouseEvent = false;
+			return;
+		}
 
 		// relatedTarget is the element receiving focus. If it's outside the container, close the dropdown.
-		if (
-			this.state.open &&
-			relatedTarget &&
-			! this.componentRef.current?.contains( relatedTarget )
-		) {
+		const { relatedTarget } = event;
+		if ( relatedTarget && ! this.componentRef.current?.contains( relatedTarget ) ) {
 			this.onClose( event );
 		}
 	}
@@ -133,6 +138,7 @@ export class SitesDropdown extends PureComponent {
 
 	render() {
 		return (
+			// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 			<div
 				ref={ this.componentRef }
 				className={ clsx(
@@ -141,6 +147,7 @@ export class SitesDropdown extends PureComponent {
 					{ 'is-disabled': this.props.disabled },
 					{ 'has-multiple-sites': this.props.hasMultipleSites }
 				) }
+				onMouseDown={ () => ( this.isMouseEvent = true ) }
 				onBlur={ this.onFocusOutside }
 			>
 				<div className="sites-dropdown__wrapper">
