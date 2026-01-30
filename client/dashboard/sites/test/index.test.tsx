@@ -62,10 +62,24 @@ describe( 'Sites', () => {
 		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders DataViews', async () => {
+	it( 'renders empty state when the user has no sites', async () => {
 		render( <Sites />, {
 			user: {
-				site_count: 13, // to force the table layout
+				site_count: 0,
+			} as User,
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders DataViews when the user has sites', async () => {
+		render( <Sites />, {
+			user: {
+				site_count: 13, // more than 12 sites to force the table layout
 			} as User,
 		} );
 
