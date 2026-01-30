@@ -17,6 +17,52 @@ jest.mock( '@automattic/odie-client/src/data', () => ( {
 	broadcastOdieMessage: jest.fn(),
 } ) );
 
+// Mock the private APIs before other imports
+// This needs to happen before @wordpress/data is imported
+jest.mock( '@wordpress/private-apis', () => {
+	const mockPrivateApis = new Map();
+	return {
+		__dangerousOptInToUnstableAPIsOnlyForCoreModules: () => ( {
+			lock: ( api, privateExports ) => {
+				mockPrivateApis.set( api, privateExports );
+			},
+			unlock: ( api ) => {
+				// If we have the actual locked API, return it
+				if ( mockPrivateApis.has( api ) ) {
+					return mockPrivateApis.get( api );
+				}
+				// Otherwise return a mock based on the module
+				// For @wordpress/block-editor
+				if ( api && typeof api === 'object' && 'privateApis' in api ) {
+					return {
+						cleanEmptyObject: ( obj ) => {
+							if ( ! obj ) {
+								return obj;
+							}
+							const cleaned = {};
+							Object.keys( obj ).forEach( ( key ) => {
+								if ( obj[ key ] !== null && obj[ key ] !== undefined && obj[ key ] !== '' ) {
+									cleaned[ key ] = obj[ key ];
+								}
+							} );
+							return Object.keys( cleaned ).length > 0 ? cleaned : undefined;
+						},
+						Badge: ( { children, style } ) => ( { children, style } ),
+					};
+				}
+				// Fallback for components
+				return {
+					Badge: ( { children, style } ) => ( { children, style } ),
+				};
+			},
+		} ),
+	};
+} );
+
+jest.mock( '@wordpress/block-editor', () => ( {
+	privateApis: {},
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
