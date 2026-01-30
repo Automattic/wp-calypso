@@ -88,12 +88,11 @@ class PreviewToolbar extends Component {
 
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId, setStyleVariation } =
+		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId, persistStyleVariation } =
 			this.props;
 
-		// Set the style variation before navigating to the editor
-		if ( setStyleVariation ) {
-			await setStyleVariation();
+		if ( persistStyleVariation ) {
+			await persistStyleVariation();
 		}
 
 		// For atomic sites, we need to install theme before navigating to site editor

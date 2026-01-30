@@ -67,9 +67,9 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
+	getGlobalStyles,
 	getGlobalStylesId,
 	updateGlobalStyles,
-	getGlobalStyles,
 } from 'calypso/state/global-styles/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -193,9 +193,9 @@ class ThemeSheet extends Component {
 		canUserEditThemeOptions: PropTypes.bool,
 		siteEditorUrl: PropTypes.string,
 		themeInstallId: PropTypes.string,
+		getGlobalStyles: PropTypes.func,
 		getGlobalStylesId: PropTypes.func,
 		updateGlobalStyles: PropTypes.func,
-		getGlobalStyles: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -213,9 +213,9 @@ class ThemeSheet extends Component {
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
-		styleVariation: null,
 		currentGlobalStyles: null,
 		globalStylesId: null,
+		styleVariation: null,
 	};
 
 	// This is a plain instance property because we only want to know the state of the
@@ -280,21 +280,16 @@ class ThemeSheet extends Component {
 	}
 
 	fetchCurrentGlobalStyles = async () => {
-		const {
-			getGlobalStylesId: dispatchGetGlobalStylesId,
-			getGlobalStyles: dispatchGetGlobalStyles,
-			siteId,
-			themeId,
-		} = this.props;
+		const { siteId, themeId } = this.props;
 
 		if ( ! siteId ) {
 			return;
 		}
 
-		const globalStylesId = await dispatchGetGlobalStylesId( siteId, themeId );
+		const globalStylesId = await this.props.getGlobalStylesId( siteId, themeId );
 		this.setState( { globalStylesId } );
 
-		const currentGlobalStyles = await dispatchGetGlobalStyles( siteId, globalStylesId );
+		const currentGlobalStyles = await this.props.getGlobalStyles( siteId, globalStylesId );
 		this.setState( { currentGlobalStyles } );
 	};
 
@@ -341,7 +336,7 @@ class ThemeSheet extends Component {
 			this.props.secondaryOption,
 			{
 				styleVariation: this.getSelectedStyleVariation(),
-				setStyleVariation: this.setStyleVariation,
+				persistStyleVariation: this.persistStyleVariation,
 			}
 		);
 	};
@@ -368,7 +363,7 @@ class ThemeSheet extends Component {
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
-	onStyleVariationClick = async ( variation ) => {
+	onStyleVariationClick = ( variation ) => {
 		// eslint-disable-next-line no-unused-vars -- We want inline_css out of the styleVariation
 		const { inline_css, ...styleVariation } = variation;
 		this.setState( { styleVariation } );
@@ -391,8 +386,8 @@ class ThemeSheet extends Component {
 		}
 	};
 
-	setStyleVariation = async () => {
-		const { updateGlobalStyles: dispatchUpdateGlobalStyles, siteId } = this.props;
+	persistStyleVariation = async () => {
+		const { siteId } = this.props;
 		const { globalStylesId, styleVariation } = this.state;
 
 		if ( ! styleVariation ) {
@@ -401,7 +396,7 @@ class ThemeSheet extends Component {
 
 		const { _links, settings, styles } = styleVariation;
 
-		await dispatchUpdateGlobalStyles( siteId, globalStylesId, {
+		await this.props.updateGlobalStyles( siteId, globalStylesId, {
 			settings: cleanEmptyObject( settings ) || {},
 			styles: cleanEmptyObject( styles ) || {},
 			_links: cleanEmptyObject( _links ) || {},
@@ -461,7 +456,7 @@ class ThemeSheet extends Component {
 			{
 				styleVariation: this.getSelectedStyleVariation(),
 				previewSource: previewSource,
-				setStyleVariation: this.setStyleVariation,
+				persistStyleVariation: this.persistStyleVariation,
 			}
 		);
 
@@ -1042,7 +1037,7 @@ class ThemeSheet extends Component {
 
 		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
 
-		await this.setStyleVariation();
+		await this.persistStyleVariation();
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
@@ -1643,9 +1638,9 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
+		getGlobalStyles,
 		getGlobalStylesId,
 		updateGlobalStyles,
-		getGlobalStyles,
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(

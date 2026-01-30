@@ -43,7 +43,6 @@ export function updateGlobalStyles(
 			body: {
 				id: globalStylesId,
 				settings: globalStyles.settings ?? {},
-				slug: globalStyles.slug ?? {},
 				styles: globalStyles.styles ?? {},
 			},
 		} );
