@@ -26,7 +26,7 @@ export default function HostingFeatureList( { site }: { site: Site } ) {
 			text: __( 'Advanced server settings' ),
 		},
 		{
-			feature: HostingFeatures.BACKUPS,
+			feature: HostingFeatures.BACKUPS_RESTORE,
 			text: __( 'Backup and restore' ),
 		},
 		{
