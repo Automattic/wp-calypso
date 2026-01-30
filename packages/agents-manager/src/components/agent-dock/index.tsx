@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
+import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
@@ -34,15 +35,9 @@ import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
 } from '../../utils/load-external-providers';
-import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentDockProps {
-	/** The selected site object. */
-	site?: HelpCenterSite | null;
-	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName: string;
-	/** Indicates if the user is eligible for chat. */
-	isEligibleForChat: boolean;
 	/** Agent configuration for the chat client. */
 	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
@@ -61,9 +56,6 @@ interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
-	site,
-	sectionName,
-	isEligibleForChat,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -71,6 +63,7 @@ export default function AgentDock( {
 	useAbilitiesSetup,
 	getChatComponent,
 }: AgentDockProps ) {
+	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
