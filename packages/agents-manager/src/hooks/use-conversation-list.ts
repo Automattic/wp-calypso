@@ -16,7 +16,9 @@ interface Options {
 }
 
 export default function useConversationList( { agentId, authProvider }: Options ) {
-	const botId = createOdieBotId( agentId );
+	const urlSearchParams = new URLSearchParams( window.location.search );
+	const hasAgentParam = urlSearchParams.has( 'agent' );
+	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
 
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 

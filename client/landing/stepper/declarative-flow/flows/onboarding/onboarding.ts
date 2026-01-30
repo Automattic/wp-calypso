@@ -213,7 +213,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'blank-site':
-							window.location.replace( `/sites/${ siteSlug }` );
+							window.location.assign( `/sites/${ siteSlug }` );
 							return;
 						default:
 							return;

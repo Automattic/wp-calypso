@@ -64,14 +64,14 @@ function MyComponent() {
 
 ### UnifiedAIAgent Props
 
-| Prop                | Type                        | Description                                                |
-| ------------------- | --------------------------- | ---------------------------------------------------------- |
-| `currentRoute`      | `string` (optional)         | The current route path.                                    |
-| `isEligibleForChat` | `boolean`                   | Indicates if the user is eligible for chat.                |
-| `sectionName`       | `string`                    | The name of the current section (e.g., 'posts', 'pages').  |
-| `site`              | `HelpCenterSite` (optional) | The selected site object (from `@automattic/data-stores`). |
-| `currentUser`       | `CurrentUser` (optional)    | The current user object (from `@automattic/data-stores`).  |
-| `handleClose`       | `() => void` (optional)     | Called when the agent is closed.                           |
+| Prop                | Type                           | Description                                                |
+| ------------------- | ------------------------------ | ---------------------------------------------------------- |
+| `currentRoute`      | `string` (optional)            | The current route path.                                    |
+| `isEligibleForChat` | `boolean`                      | Indicates if the user is eligible for chat.                |
+| `sectionName`       | `string`                       | The name of the current section (e.g., 'posts', 'pages').  |
+| `site`              | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`). |
+| `currentUser`       | `CurrentUser` (optional)       | The current user object (from `@automattic/data-stores`).  |
+| `handleClose`       | `() => void` (optional)        | Called when the agent is closed.                           |
 
 ### Exported Types
 
