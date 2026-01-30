@@ -137,6 +137,7 @@
 		"cookie-parser": "^1.4.7",
 		"core-js-bundle": "^3.6.4",
 		"creditcards": "^3.1.0",
+		"cronstrue": "^3.11.0",
 		"csv-parse": "^5.1.0",
 		"d3-array": "^2.4.0",
 		"d3-axis": "^1.0.12",
