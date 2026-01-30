@@ -353,7 +353,18 @@ export interface Purchase {
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
+
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `payment_expiry_date` if possible as it will be more accurate.
+	 */
 	payment_expiry: string | undefined;
+
+	/**
+	 * The expiry date in ISO 8601 (YYYY-MM-DD) if the payment method has one.
+	 */
+	payment_expiry_date: string | undefined;
 
 	/**
 	 * True if this subscription can be upgraded to a different one.

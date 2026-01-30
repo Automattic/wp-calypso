@@ -23,6 +23,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
+		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
