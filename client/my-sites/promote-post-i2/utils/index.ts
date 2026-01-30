@@ -431,3 +431,33 @@ export const getPaymentStatus = ( status?: string ) => {
 			return status;
 	}
 };
+
+export type CreditExpirationInfo = {
+	hasExpiringCredits: boolean;
+	sortedHistory: Array< { amount: number; expires: string } >;
+};
+
+/**
+ * Check if any credits expire within a month and return sorted history
+ */
+export const getCreditExpirationInfo = (
+	history: Array< { amount: number; expires: string } > = []
+): CreditExpirationInfo => {
+	const sortedHistory = [ ...history ].sort( ( a, b ) =>
+		moment( a.expires ).diff( moment( b.expires ) )
+	);
+
+	const hasExpiringCredits = sortedHistory.some( ( { expires } ) => {
+		const exp = moment( expires );
+		return (
+			exp.isValid() &&
+			exp.isAfter( moment(), 'day' ) &&
+			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
+		);
+	} );
+
+	return {
+		hasExpiringCredits,
+		sortedHistory,
+	};
+};
