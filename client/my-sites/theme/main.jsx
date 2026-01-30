@@ -375,11 +375,7 @@ class ThemeSheet extends Component {
 
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
-			if ( variation.slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
-				params.set( 'style_variation', variation.slug );
-			} else {
-				params.delete( 'style_variation' );
-			}
+			params.set( 'style_variation', variation.slug );
 
 			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
 			page( `${ window.location.pathname }${ paramsString }` );
