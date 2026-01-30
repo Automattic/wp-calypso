@@ -1,14 +1,24 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, search, globe } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
-import InlineSupportLink from '../../components/inline-support-link';
-import OfferCard from '../../components/offer-card';
+import type { ReactNode } from 'react';
 
-export default function EmptyMailboxesState() {
+interface EmptyMailboxesStateProps {
+	title: string;
+	description: ReactNode;
+	isBorderless?: boolean;
+	children?: ReactNode;
+}
+
+export default function EmptyMailboxesState( {
+	title,
+	description,
+	isBorderless = false,
+	children,
+}: EmptyMailboxesStateProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate();
 
@@ -28,25 +38,12 @@ export default function EmptyMailboxesState() {
 		navigate( { to: '/emails/add-forwarder' } );
 	};
 
-	const handleOfferClick = () => {
-		trackEmptyStateActionClick( 'offer' );
-	};
-
 	return (
-		<EmptyState.Wrapper>
+		<EmptyState.Wrapper isBorderless={ isBorderless }>
 			<EmptyState>
 				<EmptyState.Header>
-					<EmptyState.Title>{ __( 'Set up email for your domain' ) }</EmptyState.Title>
-					<EmptyState.Description>
-						{ createInterpolateElement(
-							__(
-								'Create a mailbox or set up a forwarder for an email address using your domain. <learnMoreLink/>'
-							),
-							{
-								learnMoreLink: <InlineSupportLink supportContext="emails" />,
-							}
-						) }
-					</EmptyState.Description>
+					<EmptyState.Title>{ title }</EmptyState.Title>
+					<EmptyState.Description>{ description }</EmptyState.Description>
 				</EmptyState.Header>
 				<EmptyState.Content>
 					<EmptyState.ActionList>
@@ -85,7 +82,7 @@ export default function EmptyMailboxesState() {
 							}
 						/>
 					</EmptyState.ActionList>
-					<OfferCard onClick={ handleOfferClick } />
+					{ children }
 				</EmptyState.Content>
 			</EmptyState>
 		</EmptyState.Wrapper>

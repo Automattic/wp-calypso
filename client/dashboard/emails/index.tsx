@@ -4,11 +4,15 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../app/analytics';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard } from '../components/dataviews';
+import InlineSupportLink from '../components/inline-support-link';
+import OfferCard from '../components/offer-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -22,6 +26,7 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
+	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate();
 	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
@@ -97,7 +102,27 @@ function Emails() {
 		}
 
 		if ( hasNoEmails ) {
-			return <EmptyMailboxesState />;
+			return (
+				<EmptyMailboxesState
+					title={ __( 'Set up email for your domain' ) }
+					description={ createInterpolateElement(
+						__(
+							'Create a mailbox or set up a forwarder for an email address using your domain. <learnMoreLink/>'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="emails" />,
+						}
+					) }
+				>
+					<OfferCard
+						onClick={ () =>
+							recordTracksEvent( 'calypso_emails_dashboard_empty_mailboxes_state_action_click', {
+								action: 'offer',
+							} )
+						}
+					/>
+				</EmptyMailboxesState>
+			);
 		}
 
 		return (
@@ -115,6 +140,13 @@ function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
+					empty={
+						<EmptyMailboxesState
+							title={ __( 'No emails match your search' ) }
+							description={ __( 'Try again, or continue with the options below.' ) }
+							isBorderless
+						/>
+					}
 				/>
 			</DataViewsCard>
 		);
