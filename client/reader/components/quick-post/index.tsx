@@ -7,7 +7,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
-import { createBlock, parse, serialize, unregisterBlockType } from '@wordpress/blocks';
+import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -29,7 +29,6 @@ import './style.scss';
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
 loadTextFormatting( [ heading.name ] );
-unregisterBlockType( 'core/embed' );
 
 export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
