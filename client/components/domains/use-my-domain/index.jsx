@@ -32,7 +32,7 @@ import wpcom from 'calypso/lib/wp';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { isUpdatingPrimaryDomain } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
 
@@ -47,7 +47,6 @@ function UseMyDomain( props ) {
 		onTransfer,
 		dashboard,
 		selectedSite,
-		selectedSiteId,
 		transferDomainUrl,
 		initialMode,
 		onNextStep,
@@ -176,7 +175,7 @@ function UseMyDomain( props ) {
 
 		const availabilityData = await wpcom
 			.domain( filteredDomainName )
-			.isAvailable( { apiVersion: '1.3', blog_id: selectedSiteId, is_cart_pre_check: false } );
+			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
 
 		return {
 			availabilityData,
@@ -195,7 +194,6 @@ function UseMyDomain( props ) {
 		selectedSite,
 		registerNowAction,
 		dashboard,
-		selectedSiteId,
 	] );
 
 	const setTransferStepsAndLockStatus = useCallback(
@@ -508,6 +506,5 @@ export default connect( ( state ) => ( {
 	dashboard:
 		getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ?? undefined,
 	selectedSite: getSelectedSite( state ),
-	selectedSiteId: getSelectedSiteId( state ),
 	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
 } ) )( UseMyDomain );
