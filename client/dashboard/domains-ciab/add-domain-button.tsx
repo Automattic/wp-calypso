@@ -5,7 +5,7 @@ import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { siteRoute } from '../app/router/sites';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
 export default function AddDomainButton() {
 	const router = useRouter();
@@ -20,7 +20,7 @@ export default function AddDomainButton() {
 		}
 
 		queryArgs.dashboard = getCurrentDashboard();
-		queryArgs.back_to = redirectToDashboardLink();
+
 		return queryArgs;
 	};
 

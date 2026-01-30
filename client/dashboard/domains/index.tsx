@@ -19,7 +19,6 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from './dataviews';
-import EmptyDomainsState from './empty-domains-state';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -41,6 +40,7 @@ function Domains() {
 	const { user } = useAuth();
 	const { queries, components } = useAppContext();
 	const AddDomainButton = useMemo( () => lazy( components.addDomainButton ), [ components ] );
+	const EmptyDomainsState = useMemo( () => lazy( components.emptyDomainsState ), [ components ] );
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -65,7 +65,7 @@ function Domains() {
 		fields
 	);
 
-	const hasDomains = !! domains && domains.length > 0;
+	const hasDomains = domains.length > 0;
 
 	return (
 		<Suspense fallback={ null }>
