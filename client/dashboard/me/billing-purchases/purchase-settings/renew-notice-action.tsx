@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../../app/router/me';
-import { isCloseToExpiration } from '../../../utils/purchase';
+import { isCloseToExpiration, isInExpirationGracePeriod } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -38,6 +38,11 @@ export function shouldShowRenewNoticeAction( purchase: Purchase ): boolean {
 	}
 
 	if ( ! purchase.is_rechargeable ) {
+		return true;
+	}
+
+	// Show renew action for purchases in grace period that can be renewed.
+	if ( purchase.can_explicit_renew && isInExpirationGracePeriod( purchase ) ) {
 		return true;
 	}
 

@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/help-center/src/hooks';
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

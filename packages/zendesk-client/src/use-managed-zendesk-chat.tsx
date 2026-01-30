@@ -51,10 +51,10 @@ function getSmoochContainer(): HTMLDivElement | null {
 	return smoochContainer;
 }
 
-function useSmooch() {
+function useSmooch( enabled = true ) {
 	const queryClient = useQueryClient();
 	const { data: authData, isFetching: isAuthenticatingZendeskMessaging } =
-		useAuthenticateZendeskMessaging( true, 'zendesk', false );
+		useAuthenticateZendeskMessaging( enabled, 'zendesk', false );
 	const jwt = authData?.jwt;
 	const externalId = authData?.externalId;
 
@@ -94,7 +94,7 @@ function useSmooch() {
 			} );
 		},
 		staleTime: Infinity,
-		enabled: !! jwt && !! externalId,
+		enabled: !! jwt && !! externalId && enabled,
 		meta: {
 			persist: false,
 		},
@@ -304,7 +304,7 @@ export const useManagedZendeskChat = () => {
 	};
 };
 
-export const useGetZendeskConversations = () => {
-	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
+export const useGetZendeskConversations = ( enabled: boolean ) => {
+	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch( enabled );
 	return { conversations: Smooch?.getConversations() ?? [], isLoading: isSettingUpSmooch };
 };

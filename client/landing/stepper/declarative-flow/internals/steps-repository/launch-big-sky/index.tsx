@@ -51,9 +51,9 @@ const LaunchBigSky: StepType = function ( props ) {
 
 	useEffect( () => {
 		if ( ! isEligible ) {
-			window.location.assign( '/start' );
+			window.location.replace( `/sites/${ siteSlug }` );
 		}
-	}, [ isEligible ] );
+	}, [ isEligible, siteSlug ] );
 
 	const exitFlow = useCallback(
 		async ( selectedSiteId: string, selectedSiteSlug: string ) => {

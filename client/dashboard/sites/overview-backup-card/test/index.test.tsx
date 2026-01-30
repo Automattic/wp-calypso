@@ -27,10 +27,6 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => mockSite,
-} ) );
-
 jest.mock( '@wordpress/i18n', () => ( {
 	...jest.requireActual( '@wordpress/i18n' ),
 	__: ( text: string ) => text,
