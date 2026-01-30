@@ -361,7 +361,7 @@ function McpSetupComponent( { path } ) {
 										help={ translate(
 											"Copy this configuration and paste it into your MCP client's settings."
 										) }
-										style={ { minHeight: '240px' } }
+										style={ { minHeight: '160px' } }
 									/>
 								</VStack>
 							</VStack>

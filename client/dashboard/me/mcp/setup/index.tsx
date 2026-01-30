@@ -262,12 +262,7 @@ function McpSetupComponent() {
 													{ createInterpolateElement(
 														__( 'Open <link>Claude settings → Browse Connectors</link>.' ),
 														{
-															link: (
-																<ExternalLink
-																	href="https://claude.ai/settings/connectors"
-																	target="_blank"
-																/>
-															),
+															link: <ExternalLink href="https://claude.ai/settings/connectors" />,
 														}
 													) }
 												</Text>
@@ -349,7 +344,7 @@ function McpSetupComponent() {
 									help={ __(
 										'Copy this configuration and paste it into your MCP client’s settings.'
 									) }
-									style={ { minHeight: '240px' } }
+									style={ { minHeight: '160px' } }
 								/>
 								<VStack spacing={ 1 }>
 									<Text size="12px">
