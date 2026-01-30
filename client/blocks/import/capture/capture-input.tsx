@@ -26,7 +26,6 @@ interface Props {
 	onInputEnter: OnInputEnter;
 	placeholder?: string;
 	skipInitialChecking?: boolean;
-	customInfoContent?: React.ReactNode;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -40,7 +39,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		dontHaveSiteAddressLabel,
 		hideImporterListLink = false,
 		nextLabelText,
-		customInfoContent,
 	} = props;
 
 	const translate = useTranslate();
@@ -125,14 +123,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	function renderInfoContent() {
-		if ( ! customInfoContent ) {
-			return null;
-		}
-
-		return <div className="capture-input__info">{ customInfoContent }</div>;
-	}
-
 	return (
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
@@ -151,7 +141,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					value={ urlValue }
 					placeholder={ placeholder }
 					onChange={ onChange }
-					aria-describedby={ customInfoContent ? 'wpcom-info-message' : undefined }
 				/>
 
 				<FormSettingExplanation>{ renderError() }</FormSettingExplanation>
@@ -173,8 +162,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						}
 					) }
 			</div>
-
-			{ renderInfoContent() }
 		</form>
 	);
 };
