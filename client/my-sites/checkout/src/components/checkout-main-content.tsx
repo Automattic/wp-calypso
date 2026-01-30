@@ -590,6 +590,8 @@ export default function CheckoutMainContent( {
 		return true;
 	};
 
+	const paymentMethodStepFirst = true;
+
 	const checkoutSummary = (
 		<WPCheckoutSidebarContent className="checkout-sidebar-content">
 			{ isLoading && <LoadingSidebarContent /> }
@@ -681,6 +683,40 @@ export default function CheckoutMainContent( {
 						}
 						formStatus={ formStatus }
 					/>
+
+					{ paymentMethodStepFirst && (
+						<PaymentMethodStep
+							activeStepHeader={
+								<>
+									<GoogleDomainsCopy responseCart={ responseCart } />
+									<PaymentMethodFilter
+										areStoredCardsFiltered={ areStoredCardsFiltered }
+										isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+									/>
+								</>
+							}
+							canEditStep={ canEditPaymentStep() }
+							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+							nextStepButtonText={ String( translate( 'Continue' ) ) }
+							nextStepButtonAriaLabel={ String(
+								translate( 'Continue with the selected payment method' )
+							) }
+							validatingButtonText={ validatingButtonText }
+							validatingButtonAriaLabel={ validatingButtonText }
+							onPageLoadError={ onPageLoadError }
+							waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+							isCompleteCallback={ () => {
+								// We want to consider this step complete only if there is a
+								// payment method selected and it does not have required fields.
+								// This will not prevent the form from being submitted because
+								// the submit button will be active as long as the last step is
+								// shown, but it will prevent the payment method step from
+								// automatically collapsing when checkout loads.
+								return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
+							} }
+						/>
+					) }
 
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
@@ -792,37 +828,40 @@ export default function CheckoutMainContent( {
 							validatingButtonAriaLabel={ validatingButtonText }
 						/>
 					) }
-					<PaymentMethodStep
-						activeStepHeader={
-							<>
-								<GoogleDomainsCopy responseCart={ responseCart } />
-								<PaymentMethodFilter
-									areStoredCardsFiltered={ areStoredCardsFiltered }
-									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-								/>
-							</>
-						}
-						canEditStep={ canEditPaymentStep() }
-						editButtonText={ String( translate( 'Edit' ) ) }
-						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
-						nextStepButtonText={ String( translate( 'Continue' ) ) }
-						nextStepButtonAriaLabel={ String(
-							translate( 'Continue with the selected payment method' )
-						) }
-						validatingButtonText={ validatingButtonText }
-						validatingButtonAriaLabel={ validatingButtonText }
-						onPageLoadError={ onPageLoadError }
-						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
-						isCompleteCallback={ () => {
-							// We want to consider this step complete only if there is a
-							// payment method selected and it does not have required fields.
-							// This will not prevent the form from being submitted because
-							// the submit button will be active as long as the last step is
-							// shown, but it will prevent the payment method step from
-							// automatically collapsing when checkout loads.
-							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
-						} }
-					/>
+
+					{ ! paymentMethodStepFirst && (
+						<PaymentMethodStep
+							activeStepHeader={
+								<>
+									<GoogleDomainsCopy responseCart={ responseCart } />
+									<PaymentMethodFilter
+										areStoredCardsFiltered={ areStoredCardsFiltered }
+										isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+									/>
+								</>
+							}
+							canEditStep={ canEditPaymentStep() }
+							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+							nextStepButtonText={ String( translate( 'Continue' ) ) }
+							nextStepButtonAriaLabel={ String(
+								translate( 'Continue with the selected payment method' )
+							) }
+							validatingButtonText={ validatingButtonText }
+							validatingButtonAriaLabel={ validatingButtonText }
+							onPageLoadError={ onPageLoadError }
+							waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+							isCompleteCallback={ () => {
+								// We want to consider this step complete only if there is a
+								// payment method selected and it does not have required fields.
+								// This will not prevent the form from being submitted because
+								// the submit button will be active as long as the last step is
+								// shown, but it will prevent the payment method step from
+								// automatically collapsing when checkout loads.
+								return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
+							} }
+						/>
+					) }
 
 					<CouponFieldArea
 						isCouponFieldVisible={ isCouponFieldVisible }
