@@ -339,7 +339,10 @@ class ThemeSheet extends Component {
 			this.props.themeId,
 			this.props.defaultOption,
 			this.props.secondaryOption,
-			{ styleVariation: this.getSelectedStyleVariation() }
+			{
+				styleVariation: this.getSelectedStyleVariation(),
+				setStyleVariation: this.setStyleVariation,
+			}
 		);
 	};
 
@@ -458,6 +461,7 @@ class ThemeSheet extends Component {
 			{
 				styleVariation: this.getSelectedStyleVariation(),
 				previewSource: previewSource,
+				setStyleVariation: this.setStyleVariation,
 			}
 		);
 
