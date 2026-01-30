@@ -27,7 +27,6 @@ import {
 	privateApis,
 } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { select, dispatch } from '@wordpress/data';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { hasQueryArg } from '@wordpress/url';
@@ -67,6 +66,7 @@ import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getGlobalStylesId, updateGlobalStyles } from 'calypso/state/global-styles/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -189,6 +189,8 @@ class ThemeSheet extends Component {
 		canUserEditThemeOptions: PropTypes.bool,
 		siteEditorUrl: PropTypes.string,
 		themeInstallId: PropTypes.string,
+		getGlobalStylesId: PropTypes.func,
+		updateGlobalStyles: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -206,6 +208,7 @@ class ThemeSheet extends Component {
 		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
+		styleVariation: null,
 	};
 
 	// This is a plain instance property because we only want to know the state of the
@@ -335,17 +338,20 @@ class ThemeSheet extends Component {
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
-	// aquí és l'on click de calypos quan tries style variation
-	onStyleVariationClick = ( variation ) => {
+	onStyleVariationClick = async ( variation ) => {
+		// eslint-disable-next-line no-unused-vars -- We want inline_css out of the styleVariation
+		const { slug, inline_css, ...styleVariation } = variation;
+		this.setState( { styleVariation } );
+
 		this.props.recordTracksEvent( 'calypso_theme_sheet_style_variation_click', {
 			theme_name: this.props.themeId,
-			style_variation: variation.slug,
+			style_variation: slug,
 		} );
 
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
-			if ( variation.slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
-				params.set( 'style_variation', variation.slug );
+			if ( slug !== DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
+				params.set( 'style_variation', slug );
 			} else {
 				params.delete( 'style_variation' );
 			}
@@ -355,37 +361,26 @@ class ThemeSheet extends Component {
 		}
 	};
 
-	setConfig = async ( callbackOrObject, options = {} ) => {
-		const globalStylesId = await dispatch( 'core' ).getGlobalStylesId(
-			this.props.siteId,
-			this.props.themeId
-		);
+	setStyleVariation = async () => {
+		const {
+			getGlobalStylesId: dispatchGetGlobalStylesId,
+			updateGlobalStyles: dispatchUpdateGlobalStyles,
+			siteId,
+			themeId,
+		} = this.props;
+		const { styleVariation } = this.state;
 
-		// comprovar que el valor és el mateix que a gutenberg
-		// console.debug( 'globalStylesId', globalStylesId );
+		if ( ! styleVariation ) {
+			return;
+		}
 
-		const record = select( 'core' ).getEditedEntityRecord( 'root', 'globalStyles', globalStylesId );
+		const { styles, settings } = styleVariation;
+		const globalStylesId = await dispatchGetGlobalStylesId( siteId, themeId );
 
-		const currentConfig = {
-			styles: record?.styles ?? {},
-			settings: record?.settings ?? {},
-			_links: record?._links ?? {},
-		};
-
-		const updatedConfig =
-			typeof callbackOrObject === 'function' ? callbackOrObject( currentConfig ) : callbackOrObject;
-
-		dispatch( 'core' ).editEntityRecord(
-			'root',
-			'globalStyles',
-			globalStylesId,
-			{
-				styles: cleanEmptyObject( updatedConfig.styles ) || {},
-				settings: cleanEmptyObject( updatedConfig.settings ) || {},
-				_links: cleanEmptyObject( updatedConfig._links ) || {},
-			},
-			options
-		);
+		await dispatchUpdateGlobalStyles( siteId, globalStylesId, {
+			styles: cleanEmptyObject( styles ) || {},
+			settings: cleanEmptyObject( settings ) || {},
+		} );
 	};
 
 	getValidSections = () => {
@@ -1021,6 +1016,8 @@ class ThemeSheet extends Component {
 
 		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
 
+		await this.setStyleVariation();
+
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
 		try {
@@ -1559,6 +1556,8 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
+		getGlobalStylesId,
+		updateGlobalStyles,
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(
