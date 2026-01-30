@@ -37,11 +37,9 @@ export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
 	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( domainsQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+		queryClient.prefetchQuery( userMailboxesQuery() );
+		queryClient.prefetchQuery( domainsQuery() );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>

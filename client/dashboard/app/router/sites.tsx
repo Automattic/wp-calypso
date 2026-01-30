@@ -78,24 +78,21 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async ( { context } ) => {
-		const tasks: Promise< unknown >[] = [];
-
-		tasks.push( queryClient.ensureQueryData( isAutomatticianQuery() ) );
-		tasks.push( queryClient.ensureQueryData( rawUserPreferencesQuery() ) );
-
+		// Preload the default sites list response without blocking.
 		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-			tasks.push(
-				queryClient.ensureQueryData(
-					context.config.queries.sitesQuery( {
-						source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
-						site_visibility: 'visible',
-						include_a8c_owned: false,
-					} )
-				)
+			queryClient.prefetchQuery(
+				context.config.queries.sitesQuery( {
+					source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
+					site_visibility: 'visible',
+					include_a8c_owned: false,
+				} )
 			);
 		}
 
-		await Promise.all( tasks );
+		await Promise.all( [
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } );
 

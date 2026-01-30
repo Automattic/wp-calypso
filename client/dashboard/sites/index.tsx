@@ -33,7 +33,6 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import EmptySitesState from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
@@ -232,8 +231,6 @@ export default function Sites() {
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
 
-	const userHasNoSites = user.site_count === 0;
-
 	let emptyDescription = __( 'Get started by creating a new site.' );
 	if ( view.search ) {
 		emptyDescription = sprintf(
@@ -306,15 +303,13 @@ export default function Sites() {
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							userHasNoSites ? null : (
-								<Button
-									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
-									__next40pxDefaultSize
-								>
-									{ __( 'Add new site' ) }
-								</Button>
-							)
+							<Button
+								variant="primary"
+								onClick={ () => setIsModalOpen( true ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add new site' ) }
+							</Button>
 						}
 					/>
 				}
@@ -325,22 +320,18 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ ! userHasNoSites ? (
-					<SitesDataViews
-						view={ view }
-						sites={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						isPlaceholderData={ isPlaceholderData }
-						empty={ emptyState }
-						paginationInfo={ paginationInfo }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-					/>
-				) : (
-					<EmptySitesState />
-				) }
+				<SitesDataViews
+					view={ view }
+					sites={ filteredData }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+					isPlaceholderData={ isPlaceholderData }
+					empty={ emptyState }
+					paginationInfo={ paginationInfo }
+					onChangeView={ handleViewChange }
+					onResetView={ resetView }
+				/>
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

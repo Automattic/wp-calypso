@@ -1,6 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
@@ -19,7 +19,6 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from './dataviews';
-import EmptyDomainsState from './empty-domains-state';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -41,7 +40,7 @@ function Domains() {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
-	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
+	const { data: sites } = useQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
 	const searchParams = domainsIndexRoute.useSearch();
 
@@ -51,7 +50,7 @@ function Domains() {
 		queryParams: searchParams,
 	} );
 
-	const { data: domains } = useSuspenseQuery( {
+	const { data: domains, isLoading } = useQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
@@ -64,16 +63,9 @@ function Domains() {
 		fields
 	);
 
-	const hasDomains = !! domains && domains.length > 0;
-
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={ ! hasDomains ? null : <AddDomainButton /> }
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={
 				<>
 					<OptInWelcome tracksContext="domains" />
@@ -81,24 +73,21 @@ function Domains() {
 				</>
 			}
 		>
-			{ ! hasDomains ? (
-				<EmptyDomainsState />
-			) : (
-				<DataViewsCard>
-					<DataViews< DomainSummary >
-						data={ filteredData || [] }
-						fields={ fields }
-						onChangeView={ updateView }
-						onResetView={ resetView }
-						view={ view }
-						actions={ actions }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ getDomainId }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-					/>
-				</DataViewsCard>
-			) }
+			<DataViewsCard>
+				<DataViews< DomainSummary >
+					data={ filteredData || [] }
+					fields={ fields }
+					onChangeView={ updateView }
+					onResetView={ resetView }
+					view={ view }
+					actions={ actions }
+					search
+					paginationInfo={ paginationInfo }
+					getItemId={ getDomainId }
+					isLoading={ isLoading }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+				/>
+			</DataViewsCard>
 		</PageLayout>
 	);
 }
