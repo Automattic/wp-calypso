@@ -1022,12 +1022,9 @@ export const siteSettingsCrontabRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'crontab',
-	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+	beforeLoad: ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
-		}
-		if ( ! isEnabled( 'hosting/crontab' ) ) {
-			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 } );

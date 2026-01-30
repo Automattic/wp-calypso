@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteCrontabsQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -17,7 +16,6 @@ export default function CrontabSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const isFeatureEnabled = config.isEnabled( 'hosting/crontab' );
 	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
 
 	const { data: crontabs } = useQuery( {
@@ -26,10 +24,6 @@ export default function CrontabSettingsSummary( {
 	} );
 
 	const crontabCount = crontabs?.length ?? 0;
-
-	if ( ! isFeatureEnabled ) {
-		return null;
-	}
 
 	const badges = [
 		hasSshFeature && {
