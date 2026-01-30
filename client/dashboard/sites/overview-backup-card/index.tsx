@@ -104,7 +104,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }
-			feature={ HostingFeatures.BACKUPS }
+			feature={ HostingFeatures.BACKUPS_RESTORE }
 			featureIcon={ CARD_PROPS.icon }
 			upsellId={ CARD_PROPS.tracksId }
 			upsellFeatureId="site-backups"

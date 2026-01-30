@@ -6,7 +6,6 @@ import { useSelector } from 'calypso/state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 type Props = {
@@ -15,17 +14,14 @@ type Props = {
 	loadingComponent?: ReactNode;
 };
 
-const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
+const NoBackupRestoreFeatureSwitch: FunctionComponent< Props > = ( {
 	trueComponent,
 	falseComponent,
 	loadingComponent,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const isMultiSite =
-		useSelector( ( state ) => siteId && isJetpackSiteMultiSite( state, siteId ) ) || false;
-
-	const hasBackupFeature = useSelector( ( state ) =>
+	const hasBackupRestoreFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_RESTORE )
 	);
 
@@ -38,10 +34,10 @@ const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
 		[ isRequesting, siteFeatures ]
 	);
 
-	// The idea is to render the `trueComponent` if the site is multisite and doesn't have the backup feature.
+	// Render the `trueComponent` (upsell) if the site doesn't have the backup restore feature.
 	const renderCondition = useCallback(
-		() => isMultiSite && ! hasBackupFeature,
-		[ hasBackupFeature, isMultiSite ]
+		() => ! hasBackupRestoreFeature,
+		[ hasBackupRestoreFeature ]
 	);
 
 	const loadingDefaultPlaceholder = (
@@ -51,17 +47,15 @@ const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
 	);
 
 	return (
-		<>
-			<RenderSwitch
-				loadingCondition={ loadingCondition }
-				renderCondition={ renderCondition }
-				queryComponent={ <QuerySiteFeatures siteIds={ [ siteId ] } /> }
-				loadingComponent={ loadingComponent ?? loadingDefaultPlaceholder }
-				trueComponent={ trueComponent }
-				falseComponent={ falseComponent }
-			/>
-		</>
+		<RenderSwitch
+			loadingCondition={ loadingCondition }
+			renderCondition={ renderCondition }
+			queryComponent={ <QuerySiteFeatures siteIds={ [ siteId ] } /> }
+			loadingComponent={ loadingComponent ?? loadingDefaultPlaceholder }
+			trueComponent={ trueComponent }
+			falseComponent={ falseComponent }
+		/>
 	);
 };
 
-export default MultisiteNoBackupPlanSwitch;
+export default NoBackupRestoreFeatureSwitch;
