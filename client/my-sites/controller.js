@@ -60,7 +60,7 @@ import {
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';

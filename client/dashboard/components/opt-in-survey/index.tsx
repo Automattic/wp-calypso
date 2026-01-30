@@ -65,11 +65,20 @@ export default function OptInSurvey() {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
 	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
 
-	const [ isEligible ] = useState( () => checkEligible( welcomeNoticeDismissedAt ) );
+	const [ isEligible ] = useState( () =>
+		checkEligible(
+			dashboardOptIn?.value === 'forced-opt-in'
+				? dashboardOptIn?.updated_at
+				: welcomeNoticeDismissedAt
+		)
+	);
 
 	if ( ! isEligible || isDismissed ) {
 		return null;
@@ -101,7 +110,11 @@ export default function OptInSurvey() {
 
 	return (
 		<Notice
-			title={ __( 'How’s your experience with the new Hosting Dashboard?' ) }
+			title={
+				dashboardOptIn?.value === 'forced-opt-in'
+					? __( 'How’s your experience with the Hosting Dashboard?' )
+					: __( 'How’s your experience with the new Hosting Dashboard?' )
+			}
 			onClose={ dismiss }
 			actions={
 				<ButtonStack justify="flex-start">

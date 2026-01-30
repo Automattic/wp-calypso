@@ -5,9 +5,10 @@ import {
 	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
+	skipIfMailosaurLimitReached();
 	const role = 'Editor';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'invited',

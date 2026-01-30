@@ -12,7 +12,7 @@ import {
 import { PluginActionTypes } from 'calypso/my-sites/plugins/plugin-management-v2/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { Plugin, PluginSite } from 'calypso/state/plugins/installed/types';
 import { PluginActions } from '../hooks/types';
 
