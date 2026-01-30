@@ -1411,7 +1411,7 @@ __metadata:
     "@wordpress/components": "npm:^32.1.0"
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/keycodes": "npm:^4.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
+    "@wordpress/private-apis": "npm:^ 1.39.0"
     clsx: "npm:^2.1.1"
     deepmerge: "npm:^4.3.1"
     i18n-calypso: "workspace:^"
@@ -1479,7 +1479,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/plugins": "npm:^7.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
+    "@wordpress/private-apis": "npm:^ 1.39.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     "@wordpress/router": "npm:^1.23.0"
     "@wordpress/url": "npm:^4.35.0"
@@ -2501,7 +2501,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/plugins": "npm:^7.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
+    "@wordpress/private-apis": "npm:^ 1.39.0"
     "@wordpress/rich-text": "npm:^7.23.0"
     "@wordpress/router": "npm:^1.23.0"
     "@wordpress/url": "npm:^4.23.0"
@@ -13069,12 +13069,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/private-apis@npm:^1.23.0":
-  version: 1.23.0
-  resolution: "@wordpress/private-apis@npm:1.23.0"
-  dependencies:
-    "@babel/runtime": "npm:7.25.7"
-  checksum: 3461ef75780c44ceb00e96a6786375177ab1ce5c2f98ac039f23ced9aa896645c16d2cc0e2a662fe7a9477c42a78e39de16fc36b2897d565ef75a209735b9f19
+"@wordpress/private-apis@npm:^ 1.39.0":
+  version: 1.39.0
+  resolution: "@wordpress/private-apis@npm:1.39.0"
+  checksum: 762e80f69e8145e837ad027c651a740bac7ccac6e3e2f5e73a3a37214ebfd39912bedf695ad4760f55b86c965bb0e264fb87d986db67b3b99bb5d32ae69cf42e
   languageName: node
   linkType: hard
 
@@ -15513,7 +15511,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/notices": "npm:5.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
+    "@wordpress/private-apis": "npm:^ 1.39.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     "@wordpress/viewport": "npm:^6.23.0"
     "@wordpress/warning": "npm:^3.23.0"

@@ -42,7 +42,7 @@
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/is-shallow-equal": "^ 5.39.0",
 		"@wordpress/plugins": "^7.23.0",
-		"@wordpress/private-apis": "^1.23.0",
+		"@wordpress/private-apis": "^ 1.39.0",
 		"@wordpress/rich-text": "^7.23.0",
 		"@wordpress/router": "^1.23.0",
 		"@wordpress/url": "^4.23.0",
