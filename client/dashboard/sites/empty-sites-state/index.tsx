@@ -8,12 +8,21 @@ import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
+import type { ReactNode } from 'react';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
 const EMPTY_STATE_CTA_ID = 'dashboard-sites-empty-state';
 
-export default function EmptySitesState() {
+export default function EmptySitesState( {
+	title,
+	description,
+	isBorderless,
+}: {
+	title: string;
+	description: ReactNode;
+	isBorderless?: boolean;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	const trackEmptyStateActionClick = ( action: string ) => {
@@ -43,13 +52,11 @@ export default function EmptySitesState() {
 	};
 
 	return (
-		<EmptyState.Wrapper>
+		<EmptyState.Wrapper isBorderless={ isBorderless }>
 			<EmptyState>
 				<EmptyState.Header>
-					<EmptyState.Title>{ __( 'You don’t have any sites yet' ) }</EmptyState.Title>
-					<EmptyState.Description>
-						{ __( 'Start a site and begin creating, coding, or exploring what WordPress can do.' ) }
-					</EmptyState.Description>
+					<EmptyState.Title>{ title }</EmptyState.Title>
+					<EmptyState.Description>{ description }</EmptyState.Description>
 				</EmptyState.Header>
 				<EmptyState.Content>
 					<EmptyState.ActionList>
