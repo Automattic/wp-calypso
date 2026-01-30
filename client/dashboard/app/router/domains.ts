@@ -57,9 +57,11 @@ export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
 	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( domainsQuery() );
-		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
