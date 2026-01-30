@@ -1,10 +1,10 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { ActionList } from '../action-list';
 import { Card, CardBody } from '../card';
 import { Text } from '../text';
 import type { ActionItemProps } from '../action-list/types';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -17,10 +17,23 @@ function EmptyState( { children }: { children?: ReactNode } ) {
 }
 
 function EmptyStateWrapper( { children }: { children: ReactNode } ) {
+	const cardRef = useRef< HTMLElement >( null );
+
+	// Calculate the vertical offset once on mount to set a consistent min-height.
+	// This keeps the visual layout stable between view transitions. It's fine if
+	// the wrapper expands beyond this initial calculation after layout changes.
+	useLayoutEffect( () => {
+		if ( ! cardRef.current ) {
+			return;
+		}
+		const rect = cardRef.current.getBoundingClientRect();
+		cardRef.current.style.setProperty( '--dashboard-empty-state-offset', `${ rect.top }px` );
+	}, [] );
+
 	return (
-		<Card className="dashboard-empty-state__wrapper">
+		<Card ref={ cardRef } className="dashboard-empty-state__wrapper">
 			<CardBody>
-				<VStack spacing={ 8 } alignment="center">
+				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state__wrapper-content">
 					{ children }
 				</VStack>
 			</CardBody>
