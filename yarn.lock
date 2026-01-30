@@ -1830,7 +1830,7 @@ __metadata:
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     clsx: "npm:^2.1.1"
@@ -2101,7 +2101,7 @@ __metadata:
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     fuse.js: "npm:^6.6.2"
@@ -2206,7 +2206,7 @@ __metadata:
   resolution: "@automattic/state-utils@workspace:packages/state-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/warning": "npm:^3.23.0"
     lodash: "npm:^4.17.21"
     redux: "npm:^5.0.1"
@@ -2344,7 +2344,7 @@ __metadata:
     "@wordpress/format-library": "npm:^5.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/keycodes": "npm:^4.23.0"
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/rich-text": "npm:^7.23.0"
@@ -2495,7 +2495,7 @@ __metadata:
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/private-apis": "npm:^1.23.0"
     "@wordpress/rich-text": "npm:^7.23.0"
@@ -12808,12 +12808,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/is-shallow-equal@npm:^5.23.0":
-  version: 5.23.0
-  resolution: "@wordpress/is-shallow-equal@npm:5.23.0"
-  dependencies:
-    "@babel/runtime": "npm:7.25.7"
-  checksum: f73366f5042890bb870f2bc64382e84e1e4fe037fe5cdd8600afb61ccc880d088633b3eea007ea7f0aca3f39e4c7b5ddbc0184f871f2cfad086f1210a4310146
+"@wordpress/is-shallow-equal@npm:^ 5.39.0":
+  version: 5.39.0
+  resolution: "@wordpress/is-shallow-equal@npm:5.39.0"
+  checksum: 1ca63601b3067c0469f2c62598b8eaf065f3b7a7aeba9f3dea5013e012317d0ae27fddc86f1e3a40745b70e79b537b8cfc42af4eb2c90c8f8317afe97d8a7e49
   languageName: node
   linkType: hard
 
@@ -15380,7 +15378,7 @@ __metadata:
     "@wordpress/html-entities": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/notices": "npm:5.23.0"
     "@wordpress/private-apis": "npm:^1.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
@@ -38538,7 +38536,7 @@ __metadata:
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/keyboard-shortcuts": "npm:^5.23.0"
     "@wordpress/keycodes": "npm:^4.23.0"
     "@wordpress/prettier-config": "npm:^4.23.0"
