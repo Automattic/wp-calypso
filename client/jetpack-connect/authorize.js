@@ -1228,11 +1228,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname, from } = this.props.authQuery;
 
 		const actionButton = (
-			<Button
-				primary
-				disabled={  }
-				onClick={ this.handleSubmit }
-			>
+			<Button primary onClick={ this.handleSubmit }>
 				{ this.getButtonText() }
 			</Button>
 		);
@@ -1253,16 +1249,11 @@ export class JetpackAuthorize extends Component {
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
 			return (
 				<>
-				<ConsentText text={ translate(
-				'By clicking Connect to WordPress.com, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.',
-				{
-					components: {
-						termsOfServiceLink,
-						syncDataLink,
-					},
-				}
-			)}/>
-				<ActionButtons primaryLabel={ this.getButtonText() } primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError} />
+					<ConsentText text={ disclaimer } />
+					<ActionButtons
+						primaryLabel={ this.getButtonText() }
+						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+					/>
 				</>
 			);
 		}
