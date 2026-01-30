@@ -38,6 +38,12 @@ export interface Purchase {
 
 	domainRegistrationAgreementUrl: string | null;
 	expiryDate: string;
+
+	/**
+	 * The expiry date in ISO 8601 (YYYY-MM-DD) if the payment method has one.
+	 */
+	paymentExpiryDate: string | undefined;
+
 	expiryStatus: string;
 	iapPurchaseManagementLink: string | null;
 	id: number;
@@ -243,6 +249,11 @@ export interface PurchasePayment {
 	countryCode: string | undefined | null;
 	countryName: string | undefined;
 	storedDetailsId: string | number | undefined | null;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate?: string;
 	creditCard?: PurchasePaymentCreditCard;
 	paymentPartner?: string;
@@ -257,6 +268,11 @@ export type PurchasePaymentWithPayPal = PurchasePayment & {
 	countryName: string | undefined;
 	storedDetailsId: string | number;
 	type: string;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate: string;
 };
 
@@ -279,5 +295,10 @@ export interface PurchasePaymentCreditCard {
 	displayBrand: string | null;
 	processor: string;
 	number: string;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate: string;
 }

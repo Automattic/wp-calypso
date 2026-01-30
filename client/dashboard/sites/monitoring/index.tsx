@@ -114,11 +114,7 @@ function SiteMonitoring() {
 	};
 
 	return (
-		<HostingFeatureGatedWithCallout
-			site={ site }
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> } /> }
-			{ ...getMonitoringCalloutProps() }
-		>
+		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getMonitoringCalloutProps() }>
 			<PageLayout
 				header={
 					<PageHeader

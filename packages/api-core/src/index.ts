@@ -89,6 +89,7 @@ export * from './site-flex-usage';
 export * from './site-features';
 export * from './site-hosting';
 export * from './site-hosting-code-deployments';
+export * from './site-hosting-crontab';
 export * from './site-hosting-edge-cache';
 export * from './site-hosting-metrics';
 export * from './site-hosting-sftp';
