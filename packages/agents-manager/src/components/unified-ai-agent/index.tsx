@@ -4,25 +4,17 @@ import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_URL, getAgentConfig } from '../../constants';
+import { useAgentsManagerContext } from '../../contexts';
 import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
 import type { ContextEntry } from '../../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
-import type { HelpCenterSite, CurrentUser } from '@automattic/data-stores';
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
 	currentRoute?: string;
-	/** Indicates if the user is eligible for chat. */
-	isEligibleForChat: boolean;
-	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName: string;
-	/** The selected site object. */
-	site?: HelpCenterSite | null;
-	/** The current user object. */
-	currentUser?: CurrentUser;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
 }
@@ -73,12 +65,8 @@ export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( {
-	currentRoute,
-	site = null,
-	sectionName,
-	isEligibleForChat,
-}: UnifiedAIAgentProps ) {
+function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
+	const { site } = useAgentsManagerContext();
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
@@ -240,9 +228,6 @@ function AgentSetup( {
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			isEligibleForChat={ isEligibleForChat }
-			site={ site }
-			sectionName={ sectionName }
 			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
