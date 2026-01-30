@@ -1,5 +1,4 @@
 import { ServerConversationListItem } from '@automattic/agenttic-client';
-import type { getAgentManager } from '@automattic/agenttic-client';
 import type Smooch from 'smooch';
 
 /**
@@ -26,13 +25,3 @@ export type LocalConversationListItem = Omit< ServerConversationListItem, 'chat_
 	conversation_id?: string;
 	is_zendesk?: true;
 };
-
-/**
- * Extend Window interface for cross-bundle access to agentManager.
- * Used by components like Image Studio that need to access the shared agent.
- */
-declare global {
-	interface Window {
-		__agentManager?: ReturnType< typeof getAgentManager >;
-	}
-}
