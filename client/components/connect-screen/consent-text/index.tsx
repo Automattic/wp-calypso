@@ -1,47 +1,24 @@
-import { createInterpolateElement, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
 export interface ConsentTextProps {
-	text: string;
-	links?: Record< string, string >;
+	children: ReactNode;
 	className?: string;
 }
 
 /**
- * Consent text with link support using createInterpolateElement
- *
- * Use XML-like tags in text to create links. Tag names should match keys in the links prop.
+ * Styled consent text paragraph
  * @example
- * <ConsentText
- *   text="By continuing, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>."
- *   links={{
- *     tosLink: "https://wordpress.com/tos/",
- *     privacyLink: "https://automattic.com/privacy/"
- *   }}
- * />
+ * <ConsentText>
+ *   { translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
+ *     components: {
+ *       a: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />
+ *     }
+ *   } ) }
+ * </ConsentText>
  */
-export function ConsentText( { text, links = {}, className }: ConsentTextProps ): JSX.Element {
-	const interpolatedText = useMemo( () => {
-		// Build the interpolation options from links
-		const linkElements: Record< string, JSX.Element > = {};
-
-		for ( const [ key, url ] of Object.entries( links ) ) {
-			linkElements[ key ] = (
-				<a href={ url } target="_blank" rel="noopener noreferrer">
-					{ /* Placeholder content - will be replaced by createInterpolateElement */ }
-				</a>
-			);
-		}
-
-		// If no links, return plain text
-		if ( Object.keys( linkElements ).length === 0 ) {
-			return text;
-		}
-
-		return createInterpolateElement( text, linkElements );
-	}, [ text, links ] );
-
-	return <p className={ clsx( 'connect-screen-consent-text', className ) }>{ interpolatedText }</p>;
+export function ConsentText( { children, className }: ConsentTextProps ): JSX.Element {
+	return <p className={ clsx( 'connect-screen-consent-text', className ) }>{ children }</p>;
 }

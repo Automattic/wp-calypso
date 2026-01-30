@@ -121,16 +121,24 @@ export const ConsentTextVariants: StoryObj< typeof ConsentText > = {
 	render: () => (
 		<div>
 			<VariantSection title="Plain text">
-				<ConsentText text="By continuing, you agree to our terms and conditions." />
+				<ConsentText>By continuing, you agree to our terms and conditions.</ConsentText>
 			</VariantSection>
 			<VariantSection title="With links">
-				<ConsentText
-					text="By continuing, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>."
-					links={ {
-						tosLink: localizeUrl( 'https://wordpress.com/tos/' ),
-						privacyLink: localizeUrl( 'https://automattic.com/privacy/' ),
-					} }
-				/>
+				<ConsentText>
+					By continuing, you agree to our{ ' ' }
+					<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
+						Terms of Service
+					</a>{ ' ' }
+					and{ ' ' }
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noreferrer"
+					>
+						Privacy Policy
+					</a>
+					.
+				</ConsentText>
 			</VariantSection>
 		</div>
 	),
@@ -208,10 +216,13 @@ export const FullInviteScreen: StoryObj = {
 				tertiaryLabel="Sign in with another account"
 				tertiaryOnClick={ () => alert( 'Switch account!' ) }
 			/>
-			<ConsentText
-				text="By accepting, you agree to our <tosLink>Terms of Service</tosLink>."
-				links={ { tosLink: localizeUrl( 'https://wordpress.com/tos/' ) } }
-			/>
+			<ConsentText>
+				By accepting, you agree to our{ ' ' }
+				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
+					Terms of Service
+				</a>
+				.
+			</ConsentText>
 		</ScreenLayout>
 	),
 };
