@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
+import { seen, edit, cog, check, chartBar } from '@wordpress/icons';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
@@ -30,11 +31,11 @@ const mockUser = {
 };
 
 const mockPermissions = [
-	{ icon: 'view' as const, label: 'View your profile information' },
-	{ icon: 'edit' as const, label: 'Edit your posts and pages' },
-	{ icon: 'manage' as const, label: 'Manage your site settings' },
-	{ icon: 'check' as const, label: 'Access your media library' },
-	{ icon: 'view' as const, label: 'View your site statistics' },
+	{ icon: seen, label: 'View your profile information' },
+	{ icon: edit, label: 'Edit your posts and pages' },
+	{ icon: cog, label: 'Manage your site settings' },
+	{ icon: check, label: 'Access your media library' },
+	{ icon: chartBar, label: 'View your site statistics' },
 ];
 
 // BrandHeader - All variants
@@ -203,9 +204,9 @@ export const FullInviteScreen: StoryObj = {
 			<PermissionsList
 				title="As an editor, you'll be able to:"
 				permissions={ [
-					{ icon: 'edit', label: 'Create and edit posts' },
-					{ icon: 'view', label: 'View site statistics' },
-					{ icon: 'manage', label: 'Manage media uploads' },
+					{ icon: edit, label: 'Create and edit posts' },
+					{ icon: chartBar, label: 'View site statistics' },
+					{ icon: cog, label: 'Manage media uploads' },
 				] }
 			/>
 			<ActionButtons

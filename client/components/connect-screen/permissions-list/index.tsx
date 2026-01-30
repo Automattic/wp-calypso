@@ -1,13 +1,13 @@
-import { Button, Icon } from '@wordpress/components';
+import { Button, Icon, IconType } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { check, seen, edit, cog, chevronDown } from '@wordpress/icons';
+import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
 export interface Permission {
-	icon?: 'check' | 'view' | 'edit' | 'manage';
+	icon?: IconType;
 	label: string;
 }
 
@@ -19,13 +19,6 @@ export interface PermissionsListProps {
 	learnMoreUrl?: string;
 	className?: string;
 }
-
-const ICON_MAP = {
-	check,
-	view: seen,
-	edit,
-	manage: cog,
-} as const;
 
 /**
  * Expandable permissions list with optional icons
@@ -60,10 +53,9 @@ export function PermissionsList( {
 			return <span className="connect-screen-permissions-list__icon-placeholder" />;
 		}
 
-		const icon = ICON_MAP[ permission.icon ];
 		return (
 			<span className="connect-screen-permissions-list__icon">
-				<Icon icon={ icon } size={ 20 } />
+				<Icon icon={ permission.icon } size={ 20 } />
 			</span>
 		);
 	};
