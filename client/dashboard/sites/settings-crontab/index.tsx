@@ -71,7 +71,7 @@ function formatSchedule( schedule: string ): string {
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
-	perPage: 25,
+	perPage: 20,
 	page: 1,
 	fields: [ 'command' ],
 	titleField: 'schedule',
@@ -222,8 +222,8 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 					<DataViews< Crontab >
 						getItemId={ ( item ) => String( item.cron_id ) }
 						data={ filteredData }
-						fields={ fields }
-						actions={ actions }
+						fields={ filteredData.length > 0 ? fields : [] }
+						actions={ filteredData.length > 0 ? actions : [] }
 						view={ view }
 						onChangeView={ setView }
 						isLoading={ isLoadingCrontabs }

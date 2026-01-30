@@ -7,9 +7,6 @@ export const siteCrontabsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'crontabs' ],
 		queryFn: () => fetchCrontabs( siteId ),
-		meta: {
-			persist: false,
-		},
 	} );
 
 export const siteCrontabCreateMutation = ( siteId: number ) =>

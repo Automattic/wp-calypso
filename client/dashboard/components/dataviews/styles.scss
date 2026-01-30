@@ -25,11 +25,6 @@ a.dataviews-url-field {
 	}
 }
 
-// When the DataViews is empty, ensure consistent padding on top and bottom.
-.components-card__body .dataviews-wrapper .dataviews-no-results {
-	padding: 0 0 $grid-unit-10 0;
-}
-
 .dashboard-dataviews-empty-state {
 	max-width: 480px;
 	padding-block: $grid-unit-20;
