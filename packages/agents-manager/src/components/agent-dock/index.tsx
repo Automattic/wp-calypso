@@ -76,6 +76,7 @@ export default function AgentDock( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ inputValue, setInputValue ] = useState( '' );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -310,11 +311,21 @@ export default function AgentDock( {
 		thinkingMessage,
 	] );
 
+	// Determine which suggestions to show following Big Sky's logic:
+	// - When there are dynamic suggestions (from block selection, etc.), show those
+	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	let displayedEmptyViewSuggestions: Suggestion[] = [];
+	if ( suggestions.length > 0 ) {
+		displayedEmptyViewSuggestions = suggestions;
+	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
+		displayedEmptyViewSuggestions = emptyViewSuggestions;
+	}
+
 	const Chat = (
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
-			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
+			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
 			onSubmit={ onSubmit }
@@ -328,6 +339,8 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
 		/>
 	);
 
