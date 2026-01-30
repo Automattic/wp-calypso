@@ -59,7 +59,7 @@ describe( 'Sites', () => {
 	it( 'renders Add new site button', async () => {
 		render( <Sites /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
 	} );
 
 	it( 'renders empty state when the user has no sites', async () => {
@@ -71,8 +71,8 @@ describe( 'Sites', () => {
 
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
-		).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeInTheDocument();
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 	} );
 
