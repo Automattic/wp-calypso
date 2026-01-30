@@ -1,0 +1,22 @@
+@import "@automattic/components/src/styles/typography";
+
+.promote-post-i2__filter-credits-popover {
+
+	.components-popover__content {
+		min-width: 350px;
+		padding: 12px 16px;
+		font-family: $font-sf-pro-text;
+		font-size: 0.875rem;
+
+		.promote-post-i2__filter-credits-popover-header {
+			font-weight: 600;
+		}
+
+		ul {
+			list-style-type: disc;
+			list-style-position: inside;
+			margin-left: 0;
+			margin-bottom: 0;
+		}
+	}
+}

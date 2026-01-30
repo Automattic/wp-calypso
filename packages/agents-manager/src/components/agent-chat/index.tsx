@@ -72,6 +72,7 @@ export default function AgentChat( {
 	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
 	onTypingStatusChange,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -105,7 +106,6 @@ export default function AgentChat( {
 			onExpand={ onExpand }
 			onStop={ onAbort }
 			messageRenderer={ messageRenderer }
-			onTypingStatusChange={ onTypingStatusChange }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />

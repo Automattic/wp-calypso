@@ -25,6 +25,9 @@ export default function OptInWelcomeModal() {
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
 	const isLargeViewport = useViewportMatch( 'small', '>=' );
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
 	const { data: isDismissedPersisted } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( preferenceName )
@@ -36,6 +39,10 @@ export default function OptInWelcomeModal() {
 		recordTracksEvent( 'calypso_dashboard_opt_in_welcome_modal_dismiss_click' );
 		updateDismissed( new Date().toISOString() );
 	};
+
+	if ( dashboardOptIn?.value === 'forced-opt-in' ) {
+		return null;
+	}
 
 	if ( isDismissed ) {
 		return null;

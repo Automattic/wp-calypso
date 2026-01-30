@@ -51,6 +51,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	isVar1dVariant: boolean;
 	/**
+	 * When true, the user is specifically in the var4 variant.
+	 * Used to exclude var4 from certain experiment-specific styling.
+	 */
+	isVar4Variant: boolean;
+	/**
 	 * When true, the user is in an experiment variant (not control).
 	 */
 	isExperimentVariant: boolean;
@@ -102,6 +107,7 @@ function usePlanDifferentiatorsExperiment( {
 		useVar3Features: variant === 'var3',
 		useVar1Features: variant === 'var1' || variant === 'var1d',
 		isVar1dVariant: variant === 'var1d',
+		isVar4Variant: variant === 'var4',
 		isExperimentVariant,
 	};
 }

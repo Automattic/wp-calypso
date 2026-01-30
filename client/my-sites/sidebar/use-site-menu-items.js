@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
