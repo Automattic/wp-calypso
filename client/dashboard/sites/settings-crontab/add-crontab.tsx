@@ -122,7 +122,7 @@ export default function AddCrontab() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'Add Scheduled Job' ) }
+					title={ __( 'Add scheduled job' ) }
 					description={ __(
 						'Schedule a command to run automatically at specified intervals on your site.'
 					) }

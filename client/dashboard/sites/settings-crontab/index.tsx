@@ -239,6 +239,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 					label: __( 'Delete' ),
 					isBusy: isDeletingCrontab,
 					disabled: isDeletingCrontab,
+					isDestructive: true,
 				} }
 				onCancel={ () => setSelectedCrontabToRemove( null ) }
 				onConfirm={ handleDelete }
