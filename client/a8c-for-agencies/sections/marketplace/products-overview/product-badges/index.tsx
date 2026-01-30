@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/ui';
 import { useProductCategories } from '../../hooks/use-product-categories';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 

@@ -33,6 +33,7 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
+import EmptySitesState from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
@@ -46,6 +47,7 @@ import type {
 import type { View, Filter } from '@wordpress/dataviews';
 
 type SiteListQueryOptions = {
+	isDefaultView?: boolean;
 	isRestoringAccount: boolean;
 	isAutomattician: boolean;
 };
@@ -75,7 +77,7 @@ const getFetchSitesOptions = (
 
 const getFetchPaginatedSitesOptions = (
 	view: View,
-	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions,
+	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
 	siteFilters: DashboardFilters = {}
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
@@ -86,6 +88,8 @@ const getFetchPaginatedSitesOptions = (
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
 	const options: FetchPaginatedSitesOptions = {
+		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
+
 		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
@@ -202,7 +206,11 @@ export default function Sites() {
 
 	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
 		view,
-		{ isRestoringAccount, isAutomattician }
+		{
+			isDefaultView: ! resetView && ! view.search && view.page === 1,
+			isRestoringAccount,
+			isAutomattician,
+		}
 	);
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
@@ -223,6 +231,8 @@ export default function Sites() {
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 
 	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+
+	const userHasNoSites = user.site_count === 0;
 
 	let emptyDescription = __( 'Get started by creating a new site.' );
 	if ( view.search ) {
@@ -296,13 +306,15 @@ export default function Sites() {
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							<Button
-								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new site' ) }
-							</Button>
+							userHasNoSites ? null : (
+								<Button
+									variant="primary"
+									onClick={ () => setIsModalOpen( true ) }
+									__next40pxDefaultSize
+								>
+									{ __( 'Add new site' ) }
+								</Button>
+							)
 						}
 					/>
 				}
@@ -313,18 +325,22 @@ export default function Sites() {
 					</>
 				}
 			>
-				<SitesDataViews
-					view={ view }
-					sites={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-					isPlaceholderData={ isPlaceholderData }
-					empty={ emptyState }
-					paginationInfo={ paginationInfo }
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
-				/>
+				{ ! userHasNoSites ? (
+					<SitesDataViews
+						view={ view }
+						sites={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						isPlaceholderData={ isPlaceholderData }
+						empty={ emptyState }
+						paginationInfo={ paginationInfo }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+					/>
+				) : (
+					<EmptySitesState />
+				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

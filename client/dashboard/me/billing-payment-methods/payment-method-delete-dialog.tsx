@@ -11,6 +11,7 @@ import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatDate } from '../../utils/datetime';
+import { isInExpirationGracePeriod } from '../../utils/purchase';
 import { PaymentMethodDetails } from './payment-method-details';
 import type { Purchase, StoredPaymentMethod } from '@automattic/api-core';
 
@@ -85,15 +86,17 @@ export const PaymentMethodDeleteDialog = ( {
 										<Text>{ purchase.meta || purchase.domain }</Text>
 									</VStack>
 									<Text>
-										{ sprintf(
-											// translators: date is a formatted renewal date
-											__( 'Renews on %(date)s' ),
-											{
-												date: formatDate( new Date( purchase.renew_date ), locale, {
-													dateStyle: 'long',
-												} ),
-											}
-										) }
+										{ isInExpirationGracePeriod( purchase )
+											? __( 'Pending renewal' )
+											: sprintf(
+													// translators: date is a formatted renewal date
+													__( 'Renews on %(date)s' ),
+													{
+														date: formatDate( new Date( purchase.renew_date ), locale, {
+															dateStyle: 'long',
+														} ),
+													}
+											  ) }
 									</Text>
 								</HStack>
 							) ) }

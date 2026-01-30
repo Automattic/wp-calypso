@@ -1,5 +1,5 @@
 import path from 'path';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 const TEST_MEDIUM_EXPORT_FILE_PATH = path.join(
 	__dirname,
@@ -18,6 +18,8 @@ test.describe(
 		},
 	},
 	() => {
+		skipIfMailosaurLimitReached();
+
 		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "Medium Run Importer" link on the wp-admin Importers List page to import my content from my Medium account', async ( {
 			pageImportContentFromMedium,
 			sitePublic,

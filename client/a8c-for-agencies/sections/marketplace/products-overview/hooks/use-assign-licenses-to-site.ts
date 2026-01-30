@@ -5,11 +5,11 @@ import {
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import useAssignLicenseMutation from '../../hooks/use-assign-license-mutation';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 import type {
 	ProductInfo,
 	PurchasedProductsInfo,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 const NO_OP = () => {
 	/* Do nothing */

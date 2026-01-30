@@ -13,8 +13,8 @@ import {
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
 	isTemporarySitePurchase,
-	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
+	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -33,11 +33,10 @@ export function shouldShowExpiringNotice(
 	);
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
-
 	if (
 		! isExpiring( currentPurchase ) ||
 		currentPurchase?.is_trial_plan ||
-		isAkismetFreeProduct( currentPurchase )
+		isInExpirationGracePeriod( currentPurchase )
 	) {
 		return false;
 	}

@@ -45,6 +45,8 @@ interface AgentChatProps {
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
+	/** Called to clear the suggestions. */
+	clearSuggestions?: () => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -67,8 +69,10 @@ export default function AgentChat( {
 	onAbort,
 	onClose,
 	onExpand,
+	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
 	onTypingStatusChange,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -96,12 +100,12 @@ export default function AgentChat( {
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
+			clearSuggestions={ clearSuggestions }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
 			messageRenderer={ messageRenderer }
-			onTypingStatusChange={ onTypingStatusChange }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />

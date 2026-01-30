@@ -15,11 +15,15 @@ export default function isFollowing(
 	if ( feedUrl ) {
 		const url = getReaderAliasedFollowFeedUrl( state, feedUrl );
 		follow = follows.items[ prepareComparableUrl( url ) ];
-	} else if ( feedId ) {
+	}
+
+	if ( ! follow && feedId ) {
 		follow = find( follows.items, { feed_ID: feedId } );
-	} else if ( blogId ) {
+	}
+
+	if ( ! follow && blogId ) {
 		follow = find( follows.items, { blog_ID: blogId } );
 	}
 
-	return !! follow && follow.is_following;
+	return !! follow?.is_following;
 }
