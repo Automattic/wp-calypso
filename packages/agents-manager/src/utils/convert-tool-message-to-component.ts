@@ -1,8 +1,8 @@
 import type { GetChatComponent } from './load-external-providers';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage } from '@automattic/agenttic-client';
 
-interface ConvertToolMessagesOptions {
-	messages: Message[];
+interface Options {
+	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 }
 
@@ -12,7 +12,7 @@ interface ConvertToolMessagesOptions {
 export function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
-}: ConvertToolMessagesOptions ): Message[] {
+}: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
@@ -36,7 +36,7 @@ export function convertToolMessagesToComponents( {
 				return [];
 			}
 
-			const componentMessage: Message = {
+			const componentMessage = {
 				...message,
 				content: [
 					{

@@ -34,7 +34,6 @@ import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
 } from '../../utils/load-external-providers';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
 
 interface AgentDockProps {
@@ -251,15 +250,17 @@ export default function AgentDock( {
 	// Filter and convert messages for display
 	const visibleMessages = useMemo( () => {
 		const filteredMessages = messages.filter(
-			( message: Message ) =>
+			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
-		return convertToolMessagesToComponents( {
+		const convertedMessages = convertToolMessagesToComponents( {
 			messages: filteredMessages,
 			getChatComponent,
 		} );
+
+		return convertedMessages;
 	}, [ messages, deletedMessageIds, getChatComponent ] );
 
 	const Chat = (
