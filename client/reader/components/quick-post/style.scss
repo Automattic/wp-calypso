@@ -1,25 +1,38 @@
 .quick-post {
-	.editor__header {
-		border-color: var( --color-border-subtle );
-		border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
+	.sites-dropdown__wrapper {
+		width: 200px;
 
-		// Verbum editor is hiding the block settings menu, we need to show it.
-		.editor__header-wrapper .editor__header-toolbar .block-editor-block-toolbar .block-editor-block-settings-menu {
-			display: inline-block;
+		@include break-large {
+			width: 300px;
 		}
 	}
 
 	.sites-dropdown__selected .site__content {
-		padding-top: 0;
+		padding: 0;
 	}
 
 	.verbum-editor-wrapper {
-		margin-top: 8px;
+		margin-top: 14px;
+	}
+
+	.editor__header {
+		border-color: var( --color-border-subtle );
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px 6px 0 0;
+
+		// Verbum editor is hiding the block settings menu, we need to show it.
+		.editor__header-wrapper
+			.editor__header-toolbar
+			.block-editor-block-toolbar
+			.block-editor-block-settings-menu {
+			display: inline-block;
+		}
 	}
 
 	.editor__main {
 		border-color: var( --color-border-subtle );
-		border-radius: 0 0 6px 6px; /* stylelint-disable-line scales/radii */
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
 		border-top-width: 0;
 
 		&,
@@ -36,7 +49,7 @@
 		margin-top: 16px;
 
 		button {
-			height: 40px;
+			margin-left: 5px;
 		}
 
 		.is-tertiary {
@@ -44,7 +57,7 @@
 		}
 
 		.is-primary {
-			padding: 13px 26px;
+			padding: 10px 26px;
 		}
 	}
 }

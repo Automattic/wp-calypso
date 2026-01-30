@@ -187,7 +187,7 @@ export default function QuickPost(): JSX.Element | null {
 					div.is-root-container.block-editor-block-list__layout {
 						padding-bottom: 20px;
 					}
-				` }
+					` }
 				/>
 			</div>
 
