@@ -3,10 +3,20 @@ import { __ } from '@wordpress/i18n';
 import { Icon, search, globe } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
-import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
+import type { ReactNode } from 'react';
 
-export default function EmptyDomainsState() {
+export default function EmptyDomainsState( {
+	title,
+	description,
+	isBorderless,
+	children,
+}: {
+	title: string;
+	description: ReactNode;
+	isBorderless?: boolean;
+	children?: ReactNode;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	const trackEmptyStateActionClick = ( action: string ) => {
@@ -23,18 +33,12 @@ export default function EmptyDomainsState() {
 		trackEmptyStateActionClick( 'transfer-domain' );
 	};
 
-	const handleOfferClick = () => {
-		trackEmptyStateActionClick( 'offer' );
-	};
-
 	return (
-		<EmptyState.Wrapper>
+		<EmptyState.Wrapper isBorderless={ isBorderless }>
 			<EmptyState>
 				<EmptyState.Header>
-					<EmptyState.Title>{ __( 'Add your first domain name' ) }</EmptyState.Title>
-					<EmptyState.Description>
-						{ __( 'Establish a unique online identity for your site.' ) }
-					</EmptyState.Description>
+					<EmptyState.Title>{ title }</EmptyState.Title>
+					<EmptyState.Description>{ description }</EmptyState.Description>
 				</EmptyState.Header>
 				<EmptyState.Content>
 					<EmptyState.ActionList>
@@ -73,7 +77,7 @@ export default function EmptyDomainsState() {
 							}
 						/>
 					</EmptyState.ActionList>
-					<OfferCard onClick={ handleOfferClick } />
+					{ children }
 				</EmptyState.Content>
 			</EmptyState>
 		</EmptyState.Wrapper>

@@ -3,11 +3,13 @@ import { domainsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { domainsIndexRoute } from '../app/router/domains';
 import { DataViews, DataViewsCard } from '../components/dataviews';
+import OfferCard from '../components/offer-card';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -38,6 +40,7 @@ const defaultView = {
 };
 
 function Domains() {
+	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
@@ -82,7 +85,18 @@ function Domains() {
 			}
 		>
 			{ ! hasDomains ? (
-				<EmptyDomainsState />
+				<EmptyDomainsState
+					title={ __( 'Add your first domain name' ) }
+					description={ __( 'Establish a unique online identity for your site.' ) }
+				>
+					<OfferCard
+						onClick={ () =>
+							recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+								action: 'offer',
+							} )
+						}
+					/>
+				</EmptyDomainsState>
 			) : (
 				<DataViewsCard>
 					<DataViews< DomainSummary >
@@ -96,6 +110,13 @@ function Domains() {
 						paginationInfo={ paginationInfo }
 						getItemId={ getDomainId }
 						defaultLayouts={ DEFAULT_LAYOUTS }
+						empty={
+							<EmptyDomainsState
+								title={ __( 'No domains match your search' ) }
+								description={ __( 'Try again, or add a new domain with the options below.' ) }
+								isBorderless
+							/>
+						}
 					/>
 				</DataViewsCard>
 			) }
