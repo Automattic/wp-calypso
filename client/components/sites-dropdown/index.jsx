@@ -77,7 +77,9 @@ export class SitesDropdown extends PureComponent {
 	 */
 	onFocusOutside( event ) {
 		// If its a mouse event, don't do anything.
-		// This fixes an issue where blur fires before click in modal contexts.
+		//
+		// This fixes an issue where blur have relevantTarget set in modal contexts and that closes the dropdown
+		// before click event can be handled.
 		if ( this.isMouseEvent ) {
 			this.isMouseEvent = false;
 			return;
