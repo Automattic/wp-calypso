@@ -3,7 +3,7 @@ import { tags, test } from '../../lib/pw-base';
 test.describe(
 	'Importer: Site Setup',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		let siteSlug: string;
