@@ -1,8 +1,19 @@
 import { Card, Gravatar } from '@automattic/components';
 import clsx from 'clsx';
-import type { UserCardProps } from './types';
 
 import './style.scss';
+
+export interface UserCardUser {
+	displayName: string;
+	email: string;
+	avatarUrl?: string;
+}
+
+export interface UserCardProps {
+	user: UserCardUser;
+	size?: 'small' | 'large';
+	className?: string;
+}
 
 /**
  * User card displaying avatar, name, and email

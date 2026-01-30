@@ -1,8 +1,13 @@
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
-import type { ConsentTextProps } from './types';
 
 import './style.scss';
+
+export interface ConsentTextProps {
+	text: string;
+	links?: Record< string, string >;
+	className?: string;
+}
 
 /**
  * Consent text with link support using createInterpolateElement

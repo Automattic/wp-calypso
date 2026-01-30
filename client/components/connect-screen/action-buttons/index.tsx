@@ -1,8 +1,20 @@
 import { Button, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
-import type { ActionButtonsProps } from './types';
 
 import './style.scss';
+
+export interface ActionButtonsProps {
+	primaryLabel: string;
+	primaryOnClick: () => void;
+	primaryLoading?: boolean;
+	primaryDisabled?: boolean;
+	secondaryLabel?: string;
+	secondaryOnClick?: () => void;
+	secondaryDisabled?: boolean;
+	tertiaryLabel?: string;
+	tertiaryOnClick?: () => void;
+	className?: string;
+}
 
 /**
  * Button group for connect screen actions

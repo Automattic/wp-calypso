@@ -1,8 +1,18 @@
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
-import type { BrandHeaderProps } from './types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
+
+export interface BrandHeaderProps {
+	logo?: string | ReactNode;
+	logoAlt?: string;
+	logoWidth?: number;
+	logoHeight?: number;
+	title: string;
+	description?: string;
+	className?: string;
+}
 
 /**
  * Brand header with logo, title, and optional description

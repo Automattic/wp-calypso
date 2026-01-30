@@ -1,8 +1,12 @@
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
-import type { LoadingScreenProps } from './types';
 
 import './style.scss';
+
+export interface LoadingScreenProps {
+	message?: string;
+	className?: string;
+}
 
 /**
  * Full-screen loading state with spinner and optional message

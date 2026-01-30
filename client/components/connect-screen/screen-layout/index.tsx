@@ -1,7 +1,13 @@
 import clsx from 'clsx';
-import type { ScreenLayoutProps } from './types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
+
+export interface ScreenLayoutProps {
+	children: ReactNode;
+	className?: string;
+	backgroundColor?: string;
+}
 
 /**
  * Full-screen centered layout for connect flows

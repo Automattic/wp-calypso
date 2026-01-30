@@ -3,9 +3,22 @@ import { useState } from '@wordpress/element';
 import { check, seen, edit, cog, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import type { PermissionsListProps, Permission } from './types';
 
 import './style.scss';
+
+export interface Permission {
+	icon?: 'check' | 'view' | 'edit' | 'manage';
+	label: string;
+}
+
+export interface PermissionsListProps {
+	title?: string;
+	permissions: Permission[];
+	maxVisible?: number;
+	learnMoreText?: string;
+	learnMoreUrl?: string;
+	className?: string;
+}
 
 const ICON_MAP = {
 	check,
