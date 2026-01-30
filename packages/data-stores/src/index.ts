@@ -67,6 +67,7 @@ export type {
 } from './help-center/types';
 export type {
 	AgentsManagerSelect,
+	AgentsManagerSite,
 	Dispatch as AgentsManagerDispatch,
 } from './agents-manager/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
