@@ -100,16 +100,6 @@
 				overflow: hidden;
 			}
 
-			&-fader {
-				position: absolute;
-				bottom: 0;
-				right: 0;
-				background: linear-gradient(to right, transparent 0%, #fff 25%);
-				width: 140px;
-				height: 20px;
-				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-fader");
-			}
-
 			&-link {
 				position: absolute;
 				bottom: 0;
@@ -120,6 +110,17 @@
 				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-link");
 				color: var(--color-text-subtle);
 				text-decoration: underline;
+				background: #fff;
+
+				&::before {
+					content: "";
+					position: absolute;
+					top: 0;
+					bottom: 0;
+					right: 100%;
+					background: linear-gradient(to right, transparent 0%, #fff 100%);
+					width: 40px;
+				}
 			}
 		}
 
@@ -145,29 +146,20 @@
 		will not adjust the fader and link since one doesn't have text content and the other is in the
 		interface langauage. This prevents the fader and link from appearing on the correct side of the
 		description. */
-		.user-profile-header__bio-desc-text[direction="ltr"] ~ .user-profile-header__bio-desc-fader {
-			/*!rtl:ignore*/
-			right: 0;
-			/*!rtl:ignore*/
-			left: auto;
-			/*!rtl:ignore*/
-			background: linear-gradient(to right, transparent 0%, #fff 25%);
-		}
-
-		.user-profile-header__bio-desc-text[direction="rtl"] ~ .user-profile-header__bio-desc-fader {
-			/*!rtl:ignore*/
-			left: 0;
-			/*!rtl:ignore*/
-			right: auto;
-			/*!rtl:ignore*/
-			background: linear-gradient(to left, transparent 0%, #fff 25%);
-		}
-
 		.user-profile-header__bio-desc-text[direction="ltr"] ~ .user-profile-header__bio-desc-link {
 			/*!rtl:ignore*/
 			right: 0;
 			/*!rtl:ignore*/
 			left: auto;
+
+			&::before {
+				/*!rtl:ignore*/
+				right: 100%;
+				/*!rtl:ignore*/
+				left: auto;
+				/*!rtl:ignore*/
+				background: linear-gradient(to right, transparent 0%, #fff 100%);
+			}
 		}
 
 		.user-profile-header__bio-desc-text[direction="rtl"] ~ .user-profile-header__bio-desc-link {
@@ -175,6 +167,15 @@
 			left: 0;
 			/*!rtl:ignore*/
 			right: auto;
+
+			&::before {
+				/*!rtl:ignore*/
+				left: 100%;
+				/*!rtl:ignore*/
+				right: auto;
+				/*!rtl:ignore*/
+				background: linear-gradient(to left, transparent 0%, #fff 100%);
+			}
 		}
 	}
 }

@@ -16,6 +16,7 @@ import {
 	isExpiring,
 	isRenewing,
 	showCreditCardExpiringWarning,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTemporarySitePurchase } from '../../utils';
@@ -67,7 +68,7 @@ export class PlanBillingPeriod extends Component<
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate ) {
+		if ( isRenewing( purchase ) && purchase.renewDate && ! isInExpirationGracePeriod( purchase ) ) {
 			const renewDate = moment( purchase.renewDate );
 			return translate( 'Billed yearly, renews on %s', {
 				args: renewDate.format( 'LL' ),
@@ -75,7 +76,11 @@ export class PlanBillingPeriod extends Component<
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryDate ) {
+		if (
+			isExpiring( purchase ) &&
+			purchase.expiryDate &&
+			! isInExpirationGracePeriod( purchase )
+		) {
 			return translate( 'Billed yearly, expires on %s', {
 				args: moment( purchase.expiryDate ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',

@@ -33,23 +33,6 @@ function Root() {
 
 > **Important**: The command palette must be a child of a component within the TanStack Router context (like Root). Placing it as a sibling to RouterProvider will break navigation functionality.
 
-## Opening the Command Palette
-
-The command palette opens automatically with Cmd+K / Ctrl+K, or programmatically:
-
-```jsx
-import { useOpenCommandPalette } from '../command-palette/utils';
-
-function YourComponent() {
-	const openCommandPalette = useOpenCommandPalette();
-  return (
-    <button onClick={openCommandPalette}>
-      Open Command Palette
-    </button>
-  );
-}
-```
-
 ## Implementation Details
 
 This command palette:

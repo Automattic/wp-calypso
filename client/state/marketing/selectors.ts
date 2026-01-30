@@ -21,13 +21,3 @@ export function getHasRequestedJetpackSaleCoupon( state: AppState ): boolean {
 export function getIsRequestingJetpackSaleCoupon( state: AppState ): boolean {
 	return state?.marketing?.jetpackSaleCoupon?.isRequesting === true;
 }
-
-export function getJetpackSaleCouponDiscountRatio( state: AppState ): number {
-	const discount = getJetpackSaleCoupon( state )?.discount || 0;
-	return discount / 100;
-}
-
-export function getFullJetpackSaleCouponDiscountRatio( state: AppState ): number {
-	const discount = getJetpackSaleCoupon( state )?.final_discount || 0;
-	return discount / 100;
-}

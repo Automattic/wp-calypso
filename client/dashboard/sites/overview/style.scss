@@ -7,8 +7,18 @@
 	}
 }
 
+// Re-ordering the divider allows us to hide it when the secondary card container is `:empty`.
+.site-overview-divider {
+	order: 1;
+}
+
+.site-overview-cards--secondary:empty + .site-overview-divider {
+	display: none;
+}
+
 .site-overview-cards--secondary {
 	flex-wrap: wrap-reverse;
+	order: 2;
 
 	> * {
 		flex-basis: 100%;

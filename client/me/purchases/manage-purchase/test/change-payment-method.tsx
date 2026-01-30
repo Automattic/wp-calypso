@@ -83,7 +83,7 @@ const initialPurchases = [
 		is_domain_registration: false,
 		is_locked: false,
 		is_iap_purchase: false,
-		is_rechargable: false,
+		is_rechargeable: false,
 		is_refundable: false,
 		is_renewable: false,
 		is_renewal: false,

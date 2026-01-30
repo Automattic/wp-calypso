@@ -27,7 +27,7 @@ export interface StoredPaymentMethodBase {
 	remember: boolean;
 	source: string | null;
 	original_stored_details_id: string;
-	is_rechargable: boolean;
+	is_rechargeable: boolean;
 	payment_type: string | null;
 	is_expired: boolean;
 	is_backup: boolean;

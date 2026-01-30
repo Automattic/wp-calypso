@@ -194,7 +194,8 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( /remove/ ) ).toBeInTheDocument();
+		// Multiple elements may contain "remove" text (button + notice), so use findAllByText
+		expect( ( await screen.findAllByText( /remove/i ) ).length ).toBeGreaterThan( 0 );
 		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 	} );
 

@@ -22,7 +22,7 @@ type PlanDifferentiatorsExperimentResult = {
 	isShortSet: boolean;
 	/**
 	 * When true, show the differentiator header (3 bullet points).
-	 * Applies to: var1d
+	 * Currently disabled for all variants.
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
@@ -46,6 +46,16 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	useVar1Features: boolean;
 	/**
+	 * When true, the user is specifically in the var1d variant.
+	 * Used to apply differentiator styling to features below "Everything in X" headers.
+	 */
+	isVar1dVariant: boolean;
+	/**
+	 * When true, the user is specifically in the var4 variant.
+	 * Used to exclude var4 from certain experiment-specific styling.
+	 */
+	isVar4Variant: boolean;
+	/**
 	 * When true, the user is in an experiment variant (not control).
 	 */
 	isExperimentVariant: boolean;
@@ -68,7 +78,7 @@ function usePlanDifferentiatorsExperiment( {
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
-	const [ isLoading, assignment ] = useExperiment( 'calypso_plans_differentiators_20260117', {
+	const [ isLoading, assignment ] = useExperiment( 'calypso_pricing_differentiation_202601_v1', {
 		isEligible,
 	} );
 
@@ -91,11 +101,13 @@ function usePlanDifferentiatorsExperiment( {
 			variant === 'var1' || variant === 'var1d' || variant === 'var3' || variant === 'var5',
 		isLongSet: variant === 'var3' || variant === 'var4',
 		isShortSet: variant === 'var1' || variant === 'var1d' || variant === 'var5',
-		showDifferentiatorHeader: variant === 'var1d',
+		showDifferentiatorHeader: false,
 		useVar5Features: variant === 'var5',
 		useVar4Features: variant === 'var4',
 		useVar3Features: variant === 'var3',
 		useVar1Features: variant === 'var1' || variant === 'var1d',
+		isVar1dVariant: variant === 'var1d',
+		isVar4Variant: variant === 'var4',
 		isExperimentVariant,
 	};
 }

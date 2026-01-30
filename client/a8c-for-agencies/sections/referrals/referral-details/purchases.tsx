@@ -16,7 +16,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { data, isFetching } = useProductsQuery( false, false, true );
+	const { data, isFetching } = useProductsQuery( false, true );
 
 	const handleAssignToSite = useCallback(
 		( url: string ) => {

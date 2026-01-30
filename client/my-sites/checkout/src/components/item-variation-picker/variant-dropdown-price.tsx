@@ -1,4 +1,7 @@
-import { isMultiYearDomainProduct } from '@automattic/calypso-products';
+import {
+	isA4ASitelessCheckoutProduct,
+	isMultiYearDomainProduct,
+} from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -65,6 +68,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
 	const isMultiYearDomain = isMultiYearDomainProduct( product );
+	const isA4ACheckout = isA4ASitelessCheckoutProduct( product );
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
@@ -197,7 +201,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 
 				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
-					{ ! isMultiYearDomain && (
+					{ ! isMultiYearDomain && ! isA4ACheckout && (
 						<IntroPricingText>
 							{ isIntroductoryOffer && translatedIntroOfferDetails() }
 						</IntroPricingText>

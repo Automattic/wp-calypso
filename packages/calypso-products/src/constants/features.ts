@@ -273,6 +273,7 @@ export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_BACKUPS = 'backups';
+export const WPCOM_FEATURES_BIG_SKY = 'big-sky';
 export const WPCOM_FEATURES_BACKUPS_RESTORE = 'restore';
 export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
 export const WPCOM_FEATURES_COPY_SITE = 'copy-site';
@@ -362,6 +363,7 @@ export const FEATURE_ALWAYS_ONLINE = 'always-online';
 export const FEATURE_99_999_UPTIME = '99-999-uptime';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
+export const FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS = 'style-customization-fonts-colors';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
@@ -459,6 +461,7 @@ export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
 export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
 export const FEATURE_AI_ASSISTANT = 'ai-assistant';
+export const FEATURE_BIG_SKY = 'big-sky';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -487,6 +490,15 @@ export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shippi
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
+
+// Woo Hosted Features
+export const FEATURE_WOO_HOSTED_PACKAGE = 'woo-hosted-package';
+export const FEATURE_WOO_HOSTED_AI_BUILDER = 'woo-hosted-ai-builder';
+export const FEATURE_WOO_HOSTED_MARKETING_TOOLS = 'woo-hosted-marketing-tools';
+export const FEATURE_WOO_HOSTED_BASIC_MAILPOET = 'woo-hosted-basic-mailpoet';
+export const FEATURE_WOO_HOSTED_PRO_MAILPOET = 'woo-hosted-pro-mailpoet';
+export const FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS = 'woo-hosted-basic-admin-users';
+export const FEATURE_WOO_HOSTED_PRO_ADMIN_USERS = 'woo-hosted-pro-admin-users';
 
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
@@ -535,6 +547,9 @@ export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus'
 export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
 export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
 export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
+
+// "Included in plan:" header for Free plan in stacked variants
+export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

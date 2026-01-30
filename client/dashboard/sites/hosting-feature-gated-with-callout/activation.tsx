@@ -1,12 +1,11 @@
 import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import HostingFeatureList from '../hosting-feature-list';
 import illustrationUrl from './upsell-illustration.svg';
@@ -16,14 +15,12 @@ const EligibilityWarnings = lazy( () => import( 'calypso/blocks/eligibility-warn
 
 interface ActivationCalloutProps {
 	site: Site;
-	main?: ReactNode;
 	feature: HostingFeatureSlug;
 	tracksFeatureId: string;
 }
 
 export default function ActivationCallout( {
 	site,
-	main,
 	feature,
 	tracksFeatureId,
 }: ActivationCalloutProps ) {
@@ -55,6 +52,7 @@ export default function ActivationCallout( {
 			initiate_transfer_context: 'hosting',
 			initiate_transfer_geo_affinity: options.geo_affinity || '',
 			redirect_to: redirectToDashboardLink( { supportBackport: true } ),
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 
@@ -120,14 +118,9 @@ export default function ActivationCallout( {
 		/>
 	);
 
-	let content = callout;
-	if ( main ) {
-		content = <CalloutOverlay callout={ callout } main={ main } />;
-	}
-
 	return (
 		<>
-			{ content }
+			{ callout }
 			{ renderActivationModal() }
 		</>
 	);

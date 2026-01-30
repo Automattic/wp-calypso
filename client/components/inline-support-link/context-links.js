@@ -19,6 +19,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
+	'ai-tools': {
+		link: 'https://wordpress.com/support/ai-website-builder/',
+		post_id: 404989,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
 		post_id: 267092,
@@ -583,15 +587,15 @@ const contextLinks = {
 		post_id: 6595,
 	},
 	'dns-default-mx-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-mx-records',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-email-records',
 		post_id: 386585,
 	},
 	'dns-default-a-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-a-records',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-a-records',
 		post_id: 386585,
 	},
 	'dns-default-cname-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-cname-record',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-cname-record',
 		post_id: 386585,
 	},
 	'add-a-new-dns-record': {

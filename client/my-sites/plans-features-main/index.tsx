@@ -15,8 +15,11 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForComparisonGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
+	isWooHostedPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -48,7 +51,6 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -387,6 +389,8 @@ const PlansFeaturesMain = ( {
 		useVar3Features,
 		useVar4Features,
 		useVar5Features,
+		isVar1dVariant,
+		isVar4Variant,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
 
@@ -469,6 +473,7 @@ const PlansFeaturesMain = ( {
 		useShortSetStackedFeatures: useVar1Features,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -497,6 +502,7 @@ const PlansFeaturesMain = ( {
 		useShortSetStackedFeatures: useVar1Features,
 		useVar5Features,
 		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -735,16 +741,32 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
+	// Check to see if we have at least one Woo Hosted plan we're comparing.
+	const hasWooHostedFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooHostedPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
+
 	// Get summer special status
 	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
-		? getWooExpressFeaturesGroupedForComparisonGrid()
-		: getPlanFeaturesGroupedForComparisonGrid();
+	// Determine feature groups for comparison grid
+	let featureGroupMapForComparisonGrid;
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForComparisonGrid = getWooHostedFeaturesGroupedForComparisonGrid();
+	} else if ( hasWooExpressFeatures ) {
+		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
+	} else {
+		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
+			isExperimentVariant,
+		} );
+	}
 
 	let featureGroupMapForFeaturesGrid;
-	if ( hasWooExpressFeatures ) {
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForFeaturesGrid = getWooHostedFeaturesGroupedForFeaturesGrid();
+	} else if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
@@ -947,6 +969,9 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
+										isVar1dVariant={ isVar1dVariant }
+										isVar4Variant={ isVar4Variant }
+										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1011,6 +1036,7 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
+													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle
@@ -1026,15 +1052,6 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
-			{ config.isEnabled( 'summer-special-2025' ) &&
-				config.isEnabled( 'summer-special-2025-banner' ) && (
-					<AsyncLoad
-						require="calypso/blocks/summer-special-banner"
-						placeholder={ null }
-						visiblePlans={ gridPlansForFeaturesGrid }
-						isFixed
-					/>
-				) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);

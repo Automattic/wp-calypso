@@ -160,9 +160,12 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+const navigateToRoute: Reducer<
+	{ route: string | undefined; coalesceParams: boolean } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
-		return action.route;
+		return { route: action.route, coalesceParams: action.coalesceParams };
 	}
 	return state;
 };

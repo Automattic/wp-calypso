@@ -52,7 +52,6 @@ export const useGetCombinedChat = (
 	const { loggedOutOdieChatId, sessionId, botSlug } = useLoggedOutSession();
 
 	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
-
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
@@ -62,6 +61,7 @@ export const useGetCombinedChat = (
 		};
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
+	const previousOdieIdRef = useRef< string | null | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
@@ -88,7 +88,16 @@ export const useGetCombinedChat = (
 	}, [ connectionStatus, setRefreshingAfterReconnect ] );
 
 	useEffect( () => {
-		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
+		// Logged out chats don't have interactions. Only direct odie IDs.
+		const interactionHasChanged =
+			previousUuidRef.current !== currentSupportInteraction?.uuid ||
+			// If the ID has changed from something to something else, we need to clear the chat.
+			// If the ID changed from nothing to something, we need to ignore the change, because
+			// it's just a transition from an empty chat to a new one after the first message.
+			( previousOdieIdRef.current && previousOdieIdRef.current !== odieId );
+
+		previousOdieIdRef.current = odieId;
+
 		if (
 			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||

@@ -13,7 +13,6 @@ const incompatiblePlugins = new Set( [
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
-	'backup',
 	'better-wp-security',
 	'database-browser',
 	'extended-wp-reset',
@@ -25,7 +24,6 @@ const incompatiblePlugins = new Set( [
 	'reset-wp',
 	'reset',
 	'secure-file-manager',
-	'super-blank',
 	'ultimate-reset',
 	'ultimate-wp-reset',
 	'vamtam-offline-jetpack',
@@ -47,7 +45,6 @@ const incompatiblePlugins = new Set( [
 	'wp-downgrade',
 
 	// backup
-	'backup-wd',
 	'backwpup',
 	'backwpup-pro',
 	'duplicator',

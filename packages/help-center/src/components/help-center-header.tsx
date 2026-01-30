@@ -59,6 +59,8 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
+	const { currentUser } = useHelpCenterContext();
+	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -110,23 +112,27 @@ const EllipsisMenu = () => {
 				>
 					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
 				</Menu.Item>
-				<Menu.Separator />
-				<Menu.Item
-					onClick={ toggleSoundNotifications }
-					prefix={
-						areSoundNotificationsEnabled ? (
-							<MutedBellIcon />
-						) : (
-							<Icon icon={ bell } width={ 24 } height={ 24 } />
-						)
-					}
-				>
-					<Menu.ItemLabel>
-						{ areSoundNotificationsEnabled
-							? __( 'Turn off sound notifications', __i18n_text_domain__ )
-							: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
-					</Menu.ItemLabel>
-				</Menu.Item>
+				{ isLoggedIn && (
+					<>
+						<Menu.Separator />
+						<Menu.Item
+							onClick={ toggleSoundNotifications }
+							prefix={
+								areSoundNotificationsEnabled ? (
+									<MutedBellIcon />
+								) : (
+									<Icon icon={ bell } width={ 24 } height={ 24 } />
+								)
+							}
+						>
+							<Menu.ItemLabel>
+								{ areSoundNotificationsEnabled
+									? __( 'Turn off sound notifications', __i18n_text_domain__ )
+									: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
+							</Menu.ItemLabel>
+						</Menu.Item>
+					</>
+				) }
 			</Menu.Popover>
 		</Menu>
 	);

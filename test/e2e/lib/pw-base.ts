@@ -55,9 +55,13 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
+	MeSidebarComponent,
+	MyProfilePage,
 	NewSiteResponse,
+	NoticeComponent,
 	PeoplePage,
 	PreviewComponent,
+	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
@@ -69,222 +73,271 @@ import {
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
+	MyHomePage,
+	PlansPage,
+	UseADomainIOwnPage,
+	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
 import { getAccount } from './get-account';
 
-export const test = base.extend< {
+export type CustomOptions = {
 	/**
-	 * Test account used to test atomic sites (Business plans)
+	 * Viewport name used to configure device-specific behavior in page objects.
+	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile' | 'tablet'.
 	 */
-	accountAtomic: TestAccount;
-	/**
-	 * Test account selected based on the current environment variables.
-	 */
-	accountGivenByEnvironment: TestAccount;
-	/**
-	 * Default test account.
-	 */
-	accountDefaultUser: TestAccount;
-	/**
-	 * Test account with a simple Gutenberg site.
-	 */
-	accountGutenbergSimple: TestAccount;
-	/**
-	 * Test account used for i18n locale switching.
-	 */
-	accounti18n: TestAccount;
-	/**
-	 * Test account used for pre-release testing.
-	 */
-	accountPreRelease: TestAccount;
-	/**
-	 * Test account used to test atomic sites (Business plans)
-	 */
-	accountSimpleSiteFreePlan: TestAccount;
-	/**
-	 * Test account used for SMS-based 2FA.
-	 */
-	accountSMS: TestAccount;
-	/**
-	 * Test account used for P2 tests.
-	 */
-	accountP2: TestAccount;
-	/**
-	 * Client for interacting with emails during tests.
-	 */
-	clientEmail: EmailClient;
-	/**
-	 * Client for interacting with the WordPress.com REST API.
-	 */
-	clientRestAPI: RestAPIClient;
-	/**
-	 * Component for interacting with the block widget editor.
-	 */
-	componentBlockWidgetEditor: BlockWidgetEditorComponent;
-	/**
-	 * Component for interacting with the preview functionality.
-	 */
-	componentPreview: PreviewComponent;
-	/**
-	 * Component for interacting with the sidebar functionality.
-	 */
-	componentSidebar: SidebarComponent;
-	/**
-	 * Component for interacting with the site selection functionality.
-	 */
-	componentSiteSelect: SiteSelectComponent;
-	/**
-	 * Component for searching/selecting domains during signup flows.
-	 */
-	componentDomainSearch: DomainSearchComponent;
-	/**
-	 * Environment variables for the tests.
-	 */
-	environment: typeof envVariables;
-	/**
-	 * Flow encapsulating the LOHP Theme Signup onboarding process.
-	 */
-	flowLOHPThemeSignup: LOHPThemeSignupFlow;
-	/**
-	 * Flow encapsulating the Start Writing onboarding process.
-	 */
-	flowStartWriting: StartWritingFlow;
-	/**
-	 * Helper data and utilities for tests.
-	 */
-	helperData: typeof DataHelper;
-	/**
-	 * Helper for media-related tasks in tests.
-	 */
-	helperMedia: typeof MediaHelper;
-	/**
-	 * Page object representing the WordPress.com Advertising page.
-	 */
-	pageAdvertising: AdvertisingPage;
-	/**
-	 * Page object representing the Apple login page.
-	 */
-	pageAppleLogin: AppleLoginPage;
-	/**
-	 * Page object representing the Blaze campaign page.
-	 */
-	pageBlazeCampaign: BlazeCampaignPage;
-	/**
-	 * Page object representing the WordPress.com dashboard.
-	 */
-	pageDashboard: DashboardPage;
-	/**
-	 * Page object representing the cart checkout page.
-	 */
-	pageCartCheckout: CartCheckoutPage;
-	/**
-	 * Page object representing the WordPress.com dashboard visibility settings page.
-	 */
-	pageDashboardVisibilitySettings: DashboardVisibilitySettingsPage;
-	/**
-	 * Page object representing the WordPress editor page.
-	 */
-	pageEditor: EditorPage;
-	/**
-	 * Page object representing the signup plan picker page.
-	 */
-	pageSignupPickPlan: SignupPickPlanPage;
-	/**
-	 * Page object representing the Github login page.
-	 */
-	pageGitHubLogin: GitHubLoginPage;
-	/**
-	 * Page object representing the Import Content page.
-	 */
-	pageImportContent: ImportContentPage;
-	/**
-	 * Page object representing the Import Plans page.
-	 */
-	pageImportPlans: ImportPlansPage;
-	/**
-	 * Page object representing the Import Content from Medium page.
-	 */
-	pageImportContentFromMedium: ImportContentFromMediumPage;
-	/**
-	 * Page object representing the Import Content from Squarespace page.
-	 */
-	pageImportContentFromSquarespace: ImportContentFromSquarespacePage;
-	/**
-	 * Page object representing the Import Content from Substack page.
-	 */
-	pageImportContentFromSubstack: ImportContentFromSubstackPage;
-	/**
-	 * Page object representing the Import Content from WordPress page.
-	 */
-	pageImportContentFromWordPress: ImportContentFromWordPressPage;
-	/**
-	 * Page object representing the Import Content WordPress Question page.
-	 */
-	pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
-	/**
-	 * Page object representing the Import Content from Another Platform or File page.
-	 */
-	pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
-	/**
-	 * Page object representing the Let's Find Your Site page for importing content.
-	 */
-	pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
-	/**
-	 * Page object representing the Let Us Migrate Your Site page for importing content.
-	 */
-	pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
-	/**
-	 * Playwright `Page` representing an incognito browser context with no signed in state.
-	 */
-	pageIncognito: IncognitoPage;
-	/**
-	 * Page object representing the Jetpack Traffic Page
-	 */
-	pageJetpackTraffic: JetpackTrafficPage;
-	/**
-	 * Page object representing the WordPress.com login page.
-	 */
-	pageLogin: LoginPage;
-	/**
-	 * Page object representing the WordPress.com marketing page.
-	 */
-	pageMarketing: MarketingPage;
-	/**
-	 * Page object representing the WordPress.com Add People page.
-	 */
-	pageAddPeople: AddPeoplePage;
-	/**
-	 * Page object representing the WordPress.com Invite People page.
-	 */
-	pageInvitePeople: InvitePeoplePage;
-	/**
-	 * Page object representing the WordPress.com People management page.
-	 */
-	pagePeople: PeoplePage;
-	/**
-	 * Page object representing the WordPress.com themes detail page.
-	 */
-	pageThemeDetails: ThemesDetailPage;
-	/**
-	 * Page object representing the WordPress.com themes listing page.
-	 */
-	pageThemes: ThemesPage;
-	/**
-	 * Page object representing the WordPress.com user signup page.
-	 */
-	pageUserSignUp: UserSignupPage;
-	/**
-	 * Secrets needed for end-to-end tests.
-	 */
-	secrets: Secrets;
-	/**
-	 * Creates a new site with public visibility for testing.
-	 */
-	sitePublic: NewSiteResponse;
-} >( {
-	page: async ( { page }, use ) => {
+	viewportName: string;
+};
+
+export const test = base.extend<
+	CustomOptions & {
+		/**
+		 * Test account used to test atomic sites (Business plans)
+		 */
+		accountAtomic: TestAccount;
+		/**
+		 * Test account selected based on the current environment variables.
+		 */
+		accountGivenByEnvironment: TestAccount;
+		/**
+		 * Default test account.
+		 */
+		accountDefaultUser: TestAccount;
+		/**
+		 * Test account with a simple Gutenberg site.
+		 */
+		accountGutenbergSimple: TestAccount;
+		/**
+		 * Test account used for i18n locale switching.
+		 */
+		accounti18n: TestAccount;
+		/**
+		 * Test account used for pre-release testing.
+		 */
+		accountPreRelease: TestAccount;
+		/**
+		 * Test account used to test atomic sites (Business plans)
+		 */
+		accountSimpleSiteFreePlan: TestAccount;
+		/**
+		 * Test account used for SMS-based 2FA.
+		 */
+		accountSMS: TestAccount;
+		/**
+		 * Test account used for P2 tests.
+		 */
+		accountP2: TestAccount;
+		/**
+		 * Client for interacting with emails during tests.
+		 */
+		clientEmail: EmailClient;
+		/**
+		 * Client for interacting with the WordPress.com REST API.
+		 */
+		clientRestAPI: RestAPIClient;
+		/**
+		 * Component for interacting with the block widget editor.
+		 */
+		componentBlockWidgetEditor: BlockWidgetEditorComponent;
+		/**
+		 * Component for interacting with the preview functionality.
+		 */
+		componentPreview: PreviewComponent;
+		/**
+		 * Component for interacting with the sidebar functionality.
+		 */
+		componentSidebar: SidebarComponent;
+		/**
+		 * Component for interacting with the site selection functionality.
+		 */
+		componentSiteSelect: SiteSelectComponent;
+		/**
+		 * Component for searching/selecting domains during signup flows.
+		 */
+		componentDomainSearch: DomainSearchComponent;
+		/**
+		 * Component for the Me sidebar (profile/settings)
+		 */
+		componentMeSidebar: MeSidebarComponent;
+		/**
+		 * Component for displaying notices (e.g., success/error messages).
+		 */
+		componentNotice: NoticeComponent;
+		/**
+		 * Component for selecting items in various flows.
+		 */
+		componentSelectItems: SelectItemsComponent;
+		/**
+		 * Environment variables for the tests.
+		 */
+		environment: typeof envVariables;
+		/**
+		 * Flow encapsulating the LOHP Theme Signup onboarding process.
+		 */
+		flowLOHPThemeSignup: LOHPThemeSignupFlow;
+		/**
+		 * Flow encapsulating the Start Writing onboarding process.
+		 */
+		flowStartWriting: StartWritingFlow;
+		/**
+		 * Helper data and utilities for tests.
+		 */
+		helperData: typeof DataHelper;
+		/**
+		 * Helper for media-related tasks in tests.
+		 */
+		helperMedia: typeof MediaHelper;
+		/**
+		 * Page object representing the WordPress.com Advertising page.
+		 */
+		pageAdvertising: AdvertisingPage;
+		/**
+		 * Page object representing the Apple login page.
+		 */
+		pageAppleLogin: AppleLoginPage;
+		/**
+		 * Page object representing the Blaze campaign page.
+		 */
+		pageBlazeCampaign: BlazeCampaignPage;
+		/**
+		 * Page object representing the WordPress.com dashboard.
+		 */
+		pageDashboard: DashboardPage;
+		/**
+		 * Page object representing the cart checkout page.
+		 */
+		pageCartCheckout: CartCheckoutPage;
+		/**
+		 * Page object representing the WordPress.com dashboard visibility settings page.
+		 */
+		pageDashboardVisibilitySettings: DashboardVisibilitySettingsPage;
+		/**
+		 * Page object representing the WordPress editor page.
+		 */
+		pageEditor: EditorPage;
+		/**
+		 * Page object representing the signup plan picker page.
+		 */
+		pageSignupPickPlan: SignupPickPlanPage;
+		/**
+		 * Page object representing the Github login page.
+		 */
+		pageGitHubLogin: GitHubLoginPage;
+		/**
+		 * Page object representing the Import Content page.
+		 */
+		pageImportContent: ImportContentPage;
+		/**
+		 * Page object representing the Import Plans page.
+		 */
+		pageImportPlans: ImportPlansPage;
+		/**
+		 * Page object representing the Import Content from Medium page.
+		 */
+		pageImportContentFromMedium: ImportContentFromMediumPage;
+		/**
+		 * Page object representing the Import Content from Squarespace page.
+		 */
+		pageImportContentFromSquarespace: ImportContentFromSquarespacePage;
+		/**
+		 * Page object representing the Import Content from Substack page.
+		 */
+		pageImportContentFromSubstack: ImportContentFromSubstackPage;
+		/**
+		 * Page object representing the Import Content from WordPress page.
+		 */
+		pageImportContentFromWordPress: ImportContentFromWordPressPage;
+		/**
+		 * Page object representing the Import Content WordPress Question page.
+		 */
+		pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
+		/**
+		 * Page object representing the Import Content from Another Platform or File page.
+		 */
+		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
+		/**
+		 * Page object representing the Let's Find Your Site page for importing content.
+		 */
+		pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
+		/**
+		 * Page object representing the Let Us Migrate Your Site page for importing content.
+		 */
+		pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
+		/**
+		 * Playwright `Page` representing an incognito browser context with no signed in state.
+		 */
+		pageIncognito: IncognitoPage;
+		/**
+		 * Page object representing the Jetpack Traffic Page
+		 */
+		pageJetpackTraffic: JetpackTrafficPage;
+		/**
+		 * Page object representing the WordPress.com login page.
+		 */
+		pageLogin: LoginPage;
+		/**
+		 * Page object representing the WordPress.com marketing page.
+		 */
+		pageMarketing: MarketingPage;
+		/**
+		 * Page object representing the WordPress.com My Profile page.
+		 */
+		pageMyProfile: MyProfilePage;
+		/**
+		 * Page object representing the WordPress.com Add People page.
+		 */
+		pageAddPeople: AddPeoplePage;
+		/**
+		 * Page object representing the WordPress.com Invite People page.
+		 */
+		pageInvitePeople: InvitePeoplePage;
+		/**
+		 * Page object representing the WordPress.com My Home page.
+		 */
+		pageMyHome: MyHomePage;
+		/**
+		 * Page object representing the WordPress.com People management page.
+		 */
+		pagePeople: PeoplePage;
+		/**
+		 * Page object representing the WordPress.com plans page.
+		 */
+		pagePlans: PlansPage;
+		/**
+		 * Page object representing the WordPress.com purchases page.
+		 */
+		pagePurchases: PurchasesPage;
+		/**
+		 * Page object representing the WordPress.com themes detail page.
+		 */
+		pageThemeDetails: ThemesDetailPage;
+		/**
+		 * Page object representing the WordPress.com themes listing page.
+		 */
+		pageThemes: ThemesPage;
+		/**
+		 * Page object representing the Use A Domain I Already Own page.
+		 */
+		pageUseADomainIAlreadyOwn: UseADomainIOwnPage;
+		/**
+		 * Page object representing the WordPress.com user signup page.
+		 */
+		pageUserSignUp: UserSignupPage;
+		/**
+		 * Secrets needed for end-to-end tests.
+		 */
+		secrets: Secrets;
+		/**
+		 * Creates a new site with public visibility for testing.
+		 */
+		sitePublic: NewSiteResponse;
+	}
+>( {
+	viewportName: [ 'desktop', { option: true } ],
+	page: async ( { page, viewportName }, use ) => {
+		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
+		process.env.VIEWPORT_NAME = viewportName;
 		await page.context().addCookies( [
 			{
 				name: 'sensitive_pixel_options',
@@ -345,9 +398,21 @@ export const test = base.extend< {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
 	},
+	componentMeSidebar: async ( { page }, use ) => {
+		const meSidebarComponent = new MeSidebarComponent( page );
+		await use( meSidebarComponent );
+	},
+	componentNotice: async ( { page }, use ) => {
+		const noticeComponent = new NoticeComponent( page );
+		await use( noticeComponent );
+	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
 		await use( previewComponent );
+	},
+	componentSelectItems: async ( { page }, use ) => {
+		const selectItemsComponent = new SelectItemsComponent( page );
+		await use( selectItemsComponent );
 	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
@@ -473,6 +538,14 @@ export const test = base.extend< {
 		const marketingPage = new MarketingPage( page );
 		await use( marketingPage );
 	},
+	pageMyHome: async ( { page }, use ) => {
+		const myHomePage = new MyHomePage( page );
+		await use( myHomePage );
+	},
+	pageMyProfile: async ( { page }, use ) => {
+		const myProfilePage = new MyProfilePage( page );
+		await use( myProfilePage );
+	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -485,6 +558,14 @@ export const test = base.extend< {
 		const peoplePage = new PeoplePage( page );
 		await use( peoplePage );
 	},
+	pagePlans: async ( { page }, use ) => {
+		const plansPage = new PlansPage( page );
+		await use( plansPage );
+	},
+	pagePurchases: async ( { page }, use ) => {
+		const purchasesPage = new PurchasesPage( page );
+		await use( purchasesPage );
+	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
 		await use( themesDetailPage );
@@ -492,6 +573,10 @@ export const test = base.extend< {
 	pageThemes: async ( { page }, use ) => {
 		const themesPage = new ThemesPage( page );
 		await use( themesPage );
+	},
+	pageUseADomainIAlreadyOwn: async ( { page }, use ) => {
+		const useADomainIOwnPage = new UseADomainIOwnPage( page );
+		await use( useADomainIOwnPage );
 	},
 	pageUserSignUp: async ( { page }, use ) => {
 		const userSignupPage = new UserSignupPage( page );
@@ -555,5 +640,24 @@ export const tags = {
 	P2: '@p2',
 	SETTINGS: '@settings',
 };
+
+/**
+ * Skips the current test suite if Mailosaur daily email limit is reached.
+ * Use this at the top of test.describe blocks that use fixtures requiring email verification (e.g., sitePublic).
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfMailosaurLimitReached();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfMailosaurLimitReached(): void {
+	test.skip(
+		envVariables.MAILOSAUR_LIMIT_REACHED,
+		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+	);
+}
 
 export { expect };

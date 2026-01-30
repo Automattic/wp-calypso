@@ -50,6 +50,27 @@ export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
+
+	if ( new Date( purchase.expiry_date ) >= new Date() ) {
+		return false;
+	}
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
+}
+
 export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiry_status;
 }
@@ -447,6 +468,14 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 	return checkoutProductSlug;
 }
 
+function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		// Akismet checkout never uses a site slug.
+		return '';
+	}
+	return purchase.site_slug || '';
+}
+
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
@@ -465,7 +494,8 @@ export function getRenewUrlForPurchases(
 	const checkoutProductSlug = purchases
 		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
 		.join( ',' );
-	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
+	const checkoutSiteSlug =
+		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
 	const backUrl = redirectToDashboardLink();
@@ -500,7 +530,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiry_date ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 export function isPartnerPurchase(

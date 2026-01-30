@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../../constants';
+import { ORCHESTRATOR_AGENT_URL, getAgentConfig } from '../../constants';
 import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
@@ -93,15 +93,18 @@ function AgentSetup( {
 	// Load external providers and initialize agent config
 	useEffect( () => {
 		const initializeAgent = async () => {
+			// Get agent configuration from query params or defaults
+			const { agentId, version } = getAgentConfig();
+
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
 				const agentManager = getAgentManager();
 
-				if ( agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ) ) {
+				if ( agentManager.hasAgent( agentId ) ) {
 					// Abort any ongoing requests
-					await agentManager.abortCurrentRequest( ORCHESTRATOR_AGENT_ID );
+					await agentManager.abortCurrentRequest( agentId );
 					// Remove existing agent to start fresh
-					agentManager.removeAgent( ORCHESTRATOR_AGENT_ID );
+					agentManager.removeAgent( agentId );
 				}
 
 				// Clear stored session ID
@@ -124,7 +127,7 @@ function AgentSetup( {
 
 			// Create the agent configuration
 			const config: UseAgentChatConfig = {
-				agentId: ORCHESTRATOR_AGENT_ID,
+				agentId,
 				agentUrl: ORCHESTRATOR_AGENT_URL,
 				sessionId,
 				sessionIdStorageKey: SESSION_STORAGE_KEY,
@@ -165,14 +168,23 @@ function AgentSetup( {
 						const pluginContext = contextProvider.getClientContext();
 
 						// Resolve `contextEntries` if present
-						if ( pluginContext.contextEntries && pluginContext.contextEntries.length ) {
-							return {
-								...pluginContext,
-								contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-							};
-						}
+						const resolvedContext =
+							pluginContext.contextEntries && pluginContext.contextEntries.length
+								? {
+										...pluginContext,
+										contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+								  }
+								: pluginContext;
 
-						return pluginContext;
+						// Merge in agent version via constructorArguments (only if specified)
+						// TODO: Remove once agenttic-client supports top-level constructorArguments
+						return {
+							...resolvedContext,
+							constructorArguments: {
+								...( resolvedContext.constructorArguments || {} ),
+								...( version && { version } ),
+							},
+						};
 					},
 				};
 			} else {
@@ -183,6 +195,9 @@ function AgentSetup( {
 						pathname: currentRoute || window.location.pathname,
 						search: window.location.search,
 						environment: 'calypso',
+						// Pass agent version via clientContext for backend compatibility (only if specified)
+						// TODO: Remove once agenttic-client supports top-level constructorArguments
+						...( version && { constructorArguments: { version } } ),
 					} ),
 				};
 			}

@@ -1,7 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	MAILCHIMP_SETTINGS_LIST,
-	MAILCHIMP_SETTINGS_RECEIVE,
 	MAILCHIMP_SETTINGS_UPDATE,
 	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 	MAILCHIMP_SETTINGS_UPDATE_FAILURE,
@@ -15,14 +14,6 @@ export const requestSettings = ( siteId ) => ( {
 	siteId,
 	type: MAILCHIMP_SETTINGS_LIST,
 } );
-
-export function receiveSettings( siteId, lists ) {
-	return {
-		siteId,
-		type: MAILCHIMP_SETTINGS_RECEIVE,
-		lists,
-	};
-}
 
 export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 	return ( dispatch ) => {

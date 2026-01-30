@@ -295,7 +295,7 @@ class ReaderStream extends Component {
 		if (
 			inputTags.includes( tagName ) ||
 			event.target.isContentEditable ||
-			isEditorIframeFocused()
+			isEditorIframeFocused() // Disable keyboard shortcuts when quick post editor is focused.
 		) {
 			return;
 		}

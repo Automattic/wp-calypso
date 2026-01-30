@@ -10,8 +10,7 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
-import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
+import { hasDashboardOptIn, isDashboardToggleEnabled } from 'calypso/state/dashboard/selectors';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
@@ -22,11 +21,11 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 	hasOptIn: boolean;
-	isDashboardEnabled: boolean;
+	isDashboardToggleEnabled: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardEnabled }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardToggleEnabled }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -48,7 +47,7 @@ const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardEnabled }: Pr
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
-			footer={ isDashboardEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
+			footer={ isDashboardToggleEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
 				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
@@ -121,7 +120,7 @@ export default withCurrentRoute(
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
 			hasOptIn: hasDashboardOptIn( state ),
-			isDashboardEnabled: isDashboardEnabled( state ),
+			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
 		};
 	} )( PluginsSidebar )
 );

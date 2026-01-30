@@ -6,8 +6,8 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useLicenseDownloadUrlMutation from '../../purchases/licenses/revoke-license-dialog/hooks/use-license-download-url-mutation';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 interface WooProductDownloadProps {
 	licenseKey: string;
