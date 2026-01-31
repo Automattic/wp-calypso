@@ -260,9 +260,14 @@ function McpSetupComponent() {
 											<li>
 												<Text as="p" variant="muted">
 													{ createInterpolateElement(
-														__( 'Open <link>Claude settings → Browse Connectors</link>.' ),
+														/* translators: %s is the link to the Claude settings → Browse Connectors */
+														__( 'Open <ClaudeSettings/>.' ),
 														{
-															link: <ExternalLink href="https://claude.ai/settings/connectors" />,
+															ClaudeSettings: (
+																<ExternalLink href="https://claude.ai/settings/connectors">
+																	{ __( 'Claude settings → Browse Connectors' ) }
+																</ExternalLink>
+															),
 														}
 													) }
 												</Text>
