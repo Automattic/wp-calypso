@@ -17,7 +17,6 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
 import {
 	MenuItem,
 	Dropdown,
@@ -139,7 +138,23 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 );
 
 const { Badge } = unlock( privateApis );
-const { cleanEmptyObject } = unlock( blockEditorPrivateApis );
+
+// Lazy-load cleanEmptyObject from @wordpress/block-editor to avoid build error.
+// The @wordpress/block-editor package tries to access `window` at module load time,
+// so we defer the import until runtime when we know we're on the client side.
+let cleanEmptyObject;
+const getCleanEmptyObject = async () => {
+	if ( ! cleanEmptyObject ) {
+		const { privateApis: blockEditorPrivateApis } = await import( '@wordpress/block-editor' );
+		const { unlock: unlockBlockEditor } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+			'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+			'@wordpress/block-editor'
+		);
+		cleanEmptyObject = unlockBlockEditor( blockEditorPrivateApis ).cleanEmptyObject;
+	}
+
+	return cleanEmptyObject;
+};
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -392,10 +407,12 @@ class ThemeSheet extends Component {
 
 		const { _links, settings, styles } = styleVariation;
 
+		const cleanEmptyObjectFn = await getCleanEmptyObject();
+
 		await this.props.updateGlobalStyles( siteId, globalStylesId, {
-			settings: cleanEmptyObject( settings ) || {},
-			styles: cleanEmptyObject( styles ) || {},
-			_links: cleanEmptyObject( _links ) || {},
+			settings: cleanEmptyObjectFn( settings ) || {},
+			styles: cleanEmptyObjectFn( styles ) || {},
+			_links: cleanEmptyObjectFn( _links ) || {},
 		} );
 	};
 
