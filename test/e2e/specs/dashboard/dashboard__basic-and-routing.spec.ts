@@ -19,7 +19,7 @@ test.describe(
 
 			await test.step( 'Then I see the WordPress.com Multi-site Dashboard page (list of sites)', async function () {
 				expect( await pageDashboard.isLoaded() ).toBe( true );
-				expect( await pageDashboard.getHeadingText() ).toEqual( 'Sites' );
+				expect( await pageDashboard.getHeadingText() ).toEqual( 'FAIL' );
 			} );
 		} );
 
