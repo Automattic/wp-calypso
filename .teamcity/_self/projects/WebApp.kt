@@ -930,8 +930,9 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	params {
 		param("TEST_GROUP", "@calypso-pr")
-        param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "true")
+		param("CALYPSO_BASE_URL", "http://calypso.localhost:3000")
+		param("DASHBOARD_BASE_URL", "http://my.localhost:3000")
 	}
 
 	features {

@@ -78,7 +78,20 @@ export default defineConfig( {
 		screenshot: { mode: 'only-on-failure', fullPage: true },
 		video: 'retain-on-failure',
 	},
-
+	...( process.env.CALYPSO_BASE_URL === 'http://calypso.localhost:3000' && {
+		webServer: {
+			command: 'yarn install && yarn start',
+			timeout: 240_000, // 4 minutes
+			cwd: '../../.',
+			reuseExistingServer: ! process.env.CI,
+			name: 'wp-calypso',
+			stdout: 'pipe',
+			wait: { stdout: /Ready! You can load http:\/\/calypso.localhost:3000\/ now. Have fun!/ },
+			env: {
+				NODE_OPTIONS: '--max-old-space-size=6144',
+			},
+		},
+	} ),
 	/* Configure projects for major browsers */
 	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [

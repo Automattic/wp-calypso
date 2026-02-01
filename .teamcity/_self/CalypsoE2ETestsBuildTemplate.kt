@@ -73,6 +73,18 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
 		bashNodeScript {
+			name = "Configure hosts file"
+			id = "configure_hosts"
+			scriptContent = """
+				# Add hosts file entry
+				echo "127.0.0.1 calypso.localhost" | sudo tee -a /etc/hosts
+				echo "Hosts file updated"
+				cat /etc/hosts | grep calypso.localhost
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
 			name = "Determine Calypso URL"
 			id = "determine_calypso_url"
 			scriptContent = """
