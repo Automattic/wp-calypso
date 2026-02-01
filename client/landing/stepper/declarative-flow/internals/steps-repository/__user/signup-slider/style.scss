@@ -48,42 +48,85 @@
 	justify-content: flex-end;
 	align-items: center;
 	padding-inline: 50px;
-	padding-bottom: 80px;
+	position: relative;
+	padding-top: 36px;
+	padding-bottom: 48px;
 	text-align: center;
 	box-sizing: border-box;
+	overflow-x: visible;
+	overflow-y: hidden;
 }
 
-.signup-slider__slide.signup-slider__slide--1 .signup-slider__slide-content {
-	background: #183ad6 url( ./images/slide1.svg );
-	background-repeat: no-repeat;
-	background-position: top center;
-	background-size: contain;
+.signup-slider__slide-image-container {
+	width: calc( 100% + 100px );
+	max-width: none;
+	overflow: hidden;
+	margin-bottom: 60px;
+	margin-inline: -50px;
+	display: flex;
+	align-items: flex-end;
 }
 
-.signup-slider__slide.signup-slider__slide--2 .signup-slider__slide-content {
-	background: url( ./images/slide2.jpg );
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
+.signup-slider__slide-image {
+	position: static;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center bottom;
+	pointer-events: none;
+	user-select: none;
+	align-self: flex-start;
 }
 
+.signup-slider__slide--2 {
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+	.signup-slider__slide-image-container {
+		margin-bottom: 0;
+	}
+}
+
+.signup-slider__slide--3 {
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+}
+
+.signup-slider__slide--4 {
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+	.signup-slider__slide-image-container {
+		margin-bottom: 12px;
+	}
+}
+
+.signup-slider__slide.signup-slider__slide--1 .signup-slider__slide-content,
 .signup-slider__slide.signup-slider__slide--3 .signup-slider__slide-content {
-	background: url( ./images/slide3.svg );
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
+	background-color: #3858E9;
+	background-image:
+		radial-gradient(50% 50% at 50% 75%, #3858E9 0%, rgba(56, 88, 233, 0) 100%),
+		url(./images/pattern-01.png );
+	background-repeat: no-repeat, repeat;
+	background-position: center center, top left;
+	background-size: cover, auto;
 }
 
+.signup-slider__slide.signup-slider__slide--2 .signup-slider__slide-content,
 .signup-slider__slide.signup-slider__slide--4 .signup-slider__slide-content {
-	background: url( ./images/slide2.jpg );
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
+	background-color: #222;
+	background-image:
+		radial-gradient(50% 50% at 50% 75%, #222 0%, rgba(34, 34, 34, 0) 100%),
+		url(./images/pattern-02.png );
+	background-repeat: no-repeat, repeat;
+	background-position: center center, top left;
+	background-size: cover, auto;
 }
 
 .signup-slider__headline {
 	color: var( --studio-white );
-	font-size: 3.375rem;
+	font-size: 2.75rem;
 	font-family: $font-recoleta;
 	padding-inline: 5.5rem;
 	line-height: 1.2;
@@ -95,7 +138,7 @@
 	font-family: $font-sf-pro-display;
 	text-align: center;
 	align-items: flex-start;
-	font-size: 1.75rem;
+	font-size: 1.5rem;
 	line-height: 1.5;
 	margin-bottom: 48px;
 	padding-inline: 2rem;
@@ -107,7 +150,7 @@
 	align-items: center;
 
 	.signup-slider__testimonial-text {
-		font-size: 2.25rem;
+		font-size: 2rem;
 		font-family: $font-recoleta;
 		line-height: 1.1;
 		font-weight: 400;
@@ -136,6 +179,7 @@
 			padding: 2px;
 			background: linear-gradient( 90deg, #069E08, #3858E9 );
 			-webkit-mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
+			mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
 			-webkit-mask-composite: xor;
 			mask-composite: exclude;
 			pointer-events: none;
