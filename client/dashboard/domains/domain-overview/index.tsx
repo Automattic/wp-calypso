@@ -1,5 +1,10 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainQuery, purchaseQuery, domainDiagnosticsQuery } from '@automattic/api-queries';
+import {
+	domainQuery,
+	purchaseQuery,
+	domainDiagnosticsQuery,
+	domainMappingStatusQuery,
+} from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -30,6 +35,11 @@ export default function DomainOverview() {
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
+
+	const { data: domainMappingStatus } = useQuery( {
+		...domainMappingStatusQuery( domain.domain ),
+		enabled: domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION,
+	} );
 
 	const { data: diagnosticsData } = useQuery( {
 		...domainDiagnosticsQuery( domain.domain ),
@@ -126,6 +136,7 @@ export default function DomainOverview() {
 							isDisabled={ isTldInMaintenance( domain ) }
 							domain={ domain }
 							domainDiagnostics={ diagnosticsData }
+							domainMappingStatus={ domainMappingStatus }
 						/>
 					</>
 				) }
