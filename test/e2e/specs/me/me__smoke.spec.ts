@@ -17,7 +17,7 @@ test.describe( 'Me: Smoke Test', { tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE 
 		} );
 
 		const meEndpoints = [
-			{ target: 'Account Settings', endpoint: 'account' },
+			{ target: 'Account Settingszzz', endpoint: 'account' },
 			{ target: 'Purchases', endpoint: 'purchases' },
 			{ target: 'Security', endpoint: 'security' },
 			{ target: 'Privacy', endpoint: 'privacy' },
