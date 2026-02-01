@@ -1,4 +1,5 @@
 import { DotPager } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import slideImage1 from './images/img-01.png';
 import slideImage1x2 from './images/img-01@2x.png';
@@ -26,7 +27,7 @@ export const SignupSlider = ( { hideDescription }: { hideDescription: boolean } 
 						aria-hidden="true"
 					/>
 				</div>
-				<p className="signup-slider__headline">
+				<p className={ clsx( 'signup-slider__headline', { 'no-description': hideDescription } ) }>
 					{ translate( 'WordPress powers 43% of the web' ) }
 				</p>
 				{ ! hideDescription && (
@@ -68,7 +69,9 @@ export const SignupSlider = ( { hideDescription }: { hideDescription: boolean } 
 						aria-hidden="true"
 					/>
 				</div>
-				<p className="signup-slider__headline">{ translate( 'From idea to site in minutes' ) }</p>
+				<p className={ clsx( 'signup-slider__headline', { 'no-description': hideDescription } ) }>
+					{ translate( 'From idea to site in minutes' ) }
+				</p>
 				{ ! hideDescription && (
 					<p className="signup-slider__description">
 						{ translate(
