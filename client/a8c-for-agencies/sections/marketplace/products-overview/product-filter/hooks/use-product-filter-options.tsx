@@ -12,6 +12,7 @@ import {
 	next,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
@@ -19,6 +20,7 @@ import {
 	PRODUCT_CATEGORY_CUSTOMER_SERVICE,
 	PRODUCT_CATEGORY_GROWTH,
 	PRODUCT_CATEGORY_JETPACK,
+	PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	PRODUCT_CATEGORY_MERCHANDISING,
 	PRODUCT_CATEGORY_PAYMENTS,
 	PRODUCT_CATEGORY_PERFORMANCE,
@@ -55,6 +57,11 @@ export default function useProductFilterOptions() {
 				key: PRODUCT_CATEGORY_WOOCOMMERCE,
 				label: translate( 'WooCommerce' ) as string,
 				image: <img width={ 80 } src={ WooLogoColor } alt="WooCommerce" />,
+			},
+			{
+				key: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+				label: translate( 'Pressable' ) as string,
+				image: <img width={ 140 } src={ PressableLogo } alt="Pressable" />,
 			},
 			{
 				key: PRODUCT_CATEGORY_PAYMENTS,
