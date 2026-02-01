@@ -1,4 +1,6 @@
+import { useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
 
@@ -63,18 +65,20 @@ type PlanDifferentiatorsExperimentResult = {
 
 interface UsePlanDifferentiatorsExperimentParams {
 	flowName?: string | null;
-	intent?: string;
 	isInSignup: boolean;
 }
 
 function usePlanDifferentiatorsExperiment( {
 	flowName,
-	intent,
 	isInSignup,
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
-	// Eligible for onboarding signup flow or plans-default-wpcom admin intent
+	const assignmentFromPreference = useSelector( ( state ) =>
+		getPreference( state, 'calypso_pricing_differentiation_202601_v1' )
+	);
+
+	// Eligible for onboarding signup flow or when user preference is set
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
+	const isEligibleAdminIntent = ! isInSignup && !! assignmentFromPreference;
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
@@ -82,7 +86,8 @@ function usePlanDifferentiatorsExperiment( {
 		isEligible,
 	} );
 
-	const variant = ( assignment?.variationName ?? undefined ) as
+	// Use stored assignment to avoid waiting for the API response
+	const variant = ( assignmentFromPreference || assignment?.variationName || undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
 
@@ -95,7 +100,7 @@ function usePlanDifferentiatorsExperiment( {
 	// var5 -> getVar5StackedSignupWpcomFeatures
 
 	return {
-		isLoading,
+		isLoading: assignmentFromPreference ? false : isLoading,
 		variant,
 		isStacked:
 			variant === 'var1' || variant === 'var1d' || variant === 'var3' || variant === 'var5',
