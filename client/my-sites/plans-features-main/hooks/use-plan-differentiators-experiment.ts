@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
 
@@ -72,7 +73,7 @@ function usePlanDifferentiatorsExperiment( {
 	flowName,
 	isInSignup,
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
-	const assignmentFromPreference = useSelector( ( state ) =>
+	const assignmentFromPreference = useSelector( ( state: IAppState ) =>
 		getPreference( state, 'calypso_pricing_differentiation_202601_v1' )
 	);
 
