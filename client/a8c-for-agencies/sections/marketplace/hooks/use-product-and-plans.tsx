@@ -8,6 +8,7 @@ import {
 	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 	PRODUCT_TYPE_JETPACK_PLAN,
 	PRODUCT_TYPE_JETPACK_PRODUCT,
+	PRODUCT_TYPE_PRESSABLE_ADDON,
 	PRODUCT_TYPE_PRESSABLE_PLAN,
 	PRODUCT_TYPE_WOO_EXTENSION,
 	PRODUCT_TYPE_WPCOM_PLAN,
@@ -164,6 +165,10 @@ export default function useProductAndPlans( {
 			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
 			pressablePlans: filterProductsAndPlansByType(
 				PRODUCT_TYPE_PRESSABLE_PLAN,
+				filteredProductsAndBundles
+			),
+			pressableAddons: filterProductsAndPlansByType(
+				PRODUCT_TYPE_PRESSABLE_ADDON,
 				filteredProductsAndBundles
 			),
 			wpcomPlans: filterProductsAndPlansByType(
