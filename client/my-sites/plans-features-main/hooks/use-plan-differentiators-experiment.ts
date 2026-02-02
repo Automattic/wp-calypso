@@ -1,6 +1,8 @@
+import { useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getSite from 'calypso/state/sites/selectors/get-site';
 import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
@@ -67,19 +69,32 @@ type PlanDifferentiatorsExperimentResult = {
 interface UsePlanDifferentiatorsExperimentParams {
 	flowName?: string | null;
 	isInSignup: boolean;
+	siteId?: number | null;
 }
 
 function usePlanDifferentiatorsExperiment( {
 	flowName,
 	isInSignup,
+	siteId,
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
+	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
+
+	// Use a ref to "lock in" the gating flag once it's been set to true.
+	// This prevents the flag from becoming undefined if site data is refetched
+	// without this field included in the response.
+	const gatingFlagRef = useRef< boolean >( false );
+	if ( site?.options?.is_gating_business_q1 === true ) {
+		gatingFlagRef.current = true;
+	}
+	const hasGatingFlag = gatingFlagRef.current;
+
 	const assignmentFromPreference = useSelector( ( state: IAppState ) =>
-		getPreference( state, 'calypso_pricing_differentiation_202601_v1' )
+		hasGatingFlag ? getPreference( state, 'calypso_pricing_differentiation_202601_v1' ) : null
 	);
 
 	// Eligible for onboarding signup flow or when user preference is set
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && !! assignmentFromPreference;
+	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag && !! assignmentFromPreference;
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 

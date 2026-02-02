@@ -392,7 +392,7 @@ const PlansFeaturesMain = ( {
 		isVar1dVariant,
 		isVar4Variant,
 		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup } );
+	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
