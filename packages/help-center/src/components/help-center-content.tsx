@@ -75,7 +75,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
-	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
+	}, [ location.pathname, location.search, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
 		if ( navigateToRoute?.route ) {
