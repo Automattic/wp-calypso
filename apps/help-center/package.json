@@ -47,7 +47,7 @@
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/plugins": "^7.23.0",
-		"@wordpress/private-apis": "^1.23.0",
+		"@wordpress/private-apis": "^ 1.39.0",
 		"@wordpress/router": "^1.23.0",
 		"@wordpress/url": "^4.35.0",
 		"postcss-prefix-selector": "^1.16.1"

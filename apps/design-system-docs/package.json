@@ -29,7 +29,7 @@
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/browserslist-config": "^6.23.0",
 		"@wordpress/components": "^32.1.0",
-		"@wordpress/dataviews": "^10.3.0",
+		"@wordpress/dataviews": "^11.3.0",
 		"docusaurus-plugin-sass": "^0.2.6",
 		"prism-react-renderer": "^2.4.1",
 		"react": "^18.3.1",

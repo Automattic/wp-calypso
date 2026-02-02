@@ -34,7 +34,7 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@wordpress/components": "^32.1.0",
 		"@wordpress/data": "^10.23.0",
-		"@wordpress/dataviews": "^10.3.0",
+		"@wordpress/dataviews": "^11.3.0",
 		"@wordpress/element": "^6.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
