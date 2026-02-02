@@ -77,7 +77,7 @@ function usePlanDifferentiatorsExperiment( {
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
 	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
 
-	const hasGatingFlag = site?.options.is_gating_business_q1;
+	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
 
 	// Eligible for onboarding signup flow or when site flag is set
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
