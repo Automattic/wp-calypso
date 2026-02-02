@@ -23,6 +23,7 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"hosting/crontab": true,
 		"wordpress-ai-assistant": true,
 		"wordpress-ai-tools": true
 	},

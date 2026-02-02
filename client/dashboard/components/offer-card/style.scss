@@ -1,0 +1,10 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.offer-card--stacked {
+	width: 100%;
+
+	@include break-medium {
+		width: 260px;
+	}
+}

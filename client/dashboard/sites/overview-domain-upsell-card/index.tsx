@@ -1,5 +1,4 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
-import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -23,14 +22,7 @@ const requiresPlanUpgrade = ( site: Site ) => {
 };
 
 const useDomainSuggestion = ( site: Site ) => {
-	// Temporary debugging. See: https://github.com/Automattic/wp-calypso/pull/108256
-	if ( site.slug === undefined ) {
-		captureException( new Error( 'site.slug is undefined in useDomainSuggestion()' ), {
-			extra: { site },
-		} );
-	}
-
-	const search = site.slug?.split( '.' )[ 0 ] ?? '';
+	const search = site.slug.split( '.' )[ 0 ];
 	const { data: allDomainSuggestions } = useQuery(
 		domainSuggestionsQuery( search, {
 			vendor: 'domain-upsell',

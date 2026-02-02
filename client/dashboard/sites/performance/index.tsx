@@ -173,11 +173,7 @@ function SitePerformance() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	return (
-		<HostingFeatureGatedWithCallout
-			site={ site }
-			overlay={ <PageLayout header={ <PageHeader /> } /> }
-			{ ...getPerformanceCalloutProps() }
-		>
+		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getPerformanceCalloutProps() }>
 			{ site.is_coming_soon || site.is_private ? (
 				<PageLayout
 					size="small"

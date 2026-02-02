@@ -27,7 +27,7 @@ interface Options {
 
 interface ReturnValue {
 	isDocked: boolean;
-	isDesktop: boolean;
+	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
 	openSidebar: () => void;
@@ -54,7 +54,8 @@ export default function useAgentLayoutManager( {
 	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
 
 	const hasEnoughHeight = height >= adminMenuHeight;
-	const shouldRenderSidebar = isDesktop && hasEnoughHeight && isDocked;
+	const canDock = isDesktop && hasEnoughHeight;
+	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
@@ -195,11 +196,11 @@ export default function useAgentLayoutManager( {
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( true );
 
-		if ( isDesktop ) {
+		if ( canDock ) {
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ container, isReady, handleOpenSidebar, isDesktop ] );
+	}, [ container, isReady, handleOpenSidebar, canDock ] );
 
 	const undock = useCallback( () => {
 		if ( ! isReady || ! container ) {
@@ -238,7 +239,7 @@ export default function useAgentLayoutManager( {
 
 	return {
 		isDocked: !! shouldRenderSidebar,
-		isDesktop,
+		canDock,
 		dock,
 		undock,
 		openSidebar: handleOpenSidebar,

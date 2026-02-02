@@ -2,6 +2,7 @@ import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDebounce } from 'use-debounce';
 import { useIsDomainCodeValid } from 'calypso/landing/stepper/hooks/use-is-domain-code-valid';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 export type DomainValidationOptions = {
@@ -27,6 +28,9 @@ export function useValidationMessage(
 		hasGoodDomain && ( ! hasAnyAuthCode || hasGoodAuthCode ) && ! hasDuplicates;
 
 	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
+
+	const query = useQuery();
+	const dashboard = query.get( 'dashboard' );
 
 	const {
 		data: validationResult,
@@ -86,7 +90,8 @@ export function useValidationMessage(
 		validationResult,
 		true,
 		'_blank',
-		validationResult?.tld
+		validationResult?.tld,
+		dashboard ?? ''
 	);
 
 	// final success

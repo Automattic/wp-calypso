@@ -24,7 +24,7 @@ export function isHelpCenterShown() {
 
 export function getHelpCenterRouterHistory() {
 	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
-		const route = select.getNavigateToRoute();
+		const route = select.getNavigateToRoute()?.route;
 
 		// Don't use the history from the preferences if route is defined to avoid a race condition between restoring
 		// persisted data and setting the support doc data. Persisted values could overwrite freshly fetched data.

@@ -27,6 +27,7 @@ export class SitesDropdown extends PureComponent {
 		isPlaceholder: PropTypes.bool,
 		hasMultipleSites: PropTypes.bool,
 		disabled: PropTypes.bool,
+		hideDeleted: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,6 +38,7 @@ export class SitesDropdown extends PureComponent {
 		isPlaceholder: false,
 		hasMultipleSites: false,
 		disabled: false,
+		hideDeleted: true,
 	};
 
 	constructor( props ) {
@@ -102,7 +104,11 @@ export class SitesDropdown extends PureComponent {
 
 	// Our filter prop handles siteIds, while SiteSelector's filter prop needs objects
 	siteFilter( site ) {
-		return this.props.filter( site.ID );
+		if ( this.props.hideDeleted && site.is_deleted ) {
+			return false;
+		}
+
+		return this.props.filter?.( site.ID ) ?? true;
 	}
 
 	toggleOpen() {
@@ -181,7 +187,7 @@ export class SitesDropdown extends PureComponent {
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selectedSiteId }
 							hideSelected
-							filter={ this.props.filter && this.siteFilter }
+							filter={ this.siteFilter }
 						/>
 					) }
 				</div>

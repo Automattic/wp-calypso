@@ -132,7 +132,10 @@ const PostCheckoutOnboarding: StepType< {
 				hasExternalTheme,
 				hasPluginByGoal,
 				...( eligibleForExperiment
-					? { postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control' }
+					? {
+							postCheckoutBigSky: true,
+							postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control',
+					  }
 					: {} ),
 			};
 

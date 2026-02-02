@@ -10,8 +10,10 @@ import {
 	MAP_EXISTING_DOMAIN,
 	PREMIUM_DOMAINS,
 } from '@automattic/urls';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import SetAsPrimaryLink from 'calypso/my-sites/domains/domain-management/settings/set-as-primary/link';
 import {
@@ -29,7 +31,8 @@ function getAvailabilityNotice(
 	errorData,
 	isForTransferOnly = false,
 	linksTarget = '_self',
-	domainTld = ''
+	domainTld = '',
+	dashboard = ''
 ) {
 	const tld = domainTld || ( domain ? getTld( domain ) : null );
 	const { site, maintenanceEndTime, availabilityPreCheck, isSiteDomainOnly } = errorData || {};
@@ -82,17 +85,14 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( site ) {
+				const transferUrl = dashboard
+					? dashboardLink( `/domains/${ domain }/transfer/other-site` )
+					: domainManagementTransferToOtherSite( site, domain );
 				const messageOptions = {
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								target={ linksTarget }
-								rel="noopener noreferrer"
-								href={ domainManagementTransferToOtherSite( site, domain ) }
-							/>
-						),
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ transferUrl } />,
 					},
 				};
 				if ( isSiteDomainOnly ) {
@@ -156,6 +156,9 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			if ( site ) {
+				const transferUrl = dashboard
+					? dashboardLink( `/domains/${ domain }/domain-transfer-setup` )
+					: domainTransferIn( site, domain );
 				message = translate(
 					'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
 						'it from your current domain provider to WordPress.com so you can manage the domain and the site ' +
@@ -164,13 +167,7 @@ function getAvailabilityNotice(
 						args: { domain },
 						components: {
 							strong: <strong />,
-							a: (
-								<a
-									target={ linksTarget }
-									rel="noopener noreferrer"
-									href={ domainTransferIn( site, domain ) }
-								/>
-							),
+							a: <a target={ linksTarget } rel="noopener noreferrer" href={ transferUrl } />,
 						},
 					}
 				);
@@ -237,6 +234,9 @@ function getAvailabilityNotice(
 			);
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE:
+			const registerUrl = dashboard
+				? addQueryArgs( wpcomLink( '/setup/domain' ), { siteSlug: site, ref: 'dashboard' } )
+				: domainAddNew( site, domain );
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s.' +
 					' {{a}}Register it to the connected site.{{/a}}',
@@ -244,31 +244,25 @@ function getAvailabilityNotice(
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								target={ linksTarget }
-								rel="noopener noreferrer"
-								href={ domainAddNew( site, domain ) }
-							/>
-						),
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ registerUrl } />,
 					},
 				}
 			);
 			break;
 		case domainAvailability.TRANSFER_PENDING_SAME_USER:
+			// eslint-disable-next-line no-nested-ternary
+			const transferStatusUrl = dashboard
+				? dashboardLink( `/domains/${ domain }/transfer` )
+				: site
+				? domainManagementTransferIn( site, domain )
+				: '/domains/manage';
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
 				{
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								target={ linksTarget }
-								rel="noopener noreferrer"
-								href={ site ? domainManagementTransferIn( site, domain ) : '/domains/manage' }
-							/>
-						),
+						a: <a target={ linksTarget } rel="noopener noreferrer" href={ transferStatusUrl } />,
 					},
 				}
 			);
@@ -540,19 +534,16 @@ function getAvailabilityNotice(
 
 		case domainAvailability.AVAILABLE_PREMIUM:
 			if ( site ) {
+				const mapUrl = dashboard
+					? dashboardLink( `/domains/${ domain }/domain-connection-setup` )
+					: domainMapping( site, domain );
 				message = translate(
 					"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
 					{
 						args: { domain },
 						components: {
 							strong: <strong />,
-							a: (
-								<a
-									target={ linksTarget }
-									rel="noopener noreferrer"
-									href={ domainMapping( site, domain ) }
-								/>
-							),
+							a: <a target={ linksTarget } rel="noopener noreferrer" href={ mapUrl } />,
 						},
 					}
 				);

@@ -490,6 +490,14 @@ import {
 	WPCOM_FEATURES_LOGS,
 	WPCOM_FEATURES_MONITORING,
 	WPCOM_FEATURES_PERFORMANCE,
+	WPCOM_FEATURES_BIG_SKY,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
@@ -982,6 +990,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_FREE_PLUS,
+		FEATURE_CUSTOM_DOMAIN,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
@@ -1256,6 +1265,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 		FEATURE_VIDEO_UPLOADS,
+		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
@@ -1354,11 +1364,11 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT,
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_VIDEO_UPLOADS,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
-			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -1457,6 +1467,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_LOGS,
 		WPCOM_FEATURES_MONITORING,
 		WPCOM_FEATURES_PERFORMANCE,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1596,16 +1607,6 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 		),
 } );
 
-const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanWooExpressMediumDetails(),
-	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
-		),
-} );
-
 const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
@@ -1639,13 +1640,47 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 } );
 
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanWooExpressSmallDetails(),
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_WOO_HOSTED_PACKAGE,
+		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_WOO_HOSTED_PACKAGE,
+		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getStorageFeature: () => FEATURE_200GB_STORAGE,
+	getTitle: () => i18n.translate( 'Pro' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
 		),
 } );
 
@@ -2119,6 +2154,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 		FEATURE_VIDEO_UPLOADS,
+		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
@@ -2129,9 +2165,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Stacked variant: only incremental features (matching screenshot order)
 	getLongSetStackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
-		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_ADVANCED_JETPACK_FORMS,
 		FEATURE_REALTIME_BACKUPS_JP,
@@ -2147,9 +2183,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Short set stacked: incremental features from Premium
 	getShortSetStackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
-		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_ADVANCED_JETPACK_FORMS,
 		FEATURE_REALTIME_BACKUPS_JP,
@@ -2165,6 +2201,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
 	getVar5StackedSignupWpcomFeatures: () => [
 		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
+		FEATURE_AI_WRITER_DESIGNER,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
@@ -2237,11 +2274,11 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_VIDEO_UPLOADS,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
-			FEATURE_VIDEO_UPLOADS,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -2393,6 +2430,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_LOGS,
 		WPCOM_FEATURES_MONITORING,
 		WPCOM_FEATURES_PERFORMANCE,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getSenseiFeatures: ( term ) => () =>

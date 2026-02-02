@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -14,7 +15,6 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useShouldUseUnifiedAgent } from '../hooks';
 import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
