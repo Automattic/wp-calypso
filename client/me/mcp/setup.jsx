@@ -58,7 +58,7 @@ function McpSetupComponent( { path } ) {
 
 	// MCP client options
 	const mcpClientOptions = [
-		{ label: 'Claude Desktop', value: 'claude' },
+		{ label: 'Claude', value: 'claude' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'VS Code', value: 'vscode' },
 		{ label: 'Continue', value: 'continue' },
@@ -79,8 +79,7 @@ function McpSetupComponent( { path } ) {
 	// Generate MCP configuration based on selected client
 	const generateMcpConfig = ( client ) => {
 		const baseConfig = {
-			command: 'npx',
-			args: [ '-y', '@automattic/mcp-wpcom-remote@latest' ],
+			url: 'https://public-api.wordpress.com/wpcom/v2/mcp/v1',
 		};
 
 		switch ( client ) {
@@ -211,11 +210,7 @@ function McpSetupComponent( { path } ) {
 						</Text>
 						<VStack spacing={ 2 }>
 							<ul>
-								<li>
-									{ translate(
-										'Running a bridge server using the WordPress.com-specific MCP package'
-									) }
-								</li>
+								<li>{ translate( 'Connecting to the WordPress.com MCP endpoint' ) }</li>
 								<li>
 									{ translate(
 										'Handling OAuth 2.1 authentication to securely connect to your WordPress.com account'
@@ -249,7 +244,7 @@ function McpSetupComponent( { path } ) {
 								) }
 							/>
 
-							{ /* Quick Setup for Claude Desktop */ }
+							{ /* Quick Setup for Claude */ }
 							{ selectedMcpClient === 'claude' && (
 								<VStack spacing={ 4 } style={ { borderBottom: '1px solid #e0e0e0' } }>
 									<CardHeading tagName="h1" size={ 16 } isBold>
@@ -257,34 +252,41 @@ function McpSetupComponent( { path } ) {
 									</CardHeading>
 									<Text as="p" size="medium">
 										{ translate(
-											'For Claude Desktop users, we provide a one-click setup option using our MCP Bundle (MCPB) file.'
+											'For Claude users, connect WordPress.com from Claude Connectors.'
 										) }
 									</Text>
-									<Button
-										variant="primary"
-										href="https://github.com/Automattic/wpcom-mcp-bundle/raw/refs/heads/trunk/wordpress-com-mcp.mcpb"
-										target="_blank"
-										style={ { alignSelf: 'flex-start' } }
-									>
-										{ translate( 'Download MCPB File' ) }
-									</Button>
 									<Text as="p" size="medium">
 										{ translate( 'Installation steps:' ) }
 									</Text>
 									<ol>
 										<li>
 											<Text as="p" size="medium">
-												{ translate( 'Click the download button above' ) }
+												{ createInterpolateElement(
+													/* translators: %s is the link to the Claude settings page */
+													translate( 'Open <ClaudeSettings/>.' ),
+													{
+														ClaudeSettings: (
+															<ExternalLink href="https://claude.ai/settings/connectors">
+																{ translate( 'Claude settings' ) }
+															</ExternalLink>
+														),
+													}
+												) }
 											</Text>
 										</li>
 										<li>
 											<Text as="p" size="medium">
-												{ translate( 'Double-click the downloaded file' ) }
+												{ translate( 'Click the "Browse connectors" button.' ) }
 											</Text>
 										</li>
 										<li>
 											<Text as="p" size="medium">
-												{ translate( "Follow Claude Desktop's setup instructions" ) }
+												{ translate( 'Search for WordPress.com.' ) }
+											</Text>
+										</li>
+										<li>
+											<Text as="p" size="medium">
+												{ translate( 'Select WordPress.com and follow the prompts to connect.' ) }
 											</Text>
 										</li>
 									</ol>
@@ -302,12 +304,12 @@ function McpSetupComponent( { path } ) {
 									</CardHeading>
 									<Text as="p" size="medium">
 										{ translate(
-											'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
+											'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
 										) }
 									</Text>
 									<Button
 										variant="primary"
-										href="https://cursor.com/en/install-mcp?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhdXRvbWF0dGljL21jcC13cGNvbS1yZW1vdGVAbGF0ZXN0Il19"
+										href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
 										target="_blank"
 										style={ { alignSelf: 'flex-start' } }
 									>
@@ -364,7 +366,7 @@ function McpSetupComponent( { path } ) {
 										help={ translate(
 											"Copy this configuration and paste it into your MCP client's settings."
 										) }
-										style={ { minHeight: '240px' } }
+										style={ { minHeight: '160px' } }
 									/>
 								</VStack>
 							</VStack>
@@ -397,8 +399,8 @@ function McpSetupComponent( { path } ) {
 								<li>
 									{ createInterpolateElement(
 										translate(
-											'<code>%s</code> is the official WordPress.com MCP server package'
-										).replace( '%s', '@automattic/mcp-wpcom-remote' ),
+											'<code>%s</code> is the official WordPress.com MCP server endpoint'
+										).replace( '%s', 'https://public-api.wordpress.com/wpcom/v2/mcp/v1' ),
 										{
 											code: (
 												<code
@@ -411,7 +413,7 @@ function McpSetupComponent( { path } ) {
 														fontSize: '13px',
 													} }
 												>
-													@automattic/mcp-wpcom-remote
+													https://public-api.wordpress.com/wpcom/v2/mcp/v1
 												</code>
 											),
 										}

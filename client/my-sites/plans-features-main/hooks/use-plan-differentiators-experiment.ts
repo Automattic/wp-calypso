@@ -1,4 +1,7 @@
 import { useExperiment } from 'calypso/lib/explat';
+import { useSelector } from 'calypso/state';
+import getSite from 'calypso/state/sites/selectors/get-site';
+import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
 
@@ -63,18 +66,22 @@ type PlanDifferentiatorsExperimentResult = {
 
 interface UsePlanDifferentiatorsExperimentParams {
 	flowName?: string | null;
-	intent?: string;
 	isInSignup: boolean;
+	siteId?: number | null;
 }
 
 function usePlanDifferentiatorsExperiment( {
 	flowName,
-	intent,
 	isInSignup,
+	siteId,
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
-	// Eligible for onboarding signup flow or plans-default-wpcom admin intent
+	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
+
+	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
+
+	// Eligible for onboarding signup flow or when site flag is set
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
+	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag;
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
