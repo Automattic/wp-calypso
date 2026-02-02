@@ -60,7 +60,8 @@ type ChatComponentType =
 	| 'color-picker'
 	| 'pattern-picker'
 	| 'chat-suggestions'
-	| 'next-step-button';
+	| 'next-step-button'
+	| 'start-over-actions';
 
 /**
  * Get a chat component by type for rendering in agent messages.

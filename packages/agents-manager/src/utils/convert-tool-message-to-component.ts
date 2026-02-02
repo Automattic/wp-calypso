@@ -16,7 +16,8 @@ export function convertToolMessagesToComponents( {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
-		if ( message.role !== 'agent' || ! firstContentText ) {
+		// @ts-expect-error -- 'assistant' comes from Big Sky messages
+		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
 			return [ message ];
 		}
 
@@ -69,7 +70,9 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
-		// TODO: Handle `start_over` components...
+		if ( textData.tool_id === 'big_sky__client_assistants' ) {
+			// TODO: Handle start-over-actions...
+		}
 
 		return [ message ];
 	} );
