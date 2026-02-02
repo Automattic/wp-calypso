@@ -223,26 +223,38 @@ export function AgentUIContainer( {
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
-		(
+		async (
 			selectedSuggestion: Suggestion,
 			availableSuggestions: Suggestion[]
 		) => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
-			const valueWithSpace = value.endsWith( ' ' )
-				? value
-				: `${ value } `;
-			input.setValue( valueWithSpace );
-			clearSuggestions?.();
-			if ( input.textareaRef.current ) {
-				input.textareaRef.current.focus();
-				input.textareaRef.current.setSelectionRange(
-					valueWithSpace.length,
-					valueWithSpace.length
-				);
+
+			if ( selectedSuggestion.autoSubmit ) {
+				// Auto-submit: send message directly to LLM
+				clearSuggestions?.();
+				const message = value.trim();
+				if ( message ) {
+					await onSubmit( message );
+				}
+			} else {
+				// Default: populate input field for user to edit/submit
+				const valueWithSpace = value.endsWith( ' ' )
+					? value
+					: `${ value } `;
+				input.setValue( valueWithSpace );
+				clearSuggestions?.();
+				if ( input.textareaRef.current ) {
+					input.textareaRef.current.focus();
+					input.textareaRef.current.setSelectionRange(
+						valueWithSpace.length,
+						valueWithSpace.length
+					);
+				}
 			}
+
 			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 		},
-		[ input.setValue, clearSuggestions, onSuggestionClick ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input ]
 	);
 
 	// Handle opening the chat and call onOpen callback
