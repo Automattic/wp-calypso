@@ -263,13 +263,7 @@ function McpComponent( { path } ) {
 									__nextHasNoMarginBottom
 									checked={ anyToolsEnabled }
 									onChange={ handleMasterToggle }
-									label={
-										<Text weight="bold">
-											{ anyToolsEnabled
-												? translate( 'Disable MCP Tool Access' )
-												: translate( 'Enable MCP Tool Access' ) }
-										</Text>
-									}
+									label={ <Text weight="bold">{ translate( 'Enable MCP Tool Access' ) }</Text> }
 								/>
 								{ anyToolsEnabled && (
 									<Button variant="secondary" href="/me/mcp-setup">
@@ -312,11 +306,7 @@ function McpComponent( { path } ) {
 										disabled={ mutation.isPending }
 										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
 										label={
-											<Text weight="bold">
-												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
-													? translate( 'Disable MCP access for this site' )
-													: translate( 'Enable MCP access for this site' ) }
-											</Text>
+											<Text weight="bold">{ translate( 'Enable MCP access for this site' ) }</Text>
 										}
 									/>
 								) }

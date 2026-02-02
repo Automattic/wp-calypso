@@ -303,11 +303,7 @@ function McpComponent() {
 								__nextHasNoMarginBottom
 								checked={ anyToolsEnabled }
 								onChange={ handleMasterToggle }
-								label={
-									<Text>
-										{ anyToolsEnabled ? __( 'Disable AI Access' ) : __( 'Enable AI Access' ) }
-									</Text>
-								}
+								label={ <Text>{ __( 'Enable AI access' ) }</Text> }
 							/>
 						</VStack>
 					</CardBody>
@@ -345,13 +341,7 @@ function McpComponent() {
 										checked={ allSelectedSitesEnabled }
 										disabled={ mutation.isPending }
 										onChange={ handleAllSitesToggle }
-										label={
-											<Text>
-												{ allSelectedSitesEnabled
-													? __( 'Disable AI access for selected sites' )
-													: __( 'Enable AI access for selected sites' ) }
-											</Text>
-										}
+										label={ <Text>{ __( 'Enable AI access for selected sites' ) }</Text> }
 									/>
 								) }
 							</VStack>
