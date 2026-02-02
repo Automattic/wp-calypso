@@ -307,7 +307,10 @@ class ThemeSheet extends Component {
 			this.props.themeId,
 			this.props.defaultOption,
 			this.props.secondaryOption,
-			{ styleVariation: this.getSelectedStyleVariation() }
+			{
+				dispatchLivePreview: this.dispatchLivePreview,
+				styleVariation: this.getSelectedStyleVariation(),
+			}
 		);
 	};
 
@@ -978,8 +981,14 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	dispatchLivePreview() {
+		const { siteId, themeId } = this.props;
+
+		this.props.livePreview( siteId, themeId, 'detail' );
+	}
+
 	handleEditorWebPreview = async () => {
-		const { isAtomic, siteEditorUrl, siteId, themeId, themeInstallId } = this.props;
+		const { isAtomic, siteEditorUrl, siteId, themeInstallId } = this.props;
 
 		this.setState( { isRedirectingToEditorWebPreview: true } );
 
@@ -987,7 +996,7 @@ class ThemeSheet extends Component {
 
 		this.onBeforeOptionAction();
 
-		this.props.livePreview( siteId, themeId, 'detail' );
+		this.dispatchLivePreview();
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
