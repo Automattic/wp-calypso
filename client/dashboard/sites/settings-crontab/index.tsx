@@ -6,12 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	Icon,
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -92,12 +87,9 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			label: __( 'Schedule' ),
 			getValue: ( { item }: { item: Crontab } ) => item.schedule,
 			render: ( { item }: { item: Crontab } ) => (
-				<HStack spacing={ 2 }>
-					<span style={ { flex: 'none' } }>{ item.schedule }</span>
-					<Text variant="muted" size="small">
-						({ cronstrue.toString( item.schedule, { verbose: true } ) })
-					</Text>
-				</HStack>
+				<Text variant="muted" size="small">
+					{ cronstrue.toString( item.schedule, { verbose: true } ) }
+				</Text>
 			),
 			enableGlobalSearch: true,
 		},
