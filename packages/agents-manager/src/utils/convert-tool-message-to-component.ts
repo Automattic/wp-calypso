@@ -31,9 +31,9 @@ export function convertToolMessagesToComponents( {
 
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			const { type: contentType, props, followUpTasks } = textData.data ?? {};
-			const component = getChatComponent?.( contentType );
+			const Component = getChatComponent?.( contentType );
 
-			if ( ! component ) {
+			if ( ! Component ) {
 				return [];
 			}
 
@@ -42,7 +42,7 @@ export function convertToolMessagesToComponents( {
 				content: [
 					{
 						type: 'component' as const,
-						component,
+						component: Component,
 						componentProps: { ...props, contentType },
 					},
 				],
