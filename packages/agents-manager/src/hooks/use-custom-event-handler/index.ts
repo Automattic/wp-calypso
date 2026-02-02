@@ -1,7 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
-import { AGENTS_MANAGER_STORE } from '../stores';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 
 type Props = {
 	isDocked: boolean;

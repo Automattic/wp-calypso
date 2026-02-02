@@ -60,6 +60,12 @@ function MyComponent() {
 }
 ```
 
+### Custom Event Bridge (non-React integrations)
+
+If you need to control the Agents Manager UI from outside the React tree (for example from a host app, legacy code, or a separate bundle), you can dispatch the `agents-manager:action` custom event.
+
+See: `src/hooks/use-custom-event-handler/README.md`.
+
 ## API Reference
 
 ### UnifiedAIAgent Props
