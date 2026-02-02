@@ -15507,6 +15507,7 @@ __metadata:
     cookie-parser: "npm:^1.4.7"
     core-js-bundle: "npm:^3.6.4"
     creditcards: "npm:^3.1.0"
+    cronstrue: "npm:^3.11.0"
     csv-parse: "npm:^5.1.0"
     d3-array: "npm:^2.4.0"
     d3-axis: "npm:^1.0.12"
@@ -17135,6 +17136,15 @@ __metadata:
     parse-int: "npm:^1.0.0"
     parse-year: "npm:^1.0.0"
   checksum: c3fe8349d5b7f894f126c58d4b4534c025f32e7da418d1e870da171615dad3a9627aeeab36ac8a88d422613980bb5e7af3c42d453bc62aa00f38466bd26687c4
+  languageName: node
+  linkType: hard
+
+"cronstrue@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "cronstrue@npm:3.11.0"
+  bin:
+    cronstrue: bin/cli.js
+  checksum: 16ecc85750b55df41f16e0f2f10bef81f8954bbcdfc31912e66e2f46cdb0e33c059a7645e9d01080a3f0739d9d88a2a93cb86811597adc07b44255bc94bf118c
   languageName: node
   linkType: hard
 
