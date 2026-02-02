@@ -29,13 +29,6 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/components/popover-menu', () => ( {
-	__esModule: true,
-	default: ( { children }: { children: React.ReactNode } ) => (
-		<div data-testid="popover-menu">{ children }</div>
-	),
-} ) );
-
 jest.mock( '@automattic/verbum-block-editor', () => {
 	return {
 		Editor: ( {
@@ -56,6 +49,15 @@ jest.mock( '@automattic/verbum-block-editor', () => {
 		loadTextFormatting: jest.fn(),
 	};
 } );
+
+jest.mock( '@wordpress/blocks', () => ( {
+	parse: jest.fn().mockReturnValue( {
+		content: 'Test post',
+	} ),
+	createBlock: jest.fn(),
+	serialize: jest.fn(),
+	unregisterBlockType: jest.fn(),
+} ) );
 
 jest.mock( '@wordpress/block-library/build-module/heading', () => {
 	return {
@@ -87,6 +89,17 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 	useRecordReaderTracksEvent: jest.fn( () => jest.fn() ),
 } ) );
 
+const mockSavePostApi = ( type: 'publish' | 'draft' ) => {
+	return nock( 'https://public-api.wordpress.com:443' )
+		.post( '/rest/v1.1/sites/123/posts/new', {
+			title: 'Test post...',
+			content: 'Test post',
+			status: type,
+		} )
+		.once()
+		.reply( 200, { ID: 1234, URL: 'https://example.com/test-post' } );
+};
+
 describe( 'QuickPost', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -113,14 +126,8 @@ describe( 'QuickPost', () => {
 		expect( getByRole( 'button', { name: 'Post' } ) ).toBeVisible();
 	} );
 
-	it( 'saves the post when clicks on the publish button', async () => {
-		nock( 'https://public-api.wordpress.com:443' )
-			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
-				content: 'Test post',
-				status: 'publish',
-			} )
-			.reply( 200, { ID: 123, URL: 'https://example.com/test-post' } );
+	it( 'saves the post when clicks on the Post button', async () => {
+		mockSavePostApi( 'publish' );
 
 		renderWithProvider( <QuickPost /> );
 		await userEvent.type(
@@ -134,7 +141,6 @@ describe( 'QuickPost', () => {
 				'Post successful! Your post will appear in the feed soon.',
 				{
 					button: 'View Post.',
-					href: 'https://example.com/test-post',
 					onClick: expect.any( Function ),
 				}
 			);
@@ -142,15 +148,10 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'tracks the event when the post is saved', async () => {
+		mockSavePostApi( 'publish' );
+
 		const mockTrackEvent = jest.fn();
 		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
-		nock( 'https://public-api.wordpress.com:443' )
-			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
-				content: 'Test post',
-				status: 'publish',
-			} )
-			.reply( 200, { ID: 1234, URL: 'https://example.com/test-post' } );
 
 		renderWithProvider( <QuickPost /> );
 		await userEvent.type(
@@ -196,16 +197,10 @@ describe( 'QuickPost', () => {
 	} );
 
 	it( 'redirects to the full editor when the post is saved', async () => {
+		mockSavePostApi( 'draft' );
+
 		const mockTrackEvent = jest.fn();
 		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
-
-		nock( 'https://public-api.wordpress.com:443' )
-			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
-				content: 'Test post',
-				status: 'draft',
-			} )
-			.reply( 200, { ID: 1234 } );
 
 		renderWithProvider( <QuickPost /> );
 
@@ -214,8 +209,9 @@ describe( 'QuickPost', () => {
 			'Test post'
 		);
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Quick post actions' } ) );
-		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Open Full Editor' } ) );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Edit using the full editor.' } )
+		);
 
 		await waitFor( async () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
