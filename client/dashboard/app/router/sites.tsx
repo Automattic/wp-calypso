@@ -24,6 +24,7 @@ import {
 	siteCurrentPlanQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
 	purchaseQuery,
@@ -1011,6 +1012,61 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	)
 );
 
+export const siteSettingsCrontabRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cron' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'crontab',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! isEnabled( 'hosting/crontab' ) ) {
+			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} );
+
+export const siteSettingsCrontabIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteCrontabsQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsCrontabAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Scheduled Job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-add' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteSettingsTransferSiteRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1409,6 +1465,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsSftpSshRoute,
+		siteSettingsCrontabRoute.addChildren( [
+			siteSettingsCrontabIndexRoute,
+			siteSettingsCrontabAddRoute,
+		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
 			siteSettingsRepositoriesConnectRoute,

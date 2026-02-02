@@ -1,6 +1,6 @@
 ---
-description: WordPress imports
-globs: client
+paths:
+  - "client/**"
 ---
 ## WordPress imports
 

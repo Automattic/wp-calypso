@@ -1,7 +1,6 @@
 ---
-description: Rules that applies for all Clients within repository
-globs: client/**
-alwaysApply: false
+paths:
+  - "client/**"
 ---
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
 You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning AI to chat, to generate code.
@@ -12,22 +11,22 @@ You create a smooth UI that is scalable and performant.
 - Write concise, technical responses with accurate TypeScript examples.
 - Use functional, declarative programming. Avoid classes.
 - Prefer iteration and modularization over duplication.
-- Try to use `@wordpress/components` where possible as per this document [wordpress-imports.mdc](mdc:.cursor/rules/wordpress-imports.mdc)
+- Try to use `@wordpress/components` where possible as per @.claude/rules/wordpress-imports.md.
 - Always check your work for errors before completing.
 - Read through related README files to have wider context.
 
 ## Short codes
 
 Check the start of any user message for the following short codes and act appropriately:
-- ddc - short for `discuss don't code` so do not make any code changes only discuss the options until given the go ahead to make changes 
+- ddc - short for `discuss don't code` so do not make any code changes only discuss the options until given the go ahead to make changes
 - jdi - short for `just do it` so this is giving approval to go ahead and make the changes that have been discussed
-- cpd - short for `create PR description` for a given branch - you should find changes presented in current branch and create a description following this template [PULL_REQUEST_TEMPLATE.md](mdc:.github/PULL_REQUEST_TEMPLATE.md). The main branch name is `trunk`.
+- cpd - short for `create PR description` for a given branch - you should find changes presented in current branch and create a description following this template @.github/PULL_REQUEST_TEMPLATE.md. The main branch name is `trunk`.
 
 ## Analysis Process
 
 Before responding to any request, follow these steps:
 
-- Carefully read the instructions and research relative examples. 
+- Carefully read the instructions and research relative examples.
 - If a screenshot is provided, carefully build a layout to match the provided designs.
 - Plan for internationalization using hook `{ useTranslate } from 'i18n-calypso';`
 - Verify accessibility requirements
@@ -46,7 +45,7 @@ Before responding to any request, follow these steps:
 - Follow WordPress component patterns.
 - Implement proper WordPress hooks system.
 - Structure components using WordPress conventions.
-- Carrefully follow [.eslintrc.js](mdc:.eslintrc.js) coding standarts.
+- Carrefully follow @.eslintrc.js coding standarts.
 - **CRITICAL: After creating or modifying ANY JavaScript/TypeScript file, you MUST run `yarn eslint --fix` on that specific file individually. This is mandatory for every single file change.**
 
 ### Naming Conventions
@@ -63,8 +62,8 @@ Before responding to any request, follow these steps:
 
 ## Dependencies
 
-- Use imports from [wordpress-imports.mdc](mdc:.cursor/rules/wordpress-imports.mdc)
-- Use named imports to bring in only the necessary functions or components, rather than importing the entire module. 
+- Use imports from @.claude/rules/wordpress-imports.md
+- Use named imports to bring in only the necessary functions or components, rather than importing the entire module.
 
 ## Documentation
 
@@ -89,5 +88,3 @@ Remember: Always prioritize WordPress coding standards and best practices while 
 - When testing components using `@testing-library`, use query functions (`getBy*`, etc.) from the return value of `render`, not from the `screen` import.
 - Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
 - Use `toBeVisible` instead of `toBeInTheDocument` when asserting that an element should be visible to the user. This ensures the test checks both presence in the DOM and actual visibility, aligning with user-perceived behavior.
-
-

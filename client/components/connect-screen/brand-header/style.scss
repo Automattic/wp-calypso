@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.connect-screen-brand-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.connect-screen-brand-header__logo {
+	margin-bottom: 1.5rem;
+
+	@include break-mobile {
+		margin-bottom: 2rem;
+	}
+}
+
+.connect-screen-brand-header__logo-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.connect-screen-brand-header__title {
+	font-size: 1.75rem;
+	font-weight: 500;
+	margin: 0 0 0.5rem;
+	letter-spacing: -0.02em;
+	line-height: 1.35;
+	color: var( --color-text );
+
+	@include break-mobile {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+}
+
+.connect-screen-brand-header__description {
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+	margin: 0;
+}
