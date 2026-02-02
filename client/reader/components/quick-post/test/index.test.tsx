@@ -92,7 +92,6 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 const mockSavePostApi = ( type: 'publish' | 'draft' ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
 		.post( '/rest/v1.1/sites/123/posts/new', {
-			title: 'Test post...',
 			content: 'Test post',
 			status: type,
 		} )
@@ -172,7 +171,6 @@ describe( 'QuickPost', () => {
 	it( 'shows an error notice when the post is not saved', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
 				content: 'Test post',
 				status: 'publish',
 			} )
