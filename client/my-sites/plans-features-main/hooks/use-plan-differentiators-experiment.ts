@@ -1,5 +1,7 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
+import { useDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import type { IAppState } from 'calypso/state/types';
 
@@ -73,6 +75,7 @@ function usePlanDifferentiatorsExperiment( {
 	flowName,
 	isInSignup,
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
+	const dispatch = useDispatch();
 	const assignmentFromPreference = useSelector( ( state: IAppState ) =>
 		getPreference( state, 'calypso_pricing_differentiation_202601_v1' )
 	);
@@ -93,6 +96,13 @@ function usePlanDifferentiatorsExperiment( {
 		| undefined;
 
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
+
+	// Save the assignment in user preferences once we get it
+	useEffect( () => {
+		if ( ! assignmentFromPreference && isEligibleSignupFlow && isExperimentVariant && variant ) {
+			dispatch( savePreference( 'calypso_pricing_differentiation_202601_v1', variant ) );
+		}
+	}, [ assignmentFromPreference, isEligibleSignupFlow, isExperimentVariant, variant, dispatch ] );
 
 	// Map variants to feature sets:
 	// var4 -> getLongSetSignupWpcomFeatures
