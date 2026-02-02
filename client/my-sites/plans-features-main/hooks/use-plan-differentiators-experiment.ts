@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
+import { useSelector } from 'calypso/state';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import type { IAppState } from 'calypso/state/types';
 
