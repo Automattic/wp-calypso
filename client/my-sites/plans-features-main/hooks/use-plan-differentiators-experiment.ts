@@ -1,4 +1,7 @@
 import { useExperiment } from 'calypso/lib/explat';
+import { useSelector } from 'calypso/state';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant = 'control' | 'var1' | 'var1d' | 'var3' | 'var4' | 'var5';
 
@@ -63,36 +66,39 @@ type PlanDifferentiatorsExperimentResult = {
 
 interface UsePlanDifferentiatorsExperimentParams {
 	flowName?: string | null;
-	intent?: string;
 	isInSignup: boolean;
+	siteId?: number | null;
 }
 
-function usePlanDifferentiatorsExperiment( {
-	flowName,
-	intent,
-	isInSignup,
-}: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
-	// Eligible for onboarding signup flow or plans-default-wpcom admin intent
-	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && intent === 'plans-default-wpcom';
-	const isEligible =
-		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
+/**
+ * Returns the control state for the experiment (no variant assigned).
+ */
+function getControlResult(): PlanDifferentiatorsExperimentResult {
+	return {
+		isLoading: false,
+		variant: undefined,
+		isStacked: false,
+		isLongSet: false,
+		isShortSet: false,
+		showDifferentiatorHeader: false,
+		useVar5Features: false,
+		useVar4Features: false,
+		useVar3Features: false,
+		useVar1Features: false,
+		isVar1dVariant: false,
+		isVar4Variant: false,
+		isExperimentVariant: false,
+	};
+}
 
-	const [ isLoading, assignment ] = useExperiment( 'calypso_pricing_differentiation_202601_v1', {
-		isEligible,
-	} );
-
-	const variant = ( assignment?.variationName ?? undefined ) as
-		| PlanDifferentiatorsExperimentVariant
-		| undefined;
-
+/**
+ * Builds the experiment result from a variant.
+ */
+function buildResultFromVariant(
+	isLoading: boolean,
+	variant: PlanDifferentiatorsExperimentVariant | undefined
+): PlanDifferentiatorsExperimentResult {
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
-
-	// Map variants to feature sets:
-	// var4 -> getLongSetSignupWpcomFeatures
-	// var1, var1d -> getShortSetStackedSignupWpcomFeatures
-	// var3 -> getLongSetStackedSignupWpcomFeatures
-	// var5 -> getVar5StackedSignupWpcomFeatures
 
 	return {
 		isLoading,
@@ -110,6 +116,41 @@ function usePlanDifferentiatorsExperiment( {
 		isVar4Variant: variant === 'var4',
 		isExperimentVariant,
 	};
+}
+
+function usePlanDifferentiatorsExperiment( {
+	flowName,
+	isInSignup,
+	siteId,
+}: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
+	// Check if the site has the gating business Q1 flag (set when user purchased through experiment)
+	const isGatingBusinessQ1 = useSelector( ( state: IAppState ) =>
+		siteId ? getSiteOption( state, siteId, 'is_gating_business_q1' ) : false
+	);
+
+	// Determine experiment eligibility based on context:
+	// - Signup flow (no siteId): Run experiment to create/get assignment
+	// - Logged-in with siteId and is_gating_business_q1=true: Run experiment to get cached assignment
+	// - Logged-in with siteId and is_gating_business_q1=false: Don't run experiment (show control)
+	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
+	const isEligibleExistingSite = ! isInSignup && !! siteId && !! isGatingBusinessQ1;
+	const isEligible =
+		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleExistingSite );
+
+	const [ isLoading, assignment ] = useExperiment( 'calypso_pricing_differentiation_202601_v1', {
+		isEligible,
+	} );
+
+	// If user has a site but is not in the experiment (is_gating_business_q1=false), return control
+	if ( siteId && ! isGatingBusinessQ1 && ! isInSignup ) {
+		return getControlResult();
+	}
+
+	const variant = ( assignment?.variationName ?? undefined ) as
+		| PlanDifferentiatorsExperimentVariant
+		| undefined;
+
+	return buildResultFromVariant( isLoading, variant );
 }
 
 export default usePlanDifferentiatorsExperiment;
