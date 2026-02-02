@@ -527,7 +527,6 @@ export default function SubscriberDataViews( {
 				showTitle: true,
 				showMedia: true,
 				fields: [],
-				layout: undefined,
 			} ) );
 		} else {
 			// Otherwise, we want to show the table view.

@@ -25,9 +25,11 @@ import { useTranslate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
-import type { View } from '@wordpress/dataviews';
 
-export function useActions( viewType: View[ 'type' ], onClose?: () => void ) {
+export function useActions(
+	viewType: 'table' | 'list' | 'grid' | 'pickerGrid' | 'pickerTable',
+	onClose?: () => void
+) {
 	const translate = useTranslate();
 	const {
 		getFullDomain,
