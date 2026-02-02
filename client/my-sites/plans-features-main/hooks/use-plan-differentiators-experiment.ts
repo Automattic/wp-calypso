@@ -89,7 +89,6 @@ function usePlanDifferentiatorsExperiment( {
 		isEligible,
 	} );
 
-	// Use stored assignment to avoid waiting for the API response
 	const variant = ( assignment?.variationName || undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
