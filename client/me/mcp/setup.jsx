@@ -262,16 +262,21 @@ function McpSetupComponent( { path } ) {
 										<li>
 											<Text as="p" size="medium">
 												{ createInterpolateElement(
-													translate( 'Open <link>Claude settings → Browse Connectors</link>.' ),
+													/* translators: %s is the link to the Claude settings page */
+													translate( 'Open <ClaudeSettings/>.' ),
 													{
-														link: (
-															<ExternalLink
-																href="https://claude.ai/settings/connectors"
-																target="_blank"
-															/>
+														ClaudeSettings: (
+															<ExternalLink href="https://claude.ai/settings/connectors">
+																{ translate( 'Claude settings' ) }
+															</ExternalLink>
 														),
 													}
 												) }
+											</Text>
+										</li>
+										<li>
+											<Text as="p" size="medium">
+												{ translate( 'Click the "Browse connectors" button.' ) }
 											</Text>
 										</li>
 										<li>

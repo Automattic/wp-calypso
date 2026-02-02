@@ -260,7 +260,7 @@ function McpSetupComponent() {
 											<li>
 												<Text as="p" variant="muted">
 													{ createInterpolateElement(
-														/* translators: %s is the link to the Claude settings → Browse Connectors */
+														/* translators: %s is the link to the Claude settings page */
 														__( 'Open <ClaudeSettings/>.' ),
 														{
 															ClaudeSettings: (
