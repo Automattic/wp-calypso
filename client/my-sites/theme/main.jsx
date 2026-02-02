@@ -83,6 +83,7 @@ import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plan
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	installTheme,
+	livePreview,
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
@@ -978,11 +979,15 @@ class ThemeSheet extends Component {
 	};
 
 	handleEditorWebPreview = async () => {
-		const { isAtomic, siteEditorUrl, siteId, themeInstallId } = this.props;
+		const { isAtomic, siteEditorUrl, siteId, themeId, themeInstallId } = this.props;
 
 		this.setState( { isRedirectingToEditorWebPreview: true } );
 
 		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
+
+		this.onBeforeOptionAction();
+
+		this.props.livePreview( siteId, themeId, 'detail' );
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
@@ -1522,6 +1527,7 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
+		livePreview,
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(
