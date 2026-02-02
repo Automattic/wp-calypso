@@ -34,8 +34,8 @@ export default function useCustomEventHandler( {
 	);
 
 	const handleSetOpen = useCallback(
-		( shouldOpen: boolean ) => {
-			if ( shouldOpen === undefined ) {
+		( shouldOpen: unknown ) => {
+			if ( typeof shouldOpen !== 'boolean' ) {
 				return;
 			}
 
@@ -55,8 +55,8 @@ export default function useCustomEventHandler( {
 	);
 
 	const handleSetDocked = useCallback(
-		( shouldDock: boolean ) => {
-			if ( shouldDock === undefined ) {
+		( shouldDock: unknown ) => {
+			if ( typeof shouldDock !== 'boolean' ) {
 				return;
 			}
 
@@ -90,5 +90,5 @@ export default function useCustomEventHandler( {
 
 		window.addEventListener( 'agents-manager:action', handler );
 		return () => window.removeEventListener( 'agents-manager:action', handler );
-	}, [ handleNavigate, handleSetDocked, handleSetOpen, navigate ] );
+	}, [ handleNavigate, handleSetDocked, handleSetOpen ] );
 }
