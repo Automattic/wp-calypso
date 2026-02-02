@@ -1,7 +1,5 @@
-import { useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import type { IAppState } from 'calypso/state/types';
 
@@ -79,22 +77,11 @@ function usePlanDifferentiatorsExperiment( {
 }: UsePlanDifferentiatorsExperimentParams ): PlanDifferentiatorsExperimentResult {
 	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
 
-	// Use a ref to "lock in" the gating flag once it's been set to true.
-	// This prevents the flag from becoming undefined if site data is refetched
-	// without this field included in the response.
-	const gatingFlagRef = useRef< boolean >( false );
-	if ( site?.options?.is_gating_business_q1 === true ) {
-		gatingFlagRef.current = true;
-	}
-	const hasGatingFlag = gatingFlagRef.current;
+	const hasGatingFlag = site?.options.is_gating_business_q1;
 
-	const assignmentFromPreference = useSelector( ( state: IAppState ) =>
-		hasGatingFlag ? getPreference( state, 'calypso_pricing_differentiation_202601_v1' ) : null
-	);
-
-	// Eligible for onboarding signup flow or when user preference is set
+	// Eligible for onboarding signup flow or when site flag is set
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag && !! assignmentFromPreference;
+	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag;
 	const isEligible =
 		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
 
@@ -103,7 +90,7 @@ function usePlanDifferentiatorsExperiment( {
 	} );
 
 	// Use stored assignment to avoid waiting for the API response
-	const variant = ( assignmentFromPreference || assignment?.variationName || undefined ) as
+	const variant = ( assignment?.variationName || undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
 
@@ -116,7 +103,7 @@ function usePlanDifferentiatorsExperiment( {
 	// var5 -> getVar5StackedSignupWpcomFeatures
 
 	return {
-		isLoading: assignmentFromPreference ? false : isLoading,
+		isLoading,
 		variant,
 		isStacked:
 			variant === 'var1' || variant === 'var1d' || variant === 'var3' || variant === 'var5',
