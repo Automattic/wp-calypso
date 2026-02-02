@@ -668,8 +668,9 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 } ) {
-	const { state } = useContext( CheckoutStepGroupContext );
+	const { state, actions } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
+	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -682,6 +683,50 @@ export function CheckoutFormSubmit( {
 	const submitWrapperRef = useCustomPropertyForHeight< HTMLDivElement >(
 		customPropertyForSubmitButtonHeight
 	);
+
+	// Wrap validateForm to first validate any active step before submission
+	const wrappedValidateForm = useCallback( async () => {
+		// Only validate if there's an actual active step (within the range of registered steps)
+		const hasActiveStep = activeStepNumber > 0 && activeStepNumber <= totalSteps;
+
+		if ( hasActiveStep ) {
+			// If the active step is incomplete, validate it before proceeding.
+			// Also validate if it's a completed step that's not the last step (since the
+			// user may have gone back to edit it and we need to revalidate the changes).
+			const isLastStep = activeStepNumber === totalSteps;
+			const isActiveStepIncomplete = ! stepCompleteStatus[ activeStepNumber ];
+			const isCompletedNonFinalStep = ! isLastStep;
+
+			if ( isActiveStepIncomplete || isCompletedNonFinalStep ) {
+				debug( `Validating active step ${ activeStepNumber } before submission` );
+				const stepCompleteCallback = getStepCompleteCallback( activeStepNumber );
+				const isStepComplete = await stepCompleteCallback();
+				debug( `Active step ${ activeStepNumber } validation result: ${ isStepComplete }` );
+
+				if ( ! isStepComplete ) {
+					// Step validation failed, don't proceed with submission
+					return false;
+				}
+
+				// Step validated successfully, mark it as complete
+				setStepCompleteStatus( { [ activeStepNumber ]: true } );
+			}
+		}
+
+		// Now run the payment method validation if provided
+		if ( validateForm ) {
+			return await validateForm();
+		}
+
+		return true;
+	}, [
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		getStepCompleteCallback,
+		setStepCompleteStatus,
+		validateForm,
+	] );
 
 	const isDisabled = ( () => {
 		if ( disableSubmitButton ) {
@@ -704,7 +749,7 @@ export function CheckoutFormSubmit( {
 			{ submitButtonHeader || null }
 			{ submitButton || (
 				<CheckoutSubmitButton
-					validateForm={ validateForm }
+					validateForm={ wrappedValidateForm }
 					disabled={ isDisabled }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
