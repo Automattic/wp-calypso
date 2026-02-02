@@ -9,7 +9,7 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
-import { DataViews, DataViewsCard } from '../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateV2 } from '../components/dataviews';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -20,6 +20,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from './dataviews';
+import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -41,7 +42,10 @@ function Domains() {
 	const { user } = useAuth();
 	const { queries, components } = useAppContext();
 	const AddDomainButton = useMemo( () => lazy( components.addDomainButton ), [ components ] );
-	const EmptyDomainsState = useMemo( () => lazy( components.emptyDomainsState ), [ components ] );
+	const EmptyDomainsStateActions = useMemo(
+		() => lazy( components.emptyDomainsStateActions ),
+		[ components ]
+	);
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -85,7 +89,13 @@ function Domains() {
 				}
 			>
 				{ ! hasDomains ? (
-					<EmptyDomainsState />
+					<DataViewsEmptyStateV2
+						title={ __( 'Add your first domain name' ) }
+						description={ __( 'Establish a unique online identity for your site.' ) }
+					>
+						<EmptyDomainsStateActions />
+						<EmptyDomainsStateUpsell />
+					</DataViewsEmptyStateV2>
 				) : (
 					<DataViewsCard>
 						<DataViews< DomainSummary >
@@ -99,6 +109,15 @@ function Domains() {
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
 							defaultLayouts={ DEFAULT_LAYOUTS }
+							empty={
+								<DataViewsEmptyStateV2
+									title={ __( 'No domains match your search' ) }
+									description={ __( 'Try again, or add a new domain with the options below.' ) }
+									isBorderless
+								>
+									<EmptyDomainsStateActions />
+								</DataViewsEmptyStateV2>
+							}
 						/>
 					</DataViewsCard>
 				) }

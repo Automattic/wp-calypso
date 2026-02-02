@@ -6,7 +6,6 @@ interface DataViewsEmptyStateV2Props {
 	description: string;
 	children?: ReactNode;
 	isBorderless?: boolean;
-	context: 'sites' | 'domains' | 'emails';
 }
 
 export function DataViewsEmptyStateV2( {
