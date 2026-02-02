@@ -3,6 +3,7 @@ import {
 	Blueprint,
 	type MountDescriptor,
 	type PlaygroundClient,
+	type SupportedPHPVersion,
 	startPlaygroundWeb,
 } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -12,7 +13,7 @@ const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
-	recommendedPhpVersion: string,
+	recommendedPhpVersion: SupportedPHPVersion | null | undefined | '',
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void
 ): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;

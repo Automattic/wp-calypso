@@ -1,9 +1,10 @@
-import { type Blueprint } from '@wp-playground/client';
 import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
+import type { BlueprintV1, BlueprintV1Declaration } from '@wp-playground/blueprints';
+import type { SupportedPHPVersion } from '@wp-playground/client';
 
-const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
-const FALLBACK_PHP_VERSION = '8.3';
-const DEFAULT_BLUEPRINT: Blueprint = {
+export const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
+export const FALLBACK_PHP_VERSION: SupportedPHPVersion = '8.3';
+const DEFAULT_BLUEPRINT: BlueprintV1Declaration = {
 	preferredVersions: {
 		php: FALLBACK_PHP_VERSION,
 		wp: 'latest',
@@ -14,7 +15,7 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 	login: true,
 };
 
-const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+const PREDEFINED_BLUEPRINTS: Record< string, BlueprintV1Declaration > = {
 	woocommerce: {
 		...DEFAULT_BLUEPRINT,
 		landingPage: '/shop',
@@ -85,7 +86,9 @@ const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
 	},
 };
 
-function getPHPVersion( recommendedPhpVersion: string ): string {
+function getPHPVersion(
+	recommendedPhpVersion?: SupportedPHPVersion | null | ''
+): SupportedPHPVersion {
 	if (
 		recommendedPhpVersion !== undefined &&
 		recommendedPhpVersion !== null &&
@@ -96,7 +99,9 @@ function getPHPVersion( recommendedPhpVersion: string ): string {
 	return FALLBACK_PHP_VERSION;
 }
 
-function getDefaultBlueprint( recommendedPhpVersion: string ): Blueprint {
+function getDefaultBlueprint(
+	recommendedPhpVersion?: SupportedPHPVersion | null | ''
+): BlueprintV1 {
 	return {
 		...DEFAULT_BLUEPRINT,
 		preferredVersions: {
@@ -135,7 +140,9 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	return 'unknown';
 }
 
-async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
+async function getBlueprintFromUrl(
+	recommendedPhpVersion?: SupportedPHPVersion | null | ''
+): Promise< BlueprintV1 > {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
 
@@ -147,11 +154,16 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 			preferredVersions: {
 				...blueprint.preferredVersions,
 				php: getPHPVersion( recommendedPhpVersion ),
+				wp: blueprint.preferredVersions?.wp || 'latest',
 			},
 		};
 	}
 
 	const blueprint = await resolveBlueprintFromURL( url );
+
+	// Type guard to ensure we're working with BlueprintV1Declaration
+	// BlueprintV1 is a union type, but we need BlueprintV1Declaration for property access
+	const blueprintV1: BlueprintV1Declaration = blueprint as BlueprintV1Declaration;
 
 	// Create a deeply merged blueprint where custom properties override defaults
 	// but nested objects are merged properly
@@ -159,20 +171,22 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 	// in the end, to ensure any new properties that might be added in the future are handled nicely
 	return {
 		...DEFAULT_BLUEPRINT,
-		...blueprint,
+		...blueprintV1,
 		// Ensure steps are combined
-		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ].filter( Boolean ),
+		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprintV1.steps || [] ) ].filter(
+			Boolean
+		),
 		// Ensure nested objects like preferredVersions are merged properly
 		preferredVersions: {
 			...DEFAULT_BLUEPRINT.preferredVersions,
-			...blueprint.preferredVersions,
+			...blueprintV1.preferredVersions,
 			php: getPHPVersion( recommendedPhpVersion ), // Always ensure PHP version is set correctly
 			wp: 'latest', // Always ensure WordPress version is set to latest
 		},
 		// Ensure nested objects like features are merged properly
 		features: {
 			...DEFAULT_BLUEPRINT.features,
-			...blueprint.features,
+			...blueprintV1.features,
 			networking: true, // ensure its always true
 		},
 		login: true, // ensure its always true, even though PG code already enforces this
@@ -181,8 +195,8 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 
 export async function getBlueprint(
 	isWordPressInstalled: boolean,
-	recommendedPhpVersion: string
-): Promise< Blueprint > {
+	recommendedPhpVersion?: SupportedPHPVersion | null | ''
+): Promise< BlueprintV1 > {
 	return ! isWordPressInstalled
 		? await getBlueprintFromUrl( recommendedPhpVersion )
 		: getDefaultBlueprint( recommendedPhpVersion );
