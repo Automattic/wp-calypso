@@ -57,7 +57,11 @@ describe( 'Sites', () => {
 	} );
 
 	it( 'renders Add new site button', async () => {
-		render( <Sites /> );
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+		} );
 
 		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
 	} );
