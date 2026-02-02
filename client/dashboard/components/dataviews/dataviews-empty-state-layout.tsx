@@ -1,19 +1,19 @@
-import EmptyState from '../../components/empty-state';
+import EmptyState from '../empty-state';
 import type { ReactNode } from 'react';
 
-interface DataViewsEmptyStateV2Props {
+interface DataViewsEmptyStateLayoutProps {
 	title: string;
 	description: string;
 	children?: ReactNode;
 	isBorderless?: boolean;
 }
 
-export function DataViewsEmptyStateV2( {
+export function DataViewsEmptyStateLayout( {
 	title,
 	description,
 	isBorderless,
 	children,
-}: DataViewsEmptyStateV2Props ) {
+}: DataViewsEmptyStateLayoutProps ) {
 	return (
 		<EmptyState.Wrapper isBorderless={ isBorderless }>
 			<EmptyState>

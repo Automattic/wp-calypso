@@ -9,7 +9,7 @@ import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
-import { DataViews, DataViewsCard, DataViewsEmptyStateV2 } from '../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -89,13 +89,13 @@ function Domains() {
 				}
 			>
 				{ ! hasDomains ? (
-					<DataViewsEmptyStateV2
+					<DataViewsEmptyStateLayout
 						title={ __( 'Add your first domain name' ) }
 						description={ __( 'Establish a unique online identity for your site.' ) }
 					>
 						<EmptyDomainsStateActions />
 						<EmptyDomainsStateUpsell />
-					</DataViewsEmptyStateV2>
+					</DataViewsEmptyStateLayout>
 				) : (
 					<DataViewsCard>
 						<DataViews< DomainSummary >
@@ -110,13 +110,13 @@ function Domains() {
 							getItemId={ getDomainId }
 							defaultLayouts={ DEFAULT_LAYOUTS }
 							empty={
-								<DataViewsEmptyStateV2
+								<DataViewsEmptyStateLayout
 									title={ __( 'No domains match your search' ) }
 									description={ __( 'Try again, or add a new domain with the options below.' ) }
 									isBorderless
 								>
 									<EmptyDomainsStateActions />
-								</DataViewsEmptyStateV2>
+								</DataViewsEmptyStateLayout>
 							}
 						/>
 					</DataViewsCard>
