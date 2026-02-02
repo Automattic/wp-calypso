@@ -109,7 +109,7 @@ function formatSchedulePreview(
 	}
 	if ( customFrequency === 'd' ) {
 		if ( customNumber === 1 ) {
-			return __( 'Runs once per day' );
+			return __( 'Runs once per day.' );
 		}
 		const interval = Math.floor( 24 / customNumber );
 		return sprintf(
@@ -135,7 +135,7 @@ function formatSchedulePreview(
 	return '';
 }
 
-export default function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
+export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
 	const parsed = useMemo( () => parseScheduleValue( value ), [ value ] );
 
 	const { scheduleType, customNumber, customFrequency } = parsed;
@@ -200,11 +200,9 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 				</HStack>
 			) }
 			{ preview && (
-				<Text variant="muted" size="small">
-					{ preview }
-					<div>
-						{ __( 'The specific execution time is randomized to prevent system overload.' ) }
-					</div>
+				<Text variant="muted" size={ 12 }>
+					{ preview }{ ' ' }
+					{ __( 'The specific execution time is randomized to prevent system overload.' ) }
 				</Text>
 			) }
 		</VStack>
