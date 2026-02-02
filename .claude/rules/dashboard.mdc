@@ -1,12 +1,11 @@
 ---
-description: Rules for development in the dashboard subdirectory
-globs: client/dashboard/**
-alwaysApply: false
+paths:
+  - "client/dashboard/**"
 ---
 
 You are an expert AI programming assistant specializing in the WordPress.com Dashboard. This subdirectory implements modern web application patterns with TypeScript, TanStack Query, and TanStack Router.
 
-Use these rules on top of [calypso-client-rules.mdc](mdc:./rules/calypso-client-rules.mdc).
+IMPORTANT: Use these rules on top of [calypso-client.mdc](mdc:./calypso-client.mdc).
 
 ## Documentation
 
@@ -91,7 +90,7 @@ const { mutate: saveSetting } = useMutation( {
 `SSH access enabled.`
 `Failed to save PHP version.`
 
-// ❌ Incorrect patterns  
+// ❌ Incorrect patterns
 <Button>Save Changes.</Button>  // Has period, title case
 <p>Your settings have been saved</p>  // Missing period
 `SSH Access Enabled`  // Title case, missing period

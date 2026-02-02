@@ -1,27 +1,26 @@
+import { useRouter } from '@tanstack/react-router';
 import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { siteRoute } from '../app/router/sites';
+import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
+import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
-export function AddDomainButton( {
-	siteSlug,
-	domainConnectionSetupUrl,
-}: {
-	siteSlug?: string;
-	domainConnectionSetupUrl?: string;
-} ) {
+export default function AddDomainButton() {
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
+
 		if ( siteSlug ) {
 			queryArgs.siteSlug = siteSlug;
-		}
-		if ( domainConnectionSetupUrl ) {
-			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
+			queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
 		}
 
 		queryArgs.dashboard = getCurrentDashboard();
-		queryArgs.back_to = redirectToDashboardLink();
+
 		return queryArgs;
 	};
 
@@ -35,10 +34,7 @@ export function AddDomainButton( {
 		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo(
-			wpcomLink( '/setup/domain/use-my-domain' ),
-			wpcomLink( '/setup/domain/use-my-domain' )
-		);
+		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
 
 	return (
 		<Dropdown
@@ -60,7 +56,7 @@ export function AddDomainButton( {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ __( 'Use a domain name I own' ) }
+						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
 					</MenuItem>
 				</>
 			) }

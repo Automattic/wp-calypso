@@ -11,6 +11,7 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { isAfter, parseISO, startOfDay } from 'date-fns';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
@@ -129,7 +130,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -141,17 +142,25 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	) {
 		return false;
 	}
-	if (
-		new Date( purchase.expiry_date ).getTime() >
-		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
-	) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Both dates are in UTC (YYYY-MM-DD format), parse and compare them
+		return isAfter( parseISO( purchase.expiry_date ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		parseISO( purchase.expiry_date ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -163,10 +172,21 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Compare current UTC date with payment expiry date (both YYYY-MM-DD in UTC)
+		return isAfter( startOfDay( new Date() ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		startOfDay( new Date() ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function isTransferredOwnership(

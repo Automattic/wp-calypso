@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -51,7 +50,7 @@ import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites s
 import './style.scss';
 
 //TODO: Remove this component once the new reader MSD is enabled for all users
-const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
+const DeprecatedReaderSidebarHeader = () => {
 	const translate = useTranslate();
 	return (
 		<div className="sidebar-header">
@@ -59,15 +58,6 @@ const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
 				<h3>{ translate( 'Reader' ) }</h3>
 				<p>{ translate( 'Keep up with your interests.' ) }</p>
 			</div>
-			<Button
-				className="reader-search-icon"
-				variant="tertiary"
-				href="/reader/search"
-				onClick={ onSearchClicked }
-				aria-label={ translate( 'Search' ) }
-			>
-				<ReaderSearchIcon />
-			</Button>
 		</div>
 	);
 };
@@ -178,11 +168,7 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				{ ! this.props.isMSDEnabled && (
-					<DeprecatedReaderSidebarHeader
-						onSearchClicked={ this.handleSidebarMenuClick( TrackingKeys.search ) }
-					/>
-				) }
+				{ ! this.props.isMSDEnabled && <DeprecatedReaderSidebarHeader /> }
 				{ this.props.isMSDEnabled && <AppTitle /> }
 				<SidebarMenu>
 					<QueryReaderLists />
