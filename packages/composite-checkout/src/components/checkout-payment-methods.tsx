@@ -25,6 +25,7 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 const CheckoutPaymentMethodsWrapper = styled.div< { isLoading: boolean } >`
 	position: relative;
 	padding-top: 4px;
+	padding-bottom: 8px;
 	pointer-events: ${ ( props ) => ( props.isLoading ? 'none' : 'auto' ) };
 	> div > div:not( [disabled] ):has( + div:hover )::before,
 	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
