@@ -64,6 +64,7 @@ export class SiteSelector extends Component {
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
 		showListBottomAdornment: PropTypes.bool,
+		forceShowSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -83,6 +84,7 @@ export class SiteSelector extends Component {
 		keepCurrentSection: false,
 		autoFocus: false,
 		showListBottomAdornment: true,
+		forceShowSearch: false,
 	};
 
 	state = {
@@ -416,7 +418,11 @@ export class SiteSelector extends Component {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		const selectorClass = clsx( 'site-selector', 'sites-list', this.props.className, {
-			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
+			'is-large':
+				this.props.forceShowSearch ||
+				this.props.siteCount > 6 ||
+				hiddenSitesCount > 0 ||
+				this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
 		} );

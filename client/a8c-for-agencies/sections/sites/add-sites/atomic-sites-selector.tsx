@@ -24,7 +24,7 @@ const AtomicSitesSelector = ( {
 	return (
 		<div className="atomic-sites-selector">
 			<BaseSiteSelector
-				clasName="add-sites-from-wpcom_site-selector"
+				className="add-sites-from-wpcom__site-selector"
 				indicator
 				allSitesPath={ A4A_SITES_LINK }
 				sitesBasePath={ A4A_SITES_LINK }
@@ -33,6 +33,7 @@ const AtomicSitesSelector = ( {
 				showHiddenSites={ false }
 				showListBottomAdornment={ false }
 				isPlaceholder={ isPlaceholder }
+				forceShowSearch
 			/>
 		</div>
 	);
