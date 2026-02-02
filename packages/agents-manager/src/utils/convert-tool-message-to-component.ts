@@ -49,8 +49,8 @@ export function convertToolMessagesToComponents( {
 
 			// Only show `next-step-button` after the most recent component message with follow-up tasks
 			const isLastMessage = index === array.length - 1;
-			const nextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( ! isLastMessage || ! followUpTasks || ! nextStepButton ) {
+			const NextStepButton = getChatComponent?.( 'next-step-button' );
+			if ( ! isLastMessage || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
 			}
 
@@ -62,7 +62,7 @@ export function convertToolMessagesToComponents( {
 					content: [
 						{
 							type: 'component' as const,
-							component: nextStepButton,
+							component: NextStepButton,
 						},
 					],
 				},
