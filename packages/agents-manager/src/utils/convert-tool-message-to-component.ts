@@ -29,6 +29,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
+		// Handle show-component ability component messages
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			const { type: contentType, props, followUpTasks } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
@@ -70,8 +71,26 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
-		if ( textData.tool_id === 'big_sky__client_assistants' ) {
-			// TODO: Handle start-over-actions...
+		// Handle start-over action component messages
+		if (
+			textData.tool_id === 'big_sky__client_assistants' &&
+			textData.data?.assistantId === 'big-sky-site-admin'
+		) {
+			const StartOverActions = getChatComponent?.( 'start-over-actions' );
+
+			if ( StartOverActions ) {
+				return [
+					{
+						...message,
+						content: [
+							{
+								type: 'component' as const,
+								component: StartOverActions,
+							},
+						],
+					},
+				];
+			}
 		}
 
 		return [ message ];
