@@ -19,7 +19,6 @@ import wooSite3 from 'calypso/assets/images/difm/woo-site-builds-en/woo-3.jpg';
 import wooSite4 from 'calypso/assets/images/difm/woo-site-builds-en/woo-4.jpg';
 import wooSite5 from 'calypso/assets/images/difm/woo-site-builds-en/woo-5.jpg';
 import wooSite6 from 'calypso/assets/images/difm/woo-site-builds-en/woo-6.jpg';
-import type { CSSPropertiesWithMultiValues } from '@emotion/serialize';
 
 /**
  * Generate keyframes for the fade animation. There are two
@@ -63,13 +62,15 @@ function fadeAnimation( slideCount: number, interval: number, fadeDelay: number 
  * @param interval Time interval for displaying each slide, in seconds.
  */
 function nthOfTypeAnimationDelay( slideCount: number, interval: number ) {
-	const styles: Record< string, CSSPropertiesWithMultiValues > = {};
+	const styles: string[] = [];
 	for ( let i = 2; i <= slideCount; i++ ) {
-		styles[ `> div:nth-of-type( ${ i } )` ] = {
-			animationDelay: `${ ( i - 1 ) * interval }s`,
-		};
+		styles.push( `
+			> div:nth-of-type(${ i }) {
+				animation-delay: ${ ( i - 1 ) * interval }s;
+			}
+		` );
 	}
-	return styles;
+	return styles.join( '' );
 }
 
 type AnimatedSlideShowProps = {
