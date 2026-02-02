@@ -116,7 +116,6 @@ describe( 'QuickPost', () => {
 	it( 'saves the post when clicks on the publish button', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
 				content: 'Test post',
 				status: 'publish',
 			} )
@@ -146,7 +145,6 @@ describe( 'QuickPost', () => {
 		( useRecordReaderTracksEvent as jest.Mock ).mockReturnValue( mockTrackEvent );
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
 				content: 'Test post',
 				status: 'publish',
 			} )
@@ -171,7 +169,6 @@ describe( 'QuickPost', () => {
 	it( 'shows an error notice when the post is not saved', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
 				content: 'Test post',
 				status: 'publish',
 			} )
@@ -201,7 +198,6 @@ describe( 'QuickPost', () => {
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/sites/123/posts/new', {
-				title: 'Test post...',
 				content: 'Test post',
 				status: 'draft',
 			} )
