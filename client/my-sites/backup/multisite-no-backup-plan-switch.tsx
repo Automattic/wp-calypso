@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_BACKUPS_RESTORE } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_BACKUPS_SELF_SERVE } from '@automattic/calypso-products';
 import { FunctionComponent, ReactNode, useCallback } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
@@ -26,7 +26,7 @@ const MultisiteNoBackupPlanSwitch: FunctionComponent< Props > = ( {
 		useSelector( ( state ) => siteId && isJetpackSiteMultiSite( state, siteId ) ) || false;
 
 	const hasBackupFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_RESTORE )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
 	);
 
 	const isRequesting = useSelector( ( state ) => isRequestingSiteFeatures( state, siteId ) );

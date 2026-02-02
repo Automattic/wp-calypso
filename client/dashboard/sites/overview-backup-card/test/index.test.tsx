@@ -21,7 +21,7 @@ const mockSite: Site = {
 	ID: mockSiteId,
 	plan: {
 		features: {
-			active: [ HostingFeatures.BACKUPS_RESTORE ],
+			active: [ HostingFeatures.BACKUPS_SELF_SERVE ],
 		},
 	},
 	is_wpcom_atomic: true,

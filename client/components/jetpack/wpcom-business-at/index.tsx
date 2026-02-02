@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_BACKUPS_RESTORE } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_BACKUPS_SELF_SERVE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -214,7 +214,7 @@ export default function WPCOMBusinessAT( {
 
 	// Check if the site has the backup restore feature
 	const hasBackupFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_RESTORE )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
 	);
 
 	useEffect( () => {

@@ -132,7 +132,7 @@ export function BackupsListPage() {
 	};
 	const columns = isSmallViewport ? 1 : 2;
 
-	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS_RESTORE );
+	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const handleBackupSelection = ( backup: ActivityLogEntry | null ) => {
 		setSelectedBackup( backup );
@@ -269,7 +269,7 @@ function SiteBackups() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.BACKUPS_RESTORE }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
 			fullPage
 			upsellId="site-backups"
 			upsellIcon={ backup }
