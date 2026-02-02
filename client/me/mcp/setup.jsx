@@ -299,7 +299,7 @@ function McpSetupComponent( { path } ) {
 									</CardHeading>
 									<Text as="p" size="medium">
 										{ translate(
-											'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
+											'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
 										) }
 									</Text>
 									<Button

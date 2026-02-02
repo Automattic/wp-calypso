@@ -190,7 +190,7 @@ function McpSetupComponent() {
 								</Text>
 								<Text as="p" variant="muted">
 									{ __(
-										'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account. It works by:'
+										'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account by:'
 									) }
 								</Text>
 								<VStack spacing={ 2 }>
@@ -265,11 +265,16 @@ function McpSetupComponent() {
 														{
 															ClaudeSettings: (
 																<ExternalLink href="https://claude.ai/settings/connectors">
-																	{ __( 'Claude settings → Browse Connectors' ) }
+																	{ __( 'Claude settings' ) }
 																</ExternalLink>
 															),
 														}
 													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ __( 'Click the "Browse connectors" button.' ) }
 												</Text>
 											</li>
 											<li>
@@ -291,7 +296,7 @@ function McpSetupComponent() {
 									<VStack spacing={ 4 }>
 										<Text as="p" variant="muted">
 											{ __(
-												'For Cursor users, we provide a one-click setup option that will automatically configure the MCP server.'
+												'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
 											) }
 										</Text>
 										<Button
