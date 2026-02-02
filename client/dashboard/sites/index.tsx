@@ -18,7 +18,7 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyStateV2 } from '../components/dataviews';
+import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -283,27 +283,27 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							<DataViewsEmptyStateV2
+							<DataViewsEmptyStateLayout
 								title={ __( 'No sites match your search' ) }
 								description={ __( 'Try again, or start a new site with the options below.' ) }
 								isBorderless
 							>
 								<EmptySitesStateContent />
-							</DataViewsEmptyStateV2>
+							</DataViewsEmptyStateLayout>
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
 						onResetView={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateV2
+					<DataViewsEmptyStateLayout
 						title={ __( 'You don’t have any sites yet' ) }
 						description={ __(
 							'Start a site and begin creating, coding, or exploring what WordPress can do.'
 						) }
 					>
 						<EmptySitesStateContent />
-					</DataViewsEmptyStateV2>
+					</DataViewsEmptyStateLayout>
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
