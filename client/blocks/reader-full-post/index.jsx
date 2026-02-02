@@ -77,6 +77,7 @@ import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 import './style.scss';
@@ -173,6 +174,7 @@ export class FullPostView extends Component {
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
 				this.resetScroll();
+				this.focusPostTitle();
 			}
 
 			// Check comments API availability when post changes
@@ -275,12 +277,12 @@ export class FullPostView extends Component {
 
 			// Next post - j
 			case 74: {
-				return this.goToPost( this.props.nextPost );
+				return this.goToPost( this.props.nextPostKey );
 			}
 
 			// Previous post - k
 			case 75: {
-				return this.goToPost( this.props.previousPost );
+				return this.goToPost( this.props.previousPostKey );
 			}
 		}
 	};
@@ -589,6 +591,19 @@ export class FullPostView extends Component {
 		}
 	};
 
+	focusPostTitle = () => {
+		// Small delay to ensure DOM has updated after navigation
+		setTimeout( () => {
+			// Try to focus the title link, or the title itself, or the back button as fallback
+			const focusTarget =
+				document.querySelector( '.reader-full-post__header-title-link' ) ||
+				document.querySelector( '.reader-full-post__header-title' ) ||
+				document.querySelector( '.reader-back-button' );
+
+			focusTarget?.focus();
+		}, 100 );
+	};
+
 	markAsSeen = () => {
 		const { post } = this.props;
 
@@ -741,6 +756,12 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+					{ this.props.previousPostKey && ! this.props.previousPost && (
+						<QueryReaderPost postKey={ this.props.previousPostKey } />
+					) }
+					{ this.props.nextPostKey && ! this.props.nextPost && (
+						<QueryReaderPost postKey={ this.props.nextPostKey } />
+					) }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -837,6 +858,16 @@ export class FullPostView extends Component {
 								) }
 							</div>
 
+							{ isDefaultLayout && (
+								<ReaderFullPostNavigation
+									previousPost={ this.props.previousPost }
+									nextPost={ this.props.nextPost }
+									previousPostKey={ this.props.previousPostKey }
+									nextPostKey={ this.props.nextPostKey }
+									onNavigate={ this.goToPost }
+								/>
+							) }
+
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
 									siteId={ +post.site_ID }
@@ -931,8 +962,16 @@ export default connect(
 
 		const currentStreamKey = getCurrentStream( state );
 		if ( currentStreamKey ) {
-			props.previousPost = getPreviousItem( state, postKey );
-			props.nextPost = getNextItem( state, postKey );
+			const previousPostKey = getPreviousItem( state, postKey );
+			const nextPostKey = getNextItem( state, postKey );
+
+			// Fetch full post data for navigation
+			props.previousPost = previousPostKey ? getPostByKey( state, previousPostKey ) : null;
+			props.nextPost = nextPostKey ? getPostByKey( state, nextPostKey ) : null;
+
+			// Keep the keys for navigation
+			props.previousPostKey = previousPostKey;
+			props.nextPostKey = nextPostKey;
 		}
 
 		return props;
