@@ -650,12 +650,13 @@ class Signup extends Component {
 		// For now, we simply make sure they are considered as dependency data when they are explicitly designated.
 		// It works, but the code could have been cleaner if there is no naming conflict.
 		// We should do a query parameter audit to make sure each query parameter means one and only one thing, and then seek for a future-proof solution.
-		const { siteId, siteSlug, flags } = queryObject;
+		const { siteId, siteSlug, flags, dashboard } = queryObject;
 
 		return {
 			siteId,
 			siteSlug,
 			flags,
+			dashboard,
 			...dependenciesInQuery,
 		};
 	};

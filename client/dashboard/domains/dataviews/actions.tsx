@@ -6,6 +6,7 @@ import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
@@ -14,12 +15,12 @@ import {
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
 	domainTransferRoute,
-	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -212,13 +213,22 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+					const siteSlug = sitesByBlogId[ domain.blog_id ]?.slug ?? domain.site_slug;
+					const queryArgs: Record< string, string > = {
+						initialQuery: domain.domain,
+						initialMode: 'transfer-domain',
+						dashboard: getCurrentDashboard(),
+						back_to: redirectToDashboardLink(),
+					};
 
-					router.navigate( {
-						to: domainTransferToAnyUserRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
+					if ( siteSlug ) {
+						queryArgs.siteSlug = siteSlug;
+					}
+
+					window.location.href = addQueryArgs(
+						wpcomLink( '/setup/domain/use-my-domain' ),
+						queryArgs
+					);
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return isTransferrableToWpcom( item );

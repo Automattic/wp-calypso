@@ -1,4 +1,10 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+$lp-orange: #f06428;
+$lp-orange-darker: #c64916;
+$radius: 8px;
+$content-width: 1060px;
 
 .promote-post-i2 {
 
@@ -126,7 +132,7 @@
 
 .blaze-disconnected-site {
 	width: 100%;
-	max-width: 1040px;
+	max-width: $content-width;
 	margin: 32px auto 0;
 	padding: 0;
 	text-align: center;
@@ -138,11 +144,11 @@
 		background-color: var(--studio-white);
 		color: var(--color-text);
 		position: relative;
-		border-radius: 8px;
+		border-radius: $radius;
 		padding: 32px 0;
 		margin-top: 32px;
 
-		@media (max-width: 768px) {
+		@media (max-width: $break-medium) {
 			padding: 24px;
 		}
 
@@ -157,7 +163,7 @@
 			font-family: Recoleta, Georgia, 'Times New Roman', serif;
 			font-size: 1rem;
 
-			@media (max-width: 640px) {
+			@media (max-width: $break-small) {
 				grid-template-columns: 1fr;
 				gap: 12px;
 
@@ -217,28 +223,54 @@
 	}
 
 	.is-primary {
-		background-color: var(--studio-black);
-		border-color: var(--studio-black);
+		background-color: $lp-orange;
+		border-color: $lp-orange;
 		color: var(--studio-white);
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		border-bottom: 3px solid darken( $lp-orange, 20% );
+		border-radius: $radius;
 
 		&:hover,
 		&:focus,
 		&:active {
-			background-color: var(--studio-black);
-			border-color: var(--studio-black);
+			background-color: $lp-orange-darker;
+			border-color: $lp-orange-darker;
 			color: var(--studio-white);
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--studio-black);
+			outline: 2px solid $lp-orange;
 			outline-offset: 2px;
 		}
+
+		.dashicons {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+			line-height: 1;
+		}
+	}
+
+	// Inline fire logo inside titles
+	.blaze-title-logo {
+		display: inline-flex;
+		vertical-align: middle;
+		margin-left: 8px;
+	}
+
+	.blaze-title-logo__icon {
+		height: 36px;
+		width: 36px;
+		display: inline-block;
+		vertical-align: middle;
 	}
 
 	.blaze-disconnected-site__hero {
 		background-color: #f4ede7;
 		padding: 64px 48px;
-		border-radius: 0;
+		border-radius: $radius $radius 0 0;
 		margin-top: 0;
 
 		.blaze-disconnected-site__hero-content {
@@ -246,8 +278,8 @@
 			flex-direction: column;
 			gap: 16px;
 			align-items: flex-start;
-			text-align: left;
-			max-width: 1060px;
+			text-align: center;
+			max-width: $content-width;
 			margin: 0 auto;
 		}
 
@@ -264,25 +296,12 @@
 			margin: 0 0 24px;
 			text-wrap: balance;
 
-			@media (max-width: 768px) {
+			@media (max-width: $break-medium) {
 				font-size: 40px;
 				line-height: 46px;
 			}
 		}
 
-		// Inline fire logo inside the H1
-		.blaze-title-logo {
-			display: inline-flex;
-			vertical-align: middle;
-			margin-left: 8px;
-		}
-
-		.blaze-title-logo__icon {
-			height: 36px;
-			width: 36px;
-			display: inline-block;
-			vertical-align: middle;
-		}
 
 		.blaze-disconnected-site__description {
 			font-size: 15px;
@@ -293,62 +312,78 @@
 		.is-primary {
 			margin-top: 8px; // spacing specific to hero section
 			font-size: rem(18px);
-			padding: 4px 16px;
+			padding: 4px 22px;
 		}
 	}
 
 	.blaze-disconnected-site__connect {
-		padding: 32px;
+		padding: 0;
+
+		@media (max-width: $break-large) {
+			padding: 28px;
+		}
+
+		.is-primary {
+			padding: 6px 16px;
+		}
 
 		.blaze-disconnected-site__connect-content {
 			display: flex;
 			flex-direction: row;
-			gap: 20px;
+			gap: 48px;
 			align-items: center;
-			text-align: start;
+			text-align: left;
+			max-width: $content-width;
+			margin: 0 auto;
 
-			@media (max-width: 640px) {
+			@media (max-width: $break-large) {
 				flex-direction: column;
 				text-align: center;
 			}
 		}
 
-		.blaze-disconnected-site__connect-icon {
-			flex: 0 0 150px;
-			min-width: 150px;
+		.blaze-disconnected-site__connect-body {
+			flex: 1;
+		}
 
-			@media (max-width: 640px) {
-				margin: 0 auto; // center icon in stacked layout
+		.blaze-disconnected-site__connect-graphic {
+			flex: 0 0 auto;
+			display: flex;
+			background: #f4ede7;
+			padding: 28px;
+
+			@media (max-width: $break-large) {
+				display: none;
 			}
 
-			svg,
 			img {
-				width: 100%;
+				width: auto;
 				height: auto;
 				max-width: 150px;
 			}
 		}
 
-		.blaze-disconnected-site__connect-text {
-			flex: 1;
-		}
-
 		.blaze-disconnected-site__connect-title {
 			font-size: 1.5rem;
 			font-weight: 400;
-			margin: 0 0 9px;
+			margin: 0 0 16px;
 			font-family: Recoleta, Georgia, 'Times New Roman', serif;
+
+			@media (max-width: $break-medium) {
+				font-size: 1.75rem;
+			}
 		}
 
 		.blaze-disconnected-site__connect-description {
-			font-size: 15px;
-			line-height: 1.7;
-			margin: 0 0 16px;
+			font-size: 1rem;
+			line-height: 1.5;
+			margin: 0 0 24px;
+
+			@media (max-width: $break-large) {
+				margin-inline: auto;
+			}
 		}
 
-		.is-primary {
-			margin-bottom: 0; // spacing specific to connect section
-		}
 	}
 
 	// Features section: image left, content right
@@ -359,9 +394,9 @@
 		align-items: center;
 		text-align: start;
 		margin-top: 0;
-		border-radius: 0 0 8px 8px;
+		border-radius: 0 0 $radius $radius;
 
-		@media (max-width: 840px) {
+		@media (max-width: $break-large) {
 			flex-direction: column;
 			text-align: center;
 		}
@@ -381,31 +416,35 @@
 
 		.blaze-disconnected-site__features-body {
 			margin-inline: 0;
+			padding-right: 28px;
 		}
 	}
 
 	// Steps section (three cards on grey background)
 	.blaze-disconnected-site__steps {
-		border-radius: 0;
+		border-radius: $radius;
 		padding: 0;
+		background-color: transparent;
 
 		.blaze-disconnected-site__steps-grid {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
 			gap: 24px;
-			max-width: 1060px;
+			max-width: $content-width;
 			margin: 0 auto;
+			border-radius: $radius;
 
-			@media (max-width: 980px) {
+			@media (max-width: $break-large) {
 				grid-template-columns: 1fr;
 			}
 		}
 
 		.blaze-disconnected-site__step-card {
 			background: var(--studio-white);
-			border-radius: 8px;
+			border-radius: $radius;
 			padding: 28px;
 			text-align: left;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		}
 
 		.blaze-disconnected-site__step-card-number {
@@ -436,6 +475,120 @@
 			font-size: 15px;
 			line-height: 1.7;
 			margin: 0;
+		}
+	}
+
+	// FAQ section
+	.blaze-disconnected-site__faq {
+		text-align: start;
+		padding: 28px;
+		background-color: var(--studio-white);
+
+		.blaze-disconnected-site__section-title {
+			margin-bottom: 28px;
+			font-weight: 400;
+			font-size: 1.5rem;
+
+			@media (max-width: $break-medium) {
+				font-size: 1.75rem;
+				margin-bottom: 32px;
+			}
+		}
+	}
+
+	.blaze-faq-accordion {
+		max-width: $content-width;
+		margin: 0 auto;
+		border-bottom: 1px solid var(--studio-gray-5);
+
+		&:first-of-type {
+			border-top: 1px solid var(--studio-gray-5);
+		}
+
+		.blaze-faq-accordion__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+			padding: 16px 0;
+			background: none;
+			border: none;
+			cursor: pointer;
+			text-align: start;
+
+			&:hover {
+				.blaze-faq-accordion__question {
+					color: var(--studio-gray-100);
+				}
+			}
+		}
+
+		.blaze-faq-accordion__question {
+			font-size: 1rem;
+			color: var(--studio-gray-100);
+			flex: 1;
+			transition: color 0.15s ease;
+
+			@media (max-width: $break-medium) {
+				font-size: 1rem;
+			}
+		}
+
+		.blaze-faq-accordion__icon {
+			flex-shrink: 0;
+			margin-inline-start: 16px;
+			transition: transform 0.2s ease;
+			color: var(--studio-gray-50);
+
+			&.is-open {
+				transform: rotate(180deg);
+			}
+
+			svg {
+				width: 24px;
+				height: 24px;
+			}
+		}
+
+		.blaze-faq-accordion__content {
+			padding: 0 0 24px;
+			color: var(--studio-gray-80);
+			font-size: rem(15px);
+			line-height: 1.6;
+			max-width: 800px;
+
+			@media (max-width: $break-medium) {
+				font-size: 1rem;
+			}
+		}
+	}
+
+	&.is-woo {
+		.blaze-disconnected-site__hero {
+			background-color: var(--studio-woocommerce-purple-0);
+		}
+
+		.blaze-disconnected-site__features-list li::before {
+			color: var(--studio-woocommerce-purple-40);
+		}
+
+		.blaze-disconnected-site__connect-graphic {
+			background-color: var(--studio-woocommerce-purple-0);
+		}
+
+		.is-primary {
+			background-color: var(--studio-woocommerce-purple-40);
+			border-color: var(--studio-woocommerce-purple-40);
+			&:hover,
+			&:focus,
+			&:active {
+				background-color: var(--studio-woocommerce-purple-60);
+				border-color: var(--studio-woocommerce-purple-60);
+			}
+
+			&:focus-visible {
+				outline-color: var(--studio-woocommerce-purple-60);
+			}
 		}
 	}
 }

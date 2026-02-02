@@ -1,4 +1,4 @@
-@import "@automattic/onboarding/styles/mixins";
+@import '@automattic/onboarding/styles/mixins';
 
 .button.plan-features-2023-grid__actions-button {
 	line-height: 20px;
@@ -8,86 +8,99 @@
 	text-align: center;
 	text-wrap: balance;
 	width: 100%;
-	color: var(--color-text-inverted);
+	color: var( --color-text-inverted );
 
 	&:hover {
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 	}
 
 	&.is-free-plan,
-	&.is-woo-hosted-plan {
-		background-color: var(--studio-wordpress-blue-50);
+	&.is-woo-hosted-basic-plan,
+	&.is-woo-hosted-pro-plan {
+		background-color: var( --studio-wordpress-blue-50 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-50);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-wordpress-blue-50 );
 		}
 
 		&:hover {
-			background-color: var(--studio-wordpress-blue-60);
+			background-color: var( --studio-wordpress-blue-60 );
 		}
 	}
 
 	&.is-personal-plan {
-		background-color: var(--studio-wordpress-blue-60);
+		background-color: var( --studio-wordpress-blue-60 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-60);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-wordpress-blue-60 );
 		}
 
 		&:hover {
-			background-color: var(--studio-wordpress-blue-70);
+			background-color: var( --studio-wordpress-blue-70 );
 		}
 	}
 
 	&.is-premium-plan {
-		background-color: var(--studio-wordpress-blue-70);
+		background-color: var( --studio-wordpress-blue-70 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-70);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-wordpress-blue-70 );
 		}
 
 		&:hover {
-			background-color: var(--studio-wordpress-blue-80);
+			background-color: var( --studio-wordpress-blue-80 );
 		}
 	}
 
 	&.is-business-plan {
-		background-color: var(--studio-woocommerce-purple-60);
+		background-color: var( --studio-woocommerce-purple-60 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-woocommerce-purple-60 );
 		}
 
 		&:hover {
-			background-color: var(--studio-woocommerce-purple-70);
+			background-color: var( --studio-woocommerce-purple-70 );
 		}
 
 		+ .button.is-borderless {
 			background: transparent;
 			font-size: $font-body-small;
-			color: var(--studio-woocommerce-purple-60);
+			color: var( --studio-woocommerce-purple-60 );
 			text-decoration: none;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
+				box-shadow:
+					0 0 0 2px var( --studio-white ),
+					0 0 0 4px var( --studio-woocommerce-purple-60 );
 			}
 		}
 	}
 
 	&.is-wooexpress-medium-plan {
-		background-color: var(--color-accent);
-		color: var(--color-text-inverted);
+		background-color: var( --color-accent );
+		color: var( --color-text-inverted );
 		font-weight: 400;
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+			box-shadow:
+				0 0 0 2px var( --color-surface ),
+				0 0 0 4px var( --color-accent );
 		}
 	}
 
 	&.is-wooexpress-small-plan {
-		background-color: var(--color-surface);
-		color: var(--color-accent);
-		border: 1px solid var(--color-accent);
+		background-color: var( --color-surface );
+		color: var( --color-accent );
+		border: 1px solid var( --color-accent );
 		font-weight: 400;
 	}
 
@@ -95,42 +108,48 @@
 		display: inline-block;
 		width: 85%;
 		text-align: center;
-		background-color: var(--color-surface);
-		color: var(--color-accent);
-		border: 1px solid  var(--color-accent);
+		background-color: var( --color-surface );
+		color: var( --color-accent );
+		border: 1px solid var( --color-accent );
 		font-weight: 400;
 	}
 
 	&.is-ecommerce-plan {
-		background-color: var(--studio-woocommerce-purple-40);
+		background-color: var( --studio-woocommerce-purple-40 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-40);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-woocommerce-purple-40 );
 		}
 
 		&:hover {
-			background-color: var(--studio-woocommerce-purple-50);
+			background-color: var( --studio-woocommerce-purple-50 );
 		}
 	}
 
 	&.is-wpcom-enterprise-grid-plan {
-		background-color: var(--studio-gray-80);
+		background-color: var( --studio-gray-80 );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
+			box-shadow:
+				0 0 0 2px var( --studio-white ),
+				0 0 0 4px var( --studio-gray-80 );
 		}
 
 		&:hover {
-			background-color: var(--studio-gray-90);
+			background-color: var( --studio-gray-90 );
 		}
 	}
 
 	&.is-p2-plus-plan {
-		background-color: var(--color-accent);
-		color: var(--color-text-inverted);
+		background-color: var( --color-accent );
+		color: var( --color-text-inverted );
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+			box-shadow:
+				0 0 0 2px var( --color-surface ),
+				0 0 0 4px var( --color-accent );
 		}
 	}
 
@@ -140,18 +159,18 @@
 	&.is-secondary,
 	&.is-current-plan,
 	&.is-default {
-		background-color: var(--studio-white);
-		color: var(--studio-gray-100);
-		box-shadow: inset 0 0 0 1px var(--studio-gray-10);
+		background-color: var( --studio-white );
+		color: var( --studio-gray-100 );
+		box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
 
 		&.is-storage-upgradeable {
-			background-color: var(--color-accent);
-			color: var(--color-text-inverted);
+			background-color: var( --color-accent );
+			color: var( --color-text-inverted );
 		}
 
 		&:hover {
-			background-color: var(--studio-white);
-			box-shadow: inset 0 0 0 1px var(--studio-gray-80);
+			background-color: var( --studio-white );
+			box-shadow: inset 0 0 0 1px var( --studio-gray-80 );
 		}
 	}
 
@@ -162,8 +181,8 @@
 
 	&.disabled,
 	&[disabled] {
-		background-color: var(--studio-white);
-		color: var(--color-neutral-light);
+		background-color: var( --studio-white );
+		color: var( --color-neutral-light );
 		box-shadow: inset 0 0 0 1px #e0e0e0;
 	}
 

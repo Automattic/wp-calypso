@@ -9,16 +9,22 @@ import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { LocalConversationListItem } from '../types';
 import { normalizeZendeskConversations } from '../utils/zendesk';
+import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 interface Options {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
 }
 
 export default function useConversationList( { agentId, authProvider }: Options ) {
-	const botId = createOdieBotId( agentId );
+	const urlSearchParams = new URLSearchParams( window.location.search );
+	const hasAgentParam = urlSearchParams.has( 'agent' );
+	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
 
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+
+	// Only fetch Zendesk conversations if the unified agent flag is enabled
 	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
-		useGetZendeskConversations();
+		useGetZendeskConversations( !! shouldUseUnifiedAgent );
 
 	const {
 		data: conversations,

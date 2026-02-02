@@ -1,7 +1,7 @@
 /**
  * External Provider Loading Utility
  *
- * Loads external agent providers registered via the help_center_agent_providers
+ * Loads external agent providers registered via the agents_manager_agent_providers
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 

@@ -6,6 +6,12 @@ import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/s
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
+	// Edge case: slug can be missing when the current user does not have
+	// permission to manage the site.
+	if ( ! site.slug ) {
+		return false;
+	}
+
 	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
 		return false;
 	}

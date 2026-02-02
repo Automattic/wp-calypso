@@ -12,6 +12,7 @@ import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
+import CrontabSettingsSummary from '../settings-crontab/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
@@ -51,7 +52,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
 						<SiteVisibilitySettingsSummary site={ site } />
-						{ isEnabled( 'wordpress-ai-tools' ) ? (
+						{ isEnabled( 'wordpress-ai-tools' ) && siteTypeSupports.settingsGeneralAITools ? (
 							<AISiteToolsSettingsSummary site={ site } />
 						) : null }
 						{ siteTypeSupports.settingsGeneralRedirect ? (
@@ -71,6 +72,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<WordPressSettingsSummary site={ site } />
 						<PHPSettingsSummary site={ site } />
 						<SftpSshSettingsSummary site={ site } />
+						<CrontabSettingsSummary site={ site } />
 						<RepositoriesSettingsSummary site={ site } />
 						<DatabaseSettingsSummary site={ site } />
 						<PrimaryDataCenterSettingsSummary site={ site } />

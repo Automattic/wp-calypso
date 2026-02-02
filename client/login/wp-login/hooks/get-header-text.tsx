@@ -9,6 +9,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	twoFactorAuthType: string | null;
@@ -28,6 +29,7 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
+	ciabConfig?: CiabPartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
 }
@@ -70,6 +72,7 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
+	ciabConfig,
 	isGravPoweredClient,
 	currentQuery,
 	translate,
@@ -92,43 +95,50 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		let clientName = oauth2Client?.name;
-		if ( isFromAkismet ) {
-			clientName = 'Akismet';
-		} else if ( isFromPassport ) {
-			clientName = 'Passport';
-		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			clientName = 'Blaze Pro';
-		} else if ( isA4AOAuth2Client( oauth2Client ) ) {
-			clientName = 'Automattic for Agencies';
-		} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			clientName = 'Jetpack Cloud';
-		} else if ( isJetpack ) {
-			clientName = 'Jetpack';
-		} else if ( isWCCOM ) {
-			clientName = 'Woo';
-		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
-			clientName = 'VIP';
-		}
+		// CIAB partners have custom headers without "with WordPress.com"
+		if ( ciabConfig ) {
+			headerText = translate( 'Log in to %(partner)s', {
+				args: { partner: ciabConfig.displayName },
+			} );
+		} else {
+			let clientName = oauth2Client?.name;
+			if ( isFromAkismet ) {
+				clientName = 'Akismet';
+			} else if ( isFromPassport ) {
+				clientName = 'Passport';
+			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				clientName = 'Blaze Pro';
+			} else if ( isA4AOAuth2Client( oauth2Client ) ) {
+				clientName = 'Automattic for Agencies';
+			} else if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+				clientName = 'Jetpack Cloud';
+			} else if ( isJetpack ) {
+				clientName = 'Jetpack';
+			} else if ( isWCCOM ) {
+				clientName = 'Woo';
+			} else if ( isVIPOAuth2Client( oauth2Client ) ) {
+				clientName = 'VIP';
+			}
 
-		/**
-		 * Override WooJPC. It's technically a Jetpack client, but we want to show "Woo" instead of "Jetpack".
-		 * This condition overrides the clientName set in the above if/elseif statement.
-		 */
-		if ( isWooJPC ) {
-			clientName = 'Woo';
-		}
+			/**
+			 * Override WooJPC. It's technically a Jetpack client, but we want to show "Woo" instead of "Jetpack".
+			 * This condition overrides the clientName set in the above if/elseif statement.
+			 */
+			if ( isWooJPC ) {
+				clientName = 'Woo';
+			}
 
-		headerText = clientName
-			? ( fixMe( {
-					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
-					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
-						args: { client: clientName },
-						components: { span: <span className="wp-login__one-login-header-client-name" /> },
-					} ),
-					oldCopy: translate( 'Log in to WordPress.com' ),
-			  } ) as TranslateResult )
-			: translate( 'Log in to WordPress.com' );
+			headerText = clientName
+				? ( fixMe( {
+						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+							args: { client: clientName },
+							components: { span: <span className="wp-login__one-login-header-client-name" /> },
+						} ),
+						oldCopy: translate( 'Log in to WordPress.com' ),
+				  } ) as TranslateResult )
+				: translate( 'Log in to WordPress.com' );
+		}
 	}
 
 	if ( twoFactorAuthType === 'authenticator' || twoFactorAuthType === 'email' ) {

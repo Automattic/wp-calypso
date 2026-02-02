@@ -72,6 +72,7 @@ export * from './site-backup-download';
 export * from './site-backup-restore';
 export * from './site-backups';
 export * from './site-cache';
+export * from './site-crontab';
 export * from './site-database';
 export * from './site-defensive-mode';
 export * from './site-deployments';
