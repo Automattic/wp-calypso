@@ -1,7 +1,8 @@
 import { DataHelper } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () => {
+	skipIfMailosaurLimitReached();
 	test.skip(
 		DataHelper.isCalypsoProduction() === false,
 		'Skipping unless running on WordPress.com as GitHub authentication requires prod callbacks'

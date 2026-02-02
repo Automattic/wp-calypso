@@ -291,6 +291,12 @@ export type GridContextProps = {
 	isVar1dVariant?: boolean;
 
 	/**
+	 * When true, indicates the user is in the var4 experiment variant.
+	 * Used to exclude var4 from certain experiment-specific styling.
+	 */
+	isVar4Variant?: boolean;
+
+	/**
 	 * When true, indicates the user is in an experiment variant.
 	 * Used to display experiment-specific feature titles in the comparison grid.
 	 */

@@ -68,6 +68,7 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
+	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -176,6 +177,10 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
+		/**
+		 * Flow encapsulating the Start Import onboarding process.
+		 */
+		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -433,6 +438,10 @@ export const test = base.extend<
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
 	},
+	flowStartImport: async ( { page }, use ) => {
+		const startImportFlow = new StartImportFlow( page );
+		await use( startImportFlow );
+	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
 		await use( startWritingFlow );
@@ -640,5 +649,24 @@ export const tags = {
 	P2: '@p2',
 	SETTINGS: '@settings',
 };
+
+/**
+ * Skips the current test suite if Mailosaur daily email limit is reached.
+ * Use this at the top of test.describe blocks that use fixtures requiring email verification (e.g., sitePublic).
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfMailosaurLimitReached();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfMailosaurLimitReached(): void {
+	test.skip(
+		envVariables.MAILOSAUR_LIMIT_REACHED,
+		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+	);
+}
 
 export { expect };

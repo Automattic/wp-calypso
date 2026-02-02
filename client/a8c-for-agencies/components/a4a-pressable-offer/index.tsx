@@ -33,15 +33,22 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 			( new Date() <= new Date( '2026-04-30T23:59:59.999Z' ) && pressableOwnership !== 'agency' ) );
 
 	const onToggleView = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_toggle_view', {
+				event_type: ! isExpanded ? 'collapse' : 'expand',
+			} )
+		);
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
-	}, [] );
+	}, [ dispatch, isExpanded ] );
 
 	const onViewEligiblePlansClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'a4a_pressable_promo_offer_2026_view_eligible_plans_click' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_view_eligible_plans_click' )
+		);
 	}, [ dispatch ] );
 
 	const onSeeFullTermClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'a4a_pressable_promo_offer_2026_see_full_terms_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_see_full_terms_click' ) );
 	}, [ dispatch ] );
 
 	if ( ! shouldShowOffer ) {

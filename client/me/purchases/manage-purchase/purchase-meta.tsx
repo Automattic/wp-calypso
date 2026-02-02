@@ -25,6 +25,7 @@ import {
 	isOneTimePurchase,
 	isRenewing,
 	isSubscription,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -170,7 +171,7 @@ function renderRenewsOrExpiresOnLabel( {
 	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
-	if ( isExpiring( purchase ) ) {
+	if ( isExpiring( purchase ) && ! isInExpirationGracePeriod( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			if ( domainDetails?.isHundredYearDomain ) {
 				return translate( 'Paid until' );
@@ -187,7 +188,7 @@ function renderRenewsOrExpiresOnLabel( {
 		}
 	}
 
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			return translate( 'Domain expired on' );
 		}
@@ -246,7 +247,7 @@ function renderRenewsOrExpiresOn( {
 		);
 	}
 
-	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
+	if ( isExpiring( purchase ) || isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		return <>{ moment( purchase.expiryDate ).format( 'LL' ) }</>;
 	}
 

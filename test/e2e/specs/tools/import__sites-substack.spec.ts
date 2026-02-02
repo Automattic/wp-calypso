@@ -1,5 +1,5 @@
 import path from 'path';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 const TEST_SUBSTACK_EXPORT_FILE_PATH = path.join( __dirname, 'import-files', 'substackexport.zip' );
 
@@ -14,6 +14,8 @@ test.describe(
 		},
 	},
 	() => {
+		skipIfMailosaurLimitReached();
+
 		const substackSiteURL = 'https://test.substack.com/';
 		const substackSiteName = 'Testing Product';
 

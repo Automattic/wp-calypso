@@ -50,7 +50,7 @@
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",
-		"@wordpress/components": "^30.9.0",
+		"@wordpress/components": "^32.1.0",
 		"@wordpress/compose": "^7.2.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",

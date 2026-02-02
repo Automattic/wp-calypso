@@ -28,10 +28,6 @@
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		white-space: normal;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
-		}
 	}
 
 	.feed-preview {

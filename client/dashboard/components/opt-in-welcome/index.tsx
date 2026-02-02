@@ -12,6 +12,9 @@ import ComponentViewTracker from '../component-view-tracker';
 
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	const { optIn } = useAppContext();
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
@@ -27,7 +30,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 		} );
 	};
 
-	if ( ! optIn ) {
+	if ( ! optIn || dashboardOptIn?.value === 'forced-opt-in' ) {
 		return null;
 	}
 

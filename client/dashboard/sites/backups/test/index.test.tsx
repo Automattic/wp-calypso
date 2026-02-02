@@ -13,12 +13,6 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
 } ) );

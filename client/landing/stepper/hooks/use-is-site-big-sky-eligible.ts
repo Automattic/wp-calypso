@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_BIG_SKY, isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import {
+	FEATURE_BIG_SKY,
+	isBusinessPlan,
+	isPremiumPlan,
+	isPersonalPlan,
+} from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
@@ -34,7 +39,10 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	);
 
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
-	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
+	const isEligiblePlan =
+		isPersonalPlan( product_slug ) ||
+		isPremiumPlan( product_slug ) ||
+		isBusinessPlan( product_slug );
 	const siteHasBigSkyFeature = site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ) ?? false;
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
