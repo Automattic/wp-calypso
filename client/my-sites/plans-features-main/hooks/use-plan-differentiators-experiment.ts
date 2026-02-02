@@ -89,7 +89,7 @@ function usePlanDifferentiatorsExperiment( {
 		isEligible,
 	} );
 
-	const variant = ( assignment?.variationName || undefined ) as
+	const variant = ( assignment?.variationName ?? undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
 
