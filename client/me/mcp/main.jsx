@@ -28,7 +28,7 @@ function McpComponent( { path } ) {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const { data: sites = [] } = useQuery( sitesQuery( { site_visibility: 'visible' } ) );
+	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
