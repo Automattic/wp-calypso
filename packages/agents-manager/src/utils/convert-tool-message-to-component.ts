@@ -28,6 +28,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
+		// Handle show-component ability component messages
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			const { type: contentType, props, followUpTasks } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
@@ -68,8 +69,6 @@ export function convertToolMessagesToComponents( {
 				},
 			];
 		}
-
-		// TODO: Handle `start_over` components...
 
 		return [ message ];
 	} );
