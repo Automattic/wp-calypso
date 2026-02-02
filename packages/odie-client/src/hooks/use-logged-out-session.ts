@@ -24,10 +24,13 @@ export const useLoggedOutSession = () => {
 
 	const isLoggedIn = !! currentUser?.ID;
 
-	// Use URL params if available, otherwise fall back to persisted session
-	const loggedOutOdieChatId = urlChatId || persistedLoggedOutOdieChat?.odieId?.toString() || null;
-	const loggedOutOdieSessionId = urlSessionId || persistedLoggedOutOdieChat?.sessionId || null;
-	const loggedOutOdieBotSlug = urlBotSlug || persistedLoggedOutOdieChat?.botSlug || null;
+	// Use URL params if available, fall back to persisted session only when logged out
+	const loggedOutOdieChatId =
+		urlChatId || ( ! isLoggedIn && persistedLoggedOutOdieChat?.odieId?.toString() ) || null;
+	const loggedOutOdieSessionId =
+		urlSessionId || ( ! isLoggedIn && persistedLoggedOutOdieChat?.sessionId ) || null;
+	const loggedOutOdieBotSlug =
+		urlBotSlug || ( ! isLoggedIn && persistedLoggedOutOdieChat?.botSlug ) || null;
 
 	const isLoggedOutSession =
 		! isLoggedIn || ( loggedOutOdieChatId && loggedOutOdieSessionId && loggedOutOdieBotSlug );
