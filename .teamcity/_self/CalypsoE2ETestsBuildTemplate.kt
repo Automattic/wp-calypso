@@ -244,7 +244,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
   	artifactRules = """
 		test/e2e/output => %PROJECT%/output
-		test/e2e/blob-report => blob-report
 	""".trimIndent()
   
   	failureConditions {

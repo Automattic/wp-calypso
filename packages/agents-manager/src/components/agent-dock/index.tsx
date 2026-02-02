@@ -79,7 +79,7 @@ export default function AgentDock( {
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
 
-	const { isDocked, isDesktop, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
@@ -227,7 +227,7 @@ export default function AgentDock( {
 
 		if ( isDocked ) {
 			options.push( undockMenuItem );
-		} else if ( isDesktop ) {
+		} else if ( canDock ) {
 			options.push( dockMenuItem );
 		}
 
