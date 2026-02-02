@@ -12,7 +12,7 @@
 		"directory": "packages/babel-plugin-transform-wpcalypso-async"
 	},
 	"dependencies": {
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.23"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

@@ -7,7 +7,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"gettext-parser": "^4.0.3",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.23"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

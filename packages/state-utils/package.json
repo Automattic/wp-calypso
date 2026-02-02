@@ -40,7 +40,7 @@
 	"dependencies": {
 		"@wordpress/is-shallow-equal": "^ 5.39.0",
 		"@wordpress/warning": "^3.23.0",
-		"lodash": "^4.17.21",
+		"lodash": "^4.17.23",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
 		"tslib": "^2.8.1"

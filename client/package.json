@@ -175,7 +175,7 @@
 		"jest-fetch-mock": "^3.0.3",
 		"jest-mock-process": "^2.0.0",
 		"jest-when": "^3.7.0",
-		"lodash": "^4.17.21",
+		"lodash": "^4.17.23",
 		"lodash-es": "^4.17.21",
 		"lru": "^3.1.0",
 		"lunr": "^2.3.9",
