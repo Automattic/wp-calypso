@@ -40,7 +40,14 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {} ) ),
+	QueryClient: jest.fn().mockImplementation( () => ( {
+		getQueryCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+		getMutationCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+	} ) ),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 	useQuery: jest.fn( () => ( { data: { ID: 1, slug: 'production-site' }, isLoading: false } ) ),
 	useMutation: jest.fn( () => ( {
