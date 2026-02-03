@@ -29,17 +29,22 @@ function getScanURL( site: Site ) {
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	const threatCount = scan.threats?.length ?? 0;
-	const description = sprintf(
+	const heading = sprintf(
 		/* translators: %d: number of risks */
 		_n( '%d risk found', '%d risks found', threatCount ),
 		threatCount
 	);
 
+	const hasFixableThreats = scan.threats?.some( ( threat ) => threat.fixable ) ?? false;
+	const description = hasFixableThreats
+		? __( 'Auto fixes are available.' )
+		: __( 'Manual review required.' );
+
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			heading={ description }
-			description={ __( 'Auto fixes are available.' ) }
+			heading={ heading }
+			description={ description }
 			link={ getScanURL( site ) }
 			intent="error"
 		/>
