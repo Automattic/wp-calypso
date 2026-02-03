@@ -3,39 +3,12 @@
 	margin-block-end: 32px;
 }
 
-.reader-full-post-navigation__divider {
-	height: 1px;
-	background-color: var( --color-neutral-10 );
-	margin-block-start: 24px;
-	margin-block-end: 24px;
-	width: 100%;
-}
-
-.reader-full-post-navigation__links {
-	display: flex;
-	justify-content: space-between;
-	gap: 24px;
-	margin-block-start: 0;
-	margin-block-end: 0;
-}
-
 .reader-full-post-navigation__link {
 	flex: 1;
 	max-width: 50%;
 }
 
-.reader-full-post-navigation__link--previous {
-	text-align: start;
-}
-
-.reader-full-post-navigation__link--next {
-	text-align: end;
-}
-
 .reader-full-post-navigation__link-button.components-button {
-	display: flex;
-	align-items: center;
-	gap: 8px;
 	text-decoration: none;
 	color: var( --color-text );
 	padding: 8px 0;
@@ -43,12 +16,9 @@
 	background: none;
 	border: none;
 	border-radius: 4px;
-	cursor: pointer;
-	font-family: inherit;
-	font-size: inherit;
 	width: 100%;
 	height: auto;
-	text-align: inherit;
+	justify-content: flex-start;
 
 	&:hover {
 		opacity: 0.7;
@@ -67,10 +37,12 @@
 }
 
 .reader-full-post-navigation__link-content {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
 	min-width: 0; // Allow text truncation
+	text-align: start;
+
+	&.reader-full-post-navigation__link-content--next {
+		text-align: end;
+	}
 }
 
 .reader-full-post-navigation__link-label {
@@ -79,7 +51,6 @@
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	font-weight: 600;
-	margin-block-end: 4px;
 }
 
 .reader-full-post-navigation__link-title {
@@ -95,23 +66,11 @@
 }
 
 .reader-full-post-navigation__link-placeholder {
-	height: 60px; // Match the approximate height of a link with title
+	height: 60px;
 }
 
 // Responsive styles
 @media ( max-width: 660px ) {
-	.reader-full-post-navigation__links {
-		display: flex;
-		justify-content: space-between;
-		gap: 16px;
-	}
-
-	.reader-full-post-navigation__link {
-		flex: 1;
-		max-width: 50%;
-	}
-
-	// Hide the post titles on very small screens, show only prev/next with arrows
 	.reader-full-post-navigation__link-title {
 		display: none;
 	}
@@ -124,30 +83,20 @@
 
 	.reader-full-post-navigation__link-button.components-button {
 		padding: 12px 8px;
-		gap: 4px;
-	}
-
-	.reader-full-post-navigation__link-content {
-		gap: 0;
 	}
 }
 
 // For very small screens (phones in portrait)
 @media ( max-width: 480px ) {
-	.reader-full-post-navigation__links {
-		gap: 8px;
-	}
-
 	.reader-full-post-navigation__link-button.components-button {
 		padding: 12px 4px;
 	}
 
-	// Even more compact - just arrows and "Previous"/"Next"
 	.reader-full-post-navigation__link-label {
-		font-size: 0.75rem; // 12px
+		font-size: 0.75rem;
 	}
 
 	.reader-full-post-navigation__link-placeholder {
-		height: 44px; // Smaller height for mobile
+		height: 44px;
 	}
 }

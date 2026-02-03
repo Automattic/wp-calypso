@@ -1,5 +1,10 @@
 import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import {
+	__experimentalDivider as Divider,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
@@ -45,14 +50,22 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 				} )
 			) }
 		>
-			{ ! isNext && <Gridicon icon={ icon } size={ 18 } /> }
-			<div className="reader-full-post-navigation__link-content">
-				<span className="reader-full-post-navigation__link-label">{ label }</span>
-				<span className="reader-full-post-navigation__link-title">
-					{ post?.title || translate( 'Loading…' ) }
-				</span>
-			</div>
-			{ isNext && <Gridicon icon={ icon } size={ 18 } /> }
+			<HStack spacing={ 2 } justify={ isNext ? 'flex-end' : 'flex-start' } expanded>
+				{ ! isNext && <Gridicon icon={ icon } size={ 18 } /> }
+				<VStack
+					spacing={ 1 }
+					className={ clsx(
+						'reader-full-post-navigation__link-content',
+						isNext && 'reader-full-post-navigation__link-content--next'
+					) }
+				>
+					<span className="reader-full-post-navigation__link-label">{ label }</span>
+					<span className="reader-full-post-navigation__link-title">
+						{ post?.title || translate( 'Loading…' ) }
+					</span>
+				</VStack>
+				{ isNext && <Gridicon icon={ icon } size={ 18 } /> }
+			</HStack>
 		</Button>
 	);
 };
@@ -77,11 +90,10 @@ const ReaderFullPostNavigation = ( {
 	}
 
 	return (
-		<div className="reader-full-post-navigation">
-			<div className="reader-full-post-navigation__divider" />
-
-			<div className="reader-full-post-navigation__links">
-				<div className="reader-full-post-navigation__link reader-full-post-navigation__link--previous">
+		<VStack spacing={ 6 } className="reader-full-post-navigation">
+			<Divider />
+			<HStack spacing={ 6 } alignment="stretch">
+				<div className="reader-full-post-navigation__link">
 					<NavigationButton
 						direction="previous"
 						post={ previousPost }
@@ -89,8 +101,7 @@ const ReaderFullPostNavigation = ( {
 						onNavigate={ onNavigate }
 					/>
 				</div>
-
-				<div className="reader-full-post-navigation__link reader-full-post-navigation__link--next">
+				<div className="reader-full-post-navigation__link">
 					<NavigationButton
 						direction="next"
 						post={ nextPost }
@@ -98,8 +109,8 @@ const ReaderFullPostNavigation = ( {
 						onNavigate={ onNavigate }
 					/>
 				</div>
-			</div>
-		</div>
+			</HStack>
+		</VStack>
 	);
 };
 
