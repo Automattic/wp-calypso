@@ -16,7 +16,6 @@ let mockSelectorState;
 
 const mockSetDraftIds = jest.fn();
 const mockDeleteEntityRecord = jest.fn();
-const mockTrackImageStudioError = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn( ( storeName ) => {
@@ -58,8 +57,11 @@ jest.mock( '../store', () => ( {
 } ) );
 
 jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioError: mockTrackImageStudioError,
+	trackImageStudioError: jest.fn(),
 } ) );
+
+const { trackImageStudioError: mockTrackImageStudioError } =
+	jest.requireMock( '../utils/tracking' );
 
 jest.mock( '../types', () => ( {
 	ImageStudioMode: {

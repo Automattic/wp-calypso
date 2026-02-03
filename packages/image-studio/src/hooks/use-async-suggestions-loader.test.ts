@@ -24,10 +24,14 @@ const mockCreateAgentConfig = jest.fn( ( _sessionId: string ) =>
 );
 const mockExtractJsonFromModelResponse = jest.fn();
 
-jest.mock( '@automattic/agenttic-client', () => ( {
-	createClient: () => mockCreateClient(),
-	createTextMessage: ( text: string ) => mockCreateTextMessage( text ),
-} ) );
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( {
+		createClient: () => mockCreateClient(),
+		createTextMessage: ( text: string ) => mockCreateTextMessage( text ),
+	} ),
+	{ virtual: true }
+);
 
 jest.mock( '../utils/agent-config', () => ( {
 	createDefaultAgentConfig: ( sessionId: string ) => mockCreateAgentConfig( sessionId ),
@@ -231,6 +235,8 @@ describe( 'useAsyncSuggestionsLoader', () => {
 				text: 'invalid response',
 			} );
 
+			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
 			const { result } = renderHook( () =>
 				useAsyncSuggestionsLoader( {
 					prompt: 'Test prompt',
@@ -242,17 +248,20 @@ describe( 'useAsyncSuggestionsLoader', () => {
 				expect( result.current.suggestions ).toEqual( DEFAULT_GENERATE_SUGGESTIONS );
 			} );
 
-			// @ts-expect-error - toHaveErroredWith is from @wordpress/jest-console
-			expect( console ).toHaveErroredWith(
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
 				'[Image Studio] Invalid suggestions response:',
 				'invalid response'
 			);
+
+			consoleErrorSpy.mockRestore();
 		} );
 
 		it( 'returns DEFAULT_GENERATE_SUGGESTIONS on network error', async () => {
 			const networkError = new Error( 'Network error' );
 			mockSendMessage.mockRejectedValue( networkError );
 
+			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+
 			const { result } = renderHook( () =>
 				useAsyncSuggestionsLoader( {
 					prompt: 'Test prompt',
@@ -264,11 +273,12 @@ describe( 'useAsyncSuggestionsLoader', () => {
 				expect( result.current.suggestions ).toEqual( DEFAULT_GENERATE_SUGGESTIONS );
 			} );
 
-			// @ts-expect-error - toHaveWarnedWith is from @wordpress/jest-console
-			expect( console ).toHaveWarnedWith(
+			expect( consoleWarnSpy ).toHaveBeenCalledWith(
 				'[Image Studio] Failed to fetch suggestions:',
 				networkError
 			);
+
+			consoleWarnSpy.mockRestore();
 		} );
 	} );
 

@@ -31,12 +31,6 @@ let mockIsLoadingSuggestions = false;
 const mockSetAnnotationMode = jest.fn();
 const mockRegisterSuggestions = jest.fn();
 const mockClearSuggestions = jest.fn();
-const mockTrackImageStudioSuggestionsRendered = jest.fn();
-const mockTrackImageStudioSuggestionClick = jest.fn();
-const mockFormatSuggestionIds = jest.fn(
-	( suggestions ) => '|' + suggestions.map( ( s: any ) => s.id ).join( '|' ) + '|'
-);
-
 jest.mock( '@wordpress/data', () => {
 	const getMockSetAnnotationMode = () => mockSetAnnotationMode;
 	return {
@@ -63,6 +57,10 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
+jest.mock( '@wordpress/editor', () => ( {
+	store: 'core/editor',
+} ) );
+
 jest.mock( '@wordpress/i18n', () => ( {
 	__: jest.fn( ( str ) => str ),
 } ) );
@@ -77,15 +75,30 @@ jest.mock( './use-current-screen', () => ( {
 } ) );
 
 jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioSuggestionsRendered: ( ...args: any[] ) =>
-		mockTrackImageStudioSuggestionsRendered( ...args ),
-	trackImageStudioSuggestionClick: ( ...args: any[] ) =>
-		mockTrackImageStudioSuggestionClick( ...args ),
+	trackImageStudioSuggestionsRendered: jest.fn(),
+	trackImageStudioSuggestionClick: jest.fn(),
 } ) );
 
 jest.mock( '../utils/agenttic-tracking', () => ( {
-	formatSuggestionIds: ( suggestions: any[] ) => mockFormatSuggestionIds( suggestions ),
+	formatSuggestionIds: jest.fn(),
 } ) );
+
+const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
+	typeof import('../utils/tracking')
+>;
+const {
+	trackImageStudioSuggestionsRendered: mockTrackImageStudioSuggestionsRendered,
+	trackImageStudioSuggestionClick: mockTrackImageStudioSuggestionClick,
+} = trackingMocks;
+
+const { formatSuggestionIds: mockFormatSuggestionIds } = jest.requireMock(
+	'../utils/agenttic-tracking'
+) as jest.Mocked< typeof import('../utils/agenttic-tracking') >;
+
+mockFormatSuggestionIds.mockImplementation(
+	( suggestions: any[] ) =>
+		'|' + suggestions.map( ( suggestion ) => suggestion.id ).join( '|' ) + '|'
+);
 
 jest.mock( './use-async-suggestions-loader', () => ( {
 	useAsyncSuggestionsLoader: () => ( {

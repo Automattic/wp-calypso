@@ -13,12 +13,6 @@ const mockSetImageStudioAiProcessing = jest.fn();
 const mockSetIsAnnotationSaving = jest.fn();
 const mockAddAnnotatedAttachmentId = jest.fn();
 const mockSetDraftIds = jest.fn();
-const mockTrackImageStudioAnnotationSave = jest.fn();
-const mockTrackImageStudioAnnotationUndo = jest.fn();
-const mockTrackImageStudioAnnotationRedo = jest.fn();
-const mockTrackImageStudioImageGenerated = jest.fn();
-const mockUploadAnnotation = jest.fn();
-
 const mockAnnotationCanvas = {
 	getBlob: jest.fn(),
 	clear: jest.fn(),
@@ -66,15 +60,28 @@ jest.mock( '../store', () => ( {
 } ) );
 
 jest.mock( '../utils/upload-annotation', () => ( {
-	uploadAnnotation: mockUploadAnnotation,
+	uploadAnnotation: jest.fn(),
 } ) );
 
+const { uploadAnnotation: mockUploadAnnotation } = jest.requireMock(
+	'../utils/upload-annotation'
+) as jest.Mocked< typeof import('../utils/upload-annotation') >;
+
 jest.mock( '../utils/tracking', () => ( {
+	trackImageStudioAnnotationSave: jest.fn(),
+	trackImageStudioImageGenerated: jest.fn(),
+	trackImageStudioAnnotationUndo: jest.fn(),
+	trackImageStudioAnnotationRedo: jest.fn(),
+} ) );
+
+const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
+	typeof import('../utils/tracking')
+>;
+const {
 	trackImageStudioAnnotationSave: mockTrackImageStudioAnnotationSave,
-	trackImageStudioImageGenerated: mockTrackImageStudioImageGenerated,
 	trackImageStudioAnnotationUndo: mockTrackImageStudioAnnotationUndo,
 	trackImageStudioAnnotationRedo: mockTrackImageStudioAnnotationRedo,
-} ) );
+} = trackingMocks;
 
 describe( 'useAnnotation', () => {
 	let mockBlob: Blob;
