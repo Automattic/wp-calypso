@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { AgentMessage } from '../types/agenttic';
 
-const getLastMessageByRole = ( messages: Message[], role: string ) => {
+const getLastMessageByRole = ( messages: AgentMessage[], role: string ) => {
 	const filtered = messages.filter( ( message ) => message.role === role );
 	return filtered[ filtered.length - 1 ];
 };
@@ -15,7 +15,7 @@ const getLastMessageByRole = ( messages: Message[], role: string ) => {
  * @param messages - Array of messages from agent chat (sorted by timestamp)
  * @returns Filtered array of messages to display
  */
-export function useImageStudioMessageDisplay( messages?: Message[] ) {
+export function useImageStudioMessageDisplay( messages?: AgentMessage[] ) {
 	const [ displayMessagesInChat, setDisplayMessagesInChat ] = useState< boolean >( false );
 
 	// Enable message display when user sends a message

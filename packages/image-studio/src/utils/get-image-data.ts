@@ -1,8 +1,7 @@
-/**
- * WordPress dependencies
- */
 import { store as coreStore } from '@wordpress/core-data';
 import { resolveSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { extractFilenameFromUrl } from './extract-filename';
 
 /**
  * Image data returned by this function
@@ -16,6 +15,7 @@ export interface ImageData {
 	description: string;
 	width: number;
 	height: number;
+	filename: string;
 }
 
 /**
@@ -63,6 +63,9 @@ export async function getImageData( attachmentId: number ): Promise< ImageData |
 			return null;
 		}
 
+		// Extract filename from URL
+		const filename = extractFilenameFromUrl( media.source_url, __( 'Untitled', 'big-sky' ) );
+
 		// Transform WordPress media entity to Image Studio format
 		return {
 			id: media.id,
@@ -73,10 +76,10 @@ export async function getImageData( attachmentId: number ): Promise< ImageData |
 			description: media.description?.raw || '',
 			width: media.media_details?.width || 0,
 			height: media.media_details?.height || 0,
+			filename,
 		};
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Error fetching image data:', error );
+		window.console?.error?.( 'Error fetching image data:', error );
 		return null;
 	}
 }

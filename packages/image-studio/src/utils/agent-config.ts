@@ -100,8 +100,7 @@ async function requestJWTTokenViaWpcom( siteId: string | number ): Promise< stri
 		}
 		return token || null;
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( '[Image Studio] Failed to get JWT token via wpcomRequest:', error );
+		window.console?.error?.( '[Image Studio] Failed to get JWT token via wpcomRequest:', error );
 		return null;
 	}
 }
@@ -134,8 +133,7 @@ async function requestJWTToken(): Promise< TokenData | null > {
 		setCachedJwtToken( JWT_TOKEN_ID, tokenData );
 		return tokenData;
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( '[Image Studio] Failed to get JWT token:', error );
+		window.console?.error?.( '[Image Studio] Failed to get JWT token:', error );
 		return null;
 	}
 }
@@ -183,7 +181,7 @@ function createAuthProvider(): AuthProvider {
 	};
 }
 
-async function createDefaultAgentConfig( sessionId: string ): Promise< UseAgentChatConfig > {
+export async function createDefaultAgentConfig( sessionId: string ): Promise< UseAgentChatConfig > {
 	await registerUpdateCanvasImageAbility();
 
 	return {

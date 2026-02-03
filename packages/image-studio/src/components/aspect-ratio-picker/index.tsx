@@ -9,11 +9,11 @@ interface AspectRatioPickerProps {
 }
 
 export const ASPECT_RATIO_OPTIONS = [
-	{ label: __( '1:1', 'default' ), value: '1:1' },
-	{ label: __( '16:9', 'default' ), value: '16:9' },
-	{ label: __( '9:16', 'default' ), value: '9:16' },
-	{ label: __( '4:3', 'default' ), value: '4:3' },
-	{ label: __( '3:4', 'default' ), value: '3:4' },
+	{ label: __( '1:1', 'big-sky' ), value: '1:1' },
+	{ label: __( '16:9', 'big-sky' ), value: '16:9' },
+	{ label: __( '9:16', 'big-sky' ), value: '9:16' },
+	{ label: __( '4:3', 'big-sky' ), value: '4:3' },
+	{ label: __( '3:4', 'big-sky' ), value: '3:4' },
 ];
 
 export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps ) {
@@ -35,7 +35,7 @@ export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps 
 
 	const selectedLabel =
 		ASPECT_RATIO_OPTIONS.find( ( opt ) => opt.value === selectedAspectRatio )?.label ??
-		__( 'Aspect ratio', 'default' );
+		__( 'Aspect Ratio', 'big-sky' );
 
 	return (
 		<AgentUI.InputToolbar

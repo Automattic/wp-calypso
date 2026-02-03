@@ -1,3 +1,5 @@
+export { ImageStudioEntryPoint } from '../store/index';
+
 export interface ImageStudioConfig {
 	attachmentId?: number;
 	imageData?: {
@@ -9,8 +11,11 @@ export interface ImageStudioConfig {
 		width?: number;
 		height?: number;
 		description?: string;
+		filename?: string;
 	};
 }
+
+import type { AgentConfigFactory } from '../utils/agent-config';
 
 export interface ImageStudioProps {
 	image: File | string;
@@ -22,12 +27,17 @@ export interface ImageStudioProps {
 	onExit: () => Promise< void > | void;
 	/** Navigate to Media Library editor (save, cleanup, navigate) */
 	onClassicMediaEditorNavigation?: ( url: string ) => Promise< void >;
+	/** Navigate to previous image in media library */
+	onNavigatePrevious?: () => void;
+	/** Navigate to next image in media library */
+	onNavigateNext?: () => void;
+	/** Whether there is a previous image available */
+	hasPreviousImage?: boolean;
+	/** Whether there is a next image available */
+	hasNextImage?: boolean;
 	className?: string;
 	config: ImageStudioConfig;
-	/** Optional custom agent config factory. If not provided, uses default. */
-	agentConfigFactory?: {
-		createAgentConfig: ( sessionId: string ) => Promise< any >;
-	};
+	agentConfigFactory?: AgentConfigFactory;
 }
 
 export enum ImageStudioMode {

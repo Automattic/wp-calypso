@@ -146,6 +146,16 @@ export function useUnsavedChangesConfirmation( {
 			// Only intercept ESC if confirmation dialog is not already showing
 			// This prevents conflicts with other UI elements (dropdowns, popovers)
 			if ( e.key === 'Escape' && ! isConfirmDialogOpen ) {
+				// Don't intercept if the event originated from within a popover (e.g., dropdown menu)
+				// This allows dropdowns to close naturally with Escape without triggering the exit flow
+				const target = e.target;
+				if ( target instanceof Element ) {
+					const isInsidePopover = target.closest( '.components-popover' );
+					if ( isInsidePopover ) {
+						return;
+					}
+				}
+
 				e.preventDefault();
 				e.stopPropagation();
 				handleRequestClose();

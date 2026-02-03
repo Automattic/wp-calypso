@@ -16,16 +16,17 @@ export const addImageStudioMediaSource = (
 		onClick: () => void;
 	}
 ) => {
+	const { onSelect, multiple, isFeatured, onClick } = args;
 	const handleClose = ( image: ImageData ) => {
 		handleImageSelection( {
 			image,
-			onSelect: args.onSelect,
-			multiple: args.multiple,
+			onSelect,
+			multiple,
 		} );
 	};
 
 	const handleOpen = () => {
-		const entryPoint = args.isFeatured
+		const entryPoint = isFeatured
 			? ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage
 			: ImageStudioEntryPoint.JetpackExternalMediaBlock;
 
@@ -34,7 +35,7 @@ export const addImageStudioMediaSource = (
 			attachmentId: undefined,
 			entryPoint,
 		} );
-		args.onClick();
+		onClick?.();
 		dispatch( imageStudioStore ).openImageStudio( undefined, handleClose, entryPoint );
 	};
 

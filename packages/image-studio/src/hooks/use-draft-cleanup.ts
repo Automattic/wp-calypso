@@ -1,5 +1,9 @@
 /**
- * Hook for cleaning up draft images on exit ONLY
+ * Hook for cleaning up draft images
+ *
+ * Exports:
+ * - cleanupOnExit: Main cleanup for exit flows
+ * - deleteDraftsExcept: Low-level cleanup for reset flows
  *
  * Cleanup rules (applies to all exit paths):
  * - Keep: originalAttachmentId + all savedAttachmentIds
@@ -121,8 +125,10 @@ export const useDraftCleanup = () => {
 					} );
 
 					// TODO: Add proper user-facing notices once we have a working notice system
-					// eslint-disable-next-line no-console
-					console.error( '[Image Studio] Failed to delete some draft images:', rejectedResults );
+					window.console?.error?.(
+						'[Image Studio] Failed to delete some draft images:',
+						rejectedResults
+					);
 				}
 			} catch ( error ) {
 				// Lazy load attachment ID only when needed for error tracking
@@ -137,8 +143,7 @@ export const useDraftCleanup = () => {
 				} );
 
 				// TODO: Add proper user-facing notices once we have a working notice system
-				// eslint-disable-next-line no-console
-				console.error( '[Image Studio] Error during draft cleanup:', error );
+				window.console?.error?.( '[Image Studio] Error during draft cleanup:', error );
 			}
 		},
 		[ setDraftIds, deleteEntityRecord ]
@@ -155,8 +160,7 @@ export const useDraftCleanup = () => {
 
 		// Guard against store not being available
 		if ( ! selectors ) {
-			// eslint-disable-next-line no-console
-			console.warn( '[Image Studio] Store not available for cleanup' );
+			window.console?.warn?.( '[Image Studio] Store not available for cleanup' );
 			return;
 		}
 
@@ -178,5 +182,6 @@ export const useDraftCleanup = () => {
 
 	return {
 		cleanupOnExit,
+		deleteDraftsExcept,
 	};
 };

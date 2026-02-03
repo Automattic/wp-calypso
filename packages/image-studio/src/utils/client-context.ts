@@ -82,8 +82,7 @@ function detectImageEntity(): ImageStudioData | null {
 
 		return imageStudio;
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[Image Studio] Error detecting image entity:', error );
+		window.console?.warn?.( '[Image Studio] Error detecting image entity:', error );
 		return null;
 	}
 }
@@ -102,8 +101,7 @@ export function getClientContext(): ImageStudioClientContext {
 		context.imageStudio = imageStudio;
 	}
 
-	// eslint-disable-next-line no-console
-	console.log( '[Image Studio] Client context:', context );
+	window.console?.log?.( '[Image Studio] Client context:', context );
 
 	return context;
 }

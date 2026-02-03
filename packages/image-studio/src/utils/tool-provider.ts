@@ -22,8 +22,7 @@ export async function initializeAbilities(): Promise< void > {
 	await registerUpdateCanvasImageAbility();
 	isInitialized = true;
 
-	// eslint-disable-next-line no-console
-	console.log( '[Image Studio] Abilities registered' );
+	window.console?.log?.( '[Image Studio] Abilities registered' );
 }
 
 export async function getFilteredAbilities(): Promise< ReturnType< typeof getAbilities > > {
@@ -34,8 +33,7 @@ export async function getFilteredAbilities(): Promise< ReturnType< typeof getAbi
 		( ability ) => ability?.name && ALLOWED_ABILITIES.includes( ability.name )
 	);
 
-	// eslint-disable-next-line no-console
-	console.log(
+	window.console?.log?.(
 		'[Image Studio] Available abilities:',
 		filtered.map( ( a ) => a.name )
 	);
@@ -50,8 +48,7 @@ export async function executeFilteredAbility( name: string, args: any ): Promise
 		throw new Error( `Ability '${ name }' is not allowed for Image Studio` );
 	}
 
-	// eslint-disable-next-line no-console
-	console.log( `[Image Studio] Executing ability: ${ name }`, args );
+	window.console?.log?.( `[Image Studio] Executing ability: ${ name }`, args );
 
 	return executeAbility( name, args );
 }

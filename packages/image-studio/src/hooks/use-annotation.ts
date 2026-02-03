@@ -236,8 +236,7 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 					value: false,
 				} );
 
-				// eslint-disable-next-line no-console
-				console.error( error );
+				window.console?.error?.( error );
 			},
 		} );
 	}, [

@@ -29,8 +29,7 @@ export const useSaveShortcut = (
 				try {
 					await onSave();
 				} catch ( error ) {
-					// eslint-disable-next-line no-console
-					console.error( '[Image Studio] Save failed:', error );
+					window.console?.error?.( '[Image Studio] Save failed:', error );
 				}
 			}
 		};

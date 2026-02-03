@@ -1,6 +1,7 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { extractFilenameFromUrl } from '../../utils/extract-filename';
 import './file-details.scss';
 
 /**
@@ -10,24 +11,24 @@ import './file-details.scss';
  */
 function formatFileSize( bytes: number ): string {
 	if ( ! bytes || bytes === 0 ) {
-		return __( 'Unknown', 'default' );
+		return __( 'Unknown', 'big-sky' );
 	}
 
 	const gb = bytes / ( 1024 * 1024 * 1024 );
 	if ( gb >= 1 ) {
 		// translators: %.1f: File size in gigabytes
-		return sprintf( __( '%.1f GB', 'default' ), gb );
+		return sprintf( __( '%.1f GB', 'big-sky' ), gb );
 	}
 
 	const mb = bytes / ( 1024 * 1024 );
 	if ( mb >= 1 ) {
 		// translators: %.1f: File size in megabytes
-		return sprintf( __( '%.1f MB', 'default' ), mb );
+		return sprintf( __( '%.1f MB', 'big-sky' ), mb );
 	}
 
 	const kb = bytes / 1024;
 	// translators: %.1f: File size in kilobytes
-	return sprintf( __( '%.1f KB', 'default' ), kb );
+	return sprintf( __( '%.1f KB', 'big-sky' ), kb );
 }
 
 interface FileDetailsProps {
@@ -91,16 +92,16 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				minute: 'numeric',
 				hour12: true,
 		  } )
-		: __( 'Unknown', 'default' );
+		: __( 'Unknown', 'big-sky' );
 
-	const authorName = author?.name || author?.display_name || __( 'Unknown', 'default' );
+	const authorName = author?.name || author?.display_name || __( 'Unknown', 'big-sky' );
 	const authorLink = author?.link || null;
 
-	const fileType = attachment.mime_type || __( 'Unknown', 'default' );
+	const fileType = attachment.mime_type || __( 'Unknown', 'big-sky' );
 
 	const fileSize = attachment.media_details?.filesize
 		? formatFileSize( attachment.media_details.filesize )
-		: __( 'Unknown', 'default' );
+		: __( 'Unknown', 'big-sky' );
 
 	const width = attachment.media_details?.width || 0;
 	const height = attachment.media_details?.height || 0;
@@ -108,26 +109,37 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 		width && height
 			? sprintf(
 					// translators: %1$d: Image width, %2$d: Image height
-					__( '%1$d × %2$d', 'default' ),
+					__( '%1$d × %2$d', 'big-sky' ),
 					width,
 					height
 			  )
-			: __( 'Unknown', 'default' );
+			: __( 'Unknown', 'big-sky' );
+
+	// Extract filename from source_url
+	const filename = extractFilenameFromUrl( attachment.source_url, __( 'Untitled', 'big-sky' ) );
 
 	return (
 		<div className="image-studio-file-details">
-			<h3 className="image-studio-file-details__title">{ __( 'File details', 'default' ) }</h3>
+			<h3 className="image-studio-file-details__title">{ __( 'File Details', 'big-sky' ) }</h3>
 			<div className="image-studio-file-details__content">
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Uploaded on:', 'default' ) }
+						{ __( 'File name:', 'big-sky' ) }
+					</span>
+					<span className="image-studio-file-details__value" style={ { wordBreak: 'break-all' } }>
+						{ filename }
+					</span>
+				</div>
+				<div className="image-studio-file-details__row">
+					<span className="image-studio-file-details__label">
+						{ __( 'Uploaded on:', 'big-sky' ) }
 					</span>
 					<span className="image-studio-file-details__value">{ uploadedDate }</span>
 				</div>
 				{ parentPost && (
 					<div className="image-studio-file-details__row">
 						<span className="image-studio-file-details__label">
-							{ __( 'Uploaded to:', 'default' ) }
+							{ __( 'Uploaded to:', 'big-sky' ) }
 						</span>
 						<a
 							href={ parentPost.link }
@@ -141,7 +153,7 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				) }
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Uploaded by:', 'default' ) }
+						{ __( 'Uploaded by:', 'big-sky' ) }
 					</span>
 					{ authorLink ? (
 						<a
@@ -158,17 +170,17 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				</div>
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'File type:', 'default' ) }
+						{ __( 'File type:', 'big-sky' ) }
 					</span>
 					<span className="image-studio-file-details__value">{ fileType }</span>
 				</div>
 				<div className="image-studio-file-details__row">
-					<span className="image-studio-file-details__label">{ __( 'Size:', 'default' ) }</span>
+					<span className="image-studio-file-details__label">{ __( 'Size:', 'big-sky' ) }</span>
 					<span className="image-studio-file-details__value">{ fileSize }</span>
 				</div>
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Dimensions:', 'default' ) }
+						{ __( 'Dimensions:', 'big-sky' ) }
 					</span>
 					<span className="image-studio-file-details__value">{ dimensions }</span>
 				</div>

@@ -25,9 +25,10 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			return allowedBlocks.includes( name );
 		};
 
-		const WrappedComponent = ( props: any ) => {
+		const ImageStudioGenerateButton = ( props: any ) => {
 			const { name } = useBlockEditContext();
-			const { render: originalRenderProp, onSelect, multiple } = props;
+			const { render: originalRenderProp, ...rest } = props;
+			const { onSelect, multiple } = rest;
 			let render = originalRenderProp;
 			const { openImageStudio } = dispatch( imageStudioStore );
 
@@ -70,7 +71,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 									__next40pxDefaultSize
 									onClick={ handleOpen }
 								>
-									{ __( 'Generate Image', 'default' ) }
+									{ __( 'Generate Image', 'big-sky' ) }
 								</Button>
 							</>
 						);
@@ -78,14 +79,12 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 				}
 			}
 
-			return <OriginalComponent { ...props } render={ render } />;
+			return <OriginalComponent { ...rest } render={ render } />;
 		};
 
-		WrappedComponent.displayName = `withImageStudioGenerateButton(${
-			OriginalComponent.displayName || OriginalComponent.name || 'Component'
-		})`;
+		ImageStudioGenerateButton.displayName = 'ImageStudioGenerateButton';
 
-		return WrappedComponent;
+		return ImageStudioGenerateButton;
 	},
 	'withImageStudioGenerateButton'
 );

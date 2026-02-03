@@ -15,7 +15,7 @@ import { trackImageStudioOpened } from '../utils/tracking';
  */
 export const withImageStudioToolbarButton = createHigherOrderComponent(
 	( BlockEdit: React.ComponentType< any > ) => {
-		const WrappedComponent = ( props: any ) => {
+		const ImageStudioToolbarButton = ( props: any ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
 
@@ -73,10 +73,10 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 					<BlockControls group="default">
 						<ToolbarGroup>
 							<ToolbarButton
-								label={ __( 'Edit image with AI', 'default' ) }
+								label={ __( 'Edit image with AI', 'big-sky' ) }
 								onClick={ handleEditClick }
 							>
-								{ __( 'Edit', 'default' ) }
+								{ __( 'Edit', 'big-sky' ) }
 							</ToolbarButton>
 						</ToolbarGroup>
 					</BlockControls>
@@ -84,11 +84,9 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			);
 		};
 
-		WrappedComponent.displayName = `withImageStudioToolbarButton(${
-			BlockEdit.displayName || BlockEdit.name || 'Component'
-		})`;
+		ImageStudioToolbarButton.displayName = 'ImageStudioToolbarButton';
 
-		return WrappedComponent;
+		return ImageStudioToolbarButton;
 	},
 	'withImageStudioToolbarButton'
 );

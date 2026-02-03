@@ -7,8 +7,8 @@
  * - Discard: runs onDiscard, then onExit( true ).
  * - Clean exit (no changes): runs onExit( false ).
  */
-/* eslint-disable import/no-extraneous-dependencies, import/order */
 import { act, renderHook } from '@testing-library/react';
+import { useUnsavedChangesConfirmation } from './use-unsaved-changes-confirmation';
 
 // Store selector and action mocks
 const mockGetHasUnsavedChanges = jest.fn();
@@ -51,9 +51,6 @@ jest.mock( '@wordpress/element', () => ( {
 jest.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
-
-// Import after mocks
-const { useUnsavedChangesConfirmation } = require( './use-unsaved-changes-confirmation' );
 
 describe( 'useUnsavedChangesConfirmation', () => {
 	let mockOnSave;

@@ -7,7 +7,11 @@
 	align-items: flex-start;
 
 	.image-studio-modal--edit & {
-		flex: 1 0 $footer-height;
+		flex: 1 0 $header-height;
+	}
+
+	.components-button {
+		height: 32px;
 	}
 
 	.components-button.is-tertiary {
@@ -75,20 +79,24 @@
 	}
 
 	&__inner {
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		justify-content: space-between;
 		width: 100%;
-		position: relative;
-		flex-wrap: wrap;
-		padding: $modal-padding;
+		padding: 0 $modal-padding;
+		gap: 16px;
 
 		.image-studio-modal--edit & {
 			border-bottom: 1px solid #2f2f2f;
 		}
+
+		@media ($breakpoint-medium-down) {
+			grid-template-columns: auto 1fr auto;
+		}
 	}
 
 	&__left,
+	&__center,
 	&__right {
 		display: flex;
 		align-items: center;
@@ -98,10 +106,67 @@
 
 	&__left {
 		justify-content: flex-start;
+		min-width: 0;
+	}
+
+	&__center {
+		justify-content: center;
+		min-width: 0;
+	}
+
+	&__navigation-pill {
+		display: flex;
+		align-items: center;
+		background: $color-background;
+		border: 1px solid $color-border;
+		border-radius: 4px;
+		padding: 8px;
+		width: 100%;
+		min-width: 180px;
+		max-width: 300px;
+		height: 32px;
+		box-sizing: border-box;
+	}
+
+	&__nav-button {
+		&.components-button.is-tertiary {
+			min-width: 24px;
+			width: 24px;
+			height: 24px;
+			padding: 0;
+			border-radius: 2px;
+			flex-shrink: 0;
+
+			&:hover:not(:disabled) {
+				background: $color-hover-overlay;
+			}
+
+			&:disabled {
+				opacity: 0.4;
+			}
+		}
+	}
+
+	&__filename {
+		flex: 1;
+		color: $color-foreground;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: center;
+		pointer-events: none;
+
+		@media ($breakpoint-medium-down) {
+			font-size: 12px;
+		}
 	}
 
 	&__right {
 		justify-content: flex-end;
+		grid-column: 3;
 	}
 
 	&__title {

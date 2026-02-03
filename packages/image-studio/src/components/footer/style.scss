@@ -7,10 +7,11 @@
 	max-width: 600px;
 	width: 100%;
 	align-self: center;
-	margin-bottom: var(--spacing-8, 32px);
+	margin-bottom: $footer-margin-bottom;
 
 	.image-studio-modal--edit & {
 		flex: 1 0 $footer-height;
+		margin-top: var(--spacing-8, 32px);
 	}
 
 	&__inner {

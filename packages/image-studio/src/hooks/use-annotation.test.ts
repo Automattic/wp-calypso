@@ -1,6 +1,5 @@
-/* eslint-disable import/order */
 import { renderHook } from '@testing-library/react';
-
+import { useAnnotation } from './use-annotation';
 let mockSelectorState: {
 	draftIds: number[];
 	annotationCanvas: any;
@@ -76,8 +75,6 @@ jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioAnnotationUndo: mockTrackImageStudioAnnotationUndo,
 	trackImageStudioAnnotationRedo: mockTrackImageStudioAnnotationRedo,
 } ) );
-
-const { useAnnotation } = require( './use-annotation' );
 
 describe( 'useAnnotation', () => {
 	let mockBlob: Blob;

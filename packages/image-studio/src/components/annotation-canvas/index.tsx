@@ -346,8 +346,7 @@ export default function AnnotationCanvas( { imageUrl, imageElement }: Annotation
 						return;
 					}
 
-					// eslint-disable-next-line no-console
-					console.log(
+					window.console?.log?.(
 						'[Annotation Canvas] Getting blob with imageUrl:',
 						imageUrl,
 						'imageElement.src:',
@@ -428,11 +427,11 @@ export default function AnnotationCanvas( { imageUrl, imageElement }: Annotation
 				ref={ committedCanvasRef }
 				className="annotation-canvas annotation-canvas-committed"
 				role="img"
-				aria-label={ __( 'Saved annotation markings', 'default' ) }
+				aria-label={ __( 'Saved annotation markings', 'big-sky' ) }
 			/>
 			<canvas
 				ref={ liveCanvasRef }
-				aria-label={ __( 'Interactive drawing area for creating image annotations', 'default' ) }
+				aria-label={ __( 'Interactive drawing area for creating image annotations', 'big-sky' ) }
 				className="annotation-canvas annotation-canvas-live annotation-canvas-pen"
 				onPointerDown={ handlePointerDown }
 				onPointerMove={ handlePointerMove }

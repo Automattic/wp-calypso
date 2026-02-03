@@ -59,11 +59,13 @@
 		"@wordpress/hooks": "^4.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
+		"@wordpress/url": "^4.23.0",
 		"@wordpress/primitives": "^4.23.0",
 		"clsx": "^2.1.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
+		"@testing-library/react": "^15.0.0",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
