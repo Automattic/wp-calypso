@@ -181,6 +181,23 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 			return;
 		}
 
+		if ( ! targetSiteSlug ) {
+			setError( 'root', {
+				type: 'manual',
+				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+			logToLogstash( {
+				message: 'Missing targetSiteSlug in migration survey submission',
+				feature: 'calypso_client',
+				extra: {
+					step: 'site-migration-already-wpcom',
+					siteSlug: siteSlug ?? '',
+					from: from ?? '',
+				},
+			} );
+			return;
+		}
+
 		setIsSubmitting( true );
 
 		try {
