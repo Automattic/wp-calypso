@@ -60,8 +60,8 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 						args: {
 							date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
 								dateStyle: 'long',
-								timeStyle: 'numeric',
-							} ).format( new Date( parseInt( timestamp ) * 1000 ) ),
+								timeStyle: 'medium',
+							} ).format( new Date( timestamp ) ),
 						},
 					} ) }
 				</span>
