@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
@@ -32,8 +33,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 	}
 
 	return (
-		<button
-			type="button"
+		<Button
 			onClick={ () => onNavigate( postKey ) }
 			className={ clsx(
 				'reader-full-post-navigation__link-button',
@@ -53,7 +53,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 				</span>
 			</div>
 			{ isNext && <Gridicon icon={ icon } size={ 18 } /> }
-		</button>
+		</Button>
 	);
 };
 
