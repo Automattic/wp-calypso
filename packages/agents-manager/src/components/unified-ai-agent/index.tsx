@@ -234,6 +234,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
+			useImageUpload={ loadedProviders.useImageUpload }
 		/>
 	);
 }

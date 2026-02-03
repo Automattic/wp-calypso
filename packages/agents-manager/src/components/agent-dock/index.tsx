@@ -34,6 +34,7 @@ import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	SiteBuildUtils,
+	ImageUploadHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -51,6 +52,8 @@ interface AgentDockProps {
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	siteBuildUtils?: SiteBuildUtils;
+	/** Hook for handling image uploads within the agent chat. */
+	useImageUpload?: ImageUploadHook;
 }
 
 export default function AgentDock( {
@@ -61,6 +64,7 @@ export default function AgentDock( {
 	useNavigationContinuation,
 	useAbilitiesSetup,
 	siteBuildUtils,
+	useImageUpload,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -285,6 +289,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			useImageUpload={ useImageUpload }
 		/>
 	);
 

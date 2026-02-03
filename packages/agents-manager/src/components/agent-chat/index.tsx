@@ -1,13 +1,15 @@
+import { SubmitOptions } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
 	EmptyView,
+	ImageUploader,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -15,8 +17,11 @@ import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
+import type { ImageUploadHook } from '../../utils/load-external-providers';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+
+import './style.scss';
 
 interface AgentChatProps {
 	/** Chat messages to display. */
@@ -38,7 +43,7 @@ interface AgentChatProps {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string ) => void;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -53,6 +58,7 @@ interface AgentChatProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	useImageUpload?: ImageUploadHook;
 }
 
 export default function AgentChat( {
@@ -74,12 +80,18 @@ export default function AgentChat( {
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
 	onTypingStatusChange,
+	useImageUpload,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+
+	const imageUpload = useImageUpload?.();
+	const pendingImages = imageUpload?.pendingImages || [];
+	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
+
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
@@ -87,6 +99,45 @@ export default function AgentChat( {
 				extensions: markdownExtensions,
 			} ),
 		[ markdownComponents, markdownExtensions ]
+	);
+
+	const onSubmitHandler = useCallback(
+		async ( message: string ) => {
+			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+				try {
+					// Upload files to WordPress media library
+					const mediaObjects = await uploadImagesToWordPress();
+
+					// Create image data objects with full metadata including attachment ID
+					const imageData = mediaObjects.map( ( media ) => ( {
+						url: media.url,
+						metadata: {
+							id: media.id, // WordPress attachment ID
+							title: media.title,
+							fileName: media.fileName,
+							fileType: media.fileType,
+							fileSize: media.fileSize,
+							dimensions: media.dimensions,
+							uploadDate: media.uploadDate,
+							alt: media.alt,
+							caption: media.caption,
+						},
+					} ) );
+
+					// Send message with images using agenttic's imageUrls option
+					// FileParts will be automatically persisted in conversation history with metadata
+					await onSubmit( message, { imageUrls: imageData } );
+				} catch ( uploadError ) {
+					throw new Error(
+						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
+					);
+				}
+			} else {
+				// No images, just send normally
+				onSubmit( message );
+			}
+		},
+		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
 	);
 
 	return (
@@ -97,7 +148,7 @@ export default function AgentChat( {
 			messages={ messages }
 			isProcessing={ isProcessing }
 			error={ error }
-			onSubmit={ onSubmit }
+			onSubmit={ onSubmitHandler }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
@@ -125,6 +176,18 @@ export default function AgentChat( {
 				<AgentUI.Footer>
 					<AgentUI.Suggestions />
 					<AgentUI.Notice />
+					{ imageUpload && (
+						<ImageUploader
+							images={ imageUpload.pendingImages }
+							uploadingImages={ imageUpload.uploadingImages }
+							onFilesSelected={ imageUpload.handleFilesSelected }
+							onRemoveImage={ imageUpload.handleRemoveImage }
+							acceptedFileTypes={ [ 'image/jpeg', 'image/png' ] }
+							showFileMetadata
+							allowDragToInsert={ false }
+						/>
+					) }
+
 					<SelectedBlock />
 					<AgentUI.Input />
 				</AgentUI.Footer>

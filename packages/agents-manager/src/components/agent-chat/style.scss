@@ -1,0 +1,12 @@
+.agents-manager-chat .ImageUploader-module_container {
+	position: absolute;
+	padding: 0;
+
+	&:has(.ImageUploader-module_draggingMessage, .ImageUploader-module_preview) {
+		position: relative;
+	}
+
+	.ImageUploader-module_draggingMessage {
+		margin-bottom: 0;
+	}
+}
