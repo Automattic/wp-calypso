@@ -32,7 +32,7 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import { EmptySitesStateContent } from './empty-sites-state';
+import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNotices } from './notices';
 import { OptInWelcomeModal } from './welcome-modal';
@@ -288,7 +288,7 @@ export default function Sites() {
 								description={ __( 'Try again, or start a new site with the options below.' ) }
 								isBorderless
 							>
-								<EmptySitesStateContent />
+								<EmptySitesSearchStateContent />
 							</DataViewsEmptyStateLayout>
 						}
 						paginationInfo={ paginationInfo }
