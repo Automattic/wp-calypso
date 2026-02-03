@@ -17,12 +17,7 @@ export interface CanvasProps {
  */
 const Canvas = forwardRef< HTMLDivElement, CanvasProps >(
 	( { className, children, overlay, fit = 'contain', loading = false }, ref ) => (
-		<div
-			ref={ ref }
-			className={ cn( 'image-studio-canvas', className ) }
-			data-fit={ fit }
-			data-loading={ loading ? 'true' : 'false' }
-		>
+		<div ref={ ref } className={ cn( 'image-studio-canvas', className ) } data-fit={ fit }>
 			<div className="image-studio-canvas__content">{ children }</div>
 			{ overlay && <div className="image-studio-canvas__overlay">{ overlay }</div> }
 			{ loading && (

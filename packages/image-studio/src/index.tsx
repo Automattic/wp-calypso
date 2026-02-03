@@ -4,7 +4,9 @@ import { select, useDispatch, useSelect } from '@wordpress/data';
 import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
+import { registerBlockEditorFilters } from './extensions';
 import { useDraftCleanup } from './hooks/use-draft-cleanup';
+import { useImageFileNavigation } from './hooks/use-image-file-navigation';
 import { type ImageStudioActions, ImageStudioEntryPoint, store as imageStudioStore } from './store';
 import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from './types';
 import { getImageData, type ImageData } from './utils/get-image-data';
@@ -18,14 +20,13 @@ import {
  * Type definitions
  */
 
-interface ImageStudioGlobal {
+interface BigSkyImageStudioGlobal {
 	enabled?: boolean;
 }
 
 declare global {
 	interface Window {
-		imageStudio?: ImageStudioGlobal;
-		bigSkyImageStudio?: ImageStudioGlobal; // Legacy support
+		bigSkyImageStudio?: BigSkyImageStudioGlobal;
 	}
 }
 
@@ -33,15 +34,15 @@ declare global {
  * Initialize the Image Studio integration for WordPress Media Library.
  * Uses WordPress data store patterns instead of DOM manipulation.
  */
-export function initImageStudioIntegration(): void {
-	// Validate required globals - support both new and legacy global names
-	if ( ! window.imageStudio && ! window.bigSkyImageStudio ) {
+function initImageStudioIntegration(): void {
+	// Validate required globals
+	if ( ! window.bigSkyImageStudio ) {
 		return;
 	}
 
 	// Create container for the React app
 	const container = document.createElement( 'div' );
-	container.id = 'image-studio-integration';
+	container.id = 'big-sky-image-studio-integration';
 	document.body.appendChild( container );
 
 	const root = createRoot( container );
@@ -61,26 +62,42 @@ function ImageStudioIntegration(): JSX.Element | null {
 		setHasUpdatedMetadata,
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { invalidateResolution, saveEntityRecord } = useDispatch( coreStore ) as any;
-	const {
-		isOpen,
-		attachmentId,
-		canvasMetadata,
-		lastSavedAttachmentId,
-		originalAttachmentId,
-		onCloseCallback,
-	} = useSelect(
+	const { isOpen, attachmentId, canvasMetadata, originalAttachmentId, onCloseCallback } = useSelect(
 		( selectStore ) => ( {
 			isOpen: selectStore( imageStudioStore ).getIsImageStudioOpen(),
 			attachmentId: selectStore( imageStudioStore ).getImageStudioAttachmentId(),
 			canvasMetadata: selectStore( imageStudioStore ).getCanvasMetadata(),
-			lastSavedAttachmentId: selectStore( imageStudioStore ).getLastSavedAttachmentId(),
 			originalAttachmentId: selectStore( imageStudioStore ).getOriginalAttachmentId(),
 			onCloseCallback: selectStore( imageStudioStore ).getOnCloseCallback(),
 		} ),
 		[]
 	);
 
+	// Navigation is only available when opened from media library
+	const isMediaLibraryContext = ( window as any ).pagenow === 'upload';
+
 	const [ image, setImage ] = useState< ImageData | null >( null );
+
+	// Check for unsaved changes
+	const hasUnsavedChanges = useSelect(
+		( selectStore ) =>
+			(
+				selectStore( imageStudioStore ) as {
+					getHasUnsavedChanges: () => boolean;
+				}
+			 ).getHasUnsavedChanges(),
+		[]
+	);
+
+	// Use navigation hook
+	const { handleNavigatePrevious, handleNavigateNext, hasPreviousImage, hasNextImage } =
+		useImageFileNavigation( {
+			isOpen,
+			originalAttachmentId,
+			attachmentId,
+			hasUnsavedChanges,
+			isMediaLibraryContext,
+		} );
 
 	useEffect( () => {
 		/**
@@ -113,8 +130,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 				} );
 				return fetched?.mime_type ?? null;
 			} catch {
-				// eslint-disable-next-line no-console
-				console.error( '[BIG-SKY] failed to get mime type for attachment using REST API' );
+				window.console?.error?.(
+					'[BIG-SKY] failed to get mime type for attachment using REST API'
+				);
 			}
 
 			return null;
@@ -261,7 +279,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			if ( addMediaLink ) {
 				generateButton = document.createElement( 'button' );
 				generateButton.className = 'page-title-action big-sky-image-studio-link';
-				generateButton.textContent = __( 'Generate Image', 'default' );
+				generateButton.textContent = __( 'Generate Image', 'big-sky' );
 				generateButton.type = 'button';
 				generateButton.setAttribute( 'data-attachment-id', '' );
 				addMediaLink.insertAdjacentElement( 'afterend', generateButton );
@@ -291,7 +309,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 			const img = await getImageData( originalAttachmentId );
 			if ( ! img ) {
-				addNotice( __( "Image doesn't exist", 'default' ), 'error' );
+				addNotice( __( "Image doesn't exist", 'big-sky' ), 'error' );
 				return;
 			}
 
@@ -322,6 +340,28 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 		fetchImage();
 	}, [ attachmentId ] );
+
+	// If `?ai-assistant` is present, open the Image Studio directly on the upload.php page.
+	useEffect( () => {
+		if ( ( window as any ).pagenow !== 'upload' ) {
+			return;
+		}
+
+		const url = new URL( window.location.href );
+		if ( ! url.searchParams.has( 'ai-assistant' ) ) {
+			return;
+		}
+
+		url.searchParams.delete( 'ai-assistant' );
+		window.history.replaceState( {}, '', url.toString() );
+
+		openImageStudio( undefined, undefined, ImageStudioEntryPoint.MediaLibrary );
+		trackImageStudioOpened( {
+			mode: ImageStudioMode.Generate,
+			attachmentId: undefined,
+			entryPoint: ImageStudioEntryPoint.MediaLibrary,
+		} );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
 		const url = new URL( window.location.href );
@@ -393,8 +433,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 				);
 			} catch ( error ) {
 				// Surface the error but continue so the modal is not stuck open
-				// eslint-disable-next-line no-console
-				console.error( '[BIG-SKY] Failed to update attachment metadata', error );
+				window.console?.error?.( '[BIG-SKY] Failed to update attachment metadata', error );
 			}
 		}
 
@@ -423,7 +462,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 	const handleDiscard = useCallback( async () => {
 		// Restore original image in block/chat context
 		if ( onCloseCallback ) {
-			const selectors = select( imageStudioStore ) as any;
+			const selectors = select( imageStudioStore ) as {
+				getOriginalAttachmentId: () => number | null;
+			};
 			const storedOriginalAttachmentId = selectors.getOriginalAttachmentId();
 
 			if ( storedOriginalAttachmentId ) {
@@ -448,6 +489,11 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 			// Cleanup drafts
 			await cleanupOnExit();
+
+			// Read value from store to avoid stale value when called immediately after save
+			const lastSavedAttachmentId = (
+				select( imageStudioStore ) as any
+			 ).getLastSavedAttachmentId();
 
 			// Apply saved image to block/chat context (if not discarded)
 			if ( onCloseCallback && lastSavedAttachmentId ) {
@@ -482,14 +528,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			// Close the modal
 			closeImageStudio();
 		},
-		[
-			attachmentId,
-			lastSavedAttachmentId,
-			cleanupOnExit,
-			closeImageStudio,
-			invalidateResolution,
-			onCloseCallback,
-		]
+		[ attachmentId, cleanupOnExit, closeImageStudio, invalidateResolution, onCloseCallback ]
 	);
 
 	// Handle navigation to Media Library classic editor
@@ -500,8 +539,10 @@ function ImageStudioIntegration(): JSX.Element | null {
 			try {
 				await handleSave();
 			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( '[Image Studio] Save failed during Media Library navigation:', error );
+				window.console?.error?.(
+					'[Image Studio] Save failed during Media Library navigation:',
+					error
+				);
 				// Don't navigate if save failed - would lose unsaved changes
 				// Error notice will be shown by Header component, allowing user to retry
 				throw error;
@@ -511,8 +552,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			try {
 				await cleanupOnExit();
 			} catch ( cleanupError ) {
-				// eslint-disable-next-line no-console
-				console.error(
+				window.console?.error?.(
 					'[Image Studio] Cleanup failed during navigation (proceeding anyway):',
 					cleanupError
 				);
@@ -544,6 +584,10 @@ function ImageStudioIntegration(): JSX.Element | null {
 			onDiscard={ handleDiscard }
 			onExit={ handleExit }
 			onClassicMediaEditorNavigation={ handleClassicMediaEditorNavigation }
+			onNavigatePrevious={ isMediaLibraryContext ? handleNavigatePrevious : undefined }
+			onNavigateNext={ isMediaLibraryContext ? handleNavigateNext : undefined }
+			hasPreviousImage={ hasPreviousImage && ! hasUnsavedChanges }
+			hasNextImage={ hasNextImage && ! hasUnsavedChanges }
 			config={ {
 				attachmentId: attachmentId ?? undefined,
 				imageData: image ?? undefined,
@@ -552,15 +596,16 @@ function ImageStudioIntegration(): JSX.Element | null {
 	);
 }
 
-// Re-export key components and utilities
-export { default as ImageStudio } from './components';
-export { store as imageStudioStore, ImageStudioEntryPoint } from './store';
-export type { ImageStudioActions } from './store';
-export { registerBlockEditorFilters } from './extensions';
-export { ImageStudioMode, IMAGE_STUDIO_SUPPORTED_MIME_TYPES } from './types';
-export type { ImageStudioConfig, ImageStudioProps } from './types';
-export { getImageData } from './utils/get-image-data';
-export type { ImageData } from './utils/get-image-data';
+// Initialize when DOM is ready
+function initialize(): void {
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', initImageStudioIntegration );
+	} else {
+		initImageStudioIntegration();
+	}
+}
 
-// Export tracking utilities
-export * from './utils/tracking';
+initialize();
+registerBlockEditorFilters();
+
+export { initImageStudioIntegration, registerBlockEditorFilters };

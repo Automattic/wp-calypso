@@ -10,20 +10,12 @@
 	width: 100%;
 	height: 100%;
 	margin: auto;
-	
-	// Maintain minimum height during loading to prevent layout shift
-	// Use same constraint as edit-layout max-height to ensure consistent sizing
-	&[data-loading="true"] {
-		min-height: calc(100vh - #{$footer-height * 2});
-	}
 }
 
-
-.image-studio-canvas__content > * {
+.image-studio-canvas__content {
+	position: relative;
 	width: 100%;
 	height: 100%;
-	display: block;
-	object-fit: var(--canvas-fit, contain);
 }
 
 /* Overlay positioning */
@@ -44,6 +36,8 @@
 	align-items: center;
 	justify-content: center;
 	z-index: 11;
+	width: 100%;
+	height: 100%;
 }
 
 .image-studio-canvas[data-fit="contain"] {

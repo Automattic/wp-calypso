@@ -140,6 +140,11 @@ interface TrackImageStudioImageFeedbackOptions {
 	mode: ImageStudioMode;
 }
 
+interface TrackImageStudioFileNavigatedOptions {
+	attachmentId: number;
+	direction: 'previous' | 'next';
+}
+
 /**
  * Tracks when Image Studio modal is opened
  * @param options              - Tracking options
@@ -434,4 +439,20 @@ export function trackImageStudioImageFeedback( {
 	}
 
 	recordImageStudioEvent( `image_studio_image_thumbs_${ feedback }`, properties );
+}
+
+/**
+ * Tracks when the user navigates between media library images.
+ * @param options              - Tracking options
+ * @param options.attachmentId - Target attachment ID
+ * @param options.direction    - 'previous' or 'next'
+ */
+export function trackImageStudioFileNavigated( {
+	attachmentId,
+	direction,
+}: TrackImageStudioFileNavigatedOptions ): void {
+	recordImageStudioEvent( 'image_studio_file_navigated', {
+		attachment_id: attachmentId,
+		direction,
+	} );
 }

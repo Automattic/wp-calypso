@@ -1,9 +1,9 @@
-/* eslint-disable import/order */
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../../store';
+import AnnotationCanvas from './index';
 
 const mockStoreState: { annotationCanvasRef: any } = {
 	annotationCanvasRef: null,
@@ -47,8 +47,6 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
-
-import AnnotationCanvas from './index';
 
 describe( 'AnnotationCanvas', () => {
 	let mockImageElement: HTMLImageElement;

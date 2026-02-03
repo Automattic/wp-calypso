@@ -14,7 +14,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
 interface ActionButton {
 	text: string;
-	onClick: () => void;
+	onClick: () => void | Promise< void >;
 	variant?: ButtonVariant;
 	isDestructive?: boolean;
 }

@@ -17,7 +17,7 @@ export const GenerateLayout = ( {
 			} ) }
 		>
 			<BigSkyIcon size={ 80 } />
-			<h2>{ __( "Let's create!", 'default' ) }</h2>
+			<h2>{ __( "Let's create!", 'big-sky' ) }</h2>
 		</div>
 	);
 };

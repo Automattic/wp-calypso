@@ -1,12 +1,12 @@
 import { getAgentManager } from '@automattic/agenttic-client';
-import { useEffect, useState } from '@wordpress/element';
-import { getSessionId } from '../utils/session';
+import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useSessionId } from '../utils/session';
 
 /**
  * Loads and manages agent configuration for Image Studio.
  *
  * - Loads agent config asynchronously from the provided config factory
- * - Manages session ID from the session utility
+ * - Manages session ID from the store
  * - Handles agent cleanup on unmount
  * - Returns null while loading
  * @param agentConfigFactory                   - Factory function to create agent config
@@ -22,27 +22,23 @@ export function useAgentConfig(
 ) {
 	const [ agentConfigState, setAgentConfigState ] = useState< any >( null );
 
-	// Get session ID from the session utility
-	const sessionId = getSessionId();
+	const sessionId = useSessionId();
+	const sessionKey = useMemo( () => sessionId || 'image-studio-default', [ sessionId ] );
 
 	useEffect( () => {
 		let mounted = true;
 		let agentKey: string | null = null;
 
-		// Use session ID from the store
-		const currentSessionId = sessionId || 'wp-orchestrator-default';
-
 		agentConfigFactory
-			.createAgentConfig( currentSessionId )
+			.createAgentConfig( sessionKey )
 			.then( ( loadedConfig ) => {
 				if ( mounted ) {
 					setAgentConfigState( loadedConfig );
-					agentKey = `${ loadedConfig.agentId }-${ currentSessionId }`;
+					agentKey = `${ loadedConfig.agentId }-${ sessionKey }`;
 				}
 			} )
 			.catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.error( '[Image Studio] Error loading agent config:', error );
+				window.console?.error?.( '[Image Studio] Error loading agent config:', error );
 			} );
 
 		return () => {
@@ -55,7 +51,7 @@ export function useAgentConfig(
 				}
 			}
 		};
-	}, [ agentConfigFactory, modalOpenKey, sessionId ] );
+	}, [ agentConfigFactory, modalOpenKey, sessionKey ] );
 
 	return agentConfigState;
 }

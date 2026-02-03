@@ -70,6 +70,10 @@ body.js.is-image-studio-open {
 		color: $color-link;
 	}
 
+	&--generate &__content {
+		overflow: initial;
+	}
+
 	&__content {
 		position: relative;
 		overflow: hidden;
@@ -147,12 +151,6 @@ body.js.is-image-studio-open {
 		justify-content: center;
 		align-items: center;
 	}
-
-	// Align suggestions with footer in generate mode only
-	&--generate .image-studio-footer__inner {
-		// Remove padding so ChatFooter matches full width
-		padding: 0;
-	}
 }
 
 /* ==========================================================================
@@ -206,14 +204,15 @@ body.js.is-image-studio-open {
 			padding-bottom: 1em;
 			position: relative;
 			padding-top: 1em;
+			padding-right: 1rem;
 			gap: 0;
+			scrollbar-width: thin;
+			scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
 
 			> :first-child {
 				margin-top: auto;
 			}
 
-			scrollbar-width: thin;
-			scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
 
 			// Webkit scrollbar
 			&::-webkit-scrollbar {
@@ -363,7 +362,9 @@ body.js.is-image-studio-open {
 		background-color: #2a2a2a;
 		padding: 4px 4px 4px 8px;
 		transition: margin-top 0.3s ease;
-		border-radius: calc(var(--radius-lg) + 2px);
+		border-radius: var(--radius-lg, 8px);
+		border-color: transparent;
+		z-index: 100;
 
 		&:has(.Suggestions-module_container) {
 			margin-top: 42px;
@@ -405,6 +406,12 @@ body.js.is-image-studio-open {
 			color: #757575;
 		}
 	}
+
+	.image-studio-suggestions-loading {
+		position: absolute;
+		transform: translateY(-100%);
+		top: -8px;
+	}
 }
 
 /* ==========================================================================
@@ -431,15 +438,11 @@ body.js.is-image-studio-open {
 		background-color: #3a3a3a;
 		border-color: transparent;
 		color: #e0e0e0;
-		width: 380px;
-		max-height: min(400px, calc(40vh - 60px));
+		bottom: auto;
+		width: 346px;
+		max-width: calc(100vw - #{$modal-padding});
+		max-height: clamp(200px, 412px, 50vh);
 		overflow-y: auto;
-
-		// Override position to open below instead of above
-		bottom: auto !important;
-		top: 100% !important;
-		margin-top: 20px;
-		margin-bottom: 0;
 
 		// Hide scrollbar but keep scroll functionality
 		scrollbar-width: none; // Firefox
@@ -454,7 +457,7 @@ body.js.is-image-studio-open {
 // Style grid layout - 3 columns with circular images
 .image-studio-input-toolbar-dialog-grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 	gap: 12px;
 }
 
@@ -503,6 +506,7 @@ body.js.is-image-studio-open {
 		height: 100%;
 		object-fit: cover;
 		display: block;
+		transform: scale(1) translateX(-3%);
 	}
 
 	// Aspect ratio card specific: icon wrapper

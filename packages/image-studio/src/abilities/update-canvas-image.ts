@@ -8,9 +8,10 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
-import { store as imageStudioStore, type CanvasMetadata, type ImageStudioActions } from '../store';
+import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
+import type { CanvasMetadata, ImageStudioActions } from '../store';
 
 function preloadImage( url: string ): Promise< void > {
 	if ( ! url || typeof window === 'undefined' ) {
@@ -53,20 +54,16 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 	}
 
 	try {
-		// Register the image-studio category first
 		try {
 			await registerAbilityCategory( 'image-studio', {
 				label: 'Image Studio',
-				description: 'Abilities for interacting with the Image Studio',
+				description: 'Capabilities exposed by the Image Studio experience.',
 			} );
-		} catch ( categoryError: unknown ) {
-			// Category may already be registered, ignore
-			if (
-				categoryError instanceof Error &&
-				! categoryError.message.includes( 'already registered' )
-			) {
-				// eslint-disable-next-line no-console
-				console.warn( '[Image Studio] Category registration warning:', categoryError );
+		} catch ( categoryError ) {
+			// Ignore "already registered" errors so we can safely re-use the category.
+			const message = ( categoryError as Error )?.message || '';
+			if ( ! message.includes( 'already exists' ) ) {
+				throw categoryError;
 			}
 		}
 
@@ -191,8 +188,10 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 							);
 						} catch ( error ) {
 							// If the fetch fails, log but don't fail the ability
-							// eslint-disable-next-line no-console
-							console.warn( `[Image Studio] Failed to fetch attachment ${ attachmentId }:`, error );
+							window.console?.warn?.(
+								`[Image Studio] Failed to fetch attachment ${ attachmentId }:`,
+								error
+							);
 						}
 					}
 

@@ -76,12 +76,22 @@ export interface ImageStudioState {
 	onCloseCallback: ImageStudioCloseCallback | null;
 	// Array of notices to display
 	notices: Notice[];
+	// Navigation state - list of navigable attachment IDs from media library
+	navigableAttachmentIds: number[];
+	// Current index in the navigable list
+	currentNavigationIndex: number;
+	// Navigation pagination state - current page loaded
+	navigationCurrentPage: number;
+	// Whether more pages are available to load
+	navigationHasMorePages: boolean;
 	// Persisted state for whether the Image Info sidebar should be open by default
 	isSidebarOpen: boolean;
 	// Selected style preset for image generation (only used in Generate mode)
 	selectedStyle: string | null;
 	// Selected aspect ratio preset for image generation (only used in Generate mode)
 	selectedAspectRatio: string | null;
+	// Last agent message ID for feedback tracking
+	lastAgentMessageId: string | null;
 }
 
 /**
@@ -189,6 +199,27 @@ type RemoveNoticeAction = {
 	payload: string; // notice id
 };
 
+type SetNavigableAttachmentIdsAction = {
+	type: 'SET_NAVIGABLE_ATTACHMENT_IDS';
+	payload: {
+		attachmentIds: number[];
+		currentAttachmentId: number | null;
+	};
+};
+
+type NavigateToAttachmentAction = {
+	type: 'NAVIGATE_TO_ATTACHMENT';
+	payload: number; // new attachment ID
+};
+
+type SetNavigationPaginationAction = {
+	type: 'SET_NAVIGATION_PAGINATION';
+	payload: {
+		currentPage: number;
+		hasMorePages: boolean;
+	};
+};
+
 type SetIsSidebarOpenAction = {
 	type: 'SET_IS_SIDEBAR_OPEN';
 	payload: boolean;
@@ -202,6 +233,15 @@ type SetSelectedStyleAction = {
 type SetSelectedAspectRatioAction = {
 	type: 'SET_SELECTED_ASPECT_RATIO';
 	payload: string | null;
+};
+
+type SetLastAgentMessageIdAction = {
+	type: 'SET_LAST_AGENT_MESSAGE_ID';
+	payload: string | null;
+};
+
+type ResetCanvasHistoryAction = {
+	type: 'RESET_CANVAS_HISTORY';
 };
 
 type ImageStudioCloseCallback = ( image: ImageData ) => Promise< void > | void;
@@ -224,9 +264,14 @@ type ImageStudioAction =
 	| SetIsExitConfirmedAction
 	| AddNoticeAction
 	| RemoveNoticeAction
+	| SetNavigableAttachmentIdsAction
+	| NavigateToAttachmentAction
+	| SetNavigationPaginationAction
 	| SetIsSidebarOpenAction
 	| SetSelectedStyleAction
-	| SetSelectedAspectRatioAction;
+	| SetSelectedAspectRatioAction
+	| SetLastAgentMessageIdAction
+	| ResetCanvasHistoryAction;
 
 /**
  * Key for localStorage persistence
@@ -270,9 +315,14 @@ const initialState: ImageStudioState = {
 	entryPoint: null,
 	onCloseCallback: null,
 	notices: [],
+	navigableAttachmentIds: [],
+	currentNavigationIndex: -1,
+	navigationCurrentPage: 1,
+	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
-	selectedStyle: null,
+	selectedStyle: '',
 	selectedAspectRatio: null,
+	lastAgentMessageId: null,
 };
 
 /**
@@ -449,6 +499,70 @@ const reducer = (
 				notices: state.notices.filter( ( notice ) => notice.id !== action.payload ),
 			};
 
+		case 'SET_NAVIGABLE_ATTACHMENT_IDS': {
+			const { attachmentIds, currentAttachmentId } = action.payload;
+			const currentIndex =
+				currentAttachmentId !== null ? attachmentIds.indexOf( currentAttachmentId ) : -1;
+
+			return {
+				...state,
+				navigableAttachmentIds: attachmentIds,
+				currentNavigationIndex: currentIndex,
+			};
+		}
+
+		case 'NAVIGATE_TO_ATTACHMENT': {
+			const newAttachmentId = action.payload;
+			const newIndex = state.navigableAttachmentIds.indexOf( newAttachmentId );
+
+			if ( newIndex === -1 ) {
+				window.console?.warn?.(
+					`[Image Studio] Attempted to navigate to attachment ${ newAttachmentId } which is not in the navigable list`
+				);
+				return state;
+			}
+
+			// Treat each file as a new working session
+			// Reset all session-specific state while preserving navigation state
+			return {
+				...state,
+				imageStudioAttachmentId: newAttachmentId,
+				// Update original attachment ID since we're switching to a different image
+				originalAttachmentId: newAttachmentId,
+				// Reset image URLs when navigating to prevent flash of old image
+				imageStudioOriginalImageUrl: null,
+				imageStudioCurrentImageUrl: null,
+				// Update navigation index
+				currentNavigationIndex: newIndex,
+				// Reset working session state for the new file
+				draftIds: [],
+				savedAttachmentIds: [],
+				lastSavedAttachmentId: null,
+				hasUpdatedMetadata: false,
+				annotatedAttachmentIds: [],
+				isAnnotationMode: false,
+				isAnnotationSaving: false,
+				annotationCanvasRef: null,
+				canvasMetadata: null,
+				imageStudioAiProcessing: false,
+				imageStudioAiProcessingSources: {},
+				imageStudioTransitioning: false,
+				notices: [],
+				isExitConfirmed: false,
+				onCloseCallback: null,
+				entryPoint: null,
+				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
+				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
+			};
+		}
+
+		case 'SET_NAVIGATION_PAGINATION':
+			return {
+				...state,
+				navigationCurrentPage: action.payload.currentPage,
+				navigationHasMorePages: action.payload.hasMorePages,
+			};
+
 		case 'SET_IS_SIDEBAR_OPEN':
 			// Persist to localStorage
 			try {
@@ -471,6 +585,27 @@ const reducer = (
 			return {
 				...state,
 				selectedAspectRatio: action.payload,
+			};
+
+		case 'SET_LAST_AGENT_MESSAGE_ID':
+			return {
+				...state,
+				lastAgentMessageId: action.payload,
+			};
+
+		case 'RESET_CANVAS_HISTORY':
+			// Reset canvas editing history to initial values (as if modal was freshly opened)
+			// Used when reverting to original image
+			// Note: Preserves session context like originalAttachmentId, entryPoint, callbacks
+			return {
+				...state,
+				hasUpdatedMetadata: false,
+				isAnnotationMode: false,
+				lastSavedAttachmentId: null,
+				canvasMetadata: null,
+				draftIds: [],
+				savedAttachmentIds: [],
+				annotatedAttachmentIds: [],
 			};
 
 		default:
@@ -517,9 +652,20 @@ export interface ImageStudioActions {
 	setIsExitConfirmed: ( value: boolean ) => Promise< SetIsExitConfirmedAction >;
 	addNotice: ( content: string, type: 'error' | 'success' ) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
+	setNavigableAttachmentIds: (
+		attachmentIds: number[],
+		currentAttachmentId: number | null
+	) => Promise< SetNavigableAttachmentIdsAction >;
+	navigateToAttachment: ( attachmentId: number ) => Promise< NavigateToAttachmentAction >;
+	setNavigationPagination: (
+		currentPage: number,
+		hasMorePages: boolean
+	) => Promise< SetNavigationPaginationAction >;
 	setIsSidebarOpen: ( isOpen: boolean ) => Promise< SetIsSidebarOpenAction >;
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
+	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
+	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
 }
 
 /**
@@ -670,6 +816,33 @@ const actions = {
 		};
 	},
 
+	setNavigableAttachmentIds(
+		attachmentIds: number[],
+		currentAttachmentId: number | null
+	): SetNavigableAttachmentIdsAction {
+		return {
+			type: 'SET_NAVIGABLE_ATTACHMENT_IDS',
+			payload: { attachmentIds, currentAttachmentId },
+		};
+	},
+
+	navigateToAttachment( attachmentId: number ): NavigateToAttachmentAction {
+		return {
+			type: 'NAVIGATE_TO_ATTACHMENT',
+			payload: attachmentId,
+		};
+	},
+
+	setNavigationPagination(
+		currentPage: number,
+		hasMorePages: boolean
+	): SetNavigationPaginationAction {
+		return {
+			type: 'SET_NAVIGATION_PAGINATION',
+			payload: { currentPage, hasMorePages },
+		};
+	},
+
 	setIsSidebarOpen( isOpen: boolean ): SetIsSidebarOpenAction {
 		return {
 			type: 'SET_IS_SIDEBAR_OPEN',
@@ -688,6 +861,19 @@ const actions = {
 		return {
 			type: 'SET_SELECTED_ASPECT_RATIO',
 			payload: aspectRatio,
+		};
+	},
+
+	setLastAgentMessageId( messageId: string | null ): SetLastAgentMessageIdAction {
+		return {
+			type: 'SET_LAST_AGENT_MESSAGE_ID',
+			payload: messageId,
+		};
+	},
+
+	resetCanvasHistory(): ResetCanvasHistoryAction {
+		return {
+			type: 'RESET_CANVAS_HISTORY',
 		};
 	},
 };
@@ -717,9 +903,18 @@ export interface ImageStudioSelectors {
 	getEntryPoint: ( state: ImageStudioState ) => ImageStudioEntryPoint | null;
 	getNotices: ( state: ImageStudioState ) => Notice[];
 	getOnCloseCallback: ( state: ImageStudioState ) => ImageStudioCloseCallback | null;
+	getNavigableAttachmentIds: ( state: ImageStudioState ) => number[];
+	getCurrentNavigationIndex: ( state: ImageStudioState ) => number;
+	getHasNextImage: ( state: ImageStudioState ) => boolean;
+	getHasPreviousImage: ( state: ImageStudioState ) => boolean;
+	getNextAttachmentId: ( state: ImageStudioState ) => number | null;
+	getPreviousAttachmentId: ( state: ImageStudioState ) => number | null;
 	getIsSidebarOpen: ( state: ImageStudioState ) => boolean;
+	getNavigationCurrentPage: ( state: ImageStudioState ) => number;
+	getNavigationHasMorePages: ( state: ImageStudioState ) => boolean;
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
+	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
 }
 
 /**
@@ -831,8 +1026,49 @@ const selectors = {
 		return state.notices;
 	},
 
+	getNavigableAttachmentIds( state: ImageStudioState ): number[] {
+		return state.navigableAttachmentIds;
+	},
+
+	getCurrentNavigationIndex( state: ImageStudioState ): number {
+		return state.currentNavigationIndex;
+	},
+
+	getHasNextImage( state: ImageStudioState ): boolean {
+		return (
+			state.currentNavigationIndex >= 0 &&
+			state.currentNavigationIndex < state.navigableAttachmentIds.length - 1
+		);
+	},
+
+	getHasPreviousImage( state: ImageStudioState ): boolean {
+		return state.currentNavigationIndex > 0;
+	},
+
+	getNextAttachmentId( state: ImageStudioState ): number | null {
+		if ( selectors.getHasNextImage( state ) ) {
+			return state.navigableAttachmentIds[ state.currentNavigationIndex + 1 ];
+		}
+		return null;
+	},
+
+	getPreviousAttachmentId( state: ImageStudioState ): number | null {
+		if ( selectors.getHasPreviousImage( state ) ) {
+			return state.navigableAttachmentIds[ state.currentNavigationIndex - 1 ];
+		}
+		return null;
+	},
+
 	getIsSidebarOpen( state: ImageStudioState ): boolean {
 		return state.isSidebarOpen;
+	},
+
+	getNavigationCurrentPage( state: ImageStudioState ): number {
+		return state.navigationCurrentPage;
+	},
+
+	getNavigationHasMorePages( state: ImageStudioState ): boolean {
+		return state.navigationHasMorePages;
 	},
 
 	getSelectedStyle( state: ImageStudioState ): string | null {
@@ -841,6 +1077,10 @@ const selectors = {
 
 	getSelectedAspectRatio( state: ImageStudioState ): string | null {
 		return state.selectedAspectRatio;
+	},
+
+	getLastAgentMessageId( state: ImageStudioState ): string | null {
+		return state.lastAgentMessageId;
 	},
 };
 

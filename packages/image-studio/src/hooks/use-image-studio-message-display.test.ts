@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import { useImageStudioMessageDisplay } from './use-image-studio-message-display';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { AgentMessage } from '../types/agenttic';
 
 // Helper to create test messages with only the properties we need
-const createMessages = ( msgs: Array< { role: string; timestamp: number } > ): Message[] =>
-	msgs as Message[];
+const createMessages = ( msgs: Array< { role: string; timestamp: number } > ): AgentMessage[] =>
+	msgs as AgentMessage[];
 
 describe( 'useImageStudioMessageDisplay', () => {
 	describe( 'when last message is from agent (display not enabled)', () => {

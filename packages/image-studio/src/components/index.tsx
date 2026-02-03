@@ -1,5 +1,5 @@
 import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
-import { AgentUI, cn } from '@automattic/agenttic-ui';
+import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
 	__unstableAnimatePresence as AnimatePresence,
 	Modal,
@@ -12,11 +12,13 @@ import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
+import { useDraftCleanup } from '../hooks/use-draft-cleanup';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
+import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
@@ -31,12 +33,12 @@ import { getSessionId } from '../utils/session';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
+import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
-import { ImageFeedbackButtons } from './image-feedback-buttons';
 import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
@@ -56,6 +58,8 @@ function ImageStudioAgentChat( {
 } ) {
 	const agentChatProps = useAgentChat( agentConfigProp );
 	const { addNotice } = useDispatch( imageStudioStore );
+	// Storing the input value for detecting when it is cleared
+	const [ inputValue, setInputValue ] = useState( '' );
 
 	const isAnnotationSaving = useSelect( ( select ) => {
 		return select( imageStudioStore ).getIsAnnotationSaving();
@@ -79,18 +83,24 @@ function ImageStudioAgentChat( {
 
 	const placeholder =
 		mode === ImageStudioMode.Edit
-			? __( 'Describe what you want to add, remove, or replace…', 'default' )
-			: __( 'Describe your image', 'default' );
+			? __( 'Describe what you want to add, remove, or replace…', 'big-sky' )
+			: __( 'Describe your image', 'big-sky' );
 
-	const { handleSuggestionClick } = useImageStudioSuggestions(
-		agentChatProps.registerSuggestions,
-		agentChatProps.clearSuggestions,
-		displayMessages,
-		mode
-	);
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
+		useImageStudioSuggestions( {
+			registerSuggestions: agentChatProps.registerSuggestions,
+			clearSuggestions: agentChatProps.clearSuggestions,
+			messages: displayMessages,
+			mode,
+			inputValue,
+		} );
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
+			if ( isLoadingSuggestions ) {
+				abortSuggestionsLoading();
+			}
+
 			try {
 				await onChatSubmit?.();
 			} catch ( error ) {
@@ -100,7 +110,7 @@ function ImageStudioAgentChat( {
 					attachmentId,
 				} );
 
-				addNotice( __( 'Failed to send message.', 'default' ), 'error' );
+				addNotice( __( 'Failed to send message.', 'big-sky' ), 'error' );
 
 				// Abort if onChatSubmit errors
 				return;
@@ -137,7 +147,7 @@ function ImageStudioAgentChat( {
 		const errorMessage =
 			( agentError as unknown as Error )?.message ||
 			String( agentError ) ||
-			__( 'An error occurred while generating content.', 'default' );
+			__( 'An error occurred while generating content.', 'big-sky' );
 		addNotice( errorMessage, 'error' );
 	}, [ agentError, addNotice ] );
 
@@ -145,25 +155,14 @@ function ImageStudioAgentChat( {
 
 	const handleStop = isAnnotationSaving ? undefined : agentChatProps.abortCurrentRequest;
 
-	// Use simple AgentUI for Edit mode (no composable pattern)
-	if ( mode === ImageStudioMode.Edit ) {
-		return (
-			<AgentUI
-				{ ...agentUiProps }
-				messages={ displayMessages as any }
-				variant="embedded"
-				placeholder={ placeholder }
-				className="image-studio-agent agenttic"
-				onSubmit={ handleSubmit }
-				onSuggestionClick={ handleSuggestionClick }
-				onStop={ handleStop }
-				isProcessing={ isProcessing }
-				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
-			/>
-		);
-	}
+	const suggestionsComponent = isLoadingSuggestions ? (
+		<div className="image-studio-suggestions-loading">
+			<ThinkingMessage content={ __( 'Generating suggestions…', 'big-sky' ) } />
+		</div>
+	) : (
+		<AgentUI.Suggestions />
+	);
 
-	// Use composable pattern for Generate mode (with InputToolbar for style selection)
 	return (
 		<AgentUI.Container
 			{ ...agentUiProps }
@@ -175,18 +174,21 @@ function ImageStudioAgentChat( {
 			onStop={ handleStop }
 			isProcessing={ isProcessing }
 			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
+			onSuggestionClick={ handleSuggestionClick }
 		>
 			<AgentUI.ConversationView showHeader={ false }>
 				<AgentUI.Messages />
 				<AgentUI.Footer>
+					{ suggestionsComponent }
 					<AgentUI.Notice />
 					<AgentUI.Input />
 					<div className="image-studio-modal__input-toolbar">
-						<AspectRatioPicker disabled={ isProcessing } />
+						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
 						<StylePicker disabled={ isProcessing } />
 					</div>
 				</AgentUI.Footer>
-				<AgentUI.Suggestions onSelect={ ( message ) => handleSuggestionClick( message, [] ) } />
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);
@@ -210,7 +212,7 @@ const ImageStudioAgentUIComponent = ( {
 
 	if ( ! agentConfigState ) {
 		return (
-			<div className="image-studio-agent-loading">{ __( 'Loading AI assistant…', 'default' ) }</div>
+			<div className="image-studio-agent-loading">{ __( 'Loading AI assistant…', 'big-sky' ) }</div>
 		);
 	}
 
@@ -233,10 +235,14 @@ const ImageStudioContent = withInstanceId(
 		onDiscard,
 		onExit,
 		onClassicMediaEditorNavigation,
+		onNavigatePrevious,
+		onNavigateNext,
+		hasPreviousImage,
+		hasNextImage,
 		className,
 		config,
 		modalOpenKey,
-		agentConfigFactory,
+		agentConfigFactory = defaultAgentConfigFactory,
 	}: Omit< ImageStudioProps, 'image' > & {
 		instanceId: string | number;
 		modalOpenKey?: number;
@@ -273,7 +279,7 @@ const ImageStudioContent = withInstanceId(
 
 		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-		// Get session ID
+		// Get session ID (persistent across sessions)
 		const sessionId = getSessionId();
 
 		const {
@@ -294,17 +300,10 @@ const ImageStudioContent = withInstanceId(
 
 		// Track the last modal key to detect when modal reopens
 		const lastModalOpenKey = useRef< number | undefined >();
-
-		// Initialize sidebar state from persisted preference when modal opens
-		useEffect( () => {
-			// Only initialize when modal first opens (modalOpenKey changes)
-			if ( lastModalOpenKey.current !== modalOpenKey ) {
-				lastModalOpenKey.current = modalOpenKey;
-				if ( isSidebarOpen ) {
-					setActiveToolbarOption( ToolbarOption.AltText );
-				}
-			}
-		}, [ modalOpenKey, isSidebarOpen ] );
+		// Track attachment ID to detect navigation
+		const prevAttachmentIdRef = useRef< number | null >( null );
+		// Track activeToolbarOption to detect user interaction (vs. programmatic changes)
+		const prevActiveToolbarOptionRef = useRef< ToolbarOption | null >( activeToolbarOption );
 
 		const handleChatSubmit = useCallback( async () => {
 			if ( hasAnnotations ) {
@@ -314,13 +313,44 @@ const ImageStudioContent = withInstanceId(
 			setIsPromptSent( true );
 		}, [ hasAnnotations, handleAnnotationDone ] );
 
-		// Sync activeToolbarOption changes to store for persistence
+		// Sync store state to component state when modal opens or navigating between images
 		useEffect( () => {
-			const isImageInfoActiveSidebar = activeToolbarOption === ToolbarOption.AltText;
-			if ( isImageInfoActiveSidebar !== isSidebarOpen ) {
-				setIsSidebarOpen( isImageInfoActiveSidebar );
+			const hasModalOpened = lastModalOpenKey.current !== modalOpenKey;
+			const hasNavigated =
+				prevAttachmentIdRef.current !== null && prevAttachmentIdRef.current !== attachmentId;
+
+			// Sync on modal open or navigation
+			if ( hasModalOpened || hasNavigated ) {
+				const shouldBeOpen = isSidebarOpen;
+				const isCurrentlyOpen = activeToolbarOption === ToolbarOption.AltText;
+
+				if ( shouldBeOpen && ! isCurrentlyOpen ) {
+					setActiveToolbarOption( ToolbarOption.AltText );
+				} else if ( ! shouldBeOpen && isCurrentlyOpen ) {
+					setActiveToolbarOption( null );
+				}
 			}
-		}, [ activeToolbarOption, isSidebarOpen, setIsSidebarOpen ] );
+
+			// Update refs
+			lastModalOpenKey.current = modalOpenKey;
+			prevAttachmentIdRef.current = attachmentId;
+		}, [ modalOpenKey, attachmentId, isSidebarOpen, activeToolbarOption ] );
+
+		// Sync activeToolbarOption changes to store for persistence
+		// Only sync when user actually changed the toolbar option (not programmatic changes during navigation)
+		useEffect( () => {
+			const hasToolbarOptionChanged = prevActiveToolbarOptionRef.current !== activeToolbarOption;
+
+			if ( hasToolbarOptionChanged ) {
+				const isImageInfoActiveSidebar = activeToolbarOption === ToolbarOption.AltText;
+				if ( isImageInfoActiveSidebar !== isSidebarOpen ) {
+					setIsSidebarOpen( isImageInfoActiveSidebar );
+				}
+
+				prevActiveToolbarOptionRef.current = activeToolbarOption;
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ activeToolbarOption ] );
 
 		// Wrapped save handler that shows success message
 		const handleSaveWithNotification = useCallback( async () => {
@@ -328,7 +358,7 @@ const ImageStudioContent = withInstanceId(
 			try {
 				await onSave();
 				// Show success message via notice system
-				addNotice( __( 'Image saved to Media Library', 'default' ), 'success' );
+				addNotice( __( 'Image saved to Media Library', 'big-sky' ), 'success' );
 			} finally {
 				setIsSaving( false );
 			}
@@ -338,7 +368,7 @@ const ImageStudioContent = withInstanceId(
 		const isMediumUp = useMediaQuery( '(min-width: 768px)' );
 
 		const imageAltText =
-			config?.imageData?.alt || config?.imageData?.title || __( 'Image being edited', 'default' );
+			config?.imageData?.alt || config?.imageData?.title || __( 'Image being edited', 'big-sky' );
 
 		const imageUrl = useImageUrl( originalImageUrl );
 		const finalDisplayUrl = displayImageUrl || imageUrl;
@@ -367,6 +397,12 @@ const ImageStudioContent = withInstanceId(
 			onSave,
 			onDiscard,
 			onExit,
+		} );
+
+		// Revert to original functionality
+		const { deleteDraftsExcept } = useDraftCleanup();
+		const { handleRevertToOriginal, canRevert } = useRevertToOriginal( {
+			deleteDraftsExcept,
 		} );
 
 		const mode: ImageStudioMode = memoizedConfig?.attachmentId
@@ -410,16 +446,24 @@ const ImageStudioContent = withInstanceId(
 		const showFeedbackButtons =
 			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl;
 
-		const feedbackButtons =
-			sessionId && finalDisplayUrl ? (
-				<ImageFeedbackButtons
-					imageUrl={ finalDisplayUrl }
-					attachmentId={ attachmentId }
-					sessionId={ sessionId }
-					mode={ mode }
-					isVisible={ showFeedbackButtons }
-				/>
-			) : null;
+		// Show actions menu only in Edit mode after AI has made changes.
+		// canRevert already checks: originalAttachmentId exists, image changed, not processing
+		const showImageActionsMenu = mode === ImageStudioMode.Edit && canRevert;
+
+		const showCanvasControls = !! finalDisplayUrl && isRenderedImageLoaded && !! isAiProcessed;
+
+		const canvasControls = showCanvasControls ? (
+			<CanvasControls
+				imageUrl={ finalDisplayUrl }
+				attachmentId={ attachmentId }
+				sessionId={ sessionId }
+				mode={ mode }
+				showFeedbackButtons={ showFeedbackButtons }
+				showImageActionsMenu={ showImageActionsMenu }
+				onSave={ handleSaveWithNotification }
+				onRevertToOriginal={ handleRevertToOriginal }
+			/>
+		) : null;
 
 		return (
 			<>
@@ -429,7 +473,7 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={ __( 'Image Studio', 'default' ) }
+					aria-label={ __( 'Image Studio', 'big-sky' ) }
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -447,6 +491,10 @@ const ImageStudioContent = withInstanceId(
 							hasPendingAnnotations={ hasAnnotations }
 							hasUndoneAnnotations={ hasUndoneAnnotations }
 							onClassicMediaEditorNavigation={ onClassicMediaEditorNavigation }
+							onNavigatePrevious={ onNavigatePrevious }
+							onNavigateNext={ onNavigateNext }
+							hasPreviousImage={ hasPreviousImage }
+							hasNextImage={ hasNextImage }
 						/>
 
 						{ mode === ImageStudioMode.Edit ? (
@@ -459,7 +507,7 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessed={ isAiProcessed }
 								overlay={ annotationOverlay }
 								showProcessingOverlay={ showProcessingOverlay }
-								feedbackButtons={ feedbackButtons }
+								canvasControls={ canvasControls }
 								attachmentId={ attachmentId }
 								isCurrentAttachmentAnnotated={ isCurrentAttachmentAnnotated }
 								originalAttachmentId={ originalAttachmentId }
@@ -511,23 +559,23 @@ const ImageStudioContent = withInstanceId(
 				{ isConfirmDialogOpen && (
 					<ConfirmationDialog
 						isOpen={ isConfirmDialogOpen }
-						title={ __( 'Unsaved changes', 'default' ) }
+						title={ __( 'Unsaved changes', 'big-sky' ) }
 						actions={ [
 							{
-								text: __( 'Discard', 'default' ),
+								text: __( 'Discard', 'big-sky' ),
 								onClick: handleConfirmDiscard,
 								variant: 'secondary',
 								isDestructive: true,
 							},
 							{
-								text: __( 'Save', 'default' ),
+								text: __( 'Save', 'big-sky' ),
 								onClick: handleConfirmSave,
 								variant: 'primary',
 							},
 						] }
 						onClose={ handleConfirmCancel }
 					>
-						{ __( 'Do you want to save this image?', 'default' ) }
+						{ __( 'Do you want to save this image?', 'big-sky' ) }
 					</ConfirmationDialog>
 				) }
 			</>
@@ -541,9 +589,13 @@ const ImageStudio = ( {
 	onDiscard,
 	onExit,
 	onClassicMediaEditorNavigation,
+	onNavigatePrevious,
+	onNavigateNext,
+	hasPreviousImage,
+	hasNextImage,
 	className,
 	config,
-	agentConfigFactory,
+	agentConfigFactory = defaultAgentConfigFactory,
 }: ImageStudioProps ) => {
 	const { setImageStudioOriginalImageUrl } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
@@ -563,6 +615,10 @@ const ImageStudio = ( {
 			onDiscard={ onDiscard }
 			onExit={ onExit }
 			onClassicMediaEditorNavigation={ onClassicMediaEditorNavigation }
+			onNavigatePrevious={ onNavigatePrevious }
+			onNavigateNext={ onNavigateNext }
+			hasPreviousImage={ hasPreviousImage }
+			hasNextImage={ hasNextImage }
 			className={ className }
 			config={ config }
 			modalOpenKey={ modalOpenKey }

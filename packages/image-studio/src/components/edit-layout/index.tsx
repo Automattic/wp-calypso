@@ -16,7 +16,7 @@ interface EditLayoutProps {
 	isAiProcessed: boolean;
 	isAnnotationSaving?: boolean;
 	showProcessingOverlay?: boolean;
-	feedbackButtons?: ReactNode;
+	canvasControls?: ReactNode;
 	imageUrl?: string | null;
 	isRenderedImageLoaded?: boolean;
 	attachmentId?: number | null;
@@ -31,17 +31,18 @@ export const EditLayout = ( {
 	isAiProcessed,
 	isAnnotationSaving = false,
 	showProcessingOverlay = false,
-	feedbackButtons,
+	canvasControls,
 	isRenderedImageLoaded = false,
 	attachmentId,
 	isCurrentAttachmentAnnotated,
 	originalAttachmentId,
+	imageUrl,
 }: EditLayoutProps ) => {
-	// Only show loading animation when the image key changes and the image is not loaded
-	const [ shouldShowLoading, setShouldShowLoading ] = useState< boolean >( true );
 	const [ imageKey, setImageKey ] = useState< number | null >( originalAttachmentId ?? null );
 
-	const prevImageKey = useRef< typeof imageKey >( null );
+	// Track the last loaded image URL for the placeholder
+	const [ placeholderUrl, setPlaceholderUrl ] = useState< string | null >( null );
+
 	const prevAttachmentId = useRef< typeof attachmentId >( null );
 
 	useEffect( () => {
@@ -55,56 +56,65 @@ export const EditLayout = ( {
 
 		// Track the previous attachmentId
 		prevAttachmentId.current = attachmentId;
+	}, [ attachmentId, isCurrentAttachmentAnnotated, isAnnotationSaving ] );
 
-		// Show loading spinner when we switch to a new image but the image is not loaded yet
-		if ( prevImageKey.current !== imageKey && ! isRenderedImageLoaded ) {
-			setShouldShowLoading( true );
-			prevImageKey.current = imageKey;
-		} else {
-			setShouldShowLoading( false );
+	// Set placeholder on initial load
+	useEffect( () => {
+		if ( isRenderedImageLoaded && imageUrl && ! placeholderUrl ) {
+			setPlaceholderUrl( imageUrl );
 		}
-	}, [
-		imageKey,
-		attachmentId,
-		isCurrentAttachmentAnnotated,
-		isAnnotationSaving,
-		isRenderedImageLoaded,
-	] );
+	}, [ isRenderedImageLoaded, imageUrl, placeholderUrl ] );
+
+	const isAnnotatedImage = isCurrentAttachmentAnnotated || isAnnotationSaving;
+
+	// Use attachmentId as key for non-annotated images to trigger cross fade between images
+	// Use stable imageKey for annotated images to prevent fade during annotation flow
+	const effectiveImageKey = isAnnotatedImage ? imageKey : attachmentId;
+
+	// For annotated images, never show loading so that the transition from blob -> uploaded annotation is seamless
+	const shouldShowLoading = ! isAnnotatedImage && ! isRenderedImageLoaded;
 
 	return (
 		<div className="image-studio-edit-layout">
 			<div role="status" aria-live="polite" aria-atomic="true" className="image-studio-sr-only">
-				{ isAnnotationSaving && __( 'Saving your annotation…', 'default' ) }
+				{ isAnnotationSaving && __( 'Saving your annotation…', 'big-sky' ) }
 				{ ! isAnnotationSaving &&
 					isAiProcessing &&
-					__( 'AI is currently editing your image. Please wait.', 'default' ) }
+					__( 'AI is currently editing your image. Please wait.', 'big-sky' ) }
 				{ ! isAnnotationSaving &&
 					! isAiProcessing &&
 					isAiProcessed &&
-					__( 'AI has finished editing your image.', 'default' ) }
+					__( 'AI has finished editing your image.', 'big-sky' ) }
 			</div>
 
 			<Canvas fit="contain" overlay={ overlay } loading={ shouldShowLoading }>
-				<AnimatePresence mode="wait">
-					{ image && (
-						<motion.div
-							key={ imageKey }
-							className={ cn( 'image-studio-image-container', {
-								'image-studio-image-processing': showProcessingOverlay,
-							} ) }
-							initial={ { opacity: 0 } }
-							animate={ {
-								opacity: shouldShowLoading ? 0 : 1,
-							} }
-							exit={ { opacity: 0 } }
-							transition={ { duration: 0.3 } }
-						>
-							{ image }
-						</motion.div>
-					) }
+				{ /* Hidden placeholder image to maintain layout dimensions during transitions */ }
+				{ placeholderUrl && (
+					<img
+						src={ placeholderUrl }
+						alt=""
+						aria-hidden="true"
+						className="image-studio-placeholder-image"
+					/>
+				) }
+				<AnimatePresence mode="wait" onExitComplete={ () => setPlaceholderUrl( imageUrl ?? null ) }>
+					<motion.div
+						key={ effectiveImageKey }
+						className={ cn( 'image-studio-image-container', {
+							'image-studio-image-processing': showProcessingOverlay,
+						} ) }
+						initial={ { opacity: 0 } }
+						animate={ {
+							opacity: shouldShowLoading ? 0 : 1,
+						} }
+						exit={ { opacity: 0 } }
+						transition={ { duration: 0.3 } }
+					>
+						{ image }
+					</motion.div>
 				</AnimatePresence>
+				{ canvasControls }
 			</Canvas>
-			{ feedbackButtons }
 		</div>
 	);
 };

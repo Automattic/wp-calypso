@@ -4,7 +4,7 @@ import { useKeyboardShortcut } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { close, external, redo, undo } from '@wordpress/icons';
+import { chevronLeft, chevronRight, close, external, redo, undo } from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
 import { type ImageStudioActions, store as imageStudioStore } from '../../store';
 import { type ImageStudioConfig, ImageStudioMode, ToolbarOption } from '../../types';
@@ -28,6 +28,10 @@ interface HeaderProps {
 	activeToolbarOption: ToolbarOption | null;
 	config: ImageStudioConfig;
 	onClassicMediaEditorNavigation?: ( url: string ) => Promise< void >;
+	onNavigatePrevious?: () => void;
+	onNavigateNext?: () => void;
+	hasPreviousImage?: boolean;
+	hasNextImage?: boolean;
 }
 
 export const Header = ( {
@@ -45,6 +49,10 @@ export const Header = ( {
 	hasPendingAnnotations,
 	hasUndoneAnnotations,
 	onClassicMediaEditorNavigation,
+	onNavigatePrevious,
+	onNavigateNext,
+	hasPreviousImage = false,
+	hasNextImage = false,
 }: HeaderProps ) => {
 	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode } = useSelect( ( select ) => {
 		const selectors = select( imageStudioStore ) as any;
@@ -80,6 +88,8 @@ export const Header = ( {
 
 	const showTools = mode === ImageStudioMode.Edit;
 	const showTitle = mode === ImageStudioMode.Generate;
+	// Always show navigation pill in Edit mode if we have a filename to display
+	const showNavigationPill = mode === ImageStudioMode.Edit && !! config?.imageData?.filename;
 
 	// Generate classic editor URL if we have an attachment ID
 	const classicEditorUrl = config?.attachmentId
@@ -108,11 +118,47 @@ export const Header = ( {
 								'image-studio-sr-only': showTitle,
 							} ) }
 						>
-							{ __( 'Image Editor', 'default' ) }{ ' ' }
-							<span className="image-studio-badge">{ __( 'Beta', 'default' ) }</span>
+							{ __( 'Image Editor', 'big-sky' ) }{ ' ' }
+							<span className="image-studio-badge">{ __( 'Beta', 'big-sky' ) }</span>
 						</h2>
 					) }
 				</div>
+
+				{ showNavigationPill && (
+					<div className="image-studio-header__center">
+						<div className="image-studio-header__navigation-pill">
+							<Button
+								variant="tertiary"
+								icon={ chevronLeft }
+								onClick={ onNavigatePrevious }
+								disabled={ ! hasPreviousImage || isAiProcessing || isSaving }
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Previous image %s←', 'big-sky' ),
+									modKeySymbol
+								) }
+								showTooltip
+								className="image-studio-header__nav-button"
+							/>
+							<span className="image-studio-header__filename">
+								{ config?.imageData?.filename || __( 'Untitled', 'big-sky' ) }
+							</span>
+							<Button
+								variant="tertiary"
+								icon={ chevronRight }
+								onClick={ onNavigateNext }
+								disabled={ ! hasNextImage || isAiProcessing || isSaving }
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Next image %s→', 'big-sky' ),
+									modKeySymbol
+								) }
+								showTooltip
+								className="image-studio-header__nav-button"
+							/>
+						</div>
+					</div>
+				) }
 
 				<div className="image-studio-header__right">
 					{ showTools && (
@@ -125,7 +171,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationUndo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Undo %sZ', 'default' ),
+											__( 'Undo %sZ', 'big-sky' ),
 											modKeySymbol
 										) }
 										disabled={ ! hasPendingAnnotations }
@@ -136,7 +182,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationRedo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Redo ⇧%sZ', 'default' ),
+											__( 'Redo ⇧%sZ', 'big-sky' ),
 											modKeySymbol
 										) }
 										disabled={ ! hasUndoneAnnotations }
@@ -149,7 +195,7 @@ export const Header = ( {
 										variant="tertiary"
 										icon={ external }
 										className="image-studio-classic-editor-link"
-										label={ __( 'Edit this image in the WordPress Media Library', 'default' ) }
+										label={ __( 'Edit this image in the WordPress Media Library', 'big-sky' ) }
 										onClick={ async () => {
 											trackImageStudioToolClick( 'media_library' );
 											try {
@@ -158,24 +204,26 @@ export const Header = ( {
 												addNotice(
 													__(
 														'Failed to save changes. Please try again or use the Save button.',
-														'default'
+														'big-sky'
 													),
 													'error'
 												);
-												// eslint-disable-next-line no-console
-												console.error( '[Image Studio] Navigation handler error:', error );
+												window.console?.error?.(
+													'[Image Studio] Navigation handler error:',
+													error
+												);
 											}
 										} }
 									>
 										<span className="image-studio-header__button-text">
-											{ __( 'Media Library', 'default' ) }
+											{ __( 'Media Library', 'big-sky' ) }
 										</span>
 									</Button>
 								) }
 								<Button
 									variant="tertiary"
 									icon={ <Icon icon={ LassoIcon } /> }
-									label={ __( 'Select an area of the image to edit', 'default' ) }
+									label={ __( 'Select an area of the image to edit', 'big-sky' ) }
 									onClick={ () => {
 										trackImageStudioToolClick( 'annotate' );
 										handleToolbarClick( ToolbarOption.Annotate );
@@ -184,7 +232,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.Annotate }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Select', 'default' ) }
+										{ __( 'Select', 'big-sky' ) }
 									</span>
 								</Button>
 								<Button
@@ -193,7 +241,7 @@ export const Header = ( {
 										'image-studio-toolbar-alt-button': hasUpdatedMetadata,
 									} ) }
 									icon={ <Icon icon={ AltIcon } /> }
-									label={ __( 'Edit image info', 'default' ) }
+									label={ __( 'View or edit information about the image', 'big-sky' ) }
 									onClick={ () => {
 										// Track whether we're opening or closing
 										const isCurrentlyOpen = activeToolbarOption === ToolbarOption.AltText;
@@ -204,7 +252,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.AltText }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Image info', 'default' ) }
+										{ __( 'Image Info', 'big-sky' ) }
 									</span>
 								</Button>
 							</div>
@@ -213,14 +261,14 @@ export const Header = ( {
 								disabled={ ! isSaveable || isSaving }
 								isBusy={ isSaving }
 								onClick={ onSave }
-							>
-								{ isSaving ? __( 'Saving…', 'default' ) : __( 'Save', 'default' ) }
-							</Button>
+								label={ __( 'Save displayed image to Media Library', 'big-sky' ) }
+								text={ isSaving ? __( 'Saving…', 'big-sky' ) : __( 'Save', 'big-sky' ) }
+							/>
 						</Fragment>
 					) }
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close image editor', 'default' ) }
+						label={ __( 'Close image editor', 'big-sky' ) }
 						onClick={ () => onClose() }
 						disabled={ isSaving }
 					/>

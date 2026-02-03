@@ -4,21 +4,21 @@ import { __ } from '@wordpress/i18n';
 import threeDModelPreview from '../../assets/3d-model.webp';
 import analogFilmPreview from '../../assets/analog-film.webp';
 import animePreview from '../../assets/anime.webp';
-import autoPreview from '../../assets/auto.webp';
 import cinematicPreview from '../../assets/cinematic.webp';
 import comicbookPreview from '../../assets/comicbook.webp';
 import craftClayPreview from '../../assets/craft-clay.webp';
 import digitalArtPreview from '../../assets/digital-art.webp';
-import enhancePreview from '../../assets/enhance.webp';
 import fantasyArtPreview from '../../assets/fantasy-art.webp';
 import isometricPreview from '../../assets/isometric.webp';
 import lineArtPreview from '../../assets/line-art.webp';
 import lowpolyPreview from '../../assets/lowpoly.webp';
 import neonpunkPreview from '../../assets/neonpunk.webp';
+import nonePreview from '../../assets/none.webp';
 import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
+import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { BrushIcon } from '../icons/BrushIcon';
 
@@ -27,86 +27,86 @@ interface StylePickerProps {
 }
 
 export const STYLE_OPTIONS = [
-	{ label: __( 'Select style', 'default' ), value: 'none', preview: null },
-	{ label: __( 'Auto', 'default' ), value: 'auto', preview: autoPreview },
+	{ label: __( 'Select style', 'big-sky' ), value: 'none', preview: null },
+	{ label: __( 'None', 'big-sky' ), value: '', preview: nonePreview },
 	{
-		label: __( 'Enhance', 'default' ),
-		value: 'enhance',
-		preview: enhancePreview,
+		label: __( 'Vivid', 'big-sky' ),
+		value: 'vivid',
+		preview: vividPreview,
 	},
-	{ label: __( 'Anime', 'default' ), value: 'anime', preview: animePreview },
+	{ label: __( 'Anime', 'big-sky' ), value: 'anime', preview: animePreview },
 	{
-		label: __( 'Photographic', 'default' ),
+		label: __( 'Photographic', 'big-sky' ),
 		value: 'photographic',
 		preview: photographicPreview,
 	},
 	{
-		label: __( 'Digital Art', 'default' ),
+		label: __( 'Digital Art', 'big-sky' ),
 		value: 'digital-art',
 		preview: digitalArtPreview,
 	},
 	{
-		label: __( 'Comicbook', 'default' ),
+		label: __( 'Comicbook', 'big-sky' ),
 		value: 'comicbook',
 		preview: comicbookPreview,
 	},
 	{
-		label: __( 'Fantasy Art', 'default' ),
+		label: __( 'Fantasy Art', 'big-sky' ),
 		value: 'fantasy-art',
 		preview: fantasyArtPreview,
 	},
 	{
-		label: __( 'Analog Film', 'default' ),
+		label: __( 'Analog Film', 'big-sky' ),
 		value: 'analog-film',
 		preview: analogFilmPreview,
 	},
 	{
-		label: __( 'Neonpunk', 'default' ),
+		label: __( 'Neonpunk', 'big-sky' ),
 		value: 'neonpunk',
 		preview: neonpunkPreview,
 	},
 	{
-		label: __( 'Isometric', 'default' ),
+		label: __( 'Isometric', 'big-sky' ),
 		value: 'isometric',
 		preview: isometricPreview,
 	},
 	{
-		label: __( 'Lowpoly', 'default' ),
+		label: __( 'Lowpoly', 'big-sky' ),
 		value: 'lowpoly',
 		preview: lowpolyPreview,
 	},
 	{
-		label: __( 'Origami', 'default' ),
+		label: __( 'Origami', 'big-sky' ),
 		value: 'origami',
 		preview: origamiPreview,
 	},
 	{
-		label: __( 'Line Art', 'default' ),
+		label: __( 'Line Art', 'big-sky' ),
 		value: 'line-art',
 		preview: lineArtPreview,
 	},
 	{
-		label: __( 'Craft Clay', 'default' ),
+		label: __( 'Craft Clay', 'big-sky' ),
 		value: 'craft-clay',
 		preview: craftClayPreview,
 	},
 	{
-		label: __( 'Cinematic', 'default' ),
+		label: __( 'Cinematic', 'big-sky' ),
 		value: 'cinematic',
 		preview: cinematicPreview,
 	},
 	{
-		label: __( '3D Model', 'default' ),
+		label: __( '3D Model', 'big-sky' ),
 		value: '3d-model',
 		preview: threeDModelPreview,
 	},
 	{
-		label: __( 'Pixel Art', 'default' ),
+		label: __( 'Pixel Art', 'big-sky' ),
 		value: 'pixel-art',
 		preview: pixelArtPreview,
 	},
 	{
-		label: __( 'Texture', 'default' ),
+		label: __( 'Texture', 'big-sky' ),
 		value: 'texture',
 		preview: texturePreview,
 	},
@@ -136,7 +136,7 @@ export function StylePicker( { disabled = false }: StylePickerProps ) {
 
 	const selectedLabel =
 		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Styles', 'default' );
+		__( 'Styles', 'big-sky' );
 
 	return (
 		<AgentUI.InputToolbar

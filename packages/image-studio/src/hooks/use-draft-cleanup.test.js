@@ -1,3 +1,6 @@
+import { renderHook, waitFor } from '@testing-library/react';
+import { useDraftCleanup } from './use-draft-cleanup';
+
 /**
  * Tests for useDraftCleanup hook
  *
@@ -7,8 +10,6 @@
  *   - Delete: all other draft IDs in the current session.
  *   - originalAttachmentId and all savedAttachmentIds are NEVER deleted.
  */
-/* eslint-disable import/no-extraneous-dependencies, import/order */
-import { renderHook, waitFor } from '@testing-library/react';
 
 // Mutable selector state used by the `select` mock.
 let mockSelectorState;
@@ -56,7 +57,7 @@ jest.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../../utils/image-studio-tracking', () => ( {
+jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioError: mockTrackImageStudioError,
 } ) );
 
@@ -66,9 +67,6 @@ jest.mock( '../types', () => ( {
 		Generate: 'generate',
 	},
 } ) );
-
-// Import after mocks are set up
-const { useDraftCleanup } = require( './use-draft-cleanup' );
 
 describe( 'useDraftCleanup – cleanupOnExit', () => {
 	beforeEach( () => {
