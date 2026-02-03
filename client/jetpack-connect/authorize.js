@@ -1229,6 +1229,7 @@ export class JetpackAuthorize extends Component {
 					<ActionButtons
 						primaryLabel={ this.getButtonText() }
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+						primaryOnClick={ this.handleSubmit }
 					/>
 					<LoggedOutFormLinkItem
 						style={ { textAlign: 'center' } }
