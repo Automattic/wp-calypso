@@ -1,85 +1,63 @@
-/* stylelint-disable scales/radii */
-.quick-post-input {
-	margin: 20px;
+.quick-post {
+	.sites-dropdown__wrapper {
+		width: 200px;
 
-	&--loading {
-		text-align: center;
-		padding: 24px;
-	}
-
-	&__fields {
-		margin-bottom: 16px;
-	}
-
-	&__site-select-wrapper {
-		margin-bottom: 16px;
-		display: flex;
-		justify-content: space-between;
-		align-items: end;
-		gap: 10px;
-
-		.sites-dropdown {
-			flex: 0 1 300px;
-
-			.sites-dropdown__wrapper {
-				border-color: var( --color-border-subtle );
-				border-radius: 6px 6px 0 0;
-			}
-		}
-
-		.site-selector {
-			border-color: var( --color-border-subtle );
-			border-radius: 0 0 6px 6px;
+		@include break-large {
+			width: 300px;
 		}
 	}
 
-	&__actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 8px;
-	}
-
-	&__success-message {
-		padding-left: 5px;
-		color: rgb( 0, 128, 0 );
-		display: flex;
-		align-items: center;
-		opacity: 0;
-		transition: opacity 0.3s ease-in-out;
-
-		&.is-visible {
-			opacity: 1;
-		}
-
-		p {
-			margin: 0;
-		}
+	.sites-dropdown__selected .site__content {
+		padding: 0;
 	}
 
 	.verbum-editor-wrapper {
-		.editor__header {
-			border-color: var( --color-border-subtle );
-			border-style: solid;
-			border-radius: 6px 6px 0 0;
-			border-width: 1px;
-			border-bottom-width: 0;
-		}
+		margin-top: 14px;
+	}
 
-		.block-editor-block-contextual-toolbar {
-			background-color: transparent;
-		}
+	.editor__header {
+		border-color: var( --color-border-subtle );
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px 6px 0 0;
 
-		.editor__main {
-			border-color: var( --color-border-subtle );
-			border-style: solid;
-			border-radius: 0 0 6px 6px;
-			border-width: 1px;
-			border-top-width: 0;
+		// Verbum editor is hiding the block settings menu, we need to show it.
+		.editor__header-wrapper
+			.editor__header-toolbar
+			.block-editor-block-toolbar
+			.block-editor-block-settings-menu {
+			display: inline-block;
 		}
 	}
 
-	.verbum-editor-wrapper .editor__main,
-	.verbum-editor-wrapper .editor__main iframe {
-		min-height: 80px;
+	.editor__main {
+		border-color: var( --color-border-subtle );
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
+		border-top-width: 0;
+
+		&,
+		iframe {
+			min-height: initial; // To make quick post box smaller.
+		}
+
+		.components-button {
+			justify-content: initial; // Reset the global style which centers the popover menu items.
+		}
+	}
+
+	.quick-post-actions {
+		margin-top: 16px;
+
+		button {
+			margin-left: 5px;
+		}
+
+		.is-tertiary {
+			gap: 5px;
+		}
+
+		.is-primary {
+			padding: 10px 26px;
+		}
 	}
 }

@@ -2,7 +2,6 @@
 import {
 	sitesQuery,
 	paginatedSitesQuery,
-	dashboardSiteListQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
@@ -11,7 +10,6 @@ import Logo from './logo';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
-	FetchDashboardSiteListParams,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import './style.scss';
@@ -44,6 +42,8 @@ boot( {
 	},
 	optIn: true,
 	components: {
+		addDomainButton: () => import( '../domains/add-domain-button' ),
+		emptyDomainsState: () => import( '../domains/empty-domains-state' ),
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
@@ -51,8 +51,6 @@ boot( {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 	},

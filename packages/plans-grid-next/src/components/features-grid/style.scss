@@ -372,6 +372,12 @@
 			font-weight: 600;
 		}
 
+		// Experiment variants: domain included text gets green color
+		// Applies to variants with "Everything in X, plus:" features (not var1d or control)
+		&.is-domain-included-highlight {
+			color: var(--studio-green-60);
+		}
+
 		// var1d experiment: differentiator feature styling
 		// Features below "Everything in X, plus:" get distinctive underline treatment
 		&.is-differentiator-feature {
@@ -386,6 +392,11 @@
 			.plans-2023-tooltip__hover-area-container {
 				display: flex;
 				align-items: flex-start;
+			}
+
+			// Text content wrapper to keep badge inline with text
+			.plan-features-2023-grid__item-text-content {
+				flex: 1;
 			}
 
 			// Apply underline styling only to the text, not the icon

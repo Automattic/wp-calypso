@@ -8,36 +8,36 @@ import {
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login } from '@wordpress/icons';
+import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
+import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import useCustomEventHandler from '../../hooks/use-custom-event-handler';
+import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import { ZendeskChat } from '../zendesk-chat';
+import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 } from '../../utils/load-external-providers';
-import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import type { Message as UILibraryMessage } from '@automattic/agenttic-ui/dist/types';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentDockProps {
-	/** The selected site object. */
-	site?: HelpCenterSite | null;
-	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName: string;
-	/** Indicates if the user is eligible for chat. */
-	isEligibleForChat: boolean;
 	/** Agent configuration for the chat client. */
 	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
@@ -54,18 +54,17 @@ interface AgentDockProps {
 
 export default function AgentDock( {
 	agentConfig,
-	site,
-	sectionName,
-	isEligibleForChat,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
 }: AgentDockProps ) {
+	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
 		hasLoaded: isStoreReady,
 		isOpen: isPersistedOpen = false,
@@ -80,12 +79,17 @@ export default function AgentDock( {
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
 
-	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => setIsOpen( true ),
+			onOpenSidebar: () => {
+				setIsOpen( true );
+				if ( pathname === '/history' ) {
+					navigate( '/' );
+				}
+			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -100,12 +104,6 @@ export default function AgentDock( {
 		abortCurrentRequest,
 		clearSuggestions,
 	} = useAgentChat( agentConfig );
-
-	const {
-		messages: odieMessages,
-		isProcessing: isOdieProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat();
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -146,7 +144,18 @@ export default function AgentDock( {
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
 	useAbilitiesSetup?.( {
-		addMessage,
+		addMessage: ( message: BigSkyMessage ) => {
+			// Transform Big Sky message format to UIMessage format and add to chat
+			addMessage( {
+				id: message.id,
+				role: message.role === 'assistant' ? 'agent' : 'user',
+				content: message.content,
+				timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
+				archived: message.archived ?? false,
+				showIcon: message.showIcon ?? true,
+			} );
+		},
+		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
 		setIsThinking,
@@ -157,22 +166,41 @@ export default function AgentDock( {
 		},
 	} );
 
+	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
+
 	const handleNewChat = () => {
 		navigate( '/' );
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleExpand = () => {
+		setIsOpen( true );
+		if ( pathname === '/history' ) {
+			navigate( '/' );
+		}
+	};
+
+	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
+		if ( conversation.is_zendesk ) {
+			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
+		} else {
+			abortCurrentRequest();
+			setSessionId( sessionId );
+			navigate( '/chat', { state: { sessionId } } );
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname !== '/history' && ! messages.length,
+			isDisabled: pathname === '/chat' && ! messages.length,
 			onClick: handleNewChat,
+		};
+		const newZDChatMenuItem = {
+			icon: lifesaver,
+			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
+			isDisabled: pathname === '/zendesk' && ! messages.length,
+			onClick: () => navigate( '/zendesk' ),
 		};
 		const undockMenuItem = {
 			icon: login,
@@ -193,9 +221,13 @@ export default function AgentDock( {
 
 		const options: ChatHeaderOptions = [ newChatMenuItem ];
 
+		if ( shouldUseAgentsManager ) {
+			options.push( newZDChatMenuItem );
+		}
+
 		if ( isDocked ) {
 			options.push( undockMenuItem );
-		} else if ( isDesktop ) {
+		} else if ( canDock ) {
 			options.push( dockMenuItem );
 		}
 
@@ -203,15 +235,14 @@ export default function AgentDock( {
 	};
 
 	// Filter out deleted messages and local tool running messages
-	const visibleMessages = useMemo(
-		() =>
-			messages.filter(
-				( message ) =>
-					! deletedMessageIds.has( message.id ) &&
-					! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
-			),
-		[ messages, deletedMessageIds ]
-	);
+	const visibleMessages = useMemo( () => {
+		const filtered = messages.filter(
+			( message ) =>
+				! deletedMessageIds.has( message.id ) &&
+				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
+		);
+		return filtered as unknown as UILibraryMessage[];
+	}, [ messages, deletedMessageIds ] );
 
 	const Chat = (
 		<AgentChat
@@ -226,22 +257,16 @@ export default function AgentDock( {
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
+			clearSuggestions={ clearSuggestions }
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 		/>
 	);
 
-	const OdieChat = (
-		<AgentChat
-			messages={ odieMessages }
-			suggestions={ [] }
-			isProcessing={ isOdieProcessing }
-			error={ null }
-			onSubmit={ sendOdieMessage }
-			onAbort={ () => {} }
-			isLoadingConversation={ isLoadingConversation }
+	const ZendeskChatRoute = (
+		<ZendeskChat
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
@@ -249,7 +274,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			emptyViewSuggestions={ emptyViewSuggestions }
 		/>
 	);
 
@@ -263,7 +287,7 @@ export default function AgentDock( {
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
 			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>
@@ -295,9 +319,9 @@ export default function AgentDock( {
 	return createAgentPortal(
 		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 		<Routes>
-			<Route path="/odie" element={ OdieChat } />
 			<Route path="/chat" element={ Chat } />
 			<Route path="/post" element={ SupportGuideRoute } />
+			<Route path="/zendesk" element={ ZendeskChatRoute } />
 			<Route path="/support-guides" element={ SupportGuidesRoute } />
 			<Route path="/history" element={ History } />
 			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />

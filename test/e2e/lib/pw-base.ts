@@ -55,20 +55,29 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
+	MeSidebarComponent,
+	MyProfilePage,
 	NewSiteResponse,
+	NoticeComponent,
 	PeoplePage,
 	PreviewComponent,
+	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
+	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
 	UserSignupPage,
+	MyHomePage,
+	PlansPage,
+	UseADomainIOwnPage,
+	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
@@ -149,6 +158,18 @@ export const test = base.extend<
 		 */
 		componentDomainSearch: DomainSearchComponent;
 		/**
+		 * Component for the Me sidebar (profile/settings)
+		 */
+		componentMeSidebar: MeSidebarComponent;
+		/**
+		 * Component for displaying notices (e.g., success/error messages).
+		 */
+		componentNotice: NoticeComponent;
+		/**
+		 * Component for selecting items in various flows.
+		 */
+		componentSelectItems: SelectItemsComponent;
+		/**
 		 * Environment variables for the tests.
 		 */
 		environment: typeof envVariables;
@@ -156,6 +177,10 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
+		/**
+		 * Flow encapsulating the Start Import onboarding process.
+		 */
+		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -261,6 +286,10 @@ export const test = base.extend<
 		 */
 		pageMarketing: MarketingPage;
 		/**
+		 * Page object representing the WordPress.com My Profile page.
+		 */
+		pageMyProfile: MyProfilePage;
+		/**
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
@@ -269,9 +298,21 @@ export const test = base.extend<
 		 */
 		pageInvitePeople: InvitePeoplePage;
 		/**
+		 * Page object representing the WordPress.com My Home page.
+		 */
+		pageMyHome: MyHomePage;
+		/**
 		 * Page object representing the WordPress.com People management page.
 		 */
 		pagePeople: PeoplePage;
+		/**
+		 * Page object representing the WordPress.com plans page.
+		 */
+		pagePlans: PlansPage;
+		/**
+		 * Page object representing the WordPress.com purchases page.
+		 */
+		pagePurchases: PurchasesPage;
 		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
@@ -280,6 +321,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com themes listing page.
 		 */
 		pageThemes: ThemesPage;
+		/**
+		 * Page object representing the Use A Domain I Already Own page.
+		 */
+		pageUseADomainIAlreadyOwn: UseADomainIOwnPage;
 		/**
 		 * Page object representing the WordPress.com user signup page.
 		 */
@@ -358,9 +403,21 @@ export const test = base.extend<
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
 	},
+	componentMeSidebar: async ( { page }, use ) => {
+		const meSidebarComponent = new MeSidebarComponent( page );
+		await use( meSidebarComponent );
+	},
+	componentNotice: async ( { page }, use ) => {
+		const noticeComponent = new NoticeComponent( page );
+		await use( noticeComponent );
+	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
 		await use( previewComponent );
+	},
+	componentSelectItems: async ( { page }, use ) => {
+		const selectItemsComponent = new SelectItemsComponent( page );
+		await use( selectItemsComponent );
 	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
@@ -380,6 +437,10 @@ export const test = base.extend<
 	flowLOHPThemeSignup: async ( { page }, use ) => {
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
+	},
+	flowStartImport: async ( { page }, use ) => {
+		const startImportFlow = new StartImportFlow( page );
+		await use( startImportFlow );
 	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
@@ -486,6 +547,14 @@ export const test = base.extend<
 		const marketingPage = new MarketingPage( page );
 		await use( marketingPage );
 	},
+	pageMyHome: async ( { page }, use ) => {
+		const myHomePage = new MyHomePage( page );
+		await use( myHomePage );
+	},
+	pageMyProfile: async ( { page }, use ) => {
+		const myProfilePage = new MyProfilePage( page );
+		await use( myProfilePage );
+	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -498,6 +567,14 @@ export const test = base.extend<
 		const peoplePage = new PeoplePage( page );
 		await use( peoplePage );
 	},
+	pagePlans: async ( { page }, use ) => {
+		const plansPage = new PlansPage( page );
+		await use( plansPage );
+	},
+	pagePurchases: async ( { page }, use ) => {
+		const purchasesPage = new PurchasesPage( page );
+		await use( purchasesPage );
+	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
 		await use( themesDetailPage );
@@ -505,6 +582,10 @@ export const test = base.extend<
 	pageThemes: async ( { page }, use ) => {
 		const themesPage = new ThemesPage( page );
 		await use( themesPage );
+	},
+	pageUseADomainIAlreadyOwn: async ( { page }, use ) => {
+		const useADomainIOwnPage = new UseADomainIOwnPage( page );
+		await use( useADomainIOwnPage );
 	},
 	pageUserSignUp: async ( { page }, use ) => {
 		const userSignupPage = new UserSignupPage( page );
@@ -568,5 +649,24 @@ export const tags = {
 	P2: '@p2',
 	SETTINGS: '@settings',
 };
+
+/**
+ * Skips the current test suite if Mailosaur daily email limit is reached.
+ * Use this at the top of test.describe blocks that use fixtures requiring email verification (e.g., sitePublic).
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfMailosaurLimitReached();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfMailosaurLimitReached(): void {
+	test.skip(
+		envVariables.MAILOSAUR_LIMIT_REACHED,
+		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
+	);
+}
 
 export { expect };

@@ -32,14 +32,16 @@ export const useSuggestionsList = () => {
 		enabled: true,
 	} );
 
+	const isFqdnQuery = !! getTld( query );
+
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
 		...queries.freeSuggestion( query ),
-		enabled: config.skippable,
+		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
-		enabled: !! getTld( query ),
+		enabled: isFqdnQuery,
 	} );
 
 	const premiumSuggestions = useMemo(

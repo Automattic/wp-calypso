@@ -47,10 +47,11 @@ $mobile-card-max-width: 440px;
 }
 
 .plans-grid-next-storage-dropdown__option {
-	display: inline-block;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 	line-height: 20px;
 	min-height: 30px;
-	padding-top: 5px;
 	font-size: 0.75rem;
 	text-align: start;
 }

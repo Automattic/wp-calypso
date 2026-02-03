@@ -5,12 +5,14 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { wpcomLink } from '../../../utils/link';
+import { getRelativeTimeString } from '../../../utils/datetime';
+import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -21,6 +23,8 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
+	isInExpirationGracePeriod,
+	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import {
 	OtherRenewablePurchasesNotice,
@@ -110,7 +114,11 @@ function shouldShowExpiredRenewNotice(
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
-	if ( ! isExpired( currentPurchase ) ) {
+	if ( ! isExpired( currentPurchase ) && ! isInExpirationGracePeriod( currentPurchase ) ) {
+		return false;
+	}
+
+	if ( isAkismetFreeProduct( currentPurchase ) ) {
 		return false;
 	}
 
@@ -149,6 +157,23 @@ function ExpiredRenewNotice( {
 	const includedPurchase = purchase;
 
 	if ( purchase.is_renewable ) {
+		const noticeText = ( () => {
+			if ( isExpired( currentPurchase ) ) {
+				return __( 'This purchase has expired and is no longer in use.' );
+			}
+			const purchaseName = currentPurchase.is_domain
+				? currentPurchase.meta ?? ''
+				: currentPurchase.product_name;
+			const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
+			return sprintf(
+				// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+				__(
+					'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.'
+				),
+				{ purchaseName, expiry }
+			);
+		} )();
+
 		return (
 			<Notice
 				variant="error"
@@ -163,7 +188,7 @@ function ExpiredRenewNotice( {
 					) : undefined
 				}
 			>
-				{ __( 'This purchase has expired and is no longer in use.' ) }
+				{ noticeText }
 			</Notice>
 		);
 	}
@@ -247,9 +272,10 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = wpcomLink(
-				`/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug ?? '' }`
-			);
+			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+				siteSlug: purchase.site_slug ?? '',
+				dashboard: getCurrentDashboard(),
+			} );
 			return;
 		}
 
@@ -276,9 +302,10 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		return;
 	};
 
-	const daysToExpiry = isExpired( purchase )
-		? 0
-		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
+	const daysToExpiry =
+		isExpired( purchase ) || isInExpirationGracePeriod( purchase )
+			? 0
+			: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
 		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY

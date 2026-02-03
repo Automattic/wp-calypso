@@ -3,6 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
 import { useDispatch, useSelector } from 'calypso/state';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
@@ -69,6 +70,7 @@ const OneLoginLayout = ( {
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
+	const { topBarLogo } = usePartnerBranding();
 
 	const SignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
@@ -136,7 +138,7 @@ const OneLoginLayout = ( {
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } compactLogo="always" />;
+		return <Step.TopBar rightElement={ rightElement } compactLogo="always" logo={ topBarLogo } />;
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;

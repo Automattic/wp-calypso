@@ -9,6 +9,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -44,6 +45,10 @@ interface AgentChatProps {
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
+	/** Called to clear the suggestions. */
+	clearSuggestions?: () => void;
+	/** Called when the typing status changes. */
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
@@ -64,8 +69,11 @@ export default function AgentChat( {
 	onAbort,
 	onClose,
 	onExpand,
+	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
+	onTypingStatusChange,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -85,13 +93,14 @@ export default function AgentChat( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
+			clearSuggestions={ clearSuggestions }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onExpand={ onExpand }

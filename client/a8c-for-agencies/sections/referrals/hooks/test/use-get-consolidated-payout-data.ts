@@ -7,7 +7,7 @@ import * as getEstimatedCommission from '../../lib/get-estimated-commission';
 import * as getNextPayoutDate from '../../lib/get-next-payout-date';
 import useGetConsolidatedPayoutData from '../use-get-consolidated-payout-data';
 import type { Referral } from '../../types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 // Mock the dependencies
 jest.mock( '../../lib/get-estimated-commission' );

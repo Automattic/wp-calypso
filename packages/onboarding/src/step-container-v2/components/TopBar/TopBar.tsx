@@ -1,6 +1,7 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import clsx from 'clsx';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
+import { useStepContainerV2Context } from '../../contexts/StepContainerV2Context';
 
 import './style.scss';
 
@@ -35,7 +36,11 @@ export const TopBar = ( {
 	compactLogo,
 	hideLogo = false,
 }: TopBarProps ) => {
-	const defaultLogo = (
+	const context = useStepContainerV2Context();
+
+	// Context logo takes precedence over default WordPress logo.
+	// The `logo` prop provides an explicit override for both.
+	const defaultWordPressLogo = (
 		<div
 			className={ clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
 				'is-compact': compactLogo,
@@ -53,9 +58,12 @@ export const TopBar = ( {
 			/>
 		</div>
 	);
+
+	const resolvedLogo = logo ?? context.logo ?? defaultWordPressLogo;
+
 	return (
 		<div className="step-container-v2__top-bar">
-			{ ! hideLogo && ( logo ?? defaultLogo ) }
+			{ ! hideLogo && resolvedLogo }
 
 			{ ! hideLogo && leftElement && <div className="step-container-v2__top-bar-divider" /> }
 

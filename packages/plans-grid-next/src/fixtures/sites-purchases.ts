@@ -122,7 +122,7 @@ export default [
 		payment_name: 'Test User',
 		payment_country_code: 'US',
 		payment_country_name: 'United States',
-		is_rechargable: true,
+		is_rechargeable: true,
 		payment_type: 'credit_card',
 	},
 ];

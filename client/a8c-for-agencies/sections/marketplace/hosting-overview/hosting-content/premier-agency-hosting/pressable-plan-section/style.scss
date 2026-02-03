@@ -25,6 +25,43 @@
 	@include body-small;
 }
 
+.pressable-plan-card-content__price-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.pressable-plan-card-content__price-original {
+	text-decoration: line-through;
+	@include body-small;
+	color: var(--color-neutral-50);
+}
+
+.pressable-plan-card-content__price-discount {
+	@include body-small;
+	color: var(--color-success-50);
+	background-color: var(--color-success-5);
+	padding: 4px 8px;
+	border-radius: 4px;
+	text-wrap: nowrap;
+}
+
+.pressable-plan-card-content__cta-section {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.pressable-plan-card-content__promo-footnote {
+	@include body-small;
+	color: var(--color-neutral-50);
+
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}
+
 // We need to do this specifically to override the white-space.
 .pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button.pressable-plan-card-content__cta-button {
 	min-width: 0;

@@ -11,7 +11,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { isTestModeEnvironment } from './util';
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
-export const fetchMessagingAuth = async ( type: string = 'zendesk' ) => {
+export const fetchMessagingAuth = async ( type: string = 'zendesk', initializeWidget = true ) => {
 	const isTestMode = isTestModeEnvironment();
 	const params = { type, test_mode: String( isTestMode ) };
 	const wpcomParams = new URLSearchParams( params );
@@ -31,27 +31,32 @@ export const fetchMessagingAuth = async ( type: string = 'zendesk' ) => {
 
 	const jwt = auth?.user?.jwt;
 
-	return new Promise< { isLoggedIn: boolean; jwt: string; externalId: string | undefined } >(
-		( resolve, reject ) => {
-			if ( ! jwt ) {
-				reject();
+	if ( initializeWidget ) {
+		return new Promise< { isLoggedIn: boolean; jwt: string; externalId: string | undefined } >(
+			( resolve, reject ) => {
+				if ( ! jwt ) {
+					reject();
+				}
+
+				window?.zE?.( 'messenger', 'loginUser', function ( callback ) {
+					callback( jwt );
+					resolve( { isLoggedIn: true, jwt, externalId: auth?.user.external_id } );
+				} );
 			}
-			window?.zE?.( 'messenger', 'loginUser', function ( callback ) {
-				callback( jwt );
-				resolve( { isLoggedIn: true, jwt, externalId: auth?.user.external_id } );
-			} );
-		}
-	);
+		);
+	}
+	return { isLoggedIn: true, jwt, externalId: auth?.user.external_id };
 };
 
 export function useAuthenticateZendeskMessaging(
 	enabled = false,
-	type: ZendeskAuthType = 'zendesk'
+	type: ZendeskAuthType = 'zendesk',
+	initializeWidget = true
 ) {
 	const isTestMode = isTestModeEnvironment();
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', type, isTestMode ],
-		queryFn: async () => fetchMessagingAuth( type ),
+		queryKey: [ 'getMessagingAuth', type, isTestMode, initializeWidget ],
+		queryFn: async () => fetchMessagingAuth( type, initializeWidget ),
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
 	} );

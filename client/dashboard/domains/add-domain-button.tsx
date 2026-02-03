@@ -1,37 +1,32 @@
+import { useRouter } from '@tanstack/react-router';
 import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { siteRoute } from '../app/router/sites';
+import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
+import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
-export function AddDomainButton( {
-	siteSlug,
-	domainConnectionSetupUrl,
-	redirectTo,
-}: {
-	siteSlug?: string;
-	domainConnectionSetupUrl?: string;
-	redirectTo?: string;
-} ) {
+export default function AddDomainButton() {
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+
 	const buildQueryArgs = () => {
 		const queryArgs: Record< string, string > = {};
+
 		if ( siteSlug ) {
 			queryArgs.siteSlug = siteSlug;
-		}
-		if ( domainConnectionSetupUrl ) {
-			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
-		}
-		if ( redirectTo ) {
-			queryArgs.redirect_to = redirectTo;
+			queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
 		}
 
-		queryArgs.back_to = redirectToDashboardLink();
+		queryArgs.dashboard = getCurrentDashboard();
+
 		return queryArgs;
 	};
 
 	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
 		const queryArgs = buildQueryArgs();
-		window.location.href = siteSlug ? addQueryArgs( urlWithSite, queryArgs ) : urlWithoutSite;
+		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
 		return false;
 	};
 

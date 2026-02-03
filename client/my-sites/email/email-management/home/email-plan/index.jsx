@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +7,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -54,15 +56,31 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 
 import './style.scss';
 
-const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
+const UpgradeNavItem = ( { currentRoute, domain, selectedSiteId, selectedSiteSlug } ) => {
 	const translate = useTranslate();
+
+	const productSlug = TITAN_MAIL_YEARLY_SLUG;
+	const siteProduct = useSelector( ( state ) =>
+		selectedSiteId ? getSiteAvailableProduct( state, selectedSiteId, productSlug ) : null
+	);
+	const trialMonths = siteProduct?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 	if ( hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain ) ) {
 		return null;
 	}
+	const badgeTitle =
+		siteProduct?.introductory_offer?.interval_unit === 'year'
+			? translate( 'Try %(months)d months free', {
+					args: {
+						months: trialMonths,
+					},
+					comment: '%(months)d is the number of free trial months',
+			  } )
+			: translate( 'Try 3 months free' );
 
 	return (
 		<VerticalNavItem
@@ -71,7 +89,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 		>
 			{ translate( 'Upgrade to Professional Email' ) }
 			{ isDomainEligibleForTitanIntroductoryOffer( domain ) && (
-				<Badge type="info-green">{ translate( 'Try 3 months free' ) }</Badge>
+				<Badge type="info-green">{ badgeTitle }</Badge>
 			) }
 		</VerticalNavItem>
 	);
@@ -80,6 +98,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 UpgradeNavItem.propTypes = {
 	currentRoute: PropTypes.string,
 	domain: PropTypes.object.isRequired,
+	selectedSiteId: PropTypes.number,
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
@@ -344,6 +363,7 @@ function EmailPlan( {
 
 	return (
 		<>
+			{ selectedSite && <QuerySiteProducts siteId={ selectedSite.ID } /> }
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 			{ ! hideMailPoetUpsell && <MailPoetUpsell /> }
@@ -379,6 +399,7 @@ function EmailPlan( {
 						<UpgradeNavItem
 							currentRoute={ currentRoute }
 							domain={ domain }
+							selectedSiteId={ selectedSite?.ID }
 							selectedSiteSlug={ selectedSite.slug }
 						/>
 						{ renderManageAllMailboxesNavItem() }

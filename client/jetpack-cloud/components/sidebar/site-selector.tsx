@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import BaseSiteSelector from 'calypso/components/site-selector';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasJetpackPartnerAccess } from 'calypso/state/partner-portal/partner/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import useOutsideClickCallback from './use-outside-click-callback';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /* NOTE: Code for this component was borrowed from calypso/my-sites/picker,
  * with some slight modifications because we can safely assume we're using
@@ -44,6 +45,11 @@ const SiteSelector = () => {
 	const siteSelectorRef = useHideSiteSelectorOnFocusOut();
 	const canAccessJetpackManage = useSelector( hasJetpackPartnerAccess );
 
+	// Filter out garden sites and deleted sites from the site selector
+	const filterSites = useCallback( ( site: SiteDetails ) => {
+		return ! site?.is_garden && ! site?.is_deleted;
+	}, [] );
+
 	return (
 		<BaseSiteSelector
 			forwardRef={ siteSelectorRef }
@@ -62,6 +68,7 @@ const SiteSelector = () => {
 			keepCurrentSection={ ! canAccessJetpackManage }
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
+			filter={ filterSites }
 		/>
 	);
 };

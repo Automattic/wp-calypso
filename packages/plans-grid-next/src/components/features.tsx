@@ -36,9 +36,17 @@ const FeatureBadge = styled.span`
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 20px;
+	line-height: 16px;
 	margin-inline-start: 8px;
-	vertical-align: middle;
+	vertical-align: baseline;
+	text-decoration: none;
+	white-space: nowrap;
+
+	@media ( max-width: 480px ) {
+		height: 16px;
+		padding: 0 4px;
+		margin-inline-start: 6px;
+	}
 `;
 
 // var1d experiment: Checkmark bullet icon for differentiator features
@@ -106,7 +114,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips } = usePlansGridContext();
+	const { enableFeatureTooltips, isExperimentVariant, isVar1dVariant, isVar4Variant } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -137,6 +146,17 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'upload-video',
 				];
 
+				// Apply green styling for domain feature in experiment variants (not var1d, var4, or control)
+				const isCustomDomainFeatureWithPaidDomain =
+					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
+					paidDomainName &&
+					! isFreePlan( planSlug );
+				const shouldHighlightDomainFeature =
+					isCustomDomainFeatureWithPaidDomain &&
+					isExperimentVariant &&
+					! isVar1dVariant &&
+					! isVar4Variant;
+
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
@@ -153,6 +173,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
 					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-domain-included-highlight': shouldHighlightDomainFeature,
 				} );
 
 				return (
@@ -190,12 +211,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 										>
 											<>
 												{ currentFeature.isDifferentiatorFeature && <DifferentiatorCheckIcon /> }
-												{ currentFeature.getTitle( {
-													domainName: paidDomainName,
-												} ) }
-												{ currentFeature.badgeText && (
-													<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
-												) }
+												<span className="plan-features-2023-grid__item-text-content">
+													{ currentFeature.getTitle( {
+														domainName: paidDomainName,
+													} ) }
+													{ currentFeature.badgeText && (
+														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+													) }
+												</span>
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (

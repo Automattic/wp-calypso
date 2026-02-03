@@ -6,10 +6,10 @@ import {
 	ListItemCardActions,
 	type Action,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralProducts from '../components/referral-products';
 import ReferralStatus from '../components/referral-status';
 import type { ReferralAPIResponse } from '../../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 

@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
@@ -23,6 +24,7 @@ import {
 	siteCurrentPlanQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
 	purchaseQuery,
@@ -53,6 +55,7 @@ import {
 	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
@@ -76,18 +79,24 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async ( { context } ) => {
-		// Preload the default sites list response without blocking.
-		if (
-			! isEnabled( 'dashboard/v2/es-site-list' ) &&
-			! isEnabled( 'dashboard/v2/paginated-site-list' )
-		) {
-			queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+		const tasks: Promise< unknown >[] = [];
+
+		tasks.push( queryClient.ensureQueryData( isAutomatticianQuery() ) );
+		tasks.push( queryClient.ensureQueryData( rawUserPreferencesQuery() ) );
+
+		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
+			tasks.push(
+				queryClient.ensureQueryData(
+					context.config.queries.sitesQuery( {
+						source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
+						site_visibility: 'visible',
+						include_a8c_owned: false,
+					} )
+				)
+			);
 		}
 
-		await Promise.all( [
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+		await Promise.all( tasks );
 	},
 } );
 
@@ -629,6 +638,38 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
+export const siteSettingsAIToolsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI tools' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'ai-tools',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		if ( ! isEnabled( 'wordpress-ai-tools' ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsRedirectRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsGeneralRedirect' },
 	head: () => ( {
@@ -967,6 +1008,61 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsCrontabRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cron' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'crontab',
+	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! isEnabled( 'hosting/crontab' ) ) {
+			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} );
+
+export const siteSettingsCrontabIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteCrontabsQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsCrontabAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Scheduled Job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-add' )( {
+			component: d.default,
 		} )
 	)
 );
@@ -1359,6 +1455,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
+		siteSettingsAIToolsRoute,
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,
@@ -1368,6 +1465,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsSftpSshRoute,
+		siteSettingsCrontabRoute.addChildren( [
+			siteSettingsCrontabIndexRoute,
+			siteSettingsCrontabAddRoute,
+		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
 			siteSettingsRepositoriesConnectRoute,

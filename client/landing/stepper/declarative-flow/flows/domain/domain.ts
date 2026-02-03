@@ -25,8 +25,9 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
@@ -61,12 +62,16 @@ const domain: FlowV2< typeof initialize > = {
 	initialize,
 	useAssertConditions() {
 		const { site, siteSlug } = useSiteData();
+		const selectedSite = useSelector( getSelectedSite );
 
 		if ( ! siteSlug ) {
 			return { state: AssertConditionState.SUCCESS };
 		}
 
-		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+		// We want to render the step only if the site and selected site are in the Redux store
+		return {
+			state: site && selectedSite ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING,
+		};
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
@@ -420,13 +425,16 @@ const domain: FlowV2< typeof initialize > = {
 							`/sites/${ providedDependencies.siteSlug }/domains`
 						);
 
-						persistSignupDestination( destination );
-						setSignupCompleteFlowName( this.name );
-						setSignupCompleteSlug( providedDependencies.siteSlug );
-
+						// When going to checkout, rely on the redirect_to param instead of
+						// the signup destination cookie. Setting signupFlowName to 'domain'
+						// causes checkout to incorrectly append receipt ID to the cookie URL.
 						if ( providedDependencies.goToCheckout ) {
 							return goToCheckout( providedDependencies.siteSlug as string );
 						}
+
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( this.name );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
