@@ -1127,7 +1127,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 			FEATURE_CUSTOM_DOMAIN,
-			...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
+			FEATURE_PLUGINS_THEMES,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
 			FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1994,7 +1994,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
-		...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
+		FEATURE_PLUGINS_THEMES,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
