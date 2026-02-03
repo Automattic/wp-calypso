@@ -1082,7 +1082,7 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'People reached' ) }
+												{ translate( 'Ad views' ) }
 											</span>
 											<span className="campaign-item-details__text">
 												<span className="wp-brand-font">

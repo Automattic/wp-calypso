@@ -13,7 +13,13 @@
 
 	@include break-small {
 		justify-content: center;
-		min-height: min(70vh, 676px);
+		min-height: calc(100dvh - var(--dashboard-empty-state-offset, 30dvh) - var(--page-layout-block-padding, #{$grid-unit-40}));
+	}
+}
+
+.dashboard-empty-state__wrapper-content {
+	@include break-medium {
+		padding-block: $grid-unit-40;
 	}
 }
 
