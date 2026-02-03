@@ -47,9 +47,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 
 function MyComponent() {
 	const { setImageStudioOpen } = useDispatch( 'image-studio' );
-	const isOpen = useSelect( ( select ) =>
-		select( 'image-studio' ).getIsImageStudioOpen()
-	);
+	const isOpen = useSelect( ( select ) => select( 'image-studio' ).getIsImageStudioOpen() );
 
 	return <button onClick={ () => setImageStudioOpen( true ) }>Open Image Studio</button>;
 }
@@ -74,20 +72,23 @@ Test files are located alongside their source files with `.test.ts` or `.test.ts
 
 ### Manual Testing
 
-1. **Build the package:**
-   ```bash
-   yarn workspace @automattic/image-studio build
-   ```
+**Step 1 — Build the package:**
 
-2. **Test on a WordPress site:**
-   - Navigate to Media Library: `/wp-admin/upload.php?flags=image-studio-calypso`
-   - Click on any image to open Image Studio in Edit mode
-   - Or click "Generate" to create new images
+```bash
+yarn workspace @automattic/image-studio build
+```
 
-3. **Test in Block Editor:**
-   - Open the post/page editor
-   - Add an Image block
-   - Select the image and look for the Image Studio toolbar button
+**Step 2 — Test on a WordPress site:**
+
+- Navigate to Media Library: `/wp-admin/upload.php?flags=image-studio-calypso`
+- Click on any image to open Image Studio in Edit mode
+- Or click "Generate" to create new images
+
+**Step 3 — Test in Block Editor:**
+
+- Open the post/page editor
+- Add an Image block
+- Select the image and look for the Image Studio toolbar button
 
 ### E2E Testing
 
@@ -114,24 +115,27 @@ yarn workspace @automattic/image-studio watch
 
 Image Studio is deployed as part of the `agents-manager` bundle to `widgets.wp.com`:
 
-1. **Build agents-manager app:**
-   ```bash
-   yarn workspace @automattic/agents-manager build
-   ```
+**Build agents-manager app:**
 
-2. **The bundle is deployed to:**
-   - `https://widgets.wp.com/agents-manager/image-studio.min.js`
-   - `https://widgets.wp.com/agents-manager/image-studio.css`
+```bash
+yarn workspace @automattic/agents-manager build
+```
 
-3. **PHP enqueues the scripts** in `jetpack-mu-wpcom` when on an Image Studio screen:
-   - Media Library (`upload.php`)
-   - Block Editor (when editing images)
-   - External Media modal
+**The bundle is deployed to:**
+
+- `https://widgets.wp.com/agents-manager/image-studio.min.js`
+- `https://widgets.wp.com/agents-manager/image-studio.css`
+
+**PHP enqueues the scripts** in `jetpack-mu-wpcom` when on an Image Studio screen:
+
+- Media Library (`upload.php`)
+- Block Editor (when editing images)
+- External Media modal
 
 ### Feature Flags
 
-| Flag | Description |
-|------|-------------|
+| Flag                   | Description                                                |
+| ---------------------- | ---------------------------------------------------------- |
 | `image-studio-calypso` | Enables Image Studio from Calypso (without Big Sky plugin) |
 
 Use via URL: `?flags=image-studio-calypso`
@@ -181,16 +185,16 @@ src/
 ```tsx
 // Main entry point
 export {
-	initImageStudioIntegration,  // Initialize on page load
-	registerBlockEditorFilters,   // Register Gutenberg integrations
-	ImageStudio,                  // Main component
-	store,                        // WordPress data store
+	initImageStudioIntegration, // Initialize on page load
+	registerBlockEditorFilters, // Register Gutenberg integrations
+	ImageStudio, // Main component
+	store, // WordPress data store
 } from '@automattic/image-studio';
 
 // Provider exports (for agents-manager)
 export {
-	toolProvider,      // Abilities provider
-	contextProvider,   // Context provider
+	toolProvider, // Abilities provider
+	contextProvider, // Context provider
 } from '@automattic/image-studio/provider';
 ```
 
@@ -199,6 +203,7 @@ export {
 ### Store
 
 The `image-studio` store manages:
+
 - Current image state (URL, attachment ID, metadata)
 - UI state (open/closed, mode, dialogs)
 - Draft management (temporary images during editing)
@@ -207,11 +212,13 @@ The `image-studio` store manages:
 ### Abilities
 
 Image Studio registers WordPress Abilities for AI agent integration:
+
 - `image-studio/update-canvas-image` - Update the displayed image
 
 ### Block Editor Integration
 
 Filters registered for Gutenberg:
+
 - Image block toolbar button
 - Generate button in image placeholder
 - External media integration

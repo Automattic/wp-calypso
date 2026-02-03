@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/image-studio",
 	"version": "1.0.0",
-	"description": "Image Studio - AI-powered image editing and generation for WordPress",
+	"description": "Image Studio - AI-powered image editing and generation for WordPress.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
