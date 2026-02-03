@@ -59,8 +59,8 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 					{ translate( 'Tested on %(date)s', {
 						args: {
 							date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
-								month: 'long',
-								day: 'numeric',
+								dateStyle: 'long',
+								timeStyle: 'numeric',
 							} ).format( new Date( parseInt( timestamp ) * 1000 ) ),
 						},
 					} ) }
