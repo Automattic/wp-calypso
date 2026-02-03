@@ -18,6 +18,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import useCustomEventHandler from '../../hooks/use-custom-event-handler';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
@@ -82,7 +83,7 @@ export default function AgentDock( {
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
 
-	const { isDocked, canDock, dock, undock, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
@@ -171,6 +172,8 @@ export default function AgentDock( {
 		// so that messages will be stored in the same conversation.
 		getSessionId: () => sessionId || getStoredSessionId(),
 	} );
+
+	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
 
 	const handleNewChat = () => {
 		navigate( '/' );
