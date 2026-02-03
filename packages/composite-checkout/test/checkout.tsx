@@ -791,6 +791,57 @@ describe( 'Checkout', () => {
 				expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 			} );
 		} );
+
+		it( 'validates an active completed non-final step when continuing', async () => {
+			// This test verifies that when a step is marked complete but is still active
+			// (e.g., user went back to edit it), attempting to proceed past it will
+			// revalidate the step instead of skipping validation.
+			const firstStepCallback = jest.fn();
+			firstStepCallback.mockResolvedValue( true );
+
+			const { getAllByText, getByText } = render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'editable-step',
+							className: 'editable-step',
+							hasStepNumber: true,
+							titleContent: <span>First Step</span>,
+							activeStepContent: <span>First step content</span>,
+							completeStepContent: <span>First step complete</span>,
+							isCompleteCallback: firstStepCallback,
+							getEditButtonAriaLabel: () => 'Edit first step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+						steps[ 1 ], // Contact step
+					] }
+				/>
+			);
+
+			const user = userEvent.setup();
+
+			// Complete the first step (moves to second step)
+			const firstContinue = getAllByText( 'Continue' )[ 0 ];
+			await user.click( firstContinue );
+
+			await waitFor( () => {
+				expect( firstStepCallback ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			// Go back to the first step
+			const editButton = getByText( 'Edit' );
+			await user.click( editButton );
+
+			// The first step is now active but marked complete. Click Continue again.
+			// This should revalidate the step (call the callback again).
+			const continueAgain = getAllByText( 'Continue' )[ 0 ];
+			await user.click( continueAgain );
+
+			// Verify the callback was called again for revalidation
+			await waitFor( () => {
+				expect( firstStepCallback ).toHaveBeenCalledTimes( 2 );
+			} );
+		} );
 	} );
 
 	describe( 'submitting the form', function () {
