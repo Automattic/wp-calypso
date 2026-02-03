@@ -12,13 +12,8 @@ export const siteCrontabsQuery = ( siteId: number ) =>
 export const siteCrontabCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( params: CreateCrontabParams ) => createCrontab( siteId, params ),
-		onSuccess: ( newCrontab ) => {
-			queryClient.setQueryData( siteCrontabsQuery( siteId ).queryKey, ( currentCrontabs ) => {
-				if ( ! currentCrontabs ) {
-					return [ newCrontab ];
-				}
-				return [ ...currentCrontabs, newCrontab ];
-			} );
+		onSuccess: () => {
+			queryClient.invalidateQueries( siteCrontabsQuery( siteId ) );
 		},
 	} );
 

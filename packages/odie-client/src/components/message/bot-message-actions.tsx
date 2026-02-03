@@ -10,23 +10,35 @@ import { useSendOdieFeedback } from '../../data';
 import type { Message } from '../../types';
 
 const BotMessageActions = ( { message }: { message: Message } ) => {
-	const { setMessageLikedStatus, trackEvent, currentUser } = useOdieAssistantContext();
+	const { trackEvent, currentUser } = useOdieAssistantContext();
 	const isLoggedIn = !! currentUser?.ID;
 	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
 	const [ isCopied, setIsCopied ] = useState( false );
 
-	const liked = message.rating_value?.toString() === '1' || message.liked || false;
-	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
+	// Track liked state locally to avoid re-rendering all messages
+	const [ localLikedStatus, setLocalLikedStatus ] = useState< boolean | null >( null );
+
+	// Use local state if set, otherwise fall back to message props
+	const liked =
+		localLikedStatus === true ||
+		( localLikedStatus === null &&
+			( message.rating_value?.toString() === '1' || message.liked === true ) );
+
+	const notLiked =
+		localLikedStatus === false ||
+		( localLikedStatus === null &&
+			( message.rating_value?.toString() === '0' || message.liked === false ) );
 	const rated = liked || notLiked;
 
 	const handleIsHelpful = useCallback(
 		( isHelpful: boolean ) => {
+			// Update local state only - no global re-render
+			setLocalLikedStatus( isHelpful );
+
 			sendOdieMessageFeedback( {
 				messageId: Number( message.message_id ),
 				ratingValue: isHelpful ? ODIE_THUMBS_UP_RATING_VALUE : ODIE_THUMBS_DOWN_RATING_VALUE,
 			} );
-
-			setMessageLikedStatus( message, isHelpful );
 
 			trackEvent( 'chat_message_action_feedback', {
 				action: 'feedback',
@@ -34,7 +46,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 				message_id: message.message_id,
 			} );
 		},
-		[ message, sendOdieMessageFeedback, setMessageLikedStatus, trackEvent ]
+		[ message.message_id, sendOdieMessageFeedback, trackEvent ]
 	);
 
 	const handleCopyToClipboard = useCallback( async () => {

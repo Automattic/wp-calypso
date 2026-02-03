@@ -63,19 +63,16 @@
 
 		.site__title,
 		.site__domain {
-			color: var(--color-sidebar-menu-selected-text);
-			&::after {
-				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background ) );
-			}
+			color: var(--color-accent);
 		}
 
 		.count {
-			border-color: var(--color-sidebar-menu-selected-text);
-			color: var(--color-sidebar-menu-selected-text);
+			border-color: var(--color-accent);
+			color: var(--color-accent);
 		}
 
 		&.is-private .site__title::before {
-			color: var(--color-sidebar-menu-selected-text);
+			color: var(--color-accent);
 		}
 	}
 }
@@ -101,7 +98,9 @@
 	.site__badge {
 		// Only apply hover styling to specific badge types that should change
 		// Exclude styled-component badges (staging, production, etc.) which handle their own hover states
-		&:not([class*="SitesLaunchStatusBadge"]):not([class*="SitesStagingBadge"]):not([class*="SitesProductionBadge"]) {
+		&:not([class*="SitesLaunchStatusBadge"]),
+		&:not([class*="SitesStagingBadge"]),
+		&:not([class*="SitesProductionBadge"]) {
 			background-color: var(--color-surface);
 		}
 

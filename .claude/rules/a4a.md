@@ -1,8 +1,8 @@
 ---
-description: Rules that applies for Automattic for Agencies related development
-globs: client/a8c-for-agencies/**/*.*
+paths:
+  - client/a8c-for-agencies/**
 ---
-Use this rules on top of [calypso-client-rules.mdc](mdc:.cursor/rules/calypso-client-rules.mdc)
+Use this rules on top of @.claude/rules/calypso-client.md.
 
 ## Code Style and Structure
 
@@ -12,7 +12,7 @@ Use this rules on top of [calypso-client-rules.mdc](mdc:.cursor/rules/calypso-cl
 
 ### Style Conventions
 
-- Use [style.scss](mdc:client/a8c-for-agencies/style.scss) as an example.
+- Use @client/a8c-for-agencies/style.scss as an example.
 - Don't use `&--` & `&__` selectors and write full name when defining styles.
 - Avoid using `--studio*` colors and instead use `--color*`. Example, instead of `var(--studio-gray-50)` use `var(--color-neutral-50)`.
 

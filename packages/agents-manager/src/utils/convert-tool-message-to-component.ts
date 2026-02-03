@@ -71,28 +71,7 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle start-over action component messages
-		if (
-			textData.tool_id === 'big_sky__client_assistants' &&
-			textData.data?.assistantId === 'big-sky-site-admin'
-		) {
-			const StartOverActions = getChatComponent?.( 'start-over-actions' );
-
-			if ( StartOverActions ) {
-				return [
-					{
-						...message,
-						content: [
-							{
-								type: 'component' as const,
-								component: StartOverActions,
-							},
-						],
-					},
-				];
-			}
-		}
-
-		return [ message ];
+		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
+		return [];
 	} );
 }

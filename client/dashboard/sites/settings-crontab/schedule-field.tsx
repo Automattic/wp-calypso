@@ -85,48 +85,48 @@ function formatSchedulePreview(
 	customFrequency: CustomFrequency
 ): string {
 	if ( scheduleType === 'hourly' ) {
-		return __( 'Runs once every hour' );
+		return __( 'Runs once every hour.' );
 	}
 	if ( scheduleType === 'daily' ) {
-		return __( 'Runs once per day' );
+		return __( 'Runs once per day.' );
 	}
 	if ( scheduleType === 'weekly' ) {
-		return __( 'Runs once per week' );
+		return __( 'Runs once per week.' );
 	}
 
 	// Custom schedule
 	if ( customFrequency === 'h' ) {
 		if ( customNumber === 1 ) {
-			return __( 'Runs once per hour' );
+			return __( 'Runs once per hour.' );
 		}
 		const interval = Math.floor( 60 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times, %2$d is the interval in minutes */
-			__( 'Runs %1$d times per hour (every %2$d minutes)' ),
+			__( 'Runs %1$d times per hour (every %2$d minutes).' ),
 			customNumber,
 			interval
 		);
 	}
 	if ( customFrequency === 'd' ) {
 		if ( customNumber === 1 ) {
-			return __( 'Runs once per day' );
+			return __( 'Runs once per day.' );
 		}
 		const interval = Math.floor( 24 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times, %2$d is the interval in hours */
-			__( 'Runs %1$d times per day (every %2$d hours)' ),
+			__( 'Runs %1$d times per day (every %2$d hours).' ),
 			customNumber,
 			interval
 		);
 	}
 	if ( customFrequency === 'w' ) {
 		if ( customNumber === 1 ) {
-			return __( 'Runs once per week' );
+			return __( 'Runs once per week.' );
 		}
 		const interval = Math.floor( 7 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times, %2$d is the interval in days */
-			__( 'Runs %1$d times per week (every %2$d days)' ),
+			__( 'Runs %1$d times per week (every %2$d days).' ),
 			customNumber,
 			interval
 		);
@@ -135,7 +135,7 @@ function formatSchedulePreview(
 	return '';
 }
 
-export default function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
+export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
 	const parsed = useMemo( () => parseScheduleValue( value ), [ value ] );
 
 	const { scheduleType, customNumber, customFrequency } = parsed;
@@ -200,8 +200,9 @@ export default function ScheduleField( { value, onChange, disabled }: ScheduleFi
 				</HStack>
 			) }
 			{ preview && (
-				<Text variant="muted" size="small">
-					{ preview }
+				<Text variant="muted" size={ 12 }>
+					{ preview }{ ' ' }
+					{ __( 'The specific execution time is randomized to prevent system overload.' ) }
 				</Text>
 			) }
 		</VStack>

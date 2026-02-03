@@ -16,7 +16,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import ScheduleField from './schedule-field';
+import { ScheduleField } from './schedule-field';
 
 interface AddCrontabFormData {
 	schedule: string;

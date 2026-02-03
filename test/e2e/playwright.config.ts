@@ -31,7 +31,6 @@ const reporter: ReporterDescription[] = [
 
 if ( process.env.CI ) {
 	reporter.push( [ 'list' ] );
-	reporter.push( [ 'blob' ] );
 }
 
 // All end-to-end tests use a custom user agent containing this string.
