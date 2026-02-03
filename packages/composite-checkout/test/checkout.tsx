@@ -922,6 +922,78 @@ describe( 'Checkout', () => {
 
 			expect( processor ).toHaveBeenCalled();
 		} );
+
+		it( 'skips validation for a step with skipValidationOnSubmit set to true', async () => {
+			const stepCallback = jest.fn();
+			stepCallback.mockResolvedValue( false ); // Step validation would fail
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+
+			render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'skip-validation-step',
+							className: 'skip-validation-step',
+							hasStepNumber: true,
+							titleContent: <span>Skip Validation Step</span>,
+							activeStepContent: <span>Skip validation content</span>,
+							completeStepContent: <span>Skip validation complete</span>,
+							isCompleteCallback: stepCallback,
+							skipValidationOnSubmit: true,
+							getEditButtonAriaLabel: () => 'Edit skip validation step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+					] }
+					paymentProcessor={ processor }
+				/>
+			);
+
+			const submitButton = screen.getByText( 'Pay Please' );
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			// Payment processor should be called even though step validation would fail
+			expect( processor ).toHaveBeenCalled();
+			// Step callback should not be called during submit validation
+			expect( stepCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'validates a step without skipValidationOnSubmit and blocks submission if invalid', async () => {
+			const stepCallback = jest.fn();
+			stepCallback.mockResolvedValue( false ); // Step validation fails
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+
+			render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'normal-step',
+							className: 'normal-step',
+							hasStepNumber: true,
+							titleContent: <span>Normal Step</span>,
+							activeStepContent: <span>Normal content</span>,
+							completeStepContent: <span>Normal complete</span>,
+							isCompleteCallback: stepCallback,
+							getEditButtonAriaLabel: () => 'Edit normal step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+					] }
+					paymentProcessor={ processor }
+				/>
+			);
+
+			const submitButton = screen.getByText( 'Pay Please' );
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			// Step callback should be called for validation
+			await waitFor( () => {
+				expect( stepCallback ).toHaveBeenCalled();
+			} );
+
+			// Payment processor should NOT be called because validation failed
+			expect( processor ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
 
@@ -1040,6 +1112,7 @@ function createStepObjectConverter( paymentData ) {
 					isCompleteCallback={ () => stepObject.isCompleteCallback( { paymentData } ) }
 					editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 					nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+					skipValidationOnSubmit={ stepObject.skipValidationOnSubmit }
 					className={ stepObject.className }
 				/>
 			);

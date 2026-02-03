@@ -145,6 +145,7 @@ This component's props are:
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
+- `skipValidationOnSubmit?: boolean`. If true, this step will not be validated when the submit button is clicked. Defaults to false. This is useful for steps like the payment method step that have their own validation logic and should not block form submission. The [PaymentMethodStep](#PaymentMethodStep) has this set to true by default.
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 - `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.

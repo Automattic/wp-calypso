@@ -65,6 +65,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		totalSteps: 0,
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	},
 	actions: {
 		makeStepActive: noop,
@@ -98,6 +99,7 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepCompleteStatus: {},
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	};
 }
 
@@ -164,10 +166,12 @@ function createCheckoutStepGroupActions(
 	const setStepCompleteCallback = (
 		stepNumber: number,
 		stepId: string,
-		callback: StepCompleteCallback
+		callback: StepCompleteCallback,
+		skipValidationOnSubmit?: boolean
 	) => {
 		state.stepIdMap[ stepId ] = stepNumber;
 		state.stepCompleteCallbackMap[ stepNumber ] = callback;
+		state.stepSkipValidationOnSubmitMap[ stepNumber ] = skipValidationOnSubmit ?? false;
 	};
 
 	const getStepCompleteCallback = ( stepNumber: number ) => {
@@ -487,6 +491,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
+	skipValidationOnSubmit,
 	onPageLoadError,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
@@ -520,7 +525,7 @@ export const CheckoutStep = ( {
 		setFormReady();
 		return completeResult;
 	};
-	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep, skipValidationOnSubmit );
 
 	const classNames = [
 		'checkout-step',
@@ -669,7 +674,7 @@ export function CheckoutFormSubmit( {
 	onPageLoadError?: CheckoutPageErrorCallback;
 } ) {
 	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
 	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
@@ -690,14 +695,11 @@ export function CheckoutFormSubmit( {
 		const hasActiveStep = activeStepNumber > 0 && activeStepNumber <= totalSteps;
 
 		if ( hasActiveStep ) {
-			// If the active step is incomplete, validate it before proceeding.
-			// Also validate if it's a completed step that's not the last step (since the
-			// user may have gone back to edit it and we need to revalidate the changes).
-			const isLastStep = activeStepNumber === totalSteps;
-			const isActiveStepIncomplete = ! stepCompleteStatus[ activeStepNumber ];
-			const isCompletedNonFinalStep = ! isLastStep;
+			// Check if this step should skip validation on submit
+			const shouldSkipValidation = stepSkipValidationOnSubmitMap[ activeStepNumber ];
 
-			if ( isActiveStepIncomplete || isCompletedNonFinalStep ) {
+			if ( ! shouldSkipValidation ) {
+				// Validate the active step (whether it's complete or incomplete)
 				debug( `Validating active step ${ activeStepNumber } before submission` );
 				const stepCompleteCallback = getStepCompleteCallback( activeStepNumber );
 				const isStepComplete = await stepCompleteCallback();
@@ -723,6 +725,7 @@ export function CheckoutFormSubmit( {
 		activeStepNumber,
 		totalSteps,
 		stepCompleteStatus,
+		stepSkipValidationOnSubmitMap,
 		getStepCompleteCallback,
 		setStepCompleteStatus,
 		validateForm,
