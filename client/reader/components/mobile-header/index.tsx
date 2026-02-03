@@ -4,9 +4,9 @@ import AppTitle from '../app-title';
 import './index.scss';
 
 export const MobileHeader = () => {
-	const isDesktop = useViewportMatch( 'small', '>=' );
+	const isTabletOrDesktop = useViewportMatch( 'small', '>=' );
 
-	if ( isDesktop ) {
+	if ( isTabletOrDesktop ) {
 		return null;
 	}
 
