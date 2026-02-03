@@ -43,7 +43,9 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { requestSite } from 'calypso/state/sites/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import isRequestingSite from 'calypso/state/sites/selectors/is-requesting-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -191,6 +193,7 @@ export default function WPCOMBusinessAT( {
 
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
+	const isFetchingSite = useSelector( ( state: AppState ) => isRequestingSite( state, siteId ) );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
@@ -225,12 +228,17 @@ export default function WPCOMBusinessAT( {
 		if ( automatedTransferStatus !== COMPLETE ) {
 			return;
 		}
-		// Transfer is completed, check if it's already a Jetpack site
+
+		// Transfer is completed but site is not yet recognized as Jetpack - refresh site data
 		if ( ! isJetpack ) {
+			// Only request if not already fetching to avoid duplicate requests
+			if ( ! isFetchingSite ) {
+				dispatch( requestSite( siteId ) );
+			}
 			return;
 		}
 
-		// Okay, transfer is completed and it's a Jetpack site
+		// Transfer is completed and site is a Jetpack site - show success notice
 		dispatch(
 			successNotice(
 				translate( '%s is now active', {
@@ -246,7 +254,7 @@ export default function WPCOMBusinessAT( {
 			)
 		);
 		content.onActivationResolved?.();
-	}, [ automatedTransferStatus, isJetpack, content.onActivationResolved ] );
+	}, [ COMPLETE, automatedTransferStatus, content, dispatch, isFetchingSite, isJetpack, siteId ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
