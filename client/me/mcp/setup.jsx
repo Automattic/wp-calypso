@@ -205,7 +205,7 @@ function McpSetupComponent( { path } ) {
 						</Text>
 						<Text as="p" size="medium">
 							{ translate(
-								'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account. It works by:'
+								'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com account by:'
 							) }
 						</Text>
 						<VStack spacing={ 2 }>

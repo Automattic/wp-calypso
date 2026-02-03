@@ -6,13 +6,14 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button } from '@wordpress/components';
+import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { scheduled, trash, copy } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
@@ -24,50 +25,6 @@ import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
-
-function formatSchedule( schedule: string ): string {
-	// Handle predefined schedules
-	if ( schedule === 'hourly' ) {
-		return __( 'Every hour' );
-	}
-	if ( schedule === 'daily' ) {
-		return __( 'Daily' );
-	}
-	if ( schedule === 'weekly' ) {
-		return __( 'Weekly' );
-	}
-
-	// Handle shorthand notation
-	const shorthandMatch = schedule.match( /^(\d+)([hdw])$/ );
-	if ( shorthandMatch ) {
-		const num = parseInt( shorthandMatch[ 1 ], 10 );
-		const freq = shorthandMatch[ 2 ];
-		if ( freq === 'h' ) {
-			return sprintf(
-				/* translators: %d is the number of times per hour */
-				__( '%d times per hour' ),
-				num
-			);
-		}
-		if ( freq === 'd' ) {
-			return sprintf(
-				/* translators: %d is the number of times per day */
-				__( '%d times per day' ),
-				num
-			);
-		}
-		if ( freq === 'w' ) {
-			return sprintf(
-				/* translators: %d is the number of times per week */
-				__( '%d times per week' ),
-				num
-			);
-		}
-	}
-
-	// Return raw cron expression for standard cron format
-	return schedule;
-}
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -128,9 +85,11 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		{
 			id: 'schedule',
 			label: __( 'Schedule' ),
-			getValue: ( { item }: { item: Crontab } ) => formatSchedule( item.schedule ),
+			getValue: ( { item }: { item: Crontab } ) => item.schedule,
 			render: ( { item }: { item: Crontab } ) => (
-				<span title={ item.schedule }>{ formatSchedule( item.schedule ) }</span>
+				<Text variant="muted" size="small">
+					{ cronstrue.toString( item.schedule, { verbose: true } ) }
+				</Text>
 			),
 			enableGlobalSearch: true,
 		},

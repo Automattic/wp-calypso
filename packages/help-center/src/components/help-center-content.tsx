@@ -75,7 +75,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
-	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
+	}, [ location.pathname, location.search, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
 		if ( navigateToRoute?.route ) {
@@ -128,7 +128,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				container?.removeEventListener( 'scroll', handler );
 			};
 		}
-	}, [ location ] );
+	}, [ location.hash, location.pathname ] );
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">

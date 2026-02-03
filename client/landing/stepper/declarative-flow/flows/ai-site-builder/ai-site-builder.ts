@@ -76,7 +76,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			// The parameter should be exactly "1" to enable garden site creation
 			if ( createGardenSite === '1' ) {
 				setGardenName( 'commerce' );
-				setGardenPartnerName( 'wpcom' );
+				setGardenPartnerName( 'woo' );
 			} else {
 				setGardenName( null );
 				setGardenPartnerName( null );
