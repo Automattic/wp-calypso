@@ -1061,6 +1061,11 @@ class PurchaseNotice extends Component<
 		if ( isRenewable( purchase ) ) {
 			const noticeText = ( () => {
 				if ( isInExpirationGracePeriod( purchase ) ) {
+					if ( isRenewing( purchase ) ) {
+						return translate(
+							'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+						);
+					}
 					const purchaseName = getName( purchase );
 					const expiry = moment( purchase.expiryDate ).fromNow();
 					return translate(

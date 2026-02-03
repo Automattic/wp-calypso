@@ -25,6 +25,7 @@ import {
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 	isInExpirationGracePeriod,
+	isRenewing,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import {
@@ -161,6 +162,11 @@ function ExpiredRenewNotice( {
 		const noticeText = ( () => {
 			if ( isExpired( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
+			}
+			if ( isInExpirationGracePeriod( currentPurchase ) && isRenewing( currentPurchase ) ) {
+				return __(
+					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+				);
 			}
 			const purchaseName = currentPurchase.is_domain
 				? currentPurchase.meta ?? ''
