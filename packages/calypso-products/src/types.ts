@@ -341,7 +341,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
@@ -371,16 +371,14 @@ export type Plan = BillingTerm & {
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PlanComparisonFeatureOverride?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+	get2023PlanComparisonFeatureOverride?: () => Feature[];
 
 	/**
 	 * Experimental: Comparison grid features for experiment variants.
 	 * This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	 * When present, this takes precedence over get2023PlanComparisonFeatureOverride when isExperimentVariant is true.
 	 */
-	get2023PlanComparisonFeatureOverrideForExperiment?: ( props?: {
-		isSummerSpecial?: boolean;
-	} ) => Feature[];
+	get2023PlanComparisonFeatureOverrideForExperiment?: () => Feature[];
 
 	/**
 	 * Features to be shown in the plan details jetpack section and the jetpack features in the plans comparison table.

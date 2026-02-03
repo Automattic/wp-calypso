@@ -950,7 +950,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -959,13 +959,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
+			FEATURE_UPLOAD_PLUGINS,
 		];
 
 		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
-		}
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
@@ -1024,7 +1021,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_PLUGINS,
 	],
 
-	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverride: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1034,6 +1031,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_PLUGINS_THEMES,
 		];
 
 		let features = baseFeatures;
@@ -1042,16 +1040,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
 		return features;
 	},
 	// Experimental: Comparison grid features for experiment variants.
 	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
-	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1063,16 +1057,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_AI_ASSISTANT,
+			FEATURE_PLUGINS_THEMES,
 		];
 
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 
 		return features;
@@ -1896,7 +1887,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -1908,13 +1899,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
+			FEATURE_UPLOAD_PLUGINS,
 		];
 
 		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
-		}
 
 		// When the global styles grid variation is active, surface the payments fee for Premium
 		if ( isGlobalStylesGridChangesVariation() ) {
@@ -1966,7 +1954,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 	],
 
-	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverride: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1977,20 +1965,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
+			FEATURE_PLUGINS_THEMES,
 		];
 
-		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
-		return features;
+		return baseFeatures;
 	},
 	// Experimental: Comparison grid features for experiment variants.
 	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
-	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FREE_FAST_SUPPORT, // Shows "Free support with faster response times"
@@ -2003,15 +1986,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
+			FEATURE_PLUGINS_THEMES,
 		];
 
-		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
-		return features;
+		return baseFeatures;
 	},
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
