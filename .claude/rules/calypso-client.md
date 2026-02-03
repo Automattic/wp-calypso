@@ -2,6 +2,7 @@
 paths:
   - "client/**"
 ---
+
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
 You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning AI to chat, to generate code.
 You create a smooth UI that is scalable and performant.
@@ -11,16 +12,8 @@ You create a smooth UI that is scalable and performant.
 - Write concise, technical responses with accurate TypeScript examples.
 - Use functional, declarative programming. Avoid classes.
 - Prefer iteration and modularization over duplication.
-- Try to use `@wordpress/components` where possible as per @.claude/rules/wordpress-imports.md.
 - Always check your work for errors before completing.
 - Read through related README files to have wider context.
-
-## Short codes
-
-Check the start of any user message for the following short codes and act appropriately:
-- ddc - short for `discuss don't code` so do not make any code changes only discuss the options until given the go ahead to make changes
-- jdi - short for `just do it` so this is giving approval to go ahead and make the changes that have been discussed
-- cpd - short for `create PR description` for a given branch - you should find changes presented in current branch and create a description following this template @.github/PULL_REQUEST_TEMPLATE.md. The main branch name is `trunk`.
 
 ## Analysis Process
 
@@ -28,24 +21,16 @@ Before responding to any request, follow these steps:
 
 - Carefully read the instructions and research relative examples.
 - If a screenshot is provided, carefully build a layout to match the provided designs.
-- Plan for internationalization using hook `{ useTranslate } from 'i18n-calypso';`
 - Verify accessibility requirements
 
 ## Code Style and Structure
 
 ### Code Standards
 
-- Implement WordPress hooks system.
-- Use WordPress `@wordpress/element` instead of direct React import.
 - Use `import clsx from 'clsx';` instead of `classnames`.
 - There should be 1 empty line between `import './style.scss';` and other imports.
-- Follow WordPress component lifecycle patterns.
-- Follow WordPress accessibility guidelines.
-- Use WordPress data store for state management.
-- Follow WordPress component patterns.
-- Implement proper WordPress hooks system.
 - Structure components using WordPress conventions.
-- Carrefully follow @.eslintrc.js coding standarts.
+- Carrefully follow @.eslintrc.js coding standards.
 - **CRITICAL: After creating or modifying ANY JavaScript/TypeScript file, you MUST run `yarn eslint --fix` on that specific file individually. This is mandatory for every single file change.**
 
 ### Naming Conventions
@@ -58,11 +43,9 @@ Before responding to any request, follow these steps:
 
 - Don't use `&--` & `&__` selectors and write full name when defining styles.
 - Try to always use RTL specific styles. For example, instead of margin-left, use margin-inline-start.
-- WordPress code conventions include more generous whitespace, including spaces inside function call parentheses and property accessor brackets.
 
 ## Dependencies
 
-- Use imports from @.claude/rules/wordpress-imports.md
 - Use named imports to bring in only the necessary functions or components, rather than importing the entire module.
 
 ## Documentation
@@ -74,17 +57,10 @@ Before responding to any request, follow these steps:
 - Code comments should explain why the code exists or behaves a certain way, not just what it does. It should be concise, relevant, and avoid restating the obvious. Focus on intent, assumptions, and non-obvious decisions.
 - Wrap code comments to new lines at 100 columns
 
-### User Documentation
-
-- Follow WordPress documentation style
-- Provide clear usage instructions
-- Include troubleshooting guides
-
 Remember: Always prioritize WordPress coding standards and best practices while delivering the most appealing UI.
 
 ## Testing
 
-- Run tests for individual files using the command `yarn test-client filename`, substituting `filename` with the relative path to the file you want to test.
-- When testing components using `@testing-library`, use query functions (`getBy*`, etc.) from the return value of `render`, not from the `screen` import.
+- Run tests for individual files using the command `yarn test-client <filename>`.
 - Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
 - Use `toBeVisible` instead of `toBeInTheDocument` when asserting that an element should be visible to the user. This ensures the test checks both presence in the DOM and actual visibility, aligning with user-perceived behavior.

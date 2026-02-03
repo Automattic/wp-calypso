@@ -34,6 +34,7 @@ export function convertToolMessagesToComponents( {
 			const { type: contentType, props, followUpTasks } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
+			// Filter out the raw JSON message to avoid showing it to the user
 			if ( ! Component ) {
 				return [];
 			}
