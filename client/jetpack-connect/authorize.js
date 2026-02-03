@@ -15,12 +15,10 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
-import {
-	ActionButtons,
-	ConsentText,
-	PermissionsList,
-	UserCard,
-} from 'calypso/components/connect-screen';
+import ActionButtons from 'calypso/components/connect-screen/action-buttons';
+import ConsentText from 'calypso/components/connect-screen/consent-text';
+import PermissionsList from 'calypso/components/connect-screen/permissions-list';
+import UserCard from 'calypso/components/connect-screen/user-card';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -1233,6 +1231,7 @@ export class JetpackAuthorize extends Component {
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
 					/>
 					<LoggedOutFormLinkItem
+						style={ { textAlign: 'center' } }
 						href={ loginURL }
 						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 					>
