@@ -15,7 +15,12 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
-import { ActionButtons, ConsentText, UserCard } from 'calypso/components/connect-screen';
+import {
+	ActionButtons,
+	ConsentText,
+	PermissionsList,
+	UserCard,
+} from 'calypso/components/connect-screen';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -1039,43 +1044,29 @@ export class JetpackAuthorize extends Component {
 						size="small"
 					/>
 
-					<div className="jetpack-connect__benefits">
-						<div className="jetpack-connect__benefits-title">
-							{ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
-								args: {
-									siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
-								},
-							} ) }
-						</div>
-						<ul>
-							<li>
-								<span>
-									<Icon icon={ chartBar } size={ 24 } />
-								</span>
-								<span>
-									{ translate(
-										'Process detailed visitor stats in the cloud, so your site stays fast.'
-									) }
-								</span>
-							</li>
-							<li>
-								<span>
-									<Icon icon={ next } size={ 24 } />
-								</span>
-								<span>
-									{ translate( 'Improve your site’s performance and SEO automatically.' ) }
-								</span>
-							</li>
-							<li>
-								<span>
-									<Icon icon={ share } size={ 24 } />
-								</span>
-								<span>
-									{ translate( 'Automatically share your site’s posts on social media.' ) }
-								</span>
-							</li>
-						</ul>
-					</div>
+					<PermissionsList
+						title={ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
+							args: {
+								siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
+							},
+						} ) }
+						permissions={ [
+							{
+								icon: <Icon icon={ chartBar } />,
+								label: translate(
+									'Process detailed visitor stats in the cloud, so your site stays fast.'
+								),
+							},
+							{
+								icon: <Icon icon={ next } />,
+								label: translate( 'Improve your site’s performance and SEO automatically.' ),
+							},
+							{
+								icon: <Icon icon={ share } />,
+								label: translate( 'Automatically share your site’s posts on social media.' ),
+							},
+						] }
+					/>
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
