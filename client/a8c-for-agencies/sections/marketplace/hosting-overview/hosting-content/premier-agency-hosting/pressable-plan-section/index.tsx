@@ -104,22 +104,35 @@ export default function PressablePlanSection( {
 		}
 
 		if ( areSignaturePlans ) {
-			return pressablePlans.filter( ( plan ) => plan.slug.startsWith( 'pressable-signature-' ) );
+			return pressablePlans.filter(
+				( plan ) =>
+					plan.slug.startsWith( 'pressable-signature-' ) ||
+					plan.slug.startsWith( 'pressable-premium-' )
+			);
 		}
 
-		return pressablePlans.filter( ( plan ) => ! plan.slug.startsWith( 'pressable-signature-' ) );
+		return pressablePlans.filter(
+			( plan ) =>
+				! plan.slug.startsWith( 'pressable-signature-' ) ||
+				plan.slug.startsWith( 'pressable-premium-' )
+		);
 	}, [ pressablePlans, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
-			const defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+			let defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+
+			if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+				defaultSlug = 'pressable-premium-1';
+			}
+
 			setSelectedPlan(
 				isReferralMode
 					? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
 					: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ]
 			);
 		}
-	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans ] );
+	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans, selectedTab ] );
 
 	useEffect( () => {
 		if ( ! isReferralMode && existingPlan ) {
@@ -155,6 +168,7 @@ export default function PressablePlanSection( {
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ existingPressablePlan }
 					isLoading={ ! isFetching }
+					isReferralMode={ !! isReferralMode }
 					areSignaturePlans={ areSignaturePlans }
 					selectedTab={ selectedTab }
 					setSelectedTab={ setSelectedTab }
@@ -167,6 +181,7 @@ export default function PressablePlanSection( {
 		filteredPressablePlans,
 		existingPressablePlan,
 		isFetching,
+		isReferralMode,
 		areSignaturePlans,
 		selectedTab,
 	] );
@@ -196,8 +211,12 @@ export default function PressablePlanSection( {
 
 	const isCustomPlan = ! selectedPlan;
 
-	// Show premium plan section if the selected tab is premium
-	if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+	const hasNewPremiumPlans =
+		isReferralMode &&
+		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
+
+	// Show premium plan section if the selected tab is premium and there are no new premium plans
+	if ( selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans ) {
 		return <PremiumPlanSection heading={ heading } banner={ banner } />;
 	}
 
@@ -266,34 +285,47 @@ export default function PressablePlanSection( {
 				) : (
 					<SimpleList
 						items={ [
-							translate(
-								'Up to {{b}}%(count)d WordPress install{{/b}}',
-								'Up to {{b}}%(count)d WordPress installs{{/b}}',
-								{
-									args: {
-										count: selectedPlanInfo?.install ?? 0,
-									},
-									count: selectedPlanInfo?.install ?? 0,
-									components: {
-										b: <b />,
-									},
-									comment: '%(count)d is the number of WordPress installs.',
-								}
-							),
-							translate(
-								'Up to {{b}}%(count)d staging site{{/b}}',
-								'Up to {{b}}%(count)d staging sites{{/b}}',
-								{
-									args: {
-										count: selectedPlanInfo?.install ?? 0,
-									},
-									count: selectedPlanInfo?.install ?? 0,
-									components: {
-										b: <b />,
-									},
-									comment: '%(count)d is the number of staging sites.',
-								}
-							),
+							...( selectedTab === PLAN_CATEGORY_PREMIUM
+								? [
+										translate( '{{b}}%(worker)d{{/b}} base PHP Workers', {
+											args: {
+												worker: selectedPlanInfo?.worker ?? 5,
+											},
+											components: {
+												b: <b />,
+											},
+										} ),
+								  ]
+								: [
+										translate(
+											'Up to {{b}}%(count)d WordPress install{{/b}}',
+											'Up to {{b}}%(count)d WordPress installs{{/b}}',
+											{
+												args: {
+													count: selectedPlanInfo?.install ?? 0,
+												},
+												count: selectedPlanInfo?.install ?? 0,
+												components: {
+													b: <b />,
+												},
+												comment: '%(count)d is the number of WordPress installs.',
+											}
+										),
+										translate(
+											'Up to {{b}}%(count)d staging site{{/b}}',
+											'Up to {{b}}%(count)d staging sites{{/b}}',
+											{
+												args: {
+													count: selectedPlanInfo?.install ?? 0,
+												},
+												count: selectedPlanInfo?.install ?? 0,
+												components: {
+													b: <b />,
+												},
+												comment: '%(count)d is the number of staging sites.',
+											}
+										),
+								  ] ),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
 									count: formatNumberCompact( selectedPlanInfo?.visits ?? 0 ),

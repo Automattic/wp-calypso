@@ -3,6 +3,7 @@ import {
 	PLAN_CATEGORY_ENTERPRISE,
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
 
 export type PressablePlan = {
@@ -11,6 +12,7 @@ export type PressablePlan = {
 	visits: number;
 	storage: number;
 	category: string;
+	worker?: number;
 };
 
 const PLAN_DATA: Record< string, PressablePlan > = {
@@ -306,6 +308,96 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 10000000,
 		storage: 1000,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+	},
+
+	// [New] Pressable Premium Plans 2026-02
+	'pressable-premium-1': {
+		slug: 'pressable-premium-1',
+		install: 1,
+		visits: 150000,
+		storage: 30,
+		worker: 10,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-2': {
+		slug: 'pressable-premium-2',
+		install: 1,
+		visits: 250000,
+		storage: 40,
+		worker: 10,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-3': {
+		slug: 'pressable-premium-3',
+		install: 1,
+		visits: 350000,
+		storage: 50,
+		worker: 13,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-4': {
+		slug: 'pressable-premium-4',
+		install: 1,
+		visits: 500000,
+		storage: 60,
+		worker: 15,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-5': {
+		slug: 'pressable-premium-5',
+		install: 1,
+		visits: 750000,
+		storage: 70,
+		worker: 15,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-6': {
+		slug: 'pressable-premium-6',
+		install: 1,
+		visits: 1000000,
+		storage: 80,
+		worker: 17,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-7': {
+		slug: 'pressable-premium-7',
+		install: 1,
+		visits: 2000000,
+		storage: 90,
+		worker: 17,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-8': {
+		slug: 'pressable-premium-8',
+		install: 1,
+		visits: 3000000,
+		storage: 100,
+		worker: 20,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-9': {
+		slug: 'pressable-premium-9',
+		install: 1,
+		visits: 5000000,
+		storage: 125,
+		worker: 20,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-10': {
+		slug: 'pressable-premium-10',
+		install: 1,
+		visits: 7000000,
+		storage: 150,
+		worker: 25,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-11': {
+		slug: 'pressable-premium-11',
+		install: 1,
+		visits: 10000000,
+		storage: 150,
+		worker: 25,
+		category: PLAN_CATEGORY_PREMIUM,
 	},
 };
 
