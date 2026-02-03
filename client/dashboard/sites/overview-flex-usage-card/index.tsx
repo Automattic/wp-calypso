@@ -44,6 +44,7 @@ export default function OverviewFlexUsageCard( { site }: Props ) {
 
 	return (
 		<Card
+			role="article"
 			className="dashboard-overview-usage-card"
 			onMouseEnter={ () =>
 				recordTracksEvent( 'calypso_dashboard_site_overview_flex_usage_card_impression' )

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
+import nock from 'nock';
 import { Suspense } from 'react';
 import { type AnalyticsClient, AnalyticsProvider } from './app/analytics';
 import { AuthContext } from './app/auth';
@@ -70,4 +71,8 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 		recordTracksEvent,
 		recordPageView,
 	};
+}
+
+export function mockPublicApi() {
+	return nock( 'https://public-api.wordpress.com' ).persist();
 }
