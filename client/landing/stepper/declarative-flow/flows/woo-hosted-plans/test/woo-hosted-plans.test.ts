@@ -72,8 +72,8 @@ describe( 'woo-hosted-plans flow', () => {
 	} );
 
 	it( 'uses the site admin url when no back_to is provided', () => {
-		const stepsProps = wooHostedPlansFlow.useStepsProps();
-		stepsProps[ STEPS.UNIFIED_PLANS.slug ].wrapperProps?.goBack?.();
+		const stepsProps = wooHostedPlansFlow.useStepsProps?.();
+		stepsProps?.[ STEPS.UNIFIED_PLANS.slug ]?.wrapperProps?.goBack?.();
 
 		expect( window.location.assign ).toHaveBeenCalledWith( 'https://example.com/wp-admin/' );
 	} );
