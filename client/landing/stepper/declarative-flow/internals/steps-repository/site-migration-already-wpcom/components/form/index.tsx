@@ -5,7 +5,7 @@ import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useState } from 'react';
-import { Control, Controller, FieldError, useForm } from 'react-hook-form';
+import { Control, Controller, FieldError, RegisterOptions, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
@@ -21,12 +21,14 @@ interface CheckboxProps {
 	label: string;
 	control: Control< TicketMigrationData >;
 	value: string;
+	rules?: RegisterOptions< TicketMigrationData, 'intents' >;
 }
 
-const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
+const CheckboxIntents = ( { label, control, value, rules }: CheckboxProps ) => (
 	<Controller
 		control={ control }
 		name="intents"
+		rules={ rules }
 		render={ ( { field } ) => {
 			return (
 				<CheckboxControl
@@ -160,6 +162,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 		handleSubmit,
 		watch,
 		setError,
+		clearErrors,
 		formState: { errors },
 	} = useForm< TicketMigrationData >( {
 		disabled: isSubmitting,
@@ -173,13 +176,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const errorMessage = errors?.root?.message ?? errors?.intents?.message;
 
 	const onSubmit = handleSubmit( async ( data: TicketMigrationData ) => {
-		if ( data.intents.length === 0 ) {
-			setError( 'intents', {
-				type: 'manual',
-				message: translate( 'Please select an option.' ),
-			} );
-			return;
-		}
+		clearErrors( 'root' );
 
 		if ( ! targetSiteSlug ) {
 			setError( 'root', {
@@ -265,6 +262,10 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						value="transfer-my-domain-to-wordpress-com"
 						label={ translate( 'Transfer my domain to WordPress.com' ) }
 						control={ control }
+						rules={ {
+							validate: ( value: string[] ) =>
+								value.length > 0 || translate( 'Please select an option.' ),
+						} }
 					/>
 					<CheckboxIntents
 						value="copy-one-of-my-existing-sites-on-wordpress-com"
