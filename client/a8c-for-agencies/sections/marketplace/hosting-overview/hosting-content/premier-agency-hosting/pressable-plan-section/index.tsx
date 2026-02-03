@@ -216,7 +216,7 @@ export default function PressablePlanSection( {
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
 	// Show premium plan section if the selected tab is premium and there are no new premium plans
-	if ( selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans ) {
+	if ( selectedTab === PLAN_CATEGORY_PREMIUM && ( ! hasNewPremiumPlans || isCustomPlan ) ) {
 		return <PremiumPlanSection heading={ heading } banner={ banner } />;
 	}
 
