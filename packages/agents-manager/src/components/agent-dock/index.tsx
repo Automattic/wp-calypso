@@ -26,10 +26,6 @@ import { setSessionId } from '../../utils/agent-session';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
-import {
-	groupSiteBuildMessages,
-	hasSiteBuildMessages,
-} from '../site-build-progress/group-messages';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import { ZendeskChat } from '../zendesk-chat';
@@ -37,6 +33,7 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	SiteBuildUtils,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -53,6 +50,7 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	siteBuildUtils?: SiteBuildUtils;
 }
 
 export default function AgentDock( {
@@ -62,6 +60,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -152,6 +151,10 @@ export default function AgentDock( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to UIMessage format and add to chat
 			addMessage( {
+				// Keep BigSky message properties without explicit mapping to keep linter happy
+				// BigSky messages sometimes have a 'context' field used by the
+				// site build to show the progress indicator
+				...message,
 				id: message.id,
 				role: message.role === 'assistant' ? 'agent' : 'user',
 				content: message.content,
@@ -250,16 +253,19 @@ export default function AgentDock( {
 		);
 
 		// Group site-build messages only when needed
-		const hasBuildMessages = hasSiteBuildMessages( filteredMessages );
+		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( filteredMessages );
 		// Show progress card during styling phase (after structure, dock is visible)
 
-		if ( isBuildingSite || hasBuildMessages ) {
+		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
 			// Show spinner during post-layout workflow (colors, fonts, images)
-			return groupSiteBuildMessages( filteredMessages, isBuildingSite ? thinkingMessage : null );
+			return siteBuildUtils.groupSiteBuildMessages(
+				filteredMessages,
+				isBuildingSite ? thinkingMessage : null
+			);
 		}
 
 		return filteredMessages;
-	}, [ messages, isBuildingSite, deletedMessageIds, thinkingMessage ] );
+	}, [ messages, siteBuildUtils, isBuildingSite, deletedMessageIds, thinkingMessage ] );
 
 	const Chat = (
 		<AgentChat

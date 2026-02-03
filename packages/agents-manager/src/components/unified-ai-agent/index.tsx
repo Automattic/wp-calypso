@@ -233,6 +233,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+			siteBuildUtils={ loadedProviders.siteBuildUtils }
 		/>
 	);
 }
