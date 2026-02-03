@@ -20,13 +20,13 @@ import {
  * Type definitions
  */
 
-interface BigSkyImageStudioGlobal {
+interface ImageStudioGlobal {
 	enabled?: boolean;
 }
 
 declare global {
 	interface Window {
-		bigSkyImageStudio?: BigSkyImageStudioGlobal;
+		imageStudio?: ImageStudioGlobal;
 	}
 }
 
@@ -36,7 +36,7 @@ declare global {
  */
 function initImageStudioIntegration(): void {
 	// Validate required globals
-	if ( ! window.bigSkyImageStudio ) {
+	if ( ! window.imageStudio ) {
 		return;
 	}
 
