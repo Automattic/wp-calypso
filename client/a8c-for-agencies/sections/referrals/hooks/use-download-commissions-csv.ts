@@ -3,20 +3,30 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { generateCommissionsCsv } from '../lib/generate-commissions-csv';
-import type { Referral } from '../types';
+import type { Referral, ReferralCommissionPayoutResponse } from '../types';
 
-export function useDownloadCommissionsCsv() {
+export function useDownloadCommissionsCsv( isSingleClient?: boolean ) {
 	const dispatch = useDispatch();
 
 	const downloadCommissionsCsv = useCallback(
-		( referrals: Referral[], products: APIProductFamilyProduct[], clientEmail?: string ): void => {
+		(
+			referrals: Referral[],
+			products: APIProductFamilyProduct[],
+			referralCommissionPayout?: ReferralCommissionPayoutResponse,
+			clientEmail?: string
+		): void => {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_referrals_download_commissions_csv', {
-					is_single_client: !! clientEmail,
+					detailed_view: isSingleClient,
 				} )
 			);
 
-			const csvContent = generateCommissionsCsv( referrals, products );
+			const csvContent = generateCommissionsCsv(
+				referrals,
+				products,
+				referralCommissionPayout,
+				isSingleClient
+			);
 
 			// Create Blob with CSV content
 			const blob = new Blob( [ csvContent ], { type: 'text/csv;charset=utf-8;' } );
@@ -40,7 +50,7 @@ export function useDownloadCommissionsCsv() {
 			// Clean up
 			window.URL.revokeObjectURL( url );
 		},
-		[ dispatch ]
+		[ dispatch, isSingleClient ]
 	);
 
 	return { downloadCommissionsCsv };

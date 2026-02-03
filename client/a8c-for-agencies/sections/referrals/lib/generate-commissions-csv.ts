@@ -1,12 +1,11 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductCommissionPercentage } from './commissions';
-import { getDailyPrice } from './get-estimated-commission';
-import {
-	getCurrentCycleActivityWindow,
-	getNextPayoutDateActivityWindow,
-	areNextAndCurrentPayoutDatesEqual,
-} from './get-next-payout-date';
-import type { Referral, ReferralPurchase } from '../types';
+import type {
+	Referral,
+	ReferralCommissionPayoutClient,
+	ReferralCommissionPayoutResponse,
+	ReferralPurchase,
+} from '../types';
 
 /**
  * Escapes a value for CSV format.
@@ -38,170 +37,118 @@ function formatPercentage( percentage: number ): string {
 	return `${ ( percentage * 100 ).toFixed( 0 ) }%`;
 }
 
-/**
- * Calculates the estimated commission for a single purchase within an activity window.
- * This mirrors the calculation in get-estimated-commission.ts but for a single purchase.
- */
-function calculatePurchaseCommission(
-	purchase: ReferralPurchase,
-	product: APIProductFamilyProduct,
-	activityWindow: { start: Date; finish: Date },
-	usePreviousQuarter: boolean
-): number {
-	if ( purchase.commissions ) {
-		// BD-based purchases have pre-calculated commissions
-		return usePreviousQuarter
-			? purchase.commissions.estimated_commission_previous_quarter ?? 0
-			: purchase.commissions.estimated_commission_current_quarter ?? 0;
-	}
-
-	// Legacy calculation based on active days within activity window
-	const issuedDate = new Date( purchase.license.issued_at );
-	issuedDate.setHours( 0, 0, 0, 0 );
-
-	const revokedAt = purchase.license.revoked_at ? new Date( purchase.license.revoked_at ) : null;
-
-	// Start date is the latest of the license issued date and activity window start
-	const start = Math.max( issuedDate.getTime(), activityWindow.start.getTime() );
-	// Finish date is the earliest of the license revoked date and activity window finish
-	const finish = Math.min(
-		revokedAt ? revokedAt.getTime() : Infinity,
-		activityWindow.finish.getTime()
-	);
-
-	// Total days is the difference between finish and start dates in days
-	const totalDays = Math.floor( ( finish - start ) / ( 1000 * 60 * 60 * 24 ) ) + 1;
-
-	if ( totalDays < 1 ) {
-		return 0;
-	}
-
-	const dailyPrice = getDailyPrice( product, purchase.quantity );
-	const commissionPercentage = getProductCommissionPercentage( product.family_slug );
-
-	// Return commission in dollars (dailyPrice is in cents)
-	return ( dailyPrice * totalDays * commissionPercentage ) / 100;
-}
-
 interface CommissionRow {
 	clientEmail: string;
 	productName: string;
 	quantity: number;
 	issuedDate: string;
 	revokedDate: string;
-	dailyPrice: string;
+	price: string;
 	commissionPercentage: string;
 	commissionAmount: string;
 }
 
 /**
- * Generates a CSV string with commission details for all referral purchases.
- * Only includes commission-eligible purchases (active and cancelled status).
- * Commission amounts are calculated using the same activity window logic as the
- * "Estimated commissions" column, combining both previous and current quarter commissions.
+ * Finds a referral and purchase matching the API client and product for supplemental fields.
+ */
+function findMatchingPurchase(
+	referrals: Referral[],
+	apiClient: ReferralCommissionPayoutClient,
+	productId: number,
+	products: APIProductFamilyProduct[]
+): { referral: Referral; purchase: ReferralPurchase; product: APIProductFamilyProduct } | null {
+	const referral = referrals.find(
+		( r ) =>
+			r.client.id === apiClient.client_user_id ||
+			r.client.email?.toLowerCase() === apiClient.email?.toLowerCase()
+	);
+	if ( ! referral?.purchases?.length ) {
+		return null;
+	}
+	const purchase = referral.purchases.find( ( p ) => p.product_id === productId );
+	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
+		return null;
+	}
+	if ( ! purchase ) {
+		return null;
+	}
+	const product = products.find( ( p ) => p.product_id === productId );
+	if ( ! product ) {
+		return null;
+	}
+	return { referral, purchase, product };
+}
+
+/**
+ * Builds CSV rows from the referral commission payout API (commission from API, rest from referrals when available).
+ */
+function buildRowsFromApi(
+	referralCommissionPayout: ReferralCommissionPayoutResponse,
+	referrals: Referral[],
+	products: APIProductFamilyProduct[]
+): CommissionRow[] {
+	const rows: CommissionRow[] = [];
+
+	for ( const apiClient of referralCommissionPayout.client_data ) {
+		for ( const apiProduct of apiClient.products ) {
+			const match = findMatchingPurchase( referrals, apiClient, apiProduct.product_id, products );
+			if ( match ) {
+				rows.push( {
+					clientEmail: apiClient.email,
+					productName: apiProduct.product_name,
+					quantity: match.purchase.quantity ?? 1,
+					issuedDate: formatDate( match.purchase.license?.issued_at ) ?? '-',
+					revokedDate: formatDate( match.purchase.license?.revoked_at ) ?? '-',
+					price: apiProduct.total_amount.toFixed( 2 ),
+					commissionPercentage: formatPercentage(
+						getProductCommissionPercentage( match.product.slug, match.product.family_slug )
+					),
+					commissionAmount: apiProduct.total_commission.toFixed( 2 ),
+				} );
+			}
+		}
+	}
+
+	return rows;
+}
+
+/**
+ * Generates a CSV string with commission details from the referral commission payout API only.
+ * Commission and client/product data come from the endpoint; supplemental fields (quantity, dates, etc.) from matching referral/purchase data when available.
+ * Returns CSV with headers only when no API data is provided.
  */
 export function generateCommissionsCsv(
 	referrals: Referral[],
-	products: APIProductFamilyProduct[]
+	products: APIProductFamilyProduct[],
+	referralCommissionPayout?: ReferralCommissionPayoutResponse,
+	isSingleClient?: boolean
 ): string {
 	const headers = [
-		'Client Email',
+		...( isSingleClient ? [] : [ 'Client Email' ] ),
 		'Product Name',
 		'Quantity',
 		'Issued Date',
 		'Revoked Date',
-		'Daily Price (USD)',
+		'Price (USD)',
 		'Commission %',
 		'Commission Amount (USD)',
 	];
 
-	const rows: CommissionRow[] = [];
+	const rows = referralCommissionPayout?.client_data?.length
+		? buildRowsFromApi( referralCommissionPayout, referrals, products )
+		: [];
 
-	// Get activity windows for commission calculation
-	const currentDate = new Date();
-	const previousQuarterWindow = getNextPayoutDateActivityWindow( currentDate );
-	const currentQuarterWindow = getCurrentCycleActivityWindow( currentDate );
-	const samePayoutDates = areNextAndCurrentPayoutDatesEqual( currentDate );
-
-	for ( const referral of referrals ) {
-		if ( ! referral?.purchases?.length ) {
-			continue;
-		}
-
-		for ( const purchase of referral.purchases ) {
-			// Only include active and cancelled purchases (commission-eligible)
-			if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
-				continue;
-			}
-
-			const product = products.find( ( p ) => purchase.product_id === p.product_id );
-			if ( ! product ) {
-				continue;
-			}
-
-			const commissionPercentage = getProductCommissionPercentage( product.family_slug );
-
-			// Skip products with 0% commission
-			if ( commissionPercentage === 0 ) {
-				continue;
-			}
-
-			const dailyPrice = getDailyPrice( product, purchase.quantity );
-
-			// Calculate commission amount using the same logic as "Estimated commissions" column
-			// This combines both previous quarter and current quarter commissions
-			let commissionAmount = 0;
-
-			if ( samePayoutDates ) {
-				// When payout dates are equal, only use previous quarter commission
-				commissionAmount = calculatePurchaseCommission(
-					purchase,
-					product,
-					previousQuarterWindow,
-					true
-				);
-			} else {
-				// Combine both quarters' commissions
-				const previousQuarterCommission = calculatePurchaseCommission(
-					purchase,
-					product,
-					previousQuarterWindow,
-					true
-				);
-				const currentQuarterCommission = calculatePurchaseCommission(
-					purchase,
-					product,
-					currentQuarterWindow,
-					false
-				);
-				commissionAmount = previousQuarterCommission + currentQuarterCommission;
-			}
-
-			rows.push( {
-				clientEmail: referral.client.email,
-				productName: product.name,
-				quantity: purchase.quantity,
-				issuedDate: formatDate( purchase.license?.issued_at ),
-				revokedDate: formatDate( purchase.license?.revoked_at ),
-				dailyPrice: ( dailyPrice / 100 ).toFixed( 2 ),
-				commissionPercentage: formatPercentage( commissionPercentage ),
-				commissionAmount: commissionAmount.toFixed( 2 ),
-			} );
-		}
-	}
-
-	// Build CSV content
 	const csvLines: string[] = [];
 	csvLines.push( headers.map( csvEscape ).join( ',' ) );
 
 	for ( const row of rows ) {
 		const line = [
-			row.clientEmail,
+			...( isSingleClient ? [] : [ row.clientEmail ] ),
 			row.productName,
 			row.quantity,
 			row.issuedDate,
 			row.revokedDate,
-			row.dailyPrice,
+			row.price,
 			row.commissionPercentage,
 			row.commissionAmount,
 		]

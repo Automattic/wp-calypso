@@ -33,6 +33,7 @@ import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/s
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
+import useGetReferralCommissionPayout from '../../hooks/use-get-referral-commission-payout';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import { ReferralOrderFlowType } from '../../types';
@@ -72,6 +73,8 @@ export default function ReferralsOverview() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	const { data: referralCommissionPayout, isFetching: isFetchingReferralCommissionPayout } =
+		useGetReferralCommissionPayout();
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
@@ -104,7 +107,7 @@ export default function ReferralsOverview() {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' ) );
 	}, [ dispatch ] );
 
-	const isLoading = isFetching || isFetchingReferrals;
+	const isLoading = isFetching || isFetchingReferrals || isFetchingReferralCommissionPayout;
 
 	return (
 		<Layout
@@ -156,6 +159,7 @@ export default function ReferralsOverview() {
 				<LayoutBody>
 					<LayoutBodyContent
 						tipaltiData={ tipaltiData }
+						referralCommissionPayout={ referralCommissionPayout }
 						referrals={ referrals }
 						isLoading={ isLoading }
 						dataViewsState={ updatedDataViewsState }
@@ -167,6 +171,7 @@ export default function ReferralsOverview() {
 				<LayoutColumn wide>
 					<ReferralDetails
 						referral={ selectedItem }
+						referralCommissionPayout={ referralCommissionPayout }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
 								...dataViewsState,
