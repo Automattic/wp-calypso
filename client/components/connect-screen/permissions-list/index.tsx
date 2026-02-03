@@ -34,7 +34,7 @@ export interface PermissionsListProps {
  *   maxVisible={2}
  * />
  */
-export function PermissionsList( {
+export default function PermissionsList( {
 	title,
 	permissions,
 	maxVisible = 4,

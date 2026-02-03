@@ -1,13 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { seen, edit, cog, check, chartBar } from '@wordpress/icons';
-import { ActionButtons } from '../action-buttons';
-import { BrandHeader } from '../brand-header';
-import { ConsentText } from '../consent-text';
-import { LoadingScreen } from '../loading-screen';
-import { PermissionsList } from '../permissions-list';
-import { ScreenLayout } from '../screen-layout';
-import { UserCard } from '../user-card';
+import ActionButtons from '../action-buttons';
+import BrandHeader from '../brand-header';
+import ConsentText from '../consent-text';
+import LoadingScreen from '../loading-screen';
+import PermissionsList from '../permissions-list';
+import ScreenLayout from '../screen-layout';
+import UserCard from '../user-card';
 
 const meta: Meta = {
 	title: 'client/components/ConnectScreen',

@@ -14,7 +14,7 @@ export interface LoadingScreenProps {
  * @example
  * <LoadingScreen message="Connecting your account..." />
  */
-export function LoadingScreen( { message, className }: LoadingScreenProps ): JSX.Element {
+export default function LoadingScreen( { message, className }: LoadingScreenProps ): JSX.Element {
 	return (
 		<div className={ clsx( 'connect-screen-loading', className ) }>
 			<Spinner />

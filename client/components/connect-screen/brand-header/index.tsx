@@ -31,7 +31,7 @@ export interface BrandHeaderProps {
  *   title="Connect your account"
  * />
  */
-export function BrandHeader( {
+export default function BrandHeader( {
 	logo,
 	logoAlt = '',
 	logoWidth,
