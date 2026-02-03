@@ -73,12 +73,18 @@ function Domains() {
 	const hasDomains = domains.length > 0;
 
 	return (
-		<Suspense fallback={ null }>
+		<>
 			<PageLayout
 				header={
 					<PageHeader
 						title={ __( 'Domains' ) }
-						actions={ ! hasDomains ? null : <AddDomainButton /> }
+						actions={
+							! hasDomains ? null : (
+								<Suspense fallback={ null }>
+									<AddDomainButton />
+								</Suspense>
+							)
+						}
 					/>
 				}
 				notices={
@@ -123,7 +129,7 @@ function Domains() {
 				) }
 			</PageLayout>
 			<PerformanceTrackerStop id="dashboard-domain-list" />
-		</Suspense>
+		</>
 	);
 }
 
