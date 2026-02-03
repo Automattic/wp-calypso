@@ -33,8 +33,8 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	SiteBuildUtils,
 } from '../../utils/load-external-providers';
-import type { Message as UILibraryMessage } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentDockProps {
@@ -50,6 +50,7 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	siteBuildUtils?: SiteBuildUtils;
 }
 
 export default function AgentDock( {
@@ -59,9 +60,12 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
+	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
+	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
@@ -147,6 +151,10 @@ export default function AgentDock( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to UIMessage format and add to chat
 			addMessage( {
+				// Keep BigSky message properties without explicit mapping to keep linter happy
+				// BigSky messages sometimes have a 'context' field used by the
+				// site build to show the progress indicator
+				...message,
 				id: message.id,
 				role: message.role === 'assistant' ? 'agent' : 'user',
 				content: message.content,
@@ -164,6 +172,8 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
+		setIsBuildingSite,
+		setThinkingMessage,
 	} );
 
 	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
@@ -236,20 +246,33 @@ export default function AgentDock( {
 
 	// Filter out deleted messages and local tool running messages
 	const visibleMessages = useMemo( () => {
-		const filtered = messages.filter(
+		const filteredMessages = messages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
-		return filtered as unknown as UILibraryMessage[];
-	}, [ messages, deletedMessageIds ] );
+
+		// Group site-build messages only when needed
+		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( filteredMessages );
+		// Show progress card during styling phase (after structure, dock is visible)
+
+		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
+			// Show spinner during post-layout workflow (colors, fonts, images)
+			return siteBuildUtils.groupSiteBuildMessages(
+				filteredMessages,
+				isBuildingSite ? thinkingMessage : null
+			);
+		}
+
+		return filteredMessages;
+	}, [ messages, siteBuildUtils, isBuildingSite, deletedMessageIds, thinkingMessage ] );
 
 	const Chat = (
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
-			isProcessing={ isProcessing || isThinking }
+			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
