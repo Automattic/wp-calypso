@@ -207,13 +207,17 @@ export function serverChatToLoadResult(
 
 		// Handle `tool_result` messages
 		if ( msg.role === 'tool_result' ) {
-			// Always filter out `wpcom__think` tool results
+			// Only keep tool results if `allowToolMessages` is `true`
+			if ( ! allowToolMessages ) {
+				return false;
+			}
+
+			// Filter out `wpcom__think` tool results
 			if ( isThinkToolMessage( msg ) ) {
 				return false;
 			}
 
-			// Only keep other tool results if `allowToolMessages` is `true`
-			return allowToolMessages;
+			return true;
 		}
 
 		return true;
