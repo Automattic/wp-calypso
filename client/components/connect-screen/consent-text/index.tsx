@@ -19,6 +19,6 @@ export interface ConsentTextProps {
  *   } ) }
  * </ConsentText>
  */
-export default function ConsentText( { children, className }: ConsentTextProps ): JSX.Element {
+export function ConsentText( { children, className }: ConsentTextProps ): JSX.Element {
 	return <p className={ clsx( 'connect-screen-consent-text', className ) }>{ children }</p>;
 }

@@ -30,7 +30,7 @@ export interface ActionButtonsProps {
  *   tertiaryOnClick={() => handleSignIn()}
  * />
  */
-export default function ActionButtons( {
+export function ActionButtons( {
 	primaryLabel,
 	primaryOnClick,
 	primaryLoading = false,

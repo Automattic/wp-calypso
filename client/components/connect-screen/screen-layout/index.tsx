@@ -18,7 +18,7 @@ export interface ScreenLayoutProps {
  *   <ActionButtons ... />
  * </ScreenLayout>
  */
-export default function ScreenLayout( {
+export function ScreenLayout( {
 	children,
 	className,
 	backgroundColor,

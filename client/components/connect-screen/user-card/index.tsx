@@ -27,11 +27,7 @@ export interface UserCardProps {
  *   size="large"
  * />
  */
-export default function UserCard( {
-	user,
-	size = 'small',
-	className,
-}: UserCardProps ): JSX.Element {
+export function UserCard( { user, size = 'small', className }: UserCardProps ): JSX.Element {
 	const isLarge = size === 'large';
 	const avatarSize = isLarge ? 64 : 48;
 
