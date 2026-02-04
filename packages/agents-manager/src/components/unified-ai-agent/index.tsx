@@ -234,6 +234,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			getChatComponent={ loadedProviders.getChatComponent }
+			siteBuildUtils={ loadedProviders.siteBuildUtils }
 		/>
 	);
 }
