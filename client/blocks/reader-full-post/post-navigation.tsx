@@ -59,10 +59,9 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 		<a
 			href={ getPostUrlFromKey( postKey ) }
 			onClick={ handleClick }
-			className={ clsx(
-				'reader-full-post-navigation__link-button',
-				isNext && 'reader-full-post-navigation__link-button--next'
-			) }
+			className={ clsx( 'reader-full-post-navigation__link-button', {
+				'reader-full-post-navigation__link-button--next': isNext,
+			} ) }
 			aria-label={ String(
 				translate( '%(label)s: %(title)s', {
 					args: { label: String( label ), title: post?.title || String( label ) },
@@ -73,10 +72,9 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 				{ ! isNext && <Icon icon={ icon } size={ 18 } /> }
 				<VStack
 					spacing={ 1 }
-					className={ clsx(
-						'reader-full-post-navigation__link-content',
-						isNext && 'reader-full-post-navigation__link-content--next'
-					) }
+					className={ clsx( 'reader-full-post-navigation__link-content', {
+						'reader-full-post-navigation__link-content--next': isNext,
+					} ) }
 				>
 					<span className="reader-full-post-navigation__link-label">{ label }</span>
 					<span className="reader-full-post-navigation__link-title">
