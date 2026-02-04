@@ -33,6 +33,8 @@ export interface CiabPartnerConfig {
 	compactLogo?: LogoConfig;
 	/** SSO providers to show (in order). Others will be hidden. */
 	ssoProviders: string[];
+	/** Font style identifier for login/signup headings */
+	fontStyle?: 'system';
 }
 
 /**
@@ -61,6 +63,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 			height: 24,
 		},
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
+		fontStyle: 'system',
 	},
 };
 

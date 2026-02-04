@@ -30,6 +30,7 @@ import {
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
@@ -90,6 +91,7 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const { ciabConfig } = usePartnerBranding();
 
 	const stepContainerV2Context = useMemo( () => {
 		// Detect CIAB dashboard for Woo branding.
@@ -166,6 +168,7 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
+		'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
