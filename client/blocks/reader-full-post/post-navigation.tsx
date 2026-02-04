@@ -1,6 +1,7 @@
 import {
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
@@ -77,9 +78,9 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 					} ) }
 				>
 					<span className="reader-full-post-navigation__link-label">{ label }</span>
-					<span className="reader-full-post-navigation__link-title">
+					<Text className="reader-full-post-navigation__link-title" truncate numberOfLines={ 2 }>
 						{ post?.title || translate( 'Loading…' ) }
-					</span>
+					</Text>
 				</VStack>
 				{ isNext && <Icon icon={ icon } size={ 18 } /> }
 			</HStack>
