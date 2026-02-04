@@ -254,33 +254,33 @@ export default function AgentDock( {
 		return options;
 	};
 
-	// Filter and convert messages for display
 	const visibleMessages = useMemo( () => {
-		const filteredMessages = messages.filter(
+		let currentMessages = messages;
+
+		currentMessages = currentMessages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
-		let siteBuildMessages = filteredMessages;
 		// Group site-build messages only when needed
-		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( filteredMessages );
+		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
 		// Show progress card during styling phase (after structure, dock is visible)
 		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
 			// Show spinner during post-layout workflow (colors, fonts, images)
-			siteBuildMessages = siteBuildUtils.groupSiteBuildMessages(
-				filteredMessages,
+			currentMessages = siteBuildUtils.groupSiteBuildMessages(
+				currentMessages,
 				isBuildingSite ? thinkingMessage : null
 			);
 		}
 
-		const convertedMessages = convertToolMessagesToComponents( {
-			messages: siteBuildMessages,
+		currentMessages = convertToolMessagesToComponents( {
+			messages: currentMessages,
 			getChatComponent,
 		} );
 
-		return convertedMessages;
+		return currentMessages;
 	}, [
 		deletedMessageIds,
 		getChatComponent,
