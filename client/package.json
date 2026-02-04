@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-ui": "^0.1.38",
+		"@automattic/agenttic-ui": "^0.1.41",
 		"@automattic/api-core": "workspace:^",
 		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
