@@ -13,12 +13,6 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
 } ) );
@@ -151,6 +145,9 @@ jest.mock( '../../../app/router/sites', () => ( {
 	siteRoute: {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},
+	siteBackupsRoute: {
+		useSearch: () => ( {} ),
+	},
 } ) );
 
 function renderBackupsListPage( {
@@ -182,6 +179,12 @@ function renderBackupsListPage( {
 			totalItems: backupEntries.length,
 			totalPages: 1,
 		} );
+
+	nock( API_BASE )
+		.persist()
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
 
 	return render( <BackupsListPage /> );
 }

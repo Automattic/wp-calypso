@@ -15,7 +15,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { redirectToDashboardLink, wpcomLink } from './link';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
 import type { JetpackFeatureSlug, Purchase, Site } from '@automattic/api-core';
 
@@ -130,10 +130,14 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 		const backUrl = redirectToDashboardLink();
 
 		return isCommerceGarden( site )
-			? wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ site.slug }` )
+			? addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+					siteSlug: site.slug,
+					dashboard: getCurrentDashboard(),
+			  } )
 			: addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 					siteSlug: site.slug,
 					cancel_to: backUrl,
+					dashboard: getCurrentDashboard(),
 			  } );
 	}
 

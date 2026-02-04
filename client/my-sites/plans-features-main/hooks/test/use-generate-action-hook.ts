@@ -34,8 +34,6 @@ import {
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_PERSONAL,
-	PLAN_WOOEXPRESS_MEDIUM,
-	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
@@ -420,32 +418,6 @@ describe( 'useGenerateActionHook', () => {
 		const action = result.current( { planSlug: PLAN_ECOMMERCE, availableForPurchase: true } );
 
 		expect( action.primary.text ).toBe( 'Upgrade' );
-	} );
-
-	it( 'should handle WooExpress Medium plan upgrade', () => {
-		const { result } = renderHook( () =>
-			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
-		);
-
-		const action = result.current( {
-			planSlug: PLAN_WOOEXPRESS_MEDIUM,
-			availableForPurchase: true,
-		} );
-
-		expect( action.primary.text ).toBe( 'Get Performance' );
-	} );
-
-	it( 'should handle WooExpress Small plan upgrade', () => {
-		const { result } = renderHook( () =>
-			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
-		);
-
-		const action = result.current( {
-			planSlug: PLAN_WOOEXPRESS_SMALL,
-			availableForPurchase: true,
-		} );
-
-		expect( action.primary.text ).toBe( 'Get Essential' );
 	} );
 
 	it( 'should handle business trial upgrade', () => {

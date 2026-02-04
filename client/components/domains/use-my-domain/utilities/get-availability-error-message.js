@@ -7,6 +7,7 @@ import { domainAddNew } from 'calypso/my-sites/domains/paths';
 export function getAvailabilityErrorMessage( {
 	availabilityData,
 	domainName,
+	dashboard,
 	selectedSite,
 	registerNowAction = undefined,
 } ) {
@@ -70,12 +71,20 @@ export function getAvailabilityErrorMessage( {
 	const isSiteDomainOnly =
 		site === other_site_domain ? other_site_domain_only : selectedSite?.options?.is_domain_only;
 
-	const errorData = getAvailabilityNotice( domainName, availabilityStatus, {
-		site,
-		maintenanceEndTime,
-		isSiteDomainOnly,
-		cannot_transfer_due_to_unsupported_premium_tld:
-			availabilityData?.cannot_transfer_due_to_unsupported_premium_tld,
-	} );
+	const errorData = getAvailabilityNotice(
+		domainName,
+		availabilityStatus,
+		{
+			site,
+			maintenanceEndTime,
+			isSiteDomainOnly,
+			cannot_transfer_due_to_unsupported_premium_tld:
+				availabilityData?.cannot_transfer_due_to_unsupported_premium_tld,
+		},
+		undefined,
+		undefined,
+		undefined,
+		dashboard
+	);
 	return errorData?.message || null;
 }

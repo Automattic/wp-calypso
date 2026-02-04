@@ -35,20 +35,14 @@ export default function PricingSummary( {
 		discountedCost,
 		totalActualCostFormatted,
 		totalDiscountedCostFormatted,
-		totalActualCostFormattedText,
 		totalDiscountedCostFormattedText,
 	} = getTotalInvoiceValue( userProducts, items );
 
 	const termPricingText = useTermPricingText( termPricing, false );
 
-	// Show actual cost if the agency is referring a client
-	const totalCost = isAutomatedReferrals ? actualCost : discountedCost;
-	const totalCostFormatted = isAutomatedReferrals
-		? totalActualCostFormatted
-		: totalDiscountedCostFormatted;
-	const totalCostFormattedText = isAutomatedReferrals
-		? totalActualCostFormattedText
-		: totalDiscountedCostFormattedText;
+	const totalCost = discountedCost;
+	const totalCostFormatted = totalDiscountedCostFormatted;
+	const totalCostFormattedText = totalDiscountedCostFormattedText;
 
 	// Agency checkout is when the user is not purchasing automated referrals and not a client
 	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;

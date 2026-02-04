@@ -155,7 +155,6 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
-	FEATURE_AI_WEBSITE_BUILDER,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_BLAZE_AD_CREDITS,
@@ -177,6 +176,14 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	FEATURE_PAYMENT_TRANSACTION_FEES_0,
 	FEATURE_GROUP_WORDADS,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_GROUP_WOO_HOSTED,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -227,7 +234,6 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_SMART_REDIRECTS,
 			// AI features for plan differentiators experiment
-			FEATURE_AI_WEBSITE_BUILDER,
 			FEATURE_AI_WRITER_DESIGNER,
 		],
 	},
@@ -419,6 +425,26 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			) ]: [ FEATURE_DISCOUNTED_SHIPPING, FEATURE_PRINT_SHIPPING_LABELS ],
 		} ),
 	},
+	/* END: WooExpress Feature Groups */
+
+	/* START: Woo Hosted (CIAB) Feature Groups */
+	[ FEATURE_GROUP_WOO_HOSTED ]: {
+		slug: FEATURE_GROUP_WOO_HOSTED,
+		getTitle: () => null,
+		getFeatures: () => [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_WOO_HOSTED_PACKAGE,
+			FEATURE_WOO_HOSTED_AI_BUILDER,
+			FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+			FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+			FEATURE_WOO_HOSTED_PRO_MAILPOET,
+			FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+			FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		],
+	},
+	/* END: Woo Hosted (CIAB) Feature Groups */
+
 	[ FEATURE_GROUP_DOMAIN ]: {
 		slug: FEATURE_GROUP_DOMAIN,
 		getTitle: () => null,
@@ -640,7 +666,6 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 				getTitle: () => i18n.translate( 'Growth and monetization tools' ),
 				getFeatures: () => [
 					FEATURE_AI_ASSISTANT,
-					FEATURE_AI_WEBSITE_BUILDER,
 					FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 					FEATURE_BLAZE_AD_CREDITS,
 					FEATURE_NEWSLETTERS_RSS,
@@ -693,6 +718,23 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 }
 
 export function resolveWooExpressFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
+	return {
+		[ FEATURE_GROUP_YOUR_STORE ]: featureGroups[ FEATURE_GROUP_YOUR_STORE ],
+		[ FEATURE_GROUP_PRODUCTS ]: featureGroups[ FEATURE_GROUP_PRODUCTS ],
+		[ FEATURE_GROUP_PAYMENTS ]: featureGroups[ FEATURE_GROUP_PAYMENTS ],
+		[ FEATURE_GROUP_MARKETING_EMAIL ]: featureGroups[ FEATURE_GROUP_MARKETING_EMAIL ],
+		[ FEATURE_GROUP_SHIPPING ]: featureGroups[ FEATURE_GROUP_SHIPPING ],
+	};
+}
+
+export function resolveWooHostedFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return {
+		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+		[ FEATURE_GROUP_WOO_HOSTED ]: featureGroups[ FEATURE_GROUP_WOO_HOSTED ],
+	};
+}
+
+export function resolveWooHostedFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {
 	return {
 		[ FEATURE_GROUP_YOUR_STORE ]: featureGroups[ FEATURE_GROUP_YOUR_STORE ],
 		[ FEATURE_GROUP_PRODUCTS ]: featureGroups[ FEATURE_GROUP_PRODUCTS ],

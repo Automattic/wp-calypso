@@ -30,6 +30,7 @@ import type {
 	CheckoutStepProps,
 	StepCompleteCallback,
 	SetStepComplete,
+	CompleteAllSteps,
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
@@ -68,6 +69,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 	actions: {
 		makeStepActive: noop,
 		setStepComplete: noop,
+		completeAllSteps: noop,
 		setActiveStepNumber: noop,
 		setStepCompleteStatus: noop,
 		setStepCompleteCallback: noop,
@@ -232,6 +234,22 @@ function createCheckoutStepGroupActions(
 		return true;
 	};
 
+	// A programmatic way to attempt to complete all steps without needing to know which is last.
+	const completeAllSteps = async () => {
+		debug( `attempting to complete all steps (totalSteps: ${ state.totalSteps })` );
+		// Try to complete all steps in order, ignoring steps that are already complete.
+		for ( let step = 1; step <= state.totalSteps; step++ ) {
+			if ( ! state.stepCompleteStatus[ step ] ) {
+				const didStepComplete = await getStepCompleteCallback( step )();
+				debug( `attempting to complete all steps; step ${ step } result was ${ didStepComplete }` );
+				if ( ! didStepComplete ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
 	return {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -240,6 +258,7 @@ function createCheckoutStepGroupActions(
 		getStepCompleteCallback,
 		setTotalSteps,
 		setStepComplete,
+		completeAllSteps,
 		makeStepActive,
 	};
 }
@@ -897,6 +916,11 @@ export function useIsStepComplete(): boolean {
 export function useSetStepComplete(): SetStepComplete {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.setStepComplete;
+}
+
+export function useCompleteAllSteps(): CompleteAllSteps {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.completeAllSteps;
 }
 
 export function useMakeStepActive(): MakeStepActive {

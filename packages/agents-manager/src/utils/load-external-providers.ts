@@ -1,11 +1,11 @@
 /**
  * External Provider Loading Utility
  *
- * Loads external agent providers registered via the help_center_agent_providers
+ * Loads external agent providers registered via the agents_manager_agent_providers
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
-import { getAgentManager } from '@automattic/agenttic-client';
+import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
@@ -48,7 +48,33 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+	getSessionId: () => string | undefined;
+	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
+	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
+
+export type SiteBuildUtils = {
+	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
+	groupSiteBuildMessages: ( messages: UIMessage[], thinkingMessage: string | null ) => UIMessage[];
+};
+
+/**
+ * Supported chat component types for agent messages.
+ */
+type ChatComponentType =
+	| 'button-picker'
+	| 'font-picker'
+	| 'color-picker'
+	| 'pattern-picker'
+	| 'chat-suggestions'
+	| 'next-step-button';
+
+/**
+ * Get a chat component by type for rendering in agent messages.
+ * @param type - The type of chat component to get
+ * @returns The React component for the specified type, or `null` if unknown
+ */
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
@@ -58,6 +84,8 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	getChatComponent?: GetChatComponent;
+	siteBuildUtils?: SiteBuildUtils;
 }
 
 /**
@@ -82,6 +110,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
+	let mergedGetChatComponent: GetChatComponent | undefined;
+	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -110,6 +140,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
+			if ( module.getChatComponent ) {
+				mergedGetChatComponent = module.getChatComponent;
+			}
+			if ( module.siteBuildUtils ) {
+				mergedSiteBuildUtils = module.siteBuildUtils;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -127,5 +163,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		getChatComponent: mergedGetChatComponent,
+		siteBuildUtils: mergedSiteBuildUtils,
 	};
 }

@@ -24,7 +24,9 @@ export default function CommissionsInfo( {
 			product.family_slug
 		);
 		const termPrice =
-			termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+			termPricing === 'yearly'
+				? product.yearly_introductory_price ?? product.yearly_price ?? 0
+				: product.monthly_introductory_price ?? product.monthly_price ?? 0;
 		const productAmount = product?.amount ? Number( product.amount.replace( /,/g, '' ) ) : 0;
 		const productPrice = isTermPricingEnabled ? termPrice : productAmount;
 		const totalCommissions = productPrice * commissionPercentage || 0;

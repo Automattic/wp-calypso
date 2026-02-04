@@ -359,6 +359,13 @@ import {
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_GROUP_WORDADS,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2173,7 +2180,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
 		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
-		getTitle: () => i18n.translate( 'Early onboarding calls for site setup' ),
+		getTitle: () => i18n.translate( 'One-on-one onboarding call' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Talk with a WordPress.com expert to set up your site.' )
@@ -2714,7 +2721,9 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'AI assistant and tools' )
 				: i18n.translate( 'AI Assistant' ),
 		getDescription: () =>
-			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
+			i18n.translate(
+				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+			),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2755,7 +2764,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Unlimited products' )
 				: i18n.translate( 'List unlimited products' ),
-		getDescription: () => '',
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
 	},
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,
@@ -2866,6 +2878,44 @@ const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Woo Express Features */
 
+	/* START: Woo Hosted (CIAB) Features */
+	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
+		getTitle: () => 'All-in-one solution to build and manage your ecommerce store',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
+		getTitle: () => 'Build your store quickly with our AI-powered site-building tool',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		getTitle: () => 'Build your business with included marketing tools',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		getTitle: () => 'Send up to 5,000 emails/month',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		getTitle: () => 'Send up to 250,000 emails/month',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		getTitle: () => 'One store admin account',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		getTitle: () => 'Unlimited store admin accounts',
+		getDescription: () => '',
+	},
+	/* END: Woo Hosted (CIAB) Features */
+
 	/* START: Sensei Features */
 	[ FEATURE_SENSEI_SUPPORT ]: {
 		getSlug: () => FEATURE_SENSEI_SUPPORT,
@@ -2962,7 +3012,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Enhanced AI assistant and tools' )
+				? i18n.translate( 'AI assistant and design capabilities' )
 				: i18n.translate( 'AI Writer & Designer' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant

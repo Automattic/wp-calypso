@@ -81,6 +81,19 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 		);
 	}, [ existingPlanInfo, isReferralMode ] );
 
+	// Determine effective ownership for UI purposes.
+	// 'regular' means the agency has a Pressable account (e.g. from a referral) but no active
+	// A4A subscription — treat as 'none' so intro pricing UI is shown.
+	const effectiveOwnership = ( () => {
+		if ( isReferralMode || agencyPressablePlan ) {
+			return 'agency';
+		}
+		if ( pressableOwnership === 'regular' ) {
+			return 'none';
+		}
+		return pressableOwnership;
+	} )();
+
 	return (
 		<div className="premier-agency-hosting">
 			{ agencyPressablePlan && ! isReferralMode && (
@@ -89,13 +102,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
-				pressableOwnership={
-					isReferralMode ||
-					agencyPressablePlan ||
-					( pressableOwnership === 'regular' && ! agencyPressablePlan ) // Agency has an existing Pressable account, but no active subscription.
-						? 'agency'
-						: pressableOwnership
-				}
+				pressableOwnership={ effectiveOwnership }
 				existingPlan={ agencyPressablePlan }
 				existingPlanInfo={ existingPlanInfo }
 				isFetching={ isExistingPlanFetched }

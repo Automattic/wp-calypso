@@ -15,5 +15,14 @@ export const DiscoverDocumentHead = () => {
 		},
 	];
 
-	return <DocumentHead title={ title } meta={ meta } />;
+	const link = [
+		{
+			rel: 'alternate',
+			type: 'application/rss+xml',
+			title: translate( 'Discover RSS Feed' ),
+			href: 'https://public-api.wordpress.com/rest/v1.2/freshly-pressed/?format=rss',
+		},
+	];
+
+	return <DocumentHead title={ title } meta={ meta } link={ link } />;
 };

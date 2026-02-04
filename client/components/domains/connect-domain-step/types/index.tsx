@@ -1,5 +1,6 @@
 import { stepSlug, useMyDomainInputMode } from '../constants';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { DashboardType } from 'calypso/dashboard/utils/link';
 
 type ValueOf< T > = T[ keyof T ];
 export type Maybe< T > = T | null | undefined;
@@ -56,6 +57,7 @@ export type StartStepProps = {
 	progressStepList: Record< PossibleSlugs, string >;
 	domainInboundTransferStatusInfo: Partial< InboundTransferStatusInfo >;
 	initialMode: PossibleInitialModes;
+	dashboard?: DashboardType;
 	selectedSite: Maybe< SiteDetails >;
 	setPage: ( page: PossibleSlugs ) => void;
 };
