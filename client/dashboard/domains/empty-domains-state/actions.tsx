@@ -6,35 +6,19 @@ import { useAppContext } from '../../app/context';
 import EmptyState from '../../components/empty-state';
 import { wpcomLink } from '../../utils/link';
 
-export default function EmptyDomainsStateActions() {
+function useTrackEmptyStateActionClick( dashboard: string ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { name } = useAppContext();
-	const isCiab = name === 'CIAB';
 
-	const trackEmptyStateActionClick = ( action: string ) => {
+	return ( action: string ) => {
 		recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
 			action,
-			dashboard: isCiab ? 'ciab' : 'msd',
+			dashboard,
 		} );
 	};
+}
 
-	const handleSearchDomainsClick = () => {
-		trackEmptyStateActionClick( 'search-domains' );
-	};
-
-	const handleTransferDomainClick = () => {
-		trackEmptyStateActionClick( 'transfer-domain' );
-	};
-
-	const searchUrl = isCiab ? '/setup/domain' : '/start/domain';
-	const transferUrl = isCiab ? '/setup/domain/use-my-domain' : '/setup/domain-transfer';
-	const transferTitle = isCiab
-		? __( 'Use a domain name you already own' )
-		: __( 'Transfer a domain you already own' );
-	const transferDescription = isCiab
-		? __( 'Bring your domain to WordPress.com and manage everything in one place.' )
-		: __( 'Move your domain to WordPress.com and manage everything in one place.' );
-	const transferButtonLabel = isCiab ? __( 'Use a domain name I own' ) : __( 'Start transfer' );
+function DotcomEmptyDomainsStateActions() {
+	const trackClick = useTrackEmptyStateActionClick( 'msd' );
 
 	return (
 		<EmptyState.ActionList>
@@ -45,8 +29,8 @@ export default function EmptyDomainsStateActions() {
 				actions={
 					<Button
 						variant="secondary"
-						href={ wpcomLink( searchUrl ) }
-						onClick={ handleSearchDomainsClick }
+						href={ wpcomLink( '/start/domain' ) }
+						onClick={ () => trackClick( 'search-domains' ) }
 						size="compact"
 						__next40pxDefaultSize
 					>
@@ -55,21 +39,76 @@ export default function EmptyDomainsStateActions() {
 				}
 			/>
 			<EmptyState.ActionItem
-				title={ transferTitle }
-				description={ transferDescription }
+				title={ __( 'Transfer a domain you already own' ) }
+				description={ __(
+					'Move your domain to WordPress.com and manage everything in one place.'
+				) }
 				decoration={ <Icon icon={ globe } size={ 24 } /> }
 				actions={
 					<Button
 						variant="secondary"
-						href={ wpcomLink( transferUrl ) }
-						onClick={ handleTransferDomainClick }
+						href={ wpcomLink( '/setup/domain-transfer' ) }
+						onClick={ () => trackClick( 'transfer-domain' ) }
 						size="compact"
 						__next40pxDefaultSize
 					>
-						{ transferButtonLabel }
+						{ __( 'Start transfer' ) }
 					</Button>
 				}
 			/>
 		</EmptyState.ActionList>
 	);
+}
+
+function CiabEmptyDomainsStateActions() {
+	const trackClick = useTrackEmptyStateActionClick( 'ciab' );
+
+	return (
+		<EmptyState.ActionList>
+			<EmptyState.ActionItem
+				title={ __( 'Search domain names' ) }
+				description={ __( 'Find and register the perfect domain for your brand.' ) }
+				decoration={ <Icon icon={ search } size={ 24 } /> }
+				actions={
+					<Button
+						variant="secondary"
+						href={ wpcomLink( '/setup/domain' ) }
+						onClick={ () => trackClick( 'search-domains' ) }
+						size="compact"
+						__next40pxDefaultSize
+					>
+						{ __( 'Search domains' ) }
+					</Button>
+				}
+			/>
+			<EmptyState.ActionItem
+				title={ __( 'Use a domain name you already own' ) }
+				description={ __(
+					'Bring your domain to WordPress.com and manage everything in one place.'
+				) }
+				decoration={ <Icon icon={ globe } size={ 24 } /> }
+				actions={
+					<Button
+						variant="secondary"
+						href={ wpcomLink( '/setup/domain/use-my-domain' ) }
+						onClick={ () => trackClick( 'transfer-domain' ) }
+						size="compact"
+						__next40pxDefaultSize
+					>
+						{ __( 'Use a domain name I own' ) }
+					</Button>
+				}
+			/>
+		</EmptyState.ActionList>
+	);
+}
+
+export default function EmptyDomainsStateActions() {
+	const { name } = useAppContext();
+
+	if ( name === 'CIAB' ) {
+		return <CiabEmptyDomainsStateActions />;
+	}
+
+	return <DotcomEmptyDomainsStateActions />;
 }

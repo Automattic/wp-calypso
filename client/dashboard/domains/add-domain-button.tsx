@@ -8,10 +8,8 @@ import { siteRoute } from '../app/router/sites';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
 import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
-export default function AddDomainButton() {
+function useDomainNavigation() {
 	const router = useRouter();
-	const { name } = useAppContext();
-	const isCiab = name === 'CIAB';
 	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
 
 	const buildQueryArgs = () => {
@@ -33,20 +31,57 @@ export default function AddDomainButton() {
 		return false;
 	};
 
-	const searchWithSiteUrl = '/setup/domain';
-	const searchWithoutSiteUrl = isCiab ? '/setup/domain' : '/start/domain';
-	const transferWithSiteUrl = '/setup/domain/use-my-domain';
-	const transferWithoutSiteUrl = isCiab ? '/setup/domain/use-my-domain' : '/setup/domain-transfer';
+	return { siteSlug, navigateTo };
+}
+
+function DotcomAddDomainButton() {
+	const { siteSlug, navigateTo } = useDomainNavigation();
 
 	const onSearchClick = () =>
-		navigateTo( wpcomLink( searchWithSiteUrl ), wpcomLink( searchWithoutSiteUrl ) );
+		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( transferWithSiteUrl ), wpcomLink( transferWithoutSiteUrl ) );
+		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
 
-	const transferLabel =
-		isCiab || siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' );
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+		/>
+	);
+}
 
+function CiabAddDomainButton() {
+	const { navigateTo } = useDomainNavigation();
+
+	const onSearchClick = () =>
+		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/setup/domain' ) );
+
+	const onTransferOrConnectClick = () =>
+		navigateTo(
+			wpcomLink( '/setup/domain/use-my-domain' ),
+			wpcomLink( '/setup/domain/use-my-domain' )
+		);
+
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ __( 'Use a domain name I own' ) }
+		/>
+	);
+}
+
+function AddDomainDropdown( {
+	onSearchClick,
+	onTransferOrConnectClick,
+	transferLabel,
+}: {
+	onSearchClick: () => void;
+	onTransferOrConnectClick: () => void;
+	transferLabel: string;
+} ) {
 	return (
 		<Dropdown
 			renderToggle={ ( { isOpen, onToggle } ) => (
@@ -73,4 +108,14 @@ export default function AddDomainButton() {
 			) }
 		/>
 	);
+}
+
+export default function AddDomainButton() {
+	const { name } = useAppContext();
+
+	if ( name === 'CIAB' ) {
+		return <CiabAddDomainButton />;
+	}
+
+	return <DotcomAddDomainButton />;
 }
