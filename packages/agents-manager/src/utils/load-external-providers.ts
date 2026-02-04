@@ -48,6 +48,7 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
@@ -57,6 +58,24 @@ export type SiteBuildUtils = {
 	groupSiteBuildMessages: ( messages: UIMessage[], thinkingMessage: string | null ) => UIMessage[];
 };
 
+/**
+ * Supported chat component types for agent messages.
+ */
+type ChatComponentType =
+	| 'button-picker'
+	| 'font-picker'
+	| 'color-picker'
+	| 'pattern-picker'
+	| 'chat-suggestions'
+	| 'next-step-button';
+
+/**
+ * Get a chat component by type for rendering in agent messages.
+ * @param type - The type of chat component to get
+ * @returns The React component for the specified type, or `null` if unknown
+ */
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -65,6 +84,7 @@ export interface LoadedProviders {
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
 }
 
@@ -90,6 +110,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
+	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 
 	for ( const moduleId of agentProviders ) {
@@ -119,6 +140,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
 			}
+			if ( module.getChatComponent ) {
+				mergedGetChatComponent = module.getChatComponent;
+			}
 			if ( module.siteBuildUtils ) {
 				mergedSiteBuildUtils = module.siteBuildUtils;
 			}
@@ -139,6 +163,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
 	};
 }

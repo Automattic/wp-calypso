@@ -22,7 +22,8 @@ import useCustomEventHandler from '../../hooks/use-custom-event-handler';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
+import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
+import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -33,6 +34,7 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	GetChatComponent,
 	SiteBuildUtils,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
@@ -50,6 +52,8 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Get a chat component by type for rendering in agent messages. */
+	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
 }
 
@@ -60,6 +64,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	getChatComponent,
 	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
@@ -172,6 +177,9 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
+		// This ensures the same session ID is used between Big Sky and Calypso agents,
+		// so that messages will be stored in the same conversation.
+		getSessionId: () => sessionId || getStoredSessionId(),
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
@@ -193,6 +201,8 @@ export default function AgentDock( {
 		if ( conversation.is_zendesk ) {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
+			const sessionId = conversation.session_id || '';
+
 			abortCurrentRequest();
 			setSessionId( sessionId );
 			navigate( '/chat', { state: { sessionId } } );
@@ -244,28 +254,41 @@ export default function AgentDock( {
 		return options;
 	};
 
-	// Filter out deleted messages and local tool running messages
 	const visibleMessages = useMemo( () => {
-		const filteredMessages = messages.filter(
+		let currentMessages = messages;
+
+		currentMessages = currentMessages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
 		// Group site-build messages only when needed
-		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( filteredMessages );
-		// Show progress card during styling phase (after structure, dock is visible)
+		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
 
+		// Show progress card during styling phase (after structure, dock is visible)
 		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
 			// Show spinner during post-layout workflow (colors, fonts, images)
-			return siteBuildUtils.groupSiteBuildMessages(
-				filteredMessages,
+			currentMessages = siteBuildUtils.groupSiteBuildMessages(
+				currentMessages,
 				isBuildingSite ? thinkingMessage : null
 			);
 		}
 
-		return filteredMessages;
-	}, [ messages, siteBuildUtils, isBuildingSite, deletedMessageIds, thinkingMessage ] );
+		currentMessages = convertToolMessagesToComponents( {
+			messages: currentMessages,
+			getChatComponent,
+		} );
+
+		return currentMessages;
+	}, [
+		deletedMessageIds,
+		getChatComponent,
+		isBuildingSite,
+		messages,
+		siteBuildUtils,
+		thinkingMessage,
+	] );
 
 	const Chat = (
 		<AgentChat
