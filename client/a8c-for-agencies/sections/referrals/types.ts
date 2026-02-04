@@ -44,15 +44,22 @@ export interface ReferralAPIResponse {
 
 export type ReferralOrderFlowType = 'send' | 'copy';
 
+export interface ReferralCommissionPayoutInvoice {
+	payment_date: string;
+	paid_amount: number;
+	commission_amount: number;
+}
+
 export interface ReferralCommissionPayoutProduct {
 	product_id: number;
 	product_name: string;
 	total_amount: number;
 	total_commission: number;
+	invoices?: ReferralCommissionPayoutInvoice[];
 }
 
 export interface ReferralCommissionPayoutClient {
-	client_user_id: number;
+	client_user_id: number | 'N/A';
 	email: string;
 	total_amount: number;
 	total_commission: number;
@@ -62,5 +69,8 @@ export interface ReferralCommissionPayoutClient {
 export interface ReferralCommissionPayoutResponse {
 	total_amount: number;
 	total_commission: number;
+	start_date: string;
+	end_date: string;
+	next_payout_date: string;
 	client_data: ReferralCommissionPayoutClient[];
 }

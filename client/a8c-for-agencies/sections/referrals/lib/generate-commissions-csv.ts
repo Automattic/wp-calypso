@@ -40,12 +40,13 @@ function formatPercentage( percentage: number ): string {
 interface CommissionRow {
 	clientEmail: string;
 	productName: string;
-	quantity: number;
-	issuedDate: string;
-	revokedDate: string;
-	price: string;
+	quantity: number | '-';
+	invoicedDate: string;
+	issuedDate: string | '-';
+	revokedDate: string | '-';
+	price: number;
 	commissionPercentage: string;
-	commissionAmount: string;
+	commissionAmount: number;
 }
 
 /**
@@ -81,6 +82,7 @@ function findMatchingPurchase(
 
 /**
  * Builds CSV rows from the referral commission payout API (commission from API, rest from referrals when available).
+ * Creates one row per invoice.
  */
 function buildRowsFromApi(
 	referralCommissionPayout: ReferralCommissionPayoutResponse,
@@ -92,19 +94,42 @@ function buildRowsFromApi(
 	for ( const apiClient of referralCommissionPayout.client_data ) {
 		for ( const apiProduct of apiClient.products ) {
 			const match = findMatchingPurchase( referrals, apiClient, apiProduct.product_id, products );
-			if ( match ) {
-				rows.push( {
-					clientEmail: apiClient.email,
-					productName: apiProduct.product_name,
-					quantity: match.purchase.quantity ?? 1,
-					issuedDate: formatDate( match.purchase.license?.issued_at ) ?? '-',
-					revokedDate: formatDate( match.purchase.license?.revoked_at ) ?? '-',
-					price: apiProduct.total_amount.toFixed( 2 ),
-					commissionPercentage: formatPercentage(
-						getProductCommissionPercentage( match.product.slug, match.product.family_slug )
-					),
-					commissionAmount: apiProduct.total_commission.toFixed( 2 ),
-				} );
+
+			if ( apiProduct.invoices && apiProduct.invoices.length > 0 ) {
+				const clientEmail = apiClient.client_user_id === 'N/A' ? 'N/A' : apiClient.email;
+				const productName = apiProduct.product_name;
+				for ( const invoice of apiProduct.invoices ) {
+					const invoicedDate = formatDate( invoice.payment_date );
+					const price = invoice.paid_amount;
+					const commissionAmount = invoice.commission_amount;
+					if ( match ) {
+						rows.push( {
+							clientEmail,
+							productName,
+							quantity: match.purchase.quantity ?? 1,
+							invoicedDate,
+							issuedDate: formatDate( match.purchase.license?.issued_at ?? null ) || '-',
+							revokedDate: formatDate( match.purchase.license?.revoked_at ?? null ) || '-',
+							price,
+							commissionPercentage: formatPercentage(
+								getProductCommissionPercentage( match.product.slug, match.product.family_slug )
+							),
+							commissionAmount,
+						} );
+					} else if ( apiClient.client_user_id === 'N/A' ) {
+						rows.push( {
+							clientEmail,
+							productName,
+							quantity: '-',
+							invoicedDate,
+							issuedDate: '-',
+							revokedDate: '-',
+							price,
+							commissionPercentage: '-',
+							commissionAmount,
+						} );
+					}
+				}
 			}
 		}
 	}
@@ -127,6 +152,7 @@ export function generateCommissionsCsv(
 		...( isSingleClient ? [] : [ 'Client Email' ] ),
 		'Product Name',
 		'Quantity',
+		'Invoiced Date',
 		'Issued Date',
 		'Revoked Date',
 		'Price (USD)',
@@ -146,6 +172,7 @@ export function generateCommissionsCsv(
 			...( isSingleClient ? [] : [ row.clientEmail ] ),
 			row.productName,
 			row.quantity,
+			row.invoicedDate,
 			row.issuedDate,
 			row.revokedDate,
 			row.price,
