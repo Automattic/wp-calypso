@@ -427,6 +427,10 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
+	.Message-module_message ul {
+		margin-left: var(--spacing-2);
+	}
+
 	.Messages-module_container {
 		padding-bottom: 24px;
 
@@ -622,10 +626,6 @@ body:not(.modal-open) .agents-manager-chat--docked {
 		left: auto;
 		right: 0;
 	}
-}
-
-.agents-manager-chat ul {
-	margin-left: var(--spacing-2);
 }
 
 /* Agenttic UI: Styles for the docked chat */
