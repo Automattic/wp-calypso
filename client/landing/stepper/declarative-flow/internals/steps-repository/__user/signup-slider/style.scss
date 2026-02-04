@@ -25,6 +25,14 @@
 		display: none;
 	}
 
+	.dot-pager__control-choose-page {
+		background-color: rgba( 255, 255, 255, 0.3 );
+
+		&.dot-pager__control-current {
+			background-color: var( --studio-white );
+		}
+	}
+
 	// Disable the opacity fade transition
 	.dot-pager__page {
 		transition: none;
