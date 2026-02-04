@@ -881,7 +881,6 @@ const PlansFeaturesMain = ( {
 						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
-						showLegacyStorageFeature={ showLegacyStorageFeature }
 						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
