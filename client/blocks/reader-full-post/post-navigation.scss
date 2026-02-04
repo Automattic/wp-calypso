@@ -7,11 +7,6 @@
 	}
 }
 
-.reader-full-post-navigation__link {
-	flex: 1;
-	max-width: 50%;
-}
-
 .reader-full-post-navigation__link-button {
 	display: flex;
 	text-decoration: none;
@@ -21,7 +16,7 @@
 	background: none;
 	border: none;
 	border-radius: 4px;
-	width: 100%;
+	max-width: 50%;
 	height: auto;
 	justify-content: flex-start;
 

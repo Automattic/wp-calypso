@@ -110,23 +110,19 @@ const ReaderFullPostNavigation = ( {
 	return (
 		<VStack spacing={ 6 } className="reader-full-post-navigation">
 			<Divider />
-			<HStack spacing={ 6 } alignment="stretch">
-				<div className="reader-full-post-navigation__link">
-					<NavigationButton
-						direction="previous"
-						post={ previousPost }
-						postKey={ previousPostKey }
-						onNavigate={ onNavigate }
-					/>
-				</div>
-				<div className="reader-full-post-navigation__link">
-					<NavigationButton
-						direction="next"
-						post={ nextPost }
-						postKey={ nextPostKey }
-						onNavigate={ onNavigate }
-					/>
-				</div>
+			<HStack spacing={ 6 } justify="space-between">
+				<NavigationButton
+					direction="previous"
+					post={ previousPost }
+					postKey={ previousPostKey }
+					onNavigate={ onNavigate }
+				/>
+				<NavigationButton
+					direction="next"
+					post={ nextPost }
+					postKey={ nextPostKey }
+					onNavigate={ onNavigate }
+				/>
 			</HStack>
 		</VStack>
 	);
