@@ -99,7 +99,9 @@ function Domains() {
 						title={ __( 'Add your first domain name' ) }
 						description={ __( 'Establish a unique online identity for your site.' ) }
 					>
-						<EmptyDomainsStateActions />
+						<Suspense fallback={ null }>
+							<EmptyDomainsStateActions />
+						</Suspense>
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
@@ -121,7 +123,9 @@ function Domains() {
 									description={ __( 'Try again, or add a new domain with the options below.' ) }
 									isBorderless
 								>
-									<EmptyDomainsStateActions />
+									<Suspense fallback={ null }>
+										<EmptyDomainsStateActions />
+									</Suspense>
 								</DataViewsEmptyStateLayout>
 							}
 						/>
