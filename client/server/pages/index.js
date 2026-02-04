@@ -1092,7 +1092,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
-	if ( calypsoEnv !== 'production' && config.isEnabled( 'dashboard/v2' ) ) {
+	if ( [ 'development', 'wpcalypso' ].includes( calypsoEnv ) ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1107,13 +1107,15 @@ export default function pages() {
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleRoute( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) => {
 				// Allow dashboard routes under my.localhost.
-				return req.get( 'host' ).startsWith( 'my.localhost' );
+				const host = req.get( 'host' ) || '';
+				return host.startsWith( 'my.localhost' );
 			} );
 		} );
 
 		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
 			// Allow CIAB routes under my.localhost.
-			return req.get( 'host' ).startsWith( 'my.localhost' );
+			const host = req.get( 'host' ) || '';
+			return host.startsWith( 'my.localhost' );
 		} );
 
 		// Temporary support redirection for the /v2 route for backwards compatibility.

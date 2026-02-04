@@ -4,10 +4,6 @@ import type { HostingDashboardOptIn } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 export const hasDashboardForcedOptIn = ( state: AppState ): boolean => {
-	if ( ! isEnabled( 'dashboard/v2' ) ) {
-		return false;
-	}
-
 	const preference = getPreference( state, 'hosting-dashboard-opt-in' ) as
 		| HostingDashboardOptIn
 		| undefined;

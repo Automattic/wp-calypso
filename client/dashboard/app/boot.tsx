@@ -1,16 +1,11 @@
 import { persistQueryClientPromise } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { initSentry } from '@automattic/calypso-sentry';
-import {
-	isSupportSession,
-	maybeInitializeSupportSession,
-} from '@automattic/calypso-support-session';
+import { maybeInitializeSupportSession } from '@automattic/calypso-support-session';
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
-import isDashboardEnv from '../utils/is-dashboard-env';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
@@ -19,10 +14,6 @@ import type { AppConfig } from './context';
 import './style.scss';
 
 function boot( config: AppConfig ) {
-	if ( ! isDashboardEnv() && ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
-		throw new Error( 'Multi-site Dashboard is not enabled' );
-	}
-
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
 	loadPreferencesHelper();

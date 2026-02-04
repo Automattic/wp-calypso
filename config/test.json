@@ -114,7 +114,6 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"wpcom-user-bootstrap": false,
-		"dashboard/v2": true
+		"wpcom-user-bootstrap": false
 	}
 }
