@@ -1,5 +1,5 @@
 import { queryClient } from '@automattic/api-queries';
-import { start, stop } from '@automattic/browser-data-collector';
+import { cancel, start, stop } from '@automattic/browser-data-collector';
 import config from '@automattic/calypso-config';
 import { useLayoutEffect } from 'react';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -33,11 +33,21 @@ function buildCollector( siteSlug?: string ): Collector {
 /**
  * Start performance tracking for a page.
  * Call this in a route's beforeLoad handler.
+ *
+ * We cancel any existing in-flight recording before starting. Exposing `cancel()` from
+ * browser-data-collector is not ideal, but it's needed to work around a TanStack Router bug where
+ * `cause` in `beforeLoad` gets cached, causing `'enter'` to be reported instead of `'preload'` on
+ * hover. This leads to spurious `start()` calls (that we need to cancel) that block subsequent
+ * real navigations.
+ *
+ * The `cancel()` call can be removed when the upstream issue is fixed.
+ * @see https://github.com/TanStack/router/issues/3179
  */
 export function startPerformanceTracking( id: string, { fullPageLoad = false } = {} ) {
 	if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 		return;
 	}
+	cancel( id );
 	start( id, { fullPageLoad } );
 }
 
