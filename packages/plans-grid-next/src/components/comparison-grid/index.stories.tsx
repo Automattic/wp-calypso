@@ -15,7 +15,6 @@ const ComponentWrapper = ( props: Omit< ComparisonGridExternalProps, 'gridPlans'
 		isSubdomainNotGenerated: false,
 		selectedFeature: undefined,
 		selectedPlan: undefined,
-		showLegacyStorageFeature: false,
 		reflectStorageSelectionInPlanPrices: false,
 		term: 'TERM_ANNUALLY',
 		useFreeTrialPlanSlugs: undefined,

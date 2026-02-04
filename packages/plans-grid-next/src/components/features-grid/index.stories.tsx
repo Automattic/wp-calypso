@@ -30,7 +30,6 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 		coupon: props.coupon,
 		allFeaturesList: props.allFeaturesList,
 		isInSignup: props.isInSignup,
-		showLegacyStorageFeature: props.showLegacyStorageFeature,
 		useCheckPlanAvailabilityForPurchase: props.useCheckPlanAvailabilityForPurchase,
 	} );
 
@@ -73,7 +72,6 @@ const defaultProps = {
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
 	recordTracksEvent: () => {},
-	showLegacyStorageFeature: false,
 	showRefundPeriod: false,
 	showUpgradeableStorage: true,
 	siteId: undefined,

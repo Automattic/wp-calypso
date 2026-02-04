@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
 	getPlan,
 	is100Year,
@@ -45,7 +44,6 @@ import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -172,7 +170,6 @@ class PlansComponent extends Component {
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
-				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ ! isUntangled }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
@@ -390,7 +387,6 @@ const ConnectedPlans = connect(
 			} ),
 			isFreePlan: isFreePlanProduct( currentPlan ),
 			domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
-			siteHasLegacyStorage: siteHasFeature( state, selectedSiteId, FEATURE_LEGACY_STORAGE_200GB ),
 			locale: getCurrentLocaleSlug( state ),
 		};
 	},

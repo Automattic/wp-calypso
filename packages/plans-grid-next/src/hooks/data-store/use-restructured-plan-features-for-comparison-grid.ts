@@ -20,7 +20,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	allFeaturesList,
 	hasRedeemedDomainCredit,
 	intent,
-	showLegacyStorageFeature,
 	selectedFeature,
 	isSummerSpecial,
 	useLongSetFeatures,
@@ -35,7 +34,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	hasRedeemedDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
-	showLegacyStorageFeature?: boolean;
 	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
@@ -52,7 +50,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		hasRedeemedDomainCredit,
 		intent,
 		selectedFeature,
-		showLegacyStorageFeature,
 		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
@@ -66,7 +63,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			allFeaturesList,
 			intent,
 			selectedFeature,
-			showLegacyStorageFeature,
 			isSummerSpecial,
 			useLongSetFeatures,
 			useLongSetStackedFeatures,
