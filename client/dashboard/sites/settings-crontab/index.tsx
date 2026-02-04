@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
+import { Icon, Button, __experimentalText as Text, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -23,8 +23,22 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { parseScheduleValue } from './schedule-field';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
+
+type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
+
+function getScheduleLabel( schedule: string ): string {
+	const labels: Record< ScheduleType, string > = {
+		hourly: __( 'Every hour' ),
+		twicedaily: __( 'Twice daily' ),
+		daily: __( 'Daily' ),
+		weekly: __( 'Weekly' ),
+	};
+
+	return labels[ parseScheduleValue( schedule ) ];
+}
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -86,11 +100,15 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			id: 'schedule',
 			label: __( 'Schedule' ),
 			getValue: ( { item }: { item: Crontab } ) => item.schedule,
-			render: ( { item }: { item: Crontab } ) => (
-				<Text variant="muted" size="small">
-					{ cronstrue.toString( item.schedule, { verbose: true } ) }
-				</Text>
-			),
+			render: ( { item }: { item: Crontab } ) => {
+				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
+
+				return (
+					<Tooltip text={ cronDescription }>
+						<Text>{ getScheduleLabel( item.schedule ) }</Text>
+					</Tooltip>
+				);
+			},
 			enableGlobalSearch: true,
 		},
 		{
