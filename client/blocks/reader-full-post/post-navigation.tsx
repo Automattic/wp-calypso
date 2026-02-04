@@ -1,10 +1,10 @@
-import { Gridicon } from '@automattic/components';
 import {
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
@@ -31,7 +31,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 	const translate = useTranslate();
 	const isNext = direction === 'next';
 	const label = isNext ? translate( 'Next post' ) : translate( 'Previous post' );
-	const icon = isNext ? 'chevron-right' : 'chevron-left';
+	const icon = isNext ? chevronRight : chevronLeft;
 
 	if ( ! postKey ) {
 		return <div className="reader-full-post-navigation__link-placeholder" />;
@@ -51,7 +51,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 			) }
 		>
 			<HStack spacing={ 2 } justify={ isNext ? 'flex-end' : 'flex-start' } expanded>
-				{ ! isNext && <Gridicon icon={ icon } size={ 18 } /> }
+				{ ! isNext && <Icon icon={ icon } size={ 18 } /> }
 				<VStack
 					spacing={ 1 }
 					className={ clsx(
@@ -64,7 +64,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 						{ post?.title || translate( 'Loading…' ) }
 					</span>
 				</VStack>
-				{ isNext && <Gridicon icon={ icon } size={ 18 } /> }
+				{ isNext && <Icon icon={ icon } size={ 18 } /> }
 			</HStack>
 		</Button>
 	);
