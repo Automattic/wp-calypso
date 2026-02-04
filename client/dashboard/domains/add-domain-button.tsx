@@ -3,12 +3,15 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
 import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
 export default function AddDomainButton() {
 	const router = useRouter();
+	const { name } = useAppContext();
+	const isCiab = name === 'CIAB';
 	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
 
 	const buildQueryArgs = () => {
@@ -30,11 +33,19 @@ export default function AddDomainButton() {
 		return false;
 	};
 
+	const searchWithSiteUrl = '/setup/domain';
+	const searchWithoutSiteUrl = isCiab ? '/setup/domain' : '/start/domain';
+	const transferWithSiteUrl = '/setup/domain/use-my-domain';
+	const transferWithoutSiteUrl = isCiab ? '/setup/domain/use-my-domain' : '/setup/domain-transfer';
+
 	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
+		navigateTo( wpcomLink( searchWithSiteUrl ), wpcomLink( searchWithoutSiteUrl ) );
 
 	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+		navigateTo( wpcomLink( transferWithSiteUrl ), wpcomLink( transferWithoutSiteUrl ) );
+
+	const transferLabel =
+		isCiab || siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' );
 
 	return (
 		<Dropdown
@@ -56,7 +67,7 @@ export default function AddDomainButton() {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						{ transferLabel }
 					</MenuItem>
 				</>
 			) }

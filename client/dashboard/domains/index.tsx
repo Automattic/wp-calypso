@@ -2,7 +2,6 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { lazy, Suspense, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -13,6 +12,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../componen
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
 	useActions,
@@ -20,6 +20,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from './dataviews';
+import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -40,12 +41,7 @@ const defaultView = {
 
 function Domains() {
 	const { user } = useAuth();
-	const { queries, components } = useAppContext();
-	const AddDomainButton = useMemo( () => lazy( components.addDomainButton ), [ components ] );
-	const EmptyDomainsStateActions = useMemo(
-		() => lazy( components.emptyDomainsStateActions ),
-		[ components ]
-	);
+	const { queries } = useAppContext();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -74,65 +70,55 @@ function Domains() {
 
 	return (
 		<>
-			<PageLayout
-				header={
-					<PageHeader
-						title={ __( 'Domains' ) }
-						actions={
-							! hasDomains ? null : (
-								<Suspense fallback={ null }>
-									<AddDomainButton />
-								</Suspense>
-							)
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ ! hasDomains ? null : <AddDomainButton /> }
+				/>
+			}
+			notices={
+				<>
+					<OptInWelcome tracksContext="domains" />
+					<BulkActionsProgressNotice />
+				</>
+			}
+		>
+			{ ! hasDomains ? (
+				<DataViewsEmptyStateLayout
+					title={ __( 'Add your first domain name' ) }
+					description={ __( 'Establish a unique online identity for your site.' ) }
+				>
+					<EmptyDomainsStateActions />
+					<EmptyDomainsStateUpsell />
+				</DataViewsEmptyStateLayout>
+			) : (
+				<DataViewsCard>
+					<DataViews< DomainSummary >
+						data={ filteredData || [] }
+						fields={ fields }
+						onChangeView={ updateView }
+						onResetView={ resetView }
+						view={ view }
+						actions={ actions }
+						search
+						paginationInfo={ paginationInfo }
+						getItemId={ getDomainId }
+						defaultLayouts={ DEFAULT_LAYOUTS }
+						empty={
+							<DataViewsEmptyStateLayout
+								title={ __( 'No domains match your search' ) }
+								description={ __( 'Try again, or add a new domain with the options below.' ) }
+								isBorderless
+							>
+								<EmptyDomainsStateActions />
+							</DataViewsEmptyStateLayout>
 						}
 					/>
-				}
-				notices={
-					<>
-						<OptInWelcome tracksContext="domains" />
-						<BulkActionsProgressNotice />
-					</>
-				}
-			>
-				{ ! hasDomains ? (
-					<DataViewsEmptyStateLayout
-						title={ __( 'Add your first domain name' ) }
-						description={ __( 'Establish a unique online identity for your site.' ) }
-					>
-						<Suspense fallback={ null }>
-							<EmptyDomainsStateActions />
-						</Suspense>
-						<EmptyDomainsStateUpsell />
-					</DataViewsEmptyStateLayout>
-				) : (
-					<DataViewsCard>
-						<DataViews< DomainSummary >
-							data={ filteredData || [] }
-							fields={ fields }
-							onChangeView={ updateView }
-							onResetView={ resetView }
-							view={ view }
-							actions={ actions }
-							search
-							paginationInfo={ paginationInfo }
-							getItemId={ getDomainId }
-							defaultLayouts={ DEFAULT_LAYOUTS }
-							empty={
-								<DataViewsEmptyStateLayout
-									title={ __( 'No domains match your search' ) }
-									description={ __( 'Try again, or add a new domain with the options below.' ) }
-									isBorderless
-								>
-									<Suspense fallback={ null }>
-										<EmptyDomainsStateActions />
-									</Suspense>
-								</DataViewsEmptyStateLayout>
-							}
-						/>
-					</DataViewsCard>
-				) }
-			</PageLayout>
-			<PerformanceTrackerStop id="dashboard-domain-list" />
+				</DataViewsCard>
+			) }
+		</PageLayout>
+		<PerformanceTrackerStop id="dashboard-domain-list" />
 		</>
 	);
 }

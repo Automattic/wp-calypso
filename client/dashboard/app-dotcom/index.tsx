@@ -42,8 +42,6 @@ boot( {
 	},
 	optIn: true,
 	components: {
-		addDomainButton: () => import( '../domains/add-domain-button' ),
-		emptyDomainsStateActions: () => import( '../domains/empty-domains-state/actions' ),
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
