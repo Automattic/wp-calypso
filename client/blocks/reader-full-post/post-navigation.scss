@@ -1,6 +1,10 @@
 .reader-full-post-navigation {
 	margin-block-start: 32px;
 	margin-block-end: 32px;
+
+	hr {
+		border-color: var( --color-border-subtle );
+	}
 }
 
 .reader-full-post-navigation__link {
