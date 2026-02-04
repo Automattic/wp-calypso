@@ -12,7 +12,7 @@ $colophon-height: 50px;
 .layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ):not(
 		.is-woocommerce-core-profiler-flow
 	):not( .is-automattic-for-agencies-flow ) {
-	// @include jetpack-connect-colors();
+	@include jetpack-connect-colors();
 }
 
 .layout.is-woocommerce-core-profiler-flow {
