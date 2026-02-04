@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-type ScheduleType = 'hourly' | 'daily' | 'weekly';
+type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
 
 interface ScheduleFieldProps {
 	value: string;
@@ -15,12 +15,13 @@ interface ScheduleFieldProps {
 
 const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
 	{ value: 'hourly', label: __( 'Every hour' ) },
+	{ value: 'twicedaily', label: __( 'Twice daily' ) },
 	{ value: 'daily', label: __( 'Daily' ) },
 	{ value: 'weekly', label: __( 'Weekly' ) },
 ];
 
 function parseScheduleValue( value: string ): ScheduleType {
-	if ( [ 'hourly', 'daily', 'weekly' ].includes( value ) ) {
+	if ( [ 'hourly', 'twicedaily', 'daily', 'weekly' ].includes( value ) ) {
 		return value as ScheduleType;
 	}
 
@@ -31,6 +32,9 @@ function parseScheduleValue( value: string ): ScheduleType {
 function formatSchedulePreview( scheduleType: ScheduleType ): string {
 	if ( scheduleType === 'hourly' ) {
 		return __( 'Runs once every hour.' );
+	}
+	if ( scheduleType === 'twicedaily' ) {
+		return __( 'Runs twice per day.' );
 	}
 	if ( scheduleType === 'daily' ) {
 		return __( 'Runs once per day.' );
