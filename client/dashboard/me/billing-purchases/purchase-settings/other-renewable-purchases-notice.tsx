@@ -249,13 +249,28 @@ export function OtherRenewablePurchasesNotice( {
 			suppressErrorStylingForCurrentPurchase && suppressErrorStylingForOtherPurchases
 				? 'info'
 				: 'error';
-		const noticeActionOnClick = () =>
+		let noticeActionOnClick: ( () => void ) | undefined = () =>
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
-		const noticeActionText = __( 'Renew all' );
+		let noticeActionHref: string | undefined;
+		let noticeActionText = __( 'Renew all' );
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( isRenewing( currentPurchase ) ) {
-				// Auto-renew ON but renewal failed - use simplified message
+			// Auto-renew ON but no payment method - show "Add Payment Method" CTA
+			if ( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type ) {
+				noticeText = createInterpolateElement(
+					__(
+						'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please add a payment method to avoid disruption to your service.'
+					),
+					{ link }
+				);
+				noticeActionText = __( 'Add Payment Method' );
+				noticeActionOnClick = undefined;
+				noticeActionHref = router.buildLocation( {
+					to: changePaymentMethodRoute.fullPath,
+					params: { purchaseId: purchase.ID },
+				} ).href;
+			} else if ( isRenewing( currentPurchase ) ) {
+				// Auto-renew ON with payment method but renewal failed
 				noticeText = createInterpolateElement(
 					__(
 						'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
@@ -413,6 +428,7 @@ export function OtherRenewablePurchasesNotice( {
 				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 				noticeStatus={ noticeStatus }
 				noticeText={ noticeText }
+				noticeActionHref={ noticeActionHref }
 				noticeActionOnClick={ noticeActionOnClick }
 				noticeActionText={ noticeActionText }
 			/>
@@ -427,10 +443,26 @@ export function OtherRenewablePurchasesNotice( {
 	) {
 		let noticeText: React.ReactNode;
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
+		let noticeActionOnClick: ( () => void ) | undefined;
+		let noticeActionHref: string | undefined;
+		let noticeActionText: string | undefined;
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( isRenewing( currentPurchase ) ) {
-				// Auto-renew ON but renewal failed - use simplified message
+			// Auto-renew ON but no payment method
+			if ( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type ) {
+				noticeText = createInterpolateElement(
+					__(
+						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please add a payment method to avoid disruption to your service.'
+					),
+					{ link }
+				);
+				noticeActionText = __( 'Add Payment Method' );
+				noticeActionHref = router.buildLocation( {
+					to: changePaymentMethodRoute.fullPath,
+					params: { purchaseId: purchase.ID },
+				} ).href;
+			} else if ( isRenewing( currentPurchase ) ) {
+				// Auto-renew ON with payment method but renewal failed
 				noticeText = createInterpolateElement(
 					__(
 						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
@@ -540,6 +572,9 @@ export function OtherRenewablePurchasesNotice( {
 				setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 				noticeStatus={ noticeStatus }
 				noticeText={ noticeText }
+				noticeActionOnClick={ noticeActionOnClick }
+				noticeActionHref={ noticeActionHref }
+				noticeActionText={ noticeActionText }
 			/>
 		);
 	}
@@ -785,11 +820,41 @@ export function OtherRenewablePurchasesNotice( {
 		currentPurchaseIsExpiring &&
 		! anotherPurchaseIsExpiring
 	) {
+		// Handle no-payment-method case separately (needs CTA)
+		if (
+			isInExpirationGracePeriod( currentPurchase ) &&
+			currentPurchase.is_auto_renew_enabled &&
+			! currentPurchase.payment_type
+		) {
+			return (
+				<NoticeContent
+					purchase={ purchase }
+					renewableSitePurchases={ renewableSitePurchases }
+					isUpcomingRenewalsDialogVisible={ isUpcomingRenewalsDialogVisible }
+					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
+					noticeStatus={ suppressErrorStylingForOtherPurchases ? 'info' : 'error' }
+					noticeText={ createInterpolateElement(
+						__(
+							'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please add a payment method to avoid disruption to your service.'
+						),
+						{ link }
+					) }
+					noticeActionText={ __( 'Add Payment Method' ) }
+					noticeActionHref={
+						router.buildLocation( {
+							to: changePaymentMethodRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+						} ).href
+					}
+				/>
+			);
+		}
+
 		const noticeText = ( () => {
 			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+				// Auto-renew ON with payment method but renewal failed
 				if ( isRenewing( currentPurchase ) ) {
-					// Auto-renew ON but renewal failed - use simplified message
 					return createInterpolateElement(
 						__(
 							'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
