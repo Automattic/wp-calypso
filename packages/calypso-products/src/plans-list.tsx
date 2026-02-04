@@ -1388,8 +1388,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_PAYPAL_JP,
 	],
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		if ( showLegacyStorageFeature && isCurrentPlan ) {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
 			return FEATURE_200GB_STORAGE;
 		}
 		return isEnabled( 'plans/updated-storage-labels' )
@@ -2365,8 +2365,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			: featureLabels;
 	},
 
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		if ( showLegacyStorageFeature && isCurrentPlan ) {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
 			return FEATURE_200GB_STORAGE;
 		}
 		return isEnabled( 'plans/updated-storage-labels' )
