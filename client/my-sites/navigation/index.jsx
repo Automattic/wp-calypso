@@ -7,7 +7,7 @@ import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-side
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isDashboardEnabled } from 'calypso/state/dashboard/selectors/is-dashboard-enabled';
+import { isDashboardToggleEnabled } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -53,7 +53,7 @@ class MySitesNavigation extends Component {
 			<GlobalSidebar
 				path={ this.props.path }
 				footer={
-					this.props.isDashboardEnabled &&
+					this.props.isDashboardToggleEnabled &&
 					! this.props.isGlobalSidebarCollapsed && <HostingDashboardOptInBanner />
 				}
 			>
@@ -94,7 +94,7 @@ export default withCurrentRoute(
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
-				isDashboardEnabled: isDashboardEnabled( state ),
+				isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
 			};
 		},
 		{

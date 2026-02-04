@@ -11,7 +11,7 @@ import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
  */
 export class DomainSearchComponent {
 	private page: Page;
-	private container?: Locator;
+	container?: Locator;
 	readonly claimYourSpaceHeading: Locator;
 	/**
 	 * Constructs an instance of the component.
@@ -193,6 +193,13 @@ export class DomainSearchComponent {
 
 		// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
 		await Promise.all( [ continueButton.dispatchEvent( 'click' ), this.page.waitForNavigation() ] );
+	}
+
+	/**
+	 * Skips the domain email upsell screen.
+	 */
+	async skipDomainEmailUpsell(): Promise< void > {
+		await this.getContainer().getByRole( 'button', { name: 'Skip' } ).click();
 	}
 
 	/**

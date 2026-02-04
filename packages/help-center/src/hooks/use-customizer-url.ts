@@ -1,7 +1,4 @@
-import { addQueryArgs } from '@wordpress/url';
 import { PANEL_MAPPINGS } from '../constants';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSiteSlug } from './use-site-slug';
 
 /**
  * Given the name of a Calypso customizer panel, returns an object containing
@@ -17,34 +14,4 @@ export function getCustomizerFocus( panel: string ) {
 	}
 
 	return null;
-}
-const panels = [ 'root', 'homepage', 'identity', 'menus' ] as const;
-
-export function useCustomizerUrls() {
-	const { site } = useHelpCenterContext();
-	const siteSlug = useSiteSlug();
-	const returnUrl = window.location.href;
-
-	return panels.reduce(
-		( acc, panel ) => {
-			if ( ! site?.jetpack && siteSlug ) {
-				const panelPath = panel === 'root' ? '' : panel;
-				const url = [ '' ]
-					.concat( [ 'customize', panelPath, siteSlug ].filter( Boolean ) )
-					.join( '/' );
-				acc[ panel ] = addQueryArgs( url, {
-					return: returnUrl,
-				} );
-			} else {
-				const customizerUrl = site?.options.admin_url + 'customize.php';
-
-				acc[ panel ] = addQueryArgs( customizerUrl, {
-					return: returnUrl,
-					...( panel ? getCustomizerFocus( panel ) : {} ),
-				} );
-			}
-			return acc;
-		},
-		{} as Record< ( typeof panels )[ number ], string >
-	);
 }

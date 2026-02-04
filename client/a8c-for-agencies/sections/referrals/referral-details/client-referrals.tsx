@@ -4,11 +4,11 @@ import { useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import ReferralProducts from './components/referral-products';
 import ReferralStatus from './components/referral-status';
 import type { ReferralAPIResponse } from '../types';
 import type { Action } from 'calypso/a8c-for-agencies/components/list-item-cards';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 

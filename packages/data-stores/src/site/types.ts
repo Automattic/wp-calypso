@@ -137,6 +137,8 @@ export interface SiteDetails {
 	is_wpcom_staging_site?: boolean;
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;
+	is_garden?: boolean;
+	garden_name?: string | null;
 	jetpack: boolean;
 	jetpack_connection?: boolean;
 	lang?: string;
@@ -259,6 +261,7 @@ export interface SiteDetailsOptions {
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
+	is_gating_business_q1?: boolean;
 	is_summer_special_2025?: boolean;
 	is_domain_only?: boolean;
 	is_mapped_domain?: boolean;

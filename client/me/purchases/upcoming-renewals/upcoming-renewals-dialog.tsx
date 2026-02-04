@@ -11,6 +11,7 @@ import {
 	purchaseType,
 	isExpired,
 	isRenewing,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { managePurchase } from '../paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -39,13 +40,17 @@ function getExpiresText(
 	purchase: Purchase
 ): TranslateResult {
 	if ( isRenewing( purchase ) ) {
+		if ( isInExpirationGracePeriod( purchase ) ) {
+			return translate( 'pending renewal' );
+		}
+
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
 			args: { renewDate: moment( purchase.renewDate ).fromNow() },
 		} );
 	}
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
 			comment:
 				'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',

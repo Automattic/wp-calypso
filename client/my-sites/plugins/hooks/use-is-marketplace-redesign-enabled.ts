@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**

@@ -3,7 +3,7 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions, Preferences } from './types';
+import type { HelpCenterOptions } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -21,17 +21,6 @@ const typingConversationStatus: Reducer<
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_TYPING_STATUS':
 			return { ...state, [ action.conversationId ]: action.isTyping };
-	}
-	return state;
-};
-
-const helpCenterPreferences: Reducer< Preferences[ 'calypso_preferences' ], HelpCenterAction > = (
-	state = {},
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_HELP_CENTER_PREFERENCES':
-			return action.preferences;
 	}
 	return state;
 };
@@ -171,9 +160,12 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+const navigateToRoute: Reducer<
+	{ route: string | undefined; coalesceParams: boolean } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
-		return action.route;
+		return { route: action.route, coalesceParams: action.coalesceParams };
 	}
 	return state;
 };
@@ -233,7 +225,6 @@ const reducer = combineReducers( {
 	showMessagingWidget,
 	zendeskConnectionStatus,
 	subject,
-	helpCenterPreferences,
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,

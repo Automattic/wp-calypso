@@ -550,6 +550,7 @@ function setUpCSP( req, res, next ) {
 			'https://connect.facebook.net', // Facebook Pixel
 			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
+			'https://analytics.tiktok.com', // TikTok tracking pixel
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
 			'https://bat.bing.com', // Bing Ads JS
@@ -665,6 +666,7 @@ function setUpCSP( req, res, next ) {
 			'https://survey.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
+			'https://analytics.tiktok.com', // TikTok tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
 			'api.stripe.com', // Stripe API endpoint

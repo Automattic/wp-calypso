@@ -17,12 +17,8 @@ import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import type { Site, SiteSettings } from '@automattic/api-core';
+import type { SiteSettings } from '@automattic/api-core';
 import type { Field, FormField } from '@wordpress/dataviews';
-
-export function canUpdateA4AFullyManagedSetting( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 const fields: Field< SiteSettings >[] = [
 	{

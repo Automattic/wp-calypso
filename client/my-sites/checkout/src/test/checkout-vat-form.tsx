@@ -97,6 +97,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( screen.queryByLabelText( 'Add VAT details' ) ).not.toBeInTheDocument();
 	} );
@@ -107,6 +108,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeInTheDocument();
 	} );
@@ -117,6 +119,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).not.toBeChecked();
 		expect( screen.queryByLabelText( 'VAT ID' ) ).not.toBeInTheDocument();
@@ -128,6 +131,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
@@ -140,6 +144,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'ES' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( screen.queryByLabelText( 'Is VAT for Northern Ireland?' ) ).not.toBeInTheDocument();
@@ -151,6 +156,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) ).toBeInTheDocument();
@@ -162,6 +168,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) ).toBeInTheDocument();
@@ -591,6 +598,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.click( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) );
@@ -619,6 +627,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		// Check the box
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );

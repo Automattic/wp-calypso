@@ -4,10 +4,9 @@
 
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
-import { useAuth } from '../../../app/auth';
 import { render } from '../../../test-utils';
 import PreferencesPrimarySite from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 import type { DeepPartial } from 'utility-types';
 
 const mockPrimarySiteId = 123;
@@ -28,10 +27,6 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: jest.fn( () => ( { user: { visible_site_count: 2 } } ) ),
-} ) );
-
 jest.mock(
 	'@automattic/api-queries',
 	() => ( {
@@ -49,6 +44,7 @@ jest.mock(
 const mockSitesQuery = jest.fn();
 
 jest.mock( '../../../app/context', () => ( {
+	...jest.requireActual( '../../../app/context' ),
 	useAppContext: jest.fn( () => ( {
 		queries: {
 			sitesQuery: () => mockSitesQuery(),
@@ -93,7 +89,9 @@ function renderPreferencesPrimarySite() {
 		queryFn: () => Promise.resolve( mockSites ),
 	} );
 
-	return render( <PreferencesPrimarySite /> );
+	return render( <PreferencesPrimarySite />, {
+		user: { visible_site_count: 2 } as User,
+	} );
 }
 
 afterEach( () => {
@@ -124,9 +122,9 @@ test( 'hides primary site selector when user has no sites', async () => {
 		queryFn: () => Promise.resolve( [] ),
 	} );
 
-	( useAuth as jest.Mock ).mockReturnValue( { user: { visible_site_count: 0 } } );
-
-	render( <PreferencesPrimarySite /> );
+	render( <PreferencesPrimarySite />, {
+		user: { visible_site_count: 0 } as User,
+	} );
 
 	// Wait for component to render
 	await waitFor( () => {

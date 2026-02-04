@@ -7,6 +7,7 @@ import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-he
 import { PLAN } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import { isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Plans from './main';
 
@@ -14,7 +15,8 @@ function showJetpackPlans( context ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isWpcom = isSiteWpcom( state, siteId );
-	return ! isWpcom;
+	const isCommerce = isCommerceGardenSite( state, siteId );
+	return ! isWpcom && ! isCommerce;
 }
 
 function is100YearPlanUser( context ) {

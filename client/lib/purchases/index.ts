@@ -27,6 +27,7 @@ import {
 	isJetpackStatsPaidProductSlug,
 	isAkismetPro500,
 	getAkismetPro500ProductDisplayName,
+	isAkismetFreeProduct,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
@@ -527,6 +528,30 @@ export function isExpiring( purchase: Purchase ) {
 	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiryDate ) {
+		return false;
+	}
+
+	if ( ! moment( purchase.expiryDate ).isBefore( moment() ) ) {
+		return false;
+	}
+
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
+}
+
 export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiryStatus;
 }
@@ -611,7 +636,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 		return false;
 	}
 
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiryDate ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 /**
@@ -829,24 +856,41 @@ export function canReenableAutoRenewal( purchase: Purchase ): boolean {
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
-	return (
-		isPaidWithCreditCard( purchase ) &&
-		hasCreditCardData( purchase ) &&
-		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) ) &&
-		moment( creditCard?.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
-	);
+	if (
+		! isPaidWithCreditCard( purchase ) ||
+		! hasCreditCardData( purchase ) ||
+		( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
+	) {
+		return false;
+	}
+
+	// Use paymentExpiryDate if available for more accurate expiry checking
+	if ( purchase.paymentExpiryDate ) {
+		return moment( purchase.paymentExpiryDate ).isBefore( purchase.expiryDate, 'day' );
+	}
+
+	// Fall back to credit card expiry date for backward compatibility
+	return moment( creditCard?.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' );
 }
 
 export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
-	return (
-		creditCard &&
-		isPaidWithCreditCard( purchase ) &&
-		hasCreditCardData( purchase ) &&
-		( ! is100Year( purchase ) || isCloseToExpiration( purchase ) ) &&
-		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
-	);
+	if ( ! creditCard || ! isPaidWithCreditCard( purchase ) || ! hasCreditCardData( purchase ) ) {
+		return false;
+	}
+
+	if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
+		return false;
+	}
+
+	// Use paymentExpiryDate if available for more accurate expiry checking
+	if ( purchase.paymentExpiryDate ) {
+		return moment( purchase.paymentExpiryDate ).isBefore( moment(), 'day' );
+	}
+
+	// Fall back to credit card expiry date for backward compatibility
+	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
 }
 
 export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
@@ -860,6 +904,12 @@ export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 }
 
 export function monthsUntilCardExpires( purchase: Purchase ) {
+	// Use paymentExpiryDate if available for more accurate expiry checking
+	if ( purchase.paymentExpiryDate ) {
+		return moment( purchase.paymentExpiryDate ).diff( moment(), 'months' );
+	}
+
+	// Fall back to credit card expiry date for backward compatibility
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard?.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );

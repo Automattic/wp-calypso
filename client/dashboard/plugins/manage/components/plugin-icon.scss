@@ -7,13 +7,13 @@
 	flex-shrink: 0;
 
 	&.is-fallback {
-		background: #c3c4c7;
-		fill: #fff;
+		border: 1px solid rgba(0, 0, 0, 0.10);
+		background: #F0F0F0;
 
 		svg {
-			fill: var(--wp-components-color-foreground, #1e1e1e);
-			width: 36px;
-			height: 36px;
+			fill: #949494;
+			width: 32px;
+			height: 32px;
 		}
 	}
 }

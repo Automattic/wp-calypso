@@ -59,7 +59,7 @@ export const convertZendeskMessageToAgentticFormat = (
 	message: ZendeskMessage
 ): AgentticMessage => {
 	// Convert role: 'business' maps to 'agent', everything else to 'user'
-	const role = message.role === 'business' ? 'agent' : 'user';
+	const role = message.role === 'business' && ! ( 'sendStatus' in message ) ? 'agent' : 'user';
 
 	// Build content array based on message type
 	const content: AgentticMessage[ 'content' ] = [];
@@ -124,7 +124,7 @@ export const convertZendeskMessageToAgentticFormat = (
 	}
 
 	return {
-		id: message.id,
+		id: message.id || crypto.randomUUID(),
 		role,
 		content,
 		timestamp: message.received,

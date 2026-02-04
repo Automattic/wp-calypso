@@ -15,11 +15,14 @@ import {
 	getDomainTransferrability,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import Notice from 'calypso/components/notice';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { Maybe, StartStepProps } from './types';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -31,6 +34,7 @@ function TransferDomainStepStart( {
 	domainInboundTransferStatusInfo,
 	domain,
 	isFetchingAvailability,
+	dashboard,
 	selectedSite,
 }: StartStepProps ) {
 	const { __ } = useI18n();
@@ -79,6 +83,7 @@ function TransferDomainStepStart( {
 					const availabilityErrorMessage = getAvailabilityErrorMessage( {
 						availabilityData,
 						domainName: domain,
+						dashboard,
 						selectedSite,
 					} );
 
@@ -93,7 +98,7 @@ function TransferDomainStepStart( {
 				setIsFetching( false );
 			}
 		} )();
-	}, [ domain, inboundTransferStatusInfo, selectedSite, isFetching ] );
+	}, [ domain, inboundTransferStatusInfo, selectedSite, isFetching, dashboard ] );
 
 	const stepContent = (
 		<>
@@ -161,6 +166,8 @@ function TransferDomainStepStart( {
 	);
 }
 
-export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
-	TransferDomainStepStart
-);
+export default connect( ( state: AppState ) => ( {
+	dashboard:
+		getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ?? undefined,
+	selectedSite: getSelectedSite( state ),
+} ) )( TransferDomainStepStart );

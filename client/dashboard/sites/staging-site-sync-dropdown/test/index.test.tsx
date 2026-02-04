@@ -25,13 +25,21 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {} ) ),
+	QueryClient: jest.fn().mockImplementation( () => ( {
+		getQueryCache: jest.fn( () => ( { subscribe: jest.fn() } ) ),
+		getMutationCache: jest.fn( () => ( { subscribe: jest.fn() } ) ),
+	} ) ),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 	useQuery: jest.fn( () => ( {
 		data: false, // Default to false for isStagingSiteDeletionInProgress
 		isLoading: false,
 		refetch: jest.fn(),
 	} ) ),
+	defaultShouldDehydrateQuery: jest.fn( () => true ),
+} ) );
+
+jest.mock( '@tanstack/react-query-persist-client', () => ( {
+	persistQueryClient: jest.fn( () => [ jest.fn(), Promise.resolve() ] ),
 } ) );
 
 jest.mock( '../../../utils/site-staging-site', () => ( {

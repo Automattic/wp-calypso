@@ -23,10 +23,6 @@
 		display: none;
 	}
 
-	.components-card {
-		box-shadow: none;
-	}
-
 	.components-card-body {
 		height: 100%;
 	}
@@ -39,5 +35,15 @@
 
 	a.dataviews-title-field:not(:hover) {
 		color: $gray-800;
+	}
+
+	.dashboard-empty-state__wrapper {
+		box-shadow: none;
+	}
+
+	@include break-medium {
+		.dashboard-empty-state {
+			margin-top: 5vh;
+		}
 	}
 }

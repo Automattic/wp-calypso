@@ -1,5 +1,5 @@
-import { GoogleWorkspaceSlugs, Product, TitanMailSlugs } from '@automattic/api-core';
-import { productsQuery } from '@automattic/api-queries';
+import { Domain, GoogleWorkspaceSlugs, Product, TitanMailSlugs } from '@automattic/api-core';
+import { productsQuery, siteProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { MailboxProvider, IntervalLength } from '../types';
 
@@ -14,11 +14,23 @@ const EMAIL_PRODUCTS = {
 	},
 };
 
-export const useEmailProduct = ( provider: MailboxProvider, interval: IntervalLength ) => {
-	const { data: products } = useQuery( productsQuery() );
+export const useEmailProduct = (
+	provider: MailboxProvider,
+	interval: IntervalLength,
+	domain?: Domain
+) => {
+	const siteId = domain?.blog_id;
+	const { data: siteProducts } = useQuery( {
+		...siteProductsQuery( siteId ?? 0 ),
+		enabled: Boolean( siteId ),
+	} );
+	const { data: products } = useQuery( {
+		...productsQuery(),
+		enabled: ! siteId,
+	} );
 
 	const productSlug = EMAIL_PRODUCTS[ provider ]?.[ interval ];
-	const product = products?.[ productSlug ] as Product;
+	const product = ( siteId ? siteProducts : products )?.[ productSlug ] as Product;
 
 	return {
 		product,

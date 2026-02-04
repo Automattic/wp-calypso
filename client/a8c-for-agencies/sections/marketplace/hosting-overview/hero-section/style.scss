@@ -12,51 +12,27 @@ $tab-background-selected: var(--color-surface);
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	gap: 39px;
 	transition: height .25s ease-out;
+	gap: 39px;
 
 	@include break-medium {
 		padding-inline: 32px;
+
+		&:not(.is-compact) {
+			padding: 32px 64px 0;
+		}
 	}
 
-	.a4a-migration-offer-v3,
-	.pressable-premium-plan-migration {
+	.a4a-pressable-offer {
 		display: none;
 
 		@include break-large {
-			display: flex;
+			display: inherit;
 		}
 	}
 
-	&:not(.is-compact) {
-		height: 163px;
-
-		@include break-small {
-			height: 188px;
-		}
-
-		@include break-medium {
-			padding: 32px 64px 0;
-			height: 254px;
-		}
-
-		@include break-large {
-			height: 380px;
-
-			&:has(.a4a-migration-offer-v3.is-expanded),
-			&:has(.pressable-premium-plan-migration.is-expanded) {
-				height: 636px;
-			}
-		}
-
-		@include break-wide {
-			height: 340px;
-
-			&:has(.a4a-migration-offer-v3.is-expanded),
-			&:has(.pressable-premium-plan-migration.is-expanded) {
-				height: 485px;
-			}
-		}
+	.hosting-hero-section__content {
+		height: auto;
 	}
 }
 
@@ -66,13 +42,10 @@ $tab-background-selected: var(--color-surface);
 	justify-content: flex-end;
 
 	.hosting-hero-section__content {
-		display: none;
-		position: absolute;
+		height: 0;
+		overflow: hidden;
 	}
-
-	height: 74px;
 }
-
 
 .hosting-hero-section__heading {
 	@include heading-x-large;

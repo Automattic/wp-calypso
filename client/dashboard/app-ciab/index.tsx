@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import {
 	sitesQuery,
-	dashboardSiteListQuery,
+	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
@@ -9,7 +9,7 @@ import boot from '../app/boot';
 import './translations';
 import type {
 	FetchSitesOptions,
-	FetchDashboardSiteListParams,
+	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import './style.scss';
@@ -42,14 +42,16 @@ boot( {
 	},
 	optIn: false,
 	components: {
+		addDomainButton: () => import( '../domains-ciab/add-domain-button' ),
+		emptyDomainsState: () => import( '../domains-ciab/empty-domains-state' ),
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( [ 'commerce-garden' ], fetchDashboardSiteListParams ),
+		paginatedSitesQuery: ( fetchSitesOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
 	},

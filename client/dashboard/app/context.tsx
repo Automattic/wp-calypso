@@ -1,14 +1,14 @@
 /* eslint-disable no-restricted-imports */
 import {
 	sitesQuery,
-	dashboardSiteListQuery,
+	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
 import type {
 	FetchSitesOptions,
-	FetchDashboardSiteListParams,
+	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 
@@ -49,9 +49,9 @@ export type AppConfig = {
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
-		dashboardSiteListQuery: (
-			params?: FetchDashboardSiteListParams
-		) => ReturnType< typeof dashboardSiteListQuery >;
+		paginatedSitesQuery: (
+			fetchSiteOptions?: FetchPaginatedSitesOptions
+		) => ReturnType< typeof paginatedSitesQuery >;
 		dashboardSiteFiltersQuery: (
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
@@ -80,8 +80,8 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 	},

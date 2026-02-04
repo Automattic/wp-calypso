@@ -4,10 +4,7 @@ import { EditorComponent } from './editor-component';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
-	// This selector was updated to the capitalized label in Gutenberg v19.5.0. Once that is released, we should be able to remove the old selector ("Close block inserter").
-	// See: https://github.com/WordPress/gutenberg/pull/65983
-	closeBlockInserterButton:
-		'button[aria-label="Close Block Inserter"], button[aria-label="Close block inserter"]',
+	closeBlockInserterButton: 'button[aria-label="Close Block Inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
 	patternExactResultItem: ( name: string ) =>
 		`${ sidebarParentSelector } div[aria-label="${ name }"]`,
@@ -44,9 +41,24 @@ export class EditorSidebarBlockInserterComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		await editorParent.locator( selectors.closeBlockInserterButton ).click();
+		const sidebarParentSelectorDetachedPromise = this.page
+			.locator( sidebarParentSelector )
+			.waitFor( { state: 'detached' } );
+		const closeBlockInserterButtonLocator = editorParent.locator(
+			selectors.closeBlockInserterButton
+		);
 
-		await this.page.locator( sidebarParentSelector ).waitFor( { state: 'detached' } );
+		// Gutenberg 22.4.0 closes the sidebar automatically in some cases, so sometimes the button won't be there to click.
+		await Promise.any( [
+			closeBlockInserterButtonLocator.waitFor(),
+			sidebarParentSelectorDetachedPromise,
+		] );
+
+		// If the button is there, click it.
+		if ( await closeBlockInserterButtonLocator.isVisible() ) {
+			await closeBlockInserterButtonLocator.click();
+			await sidebarParentSelectorDetachedPromise;
+		}
 	}
 
 	/**

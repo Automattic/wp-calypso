@@ -17,7 +17,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
-	getNextPluginsListPage,
 	getPlugin,
 	isFetching,
 	isFetchingPluginsList,
@@ -155,24 +154,5 @@ export function fetchPluginsList(
 			.catch( ( error ) => {
 				dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
 			} );
-	};
-}
-
-/**
- * Retrieve the next page of plugins for the specified category.
- * Pagination is currently supported only for category queries in the API.
- * @param {string} category   Plugin category
- * @returns {Function} Action thunk
- */
-export function fetchPluginsCategoryNextPage( category ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-
-		// Bail if we are currently fetching this plugins list
-		const nextPage = getNextPluginsListPage( state, category );
-		if ( ! nextPage ) {
-			return;
-		}
-		dispatch( fetchPluginsList( category, nextPage, undefined ) );
 	};
 }

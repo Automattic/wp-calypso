@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { DATAVIEWS_TABLE } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { DataViews } from 'calypso/components/dataviews';
 import SiteSort from '../site-sort';
 import PlanField, { AvailablePlans } from './plan-field';
@@ -35,20 +34,14 @@ export default function NeedSetupTable( {
 				</SiteSort>
 			),
 			getValue: () => '-',
-			render: ( { item }: { item: AvailablePlans } ): ReactNode => {
-				if ( isLoading ) {
-					return <TextPlaceholder />;
-				}
-
-				return (
-					<PlanField
-						{ ...item }
-						provisioning={ provisioning }
-						onCreateSite={ onCreateSite }
-						onMigrateSite={ onMigrateSite }
-					/>
-				);
-			},
+			render: ( { item }: { item: AvailablePlans } ): ReactNode => (
+				<PlanField
+					{ ...item }
+					provisioning={ provisioning }
+					onCreateSite={ onCreateSite }
+					onMigrateSite={ onMigrateSite }
+				/>
+			),
 			enableHiding: false,
 			enableSorting: false,
 		},
@@ -56,7 +49,7 @@ export default function NeedSetupTable( {
 
 	return (
 		<DataViews< AvailablePlans >
-			data={ isLoading ? [] : availablePlans }
+			data={ availablePlans }
 			paginationInfo={ { totalItems: 1, totalPages: 1 } }
 			fields={ fields }
 			view={ {
@@ -69,7 +62,7 @@ export default function NeedSetupTable( {
 			search={ false }
 			defaultLayouts={ { table: {} } }
 			actions={ [] }
-			isLoading={ false }
+			isLoading={ isLoading && ! availablePlans.length }
 			getItemId={ ( item: AvailablePlans ) => item.name }
 		/>
 	);

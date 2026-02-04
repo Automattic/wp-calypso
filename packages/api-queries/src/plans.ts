@@ -1,4 +1,4 @@
-import { fetchPlans, fetchPlansDetails } from '@automattic/api-core';
+import { fetchPlans } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export const plansQuery = ( coupon: string = '' ) => {
@@ -10,10 +10,3 @@ export const plansQuery = ( coupon: string = '' ) => {
 		queryFn: () => fetchPlans( params ),
 	} );
 };
-
-export function plansDetailsQuery() {
-	return queryOptions( {
-		queryKey: [ 'plans-details' ],
-		queryFn: () => fetchPlansDetails(),
-	} );
-}
