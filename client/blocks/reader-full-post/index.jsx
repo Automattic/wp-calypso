@@ -756,12 +756,18 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-					{ ! isLoading && this.props.previousPostKey && ! this.props.previousPost && (
-						<QueryReaderPost postKey={ this.props.previousPostKey } />
-					) }
-					{ ! isLoading && this.props.nextPostKey && ! this.props.nextPost && (
-						<QueryReaderPost postKey={ this.props.nextPostKey } />
-					) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.previousPostKey &&
+						! this.props.previousPost && (
+							<QueryReaderPost postKey={ this.props.previousPostKey } />
+						) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.nextPostKey &&
+						! this.props.nextPost && <QueryReaderPost postKey={ this.props.nextPostKey } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
