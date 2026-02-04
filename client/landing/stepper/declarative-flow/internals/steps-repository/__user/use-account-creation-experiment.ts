@@ -12,6 +12,7 @@ type AccountCreationExperimentVariant =
 type AccountCreationExperimentResult = {
 	isLoading: boolean;
 	variationName: AccountCreationExperimentVariant;
+	isExperimentVariant: boolean;
 	isEmailVariation: boolean;
 	isMessagingVariation: boolean;
 	isSliderVariation: boolean;
@@ -60,6 +61,7 @@ function useAccountCreationExperiment( {
 	return {
 		isLoading,
 		variationName,
+		isExperimentVariant: variationName !== 'control',
 		isEmailVariation: EMAIL_VARIATIONS.includes( variationName ),
 		isMessagingVariation: MESSAGING_VARIATIONS.includes( variationName ),
 		isSliderVariation: SLIDER_VARIATIONS.includes( variationName ),

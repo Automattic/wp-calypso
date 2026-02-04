@@ -46,8 +46,13 @@ const UserStepComponent: StepType = function UserStep( {
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
 
-	const { isEmailVariation, isMessagingVariation, isSliderVariation, isSimpleSliderVariation } =
-		useAccountCreationExperiment( { flow } );
+	const {
+		isExperimentVariant,
+		isEmailVariation,
+		isMessagingVariation,
+		isSliderVariation,
+		isSimpleSliderVariation,
+	} = useAccountCreationExperiment( { flow } );
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -111,6 +116,7 @@ const UserStepComponent: StepType = function UserStep( {
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				isExperimentVariant={ isExperimentVariant }
 				isEmailVariation={ isEmailVariation }
 				isMessagingVariation={ isMessagingVariation }
 				isSliderVariation={ isSliderVariation }
@@ -135,7 +141,7 @@ const UserStepComponent: StepType = function UserStep( {
 				{ localeSuggestions }
 				<Step.Heading
 					text={ headingText }
-					align={ isMessagingVariation ? 'left' : undefined }
+					align={ isExperimentVariant ? 'left' : undefined }
 					size={ isMessagingVariation ? 'small' : undefined }
 				/>
 			</>
@@ -203,12 +209,12 @@ const UserStepComponent: StepType = function UserStep( {
 				>
 					<Step.CenteredColumnLayout
 						verticalAlign="center"
-						headingColumnWidth={ isMessagingVariation ? 4 : undefined }
+						headingColumnWidth={ isExperimentVariant ? 4 : undefined }
 						columnWidth={ 4 }
 						heading={ heading }
 						topBar={ topBar }
 						stickyBottomBar={ stickyBottomBar }
-						noGap={ isMessagingVariation }
+						noGap={ isExperimentVariant }
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
@@ -221,12 +227,12 @@ const UserStepComponent: StepType = function UserStep( {
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
 				verticalAlign="center"
-				headingColumnWidth={ isMessagingVariation ? 4 : undefined }
+				headingColumnWidth={ isExperimentVariant ? 4 : undefined }
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }
 				stickyBottomBar={ stickyBottomBar }
-				noGap={ isMessagingVariation }
+				noGap={ isExperimentVariant }
 			>
 				{ stepContent }
 			</Step.CenteredColumnLayout>

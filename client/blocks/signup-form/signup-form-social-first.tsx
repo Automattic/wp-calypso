@@ -47,6 +47,7 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
+	isExperimentVariant?: boolean;
 	isEmailVariation?: boolean;
 	isMessagingVariation?: boolean;
 	isSliderVariation?: boolean;
@@ -89,6 +90,7 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
+	isExperimentVariant,
 	isEmailVariation,
 	isMessagingVariation,
 	isSliderVariation,
@@ -128,7 +130,7 @@ const SignupFormSocialFirst = ( {
 		return (
 			<p
 				className={ clsx( 'signup-form-social-first__tos-link', {
-					'is-left-aligned': isMessagingVariation,
+					'is-left-aligned': isExperimentVariant,
 				} ) }
 			>
 				{ tosText }
