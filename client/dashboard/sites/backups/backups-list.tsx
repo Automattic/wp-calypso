@@ -1,14 +1,31 @@
 import { siteBackupActivityLogGroupCountsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from 'react';
-import { siteRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews';
+import { useEffect, useMemo } from 'react';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { siteRoute, siteBackupsRoute } from '../../app/router/sites';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
+
+const defaultView: View = {
+	type: 'list',
+	fields: [ 'date', 'content_text' ],
+	mediaField: 'icon',
+	titleField: 'title',
+	perPage: 10,
+	sort: {
+		field: 'date',
+		direction: 'desc',
+	},
+	layout: {
+		density: 'balanced',
+	},
+	showLevels: false,
+};
 
 export function BackupsList( {
 	selectedBackup,
@@ -29,12 +46,12 @@ export function BackupsList( {
 } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const [ view, setView ] = useState< View >( {
-		type: 'list',
-		fields: [ 'date', 'content_text' ],
-		mediaField: 'icon',
-		titleField: 'title',
-		perPage: 10,
+
+	const searchParams = siteBackupsRoute.useSearch();
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-backups',
+		defaultView,
+		queryParams: searchParams,
 	} );
 
 	const { after, before } = useMemo( () => {
@@ -58,7 +75,7 @@ export function BackupsList( {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {
-		setView( ( currentView ) => ( { ...currentView, page: 1 } ) );
+		updateView( { ...view, page: 1 } );
 	}, [ dateRange ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
@@ -69,10 +86,6 @@ export function BackupsList( {
 		setSelectedBackup( backup );
 	};
 
-	const onChangeView = ( newView: View ) => {
-		setView( newView );
-	};
-
 	return (
 		<DataViewsCard>
 			<DataViews< ActivityLogEntry >
@@ -80,7 +93,8 @@ export function BackupsList( {
 				data={ filteredData }
 				fields={ fields }
 				view={ view }
-				onChangeView={ onChangeView }
+				onChangeView={ updateView }
+				onResetView={ resetView }
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { list: {} } }
 				paginationInfo={ paginationInfo }
