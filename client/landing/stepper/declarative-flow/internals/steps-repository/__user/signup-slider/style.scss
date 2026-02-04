@@ -99,7 +99,7 @@
 
 .signup-slider__headline {
 	color: var( --studio-white );
-	font-size: 2.75rem;
+	font-size: 44px;
 	font-family: $font-recoleta;
 	padding-inline: 5.5rem;
 	line-height: 1.2;
@@ -111,7 +111,7 @@
 	font-family: $font-sf-pro-display;
 	text-align: center;
 	align-items: flex-start;
-	font-size: 1.5rem;
+	font-size: 20px;
 	line-height: 1.5;
 	margin-bottom: 48px;
 	padding-inline: 2rem;
@@ -132,6 +132,7 @@
 .signup-slider__slide--2 {
 	.signup-slider__slide-image {
 		background-image: url( ./images/img-02@2x.png );
+		width: calc( 100% - 100px );
 		margin-bottom: 0;
 	}
 
@@ -143,6 +144,7 @@
 .signup-slider__slide--3 {
 	.signup-slider__slide-image {
 		background-image: url( ./images/img-03@2x.png );
+		width: calc( 100% - 60px );
 	}
 
 	.signup-slider__slide-content {
