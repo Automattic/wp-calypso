@@ -1,15 +1,17 @@
 import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
-import { resolveSelect } from '@wordpress/data';
+import { resolveSelect, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { FlowV2, SubmitHandler } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { isExternal } from 'calypso/lib/url';
+import type { SiteSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
@@ -64,10 +66,24 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 
 	useStepsProps() {
 		const query = useQuery();
+		const site = useSite();
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
+		const adminUrl = useSelect(
+			( select ) => {
+				if ( ! site?.ID ) {
+					return null;
+				}
+
+				const siteStore = select( SITE_STORE ) as SiteSelect;
+				return siteStore.getSiteOption( site.ID, 'admin_url' ) ?? null;
+			},
+			[ site?.ID ]
+		);
+		const safeAdminUrl = typeof adminUrl === 'string' ? adminUrl : null;
 
 		// Validate back_to to prevent open redirect - must not be external
-		const safeBackTo = backTo && ! isExternal( backTo ) ? backTo : dashboardLink( '/sites' );
+		const safeBackTo =
+			backTo && ! isExternal( backTo ) ? backTo : safeAdminUrl ?? dashboardLink( '/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {

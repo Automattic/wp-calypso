@@ -1,0 +1,17 @@
+# Creating Pull Requests
+
+Create PRs as draft. Follow the template in @.github/PULL_REQUEST_TEMPLATE.md.
+
+## Branch Naming
+
+Follow the branch naming conventions in @docs/git-workflow.md.
+
+## PR Description Guidelines
+
+- Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs
+- Avoid mentioning people's names in the PR description
+- Do not link to wordpress.com URLs
+
+## Pre-merge Checklist
+
+Include all checklist items from @.github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).

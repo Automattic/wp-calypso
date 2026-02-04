@@ -1,14 +1,28 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Repository layout
 
-Before you start, please read the following files based on the path you are working in:
+- client/ — main application clients, deployed as single-page React apps.
+- packages/ — shared libraries across clients.
+- apps/ — standalone mini-apps, deployed separately.
 
-- @.claude/rules/calypso-client.mdc
-- @.claude/rules/dashboard.mdc
-- @.rules/wordpress-imports.mdc – WordPress imports
-- @.rules/a4a-custom-rules.mdc – Rules that apply for Automattic for Agencies related development
-- @.rules/e2e-test-rules.mdc – Rules for E2E testing in test/e2e/ and packages/calypso-e2e
-- @.rules/pr-rules.mdc – Rules for creating pull requests
+## Clients
 
-If you are not sure about something, ask the user to clarify.
+- **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
+  - client/my-sites — per-site management; deprecated in favor of the Dashboard client
+  - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
+  - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
+  - Shared infra: client/components, client/state, client/lib, client/layout
+- **Jetpack Cloud** (client/jetpack-cloud) — reuses Calypso shared infra (client/state, client/components).
+- **A8C for Agencies** (client/a8c-for-agencies) — reuses Calypso shared infra.
+- **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router).
+
+## Development
+
+- `yarn install`
+- `yarn start` to start the dev server.
+- `yarn start-dashboard` to start the dev server for the Dashboard client only.
+
+## Creating PRs
+
+Follow the rules in @.claude/rules/pr.md for the best practices in creating PRs.
