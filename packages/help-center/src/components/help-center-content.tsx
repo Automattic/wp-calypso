@@ -128,7 +128,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				container?.removeEventListener( 'scroll', handler );
 			};
 		}
-	}, [ location ] );
+	}, [ location.hash, location.pathname ] );
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">

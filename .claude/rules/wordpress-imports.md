@@ -1,7 +1,8 @@
 ---
-description: WordPress imports
-globs: client
+paths:
+  - "client/**"
 ---
+## WordPress imports
 
 When building UI, prefer the native WordPress components over custom solutions when possible:
 

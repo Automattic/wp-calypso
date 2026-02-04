@@ -1,5 +1,4 @@
 import { mutationOptions } from '@tanstack/react-query';
-import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 
 interface PostItem {
@@ -20,24 +19,10 @@ const request = async ( { postContent, status, siteId }: PostMutationVariables )
 	if ( ! siteId ) {
 		return Promise.reject( new Error( 'Site ID is required' ) );
 	}
-	return (
-		wpcom
-			.site( siteId )
-			.post()
-			//TODO: Revisit this title generation
-			.add( {
-				title:
-					(
-						stripHTML( postContent )
-							.split( '\n' )
-							.find( ( line: string ) => line.trim() ) || ''
-					)
-						.substring( 0, 57 )
-						.trim() + '...',
-				content: postContent,
-				status: status,
-			} )
-	);
+	return wpcom.site( siteId ).post().add( {
+		content: postContent,
+		status: status,
+	} );
 };
 
 export const savePostMutation = ( { siteId }: { siteId?: number } ) => {
