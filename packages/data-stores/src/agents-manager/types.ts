@@ -7,10 +7,12 @@ import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
  *
  * Unlike HelpCenterSite which has many fields, AgentsManager only uses:
  * - ID: for JWT auth token generation
+ * - URL: for constructing wp-admin links
  * - domain: for support article content filtering
  */
 export interface AgentsManagerSite {
 	ID: number | string;
+	URL: string;
 	domain: string;
 }
 
