@@ -5,7 +5,7 @@
  * PHP filter. Each provider module should export toolProvider and/or contextProvider.
  */
 
-import { getAgentManager } from '@automattic/agenttic-client';
+import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
@@ -49,7 +49,14 @@ export type AbilitiesSetupHook = ( actions: {
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
+	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
+	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
+
+export type SiteBuildUtils = {
+	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
+	groupSiteBuildMessages: ( messages: UIMessage[], thinkingMessage: string | null ) => UIMessage[];
+};
 
 /**
  * Supported chat component types for agent messages.
@@ -78,6 +85,7 @@ export interface LoadedProviders {
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	getChatComponent?: GetChatComponent;
+	siteBuildUtils?: SiteBuildUtils;
 }
 
 /**
@@ -103,6 +111,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
+	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -134,6 +143,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.getChatComponent ) {
 				mergedGetChatComponent = module.getChatComponent;
 			}
+			if ( module.siteBuildUtils ) {
+				mergedSiteBuildUtils = module.siteBuildUtils;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -152,5 +164,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		getChatComponent: mergedGetChatComponent,
+		siteBuildUtils: mergedSiteBuildUtils,
 	};
 }
