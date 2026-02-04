@@ -72,6 +72,8 @@ export const useGetCombinedChat = (
 		sessionId,
 		botSlug
 	);
+	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
+
 	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
@@ -106,6 +108,7 @@ export const useGetCombinedChat = (
 		if (
 			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
+			isFetchingConversation ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
 			( chatStatus !== 'loading' && ! interactionHasChanged )
@@ -150,6 +153,7 @@ export const useGetCombinedChat = (
 		}
 
 		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
+			setIsFetchingConversation( true );
 			getZendeskConversation( conversationId )
 				?.then( ( conversation ) => {
 					if ( conversation ) {
@@ -194,6 +198,7 @@ export const useGetCombinedChat = (
 				} )
 				.finally( () => {
 					setRefreshingAfterReconnect( false );
+					setIsFetchingConversation( false );
 				} );
 		}
 	}, [
@@ -202,6 +207,7 @@ export const useGetCombinedChat = (
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
+		isFetchingConversation,
 		conversationId,
 		odieId,
 		currentSupportInteraction,
