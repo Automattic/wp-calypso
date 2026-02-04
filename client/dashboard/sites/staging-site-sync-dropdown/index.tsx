@@ -5,10 +5,9 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
-import { lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,

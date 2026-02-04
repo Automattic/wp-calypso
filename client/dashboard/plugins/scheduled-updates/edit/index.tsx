@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import {
 	pluginsScheduledUpdatesEditRoute,
