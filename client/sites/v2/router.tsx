@@ -14,7 +14,9 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
  */
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
-	beforeLoad: () => ( { fullPageLoad: consumeFirstLoad() } ),
+	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => ( {
+		fullPageLoad: cause === 'enter' && consumeFirstLoad(),
+	} ),
 } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {

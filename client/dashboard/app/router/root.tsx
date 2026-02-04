@@ -20,18 +20,18 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	notFoundComponent: NotFoundRoot,
 	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => {
 		if ( cause === 'preload' ) {
-			return { fullPageLoad: consumeFirstLoad() };
+			return { fullPageLoad: false };
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {
-			return { fullPageLoad: consumeFirstLoad() };
+			return { fullPageLoad: cause === 'enter' && consumeFirstLoad() };
 		}
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
 		if ( optIn?.value === 'opt-in' || optIn?.value === 'forced-opt-in' ) {
-			return { fullPageLoad: consumeFirstLoad() };
+			return { fullPageLoad: cause === 'enter' && consumeFirstLoad() };
 		}
 
 		throw redirect( { href: wpcomLink( '/' ), replace: true } );
