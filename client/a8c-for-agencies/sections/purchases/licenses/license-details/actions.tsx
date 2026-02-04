@@ -186,6 +186,7 @@ export default function LicenseDetailsActions( {
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
 					isClientLicense={ isClientLicense }
+					isChildLicense={ isChildLicense }
 				/>
 			) }
 		</div>
