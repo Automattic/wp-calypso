@@ -7,11 +7,11 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import {
 	siteDeploymentsListRoute,
 	siteRoute,
@@ -19,7 +19,7 @@ import {
 	siteSettingsRepositoriesManageRoute,
 	siteSettingsRepositoriesRoute,
 } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SnackbarBackButton, {
@@ -33,7 +33,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
-import type { RenderModalProps, View, Action } from '@wordpress/dataviews';
+import type { RenderModalProps, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const router = useRouter();
@@ -43,7 +43,12 @@ function RepositoriesList() {
 		githubInstallationsQuery()
 	);
 
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const searchParams = siteSettingsRepositoriesRoute.useSearch();
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-settings-repositories',
+		defaultView: DEFAULT_VIEW,
+		queryParams: searchParams,
+	} );
 
 	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
 		codeDeploymentsQuery( site.ID )
@@ -134,7 +139,8 @@ function RepositoriesList() {
 				data={ isLoadingInstallations || githubInstallationsError ? [] : filteredData }
 				fields={ fields }
 				view={ view }
-				onChangeView={ setView }
+				onChangeView={ updateView }
+				onResetView={ resetView }
 				actions={ actions }
 				isLoading={ isLoadingDeployments || isLoadingInstallations }
 				defaultLayouts={ DEFAULT_LAYOUTS }
