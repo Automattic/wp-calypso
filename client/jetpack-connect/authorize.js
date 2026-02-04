@@ -1225,7 +1225,7 @@ export class JetpackAuthorize extends Component {
 			const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 			return (
 				<>
-					<ConsentText text={ disclaimer } />
+					<ConsentText>{ disclaimer }</ConsentText>
 					<ActionButtons
 						primaryLabel={ this.getButtonText() }
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
