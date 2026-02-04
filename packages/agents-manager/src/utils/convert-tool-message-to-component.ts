@@ -1,3 +1,5 @@
+import EditorLink from '../components/editor-link';
+import { isWpComEditorPage } from './is-wpcom-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
