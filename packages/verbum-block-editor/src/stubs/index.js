@@ -8,11 +8,32 @@
  * in the verbum block editor comment context, reducing bundle size by ~50%.
  */
 
+const warned = new Set();
+
+/**
+ * Warn if a stub is used.
+ * @param {string} name - The name of the stub.
+ */
+function warnStubUsed( name ) {
+	if ( process.env.NODE_ENV !== 'production' && ! warned.has( name ) ) {
+		warned.add( name );
+		// eslint-disable-next-line no-console
+		console.warn( `[verbum-block-editor] Stubbed module invoked: ${ name }` );
+	}
+}
+
 // Generic null component - works for most React component stubs
-export const NullComponent = () => null;
+export const NullComponent = () => {
+	warnStubUsed( 'NullComponent' );
+	return null;
+};
 
 // Common exports that various modules expect
-export const noop = () => {};
+export const noop = ( ...args ) => {
+	if ( args.length > 0 ) {
+		warnStubUsed( 'noop (called with arguments)' );
+	}
+};
 
 // @wordpress/sync exports
 export const createSyncProvider = noop;
@@ -61,6 +82,7 @@ export const PrivatePublishDateTimePicker = NullComponent;
 // showdown Markdown converter stub
 export class Converter {
 	makeHtml( text ) {
+		warnStubUsed( 'showdown.Converter.makeHtml' );
 		return text;
 	}
 }
