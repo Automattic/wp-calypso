@@ -1,14 +1,20 @@
-import { siteBySlugQuery, siteCrontabCreateMutation } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	siteBySlugQuery,
+	siteCrontabCreateMutation,
+	siteCrontabsQuery,
+	siteCrontabUpdateMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
 	siteSettingsCrontabAddRoute,
+	siteSettingsCrontabEditRoute,
 	siteSettingsCrontabRoute,
 } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
@@ -16,20 +22,42 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { ScheduleField } from './schedule-field';
+import { parseScheduleValue, ScheduleField } from './schedule-field';
 import type { CrontabFormData } from '@automattic/api-core';
 
-export default function CrontabForm() {
+interface CrontabFormProps {
+	cronId?: number;
+}
+
+export default function CrontabForm( { cronId }: CrontabFormProps ) {
+	const isEditMode = !! cronId;
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( {
-		from: siteSettingsCrontabAddRoute.fullPath,
+		from: isEditMode ? siteSettingsCrontabEditRoute.fullPath : siteSettingsCrontabAddRoute.fullPath,
 	} );
+
+	const { data: crontabs = [] } = useQuery( {
+		...siteCrontabsQuery( site.ID ),
+		enabled: isEditMode,
+	} );
+
+	const crontab = isEditMode ? crontabs.find( ( c ) => c.cron_id === cronId ) : undefined;
 
 	const [ formData, setFormData ] = useState< CrontabFormData >( {
 		schedule: 'hourly',
 		command: '',
 	} );
+
+	// Initialize form data when crontab is loaded (edit mode only)
+	useEffect( () => {
+		if ( crontab ) {
+			setFormData( {
+				schedule: parseScheduleValue( crontab.schedule ),
+				command: crontab.command,
+			} );
+		}
+	}, [ crontab ] );
 
 	const { mutate: createCrontab, isPending: isCreating } = useMutation( {
 		...siteCrontabCreateMutation( site.ID ),
@@ -41,7 +69,17 @@ export default function CrontabForm() {
 		},
 	} );
 
-	const isPending = isCreating;
+	const { mutate: updateCrontab, isPending: isUpdating } = useMutation( {
+		...siteCrontabUpdateMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Scheduled job updated.' ),
+				error: __( 'Failed to update scheduled job.' ),
+			},
+		},
+	} );
+
+	const isPending = isEditMode ? isUpdating : isCreating;
 
 	const handleCancel = () => {
 		navigate( {
@@ -64,10 +102,20 @@ export default function CrontabForm() {
 			} );
 		};
 
-		createCrontab(
-			{ schedule: formData.schedule, command: formData.command.trim() },
-			{ onSuccess }
-		);
+		if ( isEditMode ) {
+			updateCrontab(
+				{
+					cronId,
+					params: { schedule: formData.schedule, command: formData.command.trim() },
+				},
+				{ onSuccess }
+			);
+		} else {
+			createCrontab(
+				{ schedule: formData.schedule, command: formData.command.trim() },
+				{ onSuccess }
+			);
+		}
 	};
 
 	const isValidCommand = formData.command.trim().length > 0;
@@ -115,11 +163,20 @@ export default function CrontabForm() {
 		[]
 	);
 
-	const pageTitle = __( 'Add scheduled job' );
-	const pageDescription = __(
-		'Schedule a command to run automatically at specified intervals on your site.'
-	);
-	const submitButtonLabel = __( 'Add scheduled job' );
+	// If crontab not found in edit mode, redirect back to list
+	if ( isEditMode && crontabs.length > 0 && ! crontab ) {
+		navigate( {
+			to: siteSettingsCrontabRoute.fullPath,
+			params: { siteSlug },
+		} );
+		return null;
+	}
+
+	const pageTitle = isEditMode ? __( 'Edit scheduled job' ) : __( 'Add scheduled job' );
+	const pageDescription = isEditMode
+		? __( 'Modify the schedule or command for this scheduled job.' )
+		: __( 'Schedule a command to run automatically at specified intervals on your site.' );
+	const submitButtonLabel = isEditMode ? __( 'Save changes' ) : __( 'Add scheduled job' );
 
 	return (
 		<PageLayout

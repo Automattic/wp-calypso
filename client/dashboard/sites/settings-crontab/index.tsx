@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
+import { Icon, Button, __experimentalText as Text, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -16,7 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
+import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -137,6 +137,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			icon: <Icon icon={ copy } />,
 			callback: ( items: Crontab[] ) => {
 				handleCopyCommand( items[ 0 ].command );
+			},
+		},
+		{
+			id: 'edit',
+			label: __( 'Edit' ),
+			callback: ( items: Crontab[] ) => {
+				router.navigate( {
+					to: siteSettingsCrontabEditRoute.fullPath,
+					params: { siteSlug, cronId: items[ 0 ].cron_id },
+				} );
 			},
 		},
 		{
