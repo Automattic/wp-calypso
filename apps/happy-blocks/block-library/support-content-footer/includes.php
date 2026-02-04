@@ -24,9 +24,11 @@ if ( ! function_exists( 'happy_blocks_get_content_footer_asset' ) ) {
 $css = happy_blocks_get_content_footer_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
 wp_enqueue_style( 'happy-blocks-support-footer-style', $css['path'], array(), $css['version'] );
 
-$assignment = \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' );
+$assignment            = \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' );
+$enable_odie_answers   = 'treatment' === $assignment
+	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' );
 
-if ( ! is_user_logged_in() && 'treatment' === $assignment ) {
+if ( ! is_user_logged_in() && $enable_odie_answers ) {
 	$js = happy_blocks_get_content_footer_asset( 'view.js' );
 	wp_enqueue_script( 'happy-blocks-support-footer-view', $js['path'], array(), $js['version'], true );
 }
