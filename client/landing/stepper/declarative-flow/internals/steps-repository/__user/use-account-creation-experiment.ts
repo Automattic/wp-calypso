@@ -4,8 +4,8 @@ import { useExperiment } from 'calypso/lib/explat';
 type AccountCreationExperimentVariant =
 	| 'control'
 	| 'treatment_email'
-	| 'treatment_email_messaging' // this was repurposed as a slider variation
-	| 'treatment_email_messaging_slider' // this slider will not show the description text
+	| 'treatment_email_messaging_slider'
+	| 'treatment_email_messaging_slider_simplified'
 	| 'treatment_email_slider'
 	| 'treatment_messaging_slider';
 
@@ -24,14 +24,14 @@ interface UseAccountCreationExperimentParams {
 
 const EMAIL_VARIATIONS: AccountCreationExperimentVariant[] = [
 	'treatment_email',
-	'treatment_email_messaging',
 	'treatment_email_messaging_slider',
+	'treatment_email_messaging_slider_simplified',
 	'treatment_email_slider',
 ];
 
 const MESSAGING_VARIATIONS: AccountCreationExperimentVariant[] = [
-	'treatment_email_messaging',
 	'treatment_email_messaging_slider',
+	'treatment_email_messaging_slider_simplified',
 	'treatment_messaging_slider',
 ];
 
@@ -39,11 +39,11 @@ const SLIDER_VARIATIONS: AccountCreationExperimentVariant[] = [
 	'treatment_email_slider',
 	'treatment_messaging_slider',
 	'treatment_email_messaging_slider',
-	'treatment_email_messaging', // this was repurposed as a slider variation
+	'treatment_email_messaging_slider_simplified',
 ];
 
 const SIMPLE_SLIDER_VARIATIONS: AccountCreationExperimentVariant[] = [
-	'treatment_email_messaging_slider', // this slider will have less text than the other
+	'treatment_email_messaging_slider_simplified',
 ];
 
 function useAccountCreationExperiment( {
