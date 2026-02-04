@@ -18,7 +18,7 @@ export type RootRouterContext = {
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => {
 		if ( cause === 'preload' ) {
 			return { fullPageLoad: consumeFirstLoad() };
 		}
