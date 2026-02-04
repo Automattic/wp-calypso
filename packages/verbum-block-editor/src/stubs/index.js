@@ -30,7 +30,7 @@ export const privateApis = {};
 // @wordpress/components/calendar exports
 export const DateCalendar = NullComponent;
 export const DateRangeCalendar = NullComponent;
-export const TZDate = Date;
+export class TZDate extends Date {}
 
 // @wordpress/components/date-time exports
 export const DateTimePicker = NullComponent;

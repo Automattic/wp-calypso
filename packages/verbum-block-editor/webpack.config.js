@@ -20,19 +20,19 @@ const modulesToStub = [
 	/^date-fns/,
 	/^@date-fns\/tz/,
 	/^react-day-picker/,
-	/@wordpress\/components\/build-module\/date-time/,
-	/@wordpress\/components\/build-module\/calendar/,
-	/@wordpress\/block-editor\/build-module\/components\/date-format-picker/,
-	/@wordpress\/block-editor\/build-module\/components\/publish-date-time-picker/,
+	/@wordpress\/components\/build-module\/date-time(?:$|\/)/,
+	/@wordpress\/components\/build-module\/calendar(?:$|\/)/,
+	/@wordpress\/block-editor\/build-module\/components\/date-format-picker(?:$|\/)/,
+	/@wordpress\/block-editor\/build-module\/components\/publish-date-time-picker(?:$|\/)/,
 
 	// Command palette (~33KB)
 	/^@wordpress\/commands$/,
 
 	// Unused @wordpress/components (~250KB total)
-	/@wordpress\/components\/build-module\/navigation/,
-	/@wordpress\/components\/build-module\/focal-point-picker/,
-	/@wordpress\/components\/build-module\/color-picker/,
-	/@wordpress\/components\/build-module\/palette-edit/,
+	/@wordpress\/components\/build-module\/navigation(?:$|\/)/,
+	/@wordpress\/components\/build-module\/focal-point-picker(?:$|\/)/,
+	/@wordpress\/components\/build-module\/color-picker(?:$|\/)/,
+	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
 
 	// Other unused libraries
 	/^showdown$/, // Markdown parser (~156KB)
