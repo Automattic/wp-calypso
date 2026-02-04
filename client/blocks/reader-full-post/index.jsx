@@ -580,13 +580,24 @@ export class FullPostView extends Component {
 		}
 	};
 
-	goToPost = ( post ) => {
+	goToPost = ( postKey ) => {
 		const { layout, setSelectedItem, showSelectedPost: showPost } = this.props;
-		if ( post ) {
+		if ( postKey ) {
+			// Track navigation usage
+			let direction = 'unknown';
+			if ( postKey === this.props.nextPostKey ) {
+				direction = 'next';
+			} else if ( postKey === this.props.previousPostKey ) {
+				direction = 'previous';
+			}
+			recordTrackForPost( 'calypso_reader_article_navigation_clicked', this.props.post, {
+				direction,
+			} );
+
 			if ( layout === 'recent' && setSelectedItem ) {
-				setSelectedItem( post );
+				setSelectedItem( postKey );
 			} else {
-				showPost( { postKey: post } );
+				showPost( { postKey } );
 			}
 		}
 	};
