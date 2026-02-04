@@ -33,6 +33,21 @@ export function convertToolMessagesToComponents( {
 
 		// Handle show-component ability component messages
 		if ( textData.tool_id === 'big_sky__show_component' ) {
+			// If not on WP.com editor page, show a link to the site editor instead of the component
+			if ( ! isWpComEditorPage() ) {
+				return [
+					{
+						...message,
+						content: [
+							{
+								type: 'component' as const,
+								component: EditorLink,
+							},
+						],
+					},
+				];
+			}
+
 			const { type: contentType, props, followUpTasks } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
