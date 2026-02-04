@@ -133,7 +133,11 @@ const UserStepComponent: StepType = function UserStep( {
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ headingText } />
+				<Step.Heading
+					text={ headingText }
+					align={ isMessagingVariation ? 'left' : undefined }
+					size={ isMessagingVariation ? 'small' : undefined }
+				/>
 			</>
 		);
 
@@ -199,6 +203,7 @@ const UserStepComponent: StepType = function UserStep( {
 				>
 					<Step.CenteredColumnLayout
 						verticalAlign="center"
+						headingColumnWidth={ isMessagingVariation ? 4 : undefined }
 						columnWidth={ 4 }
 						heading={ heading }
 						topBar={ topBar }
@@ -216,6 +221,7 @@ const UserStepComponent: StepType = function UserStep( {
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
 				verticalAlign="center"
+				headingColumnWidth={ isMessagingVariation ? 4 : undefined }
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }

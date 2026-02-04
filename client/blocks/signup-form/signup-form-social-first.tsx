@@ -125,7 +125,15 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+		return (
+			<p
+				className={ clsx( 'signup-form-social-first__tos-link', {
+					'is-left-aligned': isMessagingVariation,
+				} ) }
+			>
+				{ tosText }
+			</p>
+		);
 	};
 
 	const renderEmailStepTermsOfService = () => {

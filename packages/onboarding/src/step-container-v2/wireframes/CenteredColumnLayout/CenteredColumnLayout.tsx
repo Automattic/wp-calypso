@@ -10,6 +10,7 @@ import { renderTopBar, TopBarRenderer } from '../../components/TopBar/TopBarRend
 interface CenteredColumnLayoutProps {
 	topBar?: ContentProp;
 	heading?: ReactNode;
+	headingColumnWidth?: 4 | 5 | 6 | 8 | 10;
 	className?: string;
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
@@ -22,6 +23,7 @@ export const CenteredColumnLayout = ( {
 	columnWidth,
 	topBar,
 	heading,
+	headingColumnWidth = 6,
 	className,
 	children,
 	stickyBottomBar,
@@ -50,7 +52,7 @@ export const CenteredColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper centerAligned={ verticalAlign === 'center' } noGap={ noGap }>
-							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							{ heading && <ContentRow columns={ headingColumnWidth }>{ heading }</ContentRow> }
 							<ContentRow columns={ columnWidth } className={ className }>
 								{ content }
 							</ContentRow>

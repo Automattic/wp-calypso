@@ -264,6 +264,10 @@ $breakpoint-mobile: 660px;
 		@include break-small {
 			text-align: center;
 		}
+
+		&.is-left-aligned {
+			text-align: start;
+		}
 	}
 
 	.signup-form-social-first__email-tos-link {
