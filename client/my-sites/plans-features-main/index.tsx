@@ -171,6 +171,7 @@ export interface PlansFeaturesMainProps {
 	isStepperUpgradeFlow?: boolean;
 	isLaunchPage?: boolean | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
+	showLegacyStorageFeature?: boolean;
 	isSpotlightOnCurrentPlan?: boolean;
 	renderSiblingWhenLoaded?: () => ReactNode; // renders additional components as last dom node when plans grid dependecies are fully loaded
 	/**
@@ -224,6 +225,7 @@ const PlansFeaturesMain = ( {
 	isCustomDomainAllowedOnFreePlan = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
+	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
@@ -458,6 +460,7 @@ const PlansFeaturesMain = ( {
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
 		selectedPlan,
+		showLegacyStorageFeature,
 		siteId,
 		term,
 		useCheckPlanAvailabilityForPurchase,
@@ -487,6 +490,7 @@ const PlansFeaturesMain = ( {
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
 		selectedPlan,
+		showLegacyStorageFeature,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
@@ -943,6 +947,7 @@ const PlansFeaturesMain = ( {
 										recordTracksEvent={ recordTracksEvent }
 										reflectStorageSelectionInPlanPrices
 										selectedFeature={ selectedFeature }
+										showLegacyStorageFeature={ showLegacyStorageFeature }
 										showRefundPeriod={ isAnyHostingFlow( flowName ) }
 										showUpgradeableStorage={ showUpgradeableStorage }
 										siteId={ siteId }

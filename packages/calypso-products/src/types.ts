@@ -398,7 +398,10 @@ export type Plan = BillingTerm & {
 		isExperimentVariant?: boolean;
 	} ) => Record< Feature, TranslateResult >;
 
-	getStorageFeature?: () => WPComPlanStorageFeatureSlug;
+	getStorageFeature?: (
+		showLegacyStorageFeature?: boolean,
+		isCurrentPlan?: boolean
+	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;

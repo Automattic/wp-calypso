@@ -28,6 +28,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	allFeaturesList,
 	hasRedeemedDomainCredit,
 	intent,
+	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
 	isSummerSpecial,
@@ -43,6 +44,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	hasRedeemedDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
+	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
@@ -68,6 +70,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	hasRedeemedDomainCredit,
 	intent,
 	selectedFeature,
+	showLegacyStorageFeature,
 	isInSignup,
 	isSummerSpecial,
 	useLongSetFeatures,
@@ -367,7 +370,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					}
 				}
 
-				const storageFeature = planConstantObj.getStorageFeature?.();
+				const storageFeature = planConstantObj.getStorageFeature?.(
+					showLegacyStorageFeature,
+					gridPlan.current
+				);
 
 				return {
 					...acc,
@@ -387,6 +393,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		intent,
 		highlightedFeatures,
 		selectedFeature,
+		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		isSummerSpecial,

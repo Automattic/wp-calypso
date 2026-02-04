@@ -17,6 +17,7 @@ export interface UseGridPlansParams {
 	isSubdomainNotGenerated?: boolean; // If the subdomain generation is unsuccessful we do not show the free plan
 	selectedFeature?: string | null;
 	selectedPlan?: PlanSlug;
+	showLegacyStorageFeature?: boolean;
 	siteId?: number | null;
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
