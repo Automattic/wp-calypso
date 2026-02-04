@@ -1388,8 +1388,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_PAYPAL_JP,
 	],
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		if ( showLegacyStorageFeature && isCurrentPlan ) {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
 			return FEATURE_200GB_STORAGE;
 		}
 		return isEnabled( 'plans/updated-storage-labels' )
@@ -2365,14 +2365,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			: featureLabels;
 	},
 
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
 		if ( showLegacyStorageFeature ) {
-			/* If the user is currently has a legacy plan with 200GB storage space, the capacity will decrease to
-			 * 50GB if they change their billing terms.
-			 */
-			return isCurrentPlan ? FEATURE_200GB_STORAGE : FEATURE_50GB_STORAGE;
+			return FEATURE_200GB_STORAGE;
 		}
-
 		return isEnabled( 'plans/updated-storage-labels' )
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;

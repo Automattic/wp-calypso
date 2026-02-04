@@ -94,7 +94,12 @@ export const useGetCombinedChat = (
 			// If the ID has changed from something to something else, we need to clear the chat.
 			// If the ID changed from nothing to something, we need to ignore the change, because
 			// it's just a transition from an empty chat to a new one after the first message.
-			( previousOdieIdRef.current && previousOdieIdRef.current !== odieId );
+			( previousOdieIdRef.current && previousOdieIdRef.current !== odieId ) ||
+			// Check if the current chat state matches the URL's odieId.
+			// This handles back navigation where we navigate from a new chat (no odieId)
+			// to an existing chat (with odieId). In this case, previousOdieIdRef was undefined
+			// so interactionHasChanged is false, but we still need to reload the chat.
+			mainChatState.odieId?.toString() !== odieId?.toString();
 
 		previousOdieIdRef.current = odieId;
 
@@ -208,6 +213,7 @@ export const useGetCombinedChat = (
 		botSlug,
 		isLoadingCurrentSupportInteraction,
 		mainChatState?.messages?.length,
+		mainChatState?.odieId,
 		odieChat,
 	] );
 
