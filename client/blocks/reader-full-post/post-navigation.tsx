@@ -2,7 +2,6 @@ import {
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -27,6 +26,16 @@ interface NavigationButtonProps {
 	onNavigate: ( postKey: PostKey ) => void;
 }
 
+/**
+ * Generates the URL for a reader post from a PostKey.
+ */
+function getPostUrlFromKey( postKey: PostKey ): string {
+	if ( postKey.feedId ) {
+		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
+	}
+	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
+}
+
 const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationButtonProps ) => {
 	const translate = useTranslate();
 	const isNext = direction === 'next';
@@ -37,9 +46,19 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 		return <div className="reader-full-post-navigation__link-placeholder" />;
 	}
 
+	const handleClick = ( event: React.MouseEvent ) => {
+		// Allow default behavior for modifier keys (open in new tab)
+		if ( event.metaKey || event.ctrlKey || event.shiftKey ) {
+			return;
+		}
+		event.preventDefault();
+		onNavigate( postKey );
+	};
+
 	return (
-		<Button
-			onClick={ () => onNavigate( postKey ) }
+		<a
+			href={ getPostUrlFromKey( postKey ) }
+			onClick={ handleClick }
 			className={ clsx(
 				'reader-full-post-navigation__link-button',
 				isNext && 'reader-full-post-navigation__link-button--next'
@@ -66,7 +85,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 				</VStack>
 				{ isNext && <Icon icon={ icon } size={ 18 } /> }
 			</HStack>
-		</Button>
+		</a>
 	);
 };
 

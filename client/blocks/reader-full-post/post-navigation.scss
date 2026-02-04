@@ -12,7 +12,8 @@
 	max-width: 50%;
 }
 
-.reader-full-post-navigation__link-button.components-button {
+.reader-full-post-navigation__link-button {
+	display: flex;
 	text-decoration: none;
 	color: var( --color-text );
 	padding: 8px 0;
@@ -34,10 +35,10 @@
 		box-shadow: 0 0 0 2px var( --color-primary );
 		outline: none;
 	}
+}
 
-	&.reader-full-post-navigation__link-button--next {
-		justify-content: flex-end;
-	}
+.reader-full-post-navigation__link-button--next {
+	justify-content: flex-end;
 }
 
 .reader-full-post-navigation__link-content {
@@ -85,14 +86,14 @@
 		font-weight: 500;
 	}
 
-	.reader-full-post-navigation__link-button.components-button {
+	.reader-full-post-navigation__link-button {
 		padding: 12px 8px;
 	}
 }
 
 // For very small screens (phones in portrait)
 @media ( max-width: 480px ) {
-	.reader-full-post-navigation__link-button.components-button {
+	.reader-full-post-navigation__link-button {
 		padding: 12px 4px;
 	}
 
