@@ -127,7 +127,6 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
-		"reader": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": false,

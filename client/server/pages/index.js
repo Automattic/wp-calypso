@@ -806,7 +806,7 @@ function validateRedirect( req, url ) {
 function wpcomPages( app ) {
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
+		if ( config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
