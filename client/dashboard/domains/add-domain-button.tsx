@@ -34,7 +34,7 @@ function useDomainNavigation() {
 	return { siteSlug, navigateTo };
 }
 
-function DomainOnlySitesAddDomainButton() {
+function DomainOnlyAddDomainButton() {
 	const { siteSlug, navigateTo } = useDomainNavigation();
 
 	const onSearchClick = () =>
@@ -52,7 +52,7 @@ function DomainOnlySitesAddDomainButton() {
 	);
 }
 
-function SiteAttachedAddDomainButton() {
+function DefaultAddDomainButton() {
 	const { navigateTo } = useDomainNavigation();
 
 	const onSearchClick = () =>
@@ -114,8 +114,8 @@ export default function AddDomainButton() {
 	const { supports } = useAppContext();
 
 	if ( supports.domainOnlySites ) {
-		return <DomainOnlySitesAddDomainButton />;
+		return <DomainOnlyAddDomainButton />;
 	}
 
-	return <SiteAttachedAddDomainButton />;
+	return <DefaultAddDomainButton />;
 }

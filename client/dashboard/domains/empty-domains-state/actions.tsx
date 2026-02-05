@@ -17,7 +17,7 @@ function useTrackEmptyStateActionClick() {
 	};
 }
 
-function DomainOnlySitesEmptyDomainsStateActions() {
+function DomainOnlyEmptyDomainsStateActions() {
 	const trackClick = useTrackEmptyStateActionClick();
 
 	return (
@@ -60,7 +60,7 @@ function DomainOnlySitesEmptyDomainsStateActions() {
 	);
 }
 
-function SiteAttachedEmptyDomainsStateActions() {
+function DefaultEmptyDomainsStateActions() {
 	const trackClick = useTrackEmptyStateActionClick();
 
 	return (
@@ -107,8 +107,8 @@ export default function EmptyDomainsStateActions() {
 	const { supports } = useAppContext();
 
 	if ( supports.domainOnlySites ) {
-		return <DomainOnlySitesEmptyDomainsStateActions />;
+		return <DomainOnlyEmptyDomainsStateActions />;
 	}
 
-	return <SiteAttachedEmptyDomainsStateActions />;
+	return <DefaultEmptyDomainsStateActions />;
 }
