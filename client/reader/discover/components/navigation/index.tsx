@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
@@ -43,20 +42,16 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		return addLocaleToPathLocaleInFront( path, currentLocale );
 	};
 
-	const FRESHLY_PRESSED_OPTION = isEnabled( 'reader/discover/freshly-pressed' )
-		? {
-				slug: FRESHLY_PRESSED_TAB,
-				title: translate( 'Freshly Pressed' ),
-				path: '/discover',
-		  }
-		: null;
-
 	const baseTabs: Tab[] = [
-		...( FRESHLY_PRESSED_OPTION ? [ FRESHLY_PRESSED_OPTION ] : [] ),
+		{
+			slug: FRESHLY_PRESSED_TAB,
+			title: translate( 'Freshly Pressed' ),
+			path: '/discover',
+		},
 		{
 			slug: RECOMMENDED_TAB,
 			title: translate( 'Recommended' ),
-			path: isEnabled( 'reader/discover/freshly-pressed' ) ? '/discover/recommended' : '/discover',
+			path: '/discover/recommended',
 		},
 		{
 			slug: ADD_NEW_TAB,
