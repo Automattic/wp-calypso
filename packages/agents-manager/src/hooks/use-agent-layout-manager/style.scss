@@ -427,6 +427,10 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
+	.Message-module_message ul {
+		margin-left: var(--spacing-2);
+	}
+
 	.Messages-module_container {
 		padding-bottom: 24px;
 
@@ -855,6 +859,17 @@ body:not(.modal-open) .agents-manager-chat--docked {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	p {
+		font-size: inherit;
+		line-height: inherit;
+		margin: inherit;
+	}
+
+	ul {
+		list-style: disc;
+		margin-top: var(--spacing-3);
+	}
 
 	.Messages-module_container.Messages-module_emptyState {
 		padding-bottom: 0;
