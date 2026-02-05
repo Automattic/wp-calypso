@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useSetStepComplete } from '@automattic/composite-checkout';
+import { useCompleteAllSteps } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -21,7 +21,7 @@ function useCachedContactDetailsForCheckoutForm(
 ): boolean {
 	const countriesList = useCountryList();
 	const reduxDispatch = useReduxDispatch();
-	const setStepCompleteStatus = useSetStepComplete();
+	const completeAllSteps = useCompleteAllSteps();
 	const [ isComplete, setComplete ] = useState( false );
 	const didFillForm = useRef( false );
 
@@ -85,7 +85,7 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors?.( false );
 					debug( 'Contact details are populated; attempting to auto-complete all steps' );
-					return setStepCompleteStatus( 'payment-method-step' );
+					return completeAllSteps();
 				}
 				return false;
 			} )
@@ -123,7 +123,7 @@ function useCachedContactDetailsForCheckoutForm(
 	}, [
 		setShouldShowContactDetailsValidationErrors,
 		reduxDispatch,
-		setStepCompleteStatus,
+		completeAllSteps,
 		cachedContactDetails,
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,

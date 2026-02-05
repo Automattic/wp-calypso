@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
 import { DataViews, DataViewsCard } from '../components/dataviews';
 import { OptInWelcome } from '../components/opt-in-welcome';
@@ -102,6 +103,7 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
+			<PerformanceTrackerStop id="dashboard-domain-list" />
 		</Suspense>
 	);
 }
