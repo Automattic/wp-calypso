@@ -4,7 +4,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Button, DropdownMenu, Fill } from '@wordpress/components';
+import { DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect, dispatch, select, subscribe } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
@@ -14,8 +14,6 @@ import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
-import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
-import { getEditorType } from './utils';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
@@ -25,8 +23,6 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
-	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
-		useMenuPanelExperiment( 'calypso_help_center_menu_popover_increase_exposure', 'menu_popover' );
 	const isShown = useSelect( ( s ) => s( 'automattic/help-center' ).isHelpCenterShown(), [] );
 
 	const canvasMode = useCanvasMode();
@@ -35,23 +31,8 @@ function HelpCenterContent() {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
-
-	const handleToggleHelpCenter = useCallback( () => {
-		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: helpCenterData.sectionName || 'gutenberg-editor',
-			editor_type: getEditorType(),
-			canvas_mode: canvasMode,
-		} );
-
-		setShowHelpCenter( ! isShown );
-	}, [ setShowHelpCenter, isShown, canvasMode, trackIconInteraction ] );
+	}, [ isShown ] );
 
 	const handleMenuClick = useCallback(
 		( destination, isExternal = false ) => {
@@ -145,7 +126,7 @@ function HelpCenterContent() {
 		[ handleMenuClick ]
 	);
 
-	const content = isMenuPanelExperimentEnabled ? (
+	const content = (
 		<DropdownMenu
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			icon={ <HelpIcon /> }
@@ -155,16 +136,6 @@ function HelpCenterContent() {
 				position: 'bottom left',
 			} }
 			onToggle={ trackIconInteraction }
-		/>
-	) : (
-		<Button
-			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
-			onClick={ handleToggleHelpCenter }
-			icon={ <HelpIcon /> }
-			label="Help"
-			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
-			aria-expanded={ isShown ? true : false }
-			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
 		/>
 	);
 

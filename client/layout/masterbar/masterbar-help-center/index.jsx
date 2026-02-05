@@ -12,7 +12,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useExperiment } from 'calypso/lib/explat';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
@@ -35,34 +34,13 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		} ),
 		[]
 	);
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover_increase_exposure'
-	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
-	const isMenuPanelExperimentEnabled =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	const trackIconInteraction = () => {
 		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
 			is_help_center_visible: helpCenterVisible,
 			section: sectionName,
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	};
-
-	const handleToggleHelpCenter = () => {
-		trackIconInteraction();
-
-		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
-
-		setShowHelpCenter( ! helpCenterVisible );
 	};
 
 	const handleMenuClick = ( destination, isExternal = false ) => {
@@ -176,18 +154,18 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	return (
 		<>
 			<Item
-				onClick={ isMenuPanelExperimentEnabled ? trackIconInteraction : handleToggleHelpCenter }
+				onClick={ trackIconInteraction }
 				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
-					'is-menu-panel': isMenuPanelExperimentEnabled,
+					'is-menu-panel': true,
 				} ) }
 				wrapperClassName={ clsx( {
-					'is-menu-panel': isMenuPanelExperimentEnabled,
+					'is-menu-panel': true,
 				} ) }
 				tooltip={ tooltip }
 				icon={ <HelpCenterIcon hasUnread={ unreadCount > 0 } /> }
-				subItems={ isMenuPanelExperimentEnabled ? menuItems : undefined }
-				openSubMenuOnClick={ isMenuPanelExperimentEnabled }
+				subItems={ menuItems }
+				openSubMenuOnClick
 			/>
 		</>
 	);

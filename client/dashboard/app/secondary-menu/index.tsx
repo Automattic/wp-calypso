@@ -1,4 +1,3 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
@@ -28,7 +27,6 @@ import {
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { useExperiment } from 'calypso/lib/explat';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
@@ -50,29 +48,15 @@ const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' 
 
 function Help() {
 	const { user } = useAuth();
-	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+	const { isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
-	const isUnifiedAgentEnabled = useShouldUseUnifiedAgent();
-
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover_increase_exposure'
-	);
-	const isMenuPanelExperimentEnabled =
-		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	const trackIconInteraction = () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown,
 			section: 'dashboard',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	};
-
-	const handleToggleHelpCenter = () => {
-		trackIconInteraction();
-		setShowHelpCenter( ! isShown );
 	};
 
 	const handleCloseHelpCenterApp = useCallback( () => {
@@ -117,119 +101,90 @@ function Help() {
 		}
 	};
 
-	if ( isMenuPanelExperimentEnabled ) {
-		return (
-			<>
-				<DropdownMenu
-					popoverProps={ {
-						placement: 'bottom-end',
-						offset: 8,
-					} }
-					label={ __( 'Help' ) }
-					icon={ help }
-					toggleProps={ {
-						className: 'dashboard-secondary-menu__item',
-						variant: 'tertiary',
-					} }
-					onToggle={ trackIconInteraction }
-				>
-					{ ( { onClose } ) => (
-						<>
-							<MenuGroup>
-								<MenuItem
-									onClick={ () => {
-										handleMenuClick( '/odie' );
-										onClose();
-									} }
-								>
-									<HStack spacing={ 2 } justify="left">
-										<Icon icon={ comment } size={ 24 } />
-										<span>{ __( 'Chat support' ) }</span>
-									</HStack>
-								</MenuItem>
-								<MenuItem
-									onClick={ () => {
-										handleMenuClick( '/chat-history' );
-										onClose();
-									} }
-								>
-									<HStack spacing={ 2 } justify="left">
-										<Icon icon={ backup } size={ 24 } />
-										<span>{ __( 'Chat history' ) }</span>
-									</HStack>
-								</MenuItem>
-							</MenuGroup>
-							<MenuGroup>
-								<MenuItem
-									onClick={ () => {
-										handleMenuClick( '/support-guides' );
-										onClose();
-									} }
-								>
-									<HStack spacing={ 2 } justify="left">
-										<Icon icon={ page } size={ 24 } />
-										<span>{ __( 'Support guides' ) }</span>
-									</HStack>
-								</MenuItem>
-								<MenuItem
-									onClick={ () => {
-										handleMenuClick(
-											localizeUrl( 'https://wordpress.com/support/courses/' ),
-											true
-										);
-										onClose();
-									} }
-								>
-									<HStack spacing={ 2 } justify="left">
-										<Icon icon={ video } size={ 24 } />
-										<span>{ __( 'Courses' ) }</span>
-									</HStack>
-								</MenuItem>
-								<MenuItem
-									onClick={ () => {
-										handleMenuClick(
-											localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
-											true
-										);
-										onClose();
-									} }
-								>
-									<HStack spacing={ 2 } justify="left">
-										<Icon icon={ rss } size={ 24 } />
-										<span>{ __( 'Product updates' ) }</span>
-									</HStack>
-								</MenuItem>
-							</MenuGroup>
-						</>
-					) }
-				</DropdownMenu>
-				<Suspense fallback={ null }>
-					{ isShown && (
-						<AsyncHelpCenterApp
-							currentUser={ user }
-							handleClose={ handleCloseHelpCenterApp }
-							locale={ user.language }
-							onboardingUrl={ config( 'wpcom_signup_url' ) }
-							sectionName="dashboard"
-						/>
-					) }
-				</Suspense>
-			</>
-		);
-	}
-
 	return (
 		<>
-			<Button
-				className="dashboard-secondary-menu__item"
+			<DropdownMenu
+				popoverProps={ {
+					placement: 'bottom-end',
+					offset: 8,
+				} }
 				label={ __( 'Help' ) }
 				icon={ help }
-				variant="tertiary"
-				isBusy={ isLoading }
-				onClick={ handleToggleHelpCenter }
-			/>
+				toggleProps={ {
+					className: 'dashboard-secondary-menu__item',
+					variant: 'tertiary',
+				} }
+				onToggle={ trackIconInteraction }
+			>
+				{ ( { onClose } ) => (
+					<>
+						<MenuGroup>
+							<MenuItem
+								onClick={ () => {
+									handleMenuClick( '/odie' );
+									onClose();
+								} }
+							>
+								<HStack spacing={ 2 } justify="left">
+									<Icon icon={ comment } size={ 24 } />
+									<span>{ __( 'Chat support' ) }</span>
+								</HStack>
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									handleMenuClick( '/chat-history' );
+									onClose();
+								} }
+							>
+								<HStack spacing={ 2 } justify="left">
+									<Icon icon={ backup } size={ 24 } />
+									<span>{ __( 'Chat history' ) }</span>
+								</HStack>
+							</MenuItem>
+						</MenuGroup>
+						<MenuGroup>
+							<MenuItem
+								onClick={ () => {
+									handleMenuClick( '/support-guides' );
+									onClose();
+								} }
+							>
+								<HStack spacing={ 2 } justify="left">
+									<Icon icon={ page } size={ 24 } />
+									<span>{ __( 'Support guides' ) }</span>
+								</HStack>
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true );
+									onClose();
+								} }
+							>
+								<HStack spacing={ 2 } justify="left">
+									<Icon icon={ video } size={ 24 } />
+									<span>{ __( 'Courses' ) }</span>
+								</HStack>
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									handleMenuClick(
+										localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+										true
+									);
+									onClose();
+								} }
+							>
+								<HStack spacing={ 2 } justify="left">
+									<Icon icon={ rss } size={ 24 } />
+									<span>{ __( 'Product updates' ) }</span>
+								</HStack>
+							</MenuItem>
+						</MenuGroup>
+					</>
+				) }
+			</DropdownMenu>
 			<Suspense fallback={ null }>
-				{ ( isShown || isUnifiedAgentEnabled ) && (
+				{ isShown && (
 					<AsyncHelpCenterApp
 						currentUser={ user }
 						handleClose={ handleCloseHelpCenterApp }

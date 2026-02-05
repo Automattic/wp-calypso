@@ -6,7 +6,6 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback, useState } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
-import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 
 import './help-center.scss';
 
@@ -34,8 +33,6 @@ function AdminHelpCenterContent() {
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
-	const { isInTreatment: isMenuPanelExperimentEnabled, isLoading: isLoadingExperimentAssignment } =
-		useMenuPanelExperiment( 'calypso_help_center_menu_popover_increase_exposure', 'menu_popover' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -88,10 +85,8 @@ function AdminHelpCenterContent() {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
-	}, [ isShown, isMenuPanelExperimentEnabled, isLoadingExperimentAssignment ] );
+	}, [ isShown ] );
 
 	const handleMenuPanelClick = () => {
 		trackIconInteraction();
@@ -101,10 +96,6 @@ function AdminHelpCenterContent() {
 
 	// Close submenu when clicking outside
 	useEffect( () => {
-		if ( ! isMenuPanelExperimentEnabled ) {
-			return;
-		}
-
 		const handleClickOutside = ( event ) => {
 			if ( ! button.contains( event.target ) && button.classList.contains( 'open-click' ) ) {
 				button.classList.remove( 'open-click' );
@@ -115,20 +106,9 @@ function AdminHelpCenterContent() {
 		return () => {
 			document.removeEventListener( 'click', handleClickOutside );
 		};
-	}, [ button, isMenuPanelExperimentEnabled ] );
+	}, [ button ] );
 
-	const handleToggleHelpCenter = () => {
-		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: helpCenterData.sectionName || 'wp-admin',
-		} );
-
-		setShowHelpCenter( ! isShown );
-	};
-
-	button.onclick = isMenuPanelExperimentEnabled ? handleMenuPanelClick : handleToggleHelpCenter;
+	button.onclick = handleMenuPanelClick;
 
 	const handleMenuClick = useCallback(
 		( destination, isExternal = false ) => {

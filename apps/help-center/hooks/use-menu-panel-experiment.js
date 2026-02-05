@@ -24,8 +24,22 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 	return result;
 };
 
-const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
-	const cacheKey = `menu-panel-experiment-assignment-v2-${ experimentName }-${ treatmentVariation }`;
+/**
+ * Hook to check if the current user is in a specific experiment variation.
+ * Works in both WordPress.com and Jetpack contexts.
+ *
+ * @param {string} experimentName - The name of the experiment to check
+ * @param {string} treatmentVariation - The variation name to match against
+ * @returns {{ isInTreatment: boolean, isLoading: boolean }} Object containing whether user is in the treatment variation and loading state
+ *
+ * @example
+ * const { isInTreatment, isLoading } = useExperimentVariation(
+ *   'my_experiment_name',
+ *   'treatment_variation'
+ * );
+ */
+const useExperimentVariation = ( experimentName, treatmentVariation ) => {
+	const cacheKey = `experiment-assignment-v1-${ experimentName }-${ treatmentVariation }`;
 
 	const { data: isInTreatment, isLoading } = useQuery( {
 		queryKey: [ 'experiment-assignment', experimentName, treatmentVariation ],
@@ -64,4 +78,4 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 	return { isInTreatment, isLoading };
 };
 
-export { useMenuPanelExperiment };
+export { useExperimentVariation };
