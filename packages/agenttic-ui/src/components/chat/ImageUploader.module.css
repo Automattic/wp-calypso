@@ -2,6 +2,13 @@
 	width: 100%;
 	padding: 4px 0;
 	align-self: flex-start;
+	position: absolute;
+	pointer-events: none;
+}
+
+.container.active {
+	position: relative;
+	pointer-events: auto;
 }
 
 .uploader {
@@ -29,7 +36,7 @@
 }
 
 .clickArea:focus-visible {
-	outline: 2px solid var(--agent-ui-primary, #0675c4);
+	outline: 2px solid var(--color-primary);
 	outline-offset: 2px;
 	border-radius: 4px;
 }
@@ -37,9 +44,9 @@
 .draggingMessage {
 	padding: 60px 24px;
 	text-align: center;
-	border: 1px dashed var(--agent-ui-border, #d0d0d0);
+	border: 1px dashed var(--color-muted);
 	border-radius: 12px;
-	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+	background-color: var(--color-muted);
 	margin-bottom: 8px;
 	position: relative;
 	min-height: 150px;
@@ -52,13 +59,13 @@
 
 .draggingMessage p {
 	margin: 0;
-	color: var(--agent-ui-text-secondary, #757575);
+	color: var(--color-muted-foreground);
 	font-size: 15px;
 	line-height: 1.6;
 }
 
 .uploader.draggingOver .draggingMessage {
-	border-color: var(--agent-ui-primary, #0675c4);
+	border-color: var(--color-primary);
 	background-color: transparent;
 }
 
@@ -78,7 +85,7 @@
 	padding: 8px 8px;
 	border-radius: 8px;
 	border: none;
-	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+	background-color: var(--color-muted);
 	cursor: move;
 	transition:
 		transform 0.2s ease,
@@ -103,7 +110,7 @@
 	height: 20px;
 	border-radius: 50%;
 	border: none;
-	background-color: #757575;
+	background-color: var(--color-popover-muted, #2F2F2F);
 	color: white;
 	font-size: 16px;
 	line-height: 1;
@@ -112,7 +119,6 @@
 	align-items: center;
 	justify-content: center;
 	z-index: 2;
-	transition: background-color 0.2s ease;
 	padding: 0;
 	opacity: 0;
 	transition:
@@ -120,16 +126,16 @@
 		background-color 0.2s ease;
 }
 
+.removeButton svg {
+	color: var(--color-muted-foreground, #8F8F8F);
+}
+
 .previewItem:hover .removeButton {
 	opacity: 1;
 }
 
-.removeButton:hover {
-	background-color: rgba(0, 0, 0, 0.9);
-}
-
 .removeButton:focus-visible {
-	outline: 2px solid var(--agent-ui-primary, #0675c4);
+	outline: 2px solid var(--color-primary);
 	outline-offset: 2px;
 }
 
@@ -151,7 +157,7 @@
 
 .previewMeta span.previewFilename {
 	font-size: 14px !important;
-	color: var(--agent-ui-text-primary, #1a1a1a);
+	color: var(--color-foreground);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -160,7 +166,7 @@
 
 .previewMeta span.previewType {
 	font-size: 12px !important;
-	color: var(--agent-ui-text-secondary, #757575);
+	color: var(--color-muted-foreground);
 	text-transform: uppercase;
 	font-weight: 400;
 }
@@ -171,14 +177,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--agent-ui-background-secondary, #f9f9f9);
+	background-color: var(--color-muted);
 }
 
 .spinner {
 	width: 32px;
 	height: 32px;
-	border: 3px solid var(--agent-ui-border, #ddd);
-	border-top-color: var(--agent-ui-primary, #0675c4);
+	border: 3px solid var(--color-muted);
+	border-top-color: var(--color-primary);
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
 }
@@ -191,15 +197,15 @@
 
 .invalidMessage {
 	padding: 16px;
-	background-color: var(--agent-ui-error-light, #fee);
-	border: 1px solid var(--agent-ui-error, #d32f2f);
+	background-color: var(--color-error-background);
+	border: 1px solid var(--color-error);
 	border-radius: 8px;
 	text-align: center;
 }
 
 .invalidMessage p {
 	margin: 0;
-	color: var(--agent-ui-error, #d32f2f);
+	color: var(--color-error);
 	font-size: 14px;
 }
 
@@ -214,20 +220,20 @@
 	align-items: center;
 	justify-content: center;
 	padding: 24px;
-	border: 2px dashed var(--agent-ui-border, #d0d0d0);
+	border: 2px dashed var(--color-muted);
 	border-radius: 12px;
-	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+	background-color: var(--color-muted);
 	cursor: pointer;
 }
 
 .expandedDropOverlay.draggingOver {
-	border-color: var(--agent-ui-primary, #0675c4);
-	background-color: var(--agent-ui-background-secondary, #f0f0f0);
+	border-color: var(--color-primary);
+	background-color: var(--color-muted);
 }
 
 .expandedDropOverlay p {
 	margin: 0;
-	color: var(--agent-ui-text-secondary, #757575);
+	color: var(--color-muted-foreground);
 	font-size: 15px;
 	line-height: 1.6;
 	text-align: center;

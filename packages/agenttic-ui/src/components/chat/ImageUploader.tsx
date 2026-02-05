@@ -99,7 +99,20 @@ const ImagePreviewItem = memo(
 					aria-label={ __( 'Remove image', 'a8c-agenttic' ) }
 					type="button"
 				>
-					×
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill="currentColor"
+							fillRule="evenodd"
+							clipRule="evenodd"
+							d="M7.4632e-09 8C3.34139e-09 3.58172 3.58172 -3.34139e-09 8 -7.4632e-09C12.4183 -1.1585e-08 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 1.1585e-08 12.4183 7.4632e-09 8ZM6.16569 5.03431C5.85327 4.7219 5.34673 4.7219 5.03431 5.03431C4.7219 5.34673 4.7219 5.85327 5.03431 6.16569L6.86863 8L5.03431 9.83432C4.7219 10.1467 4.7219 10.6533 5.03431 10.9657C5.34673 11.2781 5.85327 11.2781 6.16569 10.9657L8 9.13137L9.83432 10.9657C10.1467 11.2781 10.6533 11.2781 10.9657 10.9657C11.2781 10.6533 11.2781 10.1467 10.9657 9.83432L9.13137 8L10.9657 6.16569C11.2781 5.85327 11.2781 5.34673 10.9657 5.03431C10.6533 4.7219 10.1467 4.7219 9.83432 5.03431L8 6.86863L6.16569 5.03431Z"
+						/>
+					</svg>
 				</button>
 				<img
 					src={ image.url }
@@ -416,6 +429,10 @@ export function ImageUploader( {
 	const showDropMessage = isDraggingFile;
 	const showPreview = ! isDraggingFile && ( hasImages || isUploading );
 
+	// Container is "active" when it has content to display
+	const isActive =
+		hasImages || isUploading || isDraggingFile || showInvalidFileMessage;
+
 	// Prepare i18n strings with interpolation
 	const fileSizeMessage = maxFileSize
 		? sprintf(
@@ -455,7 +472,9 @@ export function ImageUploader( {
 
 	return (
 		<div
-			className={ `${ styles.container } ${ className }` }
+			className={ `${ styles.container } ${
+				isActive ? styles.active : ''
+			} ${ className }` }
 			data-slot="image-uploader"
 		>
 			{ /* Render expanded drop overlay via portal when dropZoneRef is provided */ }
