@@ -1,10 +1,11 @@
 import { getAgentManager } from '@automattic/agenttic-client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMemo, useEffect, useState, useRef } from '@wordpress/element';
+import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_URL, getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
 import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
@@ -196,43 +197,25 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 		initializeAgent();
 	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
-	// Default suggestions - can be overridden by loaded providers
-	const defaultSuggestions = useMemo(
-		() => [
-			{
-				id: 'getting-started',
-				label: 'Getting started with WordPress',
-				prompt: 'How do I get started with WordPress?',
-			},
-			{
-				id: 'create-post',
-				label: 'Create a blog post',
-				prompt: 'How do I create a blog post?',
-			},
-			{
-				id: 'customize-site',
-				label: 'Customize my site',
-				prompt: 'How can I customize my site?',
-			},
-		],
-		[]
-	);
-
 	const loadedProviders = loadedProvidersRef.current;
 
-	// Don't render until the setup is complete
-	if ( ! agentConfig || ! loadedProviders ) {
+	// Load empty view suggestions (handles Big Sky's theme-dependent suggestions)
+	const emptyViewSuggestions = useEmptyViewSuggestions( { loadedProviders } );
+
+	// Don't render until the setup is complete AND suggestions are ready
+	if ( ! agentConfig || ! loadedProviders || emptyViewSuggestions === null ) {
 		return null;
 	}
 
 	return (
 		<AgentDock
 			agentConfig={ agentConfig }
-			emptyViewSuggestions={ loadedProviders.suggestions || defaultSuggestions }
+			emptyViewSuggestions={ emptyViewSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useNavigationContinuation={ loadedProviders.useNavigationContinuation }
 			useAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
 		/>
