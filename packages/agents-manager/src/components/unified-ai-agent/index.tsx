@@ -6,8 +6,8 @@ import { ORCHESTRATOR_AGENT_ID } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
-import { createAgentConfig } from '../../utils/create-agent-config';
 import { getSessionId, clearSessionId } from '../../utils/agent-session';
+import { createAgentConfig } from '../../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
