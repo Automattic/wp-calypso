@@ -6,8 +6,8 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTrack } from 'calypso/reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
-export function trackPageLoad( path, title, readerView ) {
-	recordPageView( path, title );
+export function trackPageLoad( path, title, readerView, extraData = {} ) {
+	recordPageView( path, title, extraData );
 	bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
 }
 
