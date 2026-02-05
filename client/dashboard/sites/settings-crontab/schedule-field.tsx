@@ -13,7 +13,7 @@ interface ScheduleFieldProps {
 	disabled?: boolean;
 }
 
-const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
+export const PREDEFINED_SCHEDULES = [
 	{ value: 'hourly', label: __( 'Every hour' ) },
 	{ value: 'twicedaily', label: __( 'Twice daily' ) },
 	{ value: 'daily', label: __( 'Daily' ) },
@@ -112,12 +112,11 @@ export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps
 	return (
 		<VStack spacing={ 3 }>
 			<SelectControl
-				__nextHasNoMarginBottom
 				label={ __( 'Schedule' ) }
 				value={ value }
 				options={ PREDEFINED_SCHEDULES }
 				onChange={ ( newValue ) => {
-					onChange( newValue as ScheduleType );
+					onChange( newValue );
 				} }
 				disabled={ disabled }
 			/>
