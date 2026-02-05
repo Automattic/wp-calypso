@@ -12,5 +12,7 @@ export function isDashboardBackport() {
 		return false;
 	}
 
-	return ! [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) );
+	// At this point, it means this dashboard screen is in non-dashboard environments,
+	// so it's a backport.
+	return true;
 }
