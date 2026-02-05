@@ -70,55 +70,55 @@ function Domains() {
 
 	return (
 		<>
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={ ! hasDomains ? null : <AddDomainButton /> }
-				/>
-			}
-			notices={
-				<>
-					<OptInWelcome tracksContext="domains" />
-					<BulkActionsProgressNotice />
-				</>
-			}
-		>
-			{ ! hasDomains ? (
-				<DataViewsEmptyStateLayout
-					title={ __( 'Add your first domain name' ) }
-					description={ __( 'Establish a unique online identity for your site.' ) }
-				>
-					<EmptyDomainsStateActions />
-					<EmptyDomainsStateUpsell />
-				</DataViewsEmptyStateLayout>
-			) : (
-				<DataViewsCard>
-					<DataViews< DomainSummary >
-						data={ filteredData || [] }
-						fields={ fields }
-						onChangeView={ updateView }
-						onResetView={ resetView }
-						view={ view }
-						actions={ actions }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ getDomainId }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-						empty={
-							<DataViewsEmptyStateLayout
-								title={ __( 'No domains match your search' ) }
-								description={ __( 'Try again, or add a new domain with the options below.' ) }
-								isBorderless
-							>
-								<EmptyDomainsStateActions />
-							</DataViewsEmptyStateLayout>
-						}
+			<PageLayout
+				header={
+					<PageHeader
+						title={ __( 'Domains' ) }
+						actions={ ! hasDomains ? null : <AddDomainButton /> }
 					/>
-				</DataViewsCard>
-			) }
-		</PageLayout>
-		<PerformanceTrackerStop id="dashboard-domain-list" />
+				}
+				notices={
+					<>
+						<OptInWelcome tracksContext="domains" />
+						<BulkActionsProgressNotice />
+					</>
+				}
+			>
+				{ ! hasDomains ? (
+					<DataViewsEmptyStateLayout
+						title={ __( 'Add your first domain name' ) }
+						description={ __( 'Establish a unique online identity for your site.' ) }
+					>
+						<EmptyDomainsStateActions />
+						<EmptyDomainsStateUpsell />
+					</DataViewsEmptyStateLayout>
+				) : (
+					<DataViewsCard>
+						<DataViews< DomainSummary >
+							data={ filteredData || [] }
+							fields={ fields }
+							onChangeView={ updateView }
+							onResetView={ resetView }
+							view={ view }
+							actions={ actions }
+							search
+							paginationInfo={ paginationInfo }
+							getItemId={ getDomainId }
+							defaultLayouts={ DEFAULT_LAYOUTS }
+							empty={
+								<DataViewsEmptyStateLayout
+									title={ __( 'No domains match your search' ) }
+									description={ __( 'Try again, or add a new domain with the options below.' ) }
+									isBorderless
+								>
+									<EmptyDomainsStateActions />
+								</DataViewsEmptyStateLayout>
+							}
+						/>
+					</DataViewsCard>
+				) }
+			</PageLayout>
+			<PerformanceTrackerStop id="dashboard-domain-list" />
 		</>
 	);
 }
