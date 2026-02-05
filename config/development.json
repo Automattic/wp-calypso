@@ -160,7 +160,6 @@
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
-		"reader/discover/freshly-pressed": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,

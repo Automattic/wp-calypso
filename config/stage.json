@@ -128,7 +128,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/discover/freshly-pressed": true,
+		"": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,

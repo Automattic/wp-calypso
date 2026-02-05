@@ -93,7 +93,6 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/discover/freshly-pressed": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
