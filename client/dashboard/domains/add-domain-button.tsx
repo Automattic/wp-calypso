@@ -8,40 +8,37 @@ import { siteRoute } from '../app/router/sites';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
 import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
-function useDomainNavigation() {
-	const router = useRouter();
-	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+function buildDomainQueryArgs( siteSlug?: string ) {
+	const queryArgs: Record< string, string > = {};
 
-	const buildQueryArgs = () => {
-		const queryArgs: Record< string, string > = {};
+	if ( siteSlug ) {
+		queryArgs.siteSlug = siteSlug;
+		queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+	}
 
-		if ( siteSlug ) {
-			queryArgs.siteSlug = siteSlug;
-			queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
-		}
+	queryArgs.dashboard = getCurrentDashboard();
 
-		queryArgs.dashboard = getCurrentDashboard();
-
-		return queryArgs;
-	};
-
-	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
-		const queryArgs = buildQueryArgs();
-		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
-		return false;
-	};
-
-	return { siteSlug, navigateTo };
+	return queryArgs;
 }
 
 function DomainOnlyAddDomainButton() {
-	const { siteSlug, navigateTo } = useDomainNavigation();
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const queryArgs = buildDomainQueryArgs( siteSlug );
 
-	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain' : '/start/domain' ),
+			queryArgs
+		);
+	};
 
-	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain/use-my-domain' : '/setup/domain-transfer' ),
+			queryArgs
+		);
+	};
 
 	return (
 		<AddDomainDropdown
@@ -53,16 +50,17 @@ function DomainOnlyAddDomainButton() {
 }
 
 function DefaultAddDomainButton() {
-	const { navigateTo } = useDomainNavigation();
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const queryArgs = buildDomainQueryArgs( siteSlug );
 
-	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/setup/domain' ) );
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain' ), queryArgs );
+	};
 
-	const onTransferOrConnectClick = () =>
-		navigateTo(
-			wpcomLink( '/setup/domain/use-my-domain' ),
-			wpcomLink( '/setup/domain/use-my-domain' )
-		);
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), queryArgs );
+	};
 
 	return (
 		<AddDomainDropdown

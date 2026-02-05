@@ -4,101 +4,103 @@ import { Icon, search, globe } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import EmptyState from '../../components/empty-state';
-import { getCurrentDashboard, wpcomLink } from '../../utils/link';
+import { wpcomLink } from '../../utils/link';
 
-function useTrackEmptyStateActionClick() {
+function SearchDomainsActionItem( { url }: { url: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	return ( action: string ) => {
-		recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
-			action,
-			dashboard: getCurrentDashboard(),
-		} );
-	};
+	return (
+		<EmptyState.ActionItem
+			title={ __( 'Search domain names' ) }
+			description={ __( 'Find and register the perfect domain for your brand.' ) }
+			decoration={ <Icon icon={ search } size={ 24 } /> }
+			actions={
+				<Button
+					variant="secondary"
+					href={ wpcomLink( url ) }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+							action: 'search-domains',
+						} )
+					}
+					size="compact"
+					__next40pxDefaultSize
+				>
+					{ __( 'Search domains' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+function TransferDomainActionItem() {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<EmptyState.ActionItem
+			title={ __( 'Transfer a domain you already own' ) }
+			description={ __( 'Move your domain to WordPress.com and manage everything in one place.' ) }
+			decoration={ <Icon icon={ globe } size={ 24 } /> }
+			actions={
+				<Button
+					variant="secondary"
+					href={ wpcomLink( '/setup/domain-transfer' ) }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+							action: 'transfer-domain',
+						} )
+					}
+					size="compact"
+					__next40pxDefaultSize
+				>
+					{ __( 'Start transfer' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+function ConnectDomainActionItem() {
+	const { recordTracksEvent } = useAnalytics();
+
+	return (
+		<EmptyState.ActionItem
+			title={ __( 'Use a domain name you already own' ) }
+			description={ __( 'Bring your domain to WordPress.com and manage everything in one place.' ) }
+			decoration={ <Icon icon={ globe } size={ 24 } /> }
+			actions={
+				<Button
+					variant="secondary"
+					href={ wpcomLink( '/setup/domain/use-my-domain' ) }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
+							action: 'transfer-domain',
+						} )
+					}
+					size="compact"
+					__next40pxDefaultSize
+				>
+					{ __( 'Use a domain name I own' ) }
+				</Button>
+			}
+		/>
+	);
 }
 
 function DomainOnlyEmptyDomainsStateActions() {
-	const trackClick = useTrackEmptyStateActionClick();
-
 	return (
 		<EmptyState.ActionList>
-			<EmptyState.ActionItem
-				title={ __( 'Search domain names' ) }
-				description={ __( 'Find and register the perfect domain for your brand.' ) }
-				decoration={ <Icon icon={ search } size={ 24 } /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ wpcomLink( '/start/domain' ) }
-						onClick={ () => trackClick( 'search-domains' ) }
-						size="compact"
-						__next40pxDefaultSize
-					>
-						{ __( 'Search domains' ) }
-					</Button>
-				}
-			/>
-			<EmptyState.ActionItem
-				title={ __( 'Transfer a domain you already own' ) }
-				description={ __(
-					'Move your domain to WordPress.com and manage everything in one place.'
-				) }
-				decoration={ <Icon icon={ globe } size={ 24 } /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ wpcomLink( '/setup/domain-transfer' ) }
-						onClick={ () => trackClick( 'transfer-domain' ) }
-						size="compact"
-						__next40pxDefaultSize
-					>
-						{ __( 'Start transfer' ) }
-					</Button>
-				}
-			/>
+			<SearchDomainsActionItem url="/start/domain" />
+			<TransferDomainActionItem />
 		</EmptyState.ActionList>
 	);
 }
 
 function DefaultEmptyDomainsStateActions() {
-	const trackClick = useTrackEmptyStateActionClick();
-
 	return (
 		<EmptyState.ActionList>
-			<EmptyState.ActionItem
-				title={ __( 'Search domain names' ) }
-				description={ __( 'Find and register the perfect domain for your brand.' ) }
-				decoration={ <Icon icon={ search } size={ 24 } /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ wpcomLink( '/setup/domain' ) }
-						onClick={ () => trackClick( 'search-domains' ) }
-						size="compact"
-						__next40pxDefaultSize
-					>
-						{ __( 'Search domains' ) }
-					</Button>
-				}
-			/>
-			<EmptyState.ActionItem
-				title={ __( 'Use a domain name you already own' ) }
-				description={ __(
-					'Bring your domain to WordPress.com and manage everything in one place.'
-				) }
-				decoration={ <Icon icon={ globe } size={ 24 } /> }
-				actions={
-					<Button
-						variant="secondary"
-						href={ wpcomLink( '/setup/domain/use-my-domain' ) }
-						onClick={ () => trackClick( 'transfer-domain' ) }
-						size="compact"
-						__next40pxDefaultSize
-					>
-						{ __( 'Use a domain name I own' ) }
-					</Button>
-				}
-			/>
+			<SearchDomainsActionItem url="/setup/domain" />
+			<ConnectDomainActionItem />
 		</EmptyState.ActionList>
 	);
 }
