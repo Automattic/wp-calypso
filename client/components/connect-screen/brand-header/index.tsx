@@ -9,8 +9,8 @@ export interface BrandHeaderProps {
 	logoAlt?: string;
 	logoWidth?: number;
 	logoHeight?: number;
-	title: string;
-	description?: string;
+	title: ReactNode;
+	description?: ReactNode;
 	className?: string;
 }
 

@@ -1,7 +1,7 @@
 import { fetchCrontabs, createCrontab, deleteCrontab } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { CreateCrontabParams } from '@automattic/api-core';
+import type { CrontabFormData } from '@automattic/api-core';
 
 export const siteCrontabsQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -11,7 +11,7 @@ export const siteCrontabsQuery = ( siteId: number ) =>
 
 export const siteCrontabCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( params: CreateCrontabParams ) => createCrontab( siteId, params ),
+		mutationFn: ( params: CrontabFormData ) => createCrontab( siteId, params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteCrontabsQuery( siteId ) );
 		},
