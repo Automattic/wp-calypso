@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
-import { Blueprint, type MountDescriptor, type PlaygroundClient } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
 import { PLAYGROUND_HOST } from './constants';
 import type { BlueprintV1 } from '@wp-playground/blueprints';
+import type { Blueprint, MountDescriptor, PlaygroundClient } from '@wp-playground/client';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
