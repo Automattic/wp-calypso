@@ -660,6 +660,21 @@ describe( 'reader stats', () => {
 					expected: 'conversations_a8c',
 					description: 'reader conversations a8c page',
 				},
+				{
+					url: '/reader/users/hazelbagarinao26/recommended-blogs',
+					expected: 'user_profile_recommended_blogs',
+					description: 'user profile recommended blogs',
+				},
+				{
+					url: '/reader/users/hazelbagarinao26/lists',
+					expected: 'user_profile_lists',
+					description: 'user profile lists',
+				},
+				{
+					url: '/reader/users/hazelbagarinao26',
+					expected: 'user_profile_posts',
+					description: 'user profile posts',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {
