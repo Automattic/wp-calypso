@@ -1,5 +1,9 @@
+import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { convertToolMessagesToComponents } from '../convert-tool-message-to-component';
+import { isEditorPage } from '../is-editor-page';
 import type { UIMessage } from '@automattic/agenttic-client';
+
+jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
 const MockNextStepButton = jest.fn();
@@ -12,7 +16,21 @@ const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 		...overrides,
 	} ) as UIMessage;
 
+const createToolMessage = (
+	toolId: string,
+	data?: object,
+	overrides?: Partial< UIMessage >
+): UIMessage =>
+	createMessage( {
+		content: [ { type: 'text', text: JSON.stringify( { tool_id: toolId, data } ) } ],
+		...overrides,
+	} );
+
 describe( 'convertToolMessagesToComponents', () => {
+	beforeEach( () => {
+		( isEditorPage as jest.Mock ).mockReturnValue( true );
+	} );
+
 	it( 'passes through user messages unchanged', () => {
 		const message = createMessage( { role: 'user' } );
 
@@ -32,16 +50,9 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'converts tool messages to components', () => {
-		const message = createMessage( {
-			content: [
-				{
-					type: 'text',
-					text: JSON.stringify( {
-						tool_id: 'big_sky__show_component',
-						data: { type: 'my-component', props: { name: 'test' } },
-					} ),
-				},
-			],
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			props: { name: 'test' },
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
@@ -57,17 +68,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'filters out unregistered components', () => {
-		const message = createMessage( {
-			content: [
-				{
-					type: 'text',
-					text: JSON.stringify( {
-						tool_id: 'big_sky__show_component',
-						data: { type: 'unknown-component' },
-					} ),
-				},
-			],
-		} );
+		const message = createToolMessage( 'big_sky__show_component', { type: 'unknown-component' } );
 		const getChatComponent = jest.fn().mockReturnValue( null );
 
 		const result = convertToolMessagesToComponents( { messages: [ message ], getChatComponent } );
@@ -76,25 +77,16 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'appends next-step-button only to the last message with follow-up tasks', () => {
-		const toolMessage = ( id: string ) =>
-			createMessage( {
-				id,
-				content: [
-					{
-						type: 'text',
-						text: JSON.stringify( {
-							tool_id: 'big_sky__show_component',
-							data: { type: 'my-component', followUpTasks: true },
-						} ),
-					},
-				],
-			} );
+		const data = { type: 'my-component', followUpTasks: true };
 		const getChatComponent = jest.fn( ( type: string ) =>
 			type === 'my-component' ? MockComponent : MockNextStepButton
 		);
 
 		const result = convertToolMessagesToComponents( {
-			messages: [ toolMessage( 'msg-1' ), toolMessage( 'msg-2' ) ],
+			messages: [
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1' } ),
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2' } ),
+			],
 			getChatComponent,
 		} );
 
@@ -104,17 +96,39 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
 	} );
 
-	it( 'filters out unhandled tool messages', () => {
-		const message = createMessage( {
-			content: [
-				{
-					type: 'text',
-					text: JSON.stringify( { tool_id: 'other_tool' } ),
-				},
-			],
+	it( 'shows unavailable tool message when not on editor page', () => {
+		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		const message = createToolMessage( 'big_sky__show_component', { type: 'my-component' } );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: UnavailableToolMessage,
+			componentProps: { type: 'picker' },
+		} );
+	} );
+
+	it( 'shows unavailable tool message for start over tool', () => {
+		const message = createToolMessage( 'big_sky__client_assistants', {
+			assistantId: 'big-sky-site-admin',
 		} );
 
 		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: UnavailableToolMessage,
+			componentProps: { type: 'start-over' },
+		} );
+	} );
+
+	it( 'filters out unhandled tool messages', () => {
+		const result = convertToolMessagesToComponents( {
+			messages: [ createToolMessage( 'other_tool' ) ],
+		} );
 
 		expect( result ).toEqual( [] );
 	} );
