@@ -1,9 +1,5 @@
 import { TrialPlans } from '@automattic/api-core';
-import {
-	p2HubP2sQuery,
-	siteDeleteMutation,
-	siteHasPurchasesThatBlockSiteDeletionQuery,
-} from '@automattic/api-queries';
+import { p2HubP2sQuery, siteDeleteMutation, sitePurchasesQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -244,9 +240,10 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 }
 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
-	const { isLoading, data: hasPurchasesThatBlockSiteDeletion } = useQuery(
-		siteHasPurchasesThatBlockSiteDeletionQuery( site.ID )
-	);
+	const { isLoading, data: hasPurchasesThatBlockSiteDeletion } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) => purchases.some( ( purchase ) => purchase.blocks_site_deletion ),
+	} );
 
 	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesThatBlockSiteDeletion;
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
