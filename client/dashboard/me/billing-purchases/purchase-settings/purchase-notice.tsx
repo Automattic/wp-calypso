@@ -164,16 +164,13 @@ function ExpiredRenewNotice( {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON with payment method - renewal failed
-				if ( isRenewing( currentPurchase ) ) {
+				// Auto-renew ON - renewal failed (payment issue or no payment method)
+				if (
+					isRenewing( currentPurchase ) ||
+					( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type )
+				) {
 					return __(
 						'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
-					);
-				}
-				// Auto-renew ON but no payment method - can't renew
-				if ( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type ) {
-					return __(
-						'There was a problem processing your renewal. Please add a payment method to avoid disruption to your service.'
 					);
 				}
 			}

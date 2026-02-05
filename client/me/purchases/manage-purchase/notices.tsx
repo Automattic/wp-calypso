@@ -417,7 +417,6 @@ class PurchaseNotice extends Component<
 
 	renderOtherRenewablePurchasesNotice() {
 		const {
-			changePaymentMethodPath,
 			translate,
 			moment,
 			purchase,
@@ -537,17 +536,11 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-expire-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON but no payment method - show "Add Payment Method" CTA
-				if ( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) ) {
-					noticeText = translate(
-						'There was a problem processing your renewal. You have {{link}}other upgrades{{/link}} on this site that may also be affected. Please add a payment method to avoid disruption to your service.',
-						translateOptions
-					);
-					noticeActionOnClick = undefined;
-					noticeActionHref = changePaymentMethodPath || undefined;
-					noticeActionText = translate( 'Add Payment Method' );
-				} else if ( isRenewing( currentPurchase ) ) {
-					// Auto-renew ON with payment method but renewal failed
+				// Auto-renew ON - renewal failed (payment issue or no payment method)
+				if (
+					isRenewing( currentPurchase ) ||
+					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
+				) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You have {{link}}other upgrades{{/link}} on this site that may also be affected. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -634,17 +627,11 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-renew-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON but no payment method
-				if ( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) ) {
-					noticeText = translate(
-						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please add a payment method to avoid disruption to your service.',
-						translateOptions
-					);
-					noticeActionOnClick = undefined;
-					noticeActionHref = changePaymentMethodPath || undefined;
-					noticeActionText = translate( 'Add Payment Method' );
-				} else if ( isRenewing( currentPurchase ) ) {
-					// Auto-renew ON with payment method but renewal failed
+				// Auto-renew ON - renewal failed (payment issue or no payment method)
+				if (
+					isRenewing( currentPurchase ) ||
+					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
+				) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -829,17 +816,11 @@ class PurchaseNotice extends Component<
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 
-				// Auto-renew ON but no payment method
-				if ( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) ) {
-					noticeText = translate(
-						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please add a payment method to avoid disruption to your service.',
-						translateOptions
-					);
-					noticeActionOnClick = undefined;
-					noticeActionHref = changePaymentMethodPath || undefined;
-					noticeActionText = translate( 'Add Payment Method' );
-				} else if ( isRenewing( currentPurchase ) ) {
-					// Auto-renew ON with payment method but renewal failed
+				// Auto-renew ON - renewal failed (payment issue or no payment method)
+				if (
+					isRenewing( currentPurchase ) ||
+					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
+				) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -1089,16 +1070,13 @@ class PurchaseNotice extends Component<
 		if ( isRenewable( purchase ) ) {
 			const noticeText = ( () => {
 				if ( isInExpirationGracePeriod( currentPurchase ) ) {
-					// Auto-renew ON with payment method - renewal failed
-					if ( isRenewing( currentPurchase ) ) {
+					// Auto-renew ON - renewal failed (payment issue or no payment method)
+					if (
+						isRenewing( currentPurchase ) ||
+						( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
+					) {
 						return translate(
 							'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
-						);
-					}
-					// Auto-renew ON but no payment method - can't renew
-					if ( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) ) {
-						return translate(
-							'There was a problem processing your renewal. Please add a payment method to avoid disruption to your service.'
 						);
 					}
 					// Auto-renew OFF - intentional expiry
