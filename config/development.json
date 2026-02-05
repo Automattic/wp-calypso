@@ -157,6 +157,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
+		"reader/discover-v3": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,

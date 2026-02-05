@@ -130,6 +130,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
+		"reader/discover-v3": false,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,
