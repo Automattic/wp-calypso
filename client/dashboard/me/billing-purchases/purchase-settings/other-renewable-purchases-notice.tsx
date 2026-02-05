@@ -10,7 +10,7 @@ import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpired,
 	isExpiring,
-	isRenewing,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	needsToRenewSoon,
 	isRecentMonthlyPurchase,
@@ -254,11 +254,7 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeActionText = __( 'Renew all' );
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			// Auto-renew ON - renewal failed (payment issue or no payment method)
-			if (
-				isRenewing( currentPurchase ) ||
-				( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type )
-			) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
 				noticeText = createInterpolateElement(
 					__(
 						'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
@@ -432,11 +428,7 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
 		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			// Auto-renew ON - renewal failed (payment issue or no payment method)
-			if (
-				isRenewing( currentPurchase ) ||
-				( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type )
-			) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
 				noticeText = createInterpolateElement(
 					__(
 						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
@@ -794,11 +786,7 @@ export function OtherRenewablePurchasesNotice( {
 		const noticeText = ( () => {
 			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON - renewal failed (payment issue or no payment method)
-				if (
-					isRenewing( currentPurchase ) ||
-					( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type )
-				) {
+				if ( isFailedAutoRenewal( currentPurchase ) ) {
 					return createInterpolateElement(
 						__(
 							'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'

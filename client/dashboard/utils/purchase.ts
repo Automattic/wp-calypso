@@ -43,6 +43,23 @@ export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
+/**
+ * Determines if the purchase is in a failed auto-renewal state.
+ *
+ * This occurs when the purchase is in grace period AND:
+ * - The purchase is still in "renewing" status (renewal attempted but failed), OR
+ * - Auto-renew is enabled but there's no payment method attached
+ *
+ * Use this to show "problem processing your renewal" messaging instead of
+ * generic expiry messages.
+ */
+export function isFailedAutoRenewal( purchase: Purchase ): boolean {
+	return (
+		isInExpirationGracePeriod( purchase ) &&
+		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
+	);
+}
+
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }

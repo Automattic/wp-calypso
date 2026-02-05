@@ -16,6 +16,7 @@ import { getRelativeTimeString } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
@@ -25,7 +26,6 @@ import {
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 	isInExpirationGracePeriod,
-	isRenewing,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import {
@@ -163,16 +163,13 @@ function ExpiredRenewNotice( {
 			if ( isExpired( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
-			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON - renewal failed (payment issue or no payment method)
-				if (
-					isRenewing( currentPurchase ) ||
-					( currentPurchase.is_auto_renew_enabled && ! currentPurchase.payment_type )
-				) {
-					return __(
-						'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
-					);
-				}
+			if (
+				isInExpirationGracePeriod( currentPurchase ) &&
+				isFailedAutoRenewal( currentPurchase )
+			) {
+				return __(
+					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+				);
 			}
 			// Auto-renew OFF or not in grace period
 			const purchaseName = currentPurchase.is_domain

@@ -31,15 +31,14 @@ import {
 	isCloseToExpiration,
 	isExpired,
 	isExpiring,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
 	isRenewable,
-	isRenewing,
 	isRechargeable,
 	needsToRenewSoon,
-	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
@@ -536,11 +535,7 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-expire-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON - renewal failed (payment issue or no payment method)
-				if (
-					isRenewing( currentPurchase ) ||
-					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
-				) {
+				if ( isFailedAutoRenewal( currentPurchase ) ) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You have {{link}}other upgrades{{/link}} on this site that may also be affected. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -627,11 +622,7 @@ class PurchaseNotice extends Component<
 			noticeImpressionName = 'current-expires-soon-others-renew-soon';
 
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				// Auto-renew ON - renewal failed (payment issue or no payment method)
-				if (
-					isRenewing( currentPurchase ) ||
-					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
-				) {
+				if ( isFailedAutoRenewal( currentPurchase ) ) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -816,11 +807,7 @@ class PurchaseNotice extends Component<
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 
-				// Auto-renew ON - renewal failed (payment issue or no payment method)
-				if (
-					isRenewing( currentPurchase ) ||
-					( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
-				) {
+				if ( isFailedAutoRenewal( currentPurchase ) ) {
 					noticeText = translate(
 						'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
 						translateOptions
@@ -1070,11 +1057,7 @@ class PurchaseNotice extends Component<
 		if ( isRenewable( purchase ) ) {
 			const noticeText = ( () => {
 				if ( isInExpirationGracePeriod( currentPurchase ) ) {
-					// Auto-renew ON - renewal failed (payment issue or no payment method)
-					if (
-						isRenewing( currentPurchase ) ||
-						( currentPurchase.isAutoRenewEnabled && ! hasPaymentMethod( currentPurchase ) )
-					) {
+					if ( isFailedAutoRenewal( currentPurchase ) ) {
 						return translate(
 							'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
 						);
