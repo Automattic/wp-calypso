@@ -482,7 +482,6 @@ import {
 	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
-	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_GOOGLE_LISTING_ADS,
@@ -937,7 +936,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		if ( isGlobalStylesGridChangesVariation() ) {
@@ -960,7 +959,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 	],
 
 	// Stacked variant: only incremental features (matching screenshot order)
@@ -1263,7 +1262,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_STORE_THEMES,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_VIDEO_UPLOADS,
 		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
@@ -1827,7 +1826,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		// When the global styles grid variation is active, surface the payments fee for Premium
@@ -1843,7 +1842,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_UPLOAD_VIDEO,
 	],
 
@@ -2152,7 +2151,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_VIDEO_UPLOADS,
 		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
