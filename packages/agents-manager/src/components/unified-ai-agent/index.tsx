@@ -2,16 +2,16 @@ import { getAgentManager } from '@automattic/agenttic-client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_URL, getAgentConfig } from '../../constants';
+import { ORCHESTRATOR_AGENT_ID } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
-import { SESSION_STORAGE_KEY, getSessionId, clearSessionId } from '../../utils/agent-session';
+import { getSessionId, clearSessionId } from '../../utils/agent-session';
+import { createAgentConfig } from '../../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
-import type { ContextEntry } from '../../extension-types';
-import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
 	/** The current route path. */
@@ -20,42 +20,9 @@ export interface UnifiedAIAgentProps {
 	handleClose?: () => void;
 }
 
-/**
- * Resolve context entries by calling `getData()` closures
- *
- * Takes context entries with optional `getData()` closures and resolves them
- * by calling `getData()` to populate the `data` field. The `getData` function is
- * removed from the resolved entries.
- *
- * This allows us to fetch live data as needed.
- */
-function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
-	return entries.map( ( entry ) => {
-		if ( entry.getData ) {
-			try {
-				const data = entry.getData();
-				// Remove getData and add resolved data
-				const { getData: _, ...resolvedEntry } = entry;
-				return {
-					...resolvedEntry,
-					data,
-				};
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( `[UnifiedAIAgent] Failed to resolve context entry "${ entry.id }":`, error );
-				// Return entry without data if resolution fails
-				const { getData: _, ...entryWithoutGetData } = entry;
-				return entryWithoutGetData;
-			}
-		}
-		// Entry already has data or doesn't need resolution
-		return entry;
-	} );
-}
-
 const queryClient = new QueryClient();
 
-export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
+export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<PersistentRouter>
@@ -66,7 +33,7 @@ export default function UnifiedAIAgent( props: UnifiedAIAgentProps ) {
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
+function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null {
 	const { site } = useAgentsManagerContext();
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
@@ -79,29 +46,23 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 	// Use empty `sessionId` for new chat, otherwise use route or stored session ID
 	const sessionId = isNewChat ? '' : routeSessionId || getSessionId();
 
-	// Load external providers and initialize agent config
 	useEffect( () => {
-		const initializeAgent = async () => {
-			// Get agent configuration from query params or defaults
-			const { agentId, version } = getAgentConfig();
-
+		async function initializeAgent(): Promise< void > {
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
 				const agentManager = getAgentManager();
 
-				if ( agentManager.hasAgent( agentId ) ) {
+				if ( agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ) ) {
 					// Abort any ongoing requests
-					await agentManager.abortCurrentRequest( agentId );
+					await agentManager.abortCurrentRequest( ORCHESTRATOR_AGENT_ID );
 					// Remove existing agent to start fresh
-					agentManager.removeAgent( agentId );
+					agentManager.removeAgent( ORCHESTRATOR_AGENT_ID );
 				}
 
 				// Clear stored session ID
 				clearSessionId();
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
-
-				// Don't set config now - the navigation above will re-run this effect
 				return;
 			}
 
@@ -112,90 +73,31 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ) {
 				loadedProvidersRef.current = providers;
 			}
 
-			const { toolProvider, contextProvider } = providers;
+			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
 
-			// Create the agent configuration
-			const config: UseAgentChatConfig = {
-				agentId,
-				agentUrl: ORCHESTRATOR_AGENT_URL,
+			const config = createAgentConfig( {
 				sessionId,
-				sessionIdStorageKey: SESSION_STORAGE_KEY,
-				authProvider: createCalypsoAuthProvider( site?.ID ),
-				enableStreaming: true,
-			};
-
-			// Add tool provider if provided by plugin
-			if ( toolProvider ) {
-				// Wrap `toolProvider` to filter out `null` annotation values
-				// WordPress Abilities API uses `null`, but `agenttic-client` expects `undefined`
-				config.toolProvider = {
-					...toolProvider,
-					getAbilities: async (): Promise< AgenticAbility[] > => {
-						const abilities = await toolProvider.getAbilities();
-						return abilities.map( ( ability ) => ( {
-							...ability,
-							meta: ability.meta?.annotations
-								? {
-										...ability.meta,
-										annotations: Object.fromEntries(
-											Object.entries( ability.meta.annotations ).filter(
-												( [ , value ] ) => value !== null
-											)
-										),
-								  }
-								: ability.meta,
-						} ) ) as AgenticAbility[];
-					},
-				};
-			}
-
-			// Add context provider - use plugin's or create default Calypso context
-			if ( contextProvider ) {
-				// Wrap plugin's context provider to resolve contextEntries
-				config.contextProvider = {
-					getClientContext: () => {
-						const pluginContext = contextProvider.getClientContext();
-
-						// Resolve `contextEntries` if present
-						const resolvedContext =
-							pluginContext.contextEntries && pluginContext.contextEntries.length
-								? {
-										...pluginContext,
-										contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-								  }
-								: pluginContext;
-
-						// Merge in agent version via constructorArguments (only if specified)
-						// TODO: Remove once agenttic-client supports top-level constructorArguments
-						return {
-							...resolvedContext,
-							constructorArguments: {
-								...( resolvedContext.constructorArguments || {} ),
-								...( version && { version } ),
-							},
-						};
-					},
-				};
-			} else {
-				// Create default Calypso context
-				config.contextProvider = {
-					getClientContext: () => ( {
-						url: window.location.href,
-						pathname: currentRoute || window.location.pathname,
-						search: window.location.search,
-						environment: 'calypso',
-						// Pass agent version via clientContext for backend compatibility (only if specified)
-						// TODO: Remove once agenttic-client supports top-level constructorArguments
-						...( version && { constructorArguments: { version } } ),
-					} ),
-				};
-			}
+				siteId,
+				currentRoute,
+				toolProvider: providers.toolProvider,
+				contextProvider: providers.contextProvider,
+				environment: 'calypso',
+			} );
 
 			setAgentConfig( config );
-		};
+		}
 
 		initializeAgent();
 	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+
+	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
+	useEffect( () => {
+		if ( agentConfig ) {
+			window.__agentManager = getAgentManager();
+			// eslint-disable-next-line no-console
+			console.log( '[UnifiedAIAgent] Exposed agentManager on window' );
+		}
+	}, [ agentConfig ] );
 
 	const loadedProviders = loadedProvidersRef.current;
 
