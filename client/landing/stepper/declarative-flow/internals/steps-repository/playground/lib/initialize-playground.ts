@@ -1,12 +1,9 @@
 import config from '@automattic/calypso-config';
-import {
-	Blueprint,
-	type MountDescriptor,
-	type PlaygroundClient,
-	startPlaygroundWeb,
-} from '@wp-playground/client';
+import { Blueprint, type MountDescriptor, type PlaygroundClient } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
+import { PLAYGROUND_HOST } from './constants';
+import type { BlueprintV1 } from '@wp-playground/blueprints';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
@@ -46,11 +43,13 @@ export async function initializeWordPressPlayground(
 		};
 
 		const blueprint = await getBlueprint( isWordPressInstalled, recommendedPhpVersion );
-
+		const { startPlaygroundWeb } = await import(
+			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
+		);
 		const client = await startPlaygroundWeb( {
 			iframe,
-			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint,
+			remoteUrl: PLAYGROUND_HOST + '/remote.html',
+			blueprint: blueprint as BlueprintV1,
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
 		} );
