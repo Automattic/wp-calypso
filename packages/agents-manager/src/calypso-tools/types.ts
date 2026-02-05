@@ -7,6 +7,7 @@ export type { Ability, ToolProvider } from '../extension-types';
 
 /**
  * Represents a selected WordPress site
+ * Only ID, name, and URL are sent in tool results to reduce payload
  */
 export interface SelectedSite {
 	ID: number;

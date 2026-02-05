@@ -67,7 +67,15 @@ export function executeSitePicker(
 			onSelect: ( site: SelectedSite ) => {
 				// eslint-disable-next-line no-console
 				console.log( '[SitePicker] Site selected:', site );
-				const result = { success: true, site };
+				// Only send essential fields to reduce payload size
+				const result = {
+					success: true,
+					site: {
+						ID: site.ID,
+						name: site.name,
+						URL: site.URL,
+					},
+				};
 				// eslint-disable-next-line no-console
 				console.log( '[SitePicker] Resolving with result:', result );
 				resolve( result );

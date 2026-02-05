@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/help-center/src/hooks';
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import AsyncLoad from 'calypso/components/async-load';
 
 interface MasterbarHelpIconWrapperProps {
