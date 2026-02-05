@@ -1,4 +1,4 @@
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	isDIFMProduct,
@@ -6,6 +6,7 @@ import {
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
 	isJetpackSearch,
+	isJetpackStatsPaidProductSlug,
 } from '../../utils/purchase';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
@@ -153,6 +154,22 @@ function renderJetpackSearchQuantitySummary( licensedQuantity: number, isRenewal
 	);
 }
 
+function renderJetpackStatsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of views per month */
+			__( 'Renewal for %s views per month' ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of views per month */
+		__( 'Purchase for %s views per month' ),
+		formatNumber( licensedQuantity )
+	);
+}
+
 function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
@@ -222,6 +239,10 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isJetpackSearch( product ) ) {
 		return renderJetpackSearchQuantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( isJetpackStatsPaidProductSlug( wpcom_product_slug ) ) {
+		return renderJetpackStatsQuantitySummary( licensedQuantity, isRenewal );
 	}
 
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
