@@ -22,62 +22,60 @@ function warnStubUsed( name ) {
 	}
 }
 
-// Generic null component - works for most React component stubs
-export const NullComponent = () => {
-	warnStubUsed( 'NullComponent' );
+// Factory for named null components - works for most React component stubs
+const createNullComponent = ( name ) => () => {
+	warnStubUsed( name );
 	return null;
 };
 
-// Common exports that various modules expect
-export const noop = ( ...args ) => {
-	if ( args.length > 0 ) {
-		warnStubUsed( 'noop (called with arguments)' );
-	}
+// Factory for named no-op functions
+const createNoop = ( name ) => () => {
+	warnStubUsed( name );
 };
 
 // @wordpress/sync exports
-export const createSyncProvider = noop;
-export const connectIndexDb = noop;
-export const getSyncProvider = noop;
-export const createWebRTCConnection = noop;
+export const createSyncProvider = createNoop( 'createSyncProvider' );
+export const connectIndexDb = createNoop( 'connectIndexDb' );
+export const getSyncProvider = createNoop( 'getSyncProvider' );
+export const createWebRTCConnection = createNoop( 'createWebRTCConnection' );
 
 // @wordpress/commands exports
 export const store = { name: 'core/commands' };
-export const useCommand = noop;
-export const useCommandLoader = noop;
-export const CommandMenu = NullComponent;
+export const useCommand = createNoop( 'useCommand' );
+export const useCommandLoader = createNoop( 'useCommandLoader' );
+export const CommandMenu = createNullComponent( 'CommandMenu' );
 export const privateApis = {};
 
 // @wordpress/components/calendar exports
-export const DateCalendar = NullComponent;
-export const DateRangeCalendar = NullComponent;
+export const DateCalendar = createNullComponent( 'DateCalendar' );
+export const DateRangeCalendar = createNullComponent( 'DateRangeCalendar' );
 export class TZDate extends Date {}
 
 // @wordpress/components/date-time exports
-export const DateTimePicker = NullComponent;
-export const DatePicker = NullComponent;
-export const TimePicker = NullComponent;
+export const DateTimePicker = createNullComponent( 'DateTimePicker' );
+export const DatePicker = createNullComponent( 'DatePicker' );
+export const TimePicker = createNullComponent( 'TimePicker' );
 
 // @wordpress/components/color-picker exports
-export const ColorPicker = NullComponent;
-export const Picker = NullComponent;
+export const ColorPicker = createNullComponent( 'ColorPicker' );
+export const Picker = createNullComponent( 'Picker' );
 
 // @wordpress/components/navigation exports
-export const NavigableMenu = NullComponent;
-export const NavigableToolbar = NullComponent;
-export const NavigationBackButton = NullComponent;
-export const NavigationGroup = NullComponent;
-export const NavigationItem = NullComponent;
-export const NavigationMenu = NullComponent;
+export const NavigableMenu = createNullComponent( 'NavigableMenu' );
+export const NavigableToolbar = createNullComponent( 'NavigableToolbar' );
+export const NavigationBackButton = createNullComponent( 'NavigationBackButton' );
+export const NavigationGroup = createNullComponent( 'NavigationGroup' );
+export const NavigationItem = createNullComponent( 'NavigationItem' );
+export const NavigationMenu = createNullComponent( 'NavigationMenu' );
 
 // @wordpress/components misc exports
-export const FocalPointPicker = NullComponent;
-export const PaletteEdit = NullComponent;
+export const FocalPointPicker = createNullComponent( 'FocalPointPicker' );
+export const PaletteEdit = createNullComponent( 'PaletteEdit' );
 
 // @wordpress/block-editor date picker exports
-export const DateFormatPicker = NullComponent;
-export const PublishDateTimePicker = NullComponent;
-export const PrivatePublishDateTimePicker = NullComponent;
+export const DateFormatPicker = createNullComponent( 'DateFormatPicker' );
+export const PublishDateTimePicker = createNullComponent( 'PublishDateTimePicker' );
+export const PrivatePublishDateTimePicker = createNullComponent( 'PrivatePublishDateTimePicker' );
 
 // showdown Markdown converter stub
 export class Converter {
