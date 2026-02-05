@@ -54,14 +54,16 @@ export const Header = ( {
 	hasPreviousImage = false,
 	hasNextImage = false,
 }: HeaderProps ) => {
-	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode } = useSelect( ( select ) => {
-		const selectors = select( imageStudioStore ) as any;
-		return {
-			isAiProcessing: selectors.getImageStudioAiProcessing(),
-			hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
-			isAnnotationMode: selectors.getIsAnnotationMode(),
-		};
-	}, [] );
+	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } =
+		useSelect( ( select ) => {
+			const selectors = select( imageStudioStore ) as any;
+			return {
+				isAiProcessing: selectors.getImageStudioAiProcessing(),
+				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
+				isAnnotationMode: selectors.getIsAnnotationMode(),
+				hasDrafts: selectors.getDraftIds().length > 0,
+			};
+		}, [] );
 
 	const { setAnnotationMode, addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
@@ -97,6 +99,7 @@ export const Header = ( {
 		: null;
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
+	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasPendingAnnotations,
@@ -105,6 +108,40 @@ export const Header = ( {
 	useKeyboardShortcut( 'mod+shift+z', () => onAnnotationRedo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasUndoneAnnotations,
 	} );
+
+	useKeyboardShortcut(
+		'mod+left',
+		( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if ( ! hasPreviousImage || isNavDisabled ) {
+				return;
+			}
+
+			onNavigatePrevious?.();
+		},
+		{
+			bindGlobal: true,
+		}
+	);
+
+	useKeyboardShortcut(
+		'mod+right',
+		( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if ( ! hasNextImage || isNavDisabled ) {
+				return;
+			}
+
+			onNavigateNext?.();
+		},
+		{
+			bindGlobal: true,
+		}
+	);
 
 	return (
 		<div className="image-studio-header">
@@ -131,7 +168,7 @@ export const Header = ( {
 								variant="tertiary"
 								icon={ chevronLeft }
 								onClick={ onNavigatePrevious }
-								disabled={ ! hasPreviousImage || isAiProcessing || isSaving }
+								disabled={ ! hasPreviousImage || isNavDisabled }
 								label={ sprintf(
 									/* translators: %s: modifier key (command or control) */
 									__( 'Previous image %s←', __i18n_text_domain__ ),
@@ -147,7 +184,7 @@ export const Header = ( {
 								variant="tertiary"
 								icon={ chevronRight }
 								onClick={ onNavigateNext }
-								disabled={ ! hasNextImage || isAiProcessing || isSaving }
+								disabled={ ! hasNextImage || isNavDisabled }
 								label={ sprintf(
 									/* translators: %s: modifier key (command or control) */
 									__( 'Next image %s→', __i18n_text_domain__ ),

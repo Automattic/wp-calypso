@@ -86,14 +86,17 @@ function ImageStudioIntegration(): JSX.Element | null {
 	);
 
 	// Use navigation hook
-	const { handleNavigatePrevious, handleNavigateNext, hasPreviousImage, hasNextImage } =
-		useImageFileNavigation( {
-			isOpen,
-			originalAttachmentId,
-			attachmentId,
-			hasUnsavedChanges,
-			isMediaLibraryContext,
-		} );
+	const {
+		handleNavigatePrevious,
+		handleNavigateNext,
+		hasPreviousImage,
+		hasNextImage,
+	} = useImageFileNavigation( {
+		isOpen,
+		originalAttachmentId,
+		attachmentId,
+		hasUnsavedChanges,
+	} );
 
 	useEffect( () => {
 		/**
