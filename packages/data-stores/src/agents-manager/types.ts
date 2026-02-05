@@ -7,7 +7,6 @@ import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
  */
 export interface AgentsManagerSite {
 	ID: number | string;
-	URL: string;
 	domain: string;
 }
 

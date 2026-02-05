@@ -1,5 +1,5 @@
-import EditorLink from '../components/editor-link';
-import { isWpComEditorPage } from './is-wpcom-editor-page';
+import UnavailableToolMessage from '../components/unavailable-tool-message';
+import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -23,7 +23,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
-		// The tool message is a JSON string. Try to parse it, falling back to the original if invalid.
+		// The tool message is a JSON string. Try to parse it, falling back to the original if invalid
 		let textData;
 		try {
 			textData = JSON.parse( firstContentText );
@@ -31,17 +31,18 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
-		// Handle show-component ability component messages
+		// Handle show-component ability tool message
 		if ( textData.tool_id === 'big_sky__show_component' ) {
-			// If not on WP.com editor page, show a link to the site editor instead of the component
-			if ( ! isWpComEditorPage() ) {
+			// If not on an editor page, show an unavailable tool message instead of the component
+			if ( ! isEditorPage() ) {
 				return [
 					{
 						...message,
 						content: [
 							{
 								type: 'component' as const,
-								component: EditorLink,
+								component: UnavailableToolMessage as React.ComponentType,
+								componentProps: { type: 'picker' },
 							},
 						],
 					},
@@ -89,7 +90,28 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
+		// Handle start over tool message
+		if (
+			textData.tool_id === 'big_sky__client_assistants' &&
+			textData.data?.assistantId === 'big-sky-site-admin'
+		) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'component' as const,
+							component: UnavailableToolMessage as React.ComponentType,
+							componentProps: { type: 'start-over' },
+						},
+					],
+				},
+			];
+		}
+
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
+		// eslint-disable-next-line no-console
+		console.warn( `Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }
