@@ -45,6 +45,9 @@ export interface CancelPurchaseButtonProps {
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
+	textOverride?: string;
+	isLinkStyle?: boolean;
+	isInline?: boolean;
 	activeSubscriptions: Array< { id: number; productName: string } >;
 	onCancellationStart: null | ( () => void );
 	onCancellationComplete: () => void;
@@ -161,31 +164,33 @@ class CancelPurchaseButton extends Component<
 		const needsDomainOptionsStep =
 			this.props.includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
-		const text = ( () => {
-			if ( includedDomainPurchase && needsDomainOptionsStep ) {
-				return translate( 'Continue with cancellation' );
-			}
-
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain and refund' );
+		const text =
+			this.props.textOverride ??
+			( () => {
+				if ( includedDomainPurchase && needsDomainOptionsStep ) {
+					return translate( 'Continue with cancellation' );
 				}
+
+				if ( hasAmountAvailableToRefund( purchase ) ) {
+					if ( isDomainRegistration( purchase ) ) {
+						return translate( 'Cancel domain and refund' );
+					}
+					if ( isSubscription( purchase ) ) {
+						return translate( 'Cancel subscription' );
+					}
+					if ( isOneTimePurchase( purchase ) ) {
+						return translate( 'Cancel and refund' );
+					}
+				}
+
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Cancel domain' );
+				}
+
 				if ( isSubscription( purchase ) ) {
 					return translate( 'Cancel subscription' );
 				}
-				if ( isOneTimePurchase( purchase ) ) {
-					return translate( 'Cancel and refund' );
-				}
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Cancel domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Cancel subscription' );
-			}
-		} )();
+			} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions, isLoading, showDialog } =
@@ -193,17 +198,25 @@ class CancelPurchaseButton extends Component<
 
 		const planName = getName( purchase );
 
+		const wrapperClassName = this.props.isInline
+			? 'cancel-purchase__button-wrapper cancel-purchase__button-wrapper--inline'
+			: 'cancel-purchase__button-wrapper';
+		const buttonClassName = this.props.isLinkStyle
+			? 'cancel-purchase__button cancel-purchase__button--link'
+			: 'cancel-purchase__button';
+
 		return (
-			<div className="cancel-purchase__button-wrapper">
+			<div className={ wrapperClassName }>
 				<Button
-					className="cancel-purchase__button"
+					className={ buttonClassName }
 					disabled={ disableButtons }
 					busy={ isLoading }
-					scary
+					scary={ ! this.props.isLinkStyle }
 					onClick={
 						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
 					}
-					primary
+					primary={ ! this.props.isLinkStyle }
+					borderless={ this.props.isLinkStyle }
 				>
 					{ text }
 				</Button>

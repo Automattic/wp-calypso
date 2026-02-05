@@ -203,6 +203,34 @@
 	}
 }
 
+.cancel-purchase__refund-eligibility-notice {
+	margin: 16px 0;
+}
+
+.cancel-purchase__refund-eligibility-text {
+	margin: 0;
+}
+
+.cancel-purchase__button-wrapper--inline {
+	display: inline;
+}
+
+.cancel-purchase__button--link {
+	background: none;
+	color: var(--color-link);
+	font-size: inherit;
+	font-weight: 400;
+	height: auto;
+	line-height: inherit;
+	padding: 0;
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: var(--color-link-dark);
+	}
+}
+
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
@@ -275,4 +303,3 @@
 		}
 	}
 }
-

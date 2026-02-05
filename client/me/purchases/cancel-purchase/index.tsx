@@ -68,6 +68,7 @@ import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
+import RefundEligibilityNotice from './refund-eligibility-notice';
 import CancelPurchaseRefundInformation from './refund-information';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
@@ -581,7 +582,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return null;
 	};
 
-	renderCancelButton = () => {
+	getCancelPurchaseButtonProps = () => {
 		const {
 			purchase,
 			includedDomainPurchase,
@@ -601,28 +602,32 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				isPlan( purchase ) ) ||
 			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed );
 
-		return (
-			<CancelPurchaseButton
-				purchase={ purchase }
-				includedDomainPurchase={ includedDomainPurchase }
-				disabled={ isDisabled }
-				siteSlug={ siteSlug }
-				cancelBundledDomain={ this.state.cancelBundledDomain }
-				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
-				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
-				onCancellationStart={ this.onCancellationStart }
-				onCancellationComplete={ this.onCancellationComplete }
-				onSurveyComplete={ this.onSurveyComplete }
-				moment={ this.props.moment }
-				// Cancellation state props
-				showDialog={ this.state.showDialog }
-				isLoading={ this.state.isLoading }
-				onDialogClose={ this.onDialogClose }
-				onSetLoading={ this.onSetLoading }
-				downgradeClick={ this.downgradeClick }
-				freeMonthOfferClick={ this.freeMonthOfferClick }
-			/>
-		);
+		return {
+			purchase,
+			includedDomainPurchase,
+			disabled: isDisabled,
+			siteSlug,
+			cancelBundledDomain: this.state.cancelBundledDomain,
+			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
+			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
+			onCancellationStart: this.onCancellationStart,
+			onCancellationComplete: this.onCancellationComplete,
+			onSurveyComplete: this.onSurveyComplete,
+			moment: this.props.moment,
+			// Cancellation state props
+			showDialog: this.state.showDialog,
+			isLoading: this.state.isLoading,
+			onDialogClose: this.onDialogClose,
+			onSetLoading: this.onSetLoading,
+			downgradeClick: this.downgradeClick,
+			freeMonthOfferClick: this.freeMonthOfferClick,
+		};
+	};
+
+	renderCancelButton = () => {
+		const cancelButtonProps = this.getCancelPurchaseButtonProps();
+
+		return <CancelPurchaseButton { ...cancelButtonProps } />;
 	};
 
 	renderKeepSubscriptionButton = () => {
@@ -654,6 +659,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
+		const refundAmountString = this.renderRefundAmountString(
+			purchase,
+			this.state.cancelBundledDomain,
+			includedDomainPurchase
+		);
+		const shouldShowRefundEligibilityNotice = Boolean( refundAmountString && isPlan( purchase ) );
+		const cancelButtonProps = this.getCancelPurchaseButtonProps();
+
 		return (
 			<>
 				{ shouldShowDomainOptionsInline && (
@@ -673,6 +686,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				) }
 
 				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
+
+				{ shouldShowRefundEligibilityNotice && refundAmountString && (
+					<RefundEligibilityNotice
+						refundAmount={ refundAmountString }
+						cancelButtonProps={ cancelButtonProps }
+					/>
+				) }
 
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
