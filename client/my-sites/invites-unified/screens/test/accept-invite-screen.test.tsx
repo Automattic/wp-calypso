@@ -126,16 +126,21 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: ( url: string ) => mockNavigate( url ),
 } ) );
 
+const mockWooBranding = {
+	logo: {
+		src: 'https://example.com/woo-logo.png',
+		alt: 'Woo',
+		width: 100,
+		height: 30,
+	},
+};
+
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	CIAB_PARTNERS: {
-		woo: {
-			logo: {
-				src: 'https://example.com/woo-logo.png',
-				alt: 'Woo',
-				width: 100,
-				height: 30,
-			},
-		},
+	getCiabConfigFromGarden: ( partner: string, name: string ) => {
+		if ( partner === 'woo' && name === 'commerce' ) {
+			return mockWooBranding;
+		}
+		return null;
 	},
 } ) );
 
