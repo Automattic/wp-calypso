@@ -284,6 +284,19 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
+// Fix for the search categories fixed top position on the plugins marketplace page
+.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary .plugins-browser--site-view .search-categories.fixed-top {
+	top: calc( $admin-bar-height + $layout-spacing + 1px );
+	left: -174px;
+	padding-top: 11px;
+	max-width: 1028px;
+	border-bottom: 1px solid var(--color-neutral-5);
+
+	&::after {
+		display: none;
+	}
+}
+
 /* Page editor */
 body.post-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
