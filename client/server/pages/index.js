@@ -110,6 +110,12 @@ function setupLoggedInContext( req, res, next ) {
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'getDefaultContext' );
 
+	const originalUrl = request.originalUrl ?? request.url ?? '';
+	const requestPath = request.url ?? '';
+	const pathname = request.path ?? getPathnameFromUrl( originalUrl );
+	const query = request.query ?? {};
+	const params = request.params ?? {};
+
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
 	const trackingPrefs = parseTrackingPrefs(
 		request.cookies.sensitive_pixel_options,
@@ -183,6 +189,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	performanceMark( request.context, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
+		originalUrl,
+		path: requestPath,
+		pathname,
+		query,
+		params,
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
 		user: false,
@@ -290,6 +301,18 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	return context;
+}
+
+function getPathnameFromUrl( url ) {
+	if ( ! url ) {
+		return '';
+	}
+
+	try {
+		return new URL( url, 'http://example.com' ).pathname;
+	} catch {
+		return url;
+	}
 }
 
 const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {

@@ -15,7 +15,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
@@ -68,6 +68,7 @@ describe( 'CheckoutMain', () => {
 		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
+		( isCommerceGardenSite as jest.Mock ).mockImplementation( () => false );
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
@@ -172,6 +173,22 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the cart blog id to check if siteless checkout is commerce garden', async () => {
+		const sitelessBlogId = 123456789;
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				cartChanges={ { blog_id: sitelessBlogId } }
+				additionalProps={ { sitelessCheckoutType: 'jetpack', siteSlug: undefined } }
+				useUndefinedSiteId
+			/>
+		);
+
+		await waitFor( () => {
+			expect( isCommerceGardenSite ).toHaveBeenCalledWith( expect.anything(), sitelessBlogId );
+		} );
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it', async () => {
