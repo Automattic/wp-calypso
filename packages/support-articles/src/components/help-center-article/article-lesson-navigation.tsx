@@ -1,3 +1,4 @@
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import type { LessonNavigation } from '../../types';
@@ -25,7 +26,9 @@ export const ArticleLessonNavigation = ( {
 					<span className="help-center-article-lesson-navigation__label">
 						{ __( '← Back', __i18n_text_domain__ ) }
 					</span>
-					<span className="help-center-article-lesson-navigation__title">{ previous.title }</span>
+					<span className="help-center-article-lesson-navigation__title">
+						{ decodeEntities( previous.title ) }
+					</span>
 				</Link>
 			) }
 			{ next?.url && (
@@ -36,7 +39,9 @@ export const ArticleLessonNavigation = ( {
 					<span className="help-center-article-lesson-navigation__label">
 						{ __( 'Up next →', __i18n_text_domain__ ) }
 					</span>
-					<span className="help-center-article-lesson-navigation__title">{ next.title }</span>
+					<span className="help-center-article-lesson-navigation__title">
+						{ decodeEntities( next.title ) }
+					</span>
 				</Link>
 			) }
 		</nav>
