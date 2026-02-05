@@ -7,6 +7,12 @@ import type {
 	ReferralPurchase,
 } from '../types';
 
+/** CSV line ending per RFC 4180; CRLF ensures Excel and Windows tools parse rows correctly. */
+const CSV_LINE_ENDING = '\r\n';
+
+/** UTF-8 BOM so Excel opens the file with correct encoding. */
+const UTF8_BOM = '\uFEFF';
+
 /**
  * Escapes a value for CSV format.
  * Wraps in quotes if the value contains commas, quotes, or newlines.
@@ -20,14 +26,25 @@ function csvEscape( value: unknown ): string {
 }
 
 /**
- * Formats a date string for CSV output.
+ * Formats a date string for CSV output (YYYY-MM-DD).
+ * Returns '-' for missing/invalid dates so the column is consistently aligned.
  */
 function formatDate( dateString: string | null ): string {
 	if ( ! dateString ) {
-		return '';
+		return '-';
 	}
 	const date = new Date( dateString );
-	return date.toISOString().split( 'T' )[ 0 ];
+	const iso = date.toISOString().split( 'T' )[ 0 ];
+	return iso || '-';
+}
+
+/**
+ * Formats a number as USD with two decimal places for consistent column alignment.
+ * Coerces strings and handles null/undefined/NaN so API values are safe.
+ */
+function formatCurrency( amount: number | string | null | undefined ): string {
+	const n = typeof amount === 'number' ? amount : Number( amount );
+	return Number.isFinite( n ) ? n.toFixed( 2 ) : '-';
 }
 
 /**
@@ -87,7 +104,8 @@ function findMatchingPurchase(
 function buildRowsFromApi(
 	referralCommissionPayout: ReferralCommissionPayoutResponse,
 	referrals: Referral[],
-	products: APIProductFamilyProduct[]
+	products: APIProductFamilyProduct[],
+	isSingleClient?: boolean
 ): CommissionRow[] {
 	const rows: CommissionRow[] = [];
 
@@ -108,24 +126,32 @@ function buildRowsFromApi(
 							productName,
 							quantity: match.purchase.quantity ?? 1,
 							invoicedDate,
-							issuedDate: formatDate( match.purchase.license?.issued_at ?? null ) || '-',
-							revokedDate: formatDate( match.purchase.license?.revoked_at ?? null ) || '-',
+							issuedDate: formatDate( match.purchase.license?.issued_at ?? null ),
+							revokedDate: formatDate( match.purchase.license?.revoked_at ?? null ),
 							price,
 							commissionPercentage: formatPercentage(
 								getProductCommissionPercentage( match.product.slug, match.product.family_slug )
 							),
 							commissionAmount,
 						} );
-					} else if ( apiClient.client_user_id === 'N/A' ) {
+					} else if ( apiClient.client_user_id === 'N/A' && ! isSingleClient ) {
+						const priceNum = typeof price === 'number' ? price : Number( price );
+						const commissionNum =
+							typeof commissionAmount === 'number' ? commissionAmount : Number( commissionAmount );
+						const derivedPercentage =
+							Number.isFinite( priceNum ) && priceNum > 0 && Number.isFinite( commissionNum )
+								? commissionNum / priceNum
+								: null;
 						rows.push( {
 							clientEmail,
 							productName,
-							quantity: '-',
+							quantity: 1,
 							invoicedDate,
 							issuedDate: '-',
 							revokedDate: '-',
 							price,
-							commissionPercentage: '-',
+							commissionPercentage:
+								derivedPercentage != null ? formatPercentage( derivedPercentage ) : '-',
 							commissionAmount,
 						} );
 					}
@@ -161,7 +187,7 @@ export function generateCommissionsCsv(
 	];
 
 	const rows = referralCommissionPayout?.client_data?.length
-		? buildRowsFromApi( referralCommissionPayout, referrals, products )
+		? buildRowsFromApi( referralCommissionPayout, referrals, products, isSingleClient )
 		: [];
 
 	const csvLines: string[] = [];
@@ -175,14 +201,14 @@ export function generateCommissionsCsv(
 			row.invoicedDate,
 			row.issuedDate,
 			row.revokedDate,
-			row.price,
+			formatCurrency( row.price ),
 			row.commissionPercentage,
-			row.commissionAmount,
+			formatCurrency( row.commissionAmount ),
 		]
 			.map( csvEscape )
 			.join( ',' );
 		csvLines.push( line );
 	}
 
-	return csvLines.join( '\n' );
+	return UTF8_BOM + csvLines.join( CSV_LINE_ENDING );
 }
