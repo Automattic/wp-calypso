@@ -82,6 +82,7 @@ const flagEnvironments = [
 	'jetpack-cloud-stage',
 	'a8c-for-agencies-stage',
 	'dashboard-stage',
+	'dashboard-ciab-woo-stage',
 ];
 
 if (

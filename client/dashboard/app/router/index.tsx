@@ -80,7 +80,7 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultNotFoundComponent: NotFound,
 		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
-				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
+				severity: calypsoConfig( 'env' ) === 'production' ? 'error' : 'debug',
 				calypso_section: 'dashboard',
 			} );
 		},

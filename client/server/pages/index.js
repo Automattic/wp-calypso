@@ -162,6 +162,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		'jetpack-cloud-development',
 		'a8c-for-agencies-development',
 		'dashboard-development',
+		'dashboard-ciab-woo-development',
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
@@ -284,6 +285,23 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	if ( calypsoEnv === 'dashboard-development' ) {
 		context.badge = 'dashboard-dev';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		context.branchName = getCurrentBranchName();
+		context.commitChecksum = getCurrentCommitShortChecksum();
+	}
+
+	if ( calypsoEnv === 'dashboard-ciab-woo-horizon' ) {
+		context.badge = 'dashboard-ciab-woo-horizon';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+	}
+
+	if ( calypsoEnv === 'dashboard-ciab-woo-stage' ) {
+		context.badge = 'dashboard-ciab-woo-staging';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+	}
+
+	if ( calypsoEnv === 'dashboard-development' ) {
+		context.badge = 'dashboard-ciab-woo-dev';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
@@ -1111,55 +1129,8 @@ export default function pages() {
 			} );
 		} );
 
-		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			// Allow CIAB routes under my.localhost.
-			return req.get( 'host' ).startsWith( 'my.localhost' );
-		} );
-
-		// Temporary support redirection for the /v2 route for backwards compatibility.
-		app.get( [ '/v2', '/v2/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path.slice(
-					'/v2'.length
-				) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path.slice( '/v2'.length ) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
-		} );
-
-		// Temporary support redirection for the /ciab route for backwards compatibility.
-		// TODO: Remove /ciab once we no longer need to support the old testing link.
-		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
-		} );
+		// TODO: remove /ciab support once we have fully migrated to the new my.woo.com domain.
+		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 	}
 
 	sections
@@ -1185,6 +1156,16 @@ export default function pages() {
 	// Register CSP report route
 	registerCspReportRoute( app );
 
+	// Multi-site Dashboard routing for CIAB (my.woo.com).
+	// Return earlier since we don't need to set up any other routes.
+	if ( isDashboardEnv( 'ciab' ) ) {
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, route, 'entry-dashboard-ciab' );
+		} );
+
+		return app;
+	}
+
 	// Multi-site Dashboard routing for my.wordpress.com.
 	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
@@ -1192,7 +1173,9 @@ export default function pages() {
 			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
 		} );
 
+		// TODO: remove /ciab support once we have fully migrated to the new my.woo.com domain.
 		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
+
 		return app;
 	}
 

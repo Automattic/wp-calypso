@@ -64,7 +64,7 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Jetpack Cloud live <a href="${link}&env=jetpack">(direct link)</a>
+                  Jetpack Cloud Live <a href="${link}&env=jetpack">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
@@ -76,7 +76,7 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Automattic for Agencies live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
+                  Automattic for Agencies Live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
@@ -88,12 +88,24 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Dashboard live <a href="${link}&env=dashboard">(direct link)</a>
+                  Dashboard (my.wordpress.com) Live <a href="${link}&env=dashboard">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
                     <td>
                       <a href="${link}&env=dashboard">${link}&env=dashboard</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Dashboard (my.woo.com) Live <a href="${link}&env=dashboard-ciab-woo">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=dashboard-ciab-woo">${link}&env=dashboard-ciab-woo</a>
                     </td>
                   </tr>
                 </table>

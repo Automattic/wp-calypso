@@ -54,19 +54,24 @@ object BuildDockerImage : BuildType({
             qrEnv = "flags=oauth",
         ),
         EnvConfig(
-            label = "Jetpack Cloud live",
+            label = "Jetpack Cloud Live",
             envQuery = "&env=jetpack",
             qrEnv = "env=jetpack&flags=oauth",
         ),
         EnvConfig(
-            label = "Automattic for Agencies live",
+            label = "Automattic for Agencies Live",
             envQuery = "&env=a8c-for-agencies",
             qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
 		EnvConfig(
-			label = "Dashboard live",
+			label = "Dashboard (my.wordpress.com) Live",
 			envQuery = "&env=dashboard",
 			qrEnv = "env=dashboard&flags=oauth",
+		),
+		EnvConfig(
+			label = "Dashboard (my.woo.com) Live",
+			envQuery = "&env=dashboard-ciab-woo",
+			qrEnv = "env=dashboard-ciab-woo&flags=oauth",
 		)
     )
 

@@ -204,7 +204,12 @@ export async function initSentry( parameters?: SentryOptions ) {
 			// release we need to track. Horizon is just a different flavor of trunk,
 			// so it can be mapped to a trunk release.
 			const environment = config< string >( 'env_id' );
-			const release = [ 'production', 'dashboard-production', 'horizon' ].includes( environment )
+			const release = [
+				'production',
+				'dashboard-production',
+				'dashboard-ciab-woo-production',
+				'horizon',
+			].includes( environment )
 				? `calypso_${ window.COMMIT_SHA }`
 				: undefined;
 

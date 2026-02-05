@@ -5,7 +5,12 @@ import { isDashboardBackport } from './is-dashboard-backport';
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
-	return [ 'http://my.localhost:3000', 'https://my.wordpress.com' ];
+	return [
+		'http://my.localhost:3000',
+		'https://my.wordpress.com',
+		'http://my.woo.localhost:3000',
+		'https://my.woo.com',
+	];
 }
 
 /**

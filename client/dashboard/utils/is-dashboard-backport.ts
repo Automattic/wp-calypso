@@ -12,5 +12,6 @@ export function isDashboardBackport() {
 		return false;
 	}
 
-	return ! [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) );
+	// TODO: remove /ciab path support once we have fully migrated to the new my.woo.com domain.
+	return ! window?.location?.pathname?.startsWith( '/ciab' );
 }

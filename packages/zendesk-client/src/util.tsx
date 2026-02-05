@@ -12,6 +12,7 @@ const PRODUCTION_ENVIRONMENTS = [
 	'jetpack-cloud-production',
 	'a8c-for-agencies-production',
 	'dashboard-production',
+	'dashboard-ciab-woo-production',
 ];
 
 export const isTestModeEnvironment = () => {

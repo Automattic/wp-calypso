@@ -7,6 +7,7 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import './translations';
+import isDashboardEnv from '../utils/is-dashboard-env';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -16,7 +17,11 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	basePath: '/ciab',
+	basePath:
+		window?.location?.hostname?.startsWith( 'my.localhost' ) ||
+		( isDashboardEnv() && ! isDashboardEnv( 'ciab' ) )
+			? '/ciab' // TODO: remove /ciab path support once we have fully migrated to the new my.woo.com domain.
+			: '/',
 	mainRoute: '/sites',
 	Logo: null,
 	supports: {
