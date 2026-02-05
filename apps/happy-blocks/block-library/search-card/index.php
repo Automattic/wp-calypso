@@ -17,7 +17,7 @@ $active_page                   = isset( $args['active_page'] ) ? $args['active_p
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
 $should_show_search_navigation = ! $is_front_page && ! $is_404_page;
 
-$enable_odie_answers = !is_user_logged_in() && 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' )
+$enable_odie_answers = ! is_user_logged_in() && 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' )
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' );
 
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
