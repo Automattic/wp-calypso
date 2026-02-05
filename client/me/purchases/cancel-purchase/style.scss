@@ -205,6 +205,10 @@
 
 .cancel-purchase__refund-eligibility-notice {
 	margin: 16px 0;
+
+	.calypso-notice__icon-wrapper {
+	    background: var(--color-primary);
+	}
 }
 
 .cancel-purchase__refund-eligibility-text {
