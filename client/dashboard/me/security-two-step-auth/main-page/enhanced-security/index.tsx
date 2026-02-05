@@ -1,4 +1,8 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import {
+	userSettingsQuery,
+	userSettingsMutation,
+	twoStepAuthSecurityKeysQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -12,6 +16,9 @@ export default function EnhancedSecurity() {
 	const { recordTracksEvent } = useAnalytics();
 
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { data: securityKeys } = useSuspenseQuery( twoStepAuthSecurityKeysQuery() );
+	const hasSecurityKeys = securityKeys?.registrations?.length > 0;
+
 	const { two_step_enhanced_security_forced, two_step_enhanced_security } = userSettings;
 
 	const { mutate: updateUserSettings, isPending: isUpdatingUserSettings } = useMutation(
@@ -36,6 +43,10 @@ export default function EnhancedSecurity() {
 			}
 		);
 	};
+
+	if ( ! hasSecurityKeys ) {
+		return null;
+	}
 
 	return (
 		<>

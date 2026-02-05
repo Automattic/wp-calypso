@@ -4,10 +4,12 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Icon } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { Card, CardHeader, CardBody } from '../../../../components/card';
@@ -42,13 +44,13 @@ const SecurityKeysList = ( {
 	isLoading: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
 		...deleteTwoStepAuthSecurityKeyMutation(),
 		meta: {
 			snackbar: {
 				success: __( 'Security key deleted.' ),
-				error: __( 'Failed to delete security key.' ),
 			},
 		},
 	} );
@@ -62,6 +64,13 @@ const SecurityKeysList = ( {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
 				{
+					onError: ( error ) => {
+						let errorMessage = __( 'Failed to delete security key.' );
+						if ( error instanceof Error ) {
+							errorMessage = error.message;
+						}
+						createErrorNotice( errorMessage, { type: 'snackbar' } );
+					},
 					onSettled: () => {
 						setSelectedKeyToRemove( null );
 					},
