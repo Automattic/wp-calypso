@@ -801,14 +801,7 @@ export function isRenewing( purchase: Purchase ): boolean {
 }
 
 /**
- * Determines if the purchase is in a failed auto-renewal state.
- *
- * This occurs when the purchase is in grace period AND:
- * - The purchase is still in "renewing" status (renewal attempted but failed), OR
- * - Auto-renew is enabled but there's no payment method attached
- *
- * Use this to show "problem processing your renewal" messaging instead of
- * generic expiry messages.
+ * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
  */
 export function isFailedAutoRenewal( purchase: Purchase ): boolean {
 	return (

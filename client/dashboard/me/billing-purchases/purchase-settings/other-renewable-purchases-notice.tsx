@@ -12,6 +12,7 @@ import {
 	isExpiring,
 	isFailedAutoRenewal,
 	isIncludedWithPlan,
+	isRenewing,
 	needsToRenewSoon,
 	isRecentMonthlyPurchase,
 	creditCardExpiresBeforeSubscription,
@@ -253,15 +254,15 @@ export function OtherRenewablePurchasesNotice( {
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		const noticeActionText = __( 'Renew all' );
 
-		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( isFailedAutoRenewal( currentPurchase ) ) {
-				noticeText = createInterpolateElement(
-					__(
-						'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
-					),
-					{ link }
-				);
-			} else if ( currentPurchase.is_domain_registration ) {
+		if ( isFailedAutoRenewal( currentPurchase ) ) {
+			noticeText = createInterpolateElement(
+				__(
+					'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
+				),
+				{ link }
+			);
+		} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, expiry is a string like "3 months ago"
@@ -427,15 +428,15 @@ export function OtherRenewablePurchasesNotice( {
 		let noticeText: React.ReactNode;
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
-		if ( isInExpirationGracePeriod( currentPurchase ) ) {
-			if ( isFailedAutoRenewal( currentPurchase ) ) {
-				noticeText = createInterpolateElement(
-					__(
-						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
-					),
-					{ link }
-				);
-			} else if ( currentPurchase.is_domain_registration ) {
+		if ( isFailedAutoRenewal( currentPurchase ) ) {
+			noticeText = createInterpolateElement(
+				__(
+					'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
+				),
+				{ link }
+			);
+		} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, expiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -784,16 +785,16 @@ export function OtherRenewablePurchasesNotice( {
 		! anotherPurchaseIsExpiring
 	) {
 		const noticeText = ( () => {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
+				return createInterpolateElement(
+					__(
+						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
+					),
+					{ link }
+				);
+			}
 			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
 			if ( isInExpirationGracePeriod( currentPurchase ) ) {
-				if ( isFailedAutoRenewal( currentPurchase ) ) {
-					return createInterpolateElement(
-						__(
-							'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
-						),
-						{ link }
-					);
-				}
 				if ( currentPurchase.is_domain_registration ) {
 					return createInterpolateElement(
 						sprintf(

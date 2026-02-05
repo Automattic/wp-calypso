@@ -163,10 +163,7 @@ function ExpiredRenewNotice( {
 			if ( isExpired( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
-			if (
-				isInExpirationGracePeriod( currentPurchase ) &&
-				isFailedAutoRenewal( currentPurchase )
-			) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
 				return __(
 					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
 				);
