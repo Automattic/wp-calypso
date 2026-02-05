@@ -109,8 +109,9 @@ export function SitePickerModal( {
 				path: '/me/sites',
 				apiVersion: '1.1',
 			} )
-				.then( ( response: { sites: SelectedSite[] } ) => {
-					setSites( response.sites || [] );
+				.then( ( response ) => {
+					const typedResponse = response as { sites: SelectedSite[] };
+					setSites( typedResponse.sites || [] );
 					setIsLoading( false );
 				} )
 				.catch( ( err: Error ) => {
