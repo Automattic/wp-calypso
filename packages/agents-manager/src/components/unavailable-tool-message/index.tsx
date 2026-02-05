@@ -17,7 +17,10 @@ export default function UnavailableToolMessage( { type }: Props ) {
 			content = site?.domain ? (
 				<>
 					This feature is only available in the{ ' ' }
-					<a href={ `https://${ site.domain }/wp-admin/site-editor.php?canvas=edit` }>
+					<a
+						href={ `https://${ site.domain }/wp-admin/site-editor.php?canvas=edit` }
+						rel="noopener noreferrer"
+					>
 						site editor
 					</a>
 					.
