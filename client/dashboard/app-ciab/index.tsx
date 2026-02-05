@@ -39,6 +39,7 @@ boot( {
 		},
 		plugins: false,
 		commandPalette: false,
+		domainOnlySites: false,
 	},
 	optIn: false,
 	components: {

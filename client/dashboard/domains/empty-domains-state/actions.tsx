@@ -4,21 +4,21 @@ import { Icon, search, globe } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import EmptyState from '../../components/empty-state';
-import { wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, wpcomLink } from '../../utils/link';
 
-function useTrackEmptyStateActionClick( dashboard: string ) {
+function useTrackEmptyStateActionClick() {
 	const { recordTracksEvent } = useAnalytics();
 
 	return ( action: string ) => {
 		recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
 			action,
-			dashboard,
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 }
 
-function DotcomEmptyDomainsStateActions() {
-	const trackClick = useTrackEmptyStateActionClick( 'msd' );
+function DomainOnlySitesEmptyDomainsStateActions() {
+	const trackClick = useTrackEmptyStateActionClick();
 
 	return (
 		<EmptyState.ActionList>
@@ -60,8 +60,8 @@ function DotcomEmptyDomainsStateActions() {
 	);
 }
 
-function CiabEmptyDomainsStateActions() {
-	const trackClick = useTrackEmptyStateActionClick( 'ciab' );
+function SiteAttachedEmptyDomainsStateActions() {
+	const trackClick = useTrackEmptyStateActionClick();
 
 	return (
 		<EmptyState.ActionList>
@@ -104,11 +104,11 @@ function CiabEmptyDomainsStateActions() {
 }
 
 export default function EmptyDomainsStateActions() {
-	const { name } = useAppContext();
+	const { supports } = useAppContext();
 
-	if ( name === 'CIAB' ) {
-		return <CiabEmptyDomainsStateActions />;
+	if ( supports.domainOnlySites ) {
+		return <DomainOnlySitesEmptyDomainsStateActions />;
 	}
 
-	return <DotcomEmptyDomainsStateActions />;
+	return <SiteAttachedEmptyDomainsStateActions />;
 }

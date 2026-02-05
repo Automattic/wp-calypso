@@ -34,7 +34,7 @@ function useDomainNavigation() {
 	return { siteSlug, navigateTo };
 }
 
-function DotcomAddDomainButton() {
+function DomainOnlySitesAddDomainButton() {
 	const { siteSlug, navigateTo } = useDomainNavigation();
 
 	const onSearchClick = () =>
@@ -52,7 +52,7 @@ function DotcomAddDomainButton() {
 	);
 }
 
-function CiabAddDomainButton() {
+function SiteAttachedAddDomainButton() {
 	const { navigateTo } = useDomainNavigation();
 
 	const onSearchClick = () =>
@@ -111,11 +111,11 @@ function AddDomainDropdown( {
 }
 
 export default function AddDomainButton() {
-	const { name } = useAppContext();
+	const { supports } = useAppContext();
 
-	if ( name === 'CIAB' ) {
-		return <CiabAddDomainButton />;
+	if ( supports.domainOnlySites ) {
+		return <DomainOnlySitesAddDomainButton />;
 	}
 
-	return <DotcomAddDomainButton />;
+	return <SiteAttachedAddDomainButton />;
 }
