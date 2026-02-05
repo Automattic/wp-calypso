@@ -11,7 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import { CIAB_PARTNERS, type CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import { getCiabConfigFromGarden, type CiabPartnerConfig } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
@@ -48,24 +48,14 @@ function toLegacyInvite( invite: Invite ) {
 }
 
 /**
- * Map garden partner to CIAB branding config
- * - "wpcom" partner uses "woo" branding
+ * Get CIAB branding config from blog details
  */
 function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): CiabPartnerConfig | null {
 	if ( ! blogDetails?.is_garden_site || ! blogDetails?.garden ) {
 		return null;
 	}
 
-	const { garden } = blogDetails;
-
-	// Map garden partners to branding configs
-	// "wpcom" partner uses "woo" branding
-	if ( garden.partner === 'woo' && garden.name === 'commerce' ) {
-		return CIAB_PARTNERS.woo ?? null;
-	}
-
-	// Future: add mappings for other partners like "paypal"
-	return null;
+	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name );
 }
 
 interface AcceptInviteScreenProps {
