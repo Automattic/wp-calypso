@@ -6,7 +6,6 @@ import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
-import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getSessionId, clearSessionId } from '../../utils/agent-session';
@@ -107,16 +106,6 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 		initializeAgent();
 	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
-	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
-	useEffect( () => {
-		if ( agentConfig ) {
-			window.__agentManager = getAgentManager();
-			// eslint-disable-next-line no-console
-			console.log( '[UnifiedAIAgent] Exposed agentManager on window' );
-		}
-	}, [ agentConfig ] );
-<<<<<<< HEAD
-
 	const loadedProviders = loadedProvidersRef.current;
 
 	// Load empty view suggestions (handles Big Sky's theme-dependent suggestions)
@@ -124,33 +113,6 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 
 	// Don't render until the setup is complete AND suggestions are ready
 	if ( ! agentConfig || ! loadedProviders || emptyViewSuggestions === null ) {
-=======
-
-	const defaultSuggestions = useMemo(
-		() => [
-			{
-				id: 'getting-started',
-				label: 'Getting started with WordPress',
-				prompt: 'How do I get started with WordPress?',
-			},
-			{
-				id: 'create-post',
-				label: 'Create a blog post',
-				prompt: 'How do I create a blog post?',
-			},
-			{
-				id: 'customize-site',
-				label: 'Customize my site',
-				prompt: 'How can I customize my site?',
-			},
-		],
-		[]
-	);
-
-	const loadedProviders = loadedProvidersRef.current;
-
-	if ( ! agentConfig || ! loadedProviders ) {
->>>>>>> 266c8428fe4 (add: headless mode for agents manager)
 		return null;
 	}
 

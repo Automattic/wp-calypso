@@ -34,6 +34,7 @@ declare module '@wordpress/block-editor' {
 	export const BlockIcon: React.ComponentType< { icon: unknown } >;
 }
 
+
 /**
  * Chat state returned by `getChatState()`.
  */
@@ -59,6 +60,5 @@ interface AgentsManagerActions {
  * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
-	__agentManager?: import('@automattic/agenttic-client').AgentManager;
 	__agentsManagerActions?: AgentsManagerActions;
 }
