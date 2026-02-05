@@ -23,11 +23,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { parseScheduleValue } from './schedule-field';
+import { parseScheduleValue, type ScheduleType } from './schedule-field';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
-
-type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
 
 function getScheduleLabel( schedule: string ): string {
 	const labels: Record< ScheduleType, string > = {

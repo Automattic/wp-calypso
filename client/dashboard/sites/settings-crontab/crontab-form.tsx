@@ -95,7 +95,6 @@ export default function CrontabForm() {
 				),
 				Edit: ( props ) => (
 					<TextControl
-						__nextHasNoMarginBottom
 						label={ props.field.label }
 						help={ props.field.description }
 						value={ props.data.command }

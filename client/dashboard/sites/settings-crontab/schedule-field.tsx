@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
+export type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
 
 interface ScheduleFieldProps {
 	value: string;
@@ -89,7 +89,7 @@ export function parseScheduleValue( schedule: string ): ScheduleType {
 	return 'hourly';
 }
 
-function formatSchedulePreview( scheduleValue: ScheduleType ): string {
+function formatSchedulePreview( scheduleValue: string ): string {
 	if ( scheduleValue === 'hourly' ) {
 		return __( 'Runs once every hour.' );
 	}
