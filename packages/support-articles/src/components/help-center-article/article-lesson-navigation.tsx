@@ -24,7 +24,7 @@ export const ArticleLessonNavigation = ( {
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--previous"
 				>
 					<span className="help-center-article-lesson-navigation__label">
-						{ __( '← Back', __i18n_text_domain__ ) }
+						← { __( 'Back', __i18n_text_domain__ ) }
 					</span>
 					<span className="help-center-article-lesson-navigation__title">
 						{ decodeEntities( previous.title ) }
@@ -37,7 +37,7 @@ export const ArticleLessonNavigation = ( {
 					className="help-center-article-lesson-navigation__link help-center-article-lesson-navigation__link--next"
 				>
 					<span className="help-center-article-lesson-navigation__label">
-						{ __( 'Up next →', __i18n_text_domain__ ) }
+						{ __( 'Up next', __i18n_text_domain__ ) } →
 					</span>
 					<span className="help-center-article-lesson-navigation__title">
 						{ decodeEntities( next.title ) }
