@@ -163,7 +163,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 					title={ __( 'Cron' ) }
 					description={ createInterpolateElement(
 						__(
-							'Schedule commands to run automatically at specified intervals on your site. <learnMoreLink />'
+							'Schedule commands to run automatically at specified intervals. <learnMoreLink />'
 						),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
