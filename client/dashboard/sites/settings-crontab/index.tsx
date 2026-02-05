@@ -23,8 +23,14 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { parseScheduleValue, PREDEFINED_SCHEDULES } from './schedule-field';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
+
+function getScheduleLabel( schedule: string ): string {
+	const scheduleType = parseScheduleValue( schedule );
+	return PREDEFINED_SCHEDULES.find( ( s ) => s.value === scheduleType )?.label ?? '';
+}
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -86,11 +92,18 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			id: 'schedule',
 			label: __( 'Schedule' ),
 			getValue: ( { item }: { item: Crontab } ) => item.schedule,
-			render: ( { item }: { item: Crontab } ) => (
-				<Text variant="muted" size="small">
-					{ cronstrue.toString( item.schedule, { verbose: true } ) }
-				</Text>
-			),
+			render: ( { item }: { item: Crontab } ) => {
+				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
+
+				return (
+					<div>
+						<Text>{ getScheduleLabel( item.schedule ) }</Text>{ ' ' }
+						<Text variant="muted" size={ 12 }>
+							({ cronDescription })
+						</Text>
+					</div>
+				);
+			},
 			enableGlobalSearch: true,
 		},
 		{
