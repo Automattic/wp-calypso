@@ -174,7 +174,7 @@ export default function CrontabForm( { cronId }: CrontabFormProps ) {
 
 	const pageTitle = isEditMode ? __( 'Edit scheduled job' ) : __( 'Add scheduled job' );
 	const pageDescription = isEditMode
-		? __( 'Modify the schedule or command for this scheduled job.' )
+		? __( 'Update the schedule or command for this job.' )
 		: __( 'Schedule a command to run automatically at specified intervals on your site.' );
 	const submitButtonLabel = isEditMode ? __( 'Save changes' ) : __( 'Add scheduled job' );
 
