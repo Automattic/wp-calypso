@@ -18,6 +18,7 @@ import {
 	CheckoutFormSubmit,
 	CheckoutStepGroup,
 	useSetStepComplete,
+	useCompleteAllSteps,
 	useTogglePaymentMethod,
 	makeErrorResponse,
 	useMakeStepActive,
@@ -613,6 +614,82 @@ describe( 'Checkout', () => {
 			const user = userEvent.setup();
 			await user.click( manualContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'completes all steps when useCompleteAllSteps is used and all steps can be completed', async () => {
+			function CompleteAllButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-one',
+				className: 'step-one',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				id: 'step-two',
+				className: 'step-two',
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Two Active</span>
+						<CompleteAllButton />
+					</div>
+				),
+			};
+			const stepThree = {
+				...steps[ 1 ],
+				id: 'step-three',
+				className: 'step-three',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const { getByText } = render( <MyCheckout steps={ [ stepOne, stepTwo, stepThree ] } /> );
+			const completeAllButton = getByText( 'Complete all steps' );
+			const user = userEvent.setup();
+			await user.click( completeAllButton );
+			await waitFor( () => {
+				const submitButton = getByText( 'Pay Please' );
+				expect( submitButton ).not.toBeDisabled();
+			} );
+		} );
+
+		it( 'does not complete all steps when useCompleteAllSteps is used and one step cannot be completed', async () => {
+			function CompleteAllButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-one',
+				className: 'step-one',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				id: 'step-two',
+				className: 'step-two',
+				isCompleteCallback: () => Promise.resolve( false ),
+			};
+			const stepThree = {
+				...steps[ 1 ],
+				id: 'step-three',
+				className: 'step-three',
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Three Active</span>
+						<CompleteAllButton />
+					</div>
+				),
+			};
+			const { getByText } = render( <MyCheckout steps={ [ stepOne, stepTwo, stepThree ] } /> );
+			const completeAllButton = getByText( 'Complete all steps' );
+			const user = userEvent.setup();
+			await user.click( completeAllButton );
+			const submitButton = getByText( 'Pay Please' );
+			expect( submitButton ).toBeDisabled();
 		} );
 
 		it( 'renders the continue button enabled if the step is active and complete', async () => {

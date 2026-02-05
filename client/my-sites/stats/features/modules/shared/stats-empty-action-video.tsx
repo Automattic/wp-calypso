@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { upload } from '@wordpress/icons';
+import { video } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
@@ -10,14 +10,14 @@ import {
 } from 'calypso/my-sites/stats/const';
 import type { StatsEmptyActionProps } from './';
 
-const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) => {
+const StatsEmptyActionVideo: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	return (
 		<EmptyStateAction
-			icon={ upload }
-			text={ translate( 'Upload videos with VideoPress' ) }
+			icon={ video }
+			text={ translate( 'Learn more about VideoPress' ) }
 			analyticsDetails={ {
 				from: from,
 				feature: 'videopress',
@@ -35,4 +35,4 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 	);
 };
 
-export default StatsEmptyActionEmail;
+export default StatsEmptyActionVideo;

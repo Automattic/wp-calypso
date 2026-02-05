@@ -297,6 +297,10 @@ A React Hook that will return a function to set a step to be the active step. On
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
 
+### useCompleteAllSteps
+
+A React Hook that will return a function to attempt to complete all steps in the current `CheckoutStepGroup`. Only works within a step. The returned function looks like `() => Promise< boolean >;`. Calling this function will attempt to complete each step in order by calling each step's `isCompleteCallback` prop, ignoring steps that are already complete. The process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all steps were completed successfully and false if any step failed.
+
 ### useTogglePaymentMethod
 
 A React Hook that returns a function which can be called to enable or disable a payment method from the list of payment methods provided to [CheckoutProvider](#CheckoutProvider). Only works within `CheckoutProvider`.
