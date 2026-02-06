@@ -4,7 +4,7 @@ import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
@@ -193,7 +193,7 @@ export default function WPCOMBusinessAT( {
 
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
-	const retryCountRef = useRef( 0 );
+	const [ retryCount, setRetryCount ] = useState( 0 );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
@@ -233,7 +233,7 @@ export default function WPCOMBusinessAT( {
 
 		// Transfer is completed but site is not yet recognized as Jetpack - poll for updated site data
 		if ( ! isJetpack ) {
-			if ( retryCountRef.current >= STARTER_SITE_POLL_MAX_ATTEMPTS ) {
+			if ( retryCount >= STARTER_SITE_POLL_MAX_ATTEMPTS ) {
 				dispatch(
 					errorNotice(
 						translate(
@@ -246,7 +246,7 @@ export default function WPCOMBusinessAT( {
 			}
 
 			const timeoutId = setTimeout( () => {
-				retryCountRef.current++;
+				setRetryCount( ( count ) => count + 1 );
 				dispatch( requestSite( siteId ) );
 			}, STARTER_SITE_POLL_DELAY_MS );
 
@@ -254,7 +254,7 @@ export default function WPCOMBusinessAT( {
 		}
 
 		// Transfer is completed and site is a Jetpack site - reset retry counter and show success notice
-		retryCountRef.current = 0;
+		setRetryCount( 0 );
 		dispatch(
 			successNotice(
 				translate( '%s is now active', {
@@ -270,7 +270,15 @@ export default function WPCOMBusinessAT( {
 			)
 		);
 		onActivationResolved?.();
-	}, [ automatedTransferStatus, dispatch, header, isJetpack, onActivationResolved, siteId ] );
+	}, [
+		automatedTransferStatus,
+		dispatch,
+		header,
+		isJetpack,
+		onActivationResolved,
+		retryCount,
+		siteId,
+	] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
