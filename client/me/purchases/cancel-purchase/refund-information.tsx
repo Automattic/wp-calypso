@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isDomainRegistration } from '@automattic/calypso-products';
+import { isDomainRegistration, isWpComPlan } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import i18n from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -52,7 +52,21 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if (
+			isSubscription( purchase ) &&
+			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+			isWpComPlan( purchase?.productSlug )
+		) {
+			text = i18n.translate(
+				"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
+					'Once it expires, it will be automatically removed from your site.',
+				{
+					args: {
+						productName: getName( purchase ),
+					},
+				}
+			);
+		} else if ( isSubscription( purchase ) ) {
 			text = [
 				i18n.translate(
 					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
