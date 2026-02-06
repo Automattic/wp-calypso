@@ -1078,6 +1078,31 @@ export const siteSettingsCrontabAddRoute = createRoute( {
 	)
 );
 
+export const siteSettingsCrontabEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit scheduled job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '$cronId/edit',
+	parseParams: ( params ) => ( {
+		cronId: Number( params.cronId ),
+	} ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteSettingsTransferSiteRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1479,6 +1504,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsCrontabRoute.addChildren( [
 			siteSettingsCrontabIndexRoute,
 			siteSettingsCrontabAddRoute,
+			siteSettingsCrontabEditRoute,
 		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
