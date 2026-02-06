@@ -56,10 +56,10 @@ function concatUint8Array( ...arrays: Uint8Array[] ): Uint8Array {
  */
 function concatBytes( totalBytes?: number ): TransformStream< Uint8Array, Uint8Array > {
 	if ( totalBytes === undefined ) {
-		let acc = new Uint8Array();
+		let acc: Uint8Array = new Uint8Array();
 		return new TransformStream< Uint8Array, Uint8Array >( {
 			transform( chunk ) {
-				acc = concatUint8Array( acc, chunk );
+				acc = concatUint8Array( acc, chunk ) as Uint8Array;
 			},
 			flush( controller ) {
 				controller.enqueue( acc );
@@ -305,7 +305,10 @@ export class ZipFilesystem implements ReadableFilesystemBackend {
 
 	async read( relativePath: string ): Promise< StreamedFile > {
 		const entry = await this.getEntry( relativePath );
-		const blob = await entry.getData!( new BlobWriter() );
+		if ( ! ( 'getData' in entry ) || ! entry.getData ) {
+			throw new Error( `Entry at ${ relativePath } is a directory, not a file.` );
+		}
+		const blob = await entry.getData( new BlobWriter() );
 		return new StreamedFile( blob.stream(), relativePath, {
 			filesize: entry.uncompressedSize,
 		} );
