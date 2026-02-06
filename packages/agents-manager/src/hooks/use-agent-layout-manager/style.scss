@@ -85,7 +85,7 @@
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -101,7 +101,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
 		border: 1px solid $border-color;
 		border-bottom: none;
 		box-sizing: border-box;
-		height: calc( var(--masterbar-height) + 1px );
+		height: calc( var( --masterbar-height ) + 1px );
 	}
 
 	#adminmenuback,
@@ -186,7 +186,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var(--masterbar-height) + 1px );
+			height: calc( var( --masterbar-height ) + 1px );
 
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
@@ -285,12 +285,16 @@ body.site-editor-php.agents-manager-sidebar-container {
 }
 
 // Fix for the search categories fixed top position on the plugins marketplace page
-.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary .plugins-browser--site-view .search-categories.fixed-top {
+.agents-manager-sidebar-container--sidebar-open
+	.layout__secondary
+	~ .layout__primary
+	.plugins-browser--site-view
+	.search-categories.fixed-top {
 	top: calc( $admin-bar-height + $layout-spacing + 1px );
 	left: -174px;
 	padding-top: 11px;
 	max-width: 1028px;
-	border-bottom: 1px solid var(--color-neutral-5);
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&::after {
 		display: none;
@@ -311,7 +315,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 }
 
-body:not(.modal-open) .agents-manager-chat--docked {
+body:not( .modal-open ) .agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -441,7 +445,7 @@ body:not(.modal-open) .agents-manager-chat--docked {
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
 	.Message-module_message ul {
-		margin-left: var(--spacing-2);
+		margin-left: var( --spacing-2 );
 	}
 
 	.Messages-module_container {
@@ -454,6 +458,24 @@ body:not(.modal-open) .agents-manager-chat--docked {
 		.EmptyView-module_container {
 			height: auto;
 			padding-block: 8px;
+		}
+
+		.big-sky__completed-plan:first-child {
+			margin-top: 0;
+		}
+
+		.big-sky-next-step-button {
+			margin-top: 20px;
+		}
+
+		// Add spacing after picker messages when followed by a message without completed-plan
+		.Message-module_message:has(
+				.big-sky__dock__menu__variation-picker,
+				.big-sky__dock__menu__pattern-picker
+			):has( + .Message-module_message ):not(
+				:has( + .Message-module_message .big-sky__completed-plan )
+			) {
+			margin-bottom: 24px;
 		}
 	}
 
@@ -570,7 +592,7 @@ body:not(.modal-open) .agents-manager-chat--docked {
 				&:hover {
 					color: $white;
 					background-color: #cc1818;
-					filter: brightness(90%);
+					filter: brightness( 90% );
 				}
 			}
 
@@ -612,17 +634,13 @@ body:not(.modal-open) .agents-manager-chat--docked {
 		max-width: 190px;
 	}
 
-	.big-sky__chat-actions::before:not(.has-confirmation-actions),
-	.big-sky__chat-actions::after:not(.has-confirmation-actions) {
-		backdrop-filter: blur(8px);
-		content: "";
+	.big-sky__chat-actions::before:not( .has-confirmation-actions ),
+	.big-sky__chat-actions::after:not( .has-confirmation-actions ) {
+		backdrop-filter: blur( 8px );
+		content: '';
 		height: 100%;
 		left: 0;
-		mask: linear-gradient(
-			to left,
-			rgba(255, 255, 255, 0.1),
-			rgba(255, 255, 255, 1)
-		);
+		mask: linear-gradient( to left, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
 		position: fixed;
 		top: 0;
 		width: 20px;
@@ -631,11 +649,7 @@ body:not(.modal-open) .agents-manager-chat--docked {
 	}
 
 	.big-sky__chat-actions::after {
-		mask: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0.1),
-			rgba(255, 255, 255, 1)
-		);
+		mask: linear-gradient( to right, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
 		left: auto;
 		right: 0;
 	}
@@ -881,7 +895,7 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 	ul {
 		list-style: disc;
-		margin-top: var(--spacing-3);
+		margin-top: var( --spacing-3 );
 	}
 
 	.Messages-module_container.Messages-module_emptyState {

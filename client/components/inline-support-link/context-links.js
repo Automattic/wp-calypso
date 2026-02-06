@@ -164,6 +164,11 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/database/',
 		post_id: 420896,
 	},
+	'hosting-cron': {
+		link: 'https://developer.wordpress.com/docs/guides/wp-cron-on-wordpress-com/',
+		post_id: 129808,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'hosting-elasticsearch': {
 		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',
 		post_id: 99387,
