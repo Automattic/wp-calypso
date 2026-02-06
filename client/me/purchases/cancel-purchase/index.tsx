@@ -661,19 +661,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
 
-		const refundAmountString = this.renderRefundAmountString(
-			purchase,
-			this.state.cancelBundledDomain,
-			includedDomainPurchase
-		);
-		const shouldShowRefundEligibilityNotice = Boolean(
-			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
-				refundAmountString &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
-		);
-		const cancelButtonProps = this.getCancelPurchaseButtonProps();
-
 		return (
 			<>
 				{ shouldShowDomainOptionsInline && (
@@ -693,13 +680,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				) }
 
 				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
-
-				{ shouldShowRefundEligibilityNotice && refundAmountString && (
-					<RefundEligibilityNotice
-						refundAmount={ refundAmountString }
-						cancelButtonProps={ cancelButtonProps }
-					/>
-				) }
 
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
@@ -903,6 +883,19 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			} );
 		}
 
+		const refundAmountString = this.renderRefundAmountString(
+			purchase,
+			this.state.cancelBundledDomain,
+			this.props.includedDomainPurchase
+		);
+		const shouldShowRefundEligibilityNotice = Boolean(
+			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+				refundAmountString &&
+				isPlan( purchase ) &&
+				isWpComPlan( purchase?.productSlug )
+		);
+		const cancelButtonProps = this.getCancelPurchaseButtonProps();
+
 		return (
 			<>
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
@@ -943,6 +936,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						headerText={ heading }
 						align="left"
 					/>
+
+					{ shouldShowRefundEligibilityNotice && refundAmountString && (
+						<RefundEligibilityNotice
+							refundAmount={ refundAmountString }
+							cancelButtonProps={ cancelButtonProps }
+						/>
+					) }
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
