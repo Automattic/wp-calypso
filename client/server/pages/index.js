@@ -206,7 +206,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
-			request.query.hasOwnProperty( 'useTranslationChunks' ),
+			'useTranslationChunks' in request.query,
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
 		hideWooHostedLogo: shouldHideWooHostedLogo( request.url ?? '' ),
