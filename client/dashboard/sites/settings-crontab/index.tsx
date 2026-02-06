@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useLocale } from '../../app/locale';
 import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
@@ -44,6 +45,7 @@ const DEFAULT_VIEW: View = {
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -92,9 +94,19 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		{
 			id: 'schedule',
 			label: __( 'Schedule' ),
-			getValue: ( { item }: { item: Crontab } ) => item.schedule,
+			getValue: ( { item }: { item: Crontab } ) => {
+				const label = getScheduleLabel( item.schedule );
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
+				return `${ label } ${ cronDescription } ${ item.schedule }`;
+			},
 			render: ( { item }: { item: Crontab } ) => {
-				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
 
 				return (
 					<div>
