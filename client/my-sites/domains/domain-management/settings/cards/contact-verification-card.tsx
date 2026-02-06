@@ -39,9 +39,11 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 						'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
 					) as string,
 					documents: [
-						translate( 'Valid passport' ) as string,
-						translate( 'Valid government-issued photo ID (Aadhaar, PAN, voter ID)' ) as string,
-						translate( 'Certificate of incorporation (for organizations)' ) as string,
+						translate( 'Valid passport or driving license' ) as string,
+						translate( 'Government-issued photo ID (e.g., Aadhaar, PAN, voter ID)' ) as string,
+						translate(
+							'For foreign nationals: government-issued documents, embassy letter, or income tax returns (last 2 years)'
+						) as string,
 					],
 					apiVerificationType: 'in_kyc',
 				};
