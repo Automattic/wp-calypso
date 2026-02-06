@@ -17,6 +17,12 @@ describe( 'shouldHideWooHostedLogo', () => {
 		expect( shouldHideWooHostedLogo( '/checkout/example.commerce-garden.com' ) ).toBe( true );
 	} );
 
+	it( 'returns true for Woo Hosted checkout plan slug', () => {
+		expect(
+			shouldHideWooHostedLogo( '/checkout/example.wordpress.com/woo_hosted_basic_plan_yearly' )
+		).toBe( true );
+	} );
+
 	it( 'returns true for checkout cancel_to Woo Hosted flow', () => {
 		expect(
 			shouldHideWooHostedLogo(

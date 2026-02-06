@@ -521,6 +521,15 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.hideWooHostedLogo ).toEqual( true );
 	} );
 
+	it( 'sets hideWooHostedLogo for Woo Hosted checkout plan URLs', async () => {
+		const { request } = await app.run( {
+			request: {
+				url: '/checkout/almost-inspiring-winner.commerce-garden.com/woo_hosted_basic_plan_yearly?redirect_to=%2F',
+			},
+		} );
+		expect( request.context.hideWooHostedLogo ).toEqual( true );
+	} );
+
 	it( 'sets the client ip', async () => {
 		const { request } = await app.run( { request: { ip: '192.168.0.1' } } );
 		expect( request.context.app.clientIp ).toEqual( '192.168.0.1' );

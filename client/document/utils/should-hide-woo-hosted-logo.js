@@ -32,8 +32,14 @@ function isWooHostedRedirect( redirectTo ) {
 }
 
 function isWooHostedCheckoutSlug( pathname ) {
-	const checkoutSlug = pathname.split( '/' )[ 2 ] ?? '';
-	return checkoutSlug.endsWith( '.commerce-garden.com' );
+	const [ , checkoutSiteSlug = '', checkoutPlanSlug = '' ] = pathname.split( '/' ).slice( 1 );
+	return (
+		isWooHostedPlanSlug( checkoutPlanSlug ) || checkoutSiteSlug.endsWith( '.commerce-garden.com' )
+	);
+}
+
+function isWooHostedPlanSlug( planSlug ) {
+	return planSlug.startsWith( 'woo_hosted_' );
 }
 
 function getPathDetails( path ) {
