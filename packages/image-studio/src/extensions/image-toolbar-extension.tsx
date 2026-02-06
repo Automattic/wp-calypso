@@ -34,7 +34,17 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			);
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
+					if ( image === null ) {
+						setAttributes( {
+							url: undefined,
+							id: undefined,
+							alt: '',
+							title: '',
+							caption: '',
+						} );
+						return;
+					}
 					if ( image?.id ) {
 						setAttributes( {
 							url: image.url,

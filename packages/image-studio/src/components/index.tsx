@@ -22,6 +22,9 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useDraftCleanup } from '../hooks/use-draft-cleanup';
+import { useDeletePermanently } from '../hooks/use-delete-permanently';
+import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
@@ -382,6 +385,7 @@ const ImageStudioContent = withInstanceId(
 		const {
 			isConfirmDialogOpen,
 			isExiting,
+			setIsExiting,
 			handleRequestClose,
 			handleConfirmSave,
 			handleConfirmDiscard,
@@ -396,6 +400,12 @@ const ImageStudioContent = withInstanceId(
 		const { deleteDraftsExcept } = useDraftCleanup();
 		const { handleRevertToOriginal, canRevert } = useRevertToOriginal( {
 			deleteDraftsExcept,
+		} );
+
+		// Delete permanently functionality
+		const { handleDeletePermanently, canDeletePermanently } = useDeletePermanently( {
+			onExit,
+			setIsExiting,
 		} );
 
 		const mode: ImageStudioMode = memoizedConfig?.attachmentId
@@ -540,7 +550,11 @@ const ImageStudioContent = withInstanceId(
 									exit={ { width: 0 } }
 									className="image-studio-modal__sidebar-inner"
 								>
-									<ImageStudioAltTextSidebar onClose={ () => setActiveToolbarOption( null ) } />
+									<ImageStudioAltTextSidebar
+										onClose={ () => setActiveToolbarOption( null ) }
+										onDeletePermanently={ handleDeletePermanently }
+										canDeletePermanently={ canDeletePermanently }
+									/>
 								</motion.div>
 							) }
 						</AnimatePresence>

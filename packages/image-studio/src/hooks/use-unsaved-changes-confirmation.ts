@@ -17,6 +17,7 @@ export interface UseUnsavedChangesConfirmationProps {
 export interface UseUnsavedChangesConfirmationReturn {
 	isConfirmDialogOpen: boolean;
 	isExiting: boolean;
+	setIsExiting: ( value: boolean ) => void;
 	handleRequestClose: () => void;
 	handleConfirmSave: () => Promise< void >;
 	handleConfirmDiscard: () => Promise< void >;
@@ -171,6 +172,7 @@ export function useUnsavedChangesConfirmation( {
 	return {
 		isConfirmDialogOpen,
 		isExiting,
+		setIsExiting,
 		handleRequestClose,
 		handleConfirmSave,
 		handleConfirmDiscard,

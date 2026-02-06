@@ -85,3 +85,26 @@
 	border-radius: 3px;
 	box-shadow: none;
 }
+
+// Override destructive button colors for dark background contrast
+// Default $alert-red (#cc1818) only achieves ~2.9:1 contrast on #1e1e1e
+// Using #f86368 achieves ~5.5:1 contrast (WCAG AA compliant)
+.image-studio-sidebar__content .components-button.is-destructive {
+	--wp-components-color-accent: #f86368;
+	--wp-components-color-accent-darker-10: #e65054;
+	--wp-components-color-accent-darker-20: #d63638;
+	color: #f86368;
+
+	&:hover:not(:disabled, [aria-disabled="true"]) {
+		color: #e65054;
+	}
+
+	&:focus:not(:active) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) #f86368;
+	}
+
+	&:disabled,
+	&[aria-disabled="true"] {
+		color: #949494; // $gray-600 equivalent - meets 3:1 for disabled state
+	}
+}

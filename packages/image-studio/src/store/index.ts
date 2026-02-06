@@ -244,7 +244,7 @@ type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
 
-type ImageStudioCloseCallback = ( image: ImageData ) => Promise< void > | void;
+type ImageStudioCloseCallback = ( image: ImageData | null ) => Promise< void > | void;
 
 type ImageStudioAction =
 	| OpenImageStudioAction
@@ -996,18 +996,19 @@ const selectors = {
 			return false;
 		}
 
-		// If user hasn't explicitly saved yet (no checkpoint)
-		if ( state.lastSavedAttachmentId === null ) {
-			// When editing existing image: compare current with original
-			if ( state.originalAttachmentId !== null ) {
-				return state.imageStudioAttachmentId !== state.originalAttachmentId;
-			}
-			// When generating from scratch: any generated image is unsaved
-			return true;
+		// If the current image is the original, no unsaved changes (it's already in the library)
+		if ( state.imageStudioAttachmentId === state.originalAttachmentId ) {
+			return false;
 		}
 
-		// User has saved at least once: compare current with last checkpoint
-		return state.imageStudioAttachmentId !== state.lastSavedAttachmentId;
+		// If the current image has been explicitly saved, no unsaved changes
+		// This handles navigation between saved revisions correctly
+		if ( state.savedAttachmentIds.includes( state.imageStudioAttachmentId ) ) {
+			return false;
+		}
+
+		// Everything else is unsaved (drafts, newly generated images not yet saved)
+		return true;
 	},
 
 	getIsExitConfirmed( state: ImageStudioState ): boolean {

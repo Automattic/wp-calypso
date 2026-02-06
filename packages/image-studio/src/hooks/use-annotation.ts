@@ -28,23 +28,17 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 		setImageStudioAiProcessing,
 		setIsAnnotationSaving,
 		addAnnotatedAttachmentId,
-		setDraftIds,
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-	// Get current draftIds from store
-	const { draftIds, annotationCanvas, hasAnnotations, hasUndoneAnnotations } = useSelect(
-		( select ) => {
-			const selectors = select( imageStudioStore ) as any;
-			const canvasRef = selectors.getAnnotationCanvasRef();
-			return {
-				draftIds: selectors.getDraftIds(),
-				annotationCanvas: canvasRef,
-				hasAnnotations: canvasRef?.hasAnnotations?.() ?? false,
-				hasUndoneAnnotations: canvasRef?.hasUndoneAnnotations?.() ?? false,
-			};
-		},
-		[]
-	);
+	const { annotationCanvas, hasAnnotations, hasUndoneAnnotations } = useSelect( ( select ) => {
+		const selectors = select( imageStudioStore ) as any;
+		const canvasRef = selectors.getAnnotationCanvasRef();
+		return {
+			annotationCanvas: canvasRef,
+			hasAnnotations: canvasRef?.hasAnnotations?.() ?? false,
+			hasUndoneAnnotations: canvasRef?.hasUndoneAnnotations?.() ?? false,
+		};
+	}, [] );
 
 	// Helper function to get the latest attachment ID from the store
 	const getCurrentAttachmentId = useCallback( () => {
@@ -199,10 +193,6 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 				// Revoke the blob URL to free memory
 				URL.revokeObjectURL( blobUrl );
 
-				// Append annotation attachment ID to draftIds
-				const updatedDraftIds = [ ...draftIds, resolvedAttachmentId ];
-				setDraftIds( updatedDraftIds );
-
 				// Also update the "original" URL for successive annotations
 				// This ensures the next annotation builds on this one
 				setImageStudioOriginalImageUrl( uploadedUrl );
@@ -247,8 +237,6 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 		updateImageStudioCanvas,
 		setImageStudioOriginalImageUrl,
 		setImageStudioAiProcessing,
-		draftIds,
-		setDraftIds,
 		originalImageUrl,
 		addAnnotatedAttachmentId,
 		hasAnnotations,
