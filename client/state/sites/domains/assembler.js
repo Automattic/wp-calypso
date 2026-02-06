@@ -149,10 +149,7 @@ export const createSiteDomainObject = ( domain ) => {
 			domain.must_remove_privacy_before_contact_update
 		),
 		name: String( domain.domain ),
-		nominetDomainSuspended: Boolean( domain.nominet_domain_suspended ),
-		nominetPendingContactVerificationRequest: Boolean(
-			domain.nominet_pending_contact_verification_request
-		),
+		customVerifications: domain.custom_verifications ?? [],
 		owner: String( domain.owner ),
 		partnerDomain: Boolean( domain.partner_domain ),
 		pendingRegistration: Boolean( domain.pending_registration ),

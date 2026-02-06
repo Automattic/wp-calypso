@@ -92,8 +92,7 @@ export interface DomainData {
 	aftermarket_auction: boolean;
 	aftermarket_auction_start: unknown;
 	aftermarket_auction_end: string | null;
-	nominet_pending_contact_verification_request: boolean;
-	nominet_domain_suspended: boolean;
+	custom_verifications: string[];
 	transfer_status:
 		| 'pending_owner'
 		| 'pending_registry'
