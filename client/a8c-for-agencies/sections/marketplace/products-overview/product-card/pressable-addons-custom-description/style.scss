@@ -1,0 +1,53 @@
+.pressable-addons-custom-description {
+	.jetpack-product-info__description {
+		margin: 12px 0;
+	}
+}
+
+.pressable-addons-custom-description__icon {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	min-width: 52px;
+	width: 52px;
+	height: 52px;
+
+	img {
+		width: 27px;
+		height: 27px;
+	}
+}
+
+.pressable-addons-custom-description__callout {
+	align-items: center;
+	background: transparent;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	color: var(--color-text);
+	display: flex;
+	font-size: 14px;
+	gap: 8px;
+	line-height: 1.5;
+	margin: 12px 0 20px;
+	padding: 6px 10px;
+
+	svg {
+		flex-shrink: 0;
+	}
+}
+
+.pressable-addons-custom-description__section {
+	margin-top: 16px;
+}
+
+.pressable-addons-custom-description__details {
+	margin: 8px 0 0 16px;
+	padding: 0;
+
+	li {
+		margin-bottom: 8px;
+		color: var(--color-text-subtle);
+		font-size: 13px;
+		line-height: 1.4;
+	}
+}
