@@ -6,6 +6,7 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getVendorInfo } from '../lib/get-vendor-info';
+import PressableAddonsCustomDescription from '../product-card/pressable-addons-custom-description';
 import WooCustomFooter from '../product-card/woo-custom-footer';
 import WooPaymentsCustomDescription from '../product-card/woopayments-custom-description';
 import WooPaymentsRevenueShareNotice from '../product-card/woopayments-revenue-share-notice';
@@ -103,6 +104,15 @@ function withProductLightbox< T >(
 		}, [ asReferral, isSelected, quantity, translate ] );
 
 		const customDescription = useMemo( () => {
+			if ( currentProduct.slug.startsWith( 'pressable-addon-sites-' ) ) {
+				return (
+					<PressableAddonsCustomDescription
+						productName={ currentProduct.name }
+						productSlug={ currentProduct.slug }
+					/>
+				);
+			}
+
 			if ( currentProduct.slug === 'woocommerce-woopayments' ) {
 				return <WooPaymentsCustomDescription />;
 			}
