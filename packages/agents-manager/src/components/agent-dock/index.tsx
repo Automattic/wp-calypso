@@ -9,7 +9,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -35,6 +35,7 @@ import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
+	UseSuggestionsHook,
 	SiteBuildUtils,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
@@ -52,6 +53,8 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
+	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
@@ -65,6 +68,7 @@ export default function AgentDock( {
 	useNavigationContinuation,
 	useAbilitiesSetup,
 	getChatComponent,
+	useSuggestions,
 	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
@@ -72,6 +76,7 @@ export default function AgentDock( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ inputValue, setInputValue ] = useState( '' );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -112,7 +117,23 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 		clearSuggestions,
+		registerSuggestions,
 	} = useAgentChat( agentConfig );
+
+	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
+	const dynamicSuggestions = useSuggestions?.();
+
+	// Register dynamic suggestions whenever they change
+	useEffect( () => {
+		const suggestions = dynamicSuggestions?.suggestions;
+
+		if ( suggestions && suggestions.length > 0 ) {
+			registerSuggestions?.( suggestions );
+		} else {
+			// Clear suggestions when there are none
+			clearSuggestions?.();
+		}
+	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -290,11 +311,21 @@ export default function AgentDock( {
 		thinkingMessage,
 	] );
 
+	// Determine which suggestions to show following Big Sky's logic:
+	// - When there are dynamic suggestions (from block selection, etc.), show those
+	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	let displayedEmptyViewSuggestions: Suggestion[] = [];
+	if ( suggestions.length > 0 ) {
+		displayedEmptyViewSuggestions = suggestions;
+	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
+		displayedEmptyViewSuggestions = emptyViewSuggestions;
+	}
+
 	const Chat = (
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
-			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
+			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
 			onSubmit={ onSubmit }
@@ -308,6 +339,8 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
 		/>
 	);
 

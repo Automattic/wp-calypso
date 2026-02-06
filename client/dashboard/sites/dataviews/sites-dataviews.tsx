@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { SiteLink } from '../site-fields';
@@ -35,6 +36,7 @@ export function SitesDataViews( {
 
 	return (
 		<>
+			{ ! isLoading && <PerformanceTrackerStop id="dashboard-site-list" /> }
 			<DataViewsCard>
 				<DataViews< Site >
 					getItemId={ ( item ) => item.ID.toString() }
