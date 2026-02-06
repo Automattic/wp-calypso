@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isPlan,
+	isWpComPlan,
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -664,7 +666,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.state.cancelBundledDomain,
 			includedDomainPurchase
 		);
-		const shouldShowRefundEligibilityNotice = Boolean( refundAmountString && isPlan( purchase ) );
+		const shouldShowRefundEligibilityNotice = Boolean(
+			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+				refundAmountString &&
+				isPlan( purchase ) &&
+				isWpComPlan( purchase?.productSlug )
+		);
 		const cancelButtonProps = this.getCancelPurchaseButtonProps();
 
 		return (

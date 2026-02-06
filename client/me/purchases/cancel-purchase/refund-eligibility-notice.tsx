@@ -27,7 +27,7 @@ const RefundEligibilityNotice = ( {
 				) }{ ' ' }
 				<CancelPurchaseButton
 					{ ...cancelButtonProps }
-					textOverride={ translate( 'Remove plan and claim refund.' ) }
+					textVariant="remove-plan-and-claim-refund"
 					isLinkStyle
 					isInline
 				/>

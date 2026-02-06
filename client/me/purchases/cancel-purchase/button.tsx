@@ -45,7 +45,7 @@ export interface CancelPurchaseButtonProps {
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
-	textOverride?: string;
+	textVariant?: string;
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	activeSubscriptions: Array< { id: number; productName: string } >;
@@ -164,33 +164,35 @@ class CancelPurchaseButton extends Component<
 		const needsDomainOptionsStep =
 			this.props.includedDomainPurchase &&
 			! willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
-		const text =
-			this.props.textOverride ??
-			( () => {
-				if ( includedDomainPurchase && needsDomainOptionsStep ) {
-					return translate( 'Continue with cancellation' );
-				}
+		const text = ( () => {
+			if ( this.props.textVariant === 'remove-plan-and-claim-refund' ) {
+				return translate( 'Remove plan and claim refund' );
+			}
 
-				if ( hasAmountAvailableToRefund( purchase ) ) {
-					if ( isDomainRegistration( purchase ) ) {
-						return translate( 'Cancel domain and refund' );
-					}
-					if ( isSubscription( purchase ) ) {
-						return translate( 'Cancel subscription' );
-					}
-					if ( isOneTimePurchase( purchase ) ) {
-						return translate( 'Cancel and refund' );
-					}
-				}
+			if ( includedDomainPurchase && needsDomainOptionsStep ) {
+				return translate( 'Continue with cancellation' );
+			}
 
+			if ( hasAmountAvailableToRefund( purchase ) ) {
 				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain' );
+					return translate( 'Cancel domain and refund' );
 				}
-
 				if ( isSubscription( purchase ) ) {
 					return translate( 'Cancel subscription' );
 				}
-			} )();
+				if ( isOneTimePurchase( purchase ) ) {
+					return translate( 'Cancel and refund' );
+				}
+			}
+
+			if ( isDomainRegistration( purchase ) ) {
+				return translate( 'Cancel domain' );
+			}
+
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription' );
+			}
+		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions, isLoading, showDialog } =
