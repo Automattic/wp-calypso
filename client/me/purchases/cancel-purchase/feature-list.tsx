@@ -7,9 +7,11 @@ import type { Purchases } from '@automattic/data-stores';
 const CancelPurchaseFeatureList = ( {
 	purchase,
 	cancellationFeatures,
+	useRefundableWpcomCopy = false,
 }: {
 	purchase: Purchases.Purchase;
 	cancellationFeatures: string[];
+	useRefundableWpcomCopy?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -20,7 +22,7 @@ const CancelPurchaseFeatureList = ( {
 	return (
 		<div className="cancel-purchase__features">
 			<p>
-				{ isRefundable( purchase )
+				{ isRefundable( purchase ) || ! useRefundableWpcomCopy
 					? translate(
 							'By canceling the %(productName)s plan, these features will no longer be available on your site:',
 							{

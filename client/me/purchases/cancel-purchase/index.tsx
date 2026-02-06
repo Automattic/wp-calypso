@@ -649,7 +649,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		);
 	};
 
-	renderMainContent = () => {
+	renderMainContent = ( options?: { useRefundableWpcomCopy?: boolean } ) => {
 		const { purchase, isJetpackPurchase, includedDomainPurchase, atomicTransfer } = this.props;
 		const plan = getPlan( purchase?.productSlug );
 
@@ -689,6 +689,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				<CancelPurchaseFeatureList
 					purchase={ purchase }
 					cancellationFeatures={ cancellationFeatures }
+					useRefundableWpcomCopy={ options?.useRefundableWpcomCopy }
 				/>
 
 				{ cancellationFeatures.length
@@ -948,7 +949,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						<div className="cancel-purchase__left">
 							{ this.state.showDomainOptionsStep
 								? this.renderDomainOptionsContent()
-								: this.renderMainContent() }
+								: this.renderMainContent( {
+										useRefundableWpcomCopy: shouldShowRefundEligibilityNotice,
+								  } ) }
 						</div>
 
 						<div className="cancel-purchase__right">
