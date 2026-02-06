@@ -4,17 +4,8 @@ import {
 	resolveRemoteBlueprint,
 } from '@wp-playground/blueprints';
 import { type Blueprint, type SupportedPHPVersion } from '@wp-playground/client';
+import { ZipFilesystem } from '@wp-playground/storage';
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
-
-/**
- * Duck typing check to determine if a BlueprintBundle is a ZIP filesystem.
- * ZipFilesystem has a private 'zipReader' property that other implementations don't have.
- * This avoids importing @wp-playground/storage directly,
- * which at the time was forcing a "yarn dedupe" risking breaking something in production.
- */
-function isZipFilesystem( fs: BlueprintBundle ): boolean {
-	return 'zipReader' in fs;
-}
 
 const DEFAULT_BLUEPRINT: BlueprintV1Declaration = {
 	preferredVersions: {
@@ -173,7 +164,7 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Bl
 	const resolvedBlueprint = await resolveBlueprintFromURL( url );
 
 	// ZIP bundles pass through unchanged
-	if ( isZipFilesystem( resolvedBlueprint ) ) {
+	if ( resolvedBlueprint instanceof ZipFilesystem ) {
 		return resolvedBlueprint as BlueprintBundle;
 	}
 

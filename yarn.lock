@@ -13852,7 +13852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wp-playground/storage@npm:3.0.46":
+"@wp-playground/storage@npm:3.0.46, @wp-playground/storage@npm:^3.0.46":
   version: 3.0.46
   resolution: "@wp-playground/storage@npm:3.0.46"
   dependencies:
@@ -39320,6 +39320,7 @@ __metadata:
     "@wordpress/viewport": "npm:^6.23.0"
     "@wp-playground/blueprints": "npm:^3.0.46"
     "@wp-playground/client": "npm:^3.0.46"
+    "@wp-playground/storage": "npm:^3.0.46"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.24.5"
