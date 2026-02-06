@@ -10,6 +10,7 @@ interface Props {
 	openSidebar: () => void;
 	closeSidebar: () => void;
 	setIsCompactMode: ( isCompact: boolean ) => void;
+	setShouldRenderChat: ( shouldRender: boolean ) => void;
 }
 
 export default function useCustomEventHandler( {
@@ -18,6 +19,7 @@ export default function useCustomEventHandler( {
 	openSidebar,
 	closeSidebar,
 	setIsCompactMode,
+	setShouldRenderChat,
 }: Props ) {
 	const { hasLoaded, isOpen, isDocked } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -87,6 +89,17 @@ export default function useCustomEventHandler( {
 		[ setIsCompactMode ]
 	);
 
+	const handleSetEnabled = useCallback(
+		( isEnabled: unknown ) => {
+			if ( typeof isEnabled !== 'boolean' ) {
+				return;
+			}
+
+			setShouldRenderChat( isEnabled );
+		},
+		[ setShouldRenderChat ]
+	);
+
 	const handleGetState = useCallback( () => {
 		// Only dispatch state if it has loaded
 		if ( ! hasLoaded ) {
@@ -131,6 +144,8 @@ export default function useCustomEventHandler( {
 				handleSetDocked( detail.payload );
 			} else if ( detail.type === 'SET_CHAT_COMPACT_MODE' ) {
 				handleSetCompactMode( detail.payload );
+			} else if ( detail.type === 'SET_CHAT_ENABLED' ) {
+				handleSetEnabled( detail.payload );
 			} else if ( detail.type === 'GET_CHAT_STATE' ) {
 				handleGetState();
 			}
@@ -138,5 +153,12 @@ export default function useCustomEventHandler( {
 
 		window.addEventListener( 'agents-manager:action', handler );
 		return () => window.removeEventListener( 'agents-manager:action', handler );
-	}, [ handleNavigate, handleSetDocked, handleSetOpen, handleSetCompactMode, handleGetState ] );
+	}, [
+		handleNavigate,
+		handleSetDocked,
+		handleSetOpen,
+		handleSetCompactMode,
+		handleSetEnabled,
+		handleGetState,
+	] );
 }

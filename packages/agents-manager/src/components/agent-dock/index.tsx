@@ -78,6 +78,7 @@ export default function AgentDock( {
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isCompactMode, setIsCompactMode ] = useState( false );
+	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -206,7 +207,14 @@ export default function AgentDock( {
 		setThinkingMessage,
 	} );
 
-	useCustomEventHandler( { dock, undock, openSidebar, closeSidebar, setIsCompactMode } );
+	useCustomEventHandler( {
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		setIsCompactMode,
+		setShouldRenderChat,
+	} );
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -397,15 +405,18 @@ export default function AgentDock( {
 		/>
 	);
 
-	return createAgentPortal(
-		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-		<Routes>
-			<Route path="/chat" element={ Chat } />
-			<Route path="/post" element={ SupportGuideRoute } />
-			<Route path="/zendesk" element={ ZendeskChatRoute } />
-			<Route path="/support-guides" element={ SupportGuidesRoute } />
-			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
-		</Routes>
+	return (
+		shouldRenderChat &&
+		createAgentPortal(
+			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+			<Routes>
+				<Route path="/chat" element={ Chat } />
+				<Route path="/post" element={ SupportGuideRoute } />
+				<Route path="/zendesk" element={ ZendeskChatRoute } />
+				<Route path="/support-guides" element={ SupportGuidesRoute } />
+				<Route path="/history" element={ History } />
+				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
+			</Routes>
+		)
 	);
 }
