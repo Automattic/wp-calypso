@@ -85,7 +85,7 @@ export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
 }
 
 export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForFeaturesGrid( {} );
+	return resolveFeatureGroupsForFeaturesGrid();
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid( props?: {
