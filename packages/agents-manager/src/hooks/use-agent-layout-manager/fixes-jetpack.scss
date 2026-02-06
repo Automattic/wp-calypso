@@ -1,4 +1,5 @@
 body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
+	&.jetpack_page_akismet-key-config,
 	&.jetpack_page_jetpack-search,
 	&.jetpack_page_my-jetpack,
 	&.toplevel_page_jetpack {
