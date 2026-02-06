@@ -75,16 +75,32 @@ export default function useCustomEventHandler( {
 	);
 
 	const handleGetState = useCallback( () => {
+		// Only dispatch state if it has loaded
+		if ( ! hasLoaded ) {
+			return;
+		}
+
 		// Dispatch a custom event with the current state
 		const stateEvent = new CustomEvent( 'agents-manager:state', {
 			detail: {
-				hasLoaded,
 				isOpen,
 				isDocked,
 			},
 		} );
 		window.dispatchEvent( stateEvent );
 	}, [ hasLoaded, isOpen, isDocked ] );
+
+	// Automatically notify external apps once when state is loaded
+	useEffect(
+		() => {
+			if ( hasLoaded ) {
+				handleGetState();
+			}
+		},
+		// Only run when hasLoaded changes, not when isOpen/isDocked change
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ hasLoaded ]
+	);
 
 	useEffect( () => {
 		const handler = ( event: Event ) => {
