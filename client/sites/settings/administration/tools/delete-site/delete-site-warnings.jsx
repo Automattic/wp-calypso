@@ -4,7 +4,12 @@ import PropTypes from 'prop-types';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 
-function DeleteSiteWarnings( { siteSlug, p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
+function DeleteSiteWarnings( {
+	siteSlug,
+	p2HubP2Count,
+	isAtomicRemovalInProgress,
+	isTrialSite = false,
+} ) {
 	const translate = useTranslate();
 
 	const getButtons = () => {
