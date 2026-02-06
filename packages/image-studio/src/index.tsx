@@ -20,15 +20,11 @@ import {
  * Type definitions
  */
 
-interface ImageStudioGlobal {
+interface ImageStudioData {
 	enabled?: boolean;
 }
 
-declare global {
-	interface Window {
-		imageStudio?: ImageStudioGlobal;
-	}
-}
+declare const imageStudioData: ImageStudioData | undefined;
 
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
@@ -36,13 +32,13 @@ declare global {
  */
 function initImageStudioIntegration(): void {
 	// Validate required globals
-	if ( ! window.imageStudio ) {
+	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
 		return;
 	}
 
 	// Create container for the React app
 	const container = document.createElement( 'div' );
-	container.id = 'big-sky-image-studio-integration';
+	container.id = 'image-studio-integration-root';
 	document.body.appendChild( container );
 
 	const root = createRoot( container );
