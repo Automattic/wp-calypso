@@ -1,4 +1,8 @@
-import { domainWhoisQuery, domainContactVerificationMutation } from '@automattic/api-queries';
+import {
+	domainQuery,
+	domainWhoisQuery,
+	domainContactVerificationMutation,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -23,21 +27,72 @@ import { findRegistrantWhois } from '../../utils/domain';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export default function DomainContactVerification() {
-	const { domainName } = domainRoute.useParams();
+interface VerificationConfig {
+	title: string;
+	description: string;
+	documents: string[];
+	verificationType: string;
+}
+
+const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
+	nominet_contact: {
+		title: __( 'Additional contact verification required for your domain' ),
+		description: __(
+			'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
+		),
+		documents: [
+			__( 'Valid drivers\u2019 license' ),
+			__( 'Valid national ID cards (for non-UK residents)' ),
+			__( 'Utility bills (last 3 months)' ),
+			__( 'Bank statement (last 3 months)' ),
+			__( 'HMRC tax notification (last 3 months)' ),
+		],
+		verificationType: 'nominet',
+	},
+	nominet_suspended: {
+		title: __( 'Your domain has been suspended' ),
+		description: __(
+			'Nominet, the organization that manages .uk domains, has suspended your domain due to unverified contact information. Please submit verification documents to restore your domain.'
+		),
+		documents: [
+			__( 'Valid drivers\u2019 license' ),
+			__( 'Valid national ID cards (for non-UK residents)' ),
+			__( 'Utility bills (last 3 months)' ),
+			__( 'Bank statement (last 3 months)' ),
+			__( 'HMRC tax notification (last 3 months)' ),
+		],
+		verificationType: 'nominet',
+	},
+	in_kyc: {
+		title: __( 'Identity verification required for your .in domain' ),
+		description: __(
+			'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
+		),
+		documents: [
+			__( 'Valid passport' ),
+			__( 'Valid government-issued photo ID (Aadhaar, PAN, voter ID)' ),
+			__( 'Certificate of incorporation (for organizations)' ),
+		],
+		verificationType: 'in_kyc',
+	},
+};
+
+function VerificationCard( {
+	config,
+	domainName,
+	registrantWhoisData,
+}: {
+	config: VerificationConfig;
+	domainName: string;
+	registrantWhoisData: ReturnType< typeof findRegistrantWhois >;
+} ) {
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
-	const { data: domainWhois } = useSuspenseQuery( domainWhoisQuery( domainName ) );
-	const registrantWhoisData = findRegistrantWhois( domainWhois );
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ error, setError ] = useState( false );
 	const { mutate: domainContactVerification, isPending: isSubmitting } = useMutation(
-		domainContactVerificationMutation( domainName )
+		domainContactVerificationMutation( domainName, config.verificationType )
 	);
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-
-	if ( ! registrantWhoisData ) {
-		return null;
-	}
 
 	const handleFilesSelected = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const files = event.currentTarget.files;
@@ -47,7 +102,9 @@ export default function DomainContactVerification() {
 		}
 
 		if ( files.length > 3 ) {
-			createErrorNotice( __( 'You can only upload up to three documents.' ), { type: 'snackbar' } );
+			createErrorNotice( __( 'You can only upload up to three documents.' ), {
+				type: 'snackbar',
+			} );
 			setSelectedFiles( null );
 			return;
 		}
@@ -60,22 +117,6 @@ export default function DomainContactVerification() {
 		}
 
 		setSelectedFiles( files );
-	};
-
-	const renderSelectedFileList = () => {
-		if ( ! selectedFiles || selectedFiles.length === 0 ) {
-			return <Text variant="muted">{ __( 'No selected files yet' ) }</Text>;
-		}
-
-		const fileList = [ ...selectedFiles ].map( ( file: File ) => (
-			<li key={ file.name }>{ file.name }</li>
-		) );
-		return (
-			<>
-				<Text as="p">{ __( 'Selected files:' ) }</Text>
-				<ul>{ fileList }</ul>
-			</>
-		);
 	};
 
 	const submitFiles = () => {
@@ -100,85 +141,125 @@ export default function DomainContactVerification() {
 		} );
 	};
 
-	const renderSubmittedMessage = () => {
-		return (
-			<Notice variant="success">
-				{ __(
-					'Thank you for submitting your documents for contact verification! If your domain was suspended, it may take up to a week for it to be unsuspended. Our support team will contact you via email if further actions are needed.'
-				) }
-			</Notice>
-		);
-	};
-
-	const renderErrorMessage = () => {
-		return (
-			<Notice variant="error">
-				{ __(
-					'An error occurred when uploading your files. Please try submitting them again. If the error persists, please contact our support team.'
-				) }
-			</Notice>
-		);
-	};
-
-	const renderInstructions = () => {
-		return (
-			<>
-				<Text as="p">
-					{ createInterpolateElement(
-						__(
-							'Please verify that the above information is correct and either <link>update</link> it or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:'
-						),
-						{
-							link: (
-								<RouterLinkButton
-									variant="link"
-									to={ domainContactInfoRoute.fullPath }
-									params={ { domainName } }
-								/>
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 3 }>
+					{ submitted && (
+						<Notice variant="success">
+							{ __(
+								'Thank you for submitting your documents for contact verification! If your domain was suspended, it may take up to a week for it to be unsuspended. Our support team will contact you via email if further actions are needed.'
+							) }
+						</Notice>
+					) }
+					{ error && (
+						<Notice variant="error">
+							{ __(
+								'An error occurred when uploading your files. Please try submitting them again. If the error persists, please contact our support team.'
+							) }
+						</Notice>
+					) }
+					<SectionHeader title={ config.title } level={ 3 } />
+					<Text as="p">{ config.description }</Text>
+					{ registrantWhoisData && (
+						<>
+							<Text as="p">{ __( 'This is your current contact information:' ) }</Text>
+							<VStack style={ { backgroundColor: '#f0f0f0', padding: '16px' } } spacing={ 1 }>
+								<Text as="p">
+									{ registrantWhoisData.fname } { registrantWhoisData.lname }
+								</Text>
+								{ registrantWhoisData.org && <Text>{ registrantWhoisData.org }</Text> }
+								<Text as="p">{ registrantWhoisData.email }</Text>
+								<Text as="p">{ registrantWhoisData.sa1 }</Text>
+								{ registrantWhoisData.sa2 && <Text>{ registrantWhoisData.sa2 }</Text> }
+								<Text as="p">
+									{ registrantWhoisData.city }
+									{ registrantWhoisData.sp && <span>, { registrantWhoisData.sp }</span> }
+									<span> { registrantWhoisData.pc }</span>
+								</Text>
+								<Text as="p">{ registrantWhoisData.country_code }</Text>
+								<Text as="p">{ registrantWhoisData.phone }</Text>
+								{ registrantWhoisData.fax && <Text>{ registrantWhoisData.fax }</Text> }
+							</VStack>
+						</>
+					) }
+					<Text as="p">
+						{ createInterpolateElement(
+							__(
+								'Please verify that the above information is correct and either <link>update</link> it or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:'
 							),
-						}
-					) }
-				</Text>
-				<ul>
-					<li>{ __( 'Valid drivers’ license' ) }</li>
-					<li>{ __( 'Valid national ID cards (for non-UK residents)' ) }</li>
-					<li>{ __( 'Utility bills (last 3 months)' ) }</li>
-					<li>{ __( 'Bank statement (last 3 months)' ) }</li>
-					<li>{ __( 'HMRC tax notification (last 3 months)' ) }</li>
-				</ul>
-				<Text>
-					{ __(
-						'Please upload a photo of the document on which the above name and address are clearly visible.'
-					) }
-				</Text>
-			</>
-		);
-	};
-
-	const renderContactInformation = () => {
-		return (
-			<>
-				<Text as="p">{ __( 'This is your current contact information:' ) }</Text>
-				<VStack style={ { backgroundColor: '#f0f0f0', padding: '16px' } } spacing={ 1 }>
-					<Text as="p">
-						{ registrantWhoisData.fname } { registrantWhoisData.lname }
+							{
+								link: (
+									<RouterLinkButton
+										variant="link"
+										to={ domainContactInfoRoute.fullPath }
+										params={ { domainName } }
+									/>
+								),
+							}
+						) }
 					</Text>
-					{ registrantWhoisData.org && <Text>{ registrantWhoisData.org }</Text> }
-					<Text as="p">{ registrantWhoisData.email }</Text>
-					<Text as="p">{ registrantWhoisData.sa1 }</Text>
-					{ registrantWhoisData.sa2 && <Text>{ registrantWhoisData.sa2 }</Text> }
-					<Text as="p">
-						{ registrantWhoisData.city }
-						{ registrantWhoisData.sp && <span>, { registrantWhoisData.sp }</span> }
-						<span> { registrantWhoisData.pc }</span>
+					<ul>
+						{ config.documents.map( ( doc ) => (
+							<li key={ doc }>{ doc }</li>
+						) ) }
+					</ul>
+					<Text>
+						{ __(
+							'Please upload a photo of the document on which the above name and address are clearly visible.'
+						) }
 					</Text>
-					<Text as="p">{ registrantWhoisData.country_code }</Text>
-					<Text as="p">{ registrantWhoisData.phone }</Text>
-					{ registrantWhoisData.fax && <Text>{ registrantWhoisData.fax }</Text> }
+					<FormFileUpload
+						accept="image/*,.pdf"
+						multiple
+						onChange={ handleFilesSelected }
+						disabled={ isSubmitting }
+						render={ ( { openFileDialog } ) => (
+							<Button variant="secondary" __next40pxDefaultSize onClick={ openFileDialog }>
+								{ __( 'Select files' ) }
+							</Button>
+						) }
+					/>
+					{ selectedFiles && selectedFiles.length > 0 ? (
+						<>
+							<Text as="p">{ __( 'Selected files:' ) }</Text>
+							<ul>
+								{ [ ...selectedFiles ].map( ( file: File ) => (
+									<li key={ file.name }>{ file.name }</li>
+								) ) }
+							</ul>
+						</>
+					) : (
+						<Text variant="muted">{ __( 'No selected files yet' ) }</Text>
+					) }
+					<HStack>
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							disabled={ ! selectedFiles || selectedFiles.length === 0 || isSubmitting }
+							isBusy={ isSubmitting }
+							onClick={ submitFiles }
+						>
+							{ __( 'Submit' ) }
+						</Button>
+					</HStack>
 				</VStack>
-			</>
-		);
-	};
+			</CardBody>
+		</Card>
+	);
+}
+
+export default function DomainContactVerification() {
+	const { domainName } = domainRoute.useParams();
+	const { data: domainWhois } = useSuspenseQuery( domainWhoisQuery( domainName ) );
+	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
+	const registrantWhoisData = findRegistrantWhois( domainWhois );
+
+	const customVerifications = domainData?.custom_verifications ?? [];
+
+	if ( customVerifications.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<PageLayout
@@ -187,53 +268,25 @@ export default function DomainContactVerification() {
 				<PageHeader
 					title={ __( 'Contact verification' ) }
 					description={ __(
-						'Verify your domain contact information to comply with ICANN requirements.'
+						'Verify your domain contact information to comply with registry requirements.'
 					) }
 				/>
 			}
 		>
-			{ submitted && renderSubmittedMessage() }
-			{ error && renderErrorMessage() }
-			<Card>
-				<CardBody>
-					<VStack spacing={ 3 }>
-						<SectionHeader
-							title={ __( 'Additional contact verification required for your domain' ) }
-							level={ 3 }
-						/>
-						<Text as="p">
-							{ __(
-								'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
-							) }
-						</Text>
-						{ renderContactInformation() }
-						{ renderInstructions() }
-						<FormFileUpload
-							accept="image/*,.pdf"
-							multiple
-							onChange={ handleFilesSelected }
-							disabled={ isSubmitting }
-							render={ ( { openFileDialog } ) => (
-								<Button variant="secondary" __next40pxDefaultSize onClick={ openFileDialog }>
-									{ __( 'Select files' ) }
-								</Button>
-							) }
-						/>
-						{ renderSelectedFileList() }
-						<HStack>
-							<Button
-								variant="primary"
-								__next40pxDefaultSize
-								disabled={ ! selectedFiles || selectedFiles.length === 0 || isSubmitting }
-								isBusy={ isSubmitting }
-								onClick={ submitFiles }
-							>
-								{ __( 'Submit' ) }
-							</Button>
-						</HStack>
-					</VStack>
-				</CardBody>
-			</Card>
+			{ customVerifications.map( ( verificationType ) => {
+				const config = VERIFICATION_CONFIG[ verificationType ];
+				if ( ! config ) {
+					return null;
+				}
+				return (
+					<VerificationCard
+						key={ verificationType }
+						config={ config }
+						domainName={ domainName }
+						registrantWhoisData={ registrantWhoisData }
+					/>
+				);
+			} ) }
 		</PageLayout>
 	);
 }
