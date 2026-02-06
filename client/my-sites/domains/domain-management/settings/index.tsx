@@ -629,8 +629,8 @@ const Settings = ( {
 			return null;
 		}
 
-		// Show the card only if the domain requires a verification from Nominet (or if it has been already suspended)
-		if ( ! domain.nominetDomainSuspended && ! domain.nominetPendingContactVerificationRequest ) {
+		const customVerifications = domain.customVerifications ?? [];
+		if ( customVerifications.length === 0 ) {
 			return null;
 		}
 
@@ -648,11 +648,15 @@ const Settings = ( {
 				} ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
-				<ContactVerificationCard
-					contactInformation={ contactInformation }
-					contactInformationUpdateLink={ contactInformationUpdateLink }
-					selectedDomainName={ selectedDomainName }
-				/>
+				{ customVerifications.map( ( verificationType ) => (
+					<ContactVerificationCard
+						key={ verificationType }
+						contactInformation={ contactInformation }
+						contactInformationUpdateLink={ contactInformationUpdateLink }
+						selectedDomainName={ selectedDomainName }
+						verificationType={ verificationType }
+					/>
+				) ) }
 			</Accordion>
 		);
 	};

@@ -10,10 +10,17 @@ import type { WhoisData } from '../types';
 
 import './style.scss';
 
+interface VerificationTypeConfig {
+	description: string;
+	documents: string[];
+	apiVerificationType: string;
+}
+
 interface Props {
 	contactInformation: WhoisData | undefined;
 	contactInformationUpdateLink: string | undefined;
 	selectedDomainName: string;
+	verificationType: string;
 }
 
 const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
@@ -23,6 +30,41 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 	const [ submitting, setSubmitting ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ error, setError ] = useState( false );
+
+	const getVerificationConfig = (): VerificationTypeConfig => {
+		switch ( props.verificationType ) {
+			case 'in_kyc':
+				return {
+					description: translate(
+						'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
+					) as string,
+					documents: [
+						translate( 'Valid passport' ) as string,
+						translate( 'Valid government-issued photo ID (Aadhaar, PAN, voter ID)' ) as string,
+						translate( 'Certificate of incorporation (for organizations)' ) as string,
+					],
+					apiVerificationType: 'in_kyc',
+				};
+			case 'nominet_contact':
+			case 'nominet_suspended':
+			default:
+				return {
+					description: translate(
+						'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
+					) as string,
+					documents: [
+						translate( "Valid drivers' license" ) as string,
+						translate( 'Valid national ID cards (for non-UK residents)' ) as string,
+						translate( 'Utility bills (last 3 months)' ) as string,
+						translate( 'Bank statement (last 3 months)' ) as string,
+						translate( 'HMRC tax notification (last 3 months)' ) as string,
+					],
+					apiVerificationType: 'nominet',
+				};
+		}
+	};
+
+	const verificationConfig = getVerificationConfig();
 
 	const renderContactInformation = () => {
 		const { contactInformation } = props;
@@ -57,11 +99,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 		return (
 			<div>
-				<p>
-					{ translate(
-						'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
-					) }
-				</p>
+				<p>{ verificationConfig.description }</p>
 				<p>{ translate( 'This is your current contact information:' ) }</p>
 				{ renderContactInformation() }
 				<p>
@@ -79,11 +117,9 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 					) }
 				</p>
 				<ul>
-					<li>{ translate( "Valid drivers' license" ) }</li>
-					<li>{ translate( 'Valid national ID cards (for non-UK residents)' ) }</li>
-					<li>{ translate( 'Utility bills (last 3 months)' ) }</li>
-					<li>{ translate( 'Bank statement (last 3 months)' ) }</li>
-					<li>{ translate( 'HMRC tax notification (last 3 months)' ) }</li>
+					{ verificationConfig.documents.map( ( doc ) => (
+						<li key={ doc }>{ doc }</li>
+					) ) }
 				</ul>
 				<p>
 					{ translate(
@@ -137,10 +173,11 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 		}
 
 		setSubmitting( true );
-		const formData: [ string, File, string ][] = [];
+		const formData: [ string, File | string, string? ][] = [];
 		[ ...selectedFiles ].forEach( ( file: File ) => {
 			formData.push( [ 'files[]', file, file.name ] );
 		} );
+		formData.push( [ 'verification_type', verificationConfig.apiVerificationType ] );
 
 		wpcom.req.post(
 			{
@@ -148,19 +185,19 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 				apiVersion: '1.1',
 				formData,
 			},
-			( error: Error ) => {
+			( submitError: Error ) => {
 				setSubmitting( false );
 
-				if ( error ) {
+				if ( submitError ) {
 					setError( true );
-					dispatch( errorNotice( error.message ) );
+					dispatch( errorNotice( submitError.message ) );
 					return;
 				}
 
 				setSubmitted( true );
 				setError( false );
 				dispatch(
-					successNotice( translate( 'Documents submitted for verification succcesfully!' ) )
+					successNotice( translate( 'Documents submitted for verification successfully!' ) )
 				);
 			}
 		);
