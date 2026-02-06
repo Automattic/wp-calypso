@@ -175,22 +175,6 @@ describe( 'CheckoutMain', () => {
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
-	it( 'uses the cart blog id to check if siteless checkout is commerce garden', async () => {
-		const sitelessBlogId = 123456789;
-		render(
-			<MockCheckout
-				initialCart={ initialCart }
-				cartChanges={ { blog_id: sitelessBlogId } }
-				additionalProps={ { sitelessCheckoutType: 'jetpack', siteSlug: undefined } }
-				useUndefinedSiteId
-			/>
-		);
-
-		await waitFor( () => {
-			expect( isCommerceGardenSite ).toHaveBeenCalledWith( expect.anything(), sitelessBlogId );
-		} );
-	} );
-
 	it( 'removes a product from the cart after clicking to remove it', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render(

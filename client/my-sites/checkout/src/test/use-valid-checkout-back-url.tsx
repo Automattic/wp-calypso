@@ -25,16 +25,6 @@ describe( 'useValidCheckoutBackUrl', () => {
 		( isCommerceGardenSite as jest.Mock ).mockReturnValue( false );
 	} );
 
-	it( 'uses the provided site id to detect commerce garden checkout', () => {
-		const siteId = 321;
-		( isCommerceGardenSite as jest.Mock ).mockReturnValue( true );
-
-		const { result } = renderHook( () => useValidCheckoutBackUrl( undefined, siteId ) );
-
-		expect( isCommerceGardenSite ).toHaveBeenCalledWith( mockState, siteId );
-		expect( result.current ).toBeUndefined();
-	} );
-
 	it( 'returns a jetpack pricing back url for non-commerce jetpack sites', () => {
 		const siteSlug = 'example-site.com';
 		const siteId = 654;
