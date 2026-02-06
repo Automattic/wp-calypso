@@ -13,7 +13,7 @@ import {
 	next,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo-color.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
