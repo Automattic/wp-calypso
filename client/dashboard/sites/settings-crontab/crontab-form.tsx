@@ -7,6 +7,7 @@ import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -129,13 +130,17 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 				id: 'command',
 				label: __( 'Command' ),
 				type: 'text' as const,
-				description: __(
-					'The command to execute (e.g., wp custom sync-products or bash custom-script.sh).'
-				),
 				Edit: ( props ) => (
 					<TextControl
 						label={ props.field.label }
-						help={ props.field.description }
+						help={ createInterpolateElement(
+							__(
+								'WP-CLI command (e.g., <code>wp custom sync-products</code>) or shell command (e.g., <code>bash custom-script.sh</code>) to be executed. Output redirection is also supported (e.g., <code>> /dev/null 2>&1</code>).'
+							),
+							{
+								code: <code />,
+							}
+						) }
 						value={ props.data.command }
 						onChange={ ( newValue ) => props.onChange( { [ props.field.id ]: newValue } ) }
 						disabled={ isPending }
