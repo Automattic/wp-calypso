@@ -515,8 +515,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.state.cancelBundledDomain,
 			includedDomainPurchase
 		);
+		const shouldUseDefaultFullText = Boolean(
+			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+				refundAmountString &&
+				isPlan( purchase ) &&
+				isWpComPlan( purchase?.productSlug )
+		);
 
-		if ( refundAmountString ) {
+		if ( refundAmountString && ! shouldUseDefaultFullText ) {
 			return translate(
 				'If you confirm this cancellation, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 				{
