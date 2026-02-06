@@ -96,7 +96,7 @@ export default function CrontabForm() {
 						label={ props.field.label }
 						help={ createInterpolateElement(
 							__(
-								'The command to execute (e.g., <code>wp custom sync-products</code> or <code>bash custom-script.sh</code>). You can include output redirection.'
+								'WP-CLI command (e.g., <code>wp custom sync-products</code>) or shell command (e.g., <code>bash custom-script.sh</code>) to be executed. Output redirection is also supported (e.g., <code>> /dev/null 2>&1</code>).'
 							),
 							{
 								code: <code />,
