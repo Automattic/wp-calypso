@@ -4,7 +4,7 @@ import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
@@ -37,7 +37,7 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
@@ -45,7 +45,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import isRequestingSite from 'calypso/state/sites/selectors/is-requesting-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -53,6 +52,8 @@ import type { AppState } from 'calypso/types';
 
 import './style.scss';
 import 'calypso/blocks/eligibility-warnings/style.scss';
+
+const { COMPLETE, START } = transferStates;
 
 interface BlockingHoldNoticeProps {
 	siteId: number;
@@ -149,7 +150,8 @@ function TransferFailureNotice( { transferStatus, productName }: TransferFailure
 		</Notice>
 	);
 }
-
+const STARTER_SITE_POLL_DELAY_MS = 3000;
+const STARTER_SITE_POLL_MAX_ATTEMPTS = 10;
 export default function WPCOMBusinessAT( {
 	content = vaultpressContent,
 }: { content?: AtomicContentSwitch } = {} ) {
@@ -168,8 +170,6 @@ export default function WPCOMBusinessAT( {
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
-
-	const { COMPLETE, START } = transferStates;
 
 	// Check if there's a blocking hold.
 	const cannotInitiateTransfer =
@@ -193,17 +193,19 @@ export default function WPCOMBusinessAT( {
 
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
-	const isFetchingSite = useSelector( ( state: AppState ) => isRequestingSite( state, siteId ) );
+	const retryCountRef = useRef( 0 );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
+
+	const { header, onActivationResolved } = content;
 
 	useEffect( () => {
 		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
 			setIsRewindActivating( false );
 			// Notify product-specific callback when activation settles
-			content.onActivationResolved?.();
+			onActivationResolved?.();
 		}
-	}, [ isRewindActivating, rewindAtomicDeactivated, content.onActivationResolved ] );
+	}, [ isRewindActivating, rewindAtomicDeactivated, onActivationResolved ] );
 
 	// Check if features are loaded
 	const featuresNotLoaded = useSelector(
@@ -229,20 +231,34 @@ export default function WPCOMBusinessAT( {
 			return;
 		}
 
-		// Transfer is completed but site is not yet recognized as Jetpack - refresh site data
+		// Transfer is completed but site is not yet recognized as Jetpack - poll for updated site data
 		if ( ! isJetpack ) {
-			// Only request if not already fetching to avoid duplicate requests
-			if ( ! isFetchingSite ) {
-				dispatch( requestSite( siteId ) );
+			if ( retryCountRef.current >= STARTER_SITE_POLL_MAX_ATTEMPTS ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'Activation is taking longer than expected. Please refresh the page to try again.'
+						),
+						{ id: 'jetpack-activation-timeout' }
+					)
+				);
+				return;
 			}
-			return;
+
+			const timeoutId = setTimeout( () => {
+				retryCountRef.current++;
+				dispatch( requestSite( siteId ) );
+			}, STARTER_SITE_POLL_DELAY_MS );
+
+			return () => clearTimeout( timeoutId );
 		}
 
-		// Transfer is completed and site is a Jetpack site - show success notice
+		// Transfer is completed and site is a Jetpack site - reset retry counter and show success notice
+		retryCountRef.current = 0;
 		dispatch(
 			successNotice(
 				translate( '%s is now active', {
-					args: content.header,
+					args: header,
 					comment:
 						'%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
 				} ),
@@ -253,8 +269,8 @@ export default function WPCOMBusinessAT( {
 				}
 			)
 		);
-		content.onActivationResolved?.();
-	}, [ COMPLETE, automatedTransferStatus, content, dispatch, isFetchingSite, isJetpack, siteId ] );
+		onActivationResolved?.();
+	}, [ automatedTransferStatus, dispatch, header, isJetpack, onActivationResolved, siteId ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
