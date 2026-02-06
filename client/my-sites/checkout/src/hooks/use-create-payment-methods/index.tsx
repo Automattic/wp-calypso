@@ -37,6 +37,7 @@ import { createPayPal } from '../../payment-methods/paypal-js';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
+import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -47,6 +48,7 @@ import type { ReactNode } from 'react';
 const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
+export { default as useCreateExistingPayPalPPCP } from './use-create-existing-paypal-ppcp';
 
 export function useCreatePayPalExpress( {
 	labelText,
@@ -471,6 +473,11 @@ export default function useCreatePaymentMethods( {
 		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
+	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
+		storedPaymentMethods: storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
+	} );
+
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
@@ -524,6 +531,7 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
+		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
 		stripeMethod,
@@ -547,6 +555,7 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			...existingPayPalPPCPMethods,
 			applePayMethod,
 			googlePayMethod,
 			paypalExpressMethod,

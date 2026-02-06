@@ -12,6 +12,13 @@ export function isPaymentMethodEnabled(
 		slug = 'existingCard';
 	}
 
+	// Existing PayPal PPCP agreements have unique slugs but here we need only
+	// know if PayPal PPCP is allowed.
+	if ( slug.startsWith( 'existingPayPalPPCP' ) ) {
+		// Allow existing PayPal PPCP if PayPal PPCP is enabled
+		slug = 'paypal-js';
+	}
+
 	// Redirect payments might not be possible in some cases - for example in the desktop app
 	if ( isRedirectPaymentMethod( slug ) && ! config.isEnabled( 'upgrades/redirect-payments' ) ) {
 		return false;
