@@ -114,10 +114,6 @@ describe( 'SiteOverview', () => {
 			.reply( 200, {} );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	it( 'renders the overview of a site with free plan', async () => {
 		mockSite( {
 			...site,

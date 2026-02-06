@@ -52,10 +52,6 @@ describe( 'Sites', () => {
 			.reply( 200, { sites: mockSites } );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	it( 'renders Add new site button', async () => {
 		render( <Sites />, {
 			user: {
