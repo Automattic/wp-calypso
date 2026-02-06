@@ -3,8 +3,10 @@
  */
 import { render } from '@testing-library/react';
 import { FlowRenderer } from '../index';
+import type { Flow, StepperStep } from '../types';
 
-const mockLoadingSpy = jest.fn( () => null );
+type LoadingProps = { hideLogo?: boolean };
+const mockLoadingSpy = jest.fn< void, [ LoadingProps ] >();
 
 jest.mock( '@automattic/components', () => ( {
 	WooDashboardLogo: () => <div data-testid="woo-dashboard-logo" />,
@@ -143,17 +145,16 @@ describe( 'FlowRenderer fallback', () => {
 	} );
 
 	it( 'passes hideLogo for Woo Hosted plans fallback', () => {
-		const flow = { name: 'woo-hosted-plans' } as any;
+		const flow = { name: 'woo-hosted-plans' } as unknown as Flow;
 		const steps = [
 			{
 				slug: 'plans',
 				asyncComponent: async () => ( { default: () => null } ),
 			},
-		] as any;
+		] as unknown as readonly StepperStep[];
 
 		render( <FlowRenderer flow={ flow } steps={ steps } /> );
 
-		expect( mockLoadingSpy ).toHaveBeenCalled();
-		expect( mockLoadingSpy.mock.calls[ 0 ][ 0 ].hideLogo ).toBe( true );
+		expect( mockLoadingSpy ).toHaveBeenCalledWith( expect.objectContaining( { hideLogo: true } ) );
 	} );
 } );
