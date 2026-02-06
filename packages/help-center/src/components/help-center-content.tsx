@@ -6,7 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, lazy, Suspense } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
@@ -16,7 +16,6 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { HelpCenterA4AContactForm } from './help-center-a4a-contact-form';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -26,6 +25,15 @@ import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 import './help-center-content.scss';
+
+// Lazy load HelpCenterA4AContactForm to code-split @wordpress/dataviews (and @wordpress/ui).
+// The webpack config bundles these packages instead of externalizing them,
+// so they won't appear in the asset.json dependencies list.
+const HelpCenterA4AContactForm = lazy( () =>
+	import( './help-center-a4a-contact-form' ).then( ( module ) => ( {
+		default: module.HelpCenterA4AContactForm,
+	} ) )
+);
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -148,7 +156,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					/>
 					<Route
 						path="/contact-form"
-						element={ source === 'a4a' ? <HelpCenterA4AContactForm /> : <HelpCenterContactForm /> }
+						element={
+							source === 'a4a' ? (
+								<Suspense fallback={ null }>
+									<HelpCenterA4AContactForm />
+								</Suspense>
+							) : (
+								<HelpCenterContactForm />
+							)
+						}
 					/>
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route

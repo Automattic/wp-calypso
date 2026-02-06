@@ -9,7 +9,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -18,10 +18,12 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import useCustomEventHandler from '../../hooks/use-custom-event-handler';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
+import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
+import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -32,8 +34,10 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	GetChatComponent,
+	UseSuggestionsHook,
+	SiteBuildUtils,
 } from '../../utils/load-external-providers';
-import type { Message as UILibraryMessage } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface AgentDockProps {
@@ -49,6 +53,11 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
+	useSuggestions?: UseSuggestionsHook;
+	/** Get a chat component by type for rendering in agent messages. */
+	getChatComponent?: GetChatComponent;
+	siteBuildUtils?: SiteBuildUtils;
 }
 
 export default function AgentDock( {
@@ -58,10 +67,16 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
+	getChatComponent,
+	useSuggestions,
+	siteBuildUtils,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
+	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
+	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ inputValue, setInputValue ] = useState( '' );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -78,7 +93,7 @@ export default function AgentDock( {
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
 
-	const { isDocked, canDock, dock, undock, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
@@ -102,7 +117,23 @@ export default function AgentDock( {
 		onSubmit,
 		abortCurrentRequest,
 		clearSuggestions,
+		registerSuggestions,
 	} = useAgentChat( agentConfig );
+
+	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
+	const dynamicSuggestions = useSuggestions?.();
+
+	// Register dynamic suggestions whenever they change
+	useEffect( () => {
+		const suggestions = dynamicSuggestions?.suggestions;
+
+		if ( suggestions && suggestions.length > 0 ) {
+			registerSuggestions?.( suggestions );
+		} else {
+			// Clear suggestions when there are none
+			clearSuggestions?.();
+		}
+	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -146,6 +177,10 @@ export default function AgentDock( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to UIMessage format and add to chat
 			addMessage( {
+				// Keep BigSky message properties without explicit mapping to keep linter happy
+				// BigSky messages sometimes have a 'context' field used by the
+				// site build to show the progress indicator
+				...message,
 				id: message.id,
 				role: message.role === 'assistant' ? 'agent' : 'user',
 				content: message.content,
@@ -163,7 +198,14 @@ export default function AgentDock( {
 				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
 			);
 		},
+		// This ensures the same session ID is used between Big Sky and Calypso agents,
+		// so that messages will be stored in the same conversation.
+		getSessionId: () => sessionId || getStoredSessionId(),
+		setIsBuildingSite,
+		setThinkingMessage,
 	} );
+
+	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -180,6 +222,8 @@ export default function AgentDock( {
 		if ( conversation.is_zendesk ) {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
+			const sessionId = conversation.session_id || '';
+
 			abortCurrentRequest();
 			setSessionId( sessionId );
 			navigate( '/chat', { state: { sessionId } } );
@@ -231,22 +275,58 @@ export default function AgentDock( {
 		return options;
 	};
 
-	// Filter out deleted messages and local tool running messages
 	const visibleMessages = useMemo( () => {
-		const filtered = messages.filter(
+		let currentMessages = messages;
+
+		currentMessages = currentMessages.filter(
 			( message ) =>
 				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
-		return filtered as unknown as UILibraryMessage[];
-	}, [ messages, deletedMessageIds ] );
+
+		// Group site-build messages only when needed
+		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
+
+		// Show progress card during styling phase (after structure, dock is visible)
+		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
+			// Show spinner during post-layout workflow (colors, fonts, images)
+			currentMessages = siteBuildUtils.groupSiteBuildMessages(
+				currentMessages,
+				isBuildingSite ? thinkingMessage : null
+			);
+		}
+
+		currentMessages = convertToolMessagesToComponents( {
+			messages: currentMessages,
+			getChatComponent,
+		} );
+
+		return currentMessages;
+	}, [
+		deletedMessageIds,
+		getChatComponent,
+		isBuildingSite,
+		messages,
+		siteBuildUtils,
+		thinkingMessage,
+	] );
+
+	// Determine which suggestions to show following Big Sky's logic:
+	// - When there are dynamic suggestions (from block selection, etc.), show those
+	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	let displayedEmptyViewSuggestions: Suggestion[] = [];
+	if ( suggestions.length > 0 ) {
+		displayedEmptyViewSuggestions = suggestions;
+	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
+		displayedEmptyViewSuggestions = emptyViewSuggestions;
+	}
 
 	const Chat = (
 		<AgentChat
 			messages={ visibleMessages }
 			suggestions={ suggestions }
-			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
-			isProcessing={ isProcessing || isThinking }
+			emptyViewSuggestions={ displayedEmptyViewSuggestions }
+			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
 			onSubmit={ onSubmit }
 			onAbort={ abortCurrentRequest }
@@ -259,6 +339,8 @@ export default function AgentDock( {
 			chatHeaderOptions={ getChatHeaderOptions() }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
 		/>
 	);
 

@@ -6,10 +6,9 @@ import {
 	useSuspenseQuery,
 	keepPreviousData,
 } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
@@ -19,7 +18,7 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews';
+import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -33,9 +32,8 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
-import EmptySitesState from './empty-sites-state';
+import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { OptInWelcomeModal } from './welcome-modal';
 import type {
@@ -183,7 +181,6 @@ function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: numb
 
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
-	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
@@ -228,24 +225,7 @@ export default function Sites() {
 		updateView( nextView );
 	};
 
-	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
-
-	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
-
-	const userHasNoSites = user.site_count === 0;
-
-	let emptyDescription = __( 'Get started by creating a new site.' );
-	if ( view.search ) {
-		emptyDescription = sprintf(
-			// Translators: %s is the search term used when looking for sites by title or domain name.
-			__(
-				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
-			),
-			view.search
-		);
-	} else if ( hasFilterOrSearch ) {
-		emptyDescription = __( 'Your search did not match any sites.' );
-	}
+	const userHasSites = user.site_count > 0;
 
 	useEffect( () => {
 		if ( sites ) {
@@ -261,37 +241,6 @@ export default function Sites() {
 		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
 		: filterSortAndPaginate( sites ?? [], view, fields );
 
-	const emptyState = (
-		<DataViewsEmptyState
-			title={ emptyTitle }
-			description={ emptyDescription }
-			illustration={ <img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } /> }
-			actions={
-				<>
-					{ view.search && (
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							onClick={ () => {
-								navigate( {
-									search: {
-										...currentSearchParams,
-										search: undefined,
-									},
-								} );
-							} }
-						>
-							{ __( 'Clear search' ) }
-						</Button>
-					) }
-					<Button __next40pxDefaultSize variant="primary" onClick={ () => setIsModalOpen( true ) }>
-						{ __( 'Add new site' ) }
-					</Button>
-				</>
-			}
-		/>
-	);
-
 	return (
 		<>
 			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
@@ -306,7 +255,7 @@ export default function Sites() {
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							userHasNoSites ? null : (
+							userHasSites && (
 								<Button
 									variant="primary"
 									onClick={ () => setIsModalOpen( true ) }
@@ -325,7 +274,7 @@ export default function Sites() {
 					</>
 				}
 			>
-				{ ! userHasNoSites ? (
+				{ userHasSites ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -333,13 +282,28 @@ export default function Sites() {
 						actions={ actions }
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
-						empty={ emptyState }
+						empty={
+							<DataViewsEmptyStateLayout
+								title={ __( 'No sites match your search' ) }
+								description={ __( 'Try again, or start a new site with the options below.' ) }
+								isBorderless
+							>
+								<EmptySitesSearchStateContent />
+							</DataViewsEmptyStateLayout>
+						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
 						onResetView={ resetView }
 					/>
 				) : (
-					<EmptySitesState />
+					<DataViewsEmptyStateLayout
+						title={ __( 'You don’t have any sites yet' ) }
+						description={ __(
+							'Start a site and begin creating, coding, or exploring what WordPress can do.'
+						) }
+					>
+						<EmptySitesStateContent />
+					</DataViewsEmptyStateLayout>
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:

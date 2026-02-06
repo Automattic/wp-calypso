@@ -3,11 +3,13 @@ import {
 	Editor,
 	loadBlocksWithCustomizations,
 	loadTextFormatting,
+	addApiMiddleware,
 } from '@automattic/verbum-block-editor';
+import { EmbedRequestParams } from '@automattic/verbum-block-editor/src/api';
 import { useMutation } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
 import * as heading from '@wordpress/block-library/build-module/heading';
-import { createBlock, parse, serialize, unregisterBlockType } from '@wordpress/blocks';
+import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -29,7 +31,17 @@ import './style.scss';
 // Initialize the editor blocks and text formatting.
 loadBlocksWithCustomizations( [ heading ] );
 loadTextFormatting( [ heading.name ] );
-unregisterBlockType( 'core/embed' );
+
+// Add API middleware for embeds.
+// This redirects `/wp-json/oembed/1.0/proxy` requests to the WordPress.com embed API.
+// Because we are not using verbum editor in site context.
+addApiMiddleware(
+	( embedURL: string ): EmbedRequestParams => ( {
+		path: '/verbum/embed',
+		query: `embed_url=${ encodeURIComponent( embedURL ) }`,
+		apiNamespace: 'wpcom/v2',
+	} )
+);
 
 export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
