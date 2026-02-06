@@ -92,7 +92,11 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		{
 			id: 'schedule',
 			label: __( 'Schedule' ),
-			getValue: ( { item }: { item: Crontab } ) => item.schedule,
+			getValue: ( { item }: { item: Crontab } ) => {
+				const label = getScheduleLabel( item.schedule );
+				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
+				return `${ label } ${ cronDescription } ${ item.schedule }`;
+			},
 			render: ( { item }: { item: Crontab } ) => {
 				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
 
