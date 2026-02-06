@@ -1,6 +1,6 @@
 import {
 	type BlueprintBundle,
-	BlueprintV1Declaration,
+	type BlueprintV1Declaration,
 	resolveRemoteBlueprint,
 } from '@wp-playground/blueprints';
 import { type Blueprint, type SupportedPHPVersion } from '@wp-playground/client';
