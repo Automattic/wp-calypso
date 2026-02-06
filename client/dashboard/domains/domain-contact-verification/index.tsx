@@ -71,9 +71,11 @@ const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
 			'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
 		),
 		documents: [
-			__( 'Valid passport' ),
-			__( 'Valid government-issued photo ID (Aadhaar, PAN, voter ID)' ),
-			__( 'Certificate of incorporation (for organizations)' ),
+			__( 'Valid passport or driving license' ),
+			__( 'Government-issued photo ID (e.g., Aadhaar, PAN, voter ID)' ),
+			__(
+				'For foreign nationals: government-issued documents, embassy letter, or income tax returns (last 2 years)'
+			),
 		],
 		verificationType: 'in_kyc',
 	},
