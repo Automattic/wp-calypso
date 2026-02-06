@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	lock,
 	people,
@@ -45,6 +46,7 @@ import {
 
 export default function useProductFilterOptions() {
 	const translate = useTranslate();
+	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
@@ -58,11 +60,15 @@ export default function useProductFilterOptions() {
 				label: translate( 'WooCommerce' ) as string,
 				image: <img width={ 80 } src={ WooLogoColor } alt="WooCommerce" />,
 			},
-			{
-				key: PRODUCT_CATEGORY_PRESSABLE_ADDON,
-				label: translate( 'Pressable' ) as string,
-				image: <img width={ 140 } src={ PressableLogo } alt="Pressable" />,
-			},
+			...( isPressableAddonsEnabled
+				? [
+						{
+							key: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+							label: translate( 'Pressable' ) as string,
+							image: <img width={ 140 } src={ PressableLogo } alt="Pressable" />,
+						},
+				  ]
+				: [] ),
 			{
 				key: PRODUCT_CATEGORY_PAYMENTS,
 				label: translate( 'Payments' ) as string,
