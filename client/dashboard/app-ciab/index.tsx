@@ -39,11 +39,10 @@ boot( {
 		},
 		plugins: false,
 		commandPalette: false,
+		domainOnlySites: false,
 	},
 	optIn: false,
 	components: {
-		addDomainButton: () => import( '../domains-ciab/add-domain-button' ),
-		emptyDomainsState: () => import( '../domains-ciab/empty-domains-state' ),
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
 	},
