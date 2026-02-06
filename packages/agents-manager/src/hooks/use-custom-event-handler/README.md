@@ -100,10 +100,8 @@ Request the current state of the chat. This dispatches a `agents-manager:state` 
      const aiButton = document.getElementById( 'ai-assistant-button' );
      if ( event.detail.isOpen ) {
        aiButton.classList.add( 'active' );
-       aiButton.setAttribute( 'aria-expanded', 'true' );
      } else {
        aiButton.classList.remove( 'active' );
-       aiButton.setAttribute( 'aria-expanded', 'false' );
      }
    }, { once: true } );
 
