@@ -127,7 +127,7 @@ describe( 'reader stats', () => {
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
 
 			expect( result ).toEqual( {
-				ui_algo: 'discover_recommended',
+				ui_algo: 'freshly-pressed',
 				custom: 'prop',
 			} );
 		} );
@@ -165,7 +165,7 @@ describe( 'reader stats', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'test_event',
 				expect.objectContaining( {
-					ui_algo: 'discover_recommended',
+					ui_algo: 'freshly-pressed',
 					prop: 'value',
 				} )
 			);
@@ -671,8 +671,8 @@ describe( 'reader stats', () => {
 			const scenarios = [
 				{
 					url: '/discover',
-					expected: 'discover_recommended',
-					description: 'discover recommended page',
+					expected: 'freshly-pressed',
+					description: 'freshly pressed page',
 					searchParams: {},
 				},
 				{
