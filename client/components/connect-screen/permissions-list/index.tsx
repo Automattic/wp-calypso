@@ -3,19 +3,20 @@ import { useState } from '@wordpress/element';
 import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
 export interface Permission {
 	icon?: IconType;
-	label: string;
+	label: ReactNode;
 }
 
 export interface PermissionsListProps {
-	title?: string;
+	title?: ReactNode;
 	permissions: Permission[];
 	maxVisible?: number;
-	learnMoreText?: string;
+	learnMoreText?: ReactNode;
 	learnMoreUrl?: string;
 	className?: string;
 }

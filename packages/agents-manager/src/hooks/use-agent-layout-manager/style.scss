@@ -284,6 +284,19 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
+// Fix for the search categories fixed top position on the plugins marketplace page
+.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary .plugins-browser--site-view .search-categories.fixed-top {
+	top: calc( $admin-bar-height + $layout-spacing + 1px );
+	left: -174px;
+	padding-top: 11px;
+	max-width: 1028px;
+	border-bottom: 1px solid var(--color-neutral-5);
+
+	&::after {
+		display: none;
+	}
+}
+
 /* Page editor */
 body.post-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
@@ -427,6 +440,10 @@ body:not(.modal-open) .agents-manager-chat--docked {
 
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
+	.Message-module_message ul {
+		margin-left: var(--spacing-2);
+	}
+
 	.Messages-module_container {
 		padding-bottom: 24px;
 
@@ -855,6 +872,17 @@ body:not(.modal-open) .agents-manager-chat--docked {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	p {
+		font-size: inherit;
+		line-height: inherit;
+		margin: inherit;
+	}
+
+	ul {
+		list-style: disc;
+		margin-top: var(--spacing-3);
+	}
 
 	.Messages-module_container.Messages-module_emptyState {
 		padding-bottom: 0;
