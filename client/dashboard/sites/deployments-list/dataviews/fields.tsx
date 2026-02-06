@@ -107,7 +107,7 @@ export function useFields( {
 									</Text>
 								</HStack>
 								{ item.is_active_deployment && (
-									<Badge style={ { flexShrink: 0 } }>{ __( 'Latest deployment' ) }</Badge>
+									<Badge style={ { flexShrink: 0 } }>{ __( 'Latest Deployment' ) }</Badge>
 								) }
 							</HStack>
 						</VStack>
