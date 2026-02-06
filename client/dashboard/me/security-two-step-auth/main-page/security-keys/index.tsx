@@ -2,6 +2,7 @@ import {
 	twoStepAuthSecurityKeysQuery,
 	deleteTwoStepAuthSecurityKeyMutation,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -17,6 +18,7 @@ import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import { isWebAuthnSupported } from '../../utils';
+import EnhancedSecurity from '../enhanced-security';
 import RegisterKey from './register-key';
 import type { UserTwoStepAuthSecurityKeys } from '@automattic/api-core';
 
@@ -185,6 +187,7 @@ export default function SecurityKeys() {
 							<SecurityKeysList data={ registrations } isLoading={ isLoading } />
 						</CardBody>
 					</Card>
+					{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
 					{ isAddKeyModalOpen && <RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } /> }
 				</>
 			) }
