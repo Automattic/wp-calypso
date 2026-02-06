@@ -10,6 +10,7 @@ import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTrack } from 'calypso/reader/stats';
+import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
@@ -25,6 +26,8 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
+import { NEW_SUBSCRIPTION_TABS } from './new-subscription';
+import { isDiscoverV3Enabled } from './utils';
 
 const analyticsPageTitle = 'Reader';
 
@@ -94,6 +97,25 @@ export function following( context, next ) {
 		onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 		feedId: context.params.feed_id,
 	} );
+	next();
+}
+
+export function loadNewSubscriptionPage( context, next ) {
+	if ( isDiscoverV3Enabled() ) {
+		const selectedTab = getCurrentTabFromURL(
+			context.path,
+			'reader/new',
+			NEW_SUBSCRIPTION_TABS.ADD_NEW
+		);
+		context.primary = (
+			<AsyncLoad require="calypso/reader/new-subscription" selectedTab={ selectedTab } />
+		);
+
+		trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
+	} else {
+		page.redirect( '/reader/subscriptions' );
+	}
+
 	next();
 }
 
@@ -319,7 +341,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
-	return next();
+	next();
 }
 
 export async function siteSubscription( context, next ) {
@@ -347,7 +369,7 @@ export async function siteSubscription( context, next ) {
 			transition={ context.query.transition === 'true' }
 		/>
 	);
-	return next();
+	next();
 }
 
 export async function commentSubscriptionsManager( context, next ) {
@@ -359,7 +381,7 @@ export async function commentSubscriptionsManager( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
 	);
-	return next();
+	next();
 }
 
 export async function pendingSubscriptionsManager( context, next ) {
@@ -371,7 +393,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
 	);
-	return next();
+	next();
 }
 
 /**
