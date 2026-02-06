@@ -205,7 +205,7 @@ export default function AgentDock( {
 		setThinkingMessage,
 	} );
 
-	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
+	useCustomEventHandler( { dock, undock, openSidebar, closeSidebar } );
 
 	const handleNewChat = () => {
 		navigate( '/' );
