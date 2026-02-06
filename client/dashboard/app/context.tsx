@@ -44,6 +44,7 @@ export type AppConfig = {
 		notifications: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
+		domainOnlySites: boolean;
 	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
@@ -75,6 +76,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		notifications: false,
 		me: false,
 		commandPalette: false,
+		domainOnlySites: false,
 	},
 	optIn: false,
 	components: {},

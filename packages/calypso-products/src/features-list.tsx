@@ -124,7 +124,6 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -853,15 +852,6 @@ const FEATURES_LIST: FeatureList = {
 						'Plugins extend the functionality of your site and ' +
 							'open up endless possibilities for presenting your content and interacting with visitors.'
 				  ),
-	},
-	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
-		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
-		getTitle: () => i18n.translate( 'Install plugins' ),
-		getDescription: () =>
-			i18n.translate(
-				'Plugins extend the functionality of your site and ' +
-					'open up endless possibilities for presenting your content and interacting with visitors.'
-			),
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {

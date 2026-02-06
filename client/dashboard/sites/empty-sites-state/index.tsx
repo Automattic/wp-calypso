@@ -13,124 +13,145 @@ const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
 const EMPTY_STATE_CTA_ID = 'dashboard-sites-empty-state';
 
-export default function EmptySitesState() {
+function CreateAndBuildActions() {
 	const { recordTracksEvent } = useAnalytics();
 
-	const trackEmptyStateActionClick = ( action: string ) => {
+	const handleCreateSiteClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
-			action,
+			action: 'create-site',
 		} );
 	};
 
-	const handleCreateSiteClick = () => {
-		trackEmptyStateActionClick( 'create-site' );
-	};
-
 	const handleBuildWithAiClick = () => {
-		trackEmptyStateActionClick( 'build-with-ai' );
-	};
-
-	const handleMigrateClick = () => {
-		trackEmptyStateActionClick( 'migrate' );
-	};
-
-	const handleJetpackClick = () => {
-		trackEmptyStateActionClick( 'migrate-via-jetpack' );
-	};
-
-	const handleOfferClick = () => {
-		trackEmptyStateActionClick( 'offer' );
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'build-with-ai',
+		} );
 	};
 
 	return (
-		<EmptyState.Wrapper>
-			<EmptyState>
-				<EmptyState.Header>
-					<EmptyState.Title>{ __( 'You don’t have any sites yet' ) }</EmptyState.Title>
-					<EmptyState.Description>
-						{ __( 'Start a site and begin creating, coding, or exploring what WordPress can do.' ) }
-					</EmptyState.Description>
-				</EmptyState.Header>
-				<EmptyState.Content>
-					<EmptyState.ActionList>
-						<EmptyState.ActionItem
-							title={ __( 'Create it yourself' ) }
-							description={ __( 'Start with a clean WordPress site and make it yours.' ) }
-							decoration={ <Icon icon={ wordpress } size={ 24 } /> }
-							actions={
-								<Button
-									variant="secondary"
-									href={ addQueryArgs( wpcomLink( '/start' ), {
-										source: CONTEXT,
-										ref: EMPTY_STATE_REF,
-									} ) }
-									onClick={ handleCreateSiteClick }
-									size="compact"
-									__next40pxDefaultSize
-								>
-									{ __( 'Create a site' ) }
-								</Button>
-							}
-						/>
-						<EmptyState.ActionItem
-							title={ __( 'Build with AI' ) }
-							description={ __( 'Describe your idea and let AI help you refine your site.' ) }
-							decoration={ <BigSkyLogo.Mark /> }
-							actions={
-								<Button
-									variant="secondary"
-									href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
-										source: CONTEXT,
-										ref: EMPTY_STATE_REF,
-									} ) }
-									onClick={ handleBuildWithAiClick }
-									__next40pxDefaultSize
-									size="compact"
-								>
-									{ __( 'Build with AI' ) }
-								</Button>
-							}
-						/>
-						<EmptyState.ActionItem
-							title={ __( 'Migrate' ) }
-							description={ __( 'Bring your site to the world’s best WordPress host.' ) }
-							decoration={ <Icon icon={ reusableBlock } size={ 24 } /> }
-							actions={
-								<Button
-									variant="secondary"
-									href={ wpcomLink(
-										`/setup/site-migration?source=${ CONTEXT }&ref=${ EMPTY_STATE_REF }`
-									) }
-									onClick={ handleMigrateClick }
-									size="compact"
-									__next40pxDefaultSize
-								>
-									{ __( 'Start migration' ) }
-								</Button>
-							}
-						/>
-						<EmptyState.ActionItem
-							title={ __( 'Via the Jetpack plugin' ) }
-							description={ __( 'Install the Jetpack plugin on an existing site.' ) }
-							decoration={ <JetpackLogo size={ 24 } /> }
-							actions={
-								<Button
-									variant="secondary"
-									href={ wpcomLink(
-										`/jetpack/connect?cta_from=${ CONTEXT }&cta_id=${ EMPTY_STATE_CTA_ID }`
-									) }
-									onClick={ handleJetpackClick }
-									size="compact"
-									__next40pxDefaultSize
-								>
-									{ __( 'Migrate via Jetpack' ) }
-								</Button>
-							}
-						/>
-					</EmptyState.ActionList>
-					<OfferCard onClick={ handleOfferClick } />
-				</EmptyState.Content>
-			</EmptyState>
-		</EmptyState.Wrapper>
+		<>
+			<EmptyState.ActionItem
+				title={ __( 'Create it yourself' ) }
+				description={ __( 'Start with a clean WordPress site and make it yours.' ) }
+				decoration={ <Icon icon={ wordpress } size={ 24 } /> }
+				actions={
+					<Button
+						variant="secondary"
+						href={ addQueryArgs( wpcomLink( '/start' ), {
+							source: CONTEXT,
+							ref: EMPTY_STATE_REF,
+						} ) }
+						onClick={ handleCreateSiteClick }
+						size="compact"
+						__next40pxDefaultSize
+					>
+						{ __( 'Create a site' ) }
+					</Button>
+				}
+			/>
+			<EmptyState.ActionItem
+				title={ __( 'Build with AI' ) }
+				description={ __( 'Describe your idea and let AI help you refine your site.' ) }
+				decoration={ <BigSkyLogo.Mark /> }
+				actions={
+					<Button
+						variant="secondary"
+						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+							source: CONTEXT,
+							ref: EMPTY_STATE_REF,
+						} ) }
+						onClick={ handleBuildWithAiClick }
+						__next40pxDefaultSize
+						size="compact"
+					>
+						{ __( 'Build with AI' ) }
+					</Button>
+				}
+			/>
+		</>
+	);
+}
+
+function EmptySitesStateUpsell() {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleOfferClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'offer',
+		} );
+	};
+
+	return <OfferCard onClick={ handleOfferClick } />;
+}
+
+export function EmptySitesSearchStateContent() {
+	return (
+		<>
+			<EmptyState.ActionList>
+				<CreateAndBuildActions />
+			</EmptyState.ActionList>
+			<EmptySitesStateUpsell />
+		</>
+	);
+}
+
+export function EmptySitesStateContent() {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleMigrateClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'migrate',
+		} );
+	};
+
+	const handleJetpackClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'migrate-via-jetpack',
+		} );
+	};
+
+	return (
+		<>
+			<EmptyState.ActionList>
+				<CreateAndBuildActions />
+				<EmptyState.ActionItem
+					title={ __( 'Migrate' ) }
+					description={ __( 'Bring your site to the world’s best WordPress host.' ) }
+					decoration={ <Icon icon={ reusableBlock } size={ 24 } /> }
+					actions={
+						<Button
+							variant="secondary"
+							href={ wpcomLink(
+								`/setup/site-migration?source=${ CONTEXT }&ref=${ EMPTY_STATE_REF }`
+							) }
+							onClick={ handleMigrateClick }
+							size="compact"
+							__next40pxDefaultSize
+						>
+							{ __( 'Start migration' ) }
+						</Button>
+					}
+				/>
+				<EmptyState.ActionItem
+					title={ __( 'Via the Jetpack plugin' ) }
+					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
+					decoration={ <JetpackLogo size={ 24 } /> }
+					actions={
+						<Button
+							variant="secondary"
+							href={ wpcomLink(
+								`/jetpack/connect?cta_from=${ CONTEXT }&cta_id=${ EMPTY_STATE_CTA_ID }`
+							) }
+							onClick={ handleJetpackClick }
+							size="compact"
+							__next40pxDefaultSize
+						>
+							{ __( 'Migrate via Jetpack' ) }
+						</Button>
+					}
+				/>
+			</EmptyState.ActionList>
+			<EmptySitesStateUpsell />
+		</>
 	);
 }

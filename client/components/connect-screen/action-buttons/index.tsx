@@ -1,17 +1,18 @@
 import { Button, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
 export interface ActionButtonsProps {
-	primaryLabel: string;
+	primaryLabel: ReactNode;
 	primaryOnClick: () => void;
 	primaryLoading?: boolean;
 	primaryDisabled?: boolean;
-	secondaryLabel?: string;
+	secondaryLabel?: ReactNode;
 	secondaryOnClick?: () => void;
 	secondaryDisabled?: boolean;
-	tertiaryLabel?: string;
+	tertiaryLabel?: ReactNode;
 	tertiaryOnClick?: () => void;
 	className?: string;
 }

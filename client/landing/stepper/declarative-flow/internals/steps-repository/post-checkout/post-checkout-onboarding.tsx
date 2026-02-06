@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
+import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -38,9 +38,12 @@ const PostCheckoutOnboarding: StepType< {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
+
 	const eligibleForExperiment =
 		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
-		site?.plan?.features?.active?.includes( FEATURE_BIG_SKY );
+		!! site?.plan &&
+		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calyso_post_onboarding_big_sky_202601_v1',
 		{ isEligible: eligibleForExperiment }

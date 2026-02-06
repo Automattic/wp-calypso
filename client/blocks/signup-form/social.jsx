@@ -32,6 +32,7 @@ class SocialSignupForm extends Component {
 		flowName: PropTypes.string,
 		redirectToAfterLoginUrl: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
+		shouldShowEmailButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -95,6 +96,7 @@ class SocialSignupForm extends Component {
 			isSocialFirst,
 			flowName,
 			setCurrentStep,
+			shouldShowEmailButton,
 		} = this.props;
 		return (
 			<Card
@@ -134,7 +136,7 @@ class SocialSignupForm extends Component {
 							/>
 						) }
 
-						{ isSocialFirst && (
+						{ isSocialFirst && shouldShowEmailButton && (
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
