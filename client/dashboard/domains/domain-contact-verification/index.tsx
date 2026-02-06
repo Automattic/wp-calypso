@@ -3,7 +3,7 @@ import {
 	domainWhoisQuery,
 	domainContactVerificationMutation,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -80,10 +80,12 @@ const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
 };
 
 function VerificationCard( {
+	verificationKey,
 	config,
 	domainName,
 	registrantWhoisData,
 }: {
+	verificationKey: string;
 	config: VerificationConfig;
 	domainName: string;
 	registrantWhoisData: ReturnType< typeof findRegistrantWhois >;
@@ -93,6 +95,7 @@ function VerificationCard( {
 	const { mutate: domainContactVerification, isPending: isSubmitting } = useMutation(
 		domainContactVerificationMutation( domainName, config.verificationType )
 	);
+	const queryClient = useQueryClient();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 
@@ -133,6 +136,16 @@ function VerificationCard( {
 		} );
 		domainContactVerification( formData, {
 			onSuccess: () => {
+				queryClient.setQueryData(
+					domainQuery( domainName ).queryKey,
+					( oldData ) =>
+						oldData && {
+							...oldData,
+							custom_verifications: oldData.custom_verifications?.filter(
+								( v ) => v !== verificationKey
+							),
+						}
+				);
 				createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
 				navigate( {
 					to: domainOverviewRoute.fullPath,
@@ -280,6 +293,7 @@ export default function DomainContactVerification() {
 				return (
 					<VerificationCard
 						key={ verificationType }
+						verificationKey={ verificationType }
 						config={ config }
 						domainName={ domainName }
 						registrantWhoisData={ registrantWhoisData }
