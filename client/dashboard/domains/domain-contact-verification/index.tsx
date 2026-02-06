@@ -4,6 +4,7 @@ import {
 	domainContactVerificationMutation,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,7 +17,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { domainContactInfoRoute, domainOverviewRoute, domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -35,7 +37,7 @@ interface VerificationConfig {
 }
 
 const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
-	nominet_contact: {
+	custom_verification_nominet_contact: {
 		title: __( 'Additional contact verification required for your domain' ),
 		description: __(
 			'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
@@ -49,7 +51,7 @@ const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
 		],
 		verificationType: 'nominet',
 	},
-	nominet_suspended: {
+	custom_verification_nominet_suspended: {
 		title: __( 'Your domain has been suspended' ),
 		description: __(
 			'Nominet, the organization that manages .uk domains, has suspended your domain due to unverified contact information. Please submit verification documents to restore your domain.'
@@ -63,7 +65,7 @@ const VERIFICATION_CONFIG: Record< string, VerificationConfig > = {
 		],
 		verificationType: 'nominet',
 	},
-	in_kyc: {
+	custom_verification_in_kyc: {
 		title: __( 'Identity verification required for your .in domain' ),
 		description: __(
 			'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
@@ -87,12 +89,12 @@ function VerificationCard( {
 	registrantWhoisData: ReturnType< typeof findRegistrantWhois >;
 } ) {
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
-	const [ submitted, setSubmitted ] = useState( false );
 	const [ error, setError ] = useState( false );
 	const { mutate: domainContactVerification, isPending: isSubmitting } = useMutation(
 		domainContactVerificationMutation( domainName, config.verificationType )
 	);
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const navigate = useNavigate();
 
 	const handleFilesSelected = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const files = event.currentTarget.files;
@@ -132,7 +134,10 @@ function VerificationCard( {
 		domainContactVerification( formData, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
-				setSubmitted( true );
+				navigate( {
+					to: domainOverviewRoute.fullPath,
+					params: { domainName },
+				} );
 			},
 			onError: () => {
 				createErrorNotice( __( 'Failed to submit files.' ), { type: 'snackbar' } );
@@ -145,13 +150,6 @@ function VerificationCard( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 3 }>
-					{ submitted && (
-						<Notice variant="success">
-							{ __(
-								'Thank you for submitting your documents for contact verification! If your domain was suspended, it may take up to a week for it to be unsuspended. Our support team will contact you via email if further actions are needed.'
-							) }
-						</Notice>
-					) }
 					{ error && (
 						<Notice variant="error">
 							{ __(
@@ -266,6 +264,7 @@ export default function DomainContactVerification() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Contact verification' ) }
 					description={ __(
 						'Verify your domain contact information to comply with registry requirements.'

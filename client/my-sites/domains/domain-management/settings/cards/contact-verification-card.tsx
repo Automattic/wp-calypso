@@ -33,7 +33,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 	const getVerificationConfig = (): VerificationTypeConfig => {
 		switch ( props.verificationType ) {
-			case 'in_kyc':
+			case 'custom_verification_in_kyc':
 				return {
 					description: translate(
 						'The .in registry (NIXI) requires identity verification for your domain. Please submit one of the accepted documents below.'
@@ -45,8 +45,8 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 					],
 					apiVerificationType: 'in_kyc',
 				};
-			case 'nominet_contact':
-			case 'nominet_suspended':
+			case 'custom_verification_nominet_contact':
+			case 'custom_verification_nominet_suspended':
 			default:
 				return {
 					description: translate(
