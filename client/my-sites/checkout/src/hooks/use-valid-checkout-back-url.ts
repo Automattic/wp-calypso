@@ -4,8 +4,7 @@ import { useMemo } from 'react';
 import { resemblesUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
 const getAllowedHosts = ( siteSlug?: string ) => {
 	const basicHosts = [
@@ -24,14 +23,21 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 	return basicHosts.concat( languageSpecificJetpackHosts );
 };
 
-const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undefined => {
+const useValidCheckoutBackUrl = (
+	siteSlug: string | undefined,
+	siteId?: number
+): string | undefined => {
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
-	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug as string | null ) );
-	const jetpackSite = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	const selectedSiteId = useSelector(
+		( state ) => siteId ?? getSiteId( state, siteSlug as string | null )
 	);
-	const site = useSelector( getSelectedSite );
-	const isCommerce = site?.is_garden && site.garden_name === 'commerce';
+	const jetpackSite = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const isCommerce = useSelector( ( state ) =>
+		selectedSiteId ? isCommerceGardenSite( state, selectedSiteId ) : false
+	);
+
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
 			// For akismet specific checkout, if navigated with direct link
@@ -62,7 +68,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 		}
 
 		return undefined;
-	}, [ siteSlug, checkoutBackUrl ] );
+	}, [ checkoutBackUrl, isCommerce, jetpackSite, siteSlug ] );
 };
 
 export default useValidCheckoutBackUrl;
