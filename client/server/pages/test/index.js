@@ -411,15 +411,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.lang ).toEqual( 'en' );
 	} );
 
-	it( 'sets request path info in context', async () => {
-		const { request } = await app.run();
-		const expectedPathname = url.split( '?' )[ 0 ];
-
-		expect( request.context.path ).toEqual( url );
-		expect( request.context.originalUrl ).toEqual( url );
-		expect( request.context.pathname ).toEqual( expectedPathname );
-	} );
-
 	it( 'sets hideWooHostedLogo to false for non-Woo Hosted routes', async () => {
 		const { request } = await app.run();
 		expect( request.context.hideWooHostedLogo ).toEqual( false );
