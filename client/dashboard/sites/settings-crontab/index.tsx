@@ -19,6 +19,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -160,8 +161,13 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Cron' ) }
-					description={ __(
-						'Schedule commands to run automatically at specified intervals on your site.'
+					description={ createInterpolateElement(
+						__(
+							'Schedule commands to run automatically at specified intervals. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
+						}
 					) }
 					actions={
 						hasSshFeature && (

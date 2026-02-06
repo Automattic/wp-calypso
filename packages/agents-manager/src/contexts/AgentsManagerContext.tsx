@@ -67,7 +67,6 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
  * Hook to access AgentsManager context data.
  *
  * Must be used within an AgentsManagerContextProvider.
- *
  * @returns The current context value with user, site, and section data.
  */
 export function useAgentsManagerContext(): AgentsManagerContextType {

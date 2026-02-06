@@ -2,17 +2,17 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { lazy, Suspense, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
-import { DataViews, DataViewsCard } from '../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
 	useActions,
@@ -20,6 +20,8 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from './dataviews';
+import EmptyDomainsStateActions from './empty-domains-state/actions';
+import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -39,9 +41,7 @@ const defaultView = {
 
 function Domains() {
 	const { user } = useAuth();
-	const { queries, components } = useAppContext();
-	const AddDomainButton = useMemo( () => lazy( components.addDomainButton ), [ components ] );
-	const EmptyDomainsState = useMemo( () => lazy( components.emptyDomainsState ), [ components ] );
+	const { queries } = useAppContext();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const actions = useActions( { user, sites } );
@@ -69,7 +69,7 @@ function Domains() {
 	const hasDomains = domains.length > 0;
 
 	return (
-		<Suspense fallback={ null }>
+		<>
 			<PageLayout
 				header={
 					<PageHeader
@@ -85,7 +85,13 @@ function Domains() {
 				}
 			>
 				{ ! hasDomains ? (
-					<EmptyDomainsState />
+					<DataViewsEmptyStateLayout
+						title={ __( 'Add your first domain name' ) }
+						description={ __( 'Establish a unique online identity for your site.' ) }
+					>
+						<EmptyDomainsStateActions />
+						<EmptyDomainsStateUpsell />
+					</DataViewsEmptyStateLayout>
 				) : (
 					<DataViewsCard>
 						<DataViews< DomainSummary >
@@ -99,12 +105,21 @@ function Domains() {
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
 							defaultLayouts={ DEFAULT_LAYOUTS }
+							empty={
+								<DataViewsEmptyStateLayout
+									title={ __( 'No domains match your search' ) }
+									description={ __( 'Try again, or add a new domain with the options below.' ) }
+									isBorderless
+								>
+									<EmptyDomainsStateActions />
+								</DataViewsEmptyStateLayout>
+							}
 						/>
 					</DataViewsCard>
 				) }
 			</PageLayout>
 			<PerformanceTrackerStop id="dashboard-domain-list" />
-		</Suspense>
+		</>
 	);
 }
 

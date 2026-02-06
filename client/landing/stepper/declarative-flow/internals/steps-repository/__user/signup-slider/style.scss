@@ -1,0 +1,222 @@
+@import "@automattic/components/src/styles/typography";
+
+/* This is needed to prevent the slider from growing beyond its container */
+:where(:has(> .signup-slider)) {
+	min-width: 0;
+}
+
+.signup-slider {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	.dot-pager__controls {
+		position: absolute;
+		bottom: 40px;
+		left: 50%;
+		transform: translateX( -50% );
+		z-index: 1;
+	}
+
+	.dot-pager__controls .dot-pager__controls-spacer,
+	.dot-pager__control-prev,
+	.dot-pager__control-next {
+		display: none;
+	}
+
+	.dot-pager__control-choose-page {
+		background-color: rgba( 255, 255, 255, 0.3 );
+
+		&.dot-pager__control-current {
+			background-color: var( --studio-white );
+		}
+	}
+
+	// Disable the opacity fade transition
+	.dot-pager__page {
+		transition: none;
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+.signup-slider__slide {
+	box-sizing: border-box;
+	height: 100vh;
+	padding: 16px;
+	padding-left: 0;
+}
+
+.signup-slider__slide-content {
+	border-radius: 16px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: center;
+	text-align: center;
+	padding-inline: 50px;
+	padding-top: 36px;
+	padding-bottom: 48px;
+	box-sizing: border-box;
+}
+
+.signup-slider__slide.signup-slider__slide--1 .signup-slider__slide-content,
+.signup-slider__slide.signup-slider__slide--3 .signup-slider__slide-content {
+	background-color: #3858E9;
+	background-image:
+		radial-gradient(50% 50% at 50% 75%, #3858E9 0%, rgba(56, 88, 233, 0) 100%),
+		url(./images/pattern-01.png );
+	background-repeat: no-repeat, repeat;
+	background-position: center center, top left;
+	background-size: cover, auto;
+}
+
+.signup-slider__slide.signup-slider__slide--2 .signup-slider__slide-content,
+.signup-slider__slide.signup-slider__slide--4 .signup-slider__slide-content {
+	background-color: #222;
+	background-image:
+		radial-gradient(50% 50% at 50% 75%, #222 0%, rgba(34, 34, 34, 0) 100%),
+		url(./images/pattern-02.png );
+	background-repeat: no-repeat, repeat;
+	background-position: center center, top left;
+	background-size: cover, auto;
+}
+
+.signup-slider__slide-image {
+	width: calc( 100% + 100px );
+	height: 100%;
+	margin-bottom: 60px;
+	margin-inline: -50px;
+	display: block;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center bottom;
+	pointer-events: none;
+	user-select: none;
+}
+
+.signup-slider__headline {
+	color: var( --studio-white );
+	font-size: 44px;
+	font-family: $font-recoleta;
+	padding-inline: 5.5rem;
+	line-height: 1.2;
+	margin-bottom: 8px;
+}
+
+.signup-slider__description {
+	color: var( --studio-white );
+	font-family: $font-sf-pro-display;
+	text-align: center;
+	align-items: flex-start;
+	font-size: 20px;
+	line-height: 1.5;
+	margin-bottom: 48px;
+	padding-inline: 2rem;
+}
+
+.signup-slider__slide--1 {
+	.signup-slider__slide-image {
+		background-image: url( ./images/img-01@2x.png );
+	}
+
+	/* This covers the case where there's no description in the slide */
+	.signup-slider__headline:last-child {
+		margin-top: 36px;
+		margin-bottom: 60px;
+	}
+}
+
+.signup-slider__slide--2 {
+	.signup-slider__slide-image {
+		background-image: url( ./images/img-02@2x.png );
+		background-position: center;
+		background-size: contain;
+		width: calc( 100% - 100px );
+		margin-bottom: 0;
+	}
+
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+}
+
+.signup-slider__slide--3 {
+	.signup-slider__slide-image {
+		background-image: url( ./images/img-03@2x.png );
+		background-position: center;
+		background-size: contain;
+		width: calc( 100% - 80px );
+		margin-bottom: 0;
+	}
+
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+
+	/* This covers the case where there's no description in the slide */
+	.signup-slider__headline:last-child {
+		margin-top: 36px;
+		margin-bottom: 72px;
+	}
+}
+
+.signup-slider__slide--4 {
+	.signup-slider__slide-image {
+		background-image: url( ./images/img-04@2x.png );
+		margin-bottom: 12px;
+	}
+
+	.signup-slider__slide-content {
+		padding-top: 0;
+	}
+}
+
+.signup-slider__slide-content--testimonial {
+	color: var( --studio-white );
+	text-align: center;
+	align-items: center;
+
+	.signup-slider__testimonial-text {
+		font-size: 2rem;
+		font-family: $font-recoleta;
+		line-height: 1.1;
+		font-weight: 400;
+		margin-bottom: 30px;
+		padding-inline: 2rem;
+	}
+
+	.signup-slider__testimonial-author {
+		font-size: 1.5rem;
+		font-family: $font-sf-pro-display;
+		font-weight: 600;
+		margin-bottom: 48px;
+		text-align: center;
+		display: inline-block;
+		position: relative;
+		padding: 4px 20px;
+		border-radius: 24px;
+		background-color: transparent;
+
+		/* This creates the "pill" border with color gradeint around the author name */
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			padding: 2px;
+			background: linear-gradient( 90deg, #069E08, #3858E9 );
+			-webkit-mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
+			mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
+			-webkit-mask-composite: xor;
+			mask-composite: exclude;
+			pointer-events: none;
+		}
+
+		@supports not ( ( -webkit-mask-composite: xor ) or ( mask-composite: exclude ) ) {
+			border: 2px solid var( --studio-white );
+		}
+	}
+}
