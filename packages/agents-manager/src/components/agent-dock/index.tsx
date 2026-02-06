@@ -77,6 +77,7 @@ export default function AgentDock( {
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ isCompactMode, setIsCompactMode ] = useState( false );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -205,7 +206,7 @@ export default function AgentDock( {
 		setThinkingMessage,
 	} );
 
-	useCustomEventHandler( { dock, undock, openSidebar, closeSidebar } );
+	useCustomEventHandler( { dock, undock, openSidebar, closeSidebar, setIsCompactMode } );
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -341,6 +342,7 @@ export default function AgentDock( {
 			markdownExtensions={ markdownExtensions }
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
+			isCompactMode={ isCompactMode }
 		/>
 	);
 

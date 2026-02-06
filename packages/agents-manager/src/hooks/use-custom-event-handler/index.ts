@@ -9,6 +9,7 @@ interface Props {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	setIsCompactMode: ( isCompact: boolean ) => void;
 }
 
 export default function useCustomEventHandler( {
@@ -16,13 +17,14 @@ export default function useCustomEventHandler( {
 	undock,
 	openSidebar,
 	closeSidebar,
+	setIsCompactMode,
 }: Props ) {
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const navigate = useNavigate();
 	const { hasLoaded, isOpen, isDocked } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const navigate = useNavigate();
 
 	const handleNavigate = useCallback(
 		( payload: { path: string; replace: boolean } ) => {
@@ -74,6 +76,17 @@ export default function useCustomEventHandler( {
 		[ dock, setIsDocked, undock ]
 	);
 
+	const handleSetCompactMode = useCallback(
+		( isCompact: unknown ) => {
+			if ( typeof isCompact !== 'boolean' ) {
+				return;
+			}
+
+			setIsCompactMode( isCompact );
+		},
+		[ setIsCompactMode ]
+	);
+
 	const handleGetState = useCallback( () => {
 		// Only dispatch state if it has loaded
 		if ( ! hasLoaded ) {
@@ -116,6 +129,8 @@ export default function useCustomEventHandler( {
 				handleSetOpen( detail.payload );
 			} else if ( detail.type === 'SET_CHAT_DOCKED' ) {
 				handleSetDocked( detail.payload );
+			} else if ( detail.type === 'SET_CHAT_COMPACT_MODE' ) {
+				handleSetCompactMode( detail.payload );
 			} else if ( detail.type === 'GET_CHAT_STATE' ) {
 				handleGetState();
 			}
@@ -123,5 +138,5 @@ export default function useCustomEventHandler( {
 
 		window.addEventListener( 'agents-manager:action', handler );
 		return () => window.removeEventListener( 'agents-manager:action', handler );
-	}, [ handleNavigate, handleSetDocked, handleSetOpen, handleGetState ] );
+	}, [ handleNavigate, handleSetDocked, handleSetOpen, handleSetCompactMode, handleGetState ] );
 }
