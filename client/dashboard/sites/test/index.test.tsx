@@ -4,7 +4,7 @@
 
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
-import { render, mockPublicApi } from '../../test-utils';
+import { render } from '../../test-utils';
 import Sites from '../index';
 import type { Site, User } from '@automattic/api-core';
 
@@ -35,12 +35,21 @@ const mockSites = [
 
 describe( 'Sites', () => {
 	beforeEach( () => {
-		mockPublicApi().get( '/rest/v1.2/read/teams' ).query( true ).reply( 200, { teams: [] } );
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.query( true )
+			.reply( 200, { teams: [] } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/rest/v1.1/me/preferences' )
 			.query( true )
 			.reply( 200, { calypso_preferences: {} } );
-		mockPublicApi().get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites: mockSites } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( true )
+			.reply( 200, { sites: mockSites } );
 	} );
 
 	afterEach( () => {

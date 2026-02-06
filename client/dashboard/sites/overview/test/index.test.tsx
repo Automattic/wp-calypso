@@ -4,7 +4,7 @@
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
-import { render, mockPublicApi } from '../../../test-utils';
+import { render } from '../../../test-utils';
 import SiteOverview from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -31,7 +31,7 @@ const site = {
 } as unknown as Site;
 
 function mockSite( mockedSite: Site ) {
-	mockPublicApi()
+	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
 		.query( true )
 		.reply( 200, mockedSite );
@@ -39,44 +39,48 @@ function mockSite( mockedSite: Site ) {
 
 describe( 'SiteOverview', () => {
 	beforeEach( () => {
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/rest/v1.1/me/preferences' )
 			.query( true )
 			.reply( 200, { calypso_preferences: {} } );
 
-		mockPublicApi().get( '/rest/v1.2/all-domains' ).query( true ).reply( 200, { domains: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/all-domains' )
+			.query( true )
+			.reply( 200, { domains: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query( true )
 			.reply( 200, [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ] );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/activity` )
 			.query( true )
 			.reply( 200, { items: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/scan` )
 			.query( true )
 			.reply( 200, { threats: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/launchpad` )
 			.query( true )
 			.reply( 200, { checklist: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/site-profiler/pages` )
 			.query( true )
 			.reply( 200, { pages: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
 			.query( true )
 			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.3/sites/${ site.ID }/plans` )
 			.query( true )
 			.reply( 200, {
@@ -94,17 +98,20 @@ describe( 'SiteOverview', () => {
 				},
 			} );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/preview-links` )
 			.query( true )
 			.reply( 200, { preview_links: [] } );
 
-		mockPublicApi()
+		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
 			.query( true )
 			.reply( 200, { data: { periods: {} } } );
 
-		mockPublicApi().get( `/wpcom/v2/sites/${ site.ID }/flex-usage` ).query( true ).reply( 200, {} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ site.ID }/flex-usage` )
+			.query( true )
+			.reply( 200, {} );
 	} );
 
 	afterEach( () => {
