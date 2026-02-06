@@ -26,7 +26,6 @@ import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
-import { shouldHideWooHostedLogo } from './utils/should-hide-woo-hosted-logo';
 
 class Document extends Component {
 	render() {
@@ -58,13 +57,13 @@ class Document extends Component {
 			languageRevisions,
 			manifests,
 			params,
-			path,
 			preferencesHelper,
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
 			sectionGroup,
 			sectionName,
+			hideWooHostedLogo,
 			storeSandboxHelper,
 			target,
 			user,
@@ -187,7 +186,7 @@ class Document extends Component {
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
-										path={ path }
+										hideWooHostedLogo={ hideWooHostedLogo }
 									/>
 								</div>
 							</div>
@@ -310,7 +309,7 @@ function LoadingPlaceholder( {
 	isWCCOM,
 	isOneTapAuth,
 	showStepContainerV2Loader,
-	path,
+	hideWooHostedLogo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
@@ -319,9 +318,8 @@ function LoadingPlaceholder( {
 		isOneTapAuth;
 
 	if ( shouldNotShowLoadingLogo ) {
-		const hideLogo = shouldHideWooHostedLogo( path );
 		return showStepContainerV2Loader || isOneTapAuth ? (
-			<Step.Loading hideLogo={ hideLogo } />
+			<Step.Loading hideLogo={ hideWooHostedLogo } />
 		) : (
 			<Loading className="wpcom-loading__boot" />
 		);

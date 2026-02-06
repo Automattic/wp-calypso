@@ -24,6 +24,7 @@ import {
 	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { shouldHideWooHostedLogo } from 'calypso/document/utils/should-hide-woo-hosted-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -219,6 +220,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
+		hideWooHostedLogo: shouldHideWooHostedLogo( requestPath ),
 	} );
 
 	context.app = {
