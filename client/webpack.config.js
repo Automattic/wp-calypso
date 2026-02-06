@@ -272,19 +272,6 @@ const webpackConfig = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			// PHP.wasm / Playground: emit binary assets as URLs; the PHP loader fetches and instantiates them
-			{
-				test: /\.wasm$/,
-				type: 'asset/resource',
-			},
-			{
-				test: /\.so($|\?)/,
-				type: 'asset/resource',
-			},
-			{
-				test: /\.dat$/,
-				type: 'asset/resource',
-			},
 			fileLoader,
 		],
 	},
@@ -309,8 +296,6 @@ const webpackConfig = {
 		} ),
 		fallback: {
 			stream: require.resolve( 'stream-browserify' ),
-			worker_threads: path.resolve( __dirname, 'lib/stubs/worker-threads.js' ),
-			fs: false,
 		},
 	},
 	node: false,
