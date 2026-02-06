@@ -9,6 +9,18 @@ export async function createCrontab( siteId: number, params: CrontabFormData ): 
 	} );
 }
 
+export async function updateCrontab(
+	siteId: number,
+	cronId: number,
+	params: CrontabFormData
+): Promise< void > {
+	await wpcom.req.put( {
+		path: `/sites/${ siteId }/hosting/crontab/${ cronId }`,
+		apiNamespace: 'wpcom/v2',
+		body: params,
+	} );
+}
+
 export async function deleteCrontab( siteId: number, cronId: number ): Promise< void > {
 	await wpcom.req.post( {
 		method: 'DELETE',

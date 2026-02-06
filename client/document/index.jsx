@@ -63,6 +63,7 @@ class Document extends Component {
 			renderedLayout,
 			sectionGroup,
 			sectionName,
+			hideWooHostedLogo,
 			storeSandboxHelper,
 			target,
 			user,
@@ -185,6 +186,7 @@ class Document extends Component {
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
+										hideWooHostedLogo={ hideWooHostedLogo }
 									/>
 								</div>
 							</div>
@@ -307,6 +309,7 @@ function LoadingPlaceholder( {
 	isWCCOM,
 	isOneTapAuth,
 	showStepContainerV2Loader,
+	hideWooHostedLogo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
@@ -316,7 +319,7 @@ function LoadingPlaceholder( {
 
 	if ( shouldNotShowLoadingLogo ) {
 		return showStepContainerV2Loader || isOneTapAuth ? (
-			<Step.Loading />
+			<Step.Loading hideLogo={ hideWooHostedLogo } />
 		) : (
 			<Loading className="wpcom-loading__boot" />
 		);
