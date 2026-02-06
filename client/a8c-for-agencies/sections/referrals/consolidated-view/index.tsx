@@ -65,6 +65,8 @@ export default function ConsolidatedViews( {
 		? findClientTotalCommission( referrals[ 0 ], referralCommissionPayout )
 		: totalReferralCommissions;
 
+	const hasPayouts = totalPayouts && totalPayouts > 0;
+
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
 			<ConsolidatedStatsCard
@@ -74,7 +76,7 @@ export default function ConsolidatedViews( {
 						? translate( 'All payouts for this client' )
 						: translate( 'All time referral payouts' )
 				}
-				footerAction={ downloadCsvButton }
+				footerAction={ hasPayouts ? downloadCsvButton : undefined }
 				popoverTitle={ translate( 'Total payouts' ) }
 				popoverContent={ translate(
 					'The exact amount your agency has been paid out for referrals.' +
