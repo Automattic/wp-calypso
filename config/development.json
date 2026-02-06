@@ -202,7 +202,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
-		"hosting/crontab": true,
 		"wordpress-ai-assistant": true,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": false
