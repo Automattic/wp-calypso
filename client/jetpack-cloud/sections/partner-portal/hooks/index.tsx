@@ -494,21 +494,15 @@ export function useProductDescription( productSlug: string ): {
 				);
 				break;
 			case 'pressable-addon-sites-1':
-				description = translate(
-					'Add an additional site to your Pressable plan to manage more client sites with ease.'
-				);
+				description = translate( 'Add an additional site to your Pressable plan limit.' );
 				features.push( translate( 'Manage an additional site' ) );
 				break;
 			case 'pressable-addon-sites-5':
-				description = translate(
-					'Add up to 5 additional sites to your Pressable plan to manage more client sites with ease.'
-				);
+				description = translate( 'Add an additional 5 sites to your Pressable plan limit.' );
 				features.push( translate( 'Manage up to 5 additional sites' ) );
 				break;
 			case 'pressable-addon-sites-10':
-				description = translate(
-					'Add up to 10 additional sites to your Pressable plan to manage more client sites with ease.'
-				);
+				description = translate( 'Add an additional 10 sites to your Pressable plan limit.' );
 				features.push( translate( 'Manage up to 10 additional sites' ) );
 				break;
 		}
