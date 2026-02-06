@@ -2,8 +2,8 @@ import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import pressableIcon from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
-import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import {
@@ -386,7 +386,7 @@ export default function ProductListing( {
 				<ProductListingSection
 					icon={ <img src={ pressableIcon } width={ 26 } height={ 26 } alt="Pressable" /> }
 					title={ translate( 'Pressable Add-ons' ) }
-					description={ translate( 'Add additional add-ons to your current Pressable plan.' ) }
+					description={ translate( 'Increase your plan limits and features with plan add-ons.' ) }
 					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( pressableAddons ) }
