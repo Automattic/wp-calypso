@@ -1,5 +1,10 @@
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
-	&:is([class*="jetpack_page_"], .toplevel_page_jetpack, .tools_page_advertising) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+	&:is(
+			[class*='jetpack_page_'],
+			[class*='plugins_page_wpcom-'],
+			.toplevel_page_jetpack,
+			.tools_page_advertising
+		) {
 		#wpwrap {
 			background-color: inherit;
 			position: inherit;
@@ -7,6 +12,12 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not(.modal-open) {
 
 		#wpbody {
 			padding-left: 0;
+		}
+	}
+
+	&.plugins_page_wpcom-install-plugin {
+		#wpwrap #wpcontent {
+			min-height: inherit;
 		}
 	}
 }
