@@ -363,7 +363,7 @@ export default function CheckoutMain( {
 		error: storedCardsError,
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
-		type: 'card',
+		type: 'all',
 		isForBusiness,
 	} );
 
