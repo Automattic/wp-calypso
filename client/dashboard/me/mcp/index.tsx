@@ -61,7 +61,7 @@ function McpComponent() {
 					__( 'Site ID: %s' ),
 					String( siteId )
 			  );
-		const domain = site?.URL || '';
+		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
 
 		return {
 			id: siteId,
@@ -392,10 +392,14 @@ function McpComponent() {
 									/>
 								) }
 								{ disabledSites.length > 0 && (
-									<VStack spacing={ 3 }>
-										<Text as="p" size="11px" weight={ 600 }>
-											{ __( 'Disabled sites' ) }
-										</Text>
+									<VStack spacing={ 4 }>
+										<SectionHeader
+											level={ 3 }
+											title={ __( 'Sites with disabled MCP access' ) }
+											description={ __(
+												'Sites with disabled MCP access are not accessible to AI assistants.'
+											) }
+										/>
 										<VStack spacing={ 2 }>
 											{ disabledSites.map( ( site ) => (
 												<ToggleControl

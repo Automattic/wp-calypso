@@ -41,7 +41,7 @@ function McpComponent( { path } ) {
 	const disabledSites = disabledSiteIds.map( ( siteId ) => {
 		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
 		const name = site?.name || translate( 'Site ID: %(siteId)s', { args: { siteId } } );
-		const domain = site?.URL || '';
+		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
 
 		return {
 			id: siteId,
