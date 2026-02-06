@@ -71,3 +71,21 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	// Default to true (enabled) if no entry exists
 	return true;
 }
+
+/**
+ * Get site IDs where MCP access is disabled at the site level
+ * @param {Object} userSettings - The user settings object
+ * @returns {number[]} Site IDs with account tools disabled
+ */
+export function getDisabledSiteIds( userSettings ) {
+	if ( userSettings?.sites ) {
+		return userSettings.sites
+			.filter( ( site ) => site.account_tools_enabled === false )
+			.map( ( site ) => site.blog_id );
+	}
+
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	return mcpSites
+		.filter( ( site ) => site.account_tools_enabled === false )
+		.map( ( site ) => site.blog_id );
+}
