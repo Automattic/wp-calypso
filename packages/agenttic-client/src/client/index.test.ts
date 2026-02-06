@@ -798,6 +798,187 @@ describe( 'Client', () => {
 		} );
 	} );
 
+	describe( 'File part preservation in conversation history', () => {
+		it( 'should preserve file parts in conversation history when continuing after tool execution', async () => {
+			// Arrange: Create a mock tool provider with a tool that returns to agent
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'set_processing_state',
+							name: 'Set Processing State',
+							description: 'Sets processing state',
+							input_schema: {
+								type: 'object',
+								properties: {
+									clientId: { type: 'string' },
+								},
+							},
+						},
+					];
+				},
+				async executeTool() {
+					return {
+						result: { success: true },
+						returnToAgent: true,
+					};
+				},
+			};
+
+			// Mock SSE stream response - agent requests tool execution
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const sseData = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								id: 'test-task-id',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'agent-message-1',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'I will process the image',
+											},
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-1',
+													toolId: 'set_processing_state',
+													arguments: {
+														clientId: 'block-123',
+													},
+												},
+											},
+										],
+									},
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			// Mock the continuation response (completion after tool result)
+			const createContinuationSSEStream = () => {
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const encoder = new TextEncoder();
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-2',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Image has been applied!',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} );
+						const sseData = `data: ${ completionEvent }\n\n`;
+						controller.enqueue( encoder.encode( sseData ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createContinuationSSEStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act: Send a message that includes a file part (simulating image upload)
+			const userMessage = {
+				role: 'user' as const,
+				kind: 'message' as const,
+				messageId: 'user-msg-1',
+				parts: [
+					{
+						type: 'text' as const,
+						text: 'Replace the hero with this image',
+					},
+					{
+						type: 'file' as const,
+						file: {
+							name: 'hero.jpg',
+							mimeType: 'image/jpeg',
+							uri: 'https://example.com/uploads/hero.jpg',
+						},
+						metadata: {
+							attachmentId: 123,
+						},
+					},
+				],
+			};
+
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert: The continuation request (second fetch call) should include file parts
+			// The second call is the continuation after tool execution
+			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
+
+			const continuationCall = mockFetch.mock.calls[ 1 ];
+			const continuationBody = JSON.parse( continuationCall[ 1 ].body );
+			const continuationParts = continuationBody.params.message.parts;
+
+			// Should contain the file part from the original message in the history
+			const fileParts = continuationParts.filter(
+				( p: any ) => p.type === 'file'
+			);
+			expect( fileParts ).toHaveLength( 1 );
+			expect( fileParts[ 0 ].file.name ).toBe( 'hero.jpg' );
+			expect( fileParts[ 0 ].file.mimeType ).toBe( 'image/jpeg' );
+			expect( fileParts[ 0 ].file.uri ).toBe(
+				'https://example.com/uploads/hero.jpg'
+			);
+		} );
+	} );
+
 	describe( 'SSE error handling', () => {
 		it( 'should throw error when SSE event contains error field', async () => {
 			const encoder = new TextEncoder();
