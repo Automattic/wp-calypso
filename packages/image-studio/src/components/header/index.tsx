@@ -101,6 +101,14 @@ export const Header = ( {
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
 	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
 
+	let navButtonDisabledTooltip: string | undefined;
+	if ( hasDrafts || hasUpdatedMetadata ) {
+		navButtonDisabledTooltip = __(
+			'Save or discard your changes',
+			'big-sky'
+		);
+	}
+
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasPendingAnnotations,
 	} );
@@ -169,12 +177,18 @@ export const Header = ( {
 								icon={ chevronLeft }
 								onClick={ onNavigatePrevious }
 								disabled={ ! hasPreviousImage || isNavDisabled }
-								label={ sprintf(
-									/* translators: %s: modifier key (command or control) */
-									__( 'Previous image %s←', __i18n_text_domain__ ),
-									modKeySymbol
-								) }
+								label={
+									navButtonDisabledTooltip ||
+									sprintf(
+										/* translators: %s: modifier key (command or control) */
+										__( 'Previous image %s←', __i18n_text_domain__ ),
+										modKeySymbol
+									)
+								}
 								showTooltip
+								accessibleWhenDisabled={
+									!! navButtonDisabledTooltip
+								}
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
@@ -185,12 +199,18 @@ export const Header = ( {
 								icon={ chevronRight }
 								onClick={ onNavigateNext }
 								disabled={ ! hasNextImage || isNavDisabled }
-								label={ sprintf(
-									/* translators: %s: modifier key (command or control) */
-									__( 'Next image %s→', __i18n_text_domain__ ),
-									modKeySymbol
-								) }
+								label={
+									navButtonDisabledTooltip ||
+									sprintf(
+										/* translators: %s: modifier key (command or control) */
+										__( 'Next image %s→', __i18n_text_domain__ ),
+										modKeySymbol
+									)
+								}
 								showTooltip
+								accessibleWhenDisabled={
+									!! navButtonDisabledTooltip
+								}
 								className="image-studio-header__nav-button"
 							/>
 						</div>
