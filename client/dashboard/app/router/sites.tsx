@@ -1091,6 +1091,10 @@ export const siteSettingsCrontabEditRoute = createRoute( {
 	parseParams: ( params ) => ( {
 		cronId: Number( params.cronId ),
 	} ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-edit' )( {

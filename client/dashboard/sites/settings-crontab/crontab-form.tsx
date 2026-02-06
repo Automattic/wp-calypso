@@ -1,15 +1,14 @@
 import {
 	siteBySlugQuery,
 	siteCrontabCreateMutation,
-	siteCrontabsQuery,
 	siteCrontabUpdateMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
@@ -23,41 +22,33 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { parseScheduleValue, ScheduleField } from './schedule-field';
-import type { CrontabFormData } from '@automattic/api-core';
+import type { Crontab, CrontabFormData } from '@automattic/api-core';
 
 interface CrontabFormProps {
-	cronId?: number;
+	crontab?: Crontab;
 }
 
-export default function CrontabForm( { cronId }: CrontabFormProps ) {
-	const isEditMode = !! cronId;
+export default function CrontabForm( { crontab }: CrontabFormProps ) {
+	const isEditMode = !! crontab;
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( {
 		from: isEditMode ? siteSettingsCrontabEditRoute.fullPath : siteSettingsCrontabAddRoute.fullPath,
 	} );
 
-	const { data: crontabs = [] } = useQuery( {
-		...siteCrontabsQuery( site.ID ),
-		enabled: isEditMode,
-	} );
-
-	const crontab = isEditMode ? crontabs.find( ( c ) => c.cron_id === cronId ) : undefined;
-
-	const [ formData, setFormData ] = useState< CrontabFormData >( {
-		schedule: 'hourly',
-		command: '',
-	} );
-
-	// Initialize form data when crontab is loaded (edit mode only)
-	useEffect( () => {
+	// Initialize form data once from the loaded crontab (edit mode) or defaults (add mode)
+	const [ formData, setFormData ] = useState< CrontabFormData >( () => {
 		if ( crontab ) {
-			setFormData( {
+			return {
 				schedule: parseScheduleValue( crontab.schedule ),
 				command: crontab.command,
-			} );
+			};
 		}
-	}, [ crontab ] );
+		return {
+			schedule: 'hourly',
+			command: '',
+		};
+	} );
 
 	const { mutate: createCrontab, isPending: isCreating } = useMutation( {
 		...siteCrontabCreateMutation( site.ID ),
@@ -102,10 +93,10 @@ export default function CrontabForm( { cronId }: CrontabFormProps ) {
 			} );
 		};
 
-		if ( isEditMode ) {
+		if ( isEditMode && crontab ) {
 			updateCrontab(
 				{
-					cronId,
+					cronId: crontab.cron_id,
 					params: { schedule: formData.schedule, command: formData.command.trim() },
 				},
 				{ onSuccess }
@@ -162,15 +153,6 @@ export default function CrontabForm( { cronId }: CrontabFormProps ) {
 		} ),
 		[]
 	);
-
-	// If crontab not found in edit mode, redirect back to list
-	if ( isEditMode && crontabs.length > 0 && ! crontab ) {
-		navigate( {
-			to: siteSettingsCrontabRoute.fullPath,
-			params: { siteSlug },
-		} );
-		return null;
-	}
 
 	const pageTitle = isEditMode ? __( 'Edit scheduled job' ) : __( 'Add scheduled job' );
 	const pageDescription = isEditMode
