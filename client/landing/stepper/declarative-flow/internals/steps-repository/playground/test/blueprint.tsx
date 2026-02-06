@@ -2,12 +2,13 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-jest.mock( '@wp-playground/blueprints', () => ( {
+jest.mock( '../lib/resolve-remote-blueprint-standalone', () => ( {
 	resolveRemoteBlueprint: jest.fn(),
+	ZipFilesystem: jest.fn(),
 } ) );
 
-import { resolveRemoteBlueprint } from '@wp-playground/blueprints';
 import { getBlueprint } from '../lib/blueprint';
+import { resolveRemoteBlueprint } from '../lib/resolve-remote-blueprint-standalone';
 
 const DEFAULT_BLUEPRINT = {
 	preferredVersions: {

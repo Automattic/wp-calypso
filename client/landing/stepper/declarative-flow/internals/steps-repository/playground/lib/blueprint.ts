@@ -1,11 +1,11 @@
-import {
-	type BlueprintBundle,
-	type BlueprintV1Declaration,
-	resolveRemoteBlueprint,
-} from '@wp-playground/blueprints';
-import { type Blueprint, type SupportedPHPVersion } from '@wp-playground/client';
-import { ZipFilesystem } from '@wp-playground/storage';
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
+import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
+import type {
+	Blueprint,
+	BlueprintBundle,
+	BlueprintV1Declaration,
+	SupportedPHPVersion,
+} from './types';
 
 const DEFAULT_BLUEPRINT: BlueprintV1Declaration = {
 	preferredVersions: {

@@ -8,7 +8,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { importPlaygroundSite } from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
-import type { PlaygroundClient } from '@wp-playground/client';
+import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
 export const PlaygroundSetupStep: Step< {
