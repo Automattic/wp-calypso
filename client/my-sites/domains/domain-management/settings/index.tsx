@@ -629,8 +629,13 @@ const Settings = ( {
 			return null;
 		}
 
-		// Show the card only if the domain requires a verification from Nominet (or if it has been already suspended)
-		if ( ! domain.nominetDomainSuspended && ! domain.nominetPendingContactVerificationRequest ) {
+		const showContactVerification =
+			domain.contactDocumentVerificationRequest === 'pending' ||
+			domain.contactDocumentVerificationRequest === 'suspended' ||
+			domain.nominetPendingContactVerificationRequest ||
+			domain.nominetDomainSuspended;
+
+		if ( ! showContactVerification ) {
 			return null;
 		}
 

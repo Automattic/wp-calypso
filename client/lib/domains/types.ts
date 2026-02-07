@@ -122,6 +122,7 @@ export type ResponseDomain = {
 	name: string;
 	nominetDomainSuspended: boolean;
 	nominetPendingContactVerificationRequest: boolean;
+	contactDocumentVerificationRequest?: 'pending' | 'suspended';
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;

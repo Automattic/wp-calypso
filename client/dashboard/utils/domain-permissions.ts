@@ -47,8 +47,12 @@ const checkNotPendingWhoisUpdate: DomainCheckFunction = ( domain: Domain ) =>
 const checkCanManageDnsRecords: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_manage_dns_records;
 
-const checkNominetPendingOrSuspended: DomainCheckFunction = ( domain: Domain ) =>
-	domain.nominet_pending_contact_verification_request || domain.nominet_domain_suspended;
+const checkContactDocumentVerificationRequired: DomainCheckFunction = ( domain: Domain ) =>
+	domain.contact_document_verification_request === 'pending' ||
+	domain.contact_document_verification_request === 'suspended' ||
+	// Backwards compat for .uk until backend migrates
+	domain.nominet_pending_contact_verification_request ||
+	domain.nominet_domain_suspended;
 
 export const PermissionCheck = {
 	INBOUND_TRANSFER: 'inbound-transfer',
@@ -188,7 +192,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 				),
 		},
 		{
-			check: checkNominetPendingOrSuspended,
+			check: checkContactDocumentVerificationRequired,
 			getErrorMessage: () => __( 'This domain does not require contact verification.' ),
 		},
 	],

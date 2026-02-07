@@ -1,3 +1,7 @@
+import {
+	extractTld,
+	getContactVerificationTldConfig,
+} from '@automattic/api-core/src/domain-contact-verification';
 import { domainWhoisQuery, domainContactVerificationMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -34,6 +38,9 @@ export default function DomainContactVerification() {
 		domainContactVerificationMutation( domainName )
 	);
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+
+	const tld = extractTld( domainName );
+	const tldConfig = getContactVerificationTldConfig( tld );
 
 	if ( ! registrantWhoisData ) {
 		return null;
@@ -121,31 +128,52 @@ export default function DomainContactVerification() {
 	};
 
 	const renderInstructions = () => {
+		const hasAcceptedDocuments = tldConfig.acceptedDocuments.length > 0;
+
 		return (
 			<>
-				<Text as="p">
-					{ createInterpolateElement(
-						__(
-							'Please verify that the above information is correct and either <link>update</link> it or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:'
-						),
-						{
-							link: (
-								<RouterLinkButton
-									variant="link"
-									to={ domainContactInfoRoute.fullPath }
-									params={ { domainName } }
-								/>
+				{ hasAcceptedDocuments ? (
+					<Text as="p">
+						{ createInterpolateElement(
+							__(
+								'Please verify that the above information is correct and either <link>update</link> it or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:'
 							),
-						}
-					) }
-				</Text>
-				<ul>
-					<li>{ __( 'Valid drivers’ license' ) }</li>
-					<li>{ __( 'Valid national ID cards (for non-UK residents)' ) }</li>
-					<li>{ __( 'Utility bills (last 3 months)' ) }</li>
-					<li>{ __( 'Bank statement (last 3 months)' ) }</li>
-					<li>{ __( 'HMRC tax notification (last 3 months)' ) }</li>
-				</ul>
+							{
+								link: (
+									<RouterLinkButton
+										variant="link"
+										to={ domainContactInfoRoute.fullPath }
+										params={ { domainName } }
+									/>
+								),
+							}
+						) }
+					</Text>
+				) : (
+					<Text as="p">
+						{ createInterpolateElement(
+							__(
+								'Please verify that the above information is correct and either <link>update</link> it or upload a valid identification document.'
+							),
+							{
+								link: (
+									<RouterLinkButton
+										variant="link"
+										to={ domainContactInfoRoute.fullPath }
+										params={ { domainName } }
+									/>
+								),
+							}
+						) }
+					</Text>
+				) }
+				{ hasAcceptedDocuments && (
+					<ul>
+						{ tldConfig.acceptedDocuments.map( ( doc ) => (
+							<li key={ doc }>{ doc }</li>
+						) ) }
+					</ul>
+				) }
 				<Text>
 					{ __(
 						'Please upload a photo of the document on which the above name and address are clearly visible.'
@@ -201,11 +229,7 @@ export default function DomainContactVerification() {
 							title={ __( 'Additional contact verification required for your domain' ) }
 							level={ 3 }
 						/>
-						<Text as="p">
-							{ __(
-								'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
-							) }
-						</Text>
+						<Text as="p">{ tldConfig.registryDescription }</Text>
 						{ renderContactInformation() }
 						{ renderInstructions() }
 						<FormFileUpload

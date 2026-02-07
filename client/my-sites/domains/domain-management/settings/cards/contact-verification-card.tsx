@@ -1,3 +1,7 @@
+import {
+	extractTld,
+	getContactVerificationTldConfig,
+} from '@automattic/api-core/src/domain-contact-verification';
 import { Button } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -53,38 +57,54 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 	};
 
 	const renderDescription = () => {
-		const { contactInformationUpdateLink } = props;
+		const { contactInformationUpdateLink, selectedDomainName } = props;
+		const tld = extractTld( selectedDomainName );
+		const tldConfig = getContactVerificationTldConfig( tld );
+		const hasAcceptedDocuments = tldConfig.acceptedDocuments.length > 0;
 
 		return (
 			<div>
-				<p>
-					{ translate(
-						'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
-					) }
-				</p>
+				<p>{ tldConfig.registryDescription }</p>
 				<p>{ translate( 'This is your current contact information:' ) }</p>
 				{ renderContactInformation() }
-				<p>
-					{ translate(
-						'Please verify that the above information is correct and either {{a}}update it{{/a}} or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:',
-						{
-							components: {
-								a: contactInformationUpdateLink ? (
-									<a href={ contactInformationUpdateLink } />
-								) : (
-									<span />
-								),
-							},
-						}
-					) }
-				</p>
-				<ul>
-					<li>{ translate( "Valid drivers' license" ) }</li>
-					<li>{ translate( 'Valid national ID cards (for non-UK residents)' ) }</li>
-					<li>{ translate( 'Utility bills (last 3 months)' ) }</li>
-					<li>{ translate( 'Bank statement (last 3 months)' ) }</li>
-					<li>{ translate( 'HMRC tax notification (last 3 months)' ) }</li>
-				</ul>
+				{ hasAcceptedDocuments ? (
+					<p>
+						{ translate(
+							'Please verify that the above information is correct and either {{a}}update it{{/a}} or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:',
+							{
+								components: {
+									a: contactInformationUpdateLink ? (
+										<a href={ contactInformationUpdateLink } />
+									) : (
+										<span />
+									),
+								},
+							}
+						) }
+					</p>
+				) : (
+					<p>
+						{ translate(
+							'Please verify that the above information is correct and either {{a}}update it{{/a}} or upload a valid identification document.',
+							{
+								components: {
+									a: contactInformationUpdateLink ? (
+										<a href={ contactInformationUpdateLink } />
+									) : (
+										<span />
+									),
+								},
+							}
+						) }
+					</p>
+				) }
+				{ hasAcceptedDocuments && (
+					<ul>
+						{ tldConfig.acceptedDocuments.map( ( doc ) => (
+							<li key={ doc }>{ doc }</li>
+						) ) }
+					</ul>
+				) }
 				<p>
 					{ translate(
 						'Click on the button below to upload up to three documents and then click on the "Submit" button. You can upload images (JPEG or PNG) and/or PDF files up to 5MB each.'
