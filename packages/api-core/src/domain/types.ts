@@ -79,6 +79,7 @@ export interface Domain extends DomainSummary {
 	move_to_new_site_pending: boolean;
 	nominet_pending_contact_verification_request: boolean;
 	nominet_domain_suspended: boolean;
+	in_pending_contact_verification: boolean;
 	owner: string;
 	is_pending_registration: boolean;
 	is_pending_registration_at_registry: boolean;

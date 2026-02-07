@@ -3,6 +3,8 @@ import { mutationOptions } from '@tanstack/react-query';
 
 export const domainContactVerificationMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( formData: [ string, File, string ][] ) =>
-			domainContactVerification( domainName, formData ),
+		mutationFn: ( params: {
+			formData: [ string, File, string ][];
+			metadata?: { nationalityType?: 'indian_national' | 'foreign_national' };
+		} ) => domainContactVerification( domainName, params.formData, params.metadata ),
 	} );

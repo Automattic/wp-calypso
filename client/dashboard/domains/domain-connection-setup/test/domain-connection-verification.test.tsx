@@ -97,6 +97,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	move_to_new_site_pending: false,
 	nominet_pending_contact_verification_request: false,
 	nominet_domain_suspended: false,
+	in_pending_contact_verification: false,
 	owner: 'user',
 	is_pending_registration: false,
 	is_pending_registration_at_registry: false,

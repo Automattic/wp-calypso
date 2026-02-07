@@ -1,3 +1,4 @@
+import { getVerificationTldType, getAcceptedDocuments } from '@automattic/api-core';
 import { domainWhoisQuery, domainContactVerificationMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -6,6 +7,7 @@ import {
 	__experimentalText as Text,
 	FormFileUpload,
 	Button,
+	RadioControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,16 +22,19 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { findRegistrantWhois } from '../../utils/domain';
+import type { NationalityType } from '@automattic/api-core';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export default function DomainContactVerification() {
 	const { domainName } = domainRoute.useParams();
+	const tldType = getVerificationTldType( domainName );
 	const [ selectedFiles, setSelectedFiles ] = useState< FileList | null >( null );
 	const { data: domainWhois } = useSuspenseQuery( domainWhoisQuery( domainName ) );
 	const registrantWhoisData = findRegistrantWhois( domainWhois );
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ error, setError ] = useState( false );
+	const [ nationalityType, setNationalityType ] = useState< NationalityType >( 'indian_national' );
 	const { mutate: domainContactVerification, isPending: isSubmitting } = useMutation(
 		domainContactVerificationMutation( domainName )
 	);
@@ -88,16 +93,22 @@ export default function DomainContactVerification() {
 		[ ...selectedFiles ].forEach( ( file: File ) => {
 			formData.push( [ 'files[]', file, file.name ] );
 		} );
-		domainContactVerification( formData, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
-				setSubmitted( true );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to submit files.' ), { type: 'snackbar' } );
-				setError( true );
-			},
-		} );
+
+		const metadata = tldType === 'in' ? { nationalityType } : undefined;
+
+		domainContactVerification(
+			{ formData, metadata },
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
+					setSubmitted( true );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to submit files.' ), { type: 'snackbar' } );
+					setError( true );
+				},
+			}
+		);
 	};
 
 	const renderSubmittedMessage = () => {
@@ -120,7 +131,35 @@ export default function DomainContactVerification() {
 		);
 	};
 
+	const getDocumentList = (): string[] => {
+		const acceptedDocuments = getAcceptedDocuments( __ );
+		if ( tldType === 'uk' ) {
+			return acceptedDocuments.uk.default;
+		}
+		return acceptedDocuments.in[ nationalityType ] ?? [];
+	};
+
+	const renderNationalitySelector = () => {
+		if ( tldType !== 'in' ) {
+			return null;
+		}
+
+		return (
+			<RadioControl
+				label={ __( 'Are you an Indian national?' ) }
+				selected={ nationalityType }
+				options={ [
+					{ label: __( 'Indian national' ), value: 'indian_national' },
+					{ label: __( 'Foreign national' ), value: 'foreign_national' },
+				] }
+				onChange={ ( value: string ) => setNationalityType( value as NationalityType ) }
+			/>
+		);
+	};
+
 	const renderInstructions = () => {
+		const documents = getDocumentList();
+
 		return (
 			<>
 				<Text as="p">
@@ -140,11 +179,9 @@ export default function DomainContactVerification() {
 					) }
 				</Text>
 				<ul>
-					<li>{ __( 'Valid drivers’ license' ) }</li>
-					<li>{ __( 'Valid national ID cards (for non-UK residents)' ) }</li>
-					<li>{ __( 'Utility bills (last 3 months)' ) }</li>
-					<li>{ __( 'Bank statement (last 3 months)' ) }</li>
-					<li>{ __( 'HMRC tax notification (last 3 months)' ) }</li>
+					{ documents.map( ( doc ) => (
+						<li key={ doc }>{ doc }</li>
+					) ) }
 				</ul>
 				<Text>
 					{ __(
@@ -187,7 +224,7 @@ export default function DomainContactVerification() {
 				<PageHeader
 					title={ __( 'Contact verification' ) }
 					description={ __(
-						'Verify your domain contact information to comply with ICANN requirements.'
+						'Verify your domain contact information to comply with registry requirements.'
 					) }
 				/>
 			}
@@ -202,11 +239,16 @@ export default function DomainContactVerification() {
 							level={ 3 }
 						/>
 						<Text as="p">
-							{ __(
-								'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
-							) }
+							{ tldType === 'uk'
+								? __(
+										'Nominet, the organization that manages .uk domains, requires us to verify the contact information of your domain.'
+								  )
+								: __(
+										'The registry that manages .in domains requires us to verify the contact information of your domain.'
+								  ) }
 						</Text>
 						{ renderContactInformation() }
+						{ renderNationalitySelector() }
 						{ renderInstructions() }
 						<FormFileUpload
 							accept="image/*,.pdf"

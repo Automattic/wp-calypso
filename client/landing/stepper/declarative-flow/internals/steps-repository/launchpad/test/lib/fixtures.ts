@@ -272,6 +272,7 @@ export const defaultDomainResponse: ResponseDomain = {
 	name: '',
 	nominetDomainSuspended: false,
 	nominetPendingContactVerificationRequest: false,
+	inPendingContactVerification: false,
 	owner: '',
 	partnerDomain: false,
 	pendingRegistration: false,

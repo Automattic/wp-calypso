@@ -45,6 +45,7 @@ export const itemsSchema = {
 					name: { type: 'string' },
 					nominetDomainSuspended: { type: 'boolean' },
 					nominetPendingContactVerificationRequest: { type: 'boolean' },
+					inPendingContactVerification: { type: 'boolean' },
 					owner: { type: 'string', optional: true },
 					partnerDomain: { type: 'boolean' },
 					pendingRegistration: { type: 'boolean' },
