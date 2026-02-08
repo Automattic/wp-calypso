@@ -646,6 +646,11 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+
+		if ( ! user ) {
+			return null;
+		}
+
 		const profileActions = [
 			{
 				label: (
