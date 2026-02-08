@@ -510,7 +510,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			start_date: customChartRange.chartStart,
 			date: customChartRange.chartEnd,
 			summarize: 1,
-			max: 10,
+			max: 50,
 		} ),
 		[ customChartRange.chartStart, customChartRange.chartEnd ]
 	);
