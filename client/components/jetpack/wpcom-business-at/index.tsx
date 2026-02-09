@@ -197,7 +197,7 @@ export default function WPCOMBusinessAT( {
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
-	const { header, onActivationResolved } = content;
+	const { header, getProductUrl, onActivationResolved } = content;
 
 	useEffect( () => {
 		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
@@ -270,14 +270,18 @@ export default function WPCOMBusinessAT( {
 			)
 		);
 		onActivationResolved?.();
+		// Full reload is needed so route middleware re-evaluates the site as Jetpack/Atomic.
+		window.location.href = getProductUrl( siteSlug );
 	}, [
 		automatedTransferStatus,
 		dispatch,
+		getProductUrl,
 		header,
 		isJetpack,
 		onActivationResolved,
 		retryCount,
 		siteId,
+		siteSlug,
 	] );
 
 	// If there are any issues, show a dialog.
