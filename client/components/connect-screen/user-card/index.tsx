@@ -1,5 +1,6 @@
 import { Card, Gravatar } from '@automattic/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -7,6 +8,8 @@ export interface UserCardUser {
 	displayName: string;
 	email: string;
 	avatarUrl?: string;
+	username?: string;
+	siteCount?: number;
 }
 
 export interface UserCardProps {
@@ -16,18 +19,21 @@ export interface UserCardProps {
 }
 
 /**
- * User card displaying avatar, name, and email
+ * User card displaying avatar, name, and email/details
  * @example
  * <UserCard
  *   user={{
  *     displayName: "John Doe",
  *     email: "john@example.com",
- *     avatarUrl: "https://gravatar.com/avatar/..."
+ *     avatarUrl: "https://gravatar.com/avatar/...",
+ *     username: "johndoe",
+ *     siteCount: 3
  *   }}
  *   size="large"
  * />
  */
 export function UserCard( { user, size = 'small', className }: UserCardProps ): JSX.Element {
+	const translate = useTranslate();
 	const isLarge = size === 'large';
 	const avatarSize = isLarge ? 64 : 48;
 
@@ -37,12 +43,35 @@ export function UserCard( { user, size = 'small', className }: UserCardProps ): 
 		avatar_URL: user.avatarUrl,
 	};
 
+	/**
+	 * Get the secondary details to display below the user's name.
+	 * For large (centered) variant: always show email.
+	 * For small (horizontal) variant: show username + site count if available, otherwise email.
+	 */
+	const getUserDetails = () => {
+		if ( isLarge ) {
+			return user.email;
+		}
+
+		if ( user.username && user.siteCount !== undefined ) {
+			return translate( '%(username)s - %(count)d site', '%(username)s - %(count)d sites', {
+				count: user.siteCount,
+				args: {
+					username: user.username,
+					count: user.siteCount,
+				},
+			} );
+		}
+
+		return user.email;
+	};
+
 	return (
 		<Card className={ clsx( 'connect-screen-user-card', `is-${ size }`, className ) }>
 			<Gravatar user={ gravatarUser } size={ avatarSize } imgSize={ avatarSize * 2 } />
 			<div className="connect-screen-user-card__info">
 				<span className="connect-screen-user-card__name">{ user.displayName }</span>
-				<span className="connect-screen-user-card__email">{ user.email }</span>
+				<span className="connect-screen-user-card__details">{ getUserDetails() }</span>
 			</div>
 		</Card>
 	);
