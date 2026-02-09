@@ -14,8 +14,6 @@ if ( ! isset( $args ) ) {
 $site_type         = isset( $args['site_type'] ) ? $args['site_type'] : '';
 $current_page_slug = isset( $args['current_page_slug'] ) ? $args['current_page_slug'] : '';
 
-l( 'current_page_slug', $current_page_slug );
-
 if ( 'contact' === $current_page_slug ) {
 	?>
 	<div class="happy-blocks-new-support-content-footer contact-page">
