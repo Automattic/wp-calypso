@@ -59,8 +59,6 @@ interface CommissionRow {
 	productName: string;
 	quantity: number | '-';
 	invoicedDate: string;
-	issuedDate: string | '-';
-	revokedDate: string | '-';
 	price: number;
 	commissionPercentage: string;
 	commissionAmount: number;
@@ -87,10 +85,9 @@ function findMatchingPurchase(
 	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
 		return null;
 	}
-	if ( ! purchase ) {
-		return null;
-	}
-	const product = products.find( ( p ) => p.product_id === productId );
+	const product = products.find( ( p ) =>
+		[ p.product_id, p.monthly_product_id, p.yearly_product_id ].includes( productId )
+	);
 	if ( ! product ) {
 		return null;
 	}
@@ -126,8 +123,6 @@ function buildRowsFromApi(
 							productName,
 							quantity: match.purchase.quantity ?? 1,
 							invoicedDate,
-							issuedDate: formatDate( match.purchase.license?.issued_at ?? null ),
-							revokedDate: formatDate( match.purchase.license?.revoked_at ?? null ),
 							price,
 							commissionPercentage: formatPercentage(
 								getProductCommissionPercentage( match.product.slug, match.product.family_slug )
@@ -147,8 +142,6 @@ function buildRowsFromApi(
 							productName,
 							quantity: 1,
 							invoicedDate,
-							issuedDate: '-',
-							revokedDate: '-',
 							price,
 							commissionPercentage:
 								derivedPercentage != null ? formatPercentage( derivedPercentage ) : '-',
@@ -179,8 +172,6 @@ export function generateCommissionsCsv(
 		'Product Name',
 		'Quantity',
 		'Invoiced On',
-		'License Issued',
-		'License Revoked',
 		'Price (USD)',
 		'Commission %',
 		'Commission Amount (USD)',
@@ -199,8 +190,6 @@ export function generateCommissionsCsv(
 			row.productName,
 			row.quantity,
 			row.invoicedDate,
-			row.issuedDate,
-			row.revokedDate,
 			formatCurrency( row.price ),
 			row.commissionPercentage,
 			formatCurrency( row.commissionAmount ),
