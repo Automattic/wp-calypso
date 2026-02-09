@@ -43,7 +43,10 @@ addApiMiddleware(
 	} )
 );
 
-export default function QuickPost(): JSX.Element | null {
+interface Props {
+	autoFocus?: boolean;
+}
+export default function QuickPost( { autoFocus = true }: Props ): JSX.Element | null {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -63,6 +66,7 @@ export default function QuickPost(): JSX.Element | null {
 	const siteAdminUrl = useSelector( ( state ) =>
 		siteId ? getSiteAdminUrl( state, siteId ) : null
 	);
+
 	const {
 		mutate: save,
 		isPending: isSaving,
@@ -196,6 +200,8 @@ export default function QuickPost(): JSX.Element | null {
 					onChange={ setPostContent }
 					isRTL={ isLocaleRtl( locale ) ?? false }
 					isDarkMode={ false }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus={ autoFocus }
 					customStyles={ `
 					div.is-root-container.block-editor-block-list__layout {
 						padding-bottom: 20px;
