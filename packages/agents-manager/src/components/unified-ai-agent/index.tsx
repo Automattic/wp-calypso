@@ -1,11 +1,14 @@
 import { getAgentManager } from '@automattic/agenttic-client';
+import { AgentsManagerSelect } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ORCHESTRATOR_AGENT_ID } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getSessionId, clearSessionId } from '../../utils/agent-session';
 import { createAgentConfig } from '../../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
@@ -22,7 +25,18 @@ export interface UnifiedAIAgentProps {
 
 const queryClient = new QueryClient();
 
-export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element {
+export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element | null {
+	// Wait for the store to load before rendering PersistentRouter
+	// This ensures router history is restored from persisted state
+	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+
+	if ( ! isStoreReady ) {
+		return null;
+	}
+
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<PersistentRouter>
