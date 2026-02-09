@@ -80,7 +80,6 @@ export function useFields( {
 							<Text title={ commit_message }>{ commit_message }</Text>
 							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
-									style={ { flexShrink: 0 } }
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
 									<Text
@@ -91,10 +90,8 @@ export function useFields( {
 										{ shortSha }
 									</Text>
 								</ExternalLink>
-								<div style={ { flexShrink: 0 } }>
-									<BranchDisplay branchName={ item.branch_name } />
-								</div>
-								<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
+								<BranchDisplay branchName={ item.branch_name } />
+								<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto' } }>
 									<img
 										src={ author.avatar_url }
 										alt={ author.name }
@@ -106,9 +103,7 @@ export function useFields( {
 										{ author.name }
 									</Text>
 								</HStack>
-								{ item.is_active_deployment && (
-									<Badge style={ { flexShrink: 0 } }>{ __( 'Latest Deployment' ) }</Badge>
-								) }
+								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);
