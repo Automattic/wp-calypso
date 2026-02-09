@@ -53,7 +53,7 @@ Enable or disable rendering of the chat UI.
 
 #### `GET_CHAT_STATE`
 
-Request the current state of the chat. This dispatches a `agents-manager:state` event with the current state.
+Request the current state of the chat. This dispatches an `agents-manager:state` event with the current state.
 
 - **payload**: none
 
