@@ -47,7 +47,7 @@ export function getSessionId( agentId?: string ): string {
 			}
 
 			// Session expired, clear it
-			localStorage.removeItem( SESSION_STORAGE_KEY );
+			localStorage.removeItem( key );
 		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
