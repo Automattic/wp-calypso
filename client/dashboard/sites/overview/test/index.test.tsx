@@ -41,7 +41,7 @@ function getCard( text: string ) {
 	return screen.getAllByRole( 'article' ).find( ( el ) => el.textContent?.includes( text ) );
 }
 
-describe( 'SiteOverview', () => {
+describe( '<SiteOverview>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
@@ -118,7 +118,7 @@ describe( 'SiteOverview', () => {
 			.reply( 200, {} );
 	} );
 
-	it( 'renders the overview of a site with free plan', async () => {
+	test( 'renders the overview of a site with free plan', async () => {
 		mockSite( {
 			...site,
 			plan: {
@@ -144,7 +144,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of a site with a paid plan on Atomic', async () => {
+	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
 		mockSite( { ...site, is_wpcom_atomic: true } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
@@ -162,7 +162,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {
+	test( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {
 		mockSite( { ...site, is_wpcom_atomic: false } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
@@ -180,7 +180,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of an unlaunched site', async () => {
+	test( 'renders the overview of an unlaunched site', async () => {
 		mockSite( { ...site, launch_status: 'unlaunched' } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
@@ -194,7 +194,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of a commerce garden site', async () => {
+	test( 'renders the overview of a commerce garden site', async () => {
 		mockSite( { ...site, is_garden: true, garden_name: 'commerce' } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
@@ -207,7 +207,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of a self-hosted Jetpack connected site', async () => {
+	test( 'renders the overview of a self-hosted Jetpack connected site', async () => {
 		mockSite( {
 			...site,
 			jetpack: true,
@@ -228,7 +228,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'Latest activity' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of an A4A dev site', async () => {
+	test( 'renders the overview of an A4A dev site', async () => {
 		mockSite( { ...site, is_wpcom_atomic: true, is_a4a_dev_site: true } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
@@ -246,7 +246,7 @@ describe( 'SiteOverview', () => {
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	it( 'renders the overview of a site with Flex plan', async () => {
+	test( 'renders the overview of a site with Flex plan', async () => {
 		mockSite( { ...site, is_wpcom_flex: true } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
