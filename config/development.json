@@ -5,6 +5,7 @@
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "calypso.localhost",
+	"hostname_allowlist": [ "calypso.localhost", "my.localhost", "my.woo.localhost" ],
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
 	"siftscience_key": "e00e878351",
