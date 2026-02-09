@@ -55,8 +55,8 @@ const ReaderSuggestedFollowsDialog = ( {
 		enabled: prefetch || isVisible,
 	} );
 
-	const hasData = Array.isArray( data ) && data.length > 0;
-	const shouldCloseModal = isFetched && isVisible && ! hasData;
+	const hasData = Array.isArray( data ) && data?.length > 0;
+	const shouldCloseModal = isFetched && isVisible && ! isLoading && ! hasData;
 
 	useEffect( () => {
 		if ( isVisible && resourceType ) {
