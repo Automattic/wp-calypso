@@ -7,12 +7,13 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-const DiscoverAddNew = () => {
+const AddNew = () => {
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
@@ -26,7 +27,7 @@ const DiscoverAddNew = () => {
 	}, [] );
 
 	return (
-		<div className="discover-add-new">
+		<div className="reader-add-new">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ ! isEmailVerified && (
 					<Notice
@@ -39,24 +40,22 @@ const DiscoverAddNew = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `discover-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
-					<h2 className="discover-add-new__form-title">
+				<div className={ `reader-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
+					<h2 className="reader-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
 					<AddSitesForm
-						pathname="/discover/add-new"
-						source="discover-add-new"
+						pathname={ isDiscoverV3Enabled() ? '/reader/new' : '/discover/add-new' }
+						source="reader-add-new"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
 				{ ! hasFeedPreview && (
 					<div
-						className={ `discover-add-new__subscriptions${
-							isEmailVerified ? '' : ' is-disabled'
-						}` }
+						className={ `reader-add-new__subscriptions${ isEmailVerified ? '' : ' is-disabled' }` }
 					>
-						<h2 className="discover-add-new__subscriptions-title">
+						<h2 className="reader-add-new__subscriptions-title">
 							{ translate( 'Your subscriptions' ) }
 						</h2>
 						<SiteSubscriptionsList layout="compact" />
@@ -67,4 +66,4 @@ const DiscoverAddNew = () => {
 	);
 };
 
-export default DiscoverAddNew;
+export default AddNew;
