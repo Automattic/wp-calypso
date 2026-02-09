@@ -8,6 +8,8 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
+import AddNew from './components/add-new';
+import AddReddit from './components/add-reddit';
 
 interface Tab {
 	slug: string;
@@ -47,8 +49,8 @@ export default function ReaderNewSubscriptionPage(
 		},
 	];
 	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
-		[ Tabs.ADD_NEW ]: <p>Add new subscription</p>,
-		[ Tabs.REDDIT ]: <p>Add Reddit subscription</p>,
+		[ Tabs.ADD_NEW ]: <AddNew />,
+		[ Tabs.REDDIT ]: <AddReddit />,
 	};
 
 	function recordTabClick( tabSlug: string ): void {

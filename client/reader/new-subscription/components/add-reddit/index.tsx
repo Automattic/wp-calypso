@@ -9,11 +9,12 @@ import {
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
+import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 
-const Reddit = () => {
+const AddReddit = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -29,7 +30,7 @@ const Reddit = () => {
 	}, [ dispatch ] );
 
 	return (
-		<div className="discover-reddit">
+		<div className="reader-add-reddit">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ ! isEmailVerified && (
 					<Notice
@@ -42,25 +43,25 @@ const Reddit = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `discover-reddit__form${ isEmailVerified ? '' : ' is-disabled' }` }>
+				<div className={ `reader-add-reddit__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<AddSitesForm
 						placeholder={ translate( 'Search by Reddit URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
-						pathname="/discover/reddit"
-						source="discover-reddit"
+						pathname={ isDiscoverV3Enabled() ? '/reader/new/reddit' : '/discover/reddit' }
+						source={ isDiscoverV3Enabled() ? 'reader-add-reddit' : 'discover-reddit' }
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
-					<div className="discover-reddit__instructions">
-						<div className="discover-reddit__instructions-icon">
+					<div className="reader-add-reddit__instructions">
+						<div className="reader-add-reddit__instructions-icon">
 							<ReaderRedditIcon iconSize={ 75 } />
 						</div>
-						<h2 className="discover-reddit__instructions-title">
+						<h2 className="reader-add-reddit__instructions-title">
 							{ translate( 'Common Reddit URLs' ) }
 						</h2>
-						<ul className="discover-reddit__instructions-list">
+						<ul className="reader-add-reddit__instructions-list">
 							<li>
 								<strong>{ translate( 'Front page:' ) }</strong>
 								{ ' https://www.reddit.com/.rss' }
@@ -93,4 +94,4 @@ const Reddit = () => {
 	);
 };
 
-export default Reddit;
+export default AddReddit;
