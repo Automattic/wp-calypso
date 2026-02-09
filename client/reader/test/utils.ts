@@ -55,7 +55,7 @@ describe( 'reader utils', () => {
 		} );
 	} );
 
-	describe( 'getCurrentTab', () => {
+	describe( 'getCurrentTabFromURL', () => {
 		it( 'returns the current tab', () => {
 			expect(
 				getCurrentTabFromURL( '/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
