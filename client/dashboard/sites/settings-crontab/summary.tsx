@@ -5,6 +5,7 @@ import { Icon } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
@@ -23,10 +24,18 @@ export default function CrontabSettingsSummary( {
 		enabled: hasSshFeature,
 	} );
 
+	if ( isDashboardBackport() ) {
+		return null;
+	}
+
+	if ( ! hasSshFeature ) {
+		return null;
+	}
+
 	const crontabCount = crontabs?.length ?? 0;
 
 	const badges = [
-		hasSshFeature && {
+		{
 			text:
 				crontabCount > 0
 					? sprintf(
@@ -37,7 +46,7 @@ export default function CrontabSettingsSummary( {
 					: __( 'No scheduled jobs' ),
 			intent: crontabCount > 0 ? ( 'success' as const ) : undefined,
 		},
-	].filter( ( badge ) => !! badge );
+	];
 
 	return (
 		<RouterLinkSummaryButton
