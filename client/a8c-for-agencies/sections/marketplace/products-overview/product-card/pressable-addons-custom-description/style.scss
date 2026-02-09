@@ -1,6 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .pressable-addons-custom-description {
 	.jetpack-product-info__description {
-		margin: 12px 0;
+		@include body-large;
+		margin-block: 12px;
+	}
+
+	.jetpack-product-info__section-title {
+		@include heading-large;
 	}
 }
 
@@ -19,16 +28,15 @@
 }
 
 .pressable-addons-custom-description__callout {
+	@include body-medium;
 	align-items: center;
 	background: transparent;
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
 	color: var(--color-text);
 	display: flex;
-	font-size: 14px;
 	gap: 8px;
-	line-height: 1.5;
-	margin: 12px 0 20px;
+	margin-block: 12px 20px;
 	padding: 6px 10px;
 
 	svg {
@@ -37,17 +45,17 @@
 }
 
 .pressable-addons-custom-description__section {
-	margin-top: 16px;
+	margin-block-start: 16px;
 }
 
 .pressable-addons-custom-description__details {
-	margin: 8px 0 0 16px;
+	margin-block-start: 8px;
+	margin-inline-start: 16px;
 	padding: 0;
 
 	li {
-		margin-bottom: 8px;
+		@include body-large;
 		color: var(--color-text-subtle);
-		font-size: 13px;
-		line-height: 1.4;
+		margin-block-end: 8px;
 	}
 }
