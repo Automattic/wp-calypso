@@ -13,6 +13,7 @@ import {
 	next,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo-color.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -43,10 +44,15 @@ import {
 	PRODUCT_TYPE_PRODUCT,
 	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../../../constants';
+import { isPressableAddonProduct } from '../../../lib/hosting';
 
 export default function useProductFilterOptions() {
 	const translate = useTranslate();
 	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
+	const { data: productsAndPlans = [] } = useProductsQuery();
+	const hasPressableAddonsAvailable = productsAndPlans.some( ( { family_slug } ) =>
+		isPressableAddonProduct( family_slug )
+	);
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
@@ -60,7 +66,7 @@ export default function useProductFilterOptions() {
 				label: translate( 'WooCommerce' ) as string,
 				image: <img width={ 80 } src={ WooLogoColor } alt="WooCommerce" />,
 			},
-			...( isPressableAddonsEnabled
+			...( isPressableAddonsEnabled && hasPressableAddonsAvailable
 				? [
 						{
 							key: PRODUCT_CATEGORY_PRESSABLE_ADDON,
