@@ -28,14 +28,12 @@ export default function CrontabSettingsSummary( {
 		return null;
 	}
 
-	if ( ! hasSshFeature ) {
-		return null;
-	}
-
 	const crontabCount = crontabs?.length ?? 0;
 
 	const badges = [
-		{
+		// If SSH feature is not enabled, don't show the badge
+		// Note: we should not `if (! hasSshFeature) { return null; }` above, because we have `Upgrade plan` screen to engage users to upgrade their plan.
+		hasSshFeature && {
 			text:
 				crontabCount > 0
 					? sprintf(
@@ -46,7 +44,7 @@ export default function CrontabSettingsSummary( {
 					: __( 'No scheduled jobs' ),
 			intent: crontabCount > 0 ? ( 'success' as const ) : undefined,
 		},
-	];
+	].filter( ( badge ) => !! badge );
 
 	return (
 		<RouterLinkSummaryButton
