@@ -2,31 +2,27 @@
 import './style.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-// Logged out asynchronous variant: wait until the Help Center is available for loading then enable the form.
-document.addEventListener( 'help-center-ready-to-load', () => {
-	const input = document.getElementById( 'support-search-input' );
-	const formContainer = document.querySelector( '.support-search-form-container' );
-	formContainer?.removeAttribute( 'disabled' );
-	if ( input ) {
-		input.placeholder = input?.dataset?.postLoadingText;
-	}
+let isHelpCenterReadyToLoad = false;
+let resolveHelpCenterReadyToLoad;
+const helpCenterReadyToLoadPromise = new Promise( ( resolve ) => {
+	resolveHelpCenterReadyToLoad = resolve;
 } );
+
+// Logged out asynchronous variant: wait until the Help Center is available for loading.
+document.addEventListener(
+	'help-center-ready-to-load',
+	() => {
+		isHelpCenterReadyToLoad = true;
+		resolveHelpCenterReadyToLoad();
+	},
+	{ once: true }
+);
 
 document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );
 	const input = document.getElementById( 'support-search-input' );
-	const formContainer = document.querySelector( '.support-search-form-container' );
-
-	// Wait until the Help Center is loaded then enable the form.
-	const unsubscribe = window.wp?.data?.subscribe( () => {
-		formContainer?.removeAttribute( 'disabled' );
-		if ( input ) {
-			input.placeholder = input?.dataset?.postLoadingText;
-		}
-		unsubscribe();
-	}, 'automattic/help-center' );
 
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
@@ -51,7 +47,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	if ( form ) {
 		form.addEventListener(
 			'submit',
-			function ( e ) {
+			async function ( e ) {
 				e.preventDefault();
 				e.stopPropagation();
 
@@ -65,10 +61,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
 				if ( isLoggedOut ) {
-					// The Help Center Asynchronous variant needs loading.
-					input.setAttribute( 'disabled', true );
+					// Wait for readiness signal before loading and navigating.
+					if ( ! isHelpCenterReadyToLoad ) {
+						await helpCenterReadyToLoadPromise;
+					}
 					window.helpCenter?.loadHelpCenter().then( () => {
-						input.removeAttribute( 'disabled' );
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
 
