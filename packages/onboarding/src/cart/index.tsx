@@ -23,7 +23,6 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 interface GetNewSiteParams {
 	flowToCheck: string;
-	isPurchasingDomainItem: boolean;
 	themeSlugWithRepo: string;
 	siteUrl?: string;
 	siteTitle: string;
@@ -144,7 +143,6 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 export const createSiteWithCart = async (
 	flowName: string,
 	userIsLoggedIn: boolean,
-	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
@@ -168,7 +166,6 @@ export const createSiteWithCart = async (
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
-		isPurchasingDomainItem,
 		themeSlugWithRepo,
 		siteUrl,
 		siteTitle,

@@ -6,7 +6,6 @@ describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
 		return {
 			flowToCheck: 'test-flow',
-			isPurchasingDomainItem: false,
 			themeSlugWithRepo: 'pub/test-theme',
 			siteTitle: 'test site title',
 			siteAccentColor: '#deface',

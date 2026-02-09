@@ -150,11 +150,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 
-	const isPaidDomainItem = Boolean(
-		domainCartItem?.product_slug ||
-			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
-	);
-
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 	const wooFlows = [ ENTREPRENEUR_FLOW ];
@@ -219,7 +214,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const site = await createSiteWithCart(
 			flow,
 			true,
-			isPaidDomainItem,
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
