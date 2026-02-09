@@ -28,7 +28,7 @@ console.log( state );
 window.__agentsManagerActions.setChatOpen( true );
 
 // Navigate to a chat session
-window.__agentsManagerActions.setChatNavigate( '/chat', { state: { sessionId }, replace: true } );
+window.__agentsManagerActions.setChatNavigate( '/chat', { state: { sessionId: '123' }, replace: true } );
 
 // Navigate to conversation history
 window.__agentsManagerActions.setChatNavigate( '/history' );
