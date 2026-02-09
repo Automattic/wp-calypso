@@ -140,7 +140,7 @@ const DomainUpsellCardContent = ( {
 
 const DomainUpsellCard = ( { site }: { site: Site } ) => {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	if ( ! sitePlan ) {
+	if ( ! sitePlan || ! site.slug ) {
 		return null;
 	}
 
