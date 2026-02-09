@@ -72,6 +72,7 @@ const getBlogNameGenerationParams = ( {
 
 		return {
 			blog_name: blogName,
+			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
 			find_available_url: !! getTld( blogName ),
 		};
 	}

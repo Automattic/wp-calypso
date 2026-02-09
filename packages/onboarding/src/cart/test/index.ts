@@ -14,6 +14,7 @@ describe( 'getNewSiteParams', () => {
 			siteVisibility: Visibility.Private,
 			username: 'testuser',
 			...partialParams,
+			partnerBundle: partialParams.partnerBundle ?? null,
 		} satisfies Parameters< typeof getNewSiteParams >[ 0 ];
 	}
 
@@ -126,13 +127,12 @@ describe( 'getNewSiteParams', () => {
 					siteUrl: 'testing123.wordpress.com',
 					siteTitle: 'Testing Inc.',
 					username: 'janedoe',
-					isPurchasingDomainItem: true,
 				} )
 			)
 		).toEqual(
 			expect.objectContaining( {
 				blog_name: 'testing123',
-				find_available_url: true,
+				find_available_url: false,
 			} )
 		);
 
@@ -142,7 +142,6 @@ describe( 'getNewSiteParams', () => {
 					siteUrl: 'testing123.wordpress.com',
 					siteTitle: 'Testing Inc.',
 					username: 'janedoe',
-					isPurchasingDomainItem: false,
 				} )
 			)
 		).toEqual(
