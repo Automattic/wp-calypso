@@ -6,7 +6,6 @@ import { isProductMatch } from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import {
-	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 	PRODUCT_TYPE_JETPACK_PLAN,
 	PRODUCT_TYPE_JETPACK_PRODUCT,
 	PRODUCT_TYPE_PRESSABLE_ADDON,
@@ -19,6 +18,7 @@ import {
 	filterProductsAndPlans,
 	filterProductsAndPlansByType,
 } from '../lib/product-filter';
+import { BACKUP_STORAGE_FAMILY_SLUG } from '../lib/product-slugs';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
@@ -173,10 +173,10 @@ export default function useProductAndPlans( {
 			filteredProductsAndBundles,
 			jetpackPlans: getDisplayableJetpackPlans( filteredProductsAndBundles ),
 			jetpackProducts: getDisplayableJetpackProducts( filteredProductsAndBundles ),
-			jetpackBackupAddons: filterProductsAndPlansByType(
-				PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
+			jetpackBackupAddons:
 				filteredProductsAndBundles
-			),
+					?.filter( ( { family_slug } ) => family_slug === BACKUP_STORAGE_FAMILY_SLUG )
+					.sort( ( a, b ) => a.product_id - b.product_id ) || [],
 			featuredProducts: getDisplayableFeaturedProducts( filteredProductsAndBundles ),
 			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
 			pressablePlans: filterProductsAndPlansByType(

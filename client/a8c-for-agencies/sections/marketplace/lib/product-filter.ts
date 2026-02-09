@@ -308,10 +308,13 @@ export function filterProductsAndPlansByType(
 			);
 
 		case PRODUCT_TYPE_JETPACK_BACKUP_ADDON:
-		case PRODUCT_TYPE_ADDON: // Right now this is the same as jetpack backup addons but once we have more non-jetpack addons we can separate them.
+		case PRODUCT_TYPE_ADDON:
 			return (
 				allProductsAndPlans
-					?.filter( ( { family_slug } ) => family_slug === BACKUP_STORAGE_FAMILY_SLUG )
+					?.filter(
+						( { family_slug } ) =>
+							family_slug === BACKUP_STORAGE_FAMILY_SLUG || isPressableAddonProduct( family_slug )
+					)
 					.sort( ( a, b ) => a.product_id - b.product_id ) || []
 			);
 
