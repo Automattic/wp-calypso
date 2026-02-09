@@ -1,5 +1,4 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { PlaygroundClient } from '@wp-playground/client';
 import { useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +8,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { importPlaygroundSite } from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
+import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
 export const PlaygroundSetupStep: Step< {

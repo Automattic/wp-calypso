@@ -7,7 +7,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
-import type { PlaygroundClient } from '@wp-playground/client';
+import type { PlaygroundClient } from '../../lib/types';
 
 export function PlaygroundIframe( {
 	className,
