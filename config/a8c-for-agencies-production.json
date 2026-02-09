@@ -40,6 +40,7 @@
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-bd-checkout": false,
+		"a4a-pressable-addons": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
@@ -67,7 +68,7 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": false,
-		"a8c-for-agencies-learn": false,
+		"a8c-for-agencies-learn": true,
 		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],

@@ -1,11 +1,11 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteCrontabsQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
@@ -17,7 +17,6 @@ export default function CrontabSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const isFeatureEnabled = config.isEnabled( 'hosting/crontab' );
 	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
 
 	const { data: crontabs } = useQuery( {
@@ -25,13 +24,15 @@ export default function CrontabSettingsSummary( {
 		enabled: hasSshFeature,
 	} );
 
-	const crontabCount = crontabs?.length ?? 0;
-
-	if ( ! isFeatureEnabled ) {
+	if ( isDashboardBackport() ) {
 		return null;
 	}
 
+	const crontabCount = crontabs?.length ?? 0;
+
 	const badges = [
+		// If SSH feature is not enabled, don't show the badge
+		// Note: we should not `if (! hasSshFeature) { return null; }` above, because we have `Upgrade plan` screen to engage users to upgrade their plan.
 		hasSshFeature && {
 			text:
 				crontabCount > 0

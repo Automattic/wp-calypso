@@ -79,7 +79,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 			onAfterOpen={ initMobileSidebar }
 		>
 			<JetpackLightboxMain ref={ mainRef }>
-				{ productInfo && (
+				{ productInfo ? (
 					<JetpackProductInfo
 						vendor={ vendor }
 						title={ title }
@@ -87,6 +87,8 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 						full={ isLargeScreen }
 						customDescription={ customDescription }
 					/>
+				) : (
+					customDescription
 				) }
 
 				{ customFooter && <JetpackLightboxFooter>{ customFooter }</JetpackLightboxFooter> }

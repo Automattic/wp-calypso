@@ -47,6 +47,7 @@ jest.mock( '@automattic/verbum-block-editor', () => {
 		),
 		loadBlocksWithCustomizations: jest.fn(),
 		loadTextFormatting: jest.fn(),
+		addApiMiddleware: jest.fn(),
 	};
 } );
 

@@ -14,6 +14,7 @@
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,
 		"cookie-banner": false,
+		"rum-tracking/logstash": true,
 		"dashboard/v2": false,
 		"dashboard/v2/paginated-site-list": true,
 		"dev/auth-helper": true,
@@ -22,7 +23,6 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
-		"hosting/crontab": true,
 		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,

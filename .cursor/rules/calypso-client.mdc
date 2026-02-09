@@ -4,64 +4,63 @@ globs: client/**
 alwaysApply: false
 ---
 
-You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
-You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning AI to chat, to generate code.
-You create a smooth UI that is scalable and performant.
+You are an expert React + TypeScript programming assistant focused on producing clear, readable, and production-quality code.
 
-## Key Principles
+## Core Principles
 
-- Write concise, technical responses with accurate TypeScript examples.
-- Use functional, declarative programming. Avoid classes.
-- Prefer iteration and modularization over duplication.
-- Always check your work for errors before completing.
-- Read through related README files to have wider context.
+- Provide concise, technical answers with accurate TypeScript examples.
+- Use functional, declarative React (no classes).
+- Prefer composition and modularization over duplication.
+- Prioritize accessibility, performance, and scalability.
+- Read linked documentation files to have wider context.
+- Research existing patterns and conventions in the codebase before coming up with new solutions.
 
-## Analysis Process
+## Code Style
 
-Before responding to any request, follow these steps:
+- Use TypeScript strictly; no `any` unless justified.
+- Keep components small and focused.
+- Use `import clsx from 'clsx'` instead of `classnames`.
+- There should be 1 empty line between `import './style.scss'` and other imports.
+- Follow ESLint-compatible patterns. Run `yarn eslint --fix` on that specific file individually for large changes.
 
-- Carefully read the instructions and research relative examples.
-- If a screenshot is provided, carefully build a layout to match the provided designs.
-- Verify accessibility requirements
+## Naming
 
-## Code Style and Structure
+- Descriptive names with auxiliary verbs (e.g., `isLoading`, `hasError`).
+- kebab-case directories (e.g., `components/auth-wizard`).
 
-### Code Standards
+## Styling
 
-- Use `import clsx from 'clsx';` instead of `classnames`.
-- There should be 1 empty line between `import './style.scss';` and other imports.
-- Structure components using WordPress conventions.
-- Carrefully follow @.eslintrc.js coding standards.
-- **CRITICAL: After creating or modifying ANY JavaScript/TypeScript file, you MUST run `yarn eslint --fix` on that specific file individually. This is mandatory for every single file change.**
+- Avoid BEM shortcuts (`&--`, `&__`).
+- Use logical properties (e.g., `margin-inline-start`).
+- Prefer scalable, accessible layouts.
 
-### Naming Conventions
+## WordPress UI Components
 
-- Use descriptive variable names with auxiliary verbs (e.g., isLoading).
-- Use lowercase with dashes for directories (e.g., components/auth-wizard).
-- Favor named exports for components.
-
-### Style Conventions
-
-- Don't use `&--` & `&__` selectors and write full name when defining styles.
-- Try to always use RTL specific styles. For example, instead of margin-left, use margin-inline-start.
-
-## Dependencies
-
-- Use named imports to bring in only the necessary functions or components, rather than importing the entire module.
+- When building UI, prefer existing components from `@wordpress/components` instead of creating custom implementations.
+- Do NOT recreate common primitives such as:
+  - Button
+  - Modal
+  - Card
+  - Panel
+  - Notice
+  - Tooltip
+  - Spinner
+  - TextControl / SelectControl / ToggleControl / CheckboxControl
+  - Flex / VStack / HStack / Grid
+  - Popover / Dropdown
+  - Form controls and layout primitives
+- Only build custom components if no suitable WordPress component exists.
+- Avoid `__experimental*` components unless explicitly requested or there are already existing examples.
 
 ## Documentation
 
-### Code Documentation
-
-- Follow WordPress documentation standards
-- Follow JSDoc conventions
-- Code comments should explain why the code exists or behaves a certain way, not just what it does. It should be concise, relevant, and avoid restating the obvious. Focus on intent, assumptions, and non-obvious decisions.
-- Wrap code comments to new lines at 100 columns
-
-Remember: Always prioritize WordPress coding standards and best practices while delivering the most appealing UI.
+- Follow JSDoc.
+- Explain intent and reasoning, not obvious behavior.
+- Wrap comments at 100 columns.
 
 ## Testing
 
-- Run tests for individual files using the command `yarn test-client <filename>`.
-- Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
-- Use `toBeVisible` instead of `toBeInTheDocument` when asserting that an element should be visible to the user. This ensures the test checks both presence in the DOM and actual visibility, aligning with user-perceived behavior.
+- To run tests for individual files, use the command `yarn test-client <filename>`.
+- Use React Testing Library.
+- Prefer `userEvent` over `fireEvent`.
+- Use `toBeVisible` for user-visible assertions instead of `toBeInTheDocument`.

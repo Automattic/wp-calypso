@@ -8,8 +8,8 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';

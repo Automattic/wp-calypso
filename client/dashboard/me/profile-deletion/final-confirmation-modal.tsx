@@ -5,8 +5,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 
 interface ConfirmationFormData {

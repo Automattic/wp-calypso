@@ -7,8 +7,8 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';

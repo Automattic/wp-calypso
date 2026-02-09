@@ -9,9 +9,13 @@ import {
 	FormTokenField,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
+import {
+	getAccountMcpAbilities,
+	getDisabledSiteIds,
+	getSiteAccountToolsEnabled,
+} from '../../../me/mcp/utils';
 import { useAppContext } from '../../app/context';
 import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -47,6 +51,24 @@ function McpComponent() {
 
 	// Site selector state for disabling MCP access on specific sites
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< number[] >( [] );
+	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+	const disabledSites = disabledSiteIds.map( ( siteId ) => {
+		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
+		const name = site
+			? getSiteDisplayName( site )
+			: sprintf(
+					/* translators: %s is the site ID. */
+					__( 'Site ID: %s' ),
+					String( siteId )
+			  );
+		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
+
+		return {
+			id: siteId,
+			name,
+			domain,
+		};
+	} );
 
 	// Use the standard userSettingsMutation with snackbar notifications
 	const mutation = useMutation( {
@@ -198,6 +220,21 @@ function McpComponent() {
 				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
 			},
 		};
+		mutation.mutate( payload as any );
+	};
+
+	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
+		const payload = {
+			mcp_abilities: {
+				sites: [
+					{
+						blog_id: siteId,
+						account_tools_enabled: enabled,
+					},
+				],
+			},
+		};
+
 		mutation.mutate( payload as any );
 	};
 
@@ -353,6 +390,30 @@ function McpComponent() {
 											</Text>
 										}
 									/>
+								) }
+								{ disabledSites.length > 0 && (
+									<VStack spacing={ 4 }>
+										<SectionHeader
+											level={ 3 }
+											title={ __( 'Sites with disabled MCP access' ) }
+											description={ __(
+												'Sites with disabled MCP access are not accessible to AI assistants.'
+											) }
+										/>
+										<VStack spacing={ 2 }>
+											{ disabledSites.map( ( site ) => (
+												<ToggleControl
+													key={ site.id }
+													__nextHasNoMarginBottom
+													checked={ false }
+													disabled={ mutation.isPending }
+													onChange={ ( enabled ) => handleSiteToggle( site.id, enabled ) }
+													label={ site.name }
+													help={ site.domain }
+												/>
+											) ) }
+										</VStack>
+									</VStack>
 								) }
 							</VStack>
 						</CardBody>

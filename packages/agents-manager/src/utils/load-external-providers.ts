@@ -53,14 +53,41 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	setIsThinking: ( isThinking: boolean ) => void;
 	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
+	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
 } ) => void;
+
+/**
+ * Suggestions hook type - for providing dynamic suggestions based on context
+ * (e.g., selected block in editor). Returns an array of suggestions.
+ */
+export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
+	suggestions: Suggestion[];
+};
 
 export type SiteBuildUtils = {
 	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
 	groupSiteBuildMessages: ( messages: UIMessage[], thinkingMessage: string | null ) => UIMessage[];
 };
+
+/**
+ * Supported chat component types for agent messages.
+ */
+type ChatComponentType =
+	| 'button-picker'
+	| 'font-picker'
+	| 'color-picker'
+	| 'pattern-picker'
+	| 'chat-suggestions'
+	| 'next-step-button';
+
+/**
+ * Get a chat component by type for rendering in agent messages.
+ * @param type - The type of chat component to get
+ * @returns The React component for the specified type, or `null` if unknown
+ */
+export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 export type ImagePreview = {
 	id: string;
@@ -102,11 +129,14 @@ export type ImageUploadHook = () => UseImageUploadResult;
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	suggestions?: Suggestion[];
+	/** Function to get empty view suggestions. Called when component is ready. */
+	getEmptyViewSuggestions?: () => Suggestion[];
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	useSuggestions?: UseSuggestionsHook;
+	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 }
@@ -128,11 +158,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedContextProvider: ContextProvider | undefined;
-	let mergedSuggestions: Suggestion[] | undefined;
+	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedMarkdownComponents: MarkdownComponents | undefined;
 	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
+	let mergedGetChatComponent: GetChatComponent | undefined;
+	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 
@@ -148,8 +180,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.contextProvider ) {
 				mergedContextProvider = module.contextProvider;
 			}
-			if ( module.suggestions ) {
-				mergedSuggestions = module.suggestions;
+			if ( module.getEmptyViewSuggestions ) {
+				mergedGetEmptyViewSuggestions = module.getEmptyViewSuggestions;
 			}
 			if ( module.markdownComponents ) {
 				mergedMarkdownComponents = module.markdownComponents;
@@ -162,6 +194,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			}
 			if ( module.useAbilitiesSetup ) {
 				mergedAbilitiesSetup = module.useAbilitiesSetup;
+			}
+			if ( module.useSuggestions ) {
+				mergedUseSuggestions = module.useSuggestions;
+			}
+			if ( module.getChatComponent ) {
+				mergedGetChatComponent = module.getChatComponent;
 			}
 			if ( module.siteBuildUtils ) {
 				mergedSiteBuildUtils = module.siteBuildUtils;
@@ -181,11 +219,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	return {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
-		suggestions: mergedSuggestions,
+		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		useSuggestions: mergedUseSuggestions,
+		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 	};

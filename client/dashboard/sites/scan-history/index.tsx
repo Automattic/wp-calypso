@@ -1,9 +1,10 @@
 import { siteScanHistoryQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
-import { DataViewsEmptyState } from '../../components/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { siteScanHistoryRoute } from '../../app/router/sites';
+import { DataViews, DataViewsEmptyState } from '../../components/dataviews';
 import noThreatsIllustration from '../scan-active/no-threats-illustration.svg';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
@@ -16,38 +17,46 @@ interface ScanHistoryDataViewsProps {
 	gmtOffset?: number;
 }
 
+const defaultView: View = {
+	type: 'table',
+	fields: [ 'status', 'fixed_on', 'threat', 'severity' ],
+	perPage: 10,
+	sort: {
+		field: 'fixed_on',
+		direction: 'desc',
+	},
+	layout: {
+		density: 'balanced',
+		styles: {
+			status: {
+				maxWidth: '100px',
+			},
+			threat: {
+				minWidth: '500px',
+			},
+			fixed_on: {
+				maxWidth: '175px',
+				minWidth: '160px',
+			},
+		},
+	},
+	showLevels: false,
+};
+
 export function ScanHistoryDataViews( {
 	site,
 	timezoneString,
 	gmtOffset,
 }: ScanHistoryDataViewsProps ) {
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		fields: [ 'status', 'fixed_on', 'threat', 'severity' ],
-		perPage: 10,
-		sort: {
-			field: 'fixed_on',
-			direction: 'desc',
-		},
-		layout: {
-			styles: {
-				status: {
-					maxWidth: '100px',
-				},
-				threat: {
-					minWidth: '500px',
-				},
-				fixed_on: {
-					maxWidth: '175px',
-					minWidth: '160px',
-				},
-			},
-		},
-	} );
-
 	const { data: scanHistory, isLoading } = useQuery( siteScanHistoryQuery( site.ID ) );
 	const threats = scanHistory?.threats || [];
 
+	const searchParams = siteScanHistoryRoute.useSearch();
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-scan-history',
+		defaultView,
+		queryParams: searchParams,
+	} );
 	const fields = getFields( timezoneString, gmtOffset );
 	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
@@ -97,7 +106,8 @@ export function ScanHistoryDataViews( {
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }
-			onChangeView={ setView }
+			onChangeView={ updateView }
+			onResetView={ resetView }
 			paginationInfo={ paginationInfo }
 			searchLabel={ __( 'Search' ) }
 			view={ view }

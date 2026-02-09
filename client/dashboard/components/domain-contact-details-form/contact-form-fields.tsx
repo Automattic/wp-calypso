@@ -7,8 +7,9 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { type Field } from '@wordpress/dataviews';
-import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
 import PhoneNumberInput from '../phone-number-input';
 import { createFieldAsyncValidator, type AsyncValidator } from './contact-validation-utils';

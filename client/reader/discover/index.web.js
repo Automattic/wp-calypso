@@ -21,7 +21,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { getDefaultTab } from './helper';
+import { FRESHLY_PRESSED_TAB } from './helper';
 import { getPrivateRoutes, getDiscoverRoutes, getCurrentTab } from './routes';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
@@ -34,7 +34,7 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const selectedTab = getCurrentTab( context.path, getDefaultTab() );
+	const selectedTab = getCurrentTab( context.path, FRESHLY_PRESSED_TAB );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(

@@ -8,9 +8,9 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
-import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useMemo, useState } from 'react';
 import { getDeploymentTypeFromPath } from '../../../sites/deployments/deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../../../sites/deployments/deployments/use-code-deployments-query';
 import { ButtonStack } from '../../components/button-stack';
