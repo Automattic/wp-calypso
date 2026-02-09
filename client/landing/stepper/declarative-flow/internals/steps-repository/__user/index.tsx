@@ -137,13 +137,15 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
-		const headingText = isMessagingVariation
-			? translate( 'Welcome to WordPress.com' )
-			: ciabConfig
-				? translate( 'Create an account for %(partner)s', {
-						args: { partner: ciabConfig.displayName },
-				  } )
-				: translate( 'Create your account' );
+		let headingText = translate( 'Create your account' );
+		if ( isMessagingVariation ) {
+			headingText = translate( 'Welcome to WordPress.com' );
+		} else if ( ciabConfig ) {
+			headingText = translate( 'Create an account for %(partner)s', {
+				args: { partner: ciabConfig.displayName },
+				textOnly: true,
+			} );
+		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>

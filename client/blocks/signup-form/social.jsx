@@ -89,8 +89,13 @@ class SocialSignupForm extends Component {
 	};
 
 	getSocialButtons() {
-		const { socialServiceResponse, flowName, setCurrentStep, isSocialFirst, shouldShowEmailButton } =
-			this.props;
+		const {
+			socialServiceResponse,
+			flowName,
+			setCurrentStep,
+			isSocialFirst,
+			shouldShowEmailButton,
+		} = this.props;
 
 		return [
 			{
