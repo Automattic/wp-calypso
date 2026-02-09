@@ -1,7 +1,4 @@
-import {
-	extractTld,
-	getContactVerificationTldConfig,
-} from '@automattic/api-core/src/domain-contact-verification';
+import { extractTld, getContactVerificationTldConfig } from '@automattic/api-core';
 import { domainWhoisQuery, domainContactVerificationMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {

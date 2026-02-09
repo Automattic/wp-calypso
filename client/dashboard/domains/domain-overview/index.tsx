@@ -23,6 +23,7 @@ import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
+import ContactVerificationNotice from './contact-verification-notice';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
 import DomainOverviewSettings from './settings';
@@ -128,6 +129,9 @@ export default function DomainOverview() {
 				) }
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
+				) }
+				{ domain.contact_document_verification_request && (
+					<ContactVerificationNotice domainName={ domain.domain } />
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>

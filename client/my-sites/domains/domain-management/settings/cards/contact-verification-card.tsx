@@ -1,7 +1,4 @@
-import {
-	extractTld,
-	getContactVerificationTldConfig,
-} from '@automattic/api-core/src/domain-contact-verification';
+import { extractTld, getContactVerificationTldConfig } from '@automattic/api-core';
 import { Button } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
