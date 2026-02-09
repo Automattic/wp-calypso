@@ -26,7 +26,7 @@ function getActionBlock( blocks ) {
  * @returns {Object}
  */
 export function getActions( note ) {
-	return getActionBlock( note.body ).actions;
+	return getActionBlock( note.body ).actions ?? {};
 }
 
 /**
