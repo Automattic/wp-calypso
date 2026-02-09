@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
+import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -65,12 +66,13 @@ const getBlogNameGenerationParams = ( {
 	siteTitle,
 	flowToCheck,
 	username,
-	isPurchasingDomainItem,
 }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
+		const blogName = siteUrl.replace( '.wordpress.com', '' );
+
 		return {
-			blog_name: siteUrl.replace( '.wordpress.com', '' ),
-			find_available_url: !! isPurchasingDomainItem,
+			blog_name: blogName,
+			find_available_url: !! getTld( blogName ),
 		};
 	}
 
