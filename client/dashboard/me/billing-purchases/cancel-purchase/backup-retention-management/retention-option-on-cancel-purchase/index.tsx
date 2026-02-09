@@ -6,8 +6,9 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalHeading as Heading, Button, ExternalLink } from '@wordpress/components';
-import { useEffect, useState, useCallback, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useState, useCallback } from 'react';
 import { useAnalytics } from '../../../../../app/analytics';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { Card, CardBody } from '../../../../../components/card';

@@ -1,8 +1,9 @@
 import { Button, Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useState, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
+import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';

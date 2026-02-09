@@ -1,8 +1,8 @@
 import { Dropdown, Tooltip, Button } from '@wordpress/components';
 import { useMediaQuery, useInstanceId } from '@wordpress/compose';
-import { useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
+import { useMemo, useState } from 'react';
 import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';

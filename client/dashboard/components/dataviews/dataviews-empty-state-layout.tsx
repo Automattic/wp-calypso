@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 interface DataViewsEmptyStateLayoutProps {
 	title: string;
-	description: string;
+	description: ReactNode;
 	children?: ReactNode;
 	isBorderless?: boolean;
 }

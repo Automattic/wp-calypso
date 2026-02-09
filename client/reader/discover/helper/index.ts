@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const RECOMMENDED_TAB = 'recommended';
 export const FRESHLY_PRESSED_TAB = 'freshly-pressed';
@@ -26,10 +24,6 @@ export function getDiscoverStreamTags( tags: string[] | null, isLoggedIn: boolea
 		return DEFAULT_DISCOVER_TAGS;
 	}
 	return tags;
-}
-
-export function getDefaultTab() {
-	return isEnabled( 'reader/discover/freshly-pressed' ) ? FRESHLY_PRESSED_TAB : RECOMMENDED_TAB;
 }
 
 /**

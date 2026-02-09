@@ -1,6 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
 import { ActivityActor } from '../../../components/logs-activity/activity-actor';
 import { ActivityEvent } from '../../../components/logs-activity/activity-event';
