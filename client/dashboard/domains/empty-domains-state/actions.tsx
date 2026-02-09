@@ -1,10 +1,11 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search, globe } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import EmptyState from '../../components/empty-state';
-import { wpcomLink } from '../../utils/link';
+import { getCurrentDashboard, wpcomLink } from '../../utils/link';
 
 function SearchDomainsActionItem( { url }: { url: string } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -17,7 +18,7 @@ function SearchDomainsActionItem( { url }: { url: string } ) {
 			actions={
 				<Button
 					variant="secondary"
-					href={ wpcomLink( url ) }
+					href={ addQueryArgs( wpcomLink( url ), { dashboard: getCurrentDashboard() } ) }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
 							action: 'search-domains',
@@ -71,7 +72,9 @@ function ConnectDomainActionItem() {
 			actions={
 				<Button
 					variant="secondary"
-					href={ wpcomLink( '/setup/domain/use-my-domain' ) }
+					href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+						dashboard: getCurrentDashboard(),
+					} ) }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_domains_dashboard_empty_state_action_click', {
 							action: 'transfer-domain',
