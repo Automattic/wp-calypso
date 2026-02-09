@@ -521,14 +521,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.state.cancelBundledDomain,
 			includedDomainPurchase
 		);
-		const shouldUseDefaultFullText = Boolean(
-			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
-				refundAmountString &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
-		);
+		const shouldDisplayRefundNotice =
+			Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
 
-		if ( refundAmountString && ! shouldUseDefaultFullText ) {
+		if ( refundAmountString && ! shouldDisplayRefundNotice ) {
 			return translate(
 				'If you confirm this cancellation, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 				{
@@ -708,6 +704,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpackPurchase }
+					useAutoRenewFlow={ this.shouldUseAutoRenewFlow( purchase ) }
 				/>
 
 				<CancelPurchaseFeatureList
@@ -850,6 +847,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
+						flowTypeOverride={
+							this.shouldUseAutoRenewFlow( purchase )
+								? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
+								: undefined
+						}
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -913,12 +915,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
-		const shouldShowRefundEligibilityNotice = Boolean(
-			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
-				refundAmountString &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
-		);
+		const shouldShowRefundEligibilityNotice =
+			Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
+
 		const cancelButtonProps = this.getCancelPurchaseButtonProps();
 
 		return (
