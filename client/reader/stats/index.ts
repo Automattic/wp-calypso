@@ -113,6 +113,18 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/reader' ), tracking: 'following' },
 
 	{ route: startsWith( '/reader/recent/' ), tracking: 'following' },
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/recommended-blogs\/?$/ ),
+		tracking: 'user_profile_recommended_blogs',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/lists\/?$/ ),
+		tracking: 'user_profile_lists',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+$/ ),
+		tracking: 'user_profile_posts',
+	},
 ] as const;
 
 const findConfigByPath = ( path: string, searchParams: URLSearchParams ) => {
