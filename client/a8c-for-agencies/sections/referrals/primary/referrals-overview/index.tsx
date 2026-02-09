@@ -135,7 +135,7 @@ export default function ReferralsOverview() {
 						/>
 					) }
 
-					<MissingPaymentSettingsNotice isFullWidth />
+					{ hasReferrals && <MissingPaymentSettingsNotice commissionType="referrals" /> }
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
