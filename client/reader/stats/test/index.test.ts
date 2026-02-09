@@ -661,17 +661,17 @@ describe( 'reader stats', () => {
 					description: 'reader conversations a8c page',
 				},
 				{
-					url: '/reader/users/hazelbagarinao26/recommended-blogs',
+					url: '/reader/users/matt/recommended-blogs',
 					expected: 'user_profile_recommended_blogs',
 					description: 'user profile recommended blogs',
 				},
 				{
-					url: '/reader/users/hazelbagarinao26/lists',
+					url: '/reader/users/matt/lists',
 					expected: 'user_profile_lists',
 					description: 'user profile lists',
 				},
 				{
-					url: '/reader/users/hazelbagarinao26',
+					url: '/reader/users/matt',
 					expected: 'user_profile_posts',
 					description: 'user profile posts',
 				},
