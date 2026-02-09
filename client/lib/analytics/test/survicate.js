@@ -53,6 +53,8 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { HelpCenterMoreResources } from '../../../../packages/help-center/src/components/help-center-more-resources';
 import { HelpCenterRequiredContextProvider } from '../../../../packages/help-center/src/contexts/HelpCenterContext';
 
+const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
 describe( 'survicate', () => {
 	let mockScript;
 	let mockScriptElement;
@@ -87,14 +89,6 @@ describe( 'survicate', () => {
 			writable: true,
 		} );
 
-		// Set up fresh module imports
-		jest.isolateModules( () => {
-			const survicateModule = require( 'calypso/lib/analytics/survicate' );
-			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
-			addSurvicate = survicateModule.addSurvicate;
-			isUserOnAnonymousPaths = survicateModule.isUserOnAnonymousPaths;
-		} );
-
 		// Mock DOM methods
 		mockScript = {
 			src: '',
@@ -125,6 +119,14 @@ describe( 'survicate', () => {
 
 		// Reset global survicate object
 		global._sva = undefined;
+
+		// Set up fresh module imports (after DOM mocks so the package picks them up)
+		jest.isolateModules( () => {
+			const survicateModule = require( 'calypso/lib/analytics/survicate' );
+			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
+			addSurvicate = survicateModule.addSurvicate;
+			isUserOnAnonymousPaths = survicateModule.isUserOnAnonymousPaths;
+		} );
 
 		// Mock setTimeout to be synchronous for testing
 		jest.spyOn( global, 'setTimeout' ).mockImplementation( ( fn ) => fn() );
@@ -245,7 +247,7 @@ describe( 'survicate', () => {
 			);
 		} );
 
-		test( 'should set visitor traits when script loads successfully with logged-in user', () => {
+		test( 'should set visitor traits when script loads successfully with logged-in user', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -259,6 +261,7 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
@@ -266,7 +269,7 @@ describe( 'survicate', () => {
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should not set visitor traits when user is not logged in', () => {
+		test( 'should not set visitor traits when user is not logged in', async () => {
 			getCurrentUser.mockReturnValue( null );
 
 			global._sva = {
@@ -277,11 +280,12 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should log error when user is not logged in', () => {
+		test( 'should log error when user is not logged in', async () => {
 			getCurrentUser.mockReturnValue( null );
 
 			global._sva = {
@@ -292,6 +296,7 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_survicate_user_not_available_error',
@@ -305,7 +310,7 @@ describe( 'survicate', () => {
 			);
 		} );
 
-		test( 'should not set visitor traits when user has no email', () => {
+		test( 'should not set visitor traits when user has no email', async () => {
 			const mockUser = {
 				id: 123,
 			};
@@ -319,11 +324,12 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should log error when user has no email', () => {
+		test( 'should log error when user has no email', async () => {
 			const mockUser = {
 				id: 123,
 			};
@@ -337,6 +343,7 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_survicate_user_not_available_error',
@@ -350,7 +357,7 @@ describe( 'survicate', () => {
 			);
 		} );
 
-		test( 'should handle case when _sva object is not available', () => {
+		test( 'should handle case when _sva object is not available', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -362,10 +369,11 @@ describe( 'survicate', () => {
 			addSurvicate();
 
 			// Simulate script load - should not throw error
-			expect( () => mockScript.onload() ).not.toThrow();
+			mockScript.onload();
+			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
-		test( 'should handle case when _sva exists but setVisitorTraits is not available', () => {
+		test( 'should handle case when _sva exists but setVisitorTraits is not available', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -376,17 +384,19 @@ describe( 'survicate', () => {
 			addSurvicate();
 
 			// Simulate script load - should not throw error
-			expect( () => mockScript.onload() ).not.toThrow();
+			mockScript.onload();
+			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
-		test( 'should handle script load error', () => {
+		test( 'should handle script load error', async () => {
 			addSurvicate();
 
 			// Simulate script error - should not throw
-			expect( () => mockScript.onerror() ).not.toThrow();
+			mockScript.onerror();
+			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
-		test( 'should use setTimeout for setting visitor traits', () => {
+		test( 'should use setTimeout for setting visitor traits', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -402,6 +412,7 @@ describe( 'survicate', () => {
 
 			addSurvicate();
 			mockScript.onload();
+			await flushPromises();
 
 			expect( setTimeout ).toHaveBeenCalledWith( expect.any( Function ), 1000 );
 		} );
@@ -419,7 +430,7 @@ describe( 'survicate', () => {
 			expect( document.createElement ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should set visitor traits when user is not on anonymous paths', () => {
+		test( 'should set visitor traits when user is not on anonymous paths', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -439,13 +450,14 @@ describe( 'survicate', () => {
 
 			// Simulate script load
 			mockScript.onload();
+			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
 		} );
 
-		test( 'should retry setting visitor traits when script is already loaded', () => {
+		test( 'should retry setting visitor traits when script is already loaded', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -463,6 +475,7 @@ describe( 'survicate', () => {
 			// First call - loads script
 			addSurvicate();
 			mockScript.onload();
+			await flushPromises();
 
 			// Clear the mock to track subsequent calls
 			global._sva.setVisitorTraits.mockClear();
