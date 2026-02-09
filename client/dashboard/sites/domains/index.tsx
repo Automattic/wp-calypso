@@ -61,7 +61,7 @@ function SiteDomains() {
 	);
 
 	// Hide actions column when no domain has eligible actions.
-	const hasEligibleActions = filteredData?.some( ( item ) =>
+	const hasEligibleActions = siteDomains?.some( ( item ) =>
 		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
