@@ -29,7 +29,7 @@ export default function useSetupCustomActions( {
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 
-	const handleSetOpen = useCallback(
+	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
 			if ( typeof shouldOpen !== 'boolean' ) {
 				return;
@@ -50,7 +50,7 @@ export default function useSetupCustomActions( {
 		[ closeSidebar, isDocked, openSidebar, setIsOpen ]
 	);
 
-	const handleSetDocked = useCallback(
+	const setChatDocked = useCallback(
 		( shouldDock: boolean ) => {
 			if ( typeof shouldDock !== 'boolean' ) {
 				return;
@@ -67,7 +67,7 @@ export default function useSetupCustomActions( {
 		[ dock, setIsDocked, undock ]
 	);
 
-	const handleSetCompactMode = useCallback(
+	const setChatCompactMode = useCallback(
 		( isCompact: boolean ) => {
 			if ( typeof isCompact !== 'boolean' ) {
 				return;
@@ -78,7 +78,7 @@ export default function useSetupCustomActions( {
 		[ setIsCompactMode ]
 	);
 
-	const handleSetEnabled = useCallback(
+	const setChatEnabled = useCallback(
 		( isEnabled: boolean ) => {
 			if ( typeof isEnabled !== 'boolean' ) {
 				return;
@@ -112,10 +112,10 @@ export default function useSetupCustomActions( {
 					resolveRef.current = resolve;
 				} );
 			},
-			setChatOpen: handleSetOpen,
-			setChatDocked: handleSetDocked,
-			setChatEnabled: handleSetEnabled,
-			setChatCompactMode: handleSetCompactMode,
+			setChatOpen,
+			setChatDocked,
+			setChatEnabled,
+			setChatCompactMode,
 			setChatNavigate: navigate,
 		};
 
@@ -127,10 +127,10 @@ export default function useSetupCustomActions( {
 		isOpen,
 		isDocked,
 		floatingPosition,
-		handleSetOpen,
-		handleSetDocked,
-		handleSetEnabled,
-		handleSetCompactMode,
+		setChatOpen,
+		setChatDocked,
+		setChatEnabled,
+		setChatCompactMode,
 		navigate,
 	] );
 }
