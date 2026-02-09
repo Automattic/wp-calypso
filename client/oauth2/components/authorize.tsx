@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
-import { UserCard } from 'calypso/components/connect-screen/user-card';
+import { UserCard, UserCardUser } from 'calypso/components/connect-screen/user-card';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useDispatch, useSelector } from 'calypso/state';
