@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getBlueprintID } from '../../lib/blueprint';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import type { PlaygroundClient } from '../../lib/types';
@@ -24,6 +25,7 @@ export function PlaygroundIframe( {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< string | null >( null );
 	const { setBlueprint } = useDispatch( ONBOARD_STORE );
+	const [ query ] = useSearchParams();
 
 	const createNewPlayground = () => {
 		// Clear the 'playground' parameter from the URL
@@ -44,7 +46,13 @@ export function PlaygroundIframe( {
 		initializeWordPressPlayground( iframeRef.current, recommendedPHPVersion, setSearchParams )
 			.then( ( result ) => {
 				setPlaygroundClient( result.client );
-				setBlueprint( result.blueprint );
+
+				const id = getBlueprintID( query );
+
+				if ( id ) {
+					// Save the Blueprint library ID to the store
+					setBlueprint( { id } );
+				}
 			} )
 			.catch( ( error ) => {
 				if ( error.message === 'WordPress installation has failed.' ) {

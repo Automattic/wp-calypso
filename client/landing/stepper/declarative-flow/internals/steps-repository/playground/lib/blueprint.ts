@@ -118,28 +118,45 @@ function getBlueprintName( name: string | null ): string | null {
 	return null;
 }
 
-// Used in sending the Tracks event
-export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
-	const blueprint = query.get( 'blueprint' );
+export function getBlueprintID( query: URLSearchParams ): string | null {
+	const blueprintUrl = query.get( 'blueprint-url' );
 
-	if ( blueprint ) {
-		if ( blueprint in PREDEFINED_BLUEPRINTS ) {
-			return blueprint;
-		}
-		// blueprint library ID
-		if ( ! isNaN( Number( blueprint ) ) ) {
-			return 'bpl-' + blueprint;
+	if ( blueprintUrl ) {
+		const src = new URL( blueprintUrl );
+
+		// /setup/onboarding/playground/?blueprint-url=BLUEPRINT_LIB_HOST?blueprint=NUMBER
+		if ( src.host === BLUEPRINT_LIB_HOST ) {
+			const blueprint = src.searchParams.get( 'blueprint' );
+			const id = Number( blueprint );
+
+			if ( ! isNaN( id ) ) {
+				return blueprint;
+			}
 		}
 	}
 
-	// If it's a blueprintlibrary.wordpress.com url for blueprint, use its id to construct the label
-	const blueprintUrl = query.get( 'blueprint-url' );
-	if ( blueprintUrl ) {
-		const src = new URL( blueprintUrl );
-		if ( src.host === BLUEPRINT_LIB_HOST ) {
-			const id = src.searchParams.get( 'blueprint' );
-			return 'bpl-' + id;
+	// /setup/onboarding/playground/?blueprint=NUMBER
+	const blueprint = query.get( 'blueprint' );
+
+	if ( blueprint && ! isNaN( Number( blueprint ) ) ) {
+		return blueprint;
+	}
+
+	return null;
+}
+
+// Used in sending the Tracks event
+export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
+	const blueprint = getBlueprintID( query );
+
+	if ( blueprint ) {
+		// The ID can be a predefined blueprint name
+		if ( blueprint in PREDEFINED_BLUEPRINTS ) {
+			return blueprint;
 		}
+
+		// The ID is a blueprint library ID
+		return 'bpl-' + blueprint;
 	}
 
 	return 'unknown';
@@ -213,14 +230,13 @@ async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 	let source: string | null = null;
 	let deprecationWarn = false;
 
-	if ( q.has( 'blueprint-url' ) ) {
-		source = q.get( 'blueprint-url' )!;
+	const id = getBlueprintID( q );
+
+	if ( id ) {
+		source = `https://${ BLUEPRINT_LIB_HOST }?blueprint=${ id }`;
+	} else {
 		deprecationWarn = true;
-	} else if ( q.has( 'blueprint' ) ) {
-		const id = Number( q.get( 'blueprint' ) );
-		if ( ! isNaN( id ) ) {
-			source = `https://${ BLUEPRINT_LIB_HOST }?blueprint=${ id }`;
-		}
+		source = q.get( 'blueprint-url' )!;
 	}
 
 	if ( ! source ) {
