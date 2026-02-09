@@ -42,6 +42,7 @@
 		"a4a-partner-directory": false,
 		"a4a-dev-sites": true,
 		"a4a-pressable-referrals": true,
+		"a4a-pressable-premium-plans": true,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,

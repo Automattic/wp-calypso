@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -15,7 +16,8 @@ import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
@@ -98,6 +100,8 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
+	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
+
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
 			return [];
@@ -107,14 +111,15 @@ export default function PressablePlanSection( {
 			return pressablePlans.filter(
 				( plan ) =>
 					plan.slug.startsWith( 'pressable-signature-' ) ||
-					plan.slug.startsWith( 'pressable-premium-' )
+					( isEnabled( 'a4a-pressable-premium-plans' ) &&
+						plan.slug.startsWith( 'pressable-premium-' ) )
 			);
 		}
 
 		return pressablePlans.filter(
 			( plan ) =>
-				! plan.slug.startsWith( 'pressable-signature-' ) ||
-				plan.slug.startsWith( 'pressable-premium-' )
+				! plan.slug.startsWith( 'pressable-signature-' ) &&
+				! plan.slug.startsWith( 'pressable-premium-' ) // We do not want to offer the new premium plans for agency with Legacy plans to reduce complexity in the UI
 		);
 	}, [ pressablePlans, areSignaturePlans ] );
 
@@ -212,6 +217,7 @@ export default function PressablePlanSection( {
 	const isCustomPlan = ! selectedPlan;
 
 	const hasNewPremiumPlans =
+		isBDBillingSystem &&
 		isReferralMode &&
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
