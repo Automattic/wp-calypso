@@ -8,7 +8,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Parse a date string as UTC and return its timestamp
- * Handles both ISO 8601 (`"2025-12-17T13:08:44.000Z"`) and space-separated (`"2025-12-17 13:08:44"`) formats.
+ * Handles both ISO 8601 ("2025-12-17T13:08:44.000Z") and space-separated ("2025-12-17 13:08:44") formats.
  * @param dateStr - Date string to parse
  * @returns UTC timestamp in milliseconds, or `0` if `undefined`
  */
