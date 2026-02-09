@@ -2,21 +2,13 @@
 import './style.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-let isHelpCenterReadyToLoad = false;
-let resolveHelpCenterReadyToLoad;
-const helpCenterReadyToLoadPromise = new Promise( ( resolve ) => {
-	resolveHelpCenterReadyToLoad = resolve;
-} );
+const { promise: helpCenterReadyToLoadPromise, resolve: resolveHelpCenterReadyToLoad } =
+	Promise.withResolvers();
 
 // Logged out asynchronous variant: wait until the Help Center is available for loading.
-document.addEventListener(
-	'help-center-ready-to-load',
-	() => {
-		isHelpCenterReadyToLoad = true;
-		resolveHelpCenterReadyToLoad();
-	},
-	{ once: true }
-);
+document.addEventListener( 'help-center-ready-to-load', resolveHelpCenterReadyToLoad, {
+	once: true,
+} );
 
 document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
@@ -61,10 +53,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				const isLoggedOut = ! helpCenterData?.currentUser?.ID;
 
 				if ( isLoggedOut ) {
-					// Wait for readiness signal before loading and navigating.
-					if ( ! isHelpCenterReadyToLoad ) {
-						await helpCenterReadyToLoadPromise;
-					}
+					await helpCenterReadyToLoadPromise;
 					window.helpCenter?.loadHelpCenter().then( () => {
 						if ( window.wp?.data?.dispatch ) {
 							const helpCenterDispatch = window.wp.data.dispatch( 'automattic/help-center' );
