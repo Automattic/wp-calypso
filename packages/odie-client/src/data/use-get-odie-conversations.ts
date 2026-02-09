@@ -35,11 +35,11 @@ export const useGetOdieConversations = (
 			const response: any[] = canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'GET',
-						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
+						path: `/ai/chats/${ botSlugs }?${ queryParams }`,
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
-						path: `/help-center/odie/conversations/${ botSlugs }?${ queryParams }`,
+						path: `/help-center/ai/chats/${ botSlugs }?${ queryParams }`,
 						method: 'GET',
 				  } );
 

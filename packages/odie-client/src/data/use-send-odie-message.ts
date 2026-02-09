@@ -253,7 +253,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
-						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
+						path: `/ai/chat/${ botSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
 						signal,
 						body: {
@@ -264,7 +264,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
+						path: `/help-center/ai/chat/${ botSlug }${ chatIdSegment }`,
 						method: 'POST',
 						signal,
 						data: {

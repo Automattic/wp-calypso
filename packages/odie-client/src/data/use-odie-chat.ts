@@ -37,11 +37,11 @@ export const useOdieChat = (
 				canAccessWpcomApis()
 					? await wpcomRequest( {
 							method: 'GET',
-							path: `/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+							path: `/ai/chat/${ botSlug }/${ chatId }?${ queryParams }`,
 							apiNamespace: 'wpcom/v2',
 					  } )
 					: await apiFetch( {
-							path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+							path: `/help-center/ai/chat/${ botSlug }/${ chatId }?${ queryParams }`,
 							method: 'GET',
 					  } )
 			) as ReturnedChat;

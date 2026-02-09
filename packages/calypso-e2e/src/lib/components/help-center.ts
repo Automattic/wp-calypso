@@ -196,7 +196,7 @@ export class HelpCenterComponent {
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					response.url().includes( '/odie/chat/wpcom-workflow-support_chat' ) &&
+					response.url().includes( '/ai/chat/wpcom-workflow-support_chat' ) &&
 					response.status() === 200
 			),
 			sendMessageForm
@@ -244,7 +244,7 @@ export class HelpCenterComponent {
 	 */
 	async setOdieTestMode(): Promise< void > {
 		// Rewrite the Odie POST request to make sure it's in test mode.
-		await this.page.route( '**/odie/chat/*', async ( route, request ) => {
+		await this.page.route( '**/ai/chat/*', async ( route, request ) => {
 			const postBody = JSON.parse( request.postData() || '{}' );
 
 			// Add Test Mode to the request.

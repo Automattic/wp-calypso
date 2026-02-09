@@ -20,7 +20,7 @@ export const useSendOdieFeedback = () => {
 		mutationFn: ( { messageId, ratingValue }: { messageId: number; ratingValue: number } ) => {
 			return wpcomRequest( {
 				method: 'POST',
-				path: `/odie/chat/${ botSlug }/${ chat.odieId }/${ messageId }/feedback`,
+				path: `/ai/chat/${ botSlug }/${ chat.odieId }/${ messageId }/feedback`,
 				apiNamespace: 'wpcom/v2',
 				body: { rating_value: ratingValue, ...( version && { version } ) },
 			} );
