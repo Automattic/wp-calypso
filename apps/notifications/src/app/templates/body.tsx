@@ -103,6 +103,9 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const actions = getActions( note );
 	const hasAction = ( types: string | string[] ) => {
+		if ( ! actions ) {
+			return false;
+		}
 		const typeArray = Array.isArray( types ) ? types : [ types ];
 		return typeArray.some( ( type ) => actions.hasOwnProperty( type ) );
 	};

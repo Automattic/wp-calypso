@@ -76,7 +76,9 @@ export class NoteBody extends Component {
 		// Check if we should show the pending approval badge
 		const noteActions = getActions( this.props.note );
 		const hasAction = ( types ) =>
-			[].concat( types ).some( ( type ) => noteActions.hasOwnProperty( type ) );
+			noteActions
+				? [].concat( types ).some( ( type ) => noteActions.hasOwnProperty( type ) )
+				: false;
 		const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! this.props.isApproved;
 
 		for ( i = 0; i < blocks.length; i++ ) {
