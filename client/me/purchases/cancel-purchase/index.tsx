@@ -27,6 +27,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
@@ -329,9 +330,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		this.setState( { isLoading: true } );
 
 		try {
-			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
+			const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( this.props.purchase );
+			const result = shouldUseAutoRenewFlow
+				? await this.cancelPurchase( this.props.purchase )
+				: await this.submitCancelAndRefundPurchase( this.props.purchase );
 			if ( result.success ) {
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				const refundable = shouldUseAutoRenewFlow
+					? false
+					: hasAmountAvailableToRefund( this.props.purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
@@ -590,6 +596,15 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return null;
 	};
 
+	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
+		return Boolean(
+			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+				hasAmountAvailableToRefund( purchase ) &&
+				isPlan( purchase ) &&
+				isWpComPlan( purchase?.productSlug )
+		);
+	};
+
 	getCancelPurchaseButtonProps = () => {
 		const {
 			purchase,
@@ -617,6 +632,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
+			flowTypeOverride: this.shouldUseAutoRenewFlow( purchase )
+				? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
+				: undefined,
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -912,7 +930,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						isVisible={ this.state.surveyShown }
 						onClose={ () => this.setState( { surveyShown: false } ) }
 						onSurveyComplete={ this.onSurveyComplete }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						flowType={
+							this.shouldUseAutoRenewFlow( purchase )
+								? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
+								: getPurchaseCancellationFlowType( purchase )
+						}
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						cancellationInProgress={ this.state.isLoading }

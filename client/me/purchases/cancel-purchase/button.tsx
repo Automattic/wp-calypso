@@ -48,6 +48,7 @@ export interface CancelPurchaseButtonProps {
 	textVariant?: string;
 	isLinkStyle?: boolean;
 	isInline?: boolean;
+	flowTypeOverride?: string;
 	activeSubscriptions: Array< { id: number; productName: string } >;
 	onCancellationStart: null | ( () => void );
 	onCancellationComplete: () => void;
@@ -232,7 +233,7 @@ class CancelPurchaseButton extends Component<
 						onSurveyComplete={ this.handleSurveyComplete }
 						downgradeClick={ this.props.downgradeClick }
 						freeMonthOfferClick={ this.props.freeMonthOfferClick }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						flowType={ this.props.flowTypeOverride ?? getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
 						cancellationInProgress={ isLoading }
