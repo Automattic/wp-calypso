@@ -34,15 +34,15 @@ export function a4aLink( path: string ) {
 
 /**
  * Dashboard type identifier.
- * undefined represents the default (main MSD dashboard).
+ * undefined represents the default (main `dotcom` MSD dashboard).
  */
-export type DashboardType = 'ciab' | 'msd';
+export type DashboardType = 'ciab' | 'dotcom';
 
 /**
  * Returns the dashboard type from a string.
  */
 export function getDashboardFromString( dashboard?: string ): DashboardType | null {
-	if ( dashboard === 'ciab' || dashboard === 'msd' ) {
+	if ( dashboard === 'ciab' || dashboard === 'dotcom' ) {
 		return dashboard;
 	}
 
@@ -98,7 +98,9 @@ function getDashboardFromReferrer(): DashboardType | null {
  * Priority: query param → current path → referrer → defaults to MSD
  */
 export function getCurrentDashboard(): DashboardType {
-	return getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? 'msd';
+	return (
+		getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? 'dotcom'
+	);
 }
 
 /**

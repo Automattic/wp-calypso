@@ -1,6 +1,6 @@
 import { hostingUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from '@wordpress/element';
+import { useMemo } from 'react';
 import { WEEKDAYS } from '../constants';
 import { normalizeScheduleId } from '../helpers';
 import type { InitialValues } from '../components/schedule-form';

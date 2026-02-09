@@ -74,6 +74,10 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
+		if ( scanTab === tab ) {
+			return;
+		}
+
 		if ( tab === 'active' ) {
 			router.navigate( { to: `/sites/${ siteSlug }/scan/active` } );
 		} else {

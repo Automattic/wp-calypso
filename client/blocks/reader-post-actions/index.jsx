@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -32,8 +31,7 @@ const ReaderPostActions = ( {
 	const showLikes = shouldShowLikes( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const isAutomattician = useSelector( isA8cTeamMember );
-	const shouldShowFreshlyPressed =
-		fullPost && isEnabled( 'reader/discover/freshly-pressed' ) && isAutomattician;
+	const shouldShowFreshlyPressed = fullPost && isAutomattician;
 
 	return (
 		<ul className={ listClassnames }>

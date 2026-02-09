@@ -10,7 +10,7 @@ import {
 	GlyphCircle,
 } from '@visx/glyph';
 import { useViewportMatch } from '@wordpress/compose';
-import { useMemo, createElement, Element } from '@wordpress/element';
+import { useMemo, createElement } from 'react';
 import { Text } from '../../components/text';
 import {
 	convertTimeRangeToUnix,
@@ -131,7 +131,7 @@ export default function MonitoringHttpResponsesCard( {
 	);
 
 	const data: SeriesData[] = [];
-	const codeStyles: { [ label: string ]: { color: string; glyph: Element } } = {};
+	const codeStyles: { [ label: string ]: { color: string; glyph: React.ReactElement } } = {};
 	let index = 0;
 
 	if ( responseStatusData ) {

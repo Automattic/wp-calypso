@@ -3,39 +3,83 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
 import { getCurrentDashboard, wpcomLink } from '../utils/link';
 
-export default function AddDomainButton() {
+function buildDomainQueryArgs( siteSlug?: string ) {
+	const queryArgs: Record< string, string > = {};
+
+	if ( siteSlug ) {
+		queryArgs.siteSlug = siteSlug;
+		queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+	}
+
+	queryArgs.dashboard = getCurrentDashboard();
+
+	return queryArgs;
+}
+
+function DomainOnlyAddDomainButton() {
 	const router = useRouter();
 	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const queryArgs = buildDomainQueryArgs( siteSlug );
 
-	const buildQueryArgs = () => {
-		const queryArgs: Record< string, string > = {};
-
-		if ( siteSlug ) {
-			queryArgs.siteSlug = siteSlug;
-			queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
-		}
-
-		queryArgs.dashboard = getCurrentDashboard();
-
-		return queryArgs;
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain' : '/start/domain' ),
+			queryArgs
+		);
 	};
 
-	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
-		const queryArgs = buildQueryArgs();
-		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
-		return false;
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain/use-my-domain' : '/setup/domain-transfer' ),
+			queryArgs
+		);
 	};
 
-	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+		/>
+	);
+}
 
-	const onTransferOrConnectClick = () =>
-		navigateTo( wpcomLink( '/setup/domain/use-my-domain' ), wpcomLink( '/setup/domain-transfer' ) );
+function DefaultAddDomainButton() {
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const queryArgs = buildDomainQueryArgs( siteSlug );
 
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain' ), queryArgs );
+	};
+
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), queryArgs );
+	};
+
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ __( 'Use a domain name I own' ) }
+		/>
+	);
+}
+
+function AddDomainDropdown( {
+	onSearchClick,
+	onTransferOrConnectClick,
+	transferLabel,
+}: {
+	onSearchClick: () => void;
+	onTransferOrConnectClick: () => void;
+	transferLabel: string;
+} ) {
 	return (
 		<Dropdown
 			renderToggle={ ( { isOpen, onToggle } ) => (
@@ -56,10 +100,20 @@ export default function AddDomainButton() {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+						{ transferLabel }
 					</MenuItem>
 				</>
 			) }
 		/>
 	);
+}
+
+export default function AddDomainButton() {
+	const { supports } = useAppContext();
+
+	if ( supports.domainOnlySites ) {
+		return <DomainOnlyAddDomainButton />;
+	}
+
+	return <DefaultAddDomainButton />;
 }

@@ -2,31 +2,23 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+jest.mock( '../lib/resolve-remote-blueprint-standalone', () => ( {
+	resolveRemoteBlueprint: jest.fn(),
+	ZipFilesystem: jest.fn(),
+} ) );
+
 import { getBlueprint } from '../lib/blueprint';
+import { resolveRemoteBlueprint } from '../lib/resolve-remote-blueprint-standalone';
 
 const DEFAULT_BLUEPRINT = {
 	preferredVersions: {
-		php: '8.3',
+		php: '8.4',
 		wp: 'latest',
 	},
 	features: {
 		networking: true,
 	},
 	login: true,
-};
-
-const BLUEPRINT_IN_URL_HASH = '#' + JSON.stringify( { landingPage: '/hash' } );
-const HASH_BLUEPRINT = {
-	preferredVersions: {
-		php: '8.2',
-		wp: 'latest',
-	},
-	features: {
-		networking: true,
-	},
-	login: true,
-	landingPage: '/hash',
-	steps: [],
 };
 
 const WOOCOMMERCE_PREDEFINED_BLUEPRINT = {
@@ -73,6 +65,24 @@ const REMOTE_BLUEPRINT = {
 	steps: [],
 };
 
+/**
+ * Creates a mock BlueprintBundle (ReadableFilesystemBackend) that returns
+ * the given blueprint JSON when reading /blueprint.json.
+ */
+function createMockBlueprintBundle( blueprintJson ) {
+	return {
+		read: jest.fn().mockImplementation( ( path ) => {
+			if ( path === '/blueprint.json' ) {
+				const encoded = new TextEncoder().encode( JSON.stringify( blueprintJson ) );
+				return Promise.resolve( {
+					arrayBuffer: () => Promise.resolve( encoded.buffer ),
+				} );
+			}
+			return Promise.reject( new Error( `File not found: ${ path }` ) );
+		} ),
+	};
+}
+
 describe( 'getBlueprint', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
@@ -98,19 +108,6 @@ describe( 'getBlueprint', () => {
 
 		const blueprint = await getBlueprint( false, '8.1' );
 		expect( blueprint ).toEqual( WOOCOMMERCE_PREDEFINED_BLUEPRINT );
-	} );
-
-	it( 'returns blueprint in url hash', async () => {
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: () => null,
-				has: () => false,
-			},
-			hash: BLUEPRINT_IN_URL_HASH,
-		} ) );
-
-		const blueprint = await getBlueprint( false, '8.2' );
-		expect( blueprint ).toEqual( HASH_BLUEPRINT );
 	} );
 
 	describe.each( [
@@ -208,9 +205,9 @@ describe( 'getBlueprint', () => {
 			},
 		},
 	] )(
-		'returns blueprint after fetching from blueprint-url GET param $testName',
+		'returns blueprint after resolving from blueprint-url GET param $testName',
 		( { mockResponse } ) => {
-			it( 'fetches and returns the expected blueprint', async () => {
+			it( 'resolves and returns the expected blueprint', async () => {
 				// Mock URL to return blueprint-url parameter
 				jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
 					searchParams: {
@@ -220,28 +217,18 @@ describe( 'getBlueprint', () => {
 					},
 				} ) );
 
-				// Mock the fetch function
-				global.fetch = jest.fn().mockImplementation( () =>
-					Promise.resolve( {
-						json: () => Promise.resolve( mockResponse ),
-					} )
-				);
+				// Mock resolveRemoteBlueprint to return a BlueprintBundle
+				// that serves the mockResponse as /blueprint.json
+				resolveRemoteBlueprint.mockResolvedValue( createMockBlueprintBundle( mockResponse ) );
 
 				const blueprint = await getBlueprint( false, '8.4' );
 
-				// Verify fetch was called with the right URL
-				expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/blueprint.json', {
-					credentials: 'omit',
-				} );
+				// Verify resolveRemoteBlueprint was called with the right URL
+				expect( resolveRemoteBlueprint ).toHaveBeenCalledWith(
+					'https://example.com/blueprint.json'
+				);
 				expect( blueprint ).toEqual( REMOTE_BLUEPRINT );
 			} );
 		}
 	);
-
-	afterEach( () => {
-		// Restore the original fetch
-		if ( global.fetch && typeof global.fetch === 'function' && global.fetch.mockRestore ) {
-			global.fetch.mockRestore();
-		}
-	} );
 } );

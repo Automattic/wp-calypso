@@ -1,6 +1,5 @@
 import { Step } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { PlaygroundClient } from '@wp-playground/client';
 import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -9,6 +8,7 @@ import { PlaygroundIframe } from './components/playground-iframe';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
 import calculate_plan_intent_php_script from './lib/calculate-plan-intent-php-script';
 import type { Step as StepType } from '../../types';
+import type { PlaygroundClient } from './lib/types';
 import './style.scss';
 export const DEFAULT_PLAN_INTENT = 'plans-playground';
 

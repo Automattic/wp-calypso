@@ -49,7 +49,11 @@ const PaymentMethodDeleteDialog = ( {
 			<DialogContent className="payment-method-delete-dialog__content">
 				<div className="payment-method-delete-dialog__explanation">
 					{ isCreditCard( card ) && (
-						<img src={ getPaymentMethodImageURL( card?.card_type ) } alt="" />
+						<img
+							className="payment-method-delete-dialog__image"
+							src={ getPaymentMethodImageURL( card?.card_type ) }
+							alt=""
+						/>
 					) }
 					<p>
 						{ translate(

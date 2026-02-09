@@ -1,9 +1,13 @@
-import { type Blueprint } from '@wp-playground/client';
-import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
+import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
+import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
+import type {
+	Blueprint,
+	BlueprintBundle,
+	BlueprintV1Declaration,
+	SupportedPHPVersion,
+} from './types';
 
-const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
-const FALLBACK_PHP_VERSION = '8.3';
-const DEFAULT_BLUEPRINT: Blueprint = {
+const DEFAULT_BLUEPRINT: BlueprintV1Declaration = {
 	preferredVersions: {
 		php: FALLBACK_PHP_VERSION,
 		wp: 'latest',
@@ -14,7 +18,7 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 	login: true,
 };
 
-const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+const PREDEFINED_BLUEPRINTS: Record< string, BlueprintV1Declaration > = {
 	woocommerce: {
 		...DEFAULT_BLUEPRINT,
 		landingPage: '/shop',
@@ -85,13 +89,13 @@ const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
 	},
 };
 
-function getPHPVersion( recommendedPhpVersion: string ): string {
+function getPHPVersion( recommendedPhpVersion: string ): SupportedPHPVersion {
 	if (
 		recommendedPhpVersion !== undefined &&
 		recommendedPhpVersion !== null &&
 		recommendedPhpVersion !== ''
 	) {
-		return recommendedPhpVersion;
+		return recommendedPhpVersion as SupportedPHPVersion;
 	}
 	return FALLBACK_PHP_VERSION;
 }
@@ -116,13 +120,19 @@ function getBlueprintName( name: string | null ): string | null {
 
 // Used in sending the Tracks event
 export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
-	const name = query.get( 'blueprint' );
+	const blueprint = query.get( 'blueprint' );
 
-	if ( name && name in PREDEFINED_BLUEPRINTS ) {
-		return name;
+	if ( blueprint ) {
+		if ( blueprint in PREDEFINED_BLUEPRINTS ) {
+			return blueprint;
+		}
+		// blueprint library ID
+		if ( ! isNaN( Number( blueprint ) ) ) {
+			return 'bpl-' + blueprint;
+		}
 	}
 
-	// If it's a blueprintlibrary.wordpress.com url for blueprint, use it's id to construct the label
+	// If it's a blueprintlibrary.wordpress.com url for blueprint, use its id to construct the label
 	const blueprintUrl = query.get( 'blueprint-url' );
 	if ( blueprintUrl ) {
 		const src = new URL( blueprintUrl );
@@ -135,7 +145,7 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	return 'unknown';
 }
 
-async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
+async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Blueprint > {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
 
@@ -148,10 +158,20 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 				...blueprint.preferredVersions,
 				php: getPHPVersion( recommendedPhpVersion ),
 			},
-		};
+		} as BlueprintV1Declaration;
 	}
 
-	const blueprint = await resolveBlueprintFromURL( url );
+	const resolvedBlueprint = await resolveBlueprintFromURL( url );
+
+	// ZIP bundles pass through unchanged
+	if ( resolvedBlueprint instanceof ZipFilesystem ) {
+		return resolvedBlueprint as BlueprintBundle;
+	}
+
+	// For JSON-based blueprints, extract the blueprint object for modification
+	const blueprintFile = await resolvedBlueprint.read( '/blueprint.json' );
+	const content = await blueprintFile.arrayBuffer();
+	const blueprint: BlueprintV1Declaration = JSON.parse( new TextDecoder().decode( content ) );
 
 	// Create a deeply merged blueprint where custom properties override defaults
 	// but nested objects are merged properly
@@ -176,7 +196,7 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 			networking: true, // ensure its always true
 		},
 		login: true, // ensure its always true, even though PG code already enforces this
-	};
+	} as BlueprintV1Declaration;
 }
 
 export async function getBlueprint(
@@ -186,4 +206,39 @@ export async function getBlueprint(
 	return ! isWordPressInstalled
 		? await getBlueprintFromUrl( recommendedPhpVersion )
 		: getDefaultBlueprint( recommendedPhpVersion );
+}
+
+async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
+	const q = url.searchParams;
+	let source: string | null = null;
+	let deprecationWarn = false;
+
+	if ( q.has( 'blueprint-url' ) ) {
+		source = q.get( 'blueprint-url' )!;
+		deprecationWarn = true;
+	} else if ( q.has( 'blueprint' ) ) {
+		const id = Number( q.get( 'blueprint' ) );
+		if ( ! isNaN( id ) ) {
+			source = `https://${ BLUEPRINT_LIB_HOST }?blueprint=${ id }`;
+		}
+	}
+
+	if ( ! source ) {
+		throw new Error( 'No valid blueprint parameter found in URL' );
+	}
+
+	if ( deprecationWarn ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`Loading blueprint from ${ source } but please migrate to blueprint library (https://${ BLUEPRINT_LIB_HOST })`
+		);
+	}
+
+	try {
+		return await resolveRemoteBlueprint( source );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( error );
+		throw new Error( `Failed to resolve blueprint: ${ source }` );
+	}
 }

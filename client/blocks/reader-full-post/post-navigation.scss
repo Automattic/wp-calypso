@@ -1,0 +1,97 @@
+.reader-full-post-navigation {
+	margin-block-start: 32px;
+	margin-block-end: 32px;
+
+	hr {
+		border-color: var( --color-border-subtle );
+	}
+}
+
+.reader-full-post-navigation__link-button {
+	display: flex;
+	text-decoration: none;
+	color: var( --color-text );
+	padding: 8px;
+	transition: opacity 0.2s ease-in-out;
+	background: none;
+	border: none;
+	border-radius: 4px;
+	max-width: 50%;
+	height: auto;
+	justify-content: flex-start;
+
+	&:hover {
+		opacity: 0.7;
+		text-decoration: none;
+		color: var( --color-text );
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 2px var( --color-primary );
+		outline: none;
+	}
+}
+
+.reader-full-post-navigation__link-button--next {
+	justify-content: flex-end;
+}
+
+.reader-full-post-navigation__link-content {
+	min-width: 0; // Allow text truncation
+	text-align: start;
+
+	&.reader-full-post-navigation__link-content--next {
+		text-align: end;
+	}
+}
+
+.reader-full-post-navigation__link-label {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-weight: 600;
+}
+
+.reader-full-post-navigation__link-title {
+	font-size: 1rem;
+	color: var( --color-text );
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+.reader-full-post-navigation__link-placeholder {
+	height: 60px;
+}
+
+// Responsive styles
+@media ( max-width: 660px ) {
+	.reader-full-post-navigation__link-title {
+		display: none;
+	}
+
+	.reader-full-post-navigation__link-label {
+		font-size: 0.875rem;
+		text-transform: none;
+		font-weight: 500;
+	}
+
+	.reader-full-post-navigation__link-button {
+		padding: 12px 8px;
+	}
+}
+
+// For very small screens (phones in portrait)
+@media ( max-width: 480px ) {
+	.reader-full-post-navigation__link-button {
+		padding: 12px 4px;
+	}
+
+	.reader-full-post-navigation__link-label {
+		font-size: 0.75rem;
+	}
+
+	.reader-full-post-navigation__link-placeholder {
+		height: 44px;
+	}
+}

@@ -16,9 +16,11 @@ import { store as noticesStore } from '@wordpress/notices';
 import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
+import { useLocale } from '../../app/locale';
+import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -43,6 +45,7 @@ const DEFAULT_VIEW: View = {
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -91,9 +94,19 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		{
 			id: 'schedule',
 			label: __( 'Schedule' ),
-			getValue: ( { item }: { item: Crontab } ) => item.schedule,
+			getValue: ( { item }: { item: Crontab } ) => {
+				const label = getScheduleLabel( item.schedule );
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
+				return `${ label } ${ cronDescription } ${ item.schedule }`;
+			},
 			render: ( { item }: { item: Crontab } ) => {
-				const cronDescription = cronstrue.toString( item.schedule, { verbose: true } );
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
 
 				return (
 					<div>
@@ -140,6 +153,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			},
 		},
 		{
+			id: 'edit',
+			label: __( 'Edit' ),
+			callback: ( items: Crontab[] ) => {
+				router.navigate( {
+					to: siteSettingsCrontabEditRoute.fullPath,
+					params: { siteSlug, cronId: items[ 0 ].cron_id },
+				} );
+			},
+		},
+		{
 			id: 'delete',
 			isDestructive: true,
 			icon: <Icon icon={ trash } />,
@@ -160,8 +183,13 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Cron' ) }
-					description={ __(
-						'Schedule commands to run automatically at specified intervals on your site.'
+					description={ createInterpolateElement(
+						__(
+							'Schedule commands to run automatically at specified intervals. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
+						}
 					) }
 					actions={
 						hasSshFeature && (
