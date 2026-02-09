@@ -17,7 +17,7 @@ function getLocaleFromUser( user: { locale_variant?: string; language?: string }
 	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
 }
 
-export function SurvicateProvider( { children }: { children: React.ReactNode } ) {
+export function useSurvicate() {
 	const { user } = useAuth();
 
 	useEffect( () => {
@@ -50,6 +50,4 @@ export function SurvicateProvider( { children }: { children: React.ReactNode } )
 				// Script failed to load — nothing to do.
 			} );
 	}, [ user ] );
-
-	return children;
 }

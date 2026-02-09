@@ -12,10 +12,10 @@ import {
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
-import { render } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { AuthContext } from '../../auth';
-import { SurvicateProvider } from '../index';
+import { useSurvicate } from '../index';
 import type { User } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -65,13 +65,17 @@ function createUser( overrides: Partial< User > = {} ): User {
 	} as User;
 }
 
-function renderWithAuth( user: User, children: React.ReactNode ) {
-	return render(
-		<AuthContext.Provider value={ { user, logout: jest.fn() } }>{ children }</AuthContext.Provider>
-	);
+function renderWithAuth( user: User ) {
+	return renderHook( () => useSurvicate(), {
+		wrapper: ( { children } ) => (
+			<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+				{ children }
+			</AuthContext.Provider>
+		),
+	} );
 }
 
-describe( 'SurvicateProvider', () => {
+describe( 'useSurvicate', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockedLoadScript.mockResolvedValue( undefined );
@@ -83,12 +87,7 @@ describe( 'SurvicateProvider', () => {
 		mockedIsMobile.mockReturnValue( false );
 
 		const user = createUser();
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		// Flush microtasks so the loadSurvicateScript promise resolves
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -101,12 +100,7 @@ describe( 'SurvicateProvider', () => {
 		mockedConfig.mockReturnValue( false );
 
 		const user = createUser();
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		expect( mockedLoadScript ).not.toHaveBeenCalled();
 	} );
@@ -116,12 +110,7 @@ describe( 'SurvicateProvider', () => {
 		mockedShouldLoad.mockReturnValue( false );
 
 		const user = createUser( { language: 'fr' } );
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		expect( mockedLoadScript ).not.toHaveBeenCalled();
 	} );
@@ -132,12 +121,7 @@ describe( 'SurvicateProvider', () => {
 		mockedIsMobile.mockReturnValue( true );
 
 		const user = createUser();
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		expect( mockedLoadScript ).not.toHaveBeenCalled();
 	} );
@@ -148,12 +132,7 @@ describe( 'SurvicateProvider', () => {
 		mockedIsMobile.mockReturnValue( false );
 
 		const user = createUser( { email: '' } );
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		// Flush promises
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -169,20 +148,6 @@ describe( 'SurvicateProvider', () => {
 		);
 	} );
 
-	test( 'renders children', () => {
-		mockedConfig.mockReturnValue( false );
-
-		const user = createUser();
-		const { getByText } = renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>test child content</div>
-			</SurvicateProvider>
-		);
-
-		expect( getByText( 'test child content' ) ).toBeVisible();
-	} );
-
 	test( 'handles script load failure gracefully', async () => {
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
@@ -192,12 +157,7 @@ describe( 'SurvicateProvider', () => {
 		const user = createUser();
 
 		// Should not throw
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
@@ -210,12 +170,7 @@ describe( 'SurvicateProvider', () => {
 		mockedIsMobile.mockReturnValue( true );
 
 		const user = createUser( { language: 'pt-br' } );
-		renderWithAuth(
-			user,
-			<SurvicateProvider>
-				<div>child</div>
-			</SurvicateProvider>
-		);
+		renderWithAuth( user );
 
 		expect( mockedShouldLoad ).toHaveBeenCalledWith( {
 			locale: 'pt-br',
