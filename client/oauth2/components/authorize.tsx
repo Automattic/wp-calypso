@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, Notice } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
@@ -77,7 +77,7 @@ function Authorize( {
 		string,
 		string
 	>;
-	const { setHeaders, headingText } = useLoginContext();
+	const { setHeaders } = useLoginContext();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -104,7 +104,8 @@ function Authorize( {
 
 	// Set initial headers only after confirming user is authenticated
 	// This prevents flashing the layout before redirect to login
-	useEffect( () => {
+	// Use useLayoutEffect to ensure headers are set synchronously before paint
+	useLayoutEffect( () => {
 		// Don't set headers until we know user is authenticated
 		if ( ! userCheckComplete || ! isLoggedIn ) {
 			return;
@@ -263,8 +264,8 @@ function Authorize( {
 	}
 
 	// Don't render OneLoginLayout until headers are set
-	// Check both local flag and context value to handle async state updates
-	if ( ! headersSet || ! headingText ) {
+	// Using headersSet ensures we wait for the effect to complete
+	if ( ! headersSet ) {
 		return (
 			<div className="oauth2-connect oauth2-connect--loading">
 				<div className="oauth2-connect__loading">
