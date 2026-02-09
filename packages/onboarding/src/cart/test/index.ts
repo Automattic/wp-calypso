@@ -135,19 +135,21 @@ describe( 'getNewSiteParams', () => {
 				find_available_url: false,
 			} )
 		);
+	} );
 
+	test( 'find_available_url is true when siteUrl is a custom domain', () => {
 		expect(
 			getNewSiteParams(
 				testParams( {
-					siteUrl: 'testing123.wordpress.com',
+					siteUrl: 'example.com',
 					siteTitle: 'Testing Inc.',
 					username: 'janedoe',
 				} )
 			)
 		).toEqual(
 			expect.objectContaining( {
-				blog_name: 'testing123',
-				find_available_url: false,
+				blog_name: 'example.com',
+				find_available_url: true,
 			} )
 		);
 	} );
