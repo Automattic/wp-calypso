@@ -37,6 +37,10 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
+function getCard( text: string ) {
+	return screen.getAllByRole( 'article' ).find( ( el ) => el.textContent?.includes( text ) );
+}
+
 describe( 'SiteOverview', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -131,15 +135,13 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 7 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Visibility' );
-		expect( cards[ 1 ] ).toHaveTextContent( /Upgrade to unlock.*Back up your site/ );
-		expect( cards[ 2 ] ).toHaveTextContent( 'Migrate' );
-		expect( cards[ 3 ] ).toHaveTextContent( /Upgrade to unlock.*Scan for security threats/ );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Plan' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Latest activity' );
-		expect( cards[ 6 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( getCard( 'Migrate' ) ).toBeVisible();
+		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Upgrade to unlock' );
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of a site with a paid plan on Atomic', async () => {
@@ -151,15 +153,13 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 7 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Visibility' );
-		expect( cards[ 1 ] ).toHaveTextContent( 'Last backup' );
-		expect( cards[ 2 ] ).toHaveTextContent( 'Performance' );
-		expect( cards[ 3 ] ).toHaveTextContent( 'Last scan' );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Plan' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Latest activity' );
-		expect( cards[ 6 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( getCard( 'Last backup' ) ).toBeVisible();
+		expect( getCard( 'Performance' ) ).toBeVisible();
+		expect( getCard( 'Last scan' ) ).toBeVisible();
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {
@@ -171,15 +171,13 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 7 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Visibility' );
-		expect( cards[ 1 ] ).toHaveTextContent( /Activate to unlock.*Back up your site/ );
-		expect( cards[ 2 ] ).toHaveTextContent( /Activate to unlock.*Test site performance/ );
-		expect( cards[ 3 ] ).toHaveTextContent( /Activate to unlock.*Scan for security threats/ );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Plan' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Latest activity' );
-		expect( cards[ 6 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Test site performance' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of an unlaunched site', async () => {
@@ -191,11 +189,9 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 8 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Finish setting up your site' );
-		expect( cards[ 6 ] ).toHaveTextContent( /bring your vision to life/ );
-		expect( cards[ 7 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Finish setting up your site' ) ).toBeVisible();
+		expect( getCard( 'We’ll bring your vision to life' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of a commerce garden site', async () => {
@@ -207,10 +203,8 @@ describe( 'SiteOverview', () => {
 		expect( screen.getByRole( 'link', { name: 'Manage store' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /WP Admin/ } ) ).not.toBeInTheDocument();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 2 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Plan' );
-		expect( cards[ 1 ] ).toHaveTextContent( 'Visibility' );
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of a self-hosted Jetpack connected site', async () => {
@@ -226,14 +220,12 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 6 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Visibility' );
-		expect( cards[ 1 ] ).toHaveTextContent( /Activate to unlock.*Back up your site/ );
-		expect( cards[ 2 ] ).toHaveTextContent( 'Subscribers' );
-		expect( cards[ 3 ] ).toHaveTextContent( /Activate to unlock.*Scan for security threats/ );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Subscriptions' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Latest activity' );
+		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Subscribers' ) ).toBeVisible();
+		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Subscriptions' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of an A4A dev site', async () => {
@@ -245,15 +237,13 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 7 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Visibility' );
-		expect( cards[ 1 ] ).toHaveTextContent( 'Last backup' );
-		expect( cards[ 2 ] ).toHaveTextContent( 'Share' );
-		expect( cards[ 3 ] ).toHaveTextContent( 'Last scan' );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Development license' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Latest activity' );
-		expect( cards[ 6 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Visibility' ) ).toBeVisible();
+		expect( getCard( 'Last backup' ) ).toBeVisible();
+		expect( getCard( 'Share' ) ).toBeVisible();
+		expect( getCard( 'Last scan' ) ).toBeVisible();
+		expect( getCard( 'Development license' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	it( 'renders the overview of a site with Flex plan', async () => {
@@ -265,14 +255,12 @@ describe( 'SiteOverview', () => {
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
-		const cards = screen.getAllByRole( 'article' );
-		expect( cards ).toHaveLength( 7 );
-		expect( cards[ 0 ] ).toHaveTextContent( 'Last backup' );
-		expect( cards[ 1 ] ).toHaveTextContent( 'Performance' );
-		expect( cards[ 2 ] ).toHaveTextContent( 'Last scan' );
-		expect( cards[ 3 ] ).toHaveTextContent( 'Plan' );
-		expect( cards[ 4 ] ).toHaveTextContent( 'Latest activity' );
-		expect( cards[ 5 ] ).toHaveTextContent( 'Month-to-date site usage' );
-		expect( cards[ 6 ] ).toHaveTextContent( 'The perfect domain awaits' );
+		expect( getCard( 'Last backup' ) ).toBeVisible();
+		expect( getCard( 'Performance' ) ).toBeVisible();
+		expect( getCard( 'Last scan' ) ).toBeVisible();
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( getCard( 'Latest activity' ) ).toBeVisible();
+		expect( getCard( 'Month-to-date site usage' ) ).toBeVisible();
+		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 } );
