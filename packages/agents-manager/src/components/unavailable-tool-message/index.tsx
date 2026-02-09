@@ -30,7 +30,7 @@ export default function UnavailableToolMessage( { type }: Props ) {
 			);
 			break;
 		case 'start-over':
-			content = 'Request to start over again.';
+			content = 'To start over, please send your request again.';
 			break;
 		default:
 			content = '';
