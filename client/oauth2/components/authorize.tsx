@@ -252,7 +252,7 @@ function Authorize( {
 						/>
 					) ) }
 
-				{ userCardUser && (
+				{ userCardUser && ! showSuccessMessage && (
 					<div className="oauth2-connect__switch-account-link">
 						<Button variant="link" onClick={ onSwitch } className="oauth2-connect__switch-account">
 							{ translate( 'Log in with a different account' ) }
