@@ -56,6 +56,7 @@ export function SitesDataViews( {
 						<SiteLink
 							{ ...props }
 							site={ item }
+							expanded={ view.type === 'grid' }
 							onClick={ () => recordTracksEvent( 'calypso_dashboard_sites_item_click' ) }
 						/>
 					) }
