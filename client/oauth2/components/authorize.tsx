@@ -77,7 +77,7 @@ function Authorize( {
 		string,
 		string
 	>;
-	const { setHeaders } = useLoginContext();
+	const { setHeaders, headingText } = useLoginContext();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -263,8 +263,15 @@ function Authorize( {
 	}
 
 	// Don't render OneLoginLayout until headers are set
-	if ( ! headersSet ) {
-		return null;
+	// Check both local flag and context value to handle async state updates
+	if ( ! headersSet || ! headingText ) {
+		return (
+			<div className="oauth2-connect oauth2-connect--loading">
+				<div className="oauth2-connect__loading">
+					<Spinner />
+				</div>
+			</div>
+		);
 	}
 
 	return (
