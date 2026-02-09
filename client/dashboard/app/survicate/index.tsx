@@ -21,7 +21,7 @@ export function SurvicateProvider( { children }: { children: React.ReactNode } )
 	const { user } = useAuth();
 
 	useEffect( () => {
-		if ( ! config.isEnabled( 'survicate_enabled' ) ) {
+		if ( ! config( 'survicate_enabled' ) ) {
 			return;
 		}
 

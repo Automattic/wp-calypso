@@ -78,7 +78,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'loads script when all conditions are met', async () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
 		mockedIsMobile.mockReturnValue( false );
 
@@ -98,7 +98,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'skips loading when config flag is disabled', () => {
-		mockedConfig.isEnabled.mockReturnValue( false );
+		mockedConfig.mockReturnValue( false );
 
 		const user = createUser();
 		renderWithAuth(
@@ -112,7 +112,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'skips loading when locale is non-English', () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( false );
 
 		const user = createUser( { language: 'fr' } );
@@ -127,7 +127,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'skips loading on mobile devices', () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( false );
 		mockedIsMobile.mockReturnValue( true );
 
@@ -143,7 +143,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'fires error event when user has no email', async () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
 		mockedIsMobile.mockReturnValue( false );
 
@@ -170,7 +170,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'renders children', () => {
-		mockedConfig.isEnabled.mockReturnValue( false );
+		mockedConfig.mockReturnValue( false );
 
 		const user = createUser();
 		const { getByText } = renderWithAuth(
@@ -184,7 +184,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'handles script load failure gracefully', async () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
 		mockedIsMobile.mockReturnValue( false );
 		mockedLoadScript.mockRejectedValue( new Error( 'Failed to load' ) );
@@ -205,7 +205,7 @@ describe( 'SurvicateProvider', () => {
 	} );
 
 	test( 'passes correct locale and isMobile to shouldLoadSurvicate', () => {
-		mockedConfig.isEnabled.mockReturnValue( true );
+		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( false );
 		mockedIsMobile.mockReturnValue( true );
 

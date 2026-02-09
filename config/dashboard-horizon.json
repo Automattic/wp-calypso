@@ -3,6 +3,7 @@
 	"env_id": "dashboard-horizon",
 	"favicon_url": "/calypso/images/favicons/favicon-wpcalypso.ico",
 	"client_slug": "browser",
+	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
 	"hostname_allowlist": [ "my.wordpress.com", "my.woo.com" ],
 	"i18n_default_locale_slug": "en",
