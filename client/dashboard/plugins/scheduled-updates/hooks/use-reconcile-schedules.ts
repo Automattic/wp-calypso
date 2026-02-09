@@ -1,5 +1,5 @@
 import { queryClient, hostingUpdateSchedulesQuery } from '@automattic/api-queries';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from 'react';
 import { useCreateSchedules } from './use-create-schedules';
 import { useDeleteSchedules } from './use-delete-schedules';
 import { useEditSchedules } from './use-edit-schedules';

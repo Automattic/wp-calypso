@@ -310,6 +310,12 @@ $breakpoint-desktop: 1440px; //Desktop size.
 			&:hover svg {
 				fill: #3858e9;
 			}
+
+			&.search-submit-button {
+				background-color: var( --color-primary );
+				color: var(--color-white);
+				border-radius: 100%;
+			}
 		}
 
 		.search-terms {

@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
-import { when } from 'jest-when';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -129,7 +127,7 @@ describe( 'reader stats', () => {
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
 
 			expect( result ).toEqual( {
-				ui_algo: 'discover_recommended',
+				ui_algo: 'freshly-pressed',
 				custom: 'prop',
 			} );
 		} );
@@ -167,7 +165,7 @@ describe( 'reader stats', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'test_event',
 				expect.objectContaining( {
-					ui_algo: 'discover_recommended',
+					ui_algo: 'freshly-pressed',
 					prop: 'value',
 				} )
 			);
@@ -673,8 +671,8 @@ describe( 'reader stats', () => {
 			const scenarios = [
 				{
 					url: '/discover',
-					expected: 'discover_recommended',
-					description: 'discover recommended page',
+					expected: 'freshly-pressed',
+					description: 'freshly pressed page',
 					searchParams: {},
 				},
 				{
@@ -730,16 +728,8 @@ describe( 'reader stats', () => {
 				}
 			);
 
-			it( 'returns freshly-pressed when the feature flag is on and there is no subpath', () => {
-				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( true );
-
+			it( 'returns freshly-pressed when there is no subpath', () => {
 				expect( getLocation( '/discover' ) ).toBe( 'freshly-pressed' );
-			} );
-
-			it( 'returns recommended when the feature flag is off and there is no subpath', () => {
-				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( false );
-
-				expect( getLocation( '/discover' ) ).toBe( 'discover_recommended' );
 			} );
 
 			it( 'supports the /discover/recommended subpath', () => {

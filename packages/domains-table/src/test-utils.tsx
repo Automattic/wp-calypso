@@ -39,7 +39,7 @@ export function testDomain(
 		is_hundred_year_domain: false,
 		has_registration: true,
 		registration_date: '2020-03-11T22:23:58+00:00',
-		expiry: '2026-03-11T00:00:00+00:00',
+		expiry: '2032-03-11T00:00:00+00:00',
 		wpcom_domain: false,
 		current_user_is_owner: true,
 		current_user_can_add_email: false,

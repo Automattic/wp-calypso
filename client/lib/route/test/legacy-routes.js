@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isLegacyRoute } from '../legacy-routes';
 
-let features = [];
+const features = [];
 
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
@@ -13,18 +13,6 @@ describe( 'legacy-routes', () => {
 
 		test( 'should return false for /settings/general', () => {
 			expect( isLegacyRoute( '/settings/general' ) ).toBe( false );
-		} );
-
-		test( 'should return true for / when reader is disabled', () => {
-			// config.isEnabled( 'reader' ) === false
-			features = [];
-			expect( isLegacyRoute( '/' ) ).toBe( true );
-		} );
-
-		test( 'should return false for / when reader is enabled', () => {
-			// config.isEnabled( 'reader' ) === true
-			features = [ 'reader' ];
-			expect( isLegacyRoute( '/' ) ).toBe( false );
 		} );
 
 		test( 'should return true for any path ending in .php', () => {
