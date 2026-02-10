@@ -1,42 +1,61 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
-import useFetchReferrals from '../../hooks/use-fetch-referrals';
+import { A4A_REFERRALS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 
 import './style.scss';
 
-export const MissingPaymentSettingsNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
+type CommissionType = 'referrals' | 'migrations' | 'woopayments';
+
+export const MissingPaymentSettingsNotice = ( {
+	commissionType,
+}: {
+	commissionType?: CommissionType;
+} ) => {
 	const translate = useTranslate();
 
 	const { data: tipaltiData, isSuccess: isDataReady } = useGetTipaltiPayee();
 	const isPayable = tipaltiData?.IsPayable;
 
-	const { data: referrals } = useFetchReferrals();
+	const getDescription = () => {
+		switch ( commissionType ) {
+			case 'referrals':
+				return translate(
+					'You’ve successfully made a client referral and will be due future commissions. Add your payment details to get paid.'
+				);
+			case 'migrations':
+				return translate(
+					'You have successfully migrated a site and will be due future commissions. Add your payment details to get paid.'
+				);
+			case 'woopayments':
+				return translate(
+					'Ensure you receive your share of revenue by providing your payout details in the payout settings screen.'
+				);
+			default:
+				return translate(
+					'Ensure you receive your share of revenue by providing your payout details in the payout settings screen.'
+				);
+		}
+	};
 
-	const hasReferrals = !! referrals?.length;
-
-	if ( isDataReady && ! isPayable && hasReferrals ) {
+	if ( isDataReady && ! isPayable ) {
 		return (
 			<LayoutBanner
-				isFullWidth={ isFullWidth }
+				isFullWidth
 				level="warning"
-				title={ translate( 'Add your payment information to get paid' ) }
+				title={ translate( 'Add your payout information to get paid.' ) }
 				className="missing-payment-settings-notice"
 				allowTemporaryDismissal
 				preferenceName="missing-payment-settings-notice-dismissed"
 				hideCloseButton
 			>
-				<div>
-					{ translate(
-						"You've successfully made a client referral and will be due future commissions. Add your payment details to get paid."
-					) }
-				</div>
+				<div>{ getDescription() }</div>
 				<Button
 					className="missing-payment-settings-notice__button is-dark"
-					href="/referrals/payment-settings"
+					href={ commissionType ? 'payment-settings' : A4A_REFERRALS_PAYMENT_SETTINGS }
 				>
-					{ translate( 'Add your payment information' ) }
+					{ translate( 'Add payout information now' ) }
 				</Button>
 			</LayoutBanner>
 		);

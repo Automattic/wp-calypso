@@ -18,7 +18,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
-import useCustomEventHandler from '../../hooks/use-custom-event-handler';
+import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
@@ -77,6 +77,8 @@ export default function AgentDock( {
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ isCompactMode, setIsCompactMode ] = useState( false );
+	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const shouldUseAgentsManager = useShouldUseUnifiedAgent();
 	const {
@@ -147,7 +149,7 @@ export default function AgentDock( {
 
 			// Sync local session ID with the server's
 			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId );
+				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
@@ -200,12 +202,19 @@ export default function AgentDock( {
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: () => sessionId || getStoredSessionId(),
+		getSessionId: () => sessionId || getStoredSessionId( agentId ),
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
 
-	useCustomEventHandler( { isDocked, dock, undock, openSidebar, closeSidebar } );
+	useSetupCustomActions( {
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		setIsCompactMode,
+		setShouldRenderChat,
+	} );
 
 	const handleNewChat = () => {
 		navigate( '/' );
@@ -225,7 +234,7 @@ export default function AgentDock( {
 			const sessionId = conversation.session_id || '';
 
 			abortCurrentRequest();
-			setSessionId( sessionId );
+			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
@@ -341,6 +350,7 @@ export default function AgentDock( {
 			markdownExtensions={ markdownExtensions }
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
+			isCompactMode={ isCompactMode }
 		/>
 	);
 
@@ -395,15 +405,18 @@ export default function AgentDock( {
 		/>
 	);
 
-	return createAgentPortal(
-		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-		<Routes>
-			<Route path="/chat" element={ Chat } />
-			<Route path="/post" element={ SupportGuideRoute } />
-			<Route path="/zendesk" element={ ZendeskChatRoute } />
-			<Route path="/support-guides" element={ SupportGuidesRoute } />
-			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
-		</Routes>
+	return (
+		shouldRenderChat &&
+		createAgentPortal(
+			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+			<Routes>
+				<Route path="/chat" element={ Chat } />
+				<Route path="/post" element={ SupportGuideRoute } />
+				<Route path="/zendesk" element={ ZendeskChatRoute } />
+				<Route path="/support-guides" element={ SupportGuidesRoute } />
+				<Route path="/history" element={ History } />
+				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
+			</Routes>
+		)
 	);
 }

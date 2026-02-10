@@ -2,14 +2,15 @@ import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { FRESHLY_PRESSED_TAB } from './helper';
-import { getLocalizedRoutes, getCurrentTab } from './routes';
+import { getLocalizedRoutes, DISCOVER_PREFIX } from './routes';
 
 const discoverSsr = ( context, next ) => {
 	context.renderHeaderSection = renderHeaderSection;
-	const selectedTab = getCurrentTab( context.path, FRESHLY_PRESSED_TAB );
+	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, FRESHLY_PRESSED_TAB );
 
 	context.primary = (
 		<>

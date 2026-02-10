@@ -239,6 +239,7 @@ export default function OverviewCard( {
 
 	return (
 		<Card
+			role="article"
 			className={ clsx( 'dashboard-overview-card', {
 				[ `dashboard-overview-card--${ intent }` ]: intent,
 				'dashboard-overview-card--disabled': isLoading || disabled,

@@ -114,6 +114,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
+		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true
 	}
 }

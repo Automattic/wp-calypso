@@ -60,6 +60,11 @@ function SiteDomains() {
 		fields
 	);
 
+	// Hide actions column when no domain has eligible actions.
+	const hasEligibleActions = siteDomains?.some( ( item ) =>
+		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
+	);
+
 	return (
 		<PageLayout
 			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
@@ -94,7 +99,7 @@ function SiteDomains() {
 					onChangeView={ updateView }
 					onResetView={ resetView }
 					view={ view }
-					actions={ actions }
+					actions={ hasEligibleActions ? actions : [] }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
