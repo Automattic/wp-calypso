@@ -12,9 +12,11 @@ import {
 	createFeedbackActions,
 	createMessageRenderer,
 	EmptyView,
+	ImageUploader,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 } from '@automattic/agenttic-ui';
+import type { UploadedImage } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
 	getClientTools,
@@ -33,6 +35,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 	>();
 
 	const [ isTyping, setIsTyping ] = useState( false );
+	const [ uploadedImages, setUploadedImages ] = useState< UploadedImage[] >( [] );
 
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
@@ -258,6 +261,23 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 		console.log( 'Selected suggestion:', message );
 	}, [] );
 
+	const handleFilesSelected = useCallback( ( files: File[] ) => {
+		// Simulate upload by creating object URLs
+		const newImages: UploadedImage[] = files.map( ( file, index ) => ( {
+			id: `${ Date.now() }-${ index }`,
+			url: URL.createObjectURL( file ),
+			name: file.name,
+			mime_type: file.type,
+		} ) );
+		setUploadedImages( ( prev ) => [ ...prev, ...newImages ] );
+	}, [] );
+
+	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
+		setUploadedImages( ( prev ) => prev.filter( ( img ) => img.id !== image.id ) );
+		// Revoke the object URL to free memory
+		URL.revokeObjectURL( image.url );
+	}, [] );
+
 	return (
 		<>
 			<style>
@@ -388,6 +408,13 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 						<AgentUI.Messages />
 						<AgentUI.Footer>
 							<AgentUI.Notice />
+								<ImageUploader
+									images={ uploadedImages }
+									onFilesSelected={ handleFilesSelected }
+									onRemoveImage={ handleRemoveImage }
+									acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
+									showFileMetadata={ true }
+								/>
 							<AgentUI.Input />
 							<AgentUI.InputToolbar label="Custom Toolbar">
 								<div>
