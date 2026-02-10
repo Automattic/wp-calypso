@@ -987,12 +987,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						align="left"
 					/>
 
-					{ shouldShowRefundEligibilityNotice && refundAmountString && (
-						<RefundEligibilityNotice
-							refundAmount={ refundAmountString }
-							cancelButtonProps={ cancelButtonProps }
-						/>
-					) }
+					{ shouldShowRefundEligibilityNotice &&
+						refundAmountString &&
+						! this.state.showDomainOptionsStep && (
+							<RefundEligibilityNotice
+								refundAmount={ refundAmountString }
+								cancelButtonProps={ cancelButtonProps }
+							/>
+						) }
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
