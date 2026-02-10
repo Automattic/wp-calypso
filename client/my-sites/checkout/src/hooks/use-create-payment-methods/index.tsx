@@ -65,8 +65,15 @@ export function useCreatePayPalExpress( {
 	return paypalMethod;
 }
 
-export function useCreatePayPalPPCP(): PaymentMethod | null {
-	return useMemo( () => createPayPal(), [] );
+export function useCreatePayPalPPCP( {
+	hasExistingPayPalPPCPMethods,
+}: {
+	hasExistingPayPalPPCPMethods?: boolean;
+} = {} ): PaymentMethod | null {
+	return useMemo(
+		() => createPayPal( { hasExistingPayPalPPCPMethods } ),
+		[ hasExistingPayPalPPCPMethods ]
+	);
 }
 
 export function useCreateCreditCard( {
@@ -424,8 +431,6 @@ export default function useCreatePaymentMethods( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { currency } = responseCart;
-	const paypalExpressMethod = useCreatePayPalExpress( {} );
-	const paypalPPCPMethod = useCreatePayPalPPCP();
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
@@ -479,6 +484,11 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+	const hasExistingPayPalPPCPMethods =
+		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
+
+	const paypalExpressMethod = useCreatePayPalExpress( {} );
+	const paypalPPCPMethod = useCreatePayPalPPCP( { hasExistingPayPalPPCPMethods } );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''

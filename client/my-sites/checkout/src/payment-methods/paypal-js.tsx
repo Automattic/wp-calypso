@@ -11,6 +11,7 @@ import {
 	PayPalButtonsComponentProps,
 	usePayPalScriptReducer,
 } from '@paypal/react-paypal-js';
+import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -26,22 +27,35 @@ async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiRespon
 	return await wp.req.get( '/me/paypal-configuration' );
 }
 
-export function createPayPal(): PaymentMethod {
+export function createPayPal( {
+	hasExistingPayPalPPCPMethods,
+}: {
+	hasExistingPayPalPPCPMethods?: boolean;
+} = {} ): PaymentMethod {
 	return {
 		id: 'paypal-js',
 		paymentProcessorId: 'paypal-js',
-		label: <PayPalLabel />,
+		label: <PayPalLabel hasExistingPayPalPPCPMethods={ hasExistingPayPalPPCPMethods } />,
 		submitButton: <PayPalSubmitButtonWrapper />,
 		getAriaLabel: () => 'PayPal',
 		isInitiallyDisabled: true,
 	};
 }
 
-function PayPalLabel() {
+function PayPalLabel( {
+	hasExistingPayPalPPCPMethods,
+}: {
+	hasExistingPayPalPPCPMethods?: boolean;
+} ) {
+	const { __ } = useI18n();
 	return (
 		<>
 			<div>
-				<span>PayPal</span>
+				{ hasExistingPayPalPPCPMethods ? (
+					<span>{ __( 'New PayPal account' ) }</span>
+				) : (
+					<span>PayPal</span>
+				) }
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
