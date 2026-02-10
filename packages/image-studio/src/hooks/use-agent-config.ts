@@ -1,6 +1,6 @@
 import { getAgentManager } from '@automattic/agenttic-client';
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import { useSessionId } from '../utils/session';
+import { getSessionId } from '../utils/session';
 
 /**
  * Loads and manages agent configuration for Image Studio.
@@ -22,7 +22,7 @@ export function useAgentConfig(
 ) {
 	const [ agentConfigState, setAgentConfigState ] = useState< any >( null );
 
-	const sessionId = useSessionId();
+	const sessionId = getSessionId();
 	const sessionKey = useMemo( () => sessionId || 'image-studio-default', [ sessionId ] );
 
 	useEffect( () => {
