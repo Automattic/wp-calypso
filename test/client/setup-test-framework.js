@@ -8,14 +8,14 @@ const nock = require( 'nock' );
 // Disables all network requests for all tests.
 nock.disableNetConnect();
 
-beforeAll( () => {
+beforeEach( () => {
 	// reactivate nock on test start
 	if ( ! nock.isActive() ) {
 		nock.activate();
 	}
 } );
 
-afterAll( () => {
+afterEach( () => {
 	// helps clean up nock after each test run and avoid memory leaks
 	nock.restore();
 	nock.cleanAll();
