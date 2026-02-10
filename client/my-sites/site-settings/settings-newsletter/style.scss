@@ -1,5 +1,24 @@
 @import "@wordpress/base-styles/breakpoints";
 
+.site-settings .site-settings__card {
+	position: relative;
+
+	.components-base-control.components-toggle-control {
+		margin-bottom: 16px;
+	}
+
+	> .support-info {
+		position: absolute;
+		inset-inline-end: 16px;
+	}
+
+	> label {
+		&:not(:first-child) {
+			margin-top: 8px;
+		}
+	}
+}
+
 .byline-preview {
 	display: inline-flex;
 	align-items: center;
