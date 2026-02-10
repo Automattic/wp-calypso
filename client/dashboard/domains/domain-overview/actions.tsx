@@ -165,7 +165,11 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 				{ availableActions.disconnect && (
 					<ActionList.ActionItem
 						title={ __( 'Detach' ) }
-						description={ __( 'Detach this domain from the site.' ) }
+						description={ sprintf(
+							/* translators: %s is the site slug, e.g. "mysite.wordpress.com" */
+							__( 'Detach this domain from %s.' ),
+							domain.site_slug
+						) }
 						actions={
 							<Button
 								size="compact"
@@ -228,7 +232,11 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						domainName
 					) }
 					description={ createInterpolateElement(
-						__( 'Are you sure you want to detach this domain? <learnMoreLink />' ),
+						sprintf(
+							/* translators: %s is the site slug, e.g. "mysite.wordpress.com" */
+							__( 'Are you sure you want to detach this domain from %s? <learnMoreLink />' ),
+							domain.site_slug
+						),
 						{
 							learnMoreLink: (
 								<InlineSupportLink
