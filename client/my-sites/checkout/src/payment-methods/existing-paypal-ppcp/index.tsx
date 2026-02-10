@@ -53,7 +53,7 @@ function ExistingPayPalPPCPLabel( { email }: { email: string } ) {
 	return (
 		<>
 			<div>
-				<span>PayPal: { email }</span>
+				<span>PayPal { email }</span>
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PayPalLogo />
