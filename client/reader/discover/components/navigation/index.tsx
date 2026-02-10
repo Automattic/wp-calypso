@@ -99,6 +99,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		<SectionNav
 			className="discover-navigation"
 			selectedText={ selectedTabData?.title }
+			variation="minimal"
 			enforceTabsView
 		>
 			<NavTabs hasHorizontalScroll>

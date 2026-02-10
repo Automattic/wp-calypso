@@ -21,11 +21,11 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 	hasOptIn: boolean;
-	isDashboardToggleEnabled: boolean;
+	showOptInBanner: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardToggleEnabled }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn, showOptInBanner }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -47,7 +47,7 @@ const PluginsSidebar = ( { path, isCollapsed, hasOptIn, isDashboardToggleEnabled
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
-			footer={ isDashboardToggleEnabled && ! isCollapsed && <HostingDashboardOptInBanner /> }
+			footer={ showOptInBanner && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
 				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
@@ -120,7 +120,7 @@ export default withCurrentRoute(
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
 			hasOptIn: hasDashboardOptIn( state ),
-			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
+			showOptInBanner: isEnabled( 'dashboard/opt-in-banners' ) && isDashboardToggleEnabled( state ),
 		};
 	} )( PluginsSidebar )
 );

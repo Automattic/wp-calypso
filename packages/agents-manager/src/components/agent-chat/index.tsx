@@ -7,6 +7,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
+	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo } from '@wordpress/element';
@@ -60,6 +61,8 @@ interface AgentChatProps {
 	inputValue?: string;
 	/** Called when the input value changes. */
 	onInputChange?: ( value: string ) => void;
+	/** Whether to render the floating chat in compact mode. */
+	isCompactMode?: boolean;
 	useImageUpload?: ImageUploadHook;
 }
 
@@ -84,6 +87,7 @@ export default function AgentChat( {
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
+	isCompactMode = false,
 	useImageUpload,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -104,6 +108,13 @@ export default function AgentChat( {
 			} ),
 		[ markdownComponents, markdownExtensions ]
 	);
+
+	let floatingChatState: ChatState = 'collapsed';
+	if ( isOpen ) {
+		floatingChatState = 'expanded';
+	} else if ( isCompactMode ) {
+		floatingChatState = 'compact';
+	}
 
 	const onSubmitHandler = useCallback(
 		async ( message: string ) => {
@@ -156,7 +167,7 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }

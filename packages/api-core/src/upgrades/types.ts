@@ -383,6 +383,14 @@ export interface Purchase {
 	 * leave the site with no other products that provide the ATOMIC feature.
 	 */
 	will_atomic_revert_after_removal: boolean;
+
+	/**
+	 * True if this purchase should prevent the site from being deleted.
+	 *
+	 * When a site has any purchase with this flag set to true, the site
+	 * deletion flow should require the user to cancel these purchases first.
+	 */
+	blocks_site_deletion: boolean;
 }
 
 export type RawPurchase = Purchase & {

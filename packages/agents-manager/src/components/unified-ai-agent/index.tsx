@@ -1,11 +1,14 @@
 import { getAgentManager } from '@automattic/agenttic-client';
+import { AgentsManagerSelect } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ORCHESTRATOR_AGENT_ID } from '../../constants';
+import { getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
+import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getSessionId, clearSessionId } from '../../utils/agent-session';
 import { createAgentConfig } from '../../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
@@ -22,7 +25,18 @@ export interface UnifiedAIAgentProps {
 
 const queryClient = new QueryClient();
 
-export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element {
+export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element | null {
+	// Wait for the store to load before rendering PersistentRouter
+	// This ensures router history is restored from persisted state
+	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
+
+	if ( ! isStoreReady ) {
+		return null;
+	}
+
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<PersistentRouter>
@@ -43,8 +57,10 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 	const isChatRoute = pathname.startsWith( '/chat' );
 	const isNewChat = isChatRoute && !! state?.isNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
-	// Use empty `sessionId` for new chat, otherwise use route or stored session ID
-	const sessionId = isNewChat ? '' : routeSessionId || getSessionId();
+	// Read agent/version overrides from browser URL (?agent=, ?version=).
+	// PersistentRouter (memory router) does not track window.location.search.
+	const { agentId, version } = getAgentConfig();
+	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
@@ -52,15 +68,14 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 			if ( isNewChat ) {
 				const agentManager = getAgentManager();
 
-				if ( agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ) ) {
-					// Abort any ongoing requests
-					await agentManager.abortCurrentRequest( ORCHESTRATOR_AGENT_ID );
-					// Remove existing agent to start fresh
-					agentManager.removeAgent( ORCHESTRATOR_AGENT_ID );
+				if ( agentManager.hasAgent( agentId ) ) {
+					// eslint-disable-next-line @typescript-eslint/await-thenable -- ensure abort completes before teardown
+					await agentManager.abortCurrentRequest( agentId );
+					agentManager.removeAgent( agentId );
 				}
 
 				// Clear stored session ID
-				clearSessionId();
+				clearSessionId( agentId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -82,13 +97,15 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				environment: 'calypso',
+				agentId,
+				version,
 			} );
 
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [ currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
 
 	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
 	useEffect( () => {

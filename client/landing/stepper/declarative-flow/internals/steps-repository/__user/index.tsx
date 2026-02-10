@@ -14,6 +14,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
@@ -45,6 +46,7 @@ const UserStepComponent: StepType = function UserStep( {
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
+	const { topBarLogo, ciabConfig, signupTosElement } = usePartnerBranding();
 
 	const {
 		isExperimentVariant,
@@ -77,6 +79,7 @@ const UserStepComponent: StepType = function UserStep( {
 		signupUrl,
 		redirectTo,
 		locale,
+		from: ciabConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -120,6 +123,8 @@ const UserStepComponent: StepType = function UserStep( {
 				isEmailVariation={ isEmailVariation }
 				isMessagingVariation={ isMessagingVariation }
 				isSliderVariation={ isSliderVariation }
+				allowedSocialServices={ ciabConfig?.ssoProviders }
+				customTosElement={ signupTosElement }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -132,9 +137,15 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
-		const headingText = isMessagingVariation
-			? translate( 'Welcome to WordPress.com' )
-			: translate( 'Create your account' );
+		let headingText = translate( 'Create your account' );
+		if ( isMessagingVariation ) {
+			headingText = translate( 'Welcome to WordPress.com' );
+		} else if ( ciabConfig ) {
+			headingText = translate( 'Create an account for %(partner)s', {
+				args: { partner: ciabConfig.displayName },
+				textOnly: true,
+			} );
+		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
@@ -149,6 +160,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 		const topBar = (
 			<Step.TopBar
+				logo={ topBarLogo }
 				leftElement={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}

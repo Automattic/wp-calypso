@@ -4,8 +4,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteScanHistoryRoute } from '../../app/router/sites';
-import { DataViews, DataViewsEmptyState } from '../../components/dataviews';
-import noThreatsIllustration from '../scan-active/no-threats-illustration.svg';
+import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
@@ -66,7 +65,7 @@ export function ScanHistoryDataViews( {
 		let description = __( 'So far, there are no archived threats on your site.' );
 
 		if ( view.search || view.filters ) {
-			title = __( 'No archived threats found' );
+			title = __( 'No history found' );
 
 			if ( view.search ) {
 				description = sprintf(
@@ -81,20 +80,7 @@ export function ScanHistoryDataViews( {
 			}
 		}
 
-		return (
-			<DataViewsEmptyState
-				title={ title }
-				description={ description }
-				illustration={
-					<img
-						src={ noThreatsIllustration }
-						alt={ __( 'No threats found illustration' ) }
-						width={ 408 }
-						height={ 280 }
-					/>
-				}
-			/>
-		);
+		return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
 	};
 
 	return (

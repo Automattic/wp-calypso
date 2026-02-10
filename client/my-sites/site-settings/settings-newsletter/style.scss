@@ -1,5 +1,24 @@
 @import "@wordpress/base-styles/breakpoints";
 
+.site-settings .site-settings__card {
+	position: relative;
+
+	.components-base-control.components-toggle-control {
+		margin-bottom: 16px;
+	}
+
+	> .support-info {
+		position: absolute;
+		inset-inline-end: 16px;
+	}
+
+	> label {
+		&:not(:first-child) {
+			margin-top: 8px;
+		}
+	}
+}
+
 .byline-preview {
 	display: inline-flex;
 	align-items: center;
@@ -7,20 +26,19 @@
 	margin-bottom: 24px;
 	padding: 16px;
 	background-color: var(--studio-gray-0);
-}
 
-.byline-preview__label {
-	height: 24px;
-	line-height: 24px;
-	margin-right: 8px;
-}
+	.byline-preview__label {
+		height: 24px;
+		line-height: 24px;
+		margin-right: 8px;
+	}
 
-
-.byline-preview__gravatar {
-	border-radius: 50%;
-	width: 24px;
-	height: 24px;
-	margin: 0 8px 0 0;
+	.byline-preview__gravatar {
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
+		margin: 0 8px 0 0;
+	}
 }
 
 .byline-settings__gravatar-preview {
@@ -28,10 +46,24 @@
 	align-items: center;
 	margin-bottom: 12px;
 	margin-top: -12px;
+
+	.byline-settings__gravatar {
+		margin-right: 16px;
+	}
+
+	.form-setting-explanation {
+		margin-bottom: 8px;
+	}
 }
 
-.byline-settings__gravatar {
-	margin-right: 16px;
+.newsletter-categories-settings__term-tree-selector.site-settings__card {
+	> div {
+		margin: 8px 0;
+	}
+
+	.form-setting-explanation.newsletter-categories-settings__description {
+		margin-top: 8px;
+	}
 }
 
 @media screen and (min-width: $break-small) {
