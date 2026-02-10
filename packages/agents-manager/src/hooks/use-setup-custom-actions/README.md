@@ -15,7 +15,7 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `setChatDocked`       | `(isDocked: boolean) => void`                              | Docks or undocks the chat.                                                                       |
 | `setChatEnabled`      | `(isEnabled: boolean) => void`                             | Enables or disables chat rendering.                                                              |
 | `setChatCompactMode`  | `(isCompact: boolean) => void`                             | Toggles compact mode (undocked only).                                                            |
-| `setChatNavigate`     | `NavigateFunction`                                         | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
+| `chatNavigate`        | `NavigateFunction`                                         | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
 
 ## Examples
 
@@ -28,10 +28,10 @@ console.log( state );
 window.__agentsManagerActions.setChatOpen( true );
 
 // Navigate to a chat session
-window.__agentsManagerActions.setChatNavigate( '/chat', { state: { sessionId: '123' }, replace: true } );
+window.__agentsManagerActions.chatNavigate( '/chat', { state: { sessionId: '123' }, replace: true } );
 
 // Navigate to conversation history
-window.__agentsManagerActions.setChatNavigate( '/history' );
+window.__agentsManagerActions.chatNavigate( '/history' );
 
 // Dock the chat
 window.__agentsManagerActions.setChatDocked( true );

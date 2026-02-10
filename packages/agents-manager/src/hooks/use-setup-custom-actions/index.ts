@@ -116,7 +116,7 @@ export default function useSetupCustomActions( {
 			setChatDocked,
 			setChatEnabled,
 			setChatCompactMode,
-			setChatNavigate: navigate,
+			chatNavigate: navigate,
 		};
 
 		return () => {

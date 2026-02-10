@@ -52,7 +52,7 @@ interface AgentsManagerActions {
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
 	setChatCompactMode: ( isCompact: boolean ) => void;
-	setChatNavigate: import('react-router-dom').NavigateFunction;
+	chatNavigate: import('react-router-dom').NavigateFunction;
 }
 
 /**
