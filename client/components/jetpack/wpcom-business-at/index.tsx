@@ -37,7 +37,7 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
@@ -150,8 +150,8 @@ function TransferFailureNotice( { transferStatus, productName }: TransferFailure
 		</Notice>
 	);
 }
-const STARTER_SITE_POLL_DELAY_MS = 3000;
-const STARTER_SITE_POLL_MAX_ATTEMPTS = 10;
+const SITE_POLL_DELAY_MS = 3000;
+const SITE_POLL_MAX_ATTEMPTS = 10;
 export default function WPCOMBusinessAT( {
 	content = vaultpressContent,
 }: { content?: AtomicContentSwitch } = {} ) {
@@ -193,11 +193,10 @@ export default function WPCOMBusinessAT( {
 
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
-	const [ retryCount, setRetryCount ] = useState( 0 );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
 
-	const { header, getProductUrl, onActivationResolved } = content;
+	const { getProductUrl, onActivationResolved } = content;
 
 	useEffect( () => {
 		if ( isRewindActivating && ! rewindAtomicDeactivated ) {
@@ -226,63 +225,47 @@ export default function WPCOMBusinessAT( {
 		}
 	}, [] );
 
+	// Poll for updated site data after transfer completes until site is recognized as Jetpack
 	useEffect( () => {
-		if ( automatedTransferStatus !== COMPLETE ) {
+		if ( automatedTransferStatus !== COMPLETE || isJetpack ) {
 			return;
 		}
 
-		// Transfer is completed but site is not yet recognized as Jetpack - poll for updated site data
-		if ( ! isJetpack ) {
-			if ( retryCount >= STARTER_SITE_POLL_MAX_ATTEMPTS ) {
-				dispatch(
-					errorNotice(
-						translate(
-							'Activation is taking longer than expected. Please refresh the page to try again.'
-						),
-						{ id: 'jetpack-activation-timeout' }
-					)
-				);
-				return;
-			}
+		dispatch( requestSite( siteId ) );
 
-			const timeoutId = setTimeout( () => {
-				setRetryCount( ( count ) => count + 1 );
-				dispatch( requestSite( siteId ) );
-			}, STARTER_SITE_POLL_DELAY_MS );
+		const intervalId = setInterval( () => {
+			dispatch( requestSite( siteId ) );
+		}, SITE_POLL_DELAY_MS );
 
-			return () => clearTimeout( timeoutId );
+		// Stop polling after max attempts to avoid indefinite requests
+		const timeoutId = setTimeout( () => {
+			clearInterval( intervalId );
+			dispatch(
+				errorNotice(
+					translate(
+						'Activation is taking longer than expected. Please refresh the page to try again.'
+					),
+					{ id: 'jetpack-activation-timeout' }
+				)
+			);
+		}, SITE_POLL_DELAY_MS * SITE_POLL_MAX_ATTEMPTS );
+
+		return () => {
+			clearInterval( intervalId );
+			clearTimeout( timeoutId );
+		};
+	}, [ automatedTransferStatus, isJetpack, dispatch, siteId ] );
+
+	// Once the site is recognized as Jetpack after transfer, navigate to the product page
+	useEffect( () => {
+		if ( automatedTransferStatus !== COMPLETE || ! isJetpack ) {
+			return;
 		}
 
-		// Transfer is completed and site is a Jetpack site - reset retry counter and show success notice
-		setRetryCount( 0 );
-		dispatch(
-			successNotice(
-				translate( '%s is now active', {
-					args: header,
-					comment:
-						'%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
-				} ),
-				{
-					id: 'jetpack-features-on',
-					duration: 5000,
-					displayOnNextPage: true,
-				}
-			)
-		);
 		onActivationResolved?.();
 		// Full reload is needed so route middleware re-evaluates the site as Jetpack/Atomic.
 		window.location.href = getProductUrl( siteSlug );
-	}, [
-		automatedTransferStatus,
-		dispatch,
-		getProductUrl,
-		header,
-		isJetpack,
-		onActivationResolved,
-		retryCount,
-		siteId,
-		siteSlug,
-	] );
+	}, [ automatedTransferStatus, isJetpack, onActivationResolved, getProductUrl, siteSlug ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
