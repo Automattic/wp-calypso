@@ -1,7 +1,6 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { Button, RadioControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,15 +48,7 @@ class CancelAutoRenewalForm extends Component {
 		const { translate } = props;
 		const productType = this.getProductTypeString();
 
-		this.radioButtons = shuffle( [
-			{
-				value: 'let-it-expire',
-				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
-				label: translate( "I'm going to let this %(productType)s expire.", {
-					args: { productType },
-				} ),
-			},
-
+		this.radioButtons = [
 			{
 				value: 'manual-renew',
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
@@ -66,10 +57,17 @@ class CancelAutoRenewalForm extends Component {
 				} ),
 			},
 			{
+				value: 'let-it-expire',
+				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
+				label: translate( "I'm going to let this %(productType)s expire.", {
+					args: { productType },
+				} ),
+			},
+			{
 				value: 'not-sure',
 				label: translate( "I'm not sure." ),
 			},
-		] );
+		];
 	}
 
 	onSubmit = () => {
@@ -93,37 +91,6 @@ class CancelAutoRenewalForm extends Component {
 		this.setState( {
 			response: value,
 		} );
-	};
-
-	renderButtons = () => {
-		const { translate, purchase, onClose } = this.props;
-		const { response } = this.state;
-		const disableSubmit = ! response;
-
-		const skip = {
-			action: 'skip',
-			disabled: false,
-			label: translate( 'Skip' ),
-			onClick: onClose,
-		};
-
-		const submit = {
-			action: 'submit',
-			isPrimary: true,
-			disabled: disableSubmit,
-			label: translate( 'Submit' ),
-			onClick: this.onSubmit,
-		};
-
-		const chat = (
-			<PrecancellationChatButton
-				purchase={ purchase }
-				onClick={ onClose }
-				className="cancel-auto-renewal-form__chat-button"
-			/>
-		);
-
-		return [ skip, submit, chat ];
 	};
 
 	render() {
