@@ -3312,30 +3312,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'blogger-2-years',
 	},
 
-	[ PLAN_PERSONAL_TRIAL_MONTHLY ]: {
-		...getPlanPersonalDetails(),
-		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].includes( plan ),
-		getProductId: () => 1059,
-		getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
-		getPathSlug: () => 'personal-trial-monthly',
-		getPlanCompareFeatures: () =>
-			compact(
-				[
-					FEATURE_HOSTING,
-					FEATURE_JETPACK_ESSENTIAL,
-					FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-					FEATURE_FREE_THEMES,
-					isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
-					FEATURE_6GB_STORAGE,
-					FEATURE_NO_ADS,
-					FEATURE_MEMBERSHIPS,
-					FEATURE_PREMIUM_CONTENT_BLOCK,
-					FEATURE_PAYMENT_TRANSACTION_FEES_8,
-				].filter( ( feature ) => feature !== null )
-			),
-	},
-
 	[ PLAN_PERSONAL_MONTHLY ]: {
 		...getPlanPersonalDetails(),
 		...getMonthlyTimeframe(),
@@ -4604,4 +4580,28 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	getTitle: getPlanBusinessTrialTitle,
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+};
+
+PLANS_LIST[ PLAN_PERSONAL_TRIAL_MONTHLY ] = {
+	...getPlanPersonalDetails(),
+	...getMonthlyTimeframe(),
+	availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].includes( plan ),
+	getProductId: () => 1059,
+	getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
+	getPathSlug: () => 'personal-trial-monthly',
+	getPlanCompareFeatures: () =>
+		compact(
+			[
+				FEATURE_HOSTING,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+				FEATURE_FREE_THEMES,
+				isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
+				FEATURE_6GB_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_MEMBERSHIPS,
+				FEATURE_PREMIUM_CONTENT_BLOCK,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			].filter( ( feature ) => feature !== null )
+		),
 };
