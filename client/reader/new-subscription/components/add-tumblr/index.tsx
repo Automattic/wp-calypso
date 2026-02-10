@@ -28,6 +28,35 @@ export default function AddTumblr(): JSX.Element {
 		dispatch( requestFollows() ); // In other places we show subscriptions table due to which list get refreshed automatically. Here we need to refresh the list manually.
 	}, [ dispatch ] );
 
+	/**
+	 * Transforms a Tumblr URL to its RSS feed equivalent (/rss at the end).
+	 * If the URL already contains /rss, it's returned unchanged.
+	 */
+	function transformTumblrUrl( url: string ): string {
+		if ( url.endsWith( '/rss' ) ) {
+			return url;
+		}
+
+		let parsedUrl: URL;
+		try {
+			parsedUrl = new URL( url );
+		} catch {
+			return url;
+		}
+
+		if ( ! parsedUrl.hostname.includes( 'tumblr.com' ) ) {
+			return url;
+		}
+
+		const pathname = parsedUrl.pathname;
+
+		// Append /rss to the end of the path.
+		const cleanPath = pathname.endsWith( '/' ) ? pathname.slice( 0, -1 ) : pathname;
+		parsedUrl.pathname = cleanPath + '/rss';
+
+		return parsedUrl.toString();
+	}
+
 	return (
 		<div className="reader-add-tumblr">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
@@ -50,6 +79,7 @@ export default function AddTumblr(): JSX.Element {
 						source="new-tumblr-subscription"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
+						transformUrl={ transformTumblrUrl }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
