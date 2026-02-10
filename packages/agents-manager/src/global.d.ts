@@ -3,7 +3,7 @@
  */
 
 /**
- * agentsManagerData is set as a global const via wp_add_inline_script
+ * `agentsManagerData` is set as a global const via wp_add_inline_script
  * in Jetpack's Agents Manager feature.
  */
 declare const agentsManagerData:
@@ -31,13 +31,34 @@ declare module '@wordpress/block-editor' {
 	}
 
 	export const store: StoreDescriptor< BlockEditorSelectors, BlockEditorActions >;
-	export const BlockIcon: React.ComponentType< { icon: any } >;
+	export const BlockIcon: React.ComponentType< { icon: unknown } >;
 }
 
 /**
- * Extend Window interface for cross-bundle access to agentManager.
- * Used by components like Image Studio that need to access the shared agent.
+ * Chat state returned by `getChatState()`.
+ */
+interface AgentsManagerChatState {
+	isOpen: boolean;
+	isDocked: boolean;
+	floatingPosition: string;
+}
+
+/**
+ * Public API shape exposed on `window.__agentsManagerActions`.
+ */
+interface AgentsManagerActions {
+	getChatState: () => Promise< AgentsManagerChatState >;
+	setChatOpen: ( isOpen: boolean ) => void;
+	setChatDocked: ( isDocked: boolean ) => void;
+	setChatEnabled: ( isEnabled: boolean ) => void;
+	setChatCompactMode: ( isCompact: boolean ) => void;
+	chatNavigate: import('react-router-dom').NavigateFunction;
+}
+
+/**
+ * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
 	__agentManager?: import('@automattic/agenttic-client').AgentManager;
+	__agentsManagerActions?: AgentsManagerActions;
 }
