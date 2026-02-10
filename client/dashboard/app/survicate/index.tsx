@@ -7,27 +7,22 @@ import {
 	setSurvicateVisitorTraits,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
-import { isMobile } from '@automattic/viewport';
+import { useViewportMatch } from '@wordpress/compose';
 import { useEffect } from 'react';
 import { useAuth } from '../auth';
-
-function getLocaleFromUser( user: { locale_variant?: string; language?: string } ): string {
-	type ComputedAttributes = { localeSlug?: string; localeVariant?: string };
-	const u = user as typeof user & ComputedAttributes;
-	return u.localeVariant || u.localeSlug || user.locale_variant || user.language || 'en';
-}
+import { useLocale } from '../locale';
 
 export function useSurvicate() {
 	const { user } = useAuth();
+	const locale = useLocale();
+	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	useEffect( () => {
 		if ( ! config( 'survicate_enabled' ) ) {
 			return;
 		}
 
-		const locale = getLocaleFromUser( user );
-
-		if ( ! shouldLoadSurvicate( { locale, isMobile: !! isMobile() } ) ) {
+		if ( ! shouldLoadSurvicate( { locale, isMobile } ) ) {
 			return;
 		}
 
@@ -49,5 +44,5 @@ export function useSurvicate() {
 			.catch( () => {
 				// Script failed to load — nothing to do.
 			} );
-	}, [ user ] );
+	}, [ user, locale, isMobile ] );
 }

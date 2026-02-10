@@ -11,8 +11,8 @@ import {
 	setSurvicateVisitorTraits,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
-import { isMobile } from '@automattic/viewport';
 import { renderHook } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
 import { AuthContext } from '../../auth';
 import { useSurvicate } from '../index';
@@ -38,15 +38,16 @@ jest.mock( '@automattic/survicate', () => ( {
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
-jest.mock( '@automattic/viewport', () => ( {
-	isMobile: jest.fn(),
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
 } ) );
 
 const mockedConfig = jest.mocked( config );
 const mockedShouldLoad = jest.mocked( shouldLoadSurvicate );
 const mockedLoadScript = jest.mocked( loadSurvicateScript );
 const mockedSetTraits = jest.mocked( setSurvicateVisitorTraits );
-const mockedIsMobile = jest.mocked( isMobile );
+const mockedUseViewportMatch = jest.mocked( useViewportMatch );
 const mockedRecordTracksEvent = jest.mocked( recordTracksEvent );
 
 function createUser( overrides: Partial< User > = {} ): User {
@@ -84,7 +85,7 @@ describe( 'useSurvicate', () => {
 	test( 'loads script when all conditions are met', async () => {
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
-		mockedIsMobile.mockReturnValue( false );
+		mockedUseViewportMatch.mockReturnValue( false );
 
 		const user = createUser();
 		renderWithAuth( user );
@@ -105,31 +106,10 @@ describe( 'useSurvicate', () => {
 		expect( mockedLoadScript ).not.toHaveBeenCalled();
 	} );
 
-	test( 'skips loading when locale is non-English', () => {
-		mockedConfig.mockReturnValue( true );
-		mockedShouldLoad.mockReturnValue( false );
-
-		const user = createUser( { language: 'fr' } );
-		renderWithAuth( user );
-
-		expect( mockedLoadScript ).not.toHaveBeenCalled();
-	} );
-
-	test( 'skips loading on mobile devices', () => {
-		mockedConfig.mockReturnValue( true );
-		mockedShouldLoad.mockReturnValue( false );
-		mockedIsMobile.mockReturnValue( true );
-
-		const user = createUser();
-		renderWithAuth( user );
-
-		expect( mockedLoadScript ).not.toHaveBeenCalled();
-	} );
-
 	test( 'fires error event when user has no email', async () => {
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
-		mockedIsMobile.mockReturnValue( false );
+		mockedUseViewportMatch.mockReturnValue( false );
 
 		const user = createUser( { email: '' } );
 		renderWithAuth( user );
@@ -151,7 +131,7 @@ describe( 'useSurvicate', () => {
 	test( 'handles script load failure gracefully', async () => {
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
-		mockedIsMobile.mockReturnValue( false );
+		mockedUseViewportMatch.mockReturnValue( false );
 		mockedLoadScript.mockRejectedValue( new Error( 'Failed to load' ) );
 
 		const user = createUser();
@@ -167,7 +147,7 @@ describe( 'useSurvicate', () => {
 	test( 'passes correct locale and isMobile to shouldLoadSurvicate', () => {
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( false );
-		mockedIsMobile.mockReturnValue( true );
+		mockedUseViewportMatch.mockReturnValue( true );
 
 		const user = createUser( { language: 'pt-br' } );
 		renderWithAuth( user );
