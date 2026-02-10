@@ -656,7 +656,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			cancelIntentOverride: this.shouldUseAutoRenewFlow( purchase ) ? 'autorenew' : undefined,
+			cancelIntentOverride: this.shouldUseAutoRenewFlow( purchase )
+				? ( 'autorenew' as const )
+				: undefined,
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -873,7 +875,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
-						cancelIntentOverride={ this.state.cancelIntent ?? undefined }
+						cancelIntentOverride={
+							this.state.cancelIntent !== null ? this.state.cancelIntent : undefined
+						}
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isDomainRegistration } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import i18n from 'i18n-calypso';
