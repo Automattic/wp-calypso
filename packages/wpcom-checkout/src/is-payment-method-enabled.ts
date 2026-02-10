@@ -13,10 +13,11 @@ export function isPaymentMethodEnabled(
 	}
 
 	// Existing PayPal PPCP payment methods have unique slugs but here we need only
-	// know if PayPal PPCP is allowed.
+	// know if stored payment methods are allowed.
 	if ( slug.startsWith( 'existingPayPalPPCP' ) ) {
-		// Allow existing PayPal PPCP if PayPal PPCP is enabled
-		slug = 'paypal-js';
+		// Both existing cards and existing PayPal PPCP use the same backend type
+		// (WPCOM_Billing_MoneyPress_Stored), so we normalize to existingCard
+		slug = 'existingCard';
 	}
 
 	// Redirect payments might not be possible in some cases - for example in the desktop app
