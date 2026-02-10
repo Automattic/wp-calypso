@@ -127,6 +127,9 @@ export const useWaitForAtomic = ( {
 	};
 
 	const waitForLatestSiteData = async () => {
+		let backoffTime = 3000;
+		const maxBackoff = 15000;
+
 		while ( true ) {
 			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
 			if (
@@ -136,7 +139,8 @@ export const useWaitForAtomic = ( {
 				break;
 			}
 
-			await wait( 1000 );
+			await wait( backoffTime );
+			backoffTime = Math.min( backoffTime * 2, maxBackoff );
 		}
 	};
 
