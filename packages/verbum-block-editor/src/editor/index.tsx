@@ -36,7 +36,6 @@ export const Editor: FC< EditorProps > = ( {
 	isRTL,
 	isDarkMode,
 	customStyles = '',
-	autoFocus = true,
 } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
@@ -108,7 +107,7 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
-					{ autoFocus && <InitialBlockSelector onBlockSelect={ () => setIsEditing( true ) } /> }
+					<InitialBlockSelector onBlockSelect={ () => setIsEditing( true ) } />
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">

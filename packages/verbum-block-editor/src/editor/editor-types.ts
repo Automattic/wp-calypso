@@ -6,7 +6,6 @@ export interface EditorProps {
 	isRTL: boolean;
 	isDarkMode: boolean;
 	customStyles?: string;
-	autoFocus?: boolean;
 }
 
 export interface StateWithUndoManager {
