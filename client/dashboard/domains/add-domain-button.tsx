@@ -5,8 +5,9 @@ import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
+import { getCurrentDashboard } from '../app/routing';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
-import { getCurrentDashboard, wpcomLink } from '../utils/link';
+import { wpcomLink } from '../utils/link';
 
 function buildDomainQueryArgs( siteSlug?: string ) {
 	const queryArgs: Record< string, string > = {};

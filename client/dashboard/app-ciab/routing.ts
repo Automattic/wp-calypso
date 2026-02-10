@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+
 const CIAB_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.woo.localhost', 'my.woo.com' ];
 
 export function isAllowedCiabDashboardHostname( hostname?: string ): boolean {
@@ -6,4 +8,11 @@ export function isAllowedCiabDashboardHostname( hostname?: string ): boolean {
 
 export function getCiabDashboardBasePath( hostname: string ): string {
 	return isAllowedCiabDashboardHostname( hostname ) ? '/' : '/ciab';
+}
+
+export function buildCiabDashboardLink( path: string = '' ) {
+	if ( config( 'env' ) === 'development' ) {
+		return new URL( path, 'http://my.woo.localhost:3000' ).href;
+	}
+	return new URL( path, 'https://my.woo.com' ).href;
 }

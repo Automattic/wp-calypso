@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
@@ -38,106 +39,11 @@ export function a4aLink( path: string ) {
 }
 
 /**
- * Dashboard type identifier.
- * undefined represents the default (main `dotcom` MSD dashboard).
- */
-export type DashboardType = 'ciab' | 'dotcom';
-
-/**
- * Returns the dashboard type from a string.
- */
-export function getDashboardFromString( dashboard?: string ): DashboardType | null {
-	if ( dashboard === 'ciab' || dashboard === 'dotcom' ) {
-		return dashboard;
-	}
-
-	return null;
-}
-
-/**
- * Returns the dashboard type from URL query params.
- * Used when in Stepper to know which dashboard the user came from.
- */
-function getDashboardFromQuery(): DashboardType | null {
-	const params = new URLSearchParams( window.location.search );
-	const dashboard = params.get( 'dashboard' );
-	if ( dashboard === 'ciab' ) {
-		return 'ciab';
-	}
-	return null;
-}
-
-/**
- * Returns the dashboard type from the current path.
- * Only detects ciab (which has a distinctive /ciab prefix).
- * Returns null for all other paths, falling through to default.
- */
-function getDashboardFromPath(): DashboardType | null {
-	if ( window.location.pathname.startsWith( '/ciab' ) ) {
-		return 'ciab';
-	}
-	return null;
-}
-
-/**
- * Returns the dashboard type from the referrer.
- * Fallback when query param and path don't indicate dashboard.
- */
-function getDashboardFromReferrer(): DashboardType | null {
-	if ( ! document.referrer ) {
-		return null;
-	}
-	try {
-		const referrerUrl = new URL( document.referrer );
-		if ( referrerUrl.pathname.startsWith( '/ciab' ) ) {
-			return 'ciab';
-		}
-		return null;
-	} catch {
-		return null;
-	}
-}
-
-/**
- * Detects the current dashboard context.
- * Priority: query param → current path → referrer → defaults to MSD
- */
-export function getCurrentDashboard(): DashboardType {
-	return (
-		getDashboardFromQuery() ?? getDashboardFromPath() ?? getDashboardFromReferrer() ?? 'dotcom'
-	);
-}
-
-/**
- * Returns the dashboard origin based on environment.
- */
-function getDashboardOrigin(): string {
-	if ( config( 'env' ) === 'development' ) {
-		return 'http://my.localhost:3000';
-	}
-	return 'https://my.wordpress.com';
-}
-
-/**
  * This function returns the link to the dashboard.
- * Context-aware: automatically uses correct base path (/ciab for CIAB, root for default).
  */
 export function dashboardLink( path: string = '' ) {
-	const origin = getDashboardOrigin();
-
-	// If path already has /ciab base, use as-is
-	if ( path.startsWith( '/ciab' ) ) {
-		return new URL( path, origin ).href;
-	}
-
-	// Detect dashboard context and add /ciab prefix if needed
-	const dashboard = getCurrentDashboard();
-	if ( dashboard === 'ciab' ) {
-		return new URL( `/ciab${ path }`, origin ).href;
-	}
-
-	// Default dashboard uses root path (no prefix)
-	return new URL( path, origin ).href;
+	const dashboard = getDashboardFromQuery() ?? getCurrentDashboard();
+	return buildDashboardLink( dashboard, path );
 }
 
 /**
