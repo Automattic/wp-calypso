@@ -21,8 +21,6 @@ import type { ImageUploadHook } from '../../utils/load-external-providers';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
-import './style.scss';
-
 interface AgentChatProps {
 	/** Chat messages to display. */
 	messages: Message[];
@@ -194,7 +192,14 @@ export default function AgentChat( {
 							uploadingImages={ imageUpload.uploadingImages }
 							onFilesSelected={ imageUpload.handleFilesSelected }
 							onRemoveImage={ imageUpload.handleRemoveImage }
-							acceptedFileTypes={ [ 'image/jpeg', 'image/png' ] }
+							acceptedFileTypes={ [
+								'image/jpeg',
+								'image/png',
+								'image/heic',
+								'image/heif',
+								'image/heic-sequence',
+								'image/heif-sequence',
+							] }
 							showFileMetadata
 							allowDragToInsert={ false }
 						/>
