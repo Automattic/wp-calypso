@@ -19,11 +19,11 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import {
-	isAllowedCiabDashboardHost,
+	isAllowedCiabDashboardHostname,
 	CIAB_DASHBOARD_SECTION_DEFINITION,
 } from 'calypso/dashboard/app-ciab/section';
 import {
-	isAllowedDotcomDashboardHost,
+	isAllowedDotcomDashboardHostname,
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
 } from 'calypso/dashboard/app-dotcom/section';
 import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
@@ -1111,16 +1111,16 @@ export default function pages() {
 		};
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
-				isAllowedDotcomDashboardHost( req.get( 'host' ) )
+				isAllowedDotcomDashboardHostname( req.hostname )
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
-				isAllowedCiabDashboardHost( req.get( 'host' ) )
+				isAllowedCiabDashboardHostname( req.hostname )
 			);
 		} );
 		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			return isAllowedDotcomDashboardHost( req.get( 'host' ) );
+			return isAllowedDotcomDashboardHostname( req.hostname );
 		} );
 	}
 

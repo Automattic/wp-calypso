@@ -5,10 +5,10 @@ export const CIAB_DASHBOARD_SECTION_DEFINITION = {
 
 const CIAB_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.woo.localhost', 'my.woo.com' ];
 
-export function isAllowedCiabDashboardHost( host?: string ): boolean {
-	return CIAB_DASHBOARD_ALLOWED_HOSTNAMES.some( ( hostname ) => host?.startsWith( hostname ) );
+export function isAllowedCiabDashboardHostname( hostname: string ): boolean {
+	return CIAB_DASHBOARD_ALLOWED_HOSTNAMES.includes( hostname );
 }
 
 export function getCiabDashboardBasePath( hostname: string ): string {
-	return CIAB_DASHBOARD_ALLOWED_HOSTNAMES.includes( hostname ) ? '/' : '/ciab';
+	return isAllowedCiabDashboardHostname( hostname ) ? '/' : '/ciab';
 }
