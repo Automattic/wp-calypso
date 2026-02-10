@@ -14,6 +14,7 @@ interface QueryParams {
 	author?: Author;
 	siteId: number;
 	postId: number;
+	excludeSiteId?: number;
 }
 
 interface QueryOptions {
@@ -36,7 +37,7 @@ const getResourceType = (
 };
 
 export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: QueryOptions ) => {
-	const { author, siteId, postId } = query;
+	const { author, siteId, postId, excludeSiteId } = query;
 	const userLogin = author?.wpcom_login || author?.ID;
 	const enabled = options?.enabled ?? true;
 	const hasUserLogin = Boolean( userLogin );
@@ -61,7 +62,17 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 		enabled: shouldLoadRelatedSites && enabled,
 	} );
 
-	const data = recommendedFeeds?.length > 0 ? recommendedFeeds : relatedSites;
+	// Filter out the excluded site from both recommended feeds and related sites
+	const filteredRecommendedFeeds = excludeSiteId
+		? recommendedFeeds?.filter( ( feed ) => Number( feed.siteId ) !== excludeSiteId )
+		: recommendedFeeds;
+
+	const filteredRelatedSites = excludeSiteId
+		? relatedSites?.filter( ( site ) => site.site_ID !== excludeSiteId )
+		: relatedSites;
+
+	const data =
+		filteredRecommendedFeeds?.length > 0 ? filteredRecommendedFeeds : filteredRelatedSites;
 	const isLoading = isLoadingRecommendedFeeds || isLoadingRelatedSites;
 	const isFetched = isFetchedRecommendedFeeds || isFetchedRelatedSites;
 
@@ -69,6 +80,6 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 		data: isFetched ? data : [],
 		isLoading,
 		isFetched,
-		resourceType: getResourceType( recommendedFeeds, relatedSites ),
+		resourceType: getResourceType( filteredRecommendedFeeds, filteredRelatedSites ),
 	};
 };

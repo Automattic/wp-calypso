@@ -47,6 +47,7 @@ const ReaderSuggestedFollowsDialog = ( {
 			author,
 			siteId,
 			postId,
+			excludeSiteId: siteId,
 		} ),
 		[ author, siteId, postId ]
 	);
