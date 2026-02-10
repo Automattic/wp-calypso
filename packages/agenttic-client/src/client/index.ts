@@ -2,6 +2,7 @@ import type {
 	Client,
 	ClientConfig,
 	DataPart,
+	FilePart,
 	Message,
 	SendMessageParams,
 	Task,
@@ -381,8 +382,8 @@ export function extractConversationHistory( message: Message ): Message[] {
  */
 function conversationHistoryToDataParts(
 	conversationHistory: Message[]
-): DataPart[] {
-	const historyParts: DataPart[] = [];
+): ( DataPart | FilePart )[] {
+	const historyParts: ( DataPart | FilePart )[] = [];
 
 	for ( const message of conversationHistory ) {
 		for ( const part of message.parts ) {
@@ -396,6 +397,8 @@ function conversationHistoryToDataParts(
 				} );
 			} else if ( part.type === 'data' ) {
 				historyParts.push( part as DataPart );
+			} else if ( part.type === 'file' ) {
+				historyParts.push( part as FilePart );
 			}
 		}
 	}
