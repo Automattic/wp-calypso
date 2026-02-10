@@ -12,24 +12,22 @@ import {
 } from './actions';
 import type { APIFetchOptions } from '../shared-types';
 
-type Preferences = {
-	calypso_preferences: {
-		agents_manager_open?: boolean;
-		agents_manager_docked?: boolean;
-		agents_manager_floating_position?: 'left' | 'right';
-		agents_manager_router_history?: {
-			entries: Location[];
-			index: number;
-		};
+type AgentsManagerStateResponse = {
+	agents_manager_open?: boolean;
+	agents_manager_docked?: boolean;
+	agents_manager_floating_position?: 'left' | 'right';
+	agents_manager_router_history?: {
+		entries: Location[];
+		index: number;
 	};
 };
 
 export function* getAgentsManagerState() {
 	yield setIsLoading( true );
 	try {
-		const { calypso_preferences: preferences }: Preferences = canAccessWpcomApis()
+		const state: AgentsManagerStateResponse = canAccessWpcomApis()
 			? yield wpcomRequest( {
-					path: '/me/preferences',
+					path: '/agents-manager/state',
 					apiNamespace: 'wpcom/v2',
 			  } )
 			: yield apiFetch( {
@@ -37,23 +35,23 @@ export function* getAgentsManagerState() {
 					path: '/agents-manager/open-state',
 			  } as APIFetchOptions );
 
-		if ( preferences.agents_manager_router_history ) {
-			yield setRouterHistory( preferences.agents_manager_router_history );
+		if ( state.agents_manager_router_history ) {
+			yield setRouterHistory( state.agents_manager_router_history );
 		}
 
-		if ( typeof preferences.agents_manager_docked === 'boolean' ) {
-			yield setIsDocked( preferences.agents_manager_docked, false );
+		if ( typeof state.agents_manager_docked === 'boolean' ) {
+			yield setIsDocked( state.agents_manager_docked, false );
 		}
 
 		if (
-			preferences.agents_manager_floating_position === 'left' ||
-			preferences.agents_manager_floating_position === 'right'
+			state.agents_manager_floating_position === 'left' ||
+			state.agents_manager_floating_position === 'right'
 		) {
-			yield setFloatingPosition( preferences.agents_manager_floating_position, false );
+			yield setFloatingPosition( state.agents_manager_floating_position, false );
 		}
 
 		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
-		if ( preferences.agents_manager_open ) {
+		if ( state.agents_manager_open ) {
 			yield setIsOpen( true, false );
 		}
 	} catch {
