@@ -29,7 +29,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
 			} );
 
 			e.preventDefault();
-
 			input.value = query;
 			submitButton.click();
 			input.value = '';
