@@ -1,4 +1,5 @@
 import {
+	domainProductSlugs,
 	isCredits,
 	isDelayedDomainTransfer,
 	isDomainProduct,
@@ -17,6 +18,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { css, Global } from '@emotion/react';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -69,14 +71,17 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CheckoutThankYouHeader from './header';
+import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import DomainOnlyNew from './redesign-v2/pages/domain-only-new';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import { PlaceholderThankYou } from './redesign-v2/pages/placeholder';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
+import { shouldShowNewDomainThankYou } from './redesign-v2/utils/domain-thank-you-feature-flag';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -513,6 +518,19 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
+	isSingleHundredYearDomainPurchase = () => {
+		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
+		const domainPurchase = purchases[ 0 ];
+		const domain = this.props.siteDomains?.find(
+			( siteDomain ) => siteDomain.name === domainPurchase.meta
+		);
+
+		if ( domain?.isHundredYearDomain ) {
+			return true;
+		}
+		return false;
+	};
+
 	render() {
 		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -567,11 +585,52 @@ export class CheckoutThankYou extends Component<
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
+			} else if ( this.props.receipt.data && this.isSingleHundredYearDomainPurchase() ) {
+				pageContent = (
+					<>
+						<Global
+							styles={ css`
+								main.checkout-thank-you {
+									&.is-redesign-v2 {
+										&.main {
+											max-width: unset;
+										}
+									}
+								}
+
+								body.is-section-checkout,
+								body.is-section-checkout .layout__content,
+								body.is-section-checkout-thank-you,
+								body.is-section-checkout-thank-you .layout__content {
+									background: linear-gradient(
+										233deg,
+										#06101c 2.17%,
+										#050c16 41.26%,
+										#02080f 88.44%
+									);
+								}
+							` }
+						/>
+						<HundredYearThankYou
+							siteSlug={ String( domainPurchase?.blogId ) }
+							receiptId={ Number( this.props.receiptId ) }
+							productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
+						/>
+					</>
+				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+				if ( shouldShowNewDomainThankYou() ) {
+					return (
+						<>
+							<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+							<DomainOnlyNew />
+						</>
+					);
+				}
+
 				pageContent = (
 					<DomainOnlyThankYou
 						purchases={ purchases }
-						receipt={ this.props.receipt.data }
 						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
 					/>
 				);
