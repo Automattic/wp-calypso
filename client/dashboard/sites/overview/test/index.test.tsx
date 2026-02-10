@@ -128,8 +128,8 @@ describe( '<SiteOverview>', () => {
 				features: { active: [] },
 			},
 		} as unknown as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await screen.findByText( 'Free' );
 
@@ -146,8 +146,8 @@ describe( '<SiteOverview>', () => {
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
 		mockSite( { ...site, is_wpcom_atomic: true } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await screen.findByText( 'Business' );
 
@@ -164,8 +164,8 @@ describe( '<SiteOverview>', () => {
 
 	test( 'renders the overview of a site with a paid plan pending Atomic activation', async () => {
 		mockSite( { ...site, is_wpcom_atomic: false } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await screen.findByText( 'Business' );
 
@@ -214,8 +214,8 @@ describe( '<SiteOverview>', () => {
 			jetpack_connection: true,
 			is_wpcom_atomic: false,
 		} as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
@@ -230,8 +230,8 @@ describe( '<SiteOverview>', () => {
 
 	test( 'renders the overview of an A4A dev site', async () => {
 		mockSite( { ...site, is_wpcom_atomic: true, is_a4a_dev_site: true } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await screen.findByText( 'Business' );
 
@@ -248,8 +248,8 @@ describe( '<SiteOverview>', () => {
 
 	test( 'renders the overview of a site with Flex plan', async () => {
 		mockSite( { ...site, is_wpcom_flex: true } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
 
+		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await screen.findByText( 'Business' );
 
