@@ -57,7 +57,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
 		paymentMethod = 'existingCard';
 	}
-	// existing PayPal PPCP agreements have unique paymentMethodIds
+	// existing PayPal PPCP payment methods have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingPayPalPPCP' ) ) {
 		paymentMethod = 'existingPayPalPPCP';
 	}
@@ -169,7 +169,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
 		paymentMethodSlug = 'credit_card';
 	}
-	// existing PayPal PPCP agreements have unique paymentMethodIds
+	// existing PayPal PPCP payment methods have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingPayPalPPCP' ) ) {
 		paymentMethodSlug = 'paypal_ppcp';
 	}

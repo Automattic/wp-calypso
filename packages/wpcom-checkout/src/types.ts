@@ -342,7 +342,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'existingCard'
 	| `existingCard${ string }` // specific saved cards have unique slugs
 	| 'existingPayPalPPCP'
-	| `existingPayPalPPCP${ string }` // specific saved PayPal PPCP agreements have unique slugs
+	| `existingPayPalPPCP${ string }` // specific saved PayPal PPCP payment methods have unique slugs
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'

@@ -12,7 +12,7 @@ export function isPaymentMethodEnabled(
 		slug = 'existingCard';
 	}
 
-	// Existing PayPal PPCP agreements have unique slugs but here we need only
+	// Existing PayPal PPCP payment methods have unique slugs but here we need only
 	// know if PayPal PPCP is allowed.
 	if ( slug.startsWith( 'existingPayPalPPCP' ) ) {
 		// Allow existing PayPal PPCP if PayPal PPCP is enabled

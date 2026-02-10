@@ -15,7 +15,7 @@ export default function useCreateExistingPayPalPPCP( {
 } ): PaymentMethod[] {
 	const onlyStoredPayPalPPCP = storedPaymentMethods.filter( isPaymentMethodPayPalPPCP );
 
-	// Memoize the PayPal agreements by comparing their stored_details_id values, in case the
+	// Memoize the PayPal payment methods by comparing their stored_details_id values, in case the
 	// objects themselves are recreated on each render.
 	const memoizedStoredPayPalPPCP = useMemoCompare( onlyStoredPayPalPPCP, ( prev, next ) => {
 		const prevIds = prev.map( ( method ) => method.stored_details_id ) ?? [];
