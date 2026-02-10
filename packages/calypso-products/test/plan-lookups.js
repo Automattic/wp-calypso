@@ -1170,13 +1170,13 @@ describe( 'findPlansKeys', () => {
 			PLAN_BLOGGER_2_YEARS,
 		] );
 		expect( findPlansKeys( { type: TYPE_PERSONAL } ) ).toEqual( [
-			PLAN_PERSONAL_TRIAL_MONTHLY,
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PERSONAL_3_YEARS,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
@@ -1283,11 +1283,11 @@ describe( 'findPlansKeys', () => {
 			PLAN_BLOGGER_2_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) ).toEqual( [
-			PLAN_PERSONAL_TRIAL_MONTHLY,
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PERSONAL_3_YEARS,
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
