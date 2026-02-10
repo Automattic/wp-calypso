@@ -33,7 +33,7 @@ function getIndividualConfig( options = {} ) {
 					include: /image-studio/,
 					type: 'asset/resource',
 					generator: {
-						filename: 'images/[name][ext]',
+						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
 			],
