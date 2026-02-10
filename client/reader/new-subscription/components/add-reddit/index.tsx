@@ -29,6 +29,41 @@ const AddReddit = () => {
 		dispatch( requestFollows() ); // In other places we show subscriptions table due to which list get refreshed automatically. Here we need to refresh the list manually.
 	}, [ dispatch ] );
 
+	/**
+	 * Transforms a Reddit URL to its RSS feed equivalent (/.rss at the end).
+	 * If the URL already contains .rss, it's returned unchanged.
+	 */
+	function transformRedditUrl( url: string ): string {
+		if ( url.includes( '.rss' ) ) {
+			return url;
+		}
+
+		let parsedUrl: URL;
+		try {
+			parsedUrl = new URL( url );
+		} catch {
+			return url;
+		}
+
+		if ( ! parsedUrl.hostname.includes( 'reddit.com' ) ) {
+			return url;
+		}
+
+		const pathname = parsedUrl.pathname;
+
+		// Handle search URLs: /search?q=query -> /search.rss?q=query
+		if ( pathname.startsWith( '/search' ) ) {
+			parsedUrl.pathname = '/search.rss';
+			return parsedUrl.toString();
+		}
+
+		// Handle all other paths by appending /.rss.
+		const cleanPath = pathname.endsWith( '/' ) ? pathname.slice( 0, -1 ) : pathname;
+		parsedUrl.pathname = cleanPath + '/.rss';
+
+		return parsedUrl.toString();
+	}
+
 	return (
 		<div className="reader-add-reddit">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
@@ -51,6 +86,7 @@ const AddReddit = () => {
 						source={ isDiscoverV3Enabled() ? 'reader-add-reddit' : 'discover-reddit' }
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
+						transformUrl={ transformRedditUrl }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
@@ -64,27 +100,27 @@ const AddReddit = () => {
 						<ul className="reader-add-reddit__instructions-list">
 							<li>
 								<strong>{ translate( 'Front page:' ) }</strong>
-								{ ' https://www.reddit.com/.rss' }
+								{ ' https://www.reddit.com' }
 							</li>
 							<li>
 								<strong>{ translate( 'A subreddit:' ) }</strong>
-								{ ' https://www.reddit.com/r/{ SUBREDDIT }/.rss' }
+								{ ' https://www.reddit.com/r/{ SUBREDDIT }' }
 							</li>
 							<li>
 								<strong>{ translate( 'A user:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/.rss' }
+								{ ' https://www.reddit.com/user/{ REDDITOR }' }
 							</li>
 							<li>
 								<strong>{ translate( 'User comments:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/comments/.rss' }
+								{ ' https://www.reddit.com/user/{ REDDITOR }/comments' }
 							</li>
 							<li>
 								<strong>{ translate( 'User submissions:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/submitted/.rss' }
+								{ ' https://www.reddit.com/user/{ REDDITOR }/submitted' }
 							</li>
 							<li>
 								<strong>{ translate( 'Search result:' ) }</strong>
-								{ ' https://www.reddit.com/search.rss?q={ QUERY }' }
+								{ ' https://www.reddit.com/search?q={ QUERY }' }
 							</li>
 						</ul>
 					</div>
