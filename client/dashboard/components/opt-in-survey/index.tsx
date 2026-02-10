@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
 
@@ -62,6 +63,7 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 }
 
 export default function OptInSurvey() {
+	const { optIn } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -80,7 +82,7 @@ export default function OptInSurvey() {
 		)
 	);
 
-	if ( ! isEligible || isDismissed ) {
+	if ( ! optIn || ! isEligible || isDismissed ) {
 		return null;
 	}
 
