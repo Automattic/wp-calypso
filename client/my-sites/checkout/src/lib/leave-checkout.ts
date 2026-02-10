@@ -125,11 +125,14 @@ export const leaveCheckout = ( {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 
 			if ( isRelativeUrl( cancelPath ) ) {
-				navigate( cancelPath );
-			} else if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
 				window.location.href = cancelPath;
+				return;
 			}
-			return;
+			if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+				window.location.href = cancelPath;
+				return;
+			}
+			// If cancel_to is invalid (e.g., external URL), fall through to default close URL.
 		}
 	} catch ( error ) {
 		// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
