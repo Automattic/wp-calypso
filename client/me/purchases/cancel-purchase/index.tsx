@@ -217,7 +217,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		} ) );
 	};
 
-	onCancellationStart = () => {
+	onCancellationStart = ( intent?: 'refund' | 'autorenew' ) => {
 		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
 			this.props;
 
@@ -227,8 +227,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return;
 		}
 
+		if ( intent && this.state.cancelIntent !== intent ) {
+			this.setState( { cancelIntent: intent } );
+		}
+
+		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( purchase );
+		const effectiveIntent = intent ?? this.state.cancelIntent;
+		const shouldSkipDomainOptions = shouldUseAutoRenewFlow && effectiveIntent !== 'refund';
+
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
+			! shouldSkipDomainOptions &&
 			includedDomainPurchase &&
 			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
 		) {
@@ -647,14 +656,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			flowTypeOverride: this.getCancelFlowType( purchase ),
-			onCancelInitiated: () => {
-				if ( this.shouldUseAutoRenewFlow( purchase ) ) {
-					this.setState( { cancelIntent: 'autorenew' } );
-				} else if ( this.state.cancelIntent ) {
-					this.setState( { cancelIntent: null } );
-				}
-			},
+			cancelIntentOverride: this.shouldUseAutoRenewFlow( purchase ) ? 'autorenew' : undefined,
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -871,14 +873,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
-						flowTypeOverride={ this.getCancelFlowType( purchase ) }
-						onCancelInitiated={ () => {
-							if ( this.shouldUseAutoRenewFlow( purchase ) ) {
-								this.setState( { cancelIntent: 'autorenew' } );
-							} else if ( this.state.cancelIntent ) {
-								this.setState( { cancelIntent: null } );
-							}
-						} }
+						cancelIntentOverride={ this.state.cancelIntent ?? undefined }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -992,7 +987,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						<RefundEligibilityNotice
 							refundAmount={ refundAmountString }
 							cancelButtonProps={ cancelButtonProps }
-							onRefundCancelInitiated={ () => this.setState( { cancelIntent: 'refund' } ) }
 						/>
 					) }
 

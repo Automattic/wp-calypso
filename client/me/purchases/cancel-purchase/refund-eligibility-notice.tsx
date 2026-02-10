@@ -7,13 +7,11 @@ import type moment from 'moment';
 interface RefundEligibilityNoticeProps {
 	refundAmount: string;
 	cancelButtonProps: CancelPurchaseButtonProps & { moment: typeof moment };
-	onRefundCancelInitiated: () => void;
 }
 
 const RefundEligibilityNotice = ( {
 	refundAmount,
 	cancelButtonProps,
-	onRefundCancelInitiated,
 }: RefundEligibilityNoticeProps ) => {
 	const translate = useTranslate();
 
@@ -32,7 +30,7 @@ const RefundEligibilityNotice = ( {
 					textVariant="remove-plan-and-claim-refund"
 					isLinkStyle
 					isInline
-					onCancelInitiated={ onRefundCancelInitiated }
+					cancelIntentOverride="refund"
 				/>
 			</p>
 		</Notice>

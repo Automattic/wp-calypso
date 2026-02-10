@@ -12,6 +12,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import {
 	getName,
@@ -48,10 +49,9 @@ export interface CancelPurchaseButtonProps {
 	textVariant?: string;
 	isLinkStyle?: boolean;
 	isInline?: boolean;
-	flowTypeOverride?: string;
-	onCancelInitiated?: () => void;
+	cancelIntentOverride?: 'refund' | 'autorenew';
 	activeSubscriptions: Array< { id: number; productName: string } >;
-	onCancellationStart: null | ( () => void );
+	onCancellationStart: null | ( ( intent?: 'refund' | 'autorenew' ) => void );
 	onCancellationComplete: () => void;
 	onSurveyComplete: () => void;
 	// Props from parent component
@@ -90,10 +90,6 @@ class CancelPurchaseButton extends Component<
 	};
 
 	handleCancelPurchaseClick = async () => {
-		if ( this.props.onCancelInitiated ) {
-			this.props.onCancelInitiated();
-		}
-
 		// For all purchases, including domain registrations, show the survey first
 		// The API call will happen at the end of the survey flow
 
@@ -109,10 +105,10 @@ class CancelPurchaseButton extends Component<
 
 			if ( needsDomainOptionsStep ) {
 				// Step 1: Show domain options step
-				this.props.onCancellationStart();
+				this.props.onCancellationStart( this.props.cancelIntentOverride );
 			} else {
 				// Step 2: Show survey directly (API call will happen in survey)
-				this.props.onCancellationStart();
+				this.props.onCancellationStart( this.props.cancelIntentOverride );
 			}
 		}
 	};
@@ -205,6 +201,12 @@ class CancelPurchaseButton extends Component<
 			this.props;
 
 		const planName = getName( purchase );
+		let flowType = getPurchaseCancellationFlowType( purchase );
+		if ( this.props.cancelIntentOverride === 'refund' ) {
+			flowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		} else if ( this.props.cancelIntentOverride === 'autorenew' ) {
+			flowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
 
 		const wrapperClassName = this.props.isInline
 			? 'cancel-purchase__button-wrapper cancel-purchase__button-wrapper--inline'
@@ -238,7 +240,7 @@ class CancelPurchaseButton extends Component<
 						onSurveyComplete={ this.handleSurveyComplete }
 						downgradeClick={ this.props.downgradeClick }
 						freeMonthOfferClick={ this.props.freeMonthOfferClick }
-						flowType={ this.props.flowTypeOverride ?? getPurchaseCancellationFlowType( purchase ) }
+						flowType={ flowType }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
 						cancellationInProgress={ isLoading }
@@ -253,7 +255,7 @@ class CancelPurchaseButton extends Component<
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
-						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						flowType={ flowType }
 						isAkismet={ isAkismet }
 						cancellationInProgress={ isLoading }
 					/>
