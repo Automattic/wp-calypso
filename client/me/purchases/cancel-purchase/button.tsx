@@ -49,6 +49,7 @@ export interface CancelPurchaseButtonProps {
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	flowTypeOverride?: string;
+	onCancelInitiated?: () => void;
 	activeSubscriptions: Array< { id: number; productName: string } >;
 	onCancellationStart: null | ( () => void );
 	onCancellationComplete: () => void;
@@ -89,6 +90,10 @@ class CancelPurchaseButton extends Component<
 	};
 
 	handleCancelPurchaseClick = async () => {
+		if ( this.props.onCancelInitiated ) {
+			this.props.onCancelInitiated();
+		}
+
 		// For all purchases, including domain registrations, show the survey first
 		// The API call will happen at the end of the survey flow
 
@@ -167,7 +172,7 @@ class CancelPurchaseButton extends Component<
 			! willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
 		const text = ( () => {
 			if ( this.props.textVariant === 'remove-plan-and-claim-refund' ) {
-				return translate( 'Remove plan and claim refund' );
+				return translate( 'Remove plan and claim refund.' );
 			}
 
 			if ( includedDomainPurchase && needsDomainOptionsStep ) {

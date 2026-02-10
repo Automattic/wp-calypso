@@ -92,6 +92,7 @@ export interface CancelPurchaseState {
 	domainConfirmationConfirmed: boolean;
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
+	cancelIntent: 'refund' | 'autorenew' | null;
 }
 
 export interface CancelPurchaseActions {
@@ -148,6 +149,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		showDomainOptionsStep: false,
 		// Cancellation state moved from button component
 		showDialog: false,
+		cancelIntent: null,
 	};
 
 	componentDidMount() {
@@ -330,12 +332,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		this.setState( { isLoading: true } );
 
 		try {
-			const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( this.props.purchase );
-			const result = shouldUseAutoRenewFlow
+			const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
+			const result = isAutoRenewIntent
 				? await this.cancelPurchase( this.props.purchase )
 				: await this.submitCancelAndRefundPurchase( this.props.purchase );
 			if ( result.success ) {
-				const refundable = shouldUseAutoRenewFlow
+				const refundable = isAutoRenewIntent
 					? false
 					: hasAmountAvailableToRefund( this.props.purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
@@ -355,7 +357,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.props.errorNotice( ( error as Error ).message );
 		} finally {
 			// Reset loading state
-			this.setState( { surveyShown: false, isLoading: false } );
+			this.setState( { surveyShown: false, isLoading: false, cancelIntent: null } );
 		}
 	};
 
@@ -363,6 +365,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		this.setState( {
 			showDialog: false,
 			isLoading: false,
+			cancelIntent: null,
 		} );
 	};
 
@@ -601,6 +604,22 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		);
 	};
 
+	getCancelFlowType = ( purchase: Purchases.Purchase ) => {
+		if ( ! this.shouldUseAutoRenewFlow( purchase ) ) {
+			return getPurchaseCancellationFlowType( purchase );
+		}
+
+		if ( this.state.cancelIntent === 'refund' ) {
+			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		}
+
+		if ( this.state.cancelIntent === 'autorenew' ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+	};
+
 	getCancelPurchaseButtonProps = () => {
 		const {
 			purchase,
@@ -628,9 +647,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			flowTypeOverride: this.shouldUseAutoRenewFlow( purchase )
-				? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
-				: undefined,
+			flowTypeOverride: this.getCancelFlowType( purchase ),
+			onCancelInitiated: () => {
+				if ( this.shouldUseAutoRenewFlow( purchase ) ) {
+					this.setState( { cancelIntent: 'autorenew' } );
+				} else if ( this.state.cancelIntent ) {
+					this.setState( { cancelIntent: null } );
+				}
+			},
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -847,11 +871,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
-						flowTypeOverride={
-							this.shouldUseAutoRenewFlow( purchase )
-								? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
-								: undefined
-						}
+						flowTypeOverride={ this.getCancelFlowType( purchase ) }
+						onCancelInitiated={ () => {
+							if ( this.shouldUseAutoRenewFlow( purchase ) ) {
+								this.setState( { cancelIntent: 'autorenew' } );
+							} else if ( this.state.cancelIntent ) {
+								this.setState( { cancelIntent: null } );
+							}
+						} }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -929,11 +956,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						isVisible={ this.state.surveyShown }
 						onClose={ () => this.setState( { surveyShown: false } ) }
 						onSurveyComplete={ this.onSurveyComplete }
-						flowType={
-							this.shouldUseAutoRenewFlow( purchase )
-								? CANCEL_FLOW_TYPE.CANCEL_AUTORENEW
-								: getPurchaseCancellationFlowType( purchase )
-						}
+						flowType={ this.getCancelFlowType( purchase ) }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						cancellationInProgress={ this.state.isLoading }
@@ -969,6 +992,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						<RefundEligibilityNotice
 							refundAmount={ refundAmountString }
 							cancelButtonProps={ cancelButtonProps }
+							onRefundCancelInitiated={ () => this.setState( { cancelIntent: 'refund' } ) }
 						/>
 					) }
 
