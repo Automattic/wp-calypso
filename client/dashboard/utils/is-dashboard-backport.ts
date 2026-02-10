@@ -15,5 +15,6 @@ export function isDashboardBackport() {
 		return false;
 	}
 
-	return ! window?.location?.pathname?.startsWith( '/ciab' );
+	// We're on a dashboard screen in non-dashboard Calypso environment.
+	return true;
 }
