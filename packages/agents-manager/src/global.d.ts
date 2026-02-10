@@ -34,7 +34,6 @@ declare module '@wordpress/block-editor' {
 	export const BlockIcon: React.ComponentType< { icon: unknown } >;
 }
 
-
 /**
  * Chat state returned by `getChatState()`.
  */
