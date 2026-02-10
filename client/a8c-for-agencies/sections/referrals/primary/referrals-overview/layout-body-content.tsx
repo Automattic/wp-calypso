@@ -106,6 +106,7 @@ export default function LayoutBodyContent( {
 					<ConsolidatedViews
 						referrals={ referrals }
 						referralCommissionPayout={ referralCommissionPayout }
+						isLoading={ isLoading }
 					/>
 				) }
 				<ReferralList

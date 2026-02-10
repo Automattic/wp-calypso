@@ -18,6 +18,7 @@ type ConsolidatedViewsProps = {
 	referrals: Referral[];
 	referralCommissionPayout?: ReferralCommissionPayoutResponse | undefined;
 	isSingleClient?: boolean;
+	isLoading?: boolean;
 };
 
 function findClientTotalCommission(
@@ -39,6 +40,7 @@ export default function ConsolidatedViews( {
 	referrals,
 	referralCommissionPayout,
 	isSingleClient,
+	isLoading,
 }: ConsolidatedViewsProps ) {
 	const translate = useTranslate();
 	const { data: productsData, isFetching } = useProductsQuery( false, true );
@@ -93,6 +95,7 @@ export default function ConsolidatedViews( {
 						},
 					}
 				) }
+				isLoading={ isLoading }
 			/>
 			<PayoutCards
 				isFetching={ isFetching }
