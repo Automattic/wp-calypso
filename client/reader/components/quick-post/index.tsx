@@ -14,6 +14,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { InView } from 'react-intersection-observer';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -43,10 +44,7 @@ addApiMiddleware(
 	} )
 );
 
-interface Props {
-	autoFocus?: boolean;
-}
-export default function QuickPost( { autoFocus = true }: Props ): JSX.Element | null {
+export default function QuickPost(): JSX.Element | null {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -194,20 +192,21 @@ export default function QuickPost( { autoFocus = true }: Props ): JSX.Element | 
 			/>
 
 			<div className="verbum-editor-wrapper">
-				<Editor
-					key={ editorKey }
-					initialContent={ postContent }
-					onChange={ setPostContent }
-					isRTL={ isLocaleRtl( locale ) ?? false }
-					isDarkMode={ false }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ autoFocus }
-					customStyles={ `
-					div.is-root-container.block-editor-block-list__layout {
-						padding-bottom: 20px;
-					}
+				<InView triggerOnce>
+					<Editor
+						key={ editorKey }
+						initialContent={ postContent }
+						onChange={ setPostContent }
+						isRTL={ isLocaleRtl( locale ) ?? false }
+						isDarkMode={ false }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						customStyles={ `
+						div.is-root-container.block-editor-block-list__layout {
+							padding-bottom: 20px;
+						}
 					` }
-				/>
+					/>
+				</InView>
 			</div>
 
 			<HStack className="quick-post-actions" justify="flex-end">
