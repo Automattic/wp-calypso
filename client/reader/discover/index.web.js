@@ -16,13 +16,14 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { FRESHLY_PRESSED_TAB } from './helper';
-import { getPrivateRoutes, getDiscoverRoutes, getCurrentTab } from './routes';
+import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -34,7 +35,7 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const selectedTab = getCurrentTab( context.path, FRESHLY_PRESSED_TAB );
+	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, FRESHLY_PRESSED_TAB );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(

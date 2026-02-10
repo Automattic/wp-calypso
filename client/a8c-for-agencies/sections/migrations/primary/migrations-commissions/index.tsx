@@ -7,6 +7,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -75,6 +76,7 @@ export default function MigrationsCommissions() {
 			wide
 		>
 			<LayoutTop isFullWidth={ ! showEmptyState }>
+				{ ! showEmptyState && <MissingPaymentSettingsNotice commissionType="migrations" /> }
 				<LayoutHeader>
 					<Breadcrumb
 						hideOnMobile

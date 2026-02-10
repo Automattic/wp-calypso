@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
+import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { Dispatch } from 'redux';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
@@ -160,4 +161,26 @@ export function setUrlQuery( key: string, value: string, pathname: string = '' )
 
 export function isDiscoverV3Enabled(): boolean {
 	return isEnabled( 'reader/discover-v3' );
+}
+
+/**
+ * Extracts the current tab from a URL path by removing locale and prefix information.
+ */
+export function getCurrentTabFromURL(
+	fullPath: string,
+	prefix: string,
+	defaultTab: string
+): string {
+	const pathWithoutQuery = fullPath.split( '?' )[ 0 ];
+	const cleanedPath = removeLocaleFromPathLocaleInFront( pathWithoutQuery );
+	const path = cleanedPath
+		.split( `/${ prefix }` )
+		.filter( ( path ) => path !== '' )
+		?.at( 0 );
+
+	if ( ! path ) {
+		return defaultTab;
+	}
+
+	return path.replace( /^\//, '' );
 }
