@@ -28,10 +28,11 @@ import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
-import type { Referral } from '../../types';
+import type { Referral, ReferralCommissionPayoutResponse } from '../../types';
 
 interface Props {
 	tipaltiData?: any;
+	referralCommissionPayout?: ReferralCommissionPayoutResponse | undefined;
 	referrals?: Referral[];
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
@@ -40,6 +41,7 @@ interface Props {
 
 export default function LayoutBodyContent( {
 	tipaltiData,
+	referralCommissionPayout,
 	referrals,
 	isLoading,
 	dataViewsState,
@@ -103,7 +105,8 @@ export default function LayoutBodyContent( {
 				{ ! dataViewsState.selectedItem && (
 					<ConsolidatedViews
 						referrals={ referrals }
-						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
+						referralCommissionPayout={ referralCommissionPayout }
+						isLoading={ isLoading }
 					/>
 				) }
 				<ReferralList

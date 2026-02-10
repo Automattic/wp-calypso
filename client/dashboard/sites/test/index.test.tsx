@@ -33,7 +33,7 @@ const mockSites = [
 	} as Site,
 ];
 
-describe( 'Sites', () => {
+describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/teams' )
@@ -52,11 +52,7 @@ describe( 'Sites', () => {
 			.reply( 200, { sites: mockSites } );
 	} );
 
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
-	it( 'renders Add new site button', async () => {
+	test( 'renders Add new site button', async () => {
 		render( <Sites />, {
 			user: {
 				site_count: mockSites.length,
@@ -66,7 +62,7 @@ describe( 'Sites', () => {
 		expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
 	} );
 
-	it( 'renders empty state when the user has no sites', async () => {
+	test( 'renders empty state when the user has no sites', async () => {
 		render( <Sites />, {
 			user: {
 				site_count: 0,
@@ -80,7 +76,7 @@ describe( 'Sites', () => {
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders DataViews when the user has sites', async () => {
+	test( 'renders DataViews when the user has sites', async () => {
 		render( <Sites />, {
 			user: {
 				site_count: 13, // more than 12 sites to force the table layout

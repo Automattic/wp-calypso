@@ -149,7 +149,7 @@ export default function AgentDock( {
 
 			// Sync local session ID with the server's
 			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId );
+				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
@@ -202,7 +202,7 @@ export default function AgentDock( {
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: () => sessionId || getStoredSessionId(),
+		getSessionId: () => sessionId || getStoredSessionId( agentId ),
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
@@ -234,7 +234,7 @@ export default function AgentDock( {
 			const sessionId = conversation.session_id || '';
 
 			abortCurrentRequest();
-			setSessionId( sessionId );
+			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
