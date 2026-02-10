@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
-import { getCiabDashboardBasePath } from './section';
+import { getCiabDashboardBasePath } from './routing';
 import './translations';
 import type {
 	FetchSitesOptions,

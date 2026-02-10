@@ -18,14 +18,10 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import {
-	isAllowedCiabDashboardHostname,
-	CIAB_DASHBOARD_SECTION_DEFINITION,
-} from 'calypso/dashboard/app-ciab/section';
-import {
-	isAllowedDotcomDashboardHostname,
-	DOTCOM_DASHBOARD_SECTION_DEFINITION,
-} from 'calypso/dashboard/app-dotcom/section';
+import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { shouldHideWooHostedLogo } from 'calypso/document/utils/should-hide-woo-hosted-logo';
