@@ -72,7 +72,7 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	{ dataView: 'site-title', sortKey: 'alphabetically' },
+	{ dataView: 'name', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
@@ -206,17 +206,17 @@ const SitesDashboard = ( {
 		...( selectedSite
 			? {
 					type: 'list',
-					titleField: 'site-title',
+					titleField: 'name',
 					showTitle: true,
-					mediaField: 'icon',
+					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
 			  }
 			: {
 					type: 'table',
-					titleField: 'site-title',
+					titleField: 'name',
 					showTitle: true,
-					mediaField: 'icon',
+					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
 					layout: {

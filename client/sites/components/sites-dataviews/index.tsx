@@ -1,3 +1,4 @@
+import { queryClient, dashboardSiteFiltersQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
@@ -7,6 +8,8 @@ import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams'
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { Text } from 'calypso/dashboard/components/text';
 import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/dataviews';
+import { DEFAULT_PROVIDER_NAME, getSiteProviderName } from 'calypso/dashboard/utils/site-provider';
+import { formatWordPressVersion } from 'calypso/dashboard/utils/wp-version';
 import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import {
@@ -108,7 +111,7 @@ const DotcomSitesDataViews = ( {
 	const fields = useMemo( () => {
 		const dataViewFields: Field< SiteExcerptData >[] = [
 			{
-				id: 'icon',
+				id: 'icon.ico',
 				label: __( 'Site icon' ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return (
@@ -124,7 +127,7 @@ const DotcomSitesDataViews = ( {
 				enableGlobalSearch: false,
 			},
 			{
-				id: 'site-title',
+				id: 'name',
 				label: __( 'Site' ),
 				getValue: ( { item } ) => getSiteDisplayName( item ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
@@ -147,12 +150,148 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'plan',
 				label: __( 'Plan' ),
+				getValue: ( { item } ) => item.plan?.product_name_en ?? '',
 				render: ( { item }: { item: SiteExcerptData } ) => (
 					<SitePlan site={ item } userId={ userId } />
 				),
+				getElements: async () => {
+					const { plan = [] } = await queryClient.ensureQueryData( {
+						...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
+						staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
+					} );
+
+					// A plan may have different product_slugs due to the period.
+					// However, a filter can only represent one value.
+					// As a result, it seems better to use the untranslated name as value for filters.
+					const elements = plan.reduce(
+						( acc, current ) => ( {
+							...acc,
+							[ current.name ]: current.name_en,
+						} ),
+						{}
+					);
+
+					return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+						label,
+						value,
+					} ) );
+				},
+				filterBy: {
+					operators: [ 'isAny' ],
+				},
+				sort: ( a, b, direction ) => {
+					const planA = a.plan?.product_name_en ?? '';
+					const planB = b.plan?.product_name_en ?? '';
+
+					return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
+				},
 				enableHiding: false,
 				enableSorting: true,
 			},
+			{
+				id: 'last-publish',
+				label: __( 'Last published' ),
+				render: ( { item }: { item: SiteExcerptData } ) =>
+					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+				enableHiding: false,
+				enableSorting: true,
+			},
+		];
+
+		if ( siteType === 'non-p2' ) {
+			const extraFields: Field< SiteExcerptData >[] = [
+				{
+					id: 'subscribers_count',
+					label: __( 'Subscribers' ),
+				},
+				{
+					id: 'visibility',
+					label: __( 'Visibility' ),
+					getValue: ( { item } ) => {
+						if (
+							item.is_coming_soon ||
+							( item.is_private && item.launch_status === 'unlaunched' )
+						) {
+							return 'coming_soon';
+						}
+
+						if ( item.is_private ) {
+							return 'private';
+						}
+
+						return 'public';
+					},
+					elements: [
+						{
+							label: __( 'Public' ),
+							value: 'public',
+						},
+						{
+							label: __( 'Private' ),
+							value: 'private',
+						},
+						{
+							label: __( 'Coming soon' ),
+							value: 'coming_soon',
+						},
+					],
+					filterBy: {
+						operators: [ 'isAny' ],
+					},
+					enableHiding: false,
+				},
+				{
+					id: 'wp_version',
+					label: __( 'WP version' ),
+					getValue: ( { item } ) => formatWordPressVersion( item.options?.software_version ?? '' ),
+					enableHiding: false,
+				},
+				{
+					id: 'host',
+					label: __( 'Host' ),
+					getValue: ( { item } ) => {
+						return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
+					},
+					render: ( { field, item } ) => field.getValue( { item } ),
+					enableHiding: false,
+				},
+				{
+					id: 'is_deleted',
+					type: 'boolean',
+					label: __( 'Deleted' ),
+					elements: [
+						{ value: true, label: __( 'Yes' ) },
+						{ value: false, label: __( 'No' ) },
+					],
+					filterBy: {
+						operators: [ 'is' ],
+					},
+					enableHiding: false,
+					enableSorting: false,
+				},
+			];
+
+			if ( isAutomattician ) {
+				extraFields.push( {
+					id: 'is_a8c',
+					label: __( 'A8C owned' ),
+					elements: [
+						{ value: true, label: __( 'Yes' ) },
+						{ value: false, label: __( 'No' ) },
+					],
+					filterBy: {
+						operators: [ 'is' ],
+					},
+					enableHiding: false,
+					enableSorting: false,
+				} );
+			}
+
+			return [ ...dataViewFields, ...extraFields ];
+		}
+
+		return [
+			...dataViewFields,
 			{
 				id: 'status',
 				label: __( 'Status' ),
@@ -163,14 +302,6 @@ const DotcomSitesDataViews = ( {
 				filterBy: {
 					operators: [ 'is' ],
 				},
-			},
-			{
-				id: 'last-publish',
-				label: __( 'Last published' ),
-				render: ( { item }: { item: SiteExcerptData } ) =>
-					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
-				enableHiding: false,
-				enableSorting: true,
 			},
 			{
 				id: 'stats',
@@ -194,29 +325,6 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		];
-
-		if ( isAutomattician && siteType === 'non-p2' ) {
-			dataViewFields.push( {
-				id: 'is_a8c',
-				label: __( 'Include A8C sites' ),
-				enableHiding: false,
-				elements: [
-					{
-						value: true,
-						label: __( 'Yes' ),
-					},
-					{
-						value: false,
-						label: __( 'No' ),
-					},
-				],
-				filterBy: {
-					operators: [ 'is' ],
-				},
-			} );
-		}
-
-		return dataViewFields;
 	}, [
 		__,
 		siteStatusGroups,
