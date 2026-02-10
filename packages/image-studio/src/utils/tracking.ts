@@ -8,6 +8,7 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
@@ -62,9 +63,25 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
-	const propsWithEntryPoint = entryPoint ? { ...properties, placement: entryPoint } : properties;
+	const baseProps: Record< string, string | number | boolean > = {
+		...properties,
+		sessionId: getSessionId(),
+	};
 
-	recordTracksEvent( eventName, propsWithEntryPoint );
+	if ( entryPoint ) {
+		baseProps.placement = entryPoint;
+	}
+
+	// Add WordPress page context if available
+	const win = window as any;
+	if ( win.pagenow ) {
+		baseProps.screen = win.pagenow;
+	}
+	if ( win.typenow ) {
+		baseProps.post_type = win.typenow;
+	}
+
+	recordTracksEvent( eventName, baseProps );
 }
 
 interface TrackImageStudioOpenedOptions {
