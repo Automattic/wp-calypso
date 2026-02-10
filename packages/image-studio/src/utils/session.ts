@@ -79,14 +79,3 @@ export function getSessionId(): string {
 
 	return newSessionId;
 }
-
-/**
- * React hook to get the session ID.
- * Uses useMemo to ensure stable reference.
- * @returns The current session ID
- */
-export function useSessionId(): string {
-	// For now, return synchronously
-	// In the future, this could be converted to use React state if needed
-	return getSessionId();
-}
