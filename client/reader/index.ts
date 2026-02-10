@@ -27,6 +27,7 @@ import {
 	pendingSubscriptionsManager,
 	setupReadRoutes,
 	setBeforePrimary,
+	loadNewSubscriptionPage,
 } from './controller';
 import { userProfile } from './user-profile/controller';
 
@@ -58,6 +59,17 @@ export default async function (): Promise< void > {
 		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		following,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		[ '/reader/new', '/reader/new/reddit' ],
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		setSelectedSiteIdByOrigin,
+		loadNewSubscriptionPage,
 		makeLayout,
 		clientRender
 	);

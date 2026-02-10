@@ -51,6 +51,8 @@ interface SignupFormSocialFirst {
 	isEmailVariation?: boolean;
 	isMessagingVariation?: boolean;
 	isSliderVariation?: boolean;
+	allowedSocialServices?: string[];
+	customTosElement?: JSX.Element;
 }
 
 const options = {
@@ -94,6 +96,8 @@ const SignupFormSocialFirst = ( {
 	isEmailVariation,
 	isMessagingVariation,
 	isSliderVariation,
+	allowedSocialServices,
+	customTosElement,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -102,6 +106,11 @@ const SignupFormSocialFirst = ( {
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 	const renderTermsOfService = () => {
+		// Custom ToS element takes priority (from partner branding)
+		if ( customTosElement ) {
+			return <p className="signup-form-social-first__tos-link">{ customTosElement }</p>;
+		}
+
 		let tosText;
 
 		if ( isWoo ) {
@@ -213,6 +222,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailVariation }
+					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ isSliderVariation && (
 					<p className="signup-form-social-first__login-link">

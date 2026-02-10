@@ -91,8 +91,18 @@
 		}
 	}
 
+	#wp-admin-bar-root-default {
+		#wp-admin-bar-wpcom-logo a {
+			border-top-left-radius: $main-border-radius;
+		}
+	}
+
 	#wp-admin-bar-top-secondary {
 		border-top-right-radius: $main-border-radius;
+
+		#wp-admin-bar-my-account a {
+			border-top-right-radius: $main-border-radius;
+		}
 
 		@media (max-width: 782px) {
 

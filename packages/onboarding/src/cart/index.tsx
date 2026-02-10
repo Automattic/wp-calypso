@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
+import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -22,7 +23,6 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 interface GetNewSiteParams {
 	flowToCheck: string;
-	isPurchasingDomainItem: boolean;
 	themeSlugWithRepo: string;
 	siteUrl?: string;
 	siteTitle: string;
@@ -65,12 +65,14 @@ const getBlogNameGenerationParams = ( {
 	siteTitle,
 	flowToCheck,
 	username,
-	isPurchasingDomainItem,
 }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
+		const blogName = siteUrl.replace( '.wordpress.com', '' );
+
 		return {
-			blog_name: siteUrl.replace( '.wordpress.com', '' ),
-			find_available_url: !! isPurchasingDomainItem,
+			blog_name: blogName,
+			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
+			find_available_url: !! getTld( blogName ),
 		};
 	}
 
@@ -141,7 +143,6 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 export const createSiteWithCart = async (
 	flowName: string,
 	userIsLoggedIn: boolean,
-	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
@@ -165,7 +166,6 @@ export const createSiteWithCart = async (
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
-		isPurchasingDomainItem,
 		themeSlugWithRepo,
 		siteUrl,
 		siteTitle,

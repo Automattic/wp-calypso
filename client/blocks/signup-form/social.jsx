@@ -33,6 +33,7 @@ class SocialSignupForm extends Component {
 		redirectToAfterLoginUrl: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
 		shouldShowEmailButton: PropTypes.bool,
+		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 	};
 
 	static defaultProps = {
@@ -87,17 +88,111 @@ class SocialSignupForm extends Component {
 		}
 	};
 
-	render() {
+	getSocialButtons() {
 		const {
-			compact,
-			translate,
 			socialServiceResponse,
-			disableTosText,
-			isSocialFirst,
 			flowName,
 			setCurrentStep,
+			isSocialFirst,
 			shouldShowEmailButton,
 		} = this.props;
+
+		return [
+			{
+				service: 'google',
+				enabled: true,
+				button: (
+					<GoogleSocialButton
+						key="social-signup-button-google"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+					/>
+				),
+			},
+			{
+				service: 'apple',
+				enabled: true,
+				button: (
+					<AppleLoginButton
+						key="social-signup-button-apple"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+						queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
+					/>
+				),
+			},
+			{
+				service: 'github',
+				enabled: true,
+				button: (
+					<GithubSocialButton
+						key="social-signup-button-github"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+				),
+			},
+			{
+				service: 'paypal',
+				enabled: config.isEnabled( 'sign-in-with-paypal' ),
+				button: (
+					<PayPalSocialButton
+						key="social-signup-button-paypal"
+						responseHandler={ this.handleSignup }
+						onClick={ this.trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+				),
+			},
+			{
+				service: 'email',
+				enabled: isSocialFirst && shouldShowEmailButton !== false,
+				button: (
+					<UsernameOrEmailButton
+						key="social-signup-button-email"
+						onClick={ () => setCurrentStep( 'email' ) }
+					/>
+				),
+			},
+		];
+	}
+
+	getFilteredSocialButtons() {
+		const { allowedSocialServices } = this.props;
+		const socialButtons = this.getSocialButtons();
+
+		if ( ! allowedSocialServices ) {
+			return socialButtons;
+		}
+
+		// Map allowedSocialServices to buttons (preserves order from config)
+		// Preserve original enabled state for feature-flagged buttons (e.g., PayPal)
+		const buttons = allowedSocialServices
+			.map( ( service ) => socialButtons.find( ( btn ) => btn.service === service ) )
+			.filter( Boolean );
+
+		// Add email button at the end only if not already included in allowedSocialServices
+		if ( ! allowedSocialServices.includes( 'email' ) ) {
+			const emailButton = socialButtons.find( ( btn ) => btn.service === 'email' );
+			if ( emailButton ) {
+				buttons.push( emailButton );
+			}
+		}
+
+		return buttons;
+	}
+
+	renderSocialButton( { enabled, button } ) {
+		if ( ! enabled ) {
+			return null;
+		}
+		return button;
+	}
+
+	render() {
+		const { compact, translate, disableTosText, isSocialFirst } = this.props;
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-signup', {
@@ -110,35 +205,7 @@ class SocialSignupForm extends Component {
 
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						<GoogleSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-						/>
-
-						<AppleLoginButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
-						/>
-
-						<GithubSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-						/>
-
-						{ config.isEnabled( 'sign-in-with-paypal' ) && (
-							<PayPalSocialButton
-								responseHandler={ this.handleSignup }
-								onClick={ this.trackSignupAndRememberRedirect }
-								socialServiceResponse={ socialServiceResponse }
-							/>
-						) }
-
-						{ isSocialFirst && shouldShowEmailButton && (
-							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
-						) }
+						{ this.getFilteredSocialButtons().map( this.renderSocialButton ) }
 					</div>
 					{ ! disableTosText && <SocialToS /> }
 				</div>
