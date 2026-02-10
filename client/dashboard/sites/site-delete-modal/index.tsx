@@ -222,7 +222,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							disabled={ mutation.isPending }
+							disabled={ mutation.isPending || mutation.isSuccess }
 							onClick={ onClose }
 						>
 							{ __( 'Cancel' ) }
@@ -232,7 +232,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							variant="primary"
 							type="submit"
 							isDestructive
-							isBusy={ mutation.isPending }
+							isBusy={ mutation.isPending || mutation.isSuccess }
 							disabled={ formData.domain !== site.slug }
 						>
 							{ __( 'Delete site' ) }
