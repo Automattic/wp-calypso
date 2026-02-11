@@ -8,7 +8,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useGetPressablePlanByProductId from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-by-product-id';
-import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import useGetPressablePlanInfo from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-info';
 
 const WPCOMHostingPlanDetails = () => {
 	const translate = useTranslate();
@@ -30,8 +30,10 @@ const WPCOMHostingPlanDetails = () => {
 const PressablePlanDetails = ( { productId }: { productId: number } ) => {
 	const translate = useTranslate();
 
+	const getPressablePlanInfo = useGetPressablePlanInfo();
+
 	const pressablePlan = useGetPressablePlanByProductId( { product_id: productId } );
-	const selectedPlanInfo = pressablePlan ? getPressablePlan( pressablePlan.slug ) : null;
+	const selectedPlanInfo = pressablePlan ? getPressablePlanInfo( pressablePlan.slug ) : null;
 
 	const isCustomPlan = ! pressablePlan;
 

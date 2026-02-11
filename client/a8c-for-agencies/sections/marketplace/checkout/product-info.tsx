@@ -7,7 +7,7 @@ import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-p
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
+import useGetPressablePlanInfo from '../pressable-overview/hooks/use-get-pressable-plan-info';
 import type { ShoppingCartItem } from '../types';
 
 export default function ProductInfo( {
@@ -24,6 +24,8 @@ export default function ProductInfo( {
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
 
+	const getPressablePlanInfo = useGetPressablePlanInfo();
+
 	const isWooCommerceProduct = product.slug.startsWith( 'woocommerce-' );
 
 	let productIcon =
@@ -33,7 +35,7 @@ export default function ProductInfo( {
 	let siteUrls;
 
 	if ( product.family_slug === 'pressable-hosting' ) {
-		const presablePlan = getPressablePlan( product.slug );
+		const presablePlan = getPressablePlanInfo( product.slug );
 		if ( ! presablePlan ) {
 			return null;
 		}

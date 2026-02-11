@@ -12,9 +12,9 @@ import {
 	PLAN_CATEGORY_PREMIUM,
 	PLAN_CATEGORY_ENTERPRISE,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
-import getPressablePlan, {
+import useGetPressablePlanInfo, {
 	PressablePlan,
-} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-info';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -98,7 +98,9 @@ export default function PressablePlanSection( {
 		productSearchQuery: '',
 	} );
 
-	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
+	const getPressablePlanInfo = useGetPressablePlanInfo();
+
+	const selectedPlanInfo = selectedPlan ? getPressablePlanInfo( selectedPlan.slug ) : null;
 
 	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
 

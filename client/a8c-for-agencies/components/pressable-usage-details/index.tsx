@@ -3,7 +3,7 @@ import { formatNumber, formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import useGetPressablePlanInfo from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-info';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { TitanOrder } from 'calypso/state/a8c-for-agencies/types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -17,10 +17,13 @@ type Props = {
 export default function PressableUsageDetails( { existingPlan }: Props ) {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
+
+	const getPressablePlanInfo = useGetPressablePlanInfo();
+
 	const planUsage = agency?.third_party?.pressable?.usage;
 	const titanUsage = agency?.third_party?.pressable?.titan_usage;
 
-	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan?.slug ) : null;
+	const planInfo = existingPlan?.slug ? getPressablePlanInfo( existingPlan?.slug ) : null;
 
 	// Filter active Titan orders and calculate total active inboxes
 	const activeOrders =

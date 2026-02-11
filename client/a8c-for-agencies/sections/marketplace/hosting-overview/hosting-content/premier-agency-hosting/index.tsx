@@ -21,7 +21,7 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext, TermPricingContext } from '../../../context';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
-import getPressablePlan from '../../../pressable-overview/lib/get-pressable-plan';
+import useGetPressablePlanInfo from '../../../pressable-overview/hooks/use-get-pressable-plan-info';
 import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
@@ -48,6 +48,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const pressableOwnership = usePressableOwnershipType();
 
+	const getPressablePlanInfo = useGetPressablePlanInfo();
+
 	const isReferralMode = marketplaceType === 'referral';
 
 	const { data, isFetched: isExistingPlanFetched } = useFetchLicenses(
@@ -70,7 +72,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 		product_id: agencyPressableLicense ? agencyPressableLicense.productId : 0,
 	} );
 
-	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
+	const existingPlanInfo = getPressablePlanInfo( agencyPressablePlan?.slug ?? '' );
 
 	const areSignaturePlans = useMemo( () => {
 		return (
