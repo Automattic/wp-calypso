@@ -1,4 +1,9 @@
-import { Button, SelectControl, __experimentalSpacer as Spacer } from '@wordpress/components';
+import {
+	Button,
+	SelectControl,
+	TextControl,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -32,25 +37,34 @@ export default function MigrationsTagSitesModal( {
 
 	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
 	const [ migrationSourceHost, setMigrationSourceHost ] = useState( '' );
+	const [ otherHostingProvider, setOtherHostingProvider ] = useState( '' );
+
+	const OTHER_OPTION_VALUE = 'other';
 
 	const migrationSourceOptions = [
 		{ label: translate( 'Select a host' ), value: '' },
-		{ label: translate( 'Kinsta' ), value: 'kinsta' },
 		{ label: translate( 'WP Engine' ), value: 'wpengine' },
+		{ label: translate( 'Kinsta' ), value: 'kinsta' },
 		{ label: translate( 'Pantheon' ), value: 'pantheon' },
-		{ label: translate( 'Nexcess' ), value: 'nexcess' },
-		{ label: translate( 'Pagely' ), value: 'pagely' },
-		{ label: translate( 'Wix' ), value: 'Wix' },
-		{ label: translate( 'Squarespace Hosted' ), value: 'squarespace' },
-		{ label: translate( 'Shopify Hosted' ), value: 'shopify' },
+		{ label: translate( 'Cloudways' ), value: 'cloudways' },
+		{ label: translate( 'SiteGround' ), value: 'siteground' },
+		{ label: translate( 'Bluehost' ), value: 'bluehost' },
+		{ label: translate( 'Liquid Web' ), value: 'liquidweb' },
+		{ label: translate( 'Other' ), value: OTHER_OPTION_VALUE },
 	];
+
+	const isOtherSelected = migrationSourceHost === OTHER_OPTION_VALUE;
+	const finalMigrationSourceHost = isOtherSelected ? otherHostingProvider : migrationSourceHost;
+	const isValidHostingProvider = isOtherSelected
+		? otherHostingProvider.trim().length > 0
+		: migrationSourceHost.length > 0;
 
 	const handleAddSites = () => {
 		tagSitesForMigration(
 			{
 				siteIds: selectedSites.map( ( site ) => site.id ),
 				tags: migrationTags,
-				migrationSourceHost,
+				migrationSourceHost: finalMigrationSourceHost,
 			},
 			{
 				onSuccess: () => {
@@ -59,7 +73,7 @@ export default function MigrationsTagSitesModal( {
 					dispatch(
 						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
 							count: selectedSites.length,
-							migration_source_host: migrationSourceHost,
+							migration_source_host: finalMigrationSourceHost,
 						} )
 					);
 					const hasSingleSite = selectedSites.length === 1;
@@ -92,7 +106,7 @@ export default function MigrationsTagSitesModal( {
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
 				count: selectedSites.length,
-				migration_source_host: migrationSourceHost,
+				migration_source_host: finalMigrationSourceHost,
 			} )
 		);
 	};
@@ -102,8 +116,17 @@ export default function MigrationsTagSitesModal( {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' ) );
 	};
 
-	const selectedMigrationSourceHost =
-		migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ?? '';
+	const handleMigrationSourceHostChange = ( value: string ) => {
+		setMigrationSourceHost( value );
+		if ( value !== OTHER_OPTION_VALUE ) {
+			setOtherHostingProvider( '' );
+		}
+	};
+
+	const selectedMigrationSourceHost = isOtherSelected
+		? otherHostingProvider
+		: migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
+		  '';
 
 	return (
 		<A4AModal
@@ -112,7 +135,7 @@ export default function MigrationsTagSitesModal( {
 				<Button
 					variant="primary"
 					onClick={ handleAddSites }
-					disabled={ isPending || ! migrationSourceHost || selectedSites.length === 0 }
+					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
 					isBusy={ isPending }
 				>
 					{ selectedSites.length > 0
@@ -144,9 +167,20 @@ export default function MigrationsTagSitesModal( {
 				label={ translate( 'Hosting provider' ) }
 				value={ migrationSourceHost }
 				options={ migrationSourceOptions }
-				onChange={ ( value ) => setMigrationSourceHost( value ) }
+				onChange={ handleMigrationSourceHostChange }
 			/>
-			{ migrationSourceHost && (
+			{ isOtherSelected && (
+				<>
+					<Spacer marginBottom={ 4 } />
+					<TextControl
+						label={ translate( 'Other hosting provider' ) }
+						value={ otherHostingProvider }
+						onChange={ setOtherHostingProvider }
+						placeholder={ translate( 'Enter hosting provider name' ) }
+					/>
+				</>
+			) }
+			{ isValidHostingProvider && (
 				<MigrationsAddSitesTable
 					taggedSites={ taggedSites }
 					selectedSites={ selectedSites }
