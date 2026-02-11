@@ -1,0 +1,8 @@
+.dashboard-switcher-overlay {
+	position: fixed;
+	inset: 0;
+	// WordPress Popover uses z-index around 1000000. Position overlay just below it
+	// so it captures clicks while the popover content remains interactive.
+	z-index: 999999;
+	background: transparent;
+}
