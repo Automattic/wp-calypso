@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, SelectControl, __experimentalSpacer as Spacer } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -7,8 +7,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useUpdateTagsForSitesMutation from '../../../hooks/use-update-tags-for-sites';
-import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
+import useTagSitesForCommissionMutation from '../../../hooks/use-tag-sites-for-commission';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { TaggedSite } from '../types';
@@ -19,23 +18,43 @@ export default function MigrationsTagSitesModal( {
 	onClose,
 	taggedSites,
 	fetchMigratedSites,
+	migrationTags,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
 	fetchMigratedSites: () => void;
+	migrationTags: string[];
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { mutate: tagSitesForMigration, isPending } = useUpdateTagsForSitesMutation();
+	const { mutate: tagSitesForMigration, isPending } = useTagSitesForCommissionMutation();
 
 	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
+	const [ migrationSourceHost, setMigrationSourceHost ] = useState( '' );
+
+	const migrationSourceOptions = [
+		{ label: translate( 'Select a host' ), value: '' },
+		{ label: translate( 'WordPress.com Hosting' ), value: 'wpcom' },
+		{ label: translate( 'Automattic' ), value: 'automattic' },
+		{ label: translate( 'Pressable' ), value: 'pressable' },
+		{ label: translate( 'WP Cloud' ), value: 'wpcloud' },
+		{ label: translate( 'Kinsta' ), value: 'kinsta' },
+		{ label: translate( 'WP Engine' ), value: 'wpengine' },
+		{ label: translate( 'Pantheon' ), value: 'pantheon' },
+		{ label: translate( 'Nexcess' ), value: 'nexcess' },
+		{ label: translate( 'Pagely' ), value: 'pagely' },
+		{ label: translate( 'Wix' ), value: 'Wix' },
+		{ label: translate( 'Squarespace Hosted' ), value: 'squarespace' },
+		{ label: translate( 'Shopify Hosted' ), value: 'shopify' },
+	];
 
 	const handleAddSites = () => {
 		tagSitesForMigration(
 			{
 				siteIds: selectedSites.map( ( site ) => site.id ),
-				tags: [ A4A_MIGRATED_SITE_TAG ],
+				tags: migrationTags,
+				migrationSourceHost,
 			},
 			{
 				onSuccess: () => {
@@ -44,6 +63,7 @@ export default function MigrationsTagSitesModal( {
 					dispatch(
 						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
 							count: selectedSites.length,
+							migration_source_host: migrationSourceHost,
 						} )
 					);
 					const hasSingleSite = selectedSites.length === 1;
@@ -76,6 +96,7 @@ export default function MigrationsTagSitesModal( {
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
 				count: selectedSites.length,
+				migration_source_host: migrationSourceHost,
 			} )
 		);
 	};
@@ -92,7 +113,7 @@ export default function MigrationsTagSitesModal( {
 				<Button
 					variant="primary"
 					onClick={ handleAddSites }
-					disabled={ isPending }
+					disabled={ isPending || ! migrationSourceHost || selectedSites.length === 0 }
 					isBusy={ isPending }
 				>
 					{ selectedSites.length > 0
@@ -119,11 +140,21 @@ export default function MigrationsTagSitesModal( {
 					)
 				) }
 			</div>
-			<MigrationsAddSitesTable
-				taggedSites={ taggedSites }
-				selectedSites={ selectedSites }
-				setSelectedSites={ setSelectedSites }
+			<Spacer marginBottom={ 4 } />
+			<SelectControl
+				label={ translate( 'Hosting provider' ) }
+				value={ migrationSourceHost }
+				options={ migrationSourceOptions }
+				onChange={ ( value ) => setMigrationSourceHost( value ) }
 			/>
+			{ migrationSourceHost && (
+				<MigrationsAddSitesTable
+					taggedSites={ taggedSites }
+					selectedSites={ selectedSites }
+					setSelectedSites={ setSelectedSites }
+					migrationSourceHost={ migrationSourceHost }
+				/>
+			) }
 		</A4AModal>
 	);
 }
