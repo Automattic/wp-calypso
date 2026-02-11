@@ -11,9 +11,7 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getStream } from 'calypso/state/reader/streams/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
-import { AppState } from 'calypso/types';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
@@ -29,9 +27,6 @@ function FollowingStream( { ...props } ) {
 	const [ readerOnboardingShouldShow, setReaderOnboardingShouldShow ] = useState( false );
 	const currentUser = useSelector( getCurrentUser );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const hasPostSelected = useSelector(
-		( state: AppState ) => getStream( state, 'following' ).selected
-	);
 
 	const handleReaderOnboardingRender = useCallback(
 		( willRender: boolean ) => {
@@ -108,8 +103,6 @@ function FollowingStream( { ...props } ) {
 							<CardBody>
 								<AsyncLoad
 									require="calypso/reader/components/quick-post"
-									// eslint-disable-next-line jsx-a11y/no-autofocus
-									autoFocus={ ! hasPostSelected }
 									placeholder={ <QuickPostSkeleton /> }
 								/>
 							</CardBody>
