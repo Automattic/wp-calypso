@@ -111,7 +111,9 @@ describe( 'ActionButtons', () => {
 					className="custom-wrapper"
 				/>
 			);
-			expect( container.querySelector( '.custom-wrapper' ) ).toBeInTheDocument();
+			const wrapper = container.firstChild;
+			expect( wrapper ).toHaveClass( 'connect-screen-action-buttons' );
+			expect( wrapper ).toHaveClass( 'custom-wrapper' );
 		} );
 	} );
 
