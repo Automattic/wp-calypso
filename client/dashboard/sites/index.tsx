@@ -193,7 +193,6 @@ export function filterSortAndPaginateSites( sites: Site[], view: View, totalItem
 
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
-	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
@@ -233,16 +232,6 @@ export default function Sites() {
 	};
 
 	const userHasSites = user.site_count > 0;
-
-	useEffect( () => {
-		if ( sites ) {
-			sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ sites, queryClient ] );
 
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
 		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
