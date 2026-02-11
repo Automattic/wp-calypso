@@ -8,35 +8,28 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteVisibilitySettings from '../index';
+import type { Site, SiteSettings } from '@automattic/api-core';
 
-interface TestSiteOptions {
-	blog_public: 0 | 1 | -1;
-	wpcom_public_coming_soon: 0 | 1;
-	wpcom_data_sharing_opt_out: boolean;
-	is_wpcom_staging_site?: boolean;
-	domains?: string[];
-	primary_domain?: string;
-}
+const site = {
+	ID: 1,
+	slug: 'test-site.wordpress.com',
+	launch_status: 'launched',
+} as Site;
 
-const siteId = 123;
-const siteSlug = 'test-site';
-
-// Only mocks site and settings fields that are necessary for the tests.
-// Feel free to add more fields as they are needed.
-function mockTestSite( options: TestSiteOptions ) {
-	const {
-		blog_public,
-		wpcom_public_coming_soon,
-		wpcom_data_sharing_opt_out,
-		is_wpcom_staging_site,
-		domains = [ siteSlug ],
-		primary_domain = options.domains?.[ 0 ] || siteSlug,
-	} = options;
-
+function mockSite(
+	mockedSite: Site,
+	{
+		domains = [ mockedSite.slug ],
+		primary_domain = domains[ 0 ] || mockedSite.slug,
+	}: {
+		domains?: string[];
+		primary_domain?: string;
+	} = {}
+) {
 	const domainObjects = domains.map( ( domain ) => {
 		return {
 			domain,
-			blog_id: siteId,
+			blog_id: mockedSite.ID,
 			subtype: {
 				id:
 					domain.endsWith( '.wordpress.com' ) || domain.endsWith( '.wpcomstaging.com' )
@@ -49,38 +42,25 @@ function mockTestSite( options: TestSiteOptions ) {
 		};
 	} );
 
-	const site = {
-		ID: siteId,
-		slug: primary_domain,
-		launch_status: 'launched',
-		is_wpcom_staging_site,
-	};
-
-	const settings = {
-		settings: {
-			blog_public,
-			wpcom_public_coming_soon,
-			wpcom_data_sharing_opt_out,
-		},
-	};
-
-	const scope = nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ site.slug }` )
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
 		.query( true )
-		.reply( 200, site )
-		.get( `/rest/v1.4/sites/${ site.ID }/settings` )
-		.query( true )
-		.reply( 200, settings )
+		.reply( 200, mockedSite )
 		.get( '/rest/v1.2/all-domains' )
 		.query( true )
 		.reply( 200, { domains: domainObjects } );
-
-	return { site, settings, domains: domainObjects, scope };
 }
 
-function mockSettingsSaved( settings: nock.DataMatcherMap ) {
+function mockSettings( settings: SiteSettings ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.4/sites/${ site.ID }/settings` )
+		.query( true )
+		.reply( 200, { settings } );
+}
+
+function mockSettingsSaved( settings: SiteSettings ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.post( `/rest/v1.4/sites/${ siteId }/settings`, ( body ) => {
+		.post( `/rest/v1.4/sites/${ site.ID }/settings`, ( body ) => {
 			expect( body ).toEqual( settings );
 			return true;
 		} )
@@ -90,13 +70,14 @@ function mockSettingsSaved( settings: nock.DataMatcherMap ) {
 describe( '<SiteVisibilitySettings>', () => {
 	describe( 'Launched site', () => {
 		test( 'hides search engine and 3rd party checkboxes when private', async () => {
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: -1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Private' } ) ).toBeChecked();
@@ -106,13 +87,14 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'hides search engine and 3rd party checkboxes when coming soon', async () => {
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 1,
 				wpcom_data_sharing_opt_out: false,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Coming soon' } ) ).toBeChecked();
@@ -124,13 +106,14 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'data sharing opt-out is disabled and force checked when site is not crawlable', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
@@ -159,13 +142,14 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'switching away from public resets data sharing and crawlable settings', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
@@ -195,7 +179,8 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site private', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
@@ -207,7 +192,7 @@ describe( '<SiteVisibilitySettings>', () => {
 				wpcom_coming_soon: 0,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
@@ -221,7 +206,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
@@ -229,7 +214,8 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site coming soon', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
@@ -241,7 +227,7 @@ describe( '<SiteVisibilitySettings>', () => {
 				wpcom_coming_soon: 0, // Legacy coming soon should always be set to 0
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
@@ -256,7 +242,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
@@ -264,7 +250,8 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a coming soon site public (crawlable, allow data sharing)', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 1,
 				wpcom_data_sharing_opt_out: false,
@@ -276,7 +263,7 @@ describe( '<SiteVisibilitySettings>', () => {
 				wpcom_coming_soon: 0,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Coming soon' } ) ).toBeChecked();
@@ -300,7 +287,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
@@ -308,7 +295,8 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a private site public (not crawlable, prevent data sharing)', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: -1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
@@ -320,7 +308,7 @@ describe( '<SiteVisibilitySettings>', () => {
 				wpcom_coming_soon: 0,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Private' } ) ).toBeChecked();
@@ -345,7 +333,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
@@ -353,7 +341,8 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'save site settings to make a public site crawlable but prevent data sharing', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( site );
+			mockSettings( {
 				blog_public: 0,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: true,
@@ -365,7 +354,7 @@ describe( '<SiteVisibilitySettings>', () => {
 				wpcom_coming_soon: 0,
 			} );
 
-			render( <SiteVisibilitySettings siteSlug="test-site" /> );
+			render( <SiteVisibilitySettings siteSlug={ site.slug } /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
@@ -388,17 +377,17 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
 
 		test( 'wpcomstaging warning shows "Add new domain" button when the site has no other domains', async () => {
-			mockTestSite( {
+			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
-				domains: [ 'site.wpcomstaging.com' ],
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
@@ -420,12 +409,14 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'wpcomstaging warning shows "Manage domains" button when the site has non dotcom domains they could switch to', async () => {
-			mockTestSite( {
+			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site, {
+				domains: [ 'site.wpcomstaging.com', 'example.com' ],
+				primary_domain: 'site.wpcomstaging.com',
+			} );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
-				domains: [ 'site.wpcomstaging.com', 'example.com' ],
-				primary_domain: 'site.wpcomstaging.com',
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
@@ -447,13 +438,21 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'staging site warning shows no domain management buttons', async () => {
-			mockTestSite( {
+			mockSite(
+				{
+					...site,
+					slug: 'staging-site.wpcomstaging.com',
+					is_wpcom_staging_site: true,
+				} as Site,
+				{
+					domains: [ 'site.wpcomstaging.com' ],
+					primary_domain: 'site.wpcomstaging.com',
+				}
+			);
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
-				is_wpcom_staging_site: true,
-				domains: [ 'staging-site.wpcomstaging.com' ],
-				primary_domain: 'staging-site.wpcomstaging.com',
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="staging-site.wpcomstaging.com" /> );
@@ -473,11 +472,13 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'checkboxes disabled for wpcomstaging sites', async () => {
-			mockTestSite( {
+			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site, {
+				domains: [ 'site.wpcomstaging.com' ],
+			} );
+			mockSettings( {
 				blog_public: 1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
-				domains: [ 'site.wpcomstaging.com' ],
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" /> );
@@ -505,11 +506,14 @@ describe( '<SiteVisibilitySettings>', () => {
 		test( 'make a wpcomstaging site public still sets blog_public=1 (even though under the hood it does not get indexed)', async () => {
 			const user = userEvent.setup();
 
-			mockTestSite( {
+			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site, {
+				domains: [ 'site.wpcomstaging.com' ],
+				primary_domain: 'site.wpcomstaging.com',
+			} );
+			mockSettings( {
 				blog_public: -1,
 				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
-				domains: [ 'site.wpcomstaging.com' ],
 			} );
 			const scope = mockSettingsSaved( {
 				blog_public: 1,
@@ -538,7 +542,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( saveButton ).toBeDisabled();
 
 			await waitFor( () => {
-				expect( scope.pendingMocks() ).toHaveLength( 0 );
+				expect( scope.isDone() ).toBe( true );
 				expect( saveButton ).toBeEnabled();
 			} );
 		} );
