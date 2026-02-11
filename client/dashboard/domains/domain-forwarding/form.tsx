@@ -115,11 +115,11 @@ export default function DomainForwardingForm( {
 				Edit: 'select',
 				elements: [
 					{
-						label: 'Subdomain',
+						label: __( 'Subdomain' ),
 						value: '',
 					},
 					{
-						label: 'Domain',
+						label: __( 'Domain' ),
 						value: 'root',
 					},
 				],
