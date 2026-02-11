@@ -36,7 +36,11 @@
 /* MARKDOWN */
 
 .message p {
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: var(--text-base--line-height);
     text-wrap-style: pretty;
+    margin-top: 0;
     margin-bottom: var(--spacing-3);
 }
 
