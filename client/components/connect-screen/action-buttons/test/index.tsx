@@ -41,6 +41,18 @@ describe( 'ActionButtons', () => {
 			);
 			expect( screen.getByRole( 'button', { name: 'Switch Account' } ) ).toBeInTheDocument();
 		} );
+
+		it( 'does not render secondary button when not provided', () => {
+			render( <ActionButtons primaryLabel="Accept" primaryOnClick={ mockPrimaryClick } /> );
+			expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Decline' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not render tertiary button when not provided', () => {
+			render( <ActionButtons primaryLabel="Accept" primaryOnClick={ mockPrimaryClick } /> );
+			expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Switch Account' } ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'click handlers', () => {
