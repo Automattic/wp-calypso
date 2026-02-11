@@ -125,6 +125,9 @@ export const leaveCheckout = ( {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 
 			if ( isRelativeUrl( cancelPath ) ) {
+				// We use window.location.href instead of navigate() because navigate() uses page.show()
+				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
+				// the SPA optimization from navigate() provides no meaningful benefit.
 				window.location.href = cancelPath;
 				return;
 			}
