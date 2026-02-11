@@ -78,10 +78,10 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
  * @example
  * const queryClient = createQueryClientBuilder()
  *   .addSiteById( 1, mockSite )
- *   .setPreference( { 'my-pref': 'value' } )
+ *   .setPreference( 'my-pref': 'value' )
  *   .build();
  *
- * render( <MyComponent />, { queryClient })
+ * render( <MyComponent />, { queryClient } );
  */
 export function createQueryClientBuilder() {
 	const entries: Array< { key: unknown[]; data: unknown } > = [];
