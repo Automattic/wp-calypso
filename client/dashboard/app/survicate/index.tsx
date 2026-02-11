@@ -26,8 +26,14 @@ export function useSurvicate() {
 			return;
 		}
 
+		const controller = new AbortController();
+
 		loadSurvicateScript( SURVICATE_WORKSPACE_ID )
 			.then( () => {
+				if ( controller.signal.aborted ) {
+					return;
+				}
+
 				if ( ! user.email ) {
 					recordTracksEvent( 'calypso_survicate_user_not_available_error', {
 						user_exists: true,
@@ -44,5 +50,9 @@ export function useSurvicate() {
 			.catch( () => {
 				// Script failed to load — nothing to do.
 			} );
+
+		return () => {
+			controller.abort();
+		};
 	}, [ user, locale, isMobile ] );
 }

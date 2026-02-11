@@ -38,6 +38,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/load-script": "workspace:^",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {

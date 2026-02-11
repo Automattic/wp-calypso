@@ -2302,6 +2302,7 @@ __metadata:
   resolution: "@automattic/survicate@workspace:packages/survicate"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/load-script": "workspace:^"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
   languageName: unknown
