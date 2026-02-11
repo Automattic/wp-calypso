@@ -128,16 +128,17 @@ export default function AgentDock( {
 		registerSuggestions,
 	} = useAgentChat( agentConfig );
 
-	// Persist the chat route once a new session ID is available, so the last conversation can be restored on page load
+	// Save the chat route for restoring the last conversation on page load
 	useEffect( () => {
-		const isNewChat = isOrcChatView && ! state?.sessionId;
-		// The server generates the session ID after the first agent reply (i.e., 2 messages: user + agent).
+		// A new chat is one without a restored session and not mid-initialization via `shouldInitNewChat`
+		const isNewChat = isOrcChatView && ! state?.sessionId && ! state?.shouldInitNewChat;
+		// The server generates the session ID after the first agent reply (i.e., 2 messages: user + agent)
 		const sessionId = messages.length === 2 && getStoredSessionId();
 
 		if ( isNewChat && sessionId ) {
 			saveCurrentChatRoute( sessionId );
 		}
-	}, [ isOrcChatView, messages.length, state?.sessionId ] );
+	}, [ isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -432,7 +433,11 @@ export default function AgentDock( {
 				<Route path="/zendesk" element={ ZendeskChatRoute } />
 				<Route path="/support-guides" element={ SupportGuidesRoute } />
 				<Route path="/history" element={ History } />
-				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
+				<Route
+					path="*"
+					// The `shouldInitNewChat` flag is used to trigger new chat initialization logic in the `AgentSetup` component of `UnifiedAIAgent`
+					element={ <Navigate to="/chat" state={ { shouldInitNewChat: true } } replace /> }
+				/>
 			</Routes>
 		)
 	);

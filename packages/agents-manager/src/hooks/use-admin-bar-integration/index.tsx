@@ -118,7 +118,7 @@ export default function useAdminBarIntegration( {
 		};
 
 		const handleChatClick = createMenuItemHandler( DESTINATION_CHAT, '/chat', {
-			isNewChat: true,
+			shouldInitNewChat: true,
 		} );
 		const handleHistoryClick = createMenuItemHandler( DESTINATION_HISTORY, '/history' );
 		const handleGuidesClick = createMenuItemHandler( DESTINATION_GUIDES, '/support-guides' );

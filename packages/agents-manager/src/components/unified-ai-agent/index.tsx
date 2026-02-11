@@ -55,17 +55,17 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 	const { pathname, state } = useLocation();
 
 	const isChatRoute = pathname.startsWith( '/chat' );
-	const isNewChat = isChatRoute && !! state?.isNewChat;
+	const shouldInitNewChat = isChatRoute && !! state?.shouldInitNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version } = getAgentConfig();
-	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
+	const sessionId = shouldInitNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
-			// Handle new chat: clear existing session and navigate to clean state
-			if ( isNewChat ) {
+			// Handle `shouldInitNewChat`: clear existing session and navigate to clean state
+			if ( shouldInitNewChat ) {
 				const agentManager = getAgentManager();
 
 				if ( agentManager.hasAgent( agentId ) ) {
@@ -76,7 +76,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 
 				// Clear stored session ID
 				clearSessionId( agentId );
-				// Clear route state to prevent repeated new chat initialization
+				// Clear the `shouldInitNewChat` flag from route state to prevent re-triggering initialization on re-renders
 				navigate( '/chat', { replace: true } );
 				return;
 			}
@@ -105,7 +105,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+	}, [ agentId, version, currentRoute, shouldInitNewChat, navigate, sessionId, site?.ID ] );
 
 	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
 	useEffect( () => {
