@@ -311,7 +311,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				fill: #3858e9;
 			}
 
-			&.search-submit-button-primary {
+			&.search-submit-button.button-primary {
 				background-color: var( --color-primary );
 				color: var(--color-white);
 				border-radius: 100%;
