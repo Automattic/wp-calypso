@@ -35,7 +35,7 @@ import { createQueryClientBuilder, render } from '../../test-utils';
 const queryClient = createQueryClientBuilder()
   .addSiteById( 1, mockSite )
   .addSiteBySlug( 'my-site', mockSite )
-  .setPreference( 'dismissed-banner': 'true' )
+  .setPreference( 'dismissed-banner', 'true' )
   .build();
 
 render( <MyComponent />, { queryClient } );
@@ -107,7 +107,16 @@ nock( 'https://public-api.wordpress.com:443' )
   .reply( 200, {} );
 ```
 
-**Asserting the request body:**
+**Tips:**
+
+- Always call `nock.cleanAll()` in `afterEach` to avoid leaking interceptors between tests.
+- Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
+- Use `scope.isDone()` to assert the request was actually made.
+- Use `.query( true )` when you don't care about specific query string values.
+- Capture the request body and assert with Jest (as below) rather than asserting inside
+  nock's body callback — Jest matchers produce clearer diffs on failure.
+
+#### Asserting the request body
 
 Capture the body in a variable via nock's callback, then assert with Jest matchers.
 This gives more readable test failures than validating inside nock's callback directly.
@@ -131,15 +140,6 @@ expect( requestBody ).toEqual(
   } )
 );
 ```
-
-**Tips:**
-
-- Always call `nock.cleanAll()` in `afterEach` to avoid leaking interceptors between tests.
-- Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
-- Use `scope.isDone()` to assert the request was actually made.
-- Use `.query( true )` when you don't care about specific query string values.
-- Capture the request body and assert with Jest (as above) rather than asserting inside
-  nock's body callback — Jest matchers produce clearer diffs on failure.
 
 ### Utility Function Tests
 
