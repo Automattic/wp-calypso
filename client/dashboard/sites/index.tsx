@@ -125,6 +125,8 @@ const getFetchPaginatedSitesOptions = (
  * Enables the correct site query based on feature flags.
  */
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
+	const queryClient = useQueryClient();
+
 	const { queries } = useAppContext();
 
 	const { data: siteFilters } = useQuery( {
@@ -150,26 +152,36 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 		},
 	} );
 
-	if ( isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-		return {
-			sites: paginatedSitesQueryResult.data?.sites,
-			hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
-			isLoadingSites: paginatedSitesQueryResult.isLoading,
-			isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
-			totalItems: paginatedSitesQueryResult.data?.total,
-		};
-	}
+	const result = isEnabled( 'dashboard/v2/paginated-site-list' )
+		? {
+				sites: paginatedSitesQueryResult.data?.sites,
+				hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
+				isLoadingSites: paginatedSitesQueryResult.isLoading,
+				isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
+				totalItems: paginatedSitesQueryResult.data?.total,
+		  }
+		: {
+				sites: sitesQueryResult.data,
+				hasNoData: sitesQueryResult.data?.length === 0,
+				isLoadingSites: sitesQueryResult.isLoading,
+				isPlaceholderData: sitesQueryResult.isPlaceholderData,
+				totalItems: sitesQueryResult.data?.length,
+		  };
 
-	return {
-		sites: sitesQueryResult.data,
-		hasNoData: sitesQueryResult.data?.length === 0,
-		isLoadingSites: sitesQueryResult.isLoading,
-		isPlaceholderData: sitesQueryResult.isPlaceholderData,
-		totalItems: sitesQueryResult.data?.length,
-	};
+	useEffect( () => {
+		if ( result.sites ) {
+			result.sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ result.sites, queryClient ] );
+
+	return result;
 }
 
-function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
+export function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
 	return {
 		data: sites,
 		paginationInfo: {
@@ -216,12 +228,7 @@ export default function Sites() {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
-		if ( nextView.type === 'list' ) {
-			return;
-		}
-
 		recordViewChanges( view, nextView, recordTracksEvent );
-
 		updateView( nextView );
 	};
 

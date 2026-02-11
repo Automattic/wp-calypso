@@ -4,9 +4,10 @@ import { useNavigate, useMatches } from '@tanstack/react-router';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTransientQueryParamsAtPathname } from '../transient-query-params';
+import type { AnyRouteMatch } from '@tanstack/react-router';
 import type { Filter, View } from '@wordpress/dataviews';
 
-interface UseViewOptions {
+export interface UseViewOptions {
 	/**
 	 * Unique slug to identify the view.
 	 * Used as the suffix for the Calypso preference name.
@@ -31,6 +32,11 @@ interface UseViewOptions {
 	queryParamFilterFields?: string[];
 
 	/**
+	 * Properties that should be persistent. Defaults to all properties of the view.
+	 */
+	persistentProperties?: string[];
+
+	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
 	 */
 	sanitizeFields?: ( fields: View[ 'fields' ] ) => View[ 'fields' ];
@@ -41,13 +47,37 @@ interface UseViewOptions {
  * Transient properties (`page` and `search`) are synced to the URL query params,
  * while the rest of the properties is persisted to Calypso preferences.
  */
-export function usePersistentView( {
+export function usePersistentView( options: UseViewOptions ) {
+	const navigate = useNavigate();
+	const matches = useMatches();
+
+	return useBasePersistentView( {
+		...options,
+		navigate,
+		matches,
+	} );
+}
+
+export function useBasePersistentView( {
 	slug,
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
+	persistentProperties,
+	matches,
 	sanitizeFields,
-}: UseViewOptions ): {
+	navigate,
+}: UseViewOptions & {
+	matches?: AnyRouteMatch[];
+	navigate: ( {
+		search,
+		replace,
+	}: {
+		search: any;
+		replace?: boolean;
+		resetScroll?: boolean;
+	} ) => void;
+} ): {
 	view: View;
 	updateView: ( newView: View ) => void;
 	resetView?: () => void;
@@ -56,9 +86,6 @@ export function usePersistentView( {
 
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
-
-	const navigate = useNavigate();
-	const matches = useMatches();
 
 	const baseView = persistedView ?? defaultView;
 
@@ -90,7 +117,7 @@ export function usePersistentView( {
 	}, [ JSON.stringify( transientFilterFields ) ] );
 
 	useEffect( () => {
-		if ( matches.length === 0 ) {
+		if ( ! matches || matches.length === 0 ) {
 			return;
 		}
 
@@ -161,7 +188,11 @@ export function usePersistentView( {
 				}
 			}
 
-			let viewToPersist = newView;
+			let viewToPersist = pickPersistentPropertiesFromView(
+				baseView,
+				newView,
+				persistentProperties
+			);
 			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
 			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
 			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
@@ -179,6 +210,7 @@ export function usePersistentView( {
 			queryParams,
 			transientProperties,
 			transientFilterFields,
+			persistentProperties,
 			navigate,
 			baseView,
 			defaultView,
@@ -197,6 +229,25 @@ export function usePersistentView( {
 	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
+}
+
+function pickPersistentPropertiesFromView(
+	baseView: View,
+	newView: View,
+	persistentProperties?: string[]
+): View {
+	if ( ! persistentProperties ) {
+		return newView;
+	}
+
+	return {
+		...baseView,
+		...Object.fromEntries(
+			persistentProperties
+				.filter( ( key ) => key in newView )
+				.map( ( key ) => [ key, newView[ key as keyof View ] ] )
+		),
+	};
 }
 
 function removeTransientPropertiesFromView( view: View ): View {
