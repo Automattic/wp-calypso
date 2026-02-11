@@ -228,7 +228,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 				<SectionHeader
 					title={ sprintf(
 						/* translators: %s is the domain name */
-						__( 'Detach domain %s' ),
+						__( 'Detach %s' ),
 						domainName
 					) }
 					description={ createInterpolateElement(
