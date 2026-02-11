@@ -99,17 +99,7 @@ class CancelPurchaseButton extends Component<
 			// We're in the domain options step, show survey directly
 			this.props.onCancellationComplete();
 		} else {
-			const needsDomainOptionsStep =
-				this.props.includedDomainPurchase &&
-				willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
-
-			if ( needsDomainOptionsStep ) {
-				// Step 1: Show domain options step
-				this.props.onCancellationStart( this.props.cancelIntentOverride );
-			} else {
-				// Step 2: Show survey directly (API call will happen in survey)
-				this.props.onCancellationStart( this.props.cancelIntentOverride );
-			}
+			this.props.onCancellationStart( this.props.cancelIntentOverride );
 		}
 	};
 
@@ -159,9 +149,7 @@ class CancelPurchaseButton extends Component<
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 
-		const onClick = ( () => {
-			return this.handleCancelPurchaseClick;
-		} )();
+		const onClick = this.handleCancelPurchaseClick;
 
 		const needsDomainOptionsStep =
 			this.props.includedDomainPurchase &&
