@@ -2,10 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '../../../test-utils';
+import { createQueryClientBuilder, render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -49,24 +48,18 @@ function renderDropdownWithSite(
 	site: Site,
 	{ isStagingSiteDeletionInProgress = false, syncState = false } = {}
 ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-	} );
-
-	// Pre-populate site-by-slug cache. The real queryKey includes SITE_FIELDS and SITE_OPTIONS
-	// arrays, but we use a fuzzy match via the queryClient filter — TQ matches by prefix, so we
-	// set with the exact key structure from siteBySlugQuery.
-	const { SITE_FIELDS, SITE_OPTIONS } = require( '@automattic/api-core' );
-	queryClient.setQueryData( [ 'site-by-slug', 'test-site', SITE_FIELDS, SITE_OPTIONS ], site );
-
 	const stagingSiteId = site.is_wpcom_staging_site ? site.ID : 2;
-	queryClient.setQueryData(
-		[ 'staging-site', stagingSiteId, 'is-deleting' ],
-		isStagingSiteDeletionInProgress
-	);
-
 	const productionSiteId = site.is_wpcom_staging_site ? 1 : site.ID;
-	queryClient.setQueryData( [ 'site', productionSiteId, 'staging-site-sync-state' ], syncState );
+
+	const queryClient = createQueryClientBuilder()
+		.withStaleTime( Infinity )
+		.addSiteBySlug( 'test-site', site )
+		.withQueryData(
+			[ 'staging-site', stagingSiteId, 'is-deleting' ],
+			isStagingSiteDeletionInProgress
+		)
+		.withQueryData( [ 'site', productionSiteId, 'staging-site-sync-state' ], syncState )
+		.build();
 
 	return render( <StagingSiteSyncDropdown siteSlug="test-site" />, { queryClient } );
 }

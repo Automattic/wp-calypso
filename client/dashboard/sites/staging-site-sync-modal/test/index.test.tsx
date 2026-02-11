@@ -2,12 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
-import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
+import { createQueryClientBuilder, render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -123,18 +121,11 @@ const renderModal = (
 	productionSite: Site = createMockSite(),
 	stagingSite: Site = createMockStagingSite()
 ) => {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-	} );
-
-	queryClient.setQueryData(
-		[ 'site-by-id', productionSite.ID, SITE_FIELDS, SITE_OPTIONS ],
-		productionSite
-	);
-	queryClient.setQueryData(
-		[ 'site-by-id', stagingSite.ID, SITE_FIELDS, SITE_OPTIONS ],
-		stagingSite
-	);
+	const queryClient = createQueryClientBuilder()
+		.withStaleTime( Infinity )
+		.addSiteById( productionSite.ID, productionSite )
+		.addSiteById( stagingSite.ID, stagingSite )
+		.build();
 
 	return render( <StagingSiteSyncModal { ...defaultProps } { ...props } />, { queryClient } );
 };

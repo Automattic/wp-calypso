@@ -4,16 +4,14 @@
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '../../../test-utils';
+import nock from 'nock';
+import { createQueryClientBuilder, render } from '../../../test-utils';
 import EnvironmentSwitcher from '../environment-switcher';
 import type { Site } from '@automattic/api-core';
 
-// Mock the hooks and dependencies we need to control
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
-const mockMutate = jest.fn();
-const mockInvalidateQueries = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -26,60 +24,6 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
 	createSelector: jest.fn(),
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	siteByIdQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'site-by-id', siteId ],
-		queryFn: () => Promise.resolve( { ID: siteId, slug: 'test-site' } ),
-	} ) ),
-	stagingSiteCreateMutation: jest.fn( () => ( {
-		mutationFn: () => Promise.resolve( { success: true } ),
-	} ) ),
-	isDeletingStagingSiteQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'is-deleting-staging', siteId ],
-		queryFn: () => Promise.resolve( false ),
-	} ) ),
-	hasStagingSiteQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'has-staging-site', siteId ],
-		queryFn: () => Promise.resolve( false ),
-	} ) ),
-	hasValidQuotaQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'has-valid-quota', siteId ],
-		queryFn: () => Promise.resolve( true ),
-	} ) ),
-	jetpackConnectionHealthQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'jetpack-connection', siteId ],
-		queryFn: () => Promise.resolve( { is_healthy: true } ),
-	} ) ),
-	siteLatestAtomicTransferQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'site-latest-atomic-transfer', siteId ],
-		queryFn: () => Promise.resolve( { status: 'completed' } ),
-	} ) ),
-	isCreatingStagingSiteQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'is-creating-staging', siteId ],
-		queryFn: () => Promise.resolve( false ),
-	} ) ),
-	siteBySlugQuery: jest.fn( ( slug ) => ( {
-		queryKey: [ 'site-by-slug', slug ],
-		queryFn: () => Promise.resolve( { slug, ID: 1 } ),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {
-		invalidateQueries: mockInvalidateQueries,
-	} ) ),
-	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useQuery: jest.fn( () => ( { data: undefined, isLoading: false, error: null } ) ),
-	useMutation: jest.fn( () => ( {
-		mutate: mockMutate,
-		isLoading: false,
-		error: null,
-	} ) ),
-	useQueryClient: jest.fn( () => ( {
-		invalidateQueries: mockInvalidateQueries,
-	} ) ),
 } ) );
 
 jest.mock( '../../../utils/site-atomic-transfers', () => ( {
@@ -137,23 +81,46 @@ const mockStagingSite: Site = {
 	},
 } as Site;
 
-// Test helpers for query mocking and common interactions
-const mockUseQuery = ( mockData: Record< string, unknown > ) => {
-	const { useQuery } = require( '@tanstack/react-query' );
-	useQuery.mockImplementation(
-		( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-			const queryKey = options?.queryKey?.join( '-' ) || '';
+/**
+ * Build a QueryClient pre-populated with the data the EnvironmentSwitcher
+ * component needs. All queries use real query key structures.
+ */
+function buildQueryClient(
+	productionSite: Site,
+	extra: {
+		isCreating?: boolean;
+		isDeleting?: boolean;
+		stagingSite?: Site;
+		hasValidQuota?: boolean;
+		connectionHealth?: { is_healthy: boolean };
+	} = {}
+) {
+	const builder = createQueryClientBuilder()
+		.addSiteById( productionSite.ID, productionSite )
+		.withQueryData(
+			[ 'staging-site', productionSite.ID, 'is-creating' ],
+			Boolean( extra.isCreating )
+		)
+		.withQueryData(
+			[ 'staging-site', productionSite.ID + 1, 'is-deleting' ],
+			Boolean( extra.isDeleting )
+		);
 
-			for ( const [ key, value ] of Object.entries( mockData ) ) {
-				if ( queryKey.includes( key ) ) {
-					return { data: value, isLoading: false, error: null };
-				}
-			}
+	if ( extra.stagingSite ) {
+		builder.addSiteById( extra.stagingSite.ID, extra.stagingSite );
+	}
+	if ( extra.hasValidQuota !== undefined ) {
+		builder.withQueryData( [ 'site', productionSite.ID, 'has-valid-quota' ], extra.hasValidQuota );
+	}
+	if ( extra.connectionHealth !== undefined ) {
+		builder.withQueryData(
+			[ 'site', productionSite.ID, 'jetpack-connection-health' ],
+			extra.connectionHealth
+		);
+	}
 
-			return { data: false, isLoading: false, error: null };
-		}
-	);
-};
+	return builder.build();
+}
 
 const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
 	const button = screen.getByRole( 'button' );
@@ -161,6 +128,14 @@ const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
 };
 
 describe( 'EnvironmentSwitcher', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	describe( 'Environment Display', () => {
 		test( 'displays "Production" for production sites', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
@@ -177,28 +152,28 @@ describe( 'EnvironmentSwitcher', () => {
 		test( 'displays "Add staging site" button when no staging site exists', async () => {
 			// Test true "no staging site" scenario: empty wpcom_staging_blog_ids array
 			// means getStagingSiteId() returns undefined, so no staging site queries run
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithoutStaging,
-				'is-creating-staging': false,
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
+				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
 		} );
 
 		test( 'shows error notice when user has insufficient quota', async () => {
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithStaging,
-				'has-valid-quota': false,
-				'jetpack-connection': { is_healthy: true },
-				'is-creating-staging': false,
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+				hasValidQuota: false,
+				connectionHealth: { is_healthy: true },
+				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			await user.click( screen.getByText( 'Add staging site' ) );
@@ -210,15 +185,14 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'shows error notice when jetpack connection is unhealthy', async () => {
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithStaging,
-				'has-valid-quota': true,
-				'jetpack-connection': { is_healthy: false },
-				'is-creating-staging': false,
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+				hasValidQuota: true,
+				connectionHealth: { is_healthy: false },
+				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			await user.click( screen.getByText( 'Add staging site' ) );
@@ -240,43 +214,46 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'displays "Adding staging site..." when staging site is being created', async () => {
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithStaging,
-				'is-creating-staging': true,
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+				isCreating: true,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
 		} );
 
 		test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithStaging,
-				'site-by-id-2': mockStagingSite,
-				'is-deleting-staging': true,
-				'is-creating-staging': false,
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+				stagingSite: mockStagingSite,
+				isDeleting: true,
+				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
 		} );
 
-		test( 'shows success notice and calls mutation when "Add staging site" button is clicked', async () => {
-			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithoutStaging,
-				'has-valid-quota': true,
-				'jetpack-connection': { is_healthy: true },
-				'is-creating-staging': false,
+		test( 'shows success notice and fires mutation when "Add staging site" is clicked', async () => {
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
+				hasValidQuota: true,
+				connectionHealth: { is_healthy: true },
+				isCreating: false,
 			} );
 
+			const scope = nock( 'https://public-api.wordpress.com:443' )
+				.post( '/wpcom/v2/sites/1/staging-site' )
+				.reply( 200, { success: true } );
+
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			await user.click( screen.getByText( 'Add staging site' ) );
@@ -286,7 +263,7 @@ describe( 'EnvironmentSwitcher', () => {
 				{ type: 'snackbar' }
 			);
 
-			expect( mockMutate ).toHaveBeenCalled();
+			expect( scope.isDone() ).toBe( true );
 		} );
 	} );
 } );

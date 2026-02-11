@@ -2,12 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
-import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
+import { createQueryClientBuilder, render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -62,20 +60,17 @@ const mockProductionSite = {
 const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
 
 function renderModal( site: Site, onClose = jest.fn() ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-	} );
+	const builder = createQueryClientBuilder().withStaleTime( Infinity );
 
 	// Pre-populate production site in cache
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	if ( productionSiteId ) {
-		queryClient.setQueryData(
-			[ 'site-by-id', productionSiteId, SITE_FIELDS, SITE_OPTIONS ],
-			mockProductionSite
-		);
+		builder.addSiteById( productionSiteId, mockProductionSite );
 	}
 
-	return render( <StagingSiteDeleteModal site={ site } onClose={ onClose } />, { queryClient } );
+	return render( <StagingSiteDeleteModal site={ site } onClose={ onClose } />, {
+		queryClient: builder.build(),
+	} );
 }
 
 describe( 'StagingSiteDeleteModal', () => {

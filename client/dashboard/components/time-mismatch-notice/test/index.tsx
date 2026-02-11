@@ -2,25 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
+import { createQueryClientBuilder, render } from '../../../test-utils';
 import TimeMismatchNotice from '../index';
-import type { UserPreferences, CalypsoUserPreferencesRequestBody } from '@automattic/api-core';
+import type { CalypsoUserPreferencesRequestBody } from '@automattic/api-core';
 
 function getOffsetHours() {
 	const now = new Date();
 	return -now.getTimezoneOffset() / 60;
-}
-
-function createQueryClient( preferences: Partial< UserPreferences > = {} ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-	} );
-	queryClient.setQueryData( [ 'me', 'preferences' ], preferences );
-	return queryClient;
 }
 
 describe( 'TimeMismatchNotice', () => {
@@ -44,7 +35,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient() }
+			{ queryClient: createQueryClientBuilder().withStaleTime( Infinity ).build() }
 		);
 
 		expect( queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
@@ -58,7 +49,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient() }
+			{ queryClient: createQueryClientBuilder().withStaleTime( Infinity ).build() }
 		);
 
 		expect( await screen.findByRole( 'button', { name: /dismiss/i } ) ).toBeVisible();
@@ -67,12 +58,17 @@ describe( 'TimeMismatchNotice', () => {
 
 	test( 'does not render when previously dismissed with same offset', () => {
 		const offsetHours = getOffsetHours();
-		const preferences = {
-			[ 'hosting-dashboard-time-mismatch-warning-dismissed-123' ]: JSON.stringify( {
-				dismissedAt: '2025-01-01T00:00:00.000Z',
-				offsetHours,
-			} ),
-		};
+
+		const queryClient = createQueryClientBuilder()
+			.withStaleTime( Infinity )
+			.setPreference(
+				'hosting-dashboard-time-mismatch-warning-dismissed-123',
+				JSON.stringify( {
+					dismissedAt: '2025-01-01T00:00:00.000Z',
+					offsetHours,
+				} )
+			)
+			.build();
 
 		const { queryByRole } = render(
 			<TimeMismatchNotice
@@ -80,7 +76,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours + 2 }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient( preferences ) }
+			{ queryClient }
 		);
 
 		expect( queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
@@ -95,7 +91,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient() }
+			{ queryClient: createQueryClientBuilder().withStaleTime( Infinity ).build() }
 		);
 
 		await user.click( await screen.findByRole( 'link', { name: /update it if needed/i } ) );
@@ -131,7 +127,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient() }
+			{ queryClient: createQueryClientBuilder().withStaleTime( Infinity ).build() }
 		);
 
 		await user.click( await screen.findByRole( 'button', { name: /dismiss/i } ) );
@@ -172,7 +168,7 @@ describe( 'TimeMismatchNotice', () => {
 				siteTime={ offsetHours + 3 }
 				settingsUrl="https://example.com"
 			/>,
-			{ queryClient: createQueryClient() }
+			{ queryClient: createQueryClientBuilder().withStaleTime( Infinity ).build() }
 		);
 
 		// Click dismiss to start the mutation — notice hides immediately (isPending)
