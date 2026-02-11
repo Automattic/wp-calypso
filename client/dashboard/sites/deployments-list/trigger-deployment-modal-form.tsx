@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { getDeploymentTypeFromPath } from '../../../sites/deployments/deployment-creation/deployment-creation-form';
@@ -17,6 +17,7 @@ import { ButtonStack } from '../../components/button-stack';
 
 interface TriggerDeploymentModalFormProps {
 	deployments: CodeDeploymentData[];
+	isStagingSite?: boolean;
 	repositoryId?: string;
 	onClose?: () => void;
 	onSuccess?: () => void;
@@ -56,6 +57,7 @@ function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectCon
 export function TriggerDeploymentModalForm( {
 	onClose,
 	deployments,
+	isStagingSite,
 	repositoryId,
 	onSuccess,
 }: TriggerDeploymentModalFormProps ) {
@@ -117,10 +119,16 @@ export function TriggerDeploymentModalForm( {
 		);
 	};
 
+	const environmentLabel = isStagingSite ? __( 'staging' ) : __( 'production' );
+
 	const getDeploymentMessage = () => {
 		if ( ! selectedDeployment ) {
-			return __(
-				"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the contents from the selected repository."
+			return sprintf(
+				/* translators: %s is the environment type, e.g. "production" or "staging" */
+				__(
+					"You're about to deploy changes from the selected repository to your %s site. This will replace the contents of your live site with the contents from the selected repository."
+				),
+				environmentLabel
 			);
 		}
 
@@ -128,22 +136,38 @@ export function TriggerDeploymentModalForm( {
 
 		switch ( deploymentType ) {
 			case 'plugin':
-				return __(
-					"You're about to deploy changes from the selected repository to your production site. This will replace the plugin in your selected deployment location. The rest of your site will remain unchanged."
+				return sprintf(
+					/* translators: %s is the environment type, e.g. "production" or "staging" */
+					__(
+						"You're about to deploy changes from the selected repository to your %s site. This will replace the plugin in your selected deployment location. The rest of your site will remain unchanged."
+					),
+					environmentLabel
 				);
 			case 'theme':
-				return __(
-					"You're about to deploy changes from the selected repository to your production site. This will replace the theme in your selected deployment location. The rest of your site will remain unchanged."
+				return sprintf(
+					/* translators: %s is the environment type, e.g. "production" or "staging" */
+					__(
+						"You're about to deploy changes from the selected repository to your %s site. This will replace the theme in your selected deployment location. The rest of your site will remain unchanged."
+					),
+					environmentLabel
 				);
 			case 'wp-content':
-				return __(
-					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your wp-content directory with the selected repository."
+				return sprintf(
+					/* translators: %s is the environment type, e.g. "production" or "staging" */
+					__(
+						"You're about to deploy changes from the selected repository to your %s site. This will replace the contents of your wp-content directory with the selected repository."
+					),
+					environmentLabel
 				);
 			case 'root':
 			case 'unknown':
 			default:
-				return __(
-					"You're about to deploy changes from the selected repository to your production site. This will replace the contents of your live site with the selected repository."
+				return sprintf(
+					/* translators: %s is the environment type, e.g. "production" or "staging" */
+					__(
+						"You're about to deploy changes from the selected repository to your %s site. This will replace the contents of your live site with the selected repository."
+					),
+					environmentLabel
 				);
 		}
 	};
@@ -172,7 +196,11 @@ export function TriggerDeploymentModalForm( {
 						type="submit"
 						disabled={ ! selectedDeployment || isCreatingCodeDeploymentRun }
 					>
-						{ __( 'Deploy to production' ) }
+						{ sprintf(
+							/* translators: %s is the environment type, e.g. "production" or "staging" */
+							__( 'Deploy to %s' ),
+							environmentLabel
+						) }
 					</Button>
 				</ButtonStack>
 			</VStack>
