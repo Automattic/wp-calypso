@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import HotkeyContainer from './container-hotkey';
 
-const ActionButton = ( { isActive, isBusy, hotkey, icon, onToggle, text, title } ) => (
+const ActionButton = ( { className, isActive, isBusy, hotkey, icon, onToggle, text, title } ) => (
 	<HotkeyContainer shortcuts={ hotkey ? [ { hotkey, action: onToggle } ] : null }>
 		<Button
-			className={ clsx( 'wpnc__action-link', {
+			className={ clsx( 'wpnc__action-link', className, {
 				'active-action': isActive,
 				'inactive-action': ! isActive,
 			} ) }
@@ -28,6 +28,7 @@ const ActionButton = ( { isActive, isBusy, hotkey, icon, onToggle, text, title }
 );
 
 ActionButton.propTypes = {
+	className: PropTypes.string,
 	isActive: PropTypes.bool.isRequired,
 	hotkey: PropTypes.string,
 	icon: PropTypes.object,
