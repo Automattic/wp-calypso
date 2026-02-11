@@ -218,7 +218,7 @@ function Authorize( {
 
 		content = (
 			<div className="oauth2-connect">
-				{ userCardUser && <UserCard user={ userCardUser } size={ userCardSize } /> }
+				{ userCardUser && <UserCard user={ userCardUser } size={ userCardSize } showSiteCount /> }
 
 				{ showPermissions && (
 					<PermissionsList
