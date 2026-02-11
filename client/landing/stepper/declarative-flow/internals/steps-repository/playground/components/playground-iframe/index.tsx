@@ -1,4 +1,4 @@
-import { Spinner } from '@wordpress/components';
+import { ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
@@ -82,7 +82,7 @@ export function PlaygroundIframe( {
 		<div className={ clsx( 'playground-iframe', className ) }>
 			{ isLoading && (
 				<div className="playground-iframe__loading">
-					<Spinner />
+					<ProgressBar className="playground-iframe__progress-bar" />
 				</div>
 			) }
 			<iframe ref={ iframeRef } id="wp" title="WordPress Playground" />

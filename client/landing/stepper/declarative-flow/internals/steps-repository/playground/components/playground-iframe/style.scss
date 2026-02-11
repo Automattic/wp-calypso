@@ -10,13 +10,13 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--studio-gray-5);
 	z-index: 1;
 }
 
-.playground-iframe__loading .components-spinner {
-	width: 48px;
-	height: 48px;
+.playground-iframe__progress-bar {
+	> div {
+		background: var(--color-accent);
+	}
 }
 
 .playground-iframe iframe {
