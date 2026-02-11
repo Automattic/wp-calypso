@@ -101,7 +101,6 @@ export interface SiteDetailsPlan {
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
-	product_name_en: string;
 	expired: boolean;
 	billing_period: string;
 	user_is_owner: boolean;
@@ -140,7 +139,6 @@ export interface SiteDetails {
 	is_a4a_dev_site?: boolean;
 	is_garden?: boolean;
 	garden_name?: string | null;
-	hosting_provider_guess?: string;
 	jetpack: boolean;
 	jetpack_connection?: boolean;
 	lang?: string;
@@ -155,7 +153,6 @@ export interface SiteDetails {
 	single_user_site?: boolean;
 	site_owner?: number;
 	slug: string;
-	subscribers_count: number;
 	title: string;
 	visible?: boolean;
 	was_ecommerce_trial?: boolean;

@@ -24,8 +24,6 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'site_owner',
 	'is_a8c',
 	'capabilities',
-	'subscribers_count',
-	'hosting_provider_guess',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
@@ -38,7 +36,6 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'launchpad_screen',
 	'site_creation_flow',
 	'site_intent',
-	'software_version',
 	'unmapped_url',
 	'updated_at',
 	'wpcom_production_blog_id',
