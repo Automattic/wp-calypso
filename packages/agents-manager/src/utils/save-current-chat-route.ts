@@ -1,7 +1,6 @@
-import apiFetch from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AGENTS_MANAGER_STORE } from '../stores';
+import { persistAgentsManagerState } from './persist-agents-manager-state';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -25,21 +24,5 @@ export function saveCurrentChatRoute( sessionId: string ): void {
 	const index = current?.index ?? 0;
 	entries[ index ] = entry;
 
-	const data = { agents_manager_router_history: { entries, index } };
-
-	if ( canAccessWpcomApis() ) {
-		wpcomRequest( {
-			path: '/me/preferences',
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: { calypso_preferences: data },
-		} ).catch( () => {} );
-	} else {
-		apiFetch( {
-			global: true,
-			path: '/agents-manager/open-state',
-			method: 'PUT',
-			data,
-		} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
-	}
+	persistAgentsManagerState( { agents_manager_router_history: { entries, index } } );
 }
