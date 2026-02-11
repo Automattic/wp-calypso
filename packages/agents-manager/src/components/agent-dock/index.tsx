@@ -24,6 +24,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
+import { saveCurrentChatRoute } from '../../utils/save-current-chat-route';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -89,8 +90,13 @@ export default function AgentDock( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const { pathname } = useLocation();
+
 	const navigate = useNavigate();
+	const { pathname, state } = useLocation();
+
+	const isOrcChatView = pathname === '/chat';
+	const isZenChatView = pathname === '/zendesk';
+	const isChatHistoryView = pathname === '/history';
 
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
@@ -102,7 +108,7 @@ export default function AgentDock( {
 			defaultOpen: isPersistedOpen,
 			onOpenSidebar: () => {
 				setIsOpen( true );
-				if ( pathname === '/history' ) {
+				if ( isChatHistoryView ) {
 					navigate( '/' );
 				}
 			},
@@ -121,6 +127,17 @@ export default function AgentDock( {
 		clearSuggestions,
 		registerSuggestions,
 	} = useAgentChat( agentConfig );
+
+	// Persist the chat route once a new session ID is available, so the last conversation can be restored on page load
+	useEffect( () => {
+		const isNewChat = isOrcChatView && ! state?.sessionId;
+		// The server generates the session ID after the first agent reply (i.e., 2 messages: user + agent).
+		const sessionId = messages.length === 2 && getStoredSessionId();
+
+		if ( isNewChat && sessionId ) {
+			saveCurrentChatRoute( sessionId );
+		}
+	}, [ isOrcChatView, messages.length, state?.sessionId ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -222,7 +239,7 @@ export default function AgentDock( {
 
 	const handleExpand = () => {
 		setIsOpen( true );
-		if ( pathname === '/history' ) {
+		if ( isChatHistoryView ) {
 			navigate( '/' );
 		}
 	};
@@ -243,13 +260,13 @@ export default function AgentDock( {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname === '/chat' && ! messages.length,
+			isDisabled: isOrcChatView && ! messages.length,
 			onClick: handleNewChat,
 		};
 		const newZDChatMenuItem = {
 			icon: lifesaver,
 			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-			isDisabled: pathname === '/zendesk' && ! messages.length,
+			isDisabled: isZenChatView && ! messages.length,
 			onClick: () => navigate( '/zendesk' ),
 		};
 		const undockMenuItem = {

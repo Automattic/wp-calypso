@@ -5,25 +5,24 @@ import { AGENTS_MANAGER_STORE } from '../stores';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
- * Replace the current entry in the persisted router history and save to the
- * server. No store dispatch, no re-renders.
- * @example
- * saveRouteToServer( '/chat', { state: { sessionId } } );
- * saveRouteToServer( '/zendesk', { state: { conversationId } } );
+ * Saves the current `/chat` route with the session ID to the server,
+ * so the last conversation can be restored on page load.
  */
-export function saveRouteToServer( path: string, { state }: { state?: unknown } = {} ): void {
+export function saveCurrentChatRoute( sessionId: string ): void {
 	const current = ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getRouterHistory();
 
 	const entry = {
-		pathname: path,
+		pathname: '/chat',
 		search: '',
 		hash: '',
 		key: crypto.randomUUID(),
-		state: state ?? null,
+		state: { sessionId },
 	};
 
-	const entries = current?.entries?.length ? [ ...current.entries ] : [ entry ];
-	const index = current?.entries?.length ? current.index ?? entries.length - 1 : 0;
+	// Clone the existing history stack, or start empty if none exists yet.
+	// Then replace the entry at the current index with the new chat route.
+	const entries = current?.entries?.length ? [ ...current.entries ] : [];
+	const index = current?.index ?? 0;
 	entries[ index ] = entry;
 
 	const data = { agents_manager_router_history: { entries, index } };
