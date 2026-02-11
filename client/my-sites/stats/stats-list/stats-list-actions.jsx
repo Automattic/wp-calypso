@@ -1,4 +1,4 @@
-import { Icon, moreHorizontalMobile } from '@wordpress/icons';
+import { Icon, moreHorizontal } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -111,7 +111,7 @@ const StatsListActions = ( {
 					context: 'Label for hidden menu in a list on the Stats page.',
 				} ) }
 			>
-				<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
+				<Icon className="stats-icon" icon={ moreHorizontal } size={ 22 } />
 			</button>
 
 			{ /* prevent actions from triggering row click handler and redirect */ }

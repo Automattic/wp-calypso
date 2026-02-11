@@ -280,12 +280,30 @@ const webpackConfig = {
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: Object.assign( {
+			// Force a single React instance when linked packages (e.g. agenttic-ui, agenttic-client) are used
+			react: path.resolve( __dirname, '../node_modules/react' ),
+			'react-dom': path.resolve( __dirname, '../node_modules/react-dom' ),
+			// Force process to resolve from wp-calypso's node_modules when linked packages (e.g. agenttic-ui) request it
+			process: path.resolve( __dirname, '../node_modules/process/browser.js' ),
+			'process/browser.js': path.resolve( __dirname, '../node_modules/process/browser.js' ),
+			// Force lodash to resolve from wp-calypso when linked packages (e.g. @visx/text via agenttic-ui) request it
+			'lodash/memoize': path.resolve( __dirname, '../node_modules/lodash/memoize.js' ),
+			lodash: path.resolve( __dirname, '../node_modules/lodash' ),
+			// Resolve from project root when linked packages (e.g. framer-motion via agenttic-ui) request it
+			'@emotion/is-prop-valid': path.resolve( __dirname, '../node_modules/@emotion/is-prop-valid' ),
 			debug: path.resolve( __dirname, '../node_modules/debug' ),
 			store: 'store/dist/store.modern',
 			// By using the path of the package we let Webpack parse the package's `package.json`
 			// and use `mainFields` to decide what is the main file.
 			'@wordpress/data': findPackage( '@wordpress/data' ),
 			'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
+			// Re-export icons + legacy 'edit' (pencil) so block-editor and other code keep working with icons 11.x
+			'@wordpress/icons': path.resolve( __dirname, 'wordpress-icons-shim.js' ),
+			// @wordpress/format-library does not export build-module/default-formats; alias to the file for verbum-block-editor
+			'@wordpress/format-library/build-module/default-formats': path.resolve(
+				__dirname,
+				'../node_modules/@wordpress/format-library/build-module/default-formats.mjs'
+			),
 			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
 			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
@@ -295,6 +313,8 @@ const webpackConfig = {
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
 		fallback: {
+			process: require.resolve( 'process/browser.js' ),
+			'process/browser.js': require.resolve( 'process/browser.js' ),
 			stream: require.resolve( 'stream-browserify' ),
 		},
 	},
@@ -316,6 +336,20 @@ const webpackConfig = {
 		// Node polyfills
 		new webpack.ProvidePlugin( {
 			process: 'process/browser.js',
+		} ),
+		// Resolve process from project root so linked packages (e.g. agenttic-ui) find it
+		new webpack.NormalModuleReplacementPlugin(
+			/^process\/browser\.js$/,
+			path.resolve( __dirname, '../node_modules/process/browser.js' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^process$/,
+			path.resolve( __dirname, '../node_modules/process/browser.js' )
+		),
+		// Force any lodash/* from project root so linked packages (e.g. @visx via agenttic-ui) resolve and bundle
+		new webpack.NormalModuleReplacementPlugin( /^lodash\/(.+)$/, ( resource ) => {
+			const subpath = resource.request.match( /^lodash\/(.+)$/ )[ 1 ];
+			resource.request = path.resolve( __dirname, '../node_modules/lodash', subpath + '.js' );
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),

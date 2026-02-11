@@ -48,7 +48,7 @@ export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnD
 		queryKey: getAllDomainsQueryKey( queryArgs ),
 		queryFn: () =>
 			wpcomRequest< AllDomainsQueryFnData >( {
-				path: addQueryArgs( '/all-domains', queryArgs ),
+				path: addQueryArgs( '/all-domains', queryArgs as Record< string, unknown > ),
 				apiVersion: '1.1',
 			} ),
 

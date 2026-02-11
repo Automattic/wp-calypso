@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { category, code, starEmpty, tool, warning } from '@wordpress/icons';
+import { category, code, starEmpty, tool, caution as warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';

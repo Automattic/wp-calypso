@@ -1,8 +1,4 @@
-import {
-	loadAllMessagesFromServer,
-	createOdieBotId,
-	type Message,
-} from '@automattic/agenttic-client';
+import { loadAllMessagesFromServer, createBotId, type Message } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
@@ -38,7 +34,7 @@ export default function useConversation( {
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
-			const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+			const botId = hasAgentParam ? agentId : createBotId( agentId );
 
 			return await loadAllMessagesFromServer(
 				sessionId,

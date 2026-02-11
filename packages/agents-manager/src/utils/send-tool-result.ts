@@ -21,7 +21,17 @@
  */
 
 import { getAgentManager } from '@automattic/agenttic-client';
-import type { Message, ToolResultDataPart } from '@automattic/agenttic-client';
+import type { Message } from '@automattic/agenttic-client';
+
+// Shape of tool result part (matches ToolResultDataPart in agenttic-client; that type is not exported from the package)
+interface ToolResultPart {
+	type: 'data';
+	data: {
+		toolCallId: string;
+		toolId: string;
+		result?: unknown;
+	};
+}
 
 /**
  * Send a tool result message to continue a paused workflow
@@ -52,7 +62,7 @@ export async function sendToolResult(
 	}
 
 	// Create tool result data part
-	const toolResultPart: ToolResultDataPart = {
+	const toolResultPart: ToolResultPart = {
 		type: 'data',
 		data: {
 			toolCallId,

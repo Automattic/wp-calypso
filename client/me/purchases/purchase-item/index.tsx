@@ -15,7 +15,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, warning as warningIcon } from '@wordpress/icons';
+import { Icon, caution as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';

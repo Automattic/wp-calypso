@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
-import { customLink, Icon, send, warning } from '@wordpress/icons';
+import { customLink, Icon, send, caution as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';

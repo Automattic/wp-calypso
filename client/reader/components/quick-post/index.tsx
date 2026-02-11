@@ -8,7 +8,7 @@ import {
 import { EmbedRequestParams } from '@automattic/verbum-block-editor/src/api';
 import { useMutation } from '@tanstack/react-query';
 // @ts-expect-error - No declaration file for heading block.
-import * as heading from '@wordpress/block-library/build-module/heading';
+import * as heading from '@wordpress/block-library/build-module/heading/index.mjs';
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';

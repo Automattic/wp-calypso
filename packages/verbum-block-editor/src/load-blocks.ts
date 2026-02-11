@@ -1,9 +1,9 @@
-import * as embed from '@wordpress/block-library/build-module/embed';
-import * as image from '@wordpress/block-library/build-module/image';
-import * as list from '@wordpress/block-library/build-module/list';
-import * as listItem from '@wordpress/block-library/build-module/list-item';
-import * as paragraph from '@wordpress/block-library/build-module/paragraph';
-import * as quote from '@wordpress/block-library/build-module/quote';
+import * as embed from '@wordpress/block-library/build-module/embed/index.mjs';
+import * as image from '@wordpress/block-library/build-module/image/index.mjs';
+import * as list from '@wordpress/block-library/build-module/list/index.mjs';
+import * as listItem from '@wordpress/block-library/build-module/list-item/index.mjs';
+import * as paragraph from '@wordpress/block-library/build-module/paragraph/index.mjs';
+import * as quote from '@wordpress/block-library/build-module/quote/index.mjs';
 import { setDefaultBlockName, registerBlockType, createBlock } from '@wordpress/blocks';
 import type { Block } from '@wordpress/blocks';
 
