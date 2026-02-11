@@ -53,7 +53,7 @@ class MySitesNavigation extends Component {
 			<GlobalSidebar
 				path={ this.props.path }
 				footer={
-					this.props.isDashboardToggleEnabled &&
+					this.props.showOptInBanner &&
 					! this.props.isGlobalSidebarCollapsed && <HostingDashboardOptInBanner />
 				}
 			>
@@ -94,7 +94,8 @@ export default withCurrentRoute(
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
-				isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
+				showOptInBanner:
+					config.isEnabled( 'dashboard/opt-in-banners' ) && isDashboardToggleEnabled( state ),
 			};
 		},
 		{

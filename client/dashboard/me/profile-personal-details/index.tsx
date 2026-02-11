@@ -37,7 +37,7 @@ export default function PersonalDetailsSection() {
 		meta: {
 			snackbar: {
 				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
+				error: { source: 'server' },
 			},
 		},
 	} );

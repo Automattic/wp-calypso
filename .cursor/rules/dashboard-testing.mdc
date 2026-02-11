@@ -1,0 +1,41 @@
+---
+description: Rules for writing tests for dashboard screen / components
+globs: client/dashboard/**/test/**
+alwaysApply: false
+---
+
+# Writing tests for dashboard screens / components
+
+Tests MUST verify user-visible behavior, not implementation details. Test what a user can see or do, not how the component is built internally.
+
+CRITICAL: consult these reference examples:
+- @client/dashboard/sites/test/index.test.tsx - DataViews assertions
+- @client/dashboard/sites/overview/test/index.test.tsx - more complex assertions for cards / sections in the screen
+- @client/dashboard/sites/settings-php/test/index.test.tsx - form submission
+
+## Setup
+
+- Put the test file under the `test/` subdirectory, with the same name as the component file but with the `.test.tsx` extension.
+- Use the component name (surrounded by `<>`) as the top-level `describe()` block.
+- Use `test()` instead of `it()` for test cases.
+- Use the custom `render()` function from @client/dashboard/test-utils.tsx — it wraps components with all required providers (QueryClient, Router, Auth, Analytics).
+- If the component uses `useSuspenseQuery()`, wait for a stable element (e.g., heading) before asserting.
+
+## Assertions
+
+- Assert on what the user sees on the screen.
+- Query by accessible role using e.g. `screen.findByRole()`, `screen.getByRole()`,  `screen.queryByRole()`, and `within()`.
+- Never query by test ID, CSS class, or DOM structure.
+- If an element isn't reachable by role, fix the component's accessibility instead.
+- Prefer simple, readable assertions over complex logic.
+
+## Mocking
+
+- DO NOT mock React components, hooks, or modules.
+- DO NOT mock TanStack queries.
+- Only mock network requests at the boundary using `nock` to intercept REST API calls to `https://public-api.wordpress.com`.
+
+## Test data
+
+- Keep test objects minimal — include only properties relevant to the test.
+- Use `as Type` to cast partial objects instead of filling unused fields.

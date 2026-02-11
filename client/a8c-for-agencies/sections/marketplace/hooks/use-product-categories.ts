@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
+import { PRODUCT_TYPE_PRESSABLE_ADDON } from '../constants';
 import { isProductType } from '../lib/product-filter';
 import {
 	SECURITY_PRODUCT_SLUGS,
@@ -68,6 +69,8 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 			categories.push( translate( 'bundle' ), translate( 'plan' ) );
 		} else if ( family_slug === BACKUP_STORAGE_FAMILY_SLUG ) {
 			categories.push( translate( 'add-on' ) );
+		} else if ( family_slug === PRODUCT_TYPE_PRESSABLE_ADDON ) {
+			categories.push( translate( 'hosting' ), translate( 'add-on' ) );
 		} else if ( isProductType( family_slug ) ) {
 			categories.push( translate( 'product' ) );
 		} else if ( isWooCommerceProduct( family_slug ) ) {

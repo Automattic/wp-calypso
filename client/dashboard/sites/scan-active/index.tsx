@@ -5,11 +5,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteScanActiveThreatsRoute } from '../../app/router/sites';
-import { DataViews, DataViewsEmptyState } from '../../components/dataviews';
+import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { useTimeSince } from '../../components/time-since';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
-import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -72,7 +71,7 @@ export function ActiveThreatsDataViews( {
 		);
 
 		if ( view.search || view.filters ) {
-			title = __( 'No archived threats found' );
+			title = __( 'No active threats found' );
 
 			if ( view.search ) {
 				description = sprintf(
@@ -87,20 +86,7 @@ export function ActiveThreatsDataViews( {
 			}
 		}
 
-		return (
-			<DataViewsEmptyState
-				title={ title }
-				description={ description }
-				illustration={
-					<img
-						src={ noThreatsIllustration }
-						alt={ __( 'No threats found illustration' ) }
-						width={ 408 }
-						height={ 280 }
-					/>
-				}
-			/>
-		);
+		return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
 	};
 
 	return (

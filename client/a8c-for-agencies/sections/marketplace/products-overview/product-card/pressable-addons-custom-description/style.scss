@@ -1,0 +1,61 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.pressable-addons-custom-description {
+	.jetpack-product-info__description {
+		@include body-large;
+		margin-block: 12px;
+	}
+
+	.jetpack-product-info__section-title {
+		@include heading-large;
+	}
+}
+
+.pressable-addons-custom-description__icon {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	min-width: 52px;
+	width: 52px;
+	height: 52px;
+
+	img {
+		width: 27px;
+		height: 27px;
+	}
+}
+
+.pressable-addons-custom-description__callout {
+	@include body-medium;
+	align-items: center;
+	background: transparent;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	color: var(--color-text);
+	display: flex;
+	gap: 8px;
+	margin-block: 12px 20px;
+	padding: 6px 10px;
+
+	svg {
+		flex-shrink: 0;
+	}
+}
+
+.pressable-addons-custom-description__section {
+	margin-block-start: 16px;
+}
+
+.pressable-addons-custom-description__details {
+	margin-block-start: 8px;
+	margin-inline-start: 16px;
+	padding: 0;
+
+	li {
+		@include body-large;
+		color: var(--color-text-subtle);
+		margin-block-end: 8px;
+	}
+}

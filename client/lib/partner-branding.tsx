@@ -1,4 +1,8 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { createInterpolateElement } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useMemo } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
@@ -42,8 +46,9 @@ export interface CiabPartnerConfig {
  *
  * To add a new partner:
  * 1. Add entry here with all config
- * 2. Add feature flag to config/_shared.json and config/development.json
- * 3. Done! No other code changes needed.
+ * 2. Add the translated ToS text in getSignupTosElement() below (required for i18n extraction)
+ * 3. Add feature flag to config/_shared.json and config/development.json
+ * 4. Done! No other code changes needed.
  */
 export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 	woo: {
@@ -108,12 +113,14 @@ export interface UsePartnerBrandingResult {
 	ciabConfig: CiabPartnerConfig | null;
 	/** Ready-to-use logo element for TopBar, or undefined to use default */
 	topBarLogo: JSX.Element | undefined;
+	/** Ready-to-use ToS element for signup, or undefined to use default */
+	signupTosElement: JSX.Element | undefined;
 }
 
 /**
  * Hook to get current partner branding based on URL params and feature flags
  * @example
- * const { topBarLogo, ciabConfig } = usePartnerBranding();
+ * const { topBarLogo, ciabConfig, signupTosElement } = usePartnerBranding();
  *
  * // In TopBar:
  * <Step.TopBar logo={topBarLogo} ... />
@@ -123,12 +130,13 @@ export interface UsePartnerBrandingResult {
  *   const allowedProviders = ciabConfig.ssoProviders;
  * }
  *
- * // For header text:
- * if (ciabConfig) {
- *   headerText = `Log in to ${ciabConfig.displayName}`;
+ * // For signup ToS:
+ * if (signupTosElement) {
+ *   return signupTosElement;
  * }
  */
 export function usePartnerBranding(): UsePartnerBrandingResult {
+	const translate = useTranslate();
 	const fromInitial = useSelector( ( state ) => get( getInitialQueryArguments( state ), 'from' ) );
 	const fromCurrent = useSelector( ( state ) => get( getCurrentQueryArguments( state ), 'from' ) );
 
@@ -150,10 +158,59 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 				/>
 			) : undefined;
 
+		// Build ToS element for signup
+		const signupTosElement = getSignupTosElement( ciabConfig, translate );
+
 		return {
 			hasCustomBranding,
 			ciabConfig,
 			topBarLogo,
+			signupTosElement,
 		};
-	}, [ from ] );
+	}, [ from, translate ] );
+}
+
+/**
+ * Get the signup ToS element for a partner.
+ * Each partner's ToS text must be a string literal for i18n extraction.
+ */
+function getSignupTosElement(
+	ciabConfig: CiabPartnerConfig | null,
+	translate: ReturnType< typeof useTranslate >
+): JSX.Element | undefined {
+	if ( ! ciabConfig ) {
+		return undefined;
+	}
+
+	const linkComponents = {
+		tosLink: (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+		privacyLink: (
+			<a
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+	};
+
+	// Each partner's ToS text - must be string literals for i18n
+	switch ( ciabConfig.id ) {
+		case 'woo':
+			return createInterpolateElement(
+				translate(
+					'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
+				),
+				linkComponents
+			);
+		default:
+			return undefined;
+	}
 }

@@ -577,7 +577,7 @@ export default function CancelPurchase() {
 	const downgradeClick = () => {
 		if ( ! state.isSubmitting ) {
 			if ( ! downgradePlan ) {
-				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
+				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
 				return;
 			}
 

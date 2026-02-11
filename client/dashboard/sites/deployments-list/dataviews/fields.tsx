@@ -78,7 +78,7 @@ export function useFields( {
 					return (
 						<VStack spacing={ 1 }>
 							<Text title={ commit_message }>{ commit_message }</Text>
-							<HStack spacing={ 3 } alignment="left" style={ { width: 'auto' } }>
+							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
@@ -103,7 +103,7 @@ export function useFields( {
 										{ author.name }
 									</Text>
 								</HStack>
-								{ item.is_active_deployment && <Badge>{ __( 'Latest deployment' ) }</Badge> }
+								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);

@@ -658,6 +658,21 @@ describe( 'reader stats', () => {
 					expected: 'conversations_a8c',
 					description: 'reader conversations a8c page',
 				},
+				{
+					url: '/reader/users/matt/recommended-blogs',
+					expected: 'user_profile_recommended_blogs',
+					description: 'user profile recommended blogs',
+				},
+				{
+					url: '/reader/users/matt/lists',
+					expected: 'user_profile_lists',
+					description: 'user profile lists',
+				},
+				{
+					url: '/reader/users/matt',
+					expected: 'user_profile_posts',
+					description: 'user profile posts',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {
