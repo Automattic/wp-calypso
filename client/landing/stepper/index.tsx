@@ -3,6 +3,12 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
+import {
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
+	DOMAIN_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
+} from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -60,6 +66,19 @@ const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
 	return siteId ? Number( siteId ) : null;
 };
+
+/**
+ * Flows that should not render the Help Center. The stepper has no masterbar or help button, so
+ * the Help Center can only auto-open from persisted preferences in these flows, which is
+ * disruptive. Flows that programmatically open the Help Center (e.g., hundred-year-plan,
+ * do-it-for-me) should NOT be added to this set.
+ */
+const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
+	DOMAIN_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
+] );
 
 async function main() {
 	const { pathname, search } = window.location;
@@ -176,7 +195,12 @@ async function main() {
 							id="notices"
 						/>
 					</BrowserRouter>
-					<AsyncHelpCenterApp currentUser={ user as UserStore.CurrentUser } sectionName="stepper" />
+					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
+						<AsyncHelpCenterApp
+							currentUser={ user as UserStore.CurrentUser }
+							sectionName="stepper"
+						/>
+					) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
