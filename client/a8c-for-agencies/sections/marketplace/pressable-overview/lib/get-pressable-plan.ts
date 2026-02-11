@@ -397,7 +397,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 1000000,
 		storage: 80,
-		worker: 15,
+		worker: 17,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 	'pressable-premium-7': {
@@ -405,7 +405,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 2000000,
 		storage: 90,
-		worker: 15,
+		worker: 17,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 	'pressable-premium-8': {
@@ -413,7 +413,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 3000000,
 		storage: 100,
-		worker: 15,
+		worker: 20,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 	'pressable-premium-9': {
@@ -421,7 +421,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 5000000,
 		storage: 125,
-		worker: 15,
+		worker: 20,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 	'pressable-premium-10': {
@@ -429,7 +429,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 7000000,
 		storage: 150,
-		worker: 15,
+		worker: 25,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 	'pressable-premium-11': {
@@ -437,7 +437,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 10000000,
 		storage: 175,
-		worker: 15,
+		worker: 25,
 		category: PLAN_CATEGORY_PREMIUM,
 	},
 };
