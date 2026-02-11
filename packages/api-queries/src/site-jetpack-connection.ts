@@ -1,5 +1,10 @@
-import { fetchJetpackConnection, fetchJetpackConnectionHealth } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import {
+	disconnectJetpackSite,
+	fetchJetpackConnection,
+	fetchJetpackConnectionHealth,
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 export const siteJetpackConnectionQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -11,4 +16,12 @@ export const jetpackConnectionHealthQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'jetpack-connection-health' ],
 		queryFn: () => fetchJetpackConnectionHealth( siteId ),
+	} );
+
+export const siteJetpackDisconnectMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: () => disconnectJetpackSite( siteId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+		},
 	} );
