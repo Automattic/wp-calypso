@@ -138,14 +138,14 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: true,
 				sort: ( a, b, direction ) => {
-					if ( a.expiry === null && b.expiry === null ) {
+					if ( a.expiry == null && b.expiry == null ) {
 						return 0;
 					}
-					if ( a.expiry === null ) {
+					if ( a.expiry == null ) {
 						return 1;
 					}
 
-					if ( b.expiry === null ) {
+					if ( b.expiry == null ) {
 						return -1;
 					}
 
