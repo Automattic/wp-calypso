@@ -95,7 +95,11 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 		// Apply search filter
 		if ( view.search ) {
 			const searchTerm = view.search.toLowerCase();
-			filteredSites = sites.filter( ( site ) => site.name?.toLowerCase().includes( searchTerm ) );
+			filteredSites = sites.filter(
+				( site ) =>
+					site.name?.toLowerCase().includes( searchTerm ) ||
+					getSiteDisplayUrl( site ).toLowerCase().includes( searchTerm )
+			);
 		}
 
 		// Apply pagination (infinite scroll)
