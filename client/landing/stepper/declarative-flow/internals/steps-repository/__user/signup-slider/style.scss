@@ -1,7 +1,7 @@
-@import "@automattic/components/src/styles/typography";
+@import '@automattic/components/src/styles/typography';
 
 /* This is needed to prevent the slider from growing beyond its container */
-:where(:has(> .signup-slider)) {
+:where( :has( > .signup-slider ) ) {
 	min-width: 0;
 }
 
@@ -64,23 +64,25 @@
 
 .signup-slider__slide.signup-slider__slide--1 .signup-slider__slide-content,
 .signup-slider__slide.signup-slider__slide--3 .signup-slider__slide-content {
-	background-color: #3858E9;
-	background-image:
-		radial-gradient(50% 50% at 50% 75%, #3858E9 0%, rgba(56, 88, 233, 0) 100%),
-		url(./images/pattern-01.png );
+	background-color: #3858e9;
+	background-image: radial-gradient( 50% 50% at 50% 75%, #3858e9 0%, rgba( 56, 88, 233, 0 ) 100% ),
+		url( ./images/pattern-01.png );
 	background-repeat: no-repeat, repeat;
-	background-position: center center, top left;
+	background-position:
+		center center,
+		top left;
 	background-size: cover, auto;
 }
 
 .signup-slider__slide.signup-slider__slide--2 .signup-slider__slide-content,
 .signup-slider__slide.signup-slider__slide--4 .signup-slider__slide-content {
 	background-color: #222;
-	background-image:
-		radial-gradient(50% 50% at 50% 75%, #222 0%, rgba(34, 34, 34, 0) 100%),
-		url(./images/pattern-02.png );
+	background-image: radial-gradient( 50% 50% at 50% 75%, #222 0%, rgba( 34, 34, 34, 0 ) 100% ),
+		url( ./images/pattern-02.png );
 	background-repeat: no-repeat, repeat;
-	background-position: center center, top left;
+	background-position:
+		center center,
+		top left;
 	background-size: cover, auto;
 }
 
@@ -99,11 +101,12 @@
 
 .signup-slider__headline {
 	color: var( --studio-white );
-	font-size: 44px;
+	font-size: 48px;
 	font-family: $font-recoleta;
 	padding-inline: 5.5rem;
 	line-height: 1.2;
 	margin-bottom: 8px;
+	text-wrap: balance;
 }
 
 .signup-slider__description {
@@ -202,14 +205,18 @@
 
 		/* This creates the "pill" border with color gradeint around the author name */
 		&::before {
-			content: "";
+			content: '';
 			position: absolute;
 			inset: 0;
 			border-radius: inherit;
 			padding: 2px;
-			background: linear-gradient( 90deg, #069E08, #3858E9 );
-			-webkit-mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
-			mask: linear-gradient( #fff 0 0 ) content-box, linear-gradient( #fff 0 0 );
+			background: linear-gradient( 90deg, #069e08, #3858e9 );
+			-webkit-mask:
+				linear-gradient( #fff 0 0 ) content-box,
+				linear-gradient( #fff 0 0 );
+			mask:
+				linear-gradient( #fff 0 0 ) content-box,
+				linear-gradient( #fff 0 0 );
 			-webkit-mask-composite: xor;
 			mask-composite: exclude;
 			pointer-events: none;
