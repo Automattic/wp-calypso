@@ -68,28 +68,38 @@ describe( 'UserCard', () => {
 	} );
 
 	describe( 'site count display', () => {
-		it( 'shows username and site count for small variant when available', () => {
+		it( 'does not show site count when showSiteCount is false (default)', () => {
 			render( <UserCard user={ mockUserWithSiteCount } size="small" /> );
+			expect( screen.getByText( 'john@example.com' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'johndoe - 3 sites' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows username and site count for small variant when showSiteCount is true', () => {
+			render( <UserCard user={ mockUserWithSiteCount } size="small" showSiteCount /> );
 			expect( screen.getByText( 'johndoe - 3 sites' ) ).toBeInTheDocument();
 		} );
 
 		it( 'shows singular site text when site count is 1', () => {
-			render( <UserCard user={ { ...mockUserWithSiteCount, siteCount: 1 } } size="small" /> );
+			render(
+				<UserCard user={ { ...mockUserWithSiteCount, siteCount: 1 } } size="small" showSiteCount />
+			);
 			expect( screen.getByText( 'johndoe - 1 site' ) ).toBeInTheDocument();
 		} );
 
-		it( 'shows email when username is missing for small variant', () => {
-			render( <UserCard user={ { ...mockUser, siteCount: 3 } } size="small" /> );
+		it( 'shows email when username is missing even with showSiteCount enabled', () => {
+			render( <UserCard user={ { ...mockUser, siteCount: 3 } } size="small" showSiteCount /> );
 			expect( screen.getByText( 'john@example.com' ) ).toBeInTheDocument();
 		} );
 
-		it( 'shows email when site count is missing for small variant', () => {
-			render( <UserCard user={ { ...mockUser, username: 'johndoe' } } size="small" /> );
+		it( 'shows email when site count is missing even with showSiteCount enabled', () => {
+			render(
+				<UserCard user={ { ...mockUser, username: 'johndoe' } } size="small" showSiteCount />
+			);
 			expect( screen.getByText( 'john@example.com' ) ).toBeInTheDocument();
 		} );
 
-		it( 'always shows email for large variant even with site count', () => {
-			render( <UserCard user={ mockUserWithSiteCount } size="large" /> );
+		it( 'always shows email for large variant even with showSiteCount enabled', () => {
+			render( <UserCard user={ mockUserWithSiteCount } size="large" showSiteCount /> );
 			expect( screen.getByText( 'john@example.com' ) ).toBeInTheDocument();
 		} );
 	} );

@@ -16,6 +16,11 @@ export interface UserCardProps {
 	user: UserCardUser;
 	size?: 'small' | 'large';
 	className?: string;
+	/**
+	 * Whether to display the site count alongside the username.
+	 * Only applies to the small variant. Defaults to false.
+	 */
+	showSiteCount?: boolean;
 }
 
 /**
@@ -32,7 +37,12 @@ export interface UserCardProps {
  *   size="large"
  * />
  */
-export function UserCard( { user, size = 'small', className }: UserCardProps ): JSX.Element {
+export function UserCard( {
+	user,
+	size = 'small',
+	className,
+	showSiteCount = false,
+}: UserCardProps ): JSX.Element {
 	const translate = useTranslate();
 	const isLarge = size === 'large';
 	const avatarSize = isLarge ? 64 : 48;
@@ -46,14 +56,15 @@ export function UserCard( { user, size = 'small', className }: UserCardProps ): 
 	/**
 	 * Get the secondary details to display below the user's name.
 	 * For large (centered) variant: always show email.
-	 * For small (horizontal) variant: show username + site count if available, otherwise email.
+	 * For small (horizontal) variant: show username + site count if showSiteCount is enabled
+	 * and data is available, otherwise show email.
 	 */
 	const getUserDetails = () => {
 		if ( isLarge ) {
 			return user.email;
 		}
 
-		if ( user.username && user.siteCount !== undefined ) {
+		if ( showSiteCount && user.username && user.siteCount !== undefined ) {
 			return translate( '%(username)s - %(count)d site', '%(username)s - %(count)d sites', {
 				count: user.siteCount,
 				args: {
