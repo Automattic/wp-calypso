@@ -70,6 +70,7 @@ export interface AgentUIProps {
 		availableSuggestions: Suggestion[]
 	) => void;
 	messageRenderer?: ComponentType< { children: string } >;
+	messagesPosition?: 'top' | 'bottom';
 	expandOnClick?: boolean;
 
 	// Controlled input props (optional)
