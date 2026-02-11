@@ -333,6 +333,15 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	return purchase.product_name;
 }
 
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	const title = getTitleForDisplay( purchase );
+	if ( purchase.is_domain_registration ) {
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), title );
+	}
+	return title;
+}
+
 /**
  * Return a short description of a purchase, usually used as a subtitle for that
  * purchase's product name (as defined by `getTitleForDisplay`).
