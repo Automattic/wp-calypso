@@ -132,11 +132,12 @@ export default function AgentDock( {
 	useEffect( () => {
 		// A new chat is one without a restored session and not mid-initialization via `shouldInitNewChat`
 		const isNewChat = isOrcChatView && ! state?.sessionId && ! state?.shouldInitNewChat;
-		// The server generates the session ID after the first agent reply (i.e., 2 messages: user + agent)
-		const sessionId = messages.length === 2 && getStoredSessionId();
+		// The server generates the session ID after the first agent reply
+		const isFirstServerMsg = messages.length === 2;
 
-		if ( isNewChat && sessionId ) {
-			saveCurrentChatRoute( sessionId );
+		// Only save the route once for a new chat
+		if ( isNewChat && isFirstServerMsg ) {
+			saveCurrentChatRoute( getStoredSessionId() );
 		}
 	}, [ isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
 
