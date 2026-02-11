@@ -4,6 +4,7 @@
 	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
 	"client_slug": "browser",
 	"hostname": "my.localhost",
+	"hostname_allowlist": [ "my.localhost", "my.woo.localhost" ],
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"wpcom_signup_id": "39911",

@@ -226,7 +226,9 @@ const SignupFormSocialFirst = ( {
 				/>
 				{ isSliderVariation && (
 					<p className="signup-form-social-first__login-link">
-						Have an account? <Step.LinkButton href={ logInUrl }>{ __( 'Log in' ) }</Step.LinkButton>
+						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+							link: <Step.LinkButton href={ logInUrl } />,
+						} ) }
 					</p>
 				) }
 			</div>

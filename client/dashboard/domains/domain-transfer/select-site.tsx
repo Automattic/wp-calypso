@@ -67,7 +67,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 		},
 		{
 			id: 'name',
-			label: 'Site Name',
+			label: __( 'Site name' ),
 			render: ( { item }: { item: Site } ) => item.name,
 		},
 		{
