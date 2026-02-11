@@ -2,102 +2,85 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import TimeMismatchNotice from '../index';
-
-jest.mock( '@automattic/api-queries', () => ( {
-	userPreferenceQuery: jest.fn( ( key: string ) => ( { queryKey: [ 'pref', key ] } ) ),
-	userPreferenceMutation: jest.fn( ( key: string ) => ( { mutationKey: [ 'pref', key ] } ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {
-		getQueryCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-		getMutationCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-	} ) ),
-	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useSuspenseQuery: jest.fn(),
-	useMutation: jest.fn(),
-} ) );
+import type { UserPreferences, CalypsoUserPreferencesRequestBody } from '@automattic/api-core';
 
 function getOffsetHours() {
 	const now = new Date();
 	return -now.getTimezoneOffset() / 60;
 }
 
+function createQueryClient( preferences: Partial< UserPreferences > = {} ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+	} );
+	queryClient.setQueryData( [ 'me', 'preferences' ], preferences );
+	return queryClient;
+}
+
 describe( 'TimeMismatchNotice', () => {
-	const mutateMock = jest.fn();
-	let useSuspenseQuery: jest.Mock;
-	let useMutation: jest.Mock;
 	// Force a deterministic local timezone offset: -120 minutes => offsetHours = 2
 	const mockTimezoneOffsetMinutes = -120;
 
 	beforeEach( () => {
-		const rq = require( '@tanstack/react-query' );
-		useSuspenseQuery = rq.useSuspenseQuery as jest.Mock;
-		useMutation = rq.useMutation as jest.Mock;
-
-		useSuspenseQuery.mockReset();
-		useMutation.mockReset();
-		mutateMock.mockReset();
-		useSuspenseQuery.mockReturnValue( { data: null } );
-		useMutation.mockReturnValue( { mutate: mutateMock, isPending: false } );
-
-		// Stub timezone offset to avoid potential environment-dependent behavior
 		jest.spyOn( Date.prototype, 'getTimezoneOffset' ).mockReturnValue( mockTimezoneOffsetMinutes );
 	} );
 
-	test( 'does not render if siteTime matches local timezone offset', () => {
-		useSuspenseQuery.mockReturnValue( { data: null } );
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
 
+	test( 'does not render if siteTime matches local timezone offset', () => {
 		const offsetHours = getOffsetHours();
 		const { queryByRole } = render(
 			<TimeMismatchNotice
 				siteId={ 123 }
 				siteTime={ offsetHours }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient() }
 		);
 
 		expect( queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
 	} );
 
 	test( 'renders warning notice when siteTime differs and no dismissal is stored', async () => {
-		useSuspenseQuery.mockReturnValue( { data: null } );
-
 		const offsetHours = getOffsetHours();
 		render(
 			<TimeMismatchNotice
 				siteId={ 123 }
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient() }
 		);
 
 		expect( await screen.findByRole( 'button', { name: /dismiss/i } ) ).toBeVisible();
-
 		expect( await screen.findByRole( 'link', { name: /update it if needed/i } ) ).toBeVisible();
 	} );
 
 	test( 'does not render when previously dismissed with same offset', () => {
 		const offsetHours = getOffsetHours();
-		useSuspenseQuery.mockReturnValue( {
-			data: JSON.stringify( { dismissedAt: '2025-01-01T00:00:00.000Z', offsetHours } ),
-		} );
-		useMutation.mockReturnValue( { mutate: mutateMock, isPending: false } );
+		const preferences = {
+			[ 'hosting-dashboard-time-mismatch-warning-dismissed-123' ]: JSON.stringify( {
+				dismissedAt: '2025-01-01T00:00:00.000Z',
+				offsetHours,
+			} ),
+		};
 
 		const { queryByRole } = render(
 			<TimeMismatchNotice
 				siteId={ 123 }
 				siteTime={ offsetHours + 2 }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient( preferences ) }
 		);
 
 		expect( queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
@@ -105,15 +88,14 @@ describe( 'TimeMismatchNotice', () => {
 
 	test( 'clicking the settings link records an analytics event', async () => {
 		const user = userEvent.setup();
-		useSuspenseQuery.mockReturnValue( { data: null } );
-
 		const offsetHours = getOffsetHours();
 		const { recordTracksEvent } = render(
 			<TimeMismatchNotice
 				siteId={ 987 }
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient() }
 		);
 
 		await user.click( await screen.findByRole( 'link', { name: /update it if needed/i } ) );
@@ -126,25 +108,46 @@ describe( 'TimeMismatchNotice', () => {
 
 	test( 'clicking dismiss persists preference and records analytics', async () => {
 		const user = userEvent.setup();
-		useSuspenseQuery.mockReturnValue( { data: null } );
-
 		const offsetHours = getOffsetHours();
+
+		let requestBody: CalypsoUserPreferencesRequestBody | undefined;
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.reply( 200, {
+				calypso_preferences: {
+					[ 'hosting-dashboard-time-mismatch-warning-dismissed-321' ]: JSON.stringify( {
+						dismissedAt: '2025-06-01T00:00:00.000Z',
+						offsetHours,
+					} ),
+				},
+			} );
+
 		const { recordTracksEvent } = render(
 			<TimeMismatchNotice
 				siteId={ 321 }
 				siteTime={ offsetHours + 1 }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient() }
 		);
 
 		await user.click( await screen.findByRole( 'button', { name: /dismiss/i } ) );
 
-		expect( mutateMock ).toHaveBeenCalledTimes( 1 );
-		const payload = mutateMock.mock.calls[ 0 ][ 0 ] as string;
-		const parsed = JSON.parse( payload );
-		expect( typeof parsed.dismissedAt ).toBe( 'string' );
-		// Avoid -0 vs 0 strict-equality issue
-		expect( parsed.offsetHours ).toBeCloseTo( offsetHours, 10 );
+		expect(
+			JSON.parse(
+				requestBody?.calypso_preferences[
+					'hosting-dashboard-time-mismatch-warning-dismissed-321'
+				] ?? ''
+			)
+		).toEqual(
+			expect.objectContaining( {
+				dismissedAt: expect.any( String ),
+				offsetHours: expect.closeTo( offsetHours, 10 ),
+			} )
+		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_time_mismatch_banner_close',
@@ -155,17 +158,25 @@ describe( 'TimeMismatchNotice', () => {
 		);
 	} );
 
-	test( 'does not render while dismiss is pending', () => {
-		useSuspenseQuery.mockReturnValue( { data: null } );
-		useMutation.mockReturnValue( { mutate: mutateMock, isPending: true } );
+	test( 'does not render while dismiss is pending', async () => {
+		const user = userEvent.setup();
 		const offsetHours = getOffsetHours();
-		const { queryByRole } = render(
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: {} } );
+
+		render(
 			<TimeMismatchNotice
 				siteId={ 111 }
 				siteTime={ offsetHours + 3 }
 				settingsUrl="https://example.com"
-			/>
+			/>,
+			{ queryClient: createQueryClient() }
 		);
-		expect( queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
+
+		// Click dismiss to start the mutation — notice hides immediately (isPending)
+		await user.click( await screen.findByRole( 'button', { name: /dismiss/i } ) );
+		expect( screen.queryByRole( 'button', { name: /dismiss/i } ) ).toBeNull();
 	} );
 } );

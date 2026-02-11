@@ -2,49 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
-import type { UseQueryOptions } from '@tanstack/react-query';
-
-jest.mock( '@automattic/api-queries', () => ( {
-	siteBySlugQuery: jest.fn( () => ( {
-		queryKey: [ 'site-by-slug' ],
-		queryFn: () => Promise.resolve( {} ),
-	} ) ),
-	stagingSiteSyncStateQuery: jest.fn( () => ( {
-		queryKey: [ 'staging-site-sync-state' ],
-		queryFn: () => Promise.resolve( {} ),
-	} ) ),
-	isDeletingStagingSiteQuery: jest.fn( () => ( {
-		queryKey: [ 'is-deleting-staging-site' ],
-		queryFn: () => Promise.resolve( false ),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {
-		getQueryCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-		getMutationCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-	} ) ),
-	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useQuery: jest.fn( () => ( {
-		data: false, // Default to false for isStagingSiteDeletionInProgress
-		isLoading: false,
-		refetch: jest.fn(),
-	} ) ),
-	defaultShouldDehydrateQuery: jest.fn( () => true ),
-} ) );
-
-jest.mock( '@tanstack/react-query-persist-client', () => ( {
-	persistQueryClient: jest.fn( () => [ jest.fn(), Promise.resolve() ] ),
-} ) );
 
 jest.mock( '../../../utils/site-staging-site', () => ( {
 	getProductionSiteId: jest.fn( () => 1 ),
@@ -81,28 +44,32 @@ const createMockStagingSite = ( options = {} ): Site =>
 // Helper functions
 const getDropdownButton = () => screen.getByRole( 'button', { name: /sync/i } );
 const getMenuItem = ( name: string ) => screen.getByRole( 'menuitem', { name } );
-const renderDropdown = ( siteSlug = 'test-site' ) =>
-	render( <StagingSiteSyncDropdown siteSlug={ siteSlug } /> );
 
-const mockUseQueryWithSite = (
+function renderDropdownWithSite(
 	site: Site,
-	isStagingSiteDeletionInProgress = false,
-	syncState = false
-) => {
-	const { useQuery } = require( '@tanstack/react-query' );
-	useQuery.mockImplementation( ( query: UseQueryOptions ) => {
-		if ( query.queryKey?.includes( 'site-by-slug' ) ) {
-			return { data: site, isLoading: false, refetch: jest.fn() };
-		}
-		if ( query.queryKey?.includes( 'is-deleting-staging-site' ) ) {
-			return { data: isStagingSiteDeletionInProgress, isLoading: false, refetch: jest.fn() };
-		}
-		if ( query.queryKey?.includes( 'staging-site-sync-state' ) ) {
-			return { data: syncState, isLoading: false, refetch: jest.fn() };
-		}
-		return { data: false, isLoading: false, refetch: jest.fn() };
+	{ isStagingSiteDeletionInProgress = false, syncState = false } = {}
+) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
-};
+
+	// Pre-populate site-by-slug cache. The real queryKey includes SITE_FIELDS and SITE_OPTIONS
+	// arrays, but we use a fuzzy match via the queryClient filter — TQ matches by prefix, so we
+	// set with the exact key structure from siteBySlugQuery.
+	const { SITE_FIELDS, SITE_OPTIONS } = require( '@automattic/api-core' );
+	queryClient.setQueryData( [ 'site-by-slug', 'test-site', SITE_FIELDS, SITE_OPTIONS ], site );
+
+	const stagingSiteId = site.is_wpcom_staging_site ? site.ID : 2;
+	queryClient.setQueryData(
+		[ 'staging-site', stagingSiteId, 'is-deleting' ],
+		isStagingSiteDeletionInProgress
+	);
+
+	const productionSiteId = site.is_wpcom_staging_site ? 1 : site.ID;
+	queryClient.setQueryData( [ 'site', productionSiteId, 'staging-site-sync-state' ], syncState );
+
+	return render( <StagingSiteSyncDropdown siteSlug="test-site" />, { queryClient } );
+}
 
 describe( 'StagingSiteSyncDropdown', () => {
 	beforeEach( () => {
@@ -119,9 +86,7 @@ describe( 'StagingSiteSyncDropdown', () => {
 
 	describe( 'Component Display', () => {
 		test( 'renders sync dropdown button', () => {
-			mockUseQueryWithSite( createMockSite() );
-
-			renderDropdown();
+			renderDropdownWithSite( createMockSite() );
 
 			expect( getDropdownButton() ).toBeInTheDocument();
 			expect( getDropdownButton() ).toHaveTextContent( 'Sync' );
@@ -131,9 +96,7 @@ describe( 'StagingSiteSyncDropdown', () => {
 			const { isStagingSiteSyncing } = require( '../../../utils/site-staging-site' );
 
 			isStagingSiteSyncing.mockReturnValue( true );
-			mockUseQueryWithSite( createMockSite() );
-
-			renderDropdown();
+			renderDropdownWithSite( createMockSite() );
 
 			expect( getDropdownButton() ).toHaveTextContent( 'Syncing…' );
 			expect( getDropdownButton() ).toBeDisabled();
@@ -143,17 +106,15 @@ describe( 'StagingSiteSyncDropdown', () => {
 			const { getProductionSiteId } = require( '../../../utils/site-staging-site' );
 
 			getProductionSiteId.mockReturnValue( null );
-			mockUseQueryWithSite( createMockSite() );
-
-			const { container } = renderDropdown();
+			const { container } = renderDropdownWithSite( createMockSite() );
 
 			expect( container.firstChild ).toBeNull();
 		} );
 
 		test( 'returns null when staging site is being deleted', () => {
-			mockUseQueryWithSite( createMockSite(), true ); // true = isStagingSiteDeletionInProgress
-
-			const { container } = renderDropdown();
+			const { container } = renderDropdownWithSite( createMockSite(), {
+				isStagingSiteDeletionInProgress: true,
+			} );
 
 			expect( container.firstChild ).toBeNull();
 		} );
@@ -161,8 +122,7 @@ describe( 'StagingSiteSyncDropdown', () => {
 
 	describe( 'Dropdown Menu Items', () => {
 		test( 'displays correct menu items for production site', async () => {
-			mockUseQueryWithSite( createMockSite() );
-			renderDropdown();
+			renderDropdownWithSite( createMockSite() );
 
 			await waitFor( () => {
 				expect( getDropdownButton() ).toBeInTheDocument();
@@ -178,9 +138,7 @@ describe( 'StagingSiteSyncDropdown', () => {
 		} );
 
 		test( 'displays correct menu items for staging site', async () => {
-			mockUseQueryWithSite( createMockStagingSite() );
-
-			renderDropdown();
+			renderDropdownWithSite( createMockStagingSite() );
 
 			await waitFor( () => {
 				expect( getDropdownButton() ).toBeInTheDocument();

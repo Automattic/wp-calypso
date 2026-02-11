@@ -1,7 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { UserPreferences } from './types';
+import type { CalypsoUserPreferencesResponseBody, UserPreferences } from './types';
 
 export async function fetchPreferences(): Promise< UserPreferences > {
-	const { calypso_preferences } = await wpcom.req.get( '/me/preferences' );
+	const { calypso_preferences } = await ( wpcom.req.get(
+		'/me/preferences'
+	) as Promise< CalypsoUserPreferencesResponseBody > );
 	return calypso_preferences;
 }

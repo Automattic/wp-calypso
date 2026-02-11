@@ -2,13 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-const mockMutate = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 const mockCreateSuccessNotice = jest.fn();
 const mockNavigate = jest.fn();
@@ -27,34 +29,6 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '@tanstack/react-router', () => ( {
 	...jest.requireActual( '@tanstack/react-router' ),
 	useNavigate: () => mockNavigate,
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	siteByIdQuery: jest.fn( () => ( {
-		queryKey: [ 'site-by-id' ],
-		queryFn: () => Promise.resolve( {} ),
-	} ) ),
-	stagingSiteDeleteMutation: jest.fn( () => ( {
-		mutationFn: () => Promise.resolve( {} ),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {
-		getQueryCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-		getMutationCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-	} ) ),
-	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useQuery: jest.fn( () => ( { data: { ID: 1, slug: 'production-site' }, isLoading: false } ) ),
-	useMutation: jest.fn( () => ( {
-		mutate: mockMutate,
-		isPending: false,
-		error: null,
-	} ) ),
 } ) );
 
 const createMockSite = ( options = {} ): Site =>
@@ -78,12 +52,41 @@ const mockStagingSiteWithoutProductionId = createMockSite( {
 	wpcom_production_blog_id: undefined,
 } );
 
+const mockProductionSite = {
+	ID: 1,
+	slug: 'production-site',
+	name: 'Production Site',
+} as Site;
+
 // Helper functions
 const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
-const renderModal = ( site: Site, onClose = jest.fn() ) =>
-	render( <StagingSiteDeleteModal site={ site } onClose={ onClose } /> );
+
+function renderModal( site: Site, onClose = jest.fn() ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+	} );
+
+	// Pre-populate production site in cache
+	const productionSiteId = site.options?.wpcom_production_blog_id;
+	if ( productionSiteId ) {
+		queryClient.setQueryData(
+			[ 'site-by-id', productionSiteId, SITE_FIELDS, SITE_OPTIONS ],
+			mockProductionSite
+		);
+	}
+
+	return render( <StagingSiteDeleteModal site={ site } onClose={ onClose } />, { queryClient } );
+}
 
 describe( 'StagingSiteDeleteModal', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	describe( 'Modal Display', () => {
 		test( 'renders modal with correct title and content', () => {
 			renderModal( mockStagingSite );
@@ -123,27 +126,28 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'triggers mutation when delete button is clicked', async () => {
 			const user = userEvent.setup();
+			const scope = nock( 'https://public-api.wordpress.com:443' )
+				.delete( '/wpcom/v2/sites/1/staging-site/2' )
+				.reply( 200, {} );
+
 			renderModal( mockStagingSite );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
-			expect( mockMutate ).toHaveBeenCalledWith( undefined, {
-				onError: expect.any( Function ),
-				onSuccess: expect.any( Function ),
-			} );
+			expect( scope.isDone() ).toBe( true );
 		} );
 	} );
 
 	describe( 'Loading State', () => {
-		test( 'disables buttons when mutation is pending', () => {
-			const { useMutation } = require( '@tanstack/react-query' );
-			useMutation.mockReturnValue( {
-				mutate: mockMutate,
-				isPending: true,
-				error: null,
-			} );
+		test( 'disables buttons when mutation is pending', async () => {
+			const user = userEvent.setup();
+			nock( 'https://public-api.wordpress.com:443' )
+				.delete( '/wpcom/v2/sites/1/staging-site/2' )
+				.reply( 200, {} );
 
 			renderModal( mockStagingSite );
+
+			await user.click( getButton( 'Delete staging site' ) );
 
 			expect( getButton( 'Cancel' ) ).toBeDisabled();
 			expect( getButton( 'Delete staging site' ) ).toBeDisabled();
@@ -153,27 +157,18 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'Error Handling', () => {
 		test( 'shows error notice and tracks failure when deletion fails', async () => {
 			const user = userEvent.setup();
-			const { useMutation } = require( '@tanstack/react-query' );
-
-			// Mock mutate to simulate calling onError callback with an error
-			const mockMutateWithError = jest.fn( ( _, options ) => {
-				if ( options?.onError ) {
-					options.onError( new Error( 'Network error' ) );
-				}
-			} );
-
-			useMutation.mockReturnValue( {
-				mutate: mockMutateWithError,
-				isPending: false,
-				error: null,
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.delete( '/wpcom/v2/sites/1/staging-site/2' )
+				.reply( 500, { message: 'Network error' } );
 
 			const { recordTracksEvent } = renderModal( mockStagingSite );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error', {
-				type: 'snackbar',
+			await waitFor( () => {
+				expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error', {
+					type: 'snackbar',
+				} );
 			} );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -183,27 +178,18 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'shows default error message when no error message is provided', async () => {
 			const user = userEvent.setup();
-			const { useMutation } = require( '@tanstack/react-query' );
-
-			// Mock mutate to simulate calling onError callback with an error without message
-			const mockMutateWithError = jest.fn( ( _, options ) => {
-				if ( options?.onError ) {
-					options.onError( new Error() );
-				}
-			} );
-
-			useMutation.mockReturnValue( {
-				mutate: mockMutateWithError,
-				isPending: false,
-				error: null,
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.delete( '/wpcom/v2/sites/1/staging-site/2' )
+				.reply( 400, { message: '' } );
 
 			renderModal( mockStagingSite );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to delete staging site', {
-				type: 'snackbar',
+			await waitFor( () => {
+				expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to delete staging site', {
+					type: 'snackbar',
+				} );
 			} );
 		} );
 	} );
@@ -222,30 +208,21 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'shows success notice, closes modal, and navigates on successful deletion', async () => {
 			const user = userEvent.setup();
-			const { useMutation } = require( '@tanstack/react-query' );
-
-			// Mock mutate to simulate calling onSuccess callback
-			const mockMutateWithSuccess = jest.fn( ( _, options ) => {
-				if ( options?.onSuccess ) {
-					options.onSuccess();
-				}
-			} );
-
-			useMutation.mockReturnValue( {
-				mutate: mockMutateWithSuccess,
-				isPending: false,
-				error: null,
-			} );
+			nock( 'https://public-api.wordpress.com:443' )
+				.delete( '/wpcom/v2/sites/1/staging-site/2' )
+				.reply( 200, {} );
 
 			const mockOnClose = jest.fn();
 			const { recordTracksEvent } = renderModal( mockStagingSite, mockOnClose );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
-			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-				'We are deleting your staging site. We will notify you when it is done.',
-				{ type: 'snackbar' }
-			);
+			await waitFor( () => {
+				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+					'We are deleting your staging site. We will notify you when it is done.',
+					{ type: 'snackbar' }
+				);
+			} );
 
 			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 

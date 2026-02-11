@@ -2,50 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
-import type { UseQueryOptions } from '@tanstack/react-query';
-
-jest.mock( '@automattic/api-queries', () => ( {
-	siteByIdQuery: jest.fn( ( id: number ) => ( {
-		queryKey: [ 'site-by-id', id ],
-		queryFn: () => Promise.resolve( {} ),
-	} ) ),
-	pushToStagingMutation: jest.fn( () => ( {
-		mutationFn: () => Promise.resolve( {} ),
-	} ) ),
-	pullFromStagingMutation: jest.fn( () => ( {
-		mutationFn: () => Promise.resolve( {} ),
-	} ) ),
-	siteBackupContentsQuery: jest.fn( () => ( {
-		queryKey: [ 'site-backup-contents' ],
-		queryFn: () => Promise.resolve( {} ),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {
-		getQueryCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-		getMutationCache: jest.fn( () => ( {
-			subscribe: jest.fn( () => jest.fn() ),
-		} ) ),
-	} ) ),
-	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
-	useQuery: jest.fn( () => ( {
-		data: undefined,
-		isLoading: false,
-		refetch: jest.fn(),
-	} ) ),
-	useMutation: jest.fn( () => ( {
-		mutate: jest.fn(),
-		isPending: false,
-	} ) ),
-} ) );
 
 jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () =>
 	jest.fn( () => ( {
@@ -97,6 +61,7 @@ jest.mock(
 						setSqlState( next );
 					}
 				},
+				addChildNodes: () => {},
 			};
 
 			return createElement(
@@ -144,34 +109,6 @@ const createMockStagingSite = ( options = {} ): Site =>
 		...options,
 	} ) as Site;
 
-const mockUseQuery = ( productionSite?: Site, stagingSite?: Site ) => {
-	const { useQuery } = require( '@tanstack/react-query' );
-	useQuery.mockImplementation( ( query: UseQueryOptions ) => {
-		const queryKey = query.queryKey as ( string | number )[];
-		if ( queryKey?.includes( 'site-by-id' ) ) {
-			if ( queryKey.includes( 1 ) ) {
-				return { data: productionSite, isLoading: false, refetch: jest.fn() };
-			}
-			if ( queryKey.includes( 2 ) ) {
-				return { data: stagingSite, isLoading: false, refetch: jest.fn() };
-			}
-		}
-		if ( queryKey?.includes( 'site-backup-contents' ) ) {
-			return { data: [], isLoading: false, refetch: jest.fn() };
-		}
-		return { data: undefined, isLoading: false, refetch: jest.fn() };
-	} );
-};
-
-const mockUseMutation = ( mutationResult = {} ) => {
-	const { useMutation } = require( '@tanstack/react-query' );
-	useMutation.mockReturnValue( {
-		mutate: jest.fn(),
-		isPending: false,
-		...mutationResult,
-	} );
-};
-
 const defaultProps = {
 	onClose: jest.fn(),
 	syncType: 'pull' as const,
@@ -181,26 +118,51 @@ const defaultProps = {
 	onSyncStart: jest.fn(),
 };
 
-const renderModal = ( props = {} ) => {
-	return render( <StagingSiteSyncModal { ...defaultProps } { ...props } /> );
+const renderModal = (
+	props = {},
+	productionSite: Site = createMockSite(),
+	stagingSite: Site = createMockStagingSite()
+) => {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+	} );
+
+	queryClient.setQueryData(
+		[ 'site-by-id', productionSite.ID, SITE_FIELDS, SITE_OPTIONS ],
+		productionSite
+	);
+	queryClient.setQueryData(
+		[ 'site-by-id', stagingSite.ID, SITE_FIELDS, SITE_OPTIONS ],
+		stagingSite
+	);
+
+	return render( <StagingSiteSyncModal { ...defaultProps } { ...props } />, { queryClient } );
 };
 
 // Test helper to render the modal with defaults and return a fresh user instance
-const setup = ( props = {} ) => {
-	const utils = render( <StagingSiteSyncModal { ...defaultProps } { ...props } /> );
+const setup = ( props = {}, productionSite?: Site, stagingSite?: Site ) => {
+	const utils = renderModal( props, productionSite, stagingSite );
 	const user = userEvent.setup();
 	return { user, ...utils };
 };
 
-describe( 'StagingSiteSyncModal', () => {
-	beforeEach( () => {
-		mockUseMutation();
-	} );
+beforeEach( () => {
+	jest.clearAllMocks();
 
+	// Nock the backup contents endpoint that FileBrowser may request
+	nock( 'https://public-api.wordpress.com:443' )
+		.post( /\/wpcom\/v2\/sites\/\d+\/rewind\/backup\/ls/ )
+		.reply( 200, { ok: true, files: [] } )
+		.persist();
+} );
+
+afterEach( () => {
+	nock.cleanAll();
+} );
+
+describe( 'StagingSiteSyncModal', () => {
 	describe( 'Component Rendering', () => {
 		test( 'renders modal with correct title for pull from staging', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal( { syncType: 'pull', environment: 'production' } );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
@@ -208,8 +170,6 @@ describe( 'StagingSiteSyncModal', () => {
 		} );
 
 		test( 'renders modal with correct title for push to production', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal( { syncType: 'push', environment: 'staging' } );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
@@ -217,8 +177,6 @@ describe( 'StagingSiteSyncModal', () => {
 		} );
 
 		test( 'renders modal with correct title for pull from production', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal( { syncType: 'pull', environment: 'staging' } );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
@@ -226,8 +184,6 @@ describe( 'StagingSiteSyncModal', () => {
 		} );
 
 		test( 'renders modal with correct title for push to staging', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal( { syncType: 'push', environment: 'production' } );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
@@ -237,16 +193,12 @@ describe( 'StagingSiteSyncModal', () => {
 
 	describe( 'File and Database Selection', () => {
 		test( 'renders files and folders checkbox', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal();
 
 			expect( screen.getByLabelText( 'Files and folders' ) ).toBeInTheDocument();
 		} );
 
 		test( 'renders database checkbox', () => {
-			mockUseQuery( createMockSite(), createMockStagingSite() );
-
 			renderModal();
 
 			expect( screen.getByLabelText( 'Database' ) ).toBeInTheDocument();
@@ -256,8 +208,6 @@ describe( 'StagingSiteSyncModal', () => {
 
 describe( 'File Selection', () => {
 	test( 'renders file selection mode dropdown', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal();
 
 		expect( screen.getByLabelText( 'Select files and folders to sync' ) ).toBeInTheDocument();
@@ -266,16 +216,12 @@ describe( 'File Selection', () => {
 
 describe( 'Domain Confirmation', () => {
 	test( 'shows domain confirmation field when syncing to production', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		expect( screen.getByLabelText( 'Type the site domain to confirm' ) ).toBeInTheDocument();
 	} );
 
 	test( 'does not show domain confirmation when not syncing to production', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal( { syncType: 'push', environment: 'production' } );
 
 		expect( screen.queryByLabelText( 'Type the site domain to confirm' ) ).not.toBeInTheDocument();
@@ -284,8 +230,6 @@ describe( 'Domain Confirmation', () => {
 
 describe( 'Warnings', () => {
 	test( 'database checkbox shows warning when checked', async () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		const { user } = setup();
 
 		const databaseCheckbox = screen.getByLabelText( 'Database' );
@@ -310,9 +254,11 @@ describe( 'Warnings', () => {
 			options: { woocommerce_is_active: true },
 		} );
 
-		mockUseQuery( siteWithWoo, stagingSiteWithWoo );
-
-		const { user } = setup( { syncType: 'push', environment: 'staging' } );
+		const { user } = setup(
+			{ syncType: 'push', environment: 'staging' },
+			siteWithWoo,
+			stagingSiteWithWoo
+		);
 
 		const databaseCheckbox = screen.getByLabelText( 'Database' );
 
@@ -323,10 +269,9 @@ describe( 'Warnings', () => {
 		} );
 	} );
 } );
+
 describe( 'Form Submission', () => {
 	test( 'submit button is disabled when domain confirmation is required but not provided', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		const submitButton = screen.getByRole( 'button', { name: 'Push' } );
@@ -336,7 +281,6 @@ describe( 'Form Submission', () => {
 	test( 'submit button is enabled when domain confirmation matches', async () => {
 		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
 		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
-		mockUseQuery( createMockSite(), createMockStagingSite() );
 
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
@@ -353,16 +297,12 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'renders pull button for pull from staging', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal( { syncType: 'pull', environment: 'production' } );
 
 		expect( screen.getByRole( 'button', { name: 'Pull' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders push button for push to production', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal( { syncType: 'push', environment: 'staging' } );
 
 		expect( screen.getByRole( 'button', { name: 'Push' } ) ).toBeInTheDocument();
@@ -373,8 +313,13 @@ describe( 'Form Submission', () => {
 		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
 		const prod = createMockSite( { slug: 'test-site' } );
 		const stag = createMockStagingSite();
-		mockUseQuery( prod, stag );
-		const { user } = setup( { syncType: 'push', environment: 'staging' } );
+
+		// syncType: 'push', environment: 'staging' → uses pullFromStaging endpoint
+		const scope = nock( 'https://public-api.wordpress.com:443' )
+			.post( '/wpcom/v2/sites/1/staging-site/pull-from-staging/2' )
+			.reply( 200, {} );
+
+		const { user } = setup( { syncType: 'push', environment: 'staging' }, prod, stag );
 
 		const modal = screen.getByRole( 'dialog' );
 		await user.type(
@@ -382,21 +327,17 @@ describe( 'Form Submission', () => {
 			'test-site'
 		);
 
-		const { useMutation } = require( '@tanstack/react-query' );
-		const submitMutation = useMutation().mutate;
 		await user.click( within( modal ).getByRole( 'button', { name: 'Push' } ) );
 
-		expect( submitMutation ).toHaveBeenCalledWith(
-			expect.objectContaining( { types: 'paths', include_paths: '', exclude_paths: '' } ),
-			expect.any( Object )
-		);
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
 	} );
 } );
 
 describe( 'Modal Actions', () => {
 	test( 'calls onClose when cancel button is clicked', async () => {
 		const onCloseMock = jest.fn();
-		mockUseQuery( createMockSite(), createMockStagingSite() );
 
 		renderModal( { onClose: onCloseMock } );
 
@@ -409,8 +350,6 @@ describe( 'Modal Actions', () => {
 	} );
 
 	test( 'renders close button in modal header', () => {
-		mockUseQuery( createMockSite(), createMockStagingSite() );
-
 		renderModal();
 
 		expect( screen.getByLabelText( 'Close' ) ).toBeInTheDocument();
@@ -418,13 +357,18 @@ describe( 'Modal Actions', () => {
 } );
 
 describe( 'Loading States', () => {
-	test( 'shows busy state on submit button when mutation is pending', () => {
-		mockUseMutation( { isPending: true } );
-		mockUseQuery( createMockSite(), createMockStagingSite() );
+	test( 'shows busy state on submit button when mutation is pending', async () => {
+		// Start a pull mutation that stays pending
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( '/wpcom/v2/sites/1/staging-site/pull-from-staging/2' )
+			.reply( 200, {} );
 
-		renderModal();
+		const { user } = setup();
 
-		const submitButton = screen.getByRole( 'button', { name: 'Pull' } );
-		expect( submitButton ).toBeDisabled();
+		await user.click( screen.getByRole( 'button', { name: 'Pull' } ) );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Pull' } ) ).toBeDisabled();
+		} );
 	} );
 } );
