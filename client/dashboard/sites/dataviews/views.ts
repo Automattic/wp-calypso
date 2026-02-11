@@ -48,17 +48,20 @@ export function getDefaultView( {
 	user,
 	isAutomattician,
 	isRestoringAccount,
+	fields,
 }: {
 	user: User;
 	isAutomattician: boolean;
 	isRestoringAccount: boolean;
+	fields?: string[];
 } ): View {
 	const type = isRestoringAccount || user.site_count > DEFAULT_PER_PAGE ? 'table' : 'grid';
 
 	const defaultView = {
-		type,
 		...DEFAULT_VIEW,
 		...DEFAULT_LAYOUTS[ type ],
+		type,
+		fields: fields ?? DEFAULT_VIEW.fields,
 	} as View;
 
 	if ( isAutomattician ) {

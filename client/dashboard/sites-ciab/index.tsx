@@ -44,6 +44,7 @@ export default function CIABSites() {
 		user,
 		isAutomattician,
 		isRestoringAccount,
+		fields: [ 'visibility', 'plan' ],
 	} );
 
 	const { view, updateView, resetView } = usePersistentView( {
