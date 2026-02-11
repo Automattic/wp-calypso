@@ -35,10 +35,6 @@ export default function MigrationsTagSitesModal( {
 
 	const migrationSourceOptions = [
 		{ label: translate( 'Select a host' ), value: '' },
-		{ label: translate( 'WordPress.com Hosting' ), value: 'wpcom' },
-		{ label: translate( 'Automattic' ), value: 'automattic' },
-		{ label: translate( 'Pressable' ), value: 'pressable' },
-		{ label: translate( 'WP Cloud' ), value: 'wpcloud' },
 		{ label: translate( 'Kinsta' ), value: 'kinsta' },
 		{ label: translate( 'WP Engine' ), value: 'wpengine' },
 		{ label: translate( 'Pantheon' ), value: 'pantheon' },
@@ -106,6 +102,9 @@ export default function MigrationsTagSitesModal( {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' ) );
 	};
 
+	const selectedMigrationSourceHost =
+		migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ?? '';
+
 	return (
 		<A4AModal
 			onClose={ handleOnClose }
@@ -152,7 +151,7 @@ export default function MigrationsTagSitesModal( {
 					taggedSites={ taggedSites }
 					selectedSites={ selectedSites }
 					setSelectedSites={ setSelectedSites }
-					migrationSourceHost={ migrationSourceHost }
+					migrationSourceHost={ selectedMigrationSourceHost }
 				/>
 			) }
 		</A4AModal>
