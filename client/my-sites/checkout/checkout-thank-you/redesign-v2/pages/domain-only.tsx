@@ -29,7 +29,7 @@ export default function DomainOnlyThankYou( {
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
 	const domainPurchases = purchases.filter( predicate );
 	const domainNames = domainPurchases.map( ( purchase ) => purchase?.meta );
-	const domainOnlySite = useSelector( ( state ) => getSite( state, domainPurchases[ 0 ]?.blogId ) );
+	const domainSite = useSelector( ( state ) => getSite( state, domainPurchases[ 0 ]?.blogId ) );
 	const siteDomains = useSelector( ( state ) =>
 		getDomainsBySiteId( state, domainPurchases[ 0 ]?.blogId )
 	);
@@ -89,8 +89,8 @@ export default function DomainOnlyThankYou( {
 			<ThankYouDomainProduct
 				purchase={ purchase }
 				key={ `domain-${ purchase.meta }` }
-				siteSlug={ domainOnlySite?.slug }
-				isDomainOnly
+				siteSlug={ domainSite?.slug }
+				isDomainOnly={ domainSite?.options?.is_domain_only ?? true }
 				isGravatarDomain={ isGravatarDomain }
 			/>
 		);
