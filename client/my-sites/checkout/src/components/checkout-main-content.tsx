@@ -590,7 +590,7 @@ export default function CheckoutMainContent( {
 		return true;
 	};
 
-	const paymentMethodStepFirst = true;
+	const paymentMethodStepFirst = searchParams.get( 'payment-first' ) === '1';
 
 	const checkoutSummary = (
 		<WPCheckoutSidebarContent className="checkout-sidebar-content">
