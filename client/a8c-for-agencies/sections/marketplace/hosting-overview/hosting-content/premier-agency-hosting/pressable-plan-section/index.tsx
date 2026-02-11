@@ -291,47 +291,34 @@ export default function PressablePlanSection( {
 				) : (
 					<SimpleList
 						items={ [
-							...( selectedTab === PLAN_CATEGORY_PREMIUM
-								? [
-										translate( '{{b}}%(worker)d{{/b}} base PHP Workers', {
-											args: {
-												worker: selectedPlanInfo?.worker ?? 5,
-											},
-											components: {
-												b: <b />,
-											},
-										} ),
-								  ]
-								: [
-										translate(
-											'Up to {{b}}%(count)d WordPress install{{/b}}',
-											'Up to {{b}}%(count)d WordPress installs{{/b}}',
-											{
-												args: {
-													count: selectedPlanInfo?.install ?? 0,
-												},
-												count: selectedPlanInfo?.install ?? 0,
-												components: {
-													b: <b />,
-												},
-												comment: '%(count)d is the number of WordPress installs.',
-											}
-										),
-										translate(
-											'Up to {{b}}%(count)d staging site{{/b}}',
-											'Up to {{b}}%(count)d staging sites{{/b}}',
-											{
-												args: {
-													count: selectedPlanInfo?.install ?? 0,
-												},
-												count: selectedPlanInfo?.install ?? 0,
-												components: {
-													b: <b />,
-												},
-												comment: '%(count)d is the number of staging sites.',
-											}
-										),
-								  ] ),
+							translate(
+								'Up to {{b}}%(count)d WordPress install{{/b}}',
+								'Up to {{b}}%(count)d WordPress installs{{/b}}',
+								{
+									args: {
+										count: selectedPlanInfo?.install ?? 0,
+									},
+									count: selectedPlanInfo?.install ?? 0,
+									components: {
+										b: <b />,
+									},
+									comment: '%(count)d is the number of WordPress installs.',
+								}
+							),
+							translate(
+								'Up to {{b}}%(count)d staging site{{/b}}',
+								'Up to {{b}}%(count)d staging sites{{/b}}',
+								{
+									args: {
+										count: selectedPlanInfo?.install ?? 0,
+									},
+									count: selectedPlanInfo?.install ?? 0,
+									components: {
+										b: <b />,
+									},
+									comment: '%(count)d is the number of staging sites.',
+								}
+							),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
 									count: formatNumberCompact( selectedPlanInfo?.visits ?? 0 ),
@@ -349,6 +336,14 @@ export default function PressablePlanSection( {
 									b: <b />,
 								},
 								comment: '%(storageSize)d is the size of storage in GB.',
+							} ),
+							translate( '{{b}}%(worker)d{{/b}} base PHP Workers', {
+								args: {
+									worker: selectedPlanInfo?.worker ?? 5,
+								},
+								components: {
+									b: <b />,
+								},
 							} ),
 							translate( '{{b}}Unmetered bandwidth{{/b}}', {
 								components: {
