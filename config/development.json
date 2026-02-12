@@ -43,6 +43,7 @@
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
+		"calypso/refund-eligibility-notice": false,
 		"checkout/checkout-version": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
