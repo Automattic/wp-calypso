@@ -1,22 +1,39 @@
 .referral-logo-picker {
 	margin-block-end: 24px;
 
-	.referral-logo-picker__description {
+	.components-base-control__help {
 		margin-block-start: 4px;
 		margin-block-end: 16px;
-		color: var(--color-text-secondary);
-		font-size: 13px;
 	}
 
 	.referral-logo-picker__options {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
+		margin-block-start: 8px;
 	}
 
 	.referral-logo-picker__option {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.referral-logo-picker__radio-label {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		gap: 8px;
+		margin: 0;
+	}
+
+	.referral-logo-picker__radio-input {
+		margin: 0;
+		cursor: pointer;
+	}
+
+	.referral-logo-picker__radio-text {
+		font-size: 14px;
+		line-height: 1.4;
 	}
 
 	.referral-logo-picker__logo-display {

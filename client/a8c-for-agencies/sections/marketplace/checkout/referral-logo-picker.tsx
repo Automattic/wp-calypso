@@ -1,10 +1,6 @@
-import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
-import { upload } from '@wordpress/icons';
+import { Button, BaseControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormRadio from 'calypso/components/forms/form-radio';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -104,23 +100,27 @@ function ReferralLogoPicker( {
 
 	return (
 		<div className="referral-logo-picker">
-			<FormFieldset>
-				<FormLabel>{ translate( 'Your logo' ) }</FormLabel>
-				<p className="referral-logo-picker__description">
-					{ translate( 'Build trust and show this referral comes from you.' ) }
-				</p>
-
+			<BaseControl
+				label={ translate( 'Your logo' ) }
+				id="referral-logo-picker"
+				help={ translate( 'Build trust and show this referral comes from you.' ) }
+			>
 				<div className="referral-logo-picker__options">
 					{ hasProfileLogo && (
 						<div className="referral-logo-picker__option">
-							<FormRadio
-								id="logo-profile"
-								name="logo-selection"
-								value="profile"
-								checked={ selectionType === 'profile' }
-								onChange={ () => handleSelectionChange( 'profile' ) }
-								label={ translate( 'Use profile logo' ) }
-							/>
+							<label className="referral-logo-picker__radio-label">
+								<input
+									type="radio"
+									name="logo-selection"
+									value="profile"
+									checked={ selectionType === 'profile' }
+									onChange={ () => handleSelectionChange( 'profile' ) }
+									className="referral-logo-picker__radio-input"
+								/>
+								<span className="referral-logo-picker__radio-text">
+									{ translate( 'Use profile logo' ) }
+								</span>
+							</label>
 							{ selectionType === 'profile' && displayLogoUrl && (
 								<div className="referral-logo-picker__logo-display">
 									<img src={ displayLogoUrl } alt={ translate( 'Profile logo' ) } />
@@ -130,14 +130,19 @@ function ReferralLogoPicker( {
 					) }
 
 					<div className="referral-logo-picker__option">
-						<FormRadio
-							id="logo-custom"
-							name="logo-selection"
-							value="custom"
-							checked={ selectionType === 'custom' }
-							onChange={ () => handleSelectionChange( 'custom' ) }
-							label={ translate( 'Use a different logo for this referral' ) }
-						/>
+						<label className="referral-logo-picker__radio-label">
+							<input
+								type="radio"
+								name="logo-selection"
+								value="custom"
+								checked={ selectionType === 'custom' }
+								onChange={ () => handleSelectionChange( 'custom' ) }
+								className="referral-logo-picker__radio-input"
+							/>
+							<span className="referral-logo-picker__radio-text">
+								{ translate( 'Use a different logo for this referral' ) }
+							</span>
+						</label>
 
 						{ selectionType === 'custom' && (
 							<div className="referral-logo-picker__upload-section">
@@ -186,7 +191,9 @@ function ReferralLogoPicker( {
 								</Button>
 
 								<p className="referral-logo-picker__upload-hint">
-									{ translate( 'Upload your logo: PNG or SVG. Max 5 MB. Transparent background works best.' ) }
+									{ translate(
+										'Upload your logo: PNG or SVG. Max 5 MB. Transparent background works best.'
+									) }
 								</p>
 
 								{ validationError && (
@@ -198,7 +205,7 @@ function ReferralLogoPicker( {
 						) }
 					</div>
 				</div>
-			</FormFieldset>
+			</BaseControl>
 		</div>
 	);
 }
