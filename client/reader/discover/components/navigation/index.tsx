@@ -1,5 +1,6 @@
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { translate, TranslateResult } from 'i18n-calypso';
+import { useMemo } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -11,6 +12,7 @@ import {
 	RECOMMENDED_TAB,
 } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -27,6 +29,19 @@ interface Props {
 	selectedTab: string;
 }
 
+const byProtectedTab =
+	( isLoggedIn: boolean ) =>
+	( tab: Tab ): boolean => {
+		return ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn;
+	};
+
+const byFeatureFlag = ( tab: Tab ): boolean => {
+	if ( ! isDiscoverV3Enabled() ) {
+		return true;
+	}
+	return [ ADD_NEW_TAB, REDDIT_TAB ].includes( tab.slug ) ? false : true;
+};
+
 const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
@@ -38,60 +53,60 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tab_clicked', { tab } ) );
 	};
 
-	const getLocalizedPath = ( path: string ) => {
-		return addLocaleToPathLocaleInFront( path, currentLocale );
-	};
-
-	const baseTabs: Tab[] = [
-		{
-			slug: FRESHLY_PRESSED_TAB,
-			title: translate( 'Freshly Pressed' ),
-			path: '/discover',
-		},
-		{
-			slug: RECOMMENDED_TAB,
-			title: translate( 'Recommended' ),
-			path: '/discover/recommended',
-		},
-		{
-			slug: ADD_NEW_TAB,
-			title: translate( 'Add new' ),
-			path: '/discover/add-new',
-		},
-		{
-			slug: FIRST_POSTS_TAB,
-			title: translate( 'First posts' ),
-			path: '/discover/firstposts',
-		},
-		{
-			slug: 'tags',
-			title: translate( 'Tags' ),
-			path: '/discover/tags?selectedTag=dailyprompt',
-		},
-		{
-			slug: REDDIT_TAB,
-			title: translate( 'Reddit' ),
-			path: '/discover/reddit',
-		},
-		{
-			slug: LATEST_TAB,
-			title: translate( 'Latest', {
-				context: 'latest blog posts',
-			} ),
-			path: '/discover/latest',
-		},
-	];
-
 	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
-	const filteredTabs = baseTabs.filter(
-		( tab ) => ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn
-	);
+	const tabs = useMemo( () => {
+		const getLocalizedPath = ( path: string ) => {
+			return addLocaleToPathLocaleInFront( path, currentLocale );
+		};
 
-	// Add localization to paths if needed.
-	const tabs = filteredTabs.map( ( tab ) => ( {
-		...tab,
-		path: getLocalizedPath( tab.path ),
-	} ) );
+		const baseTabs: Tab[] = [
+			{
+				slug: FRESHLY_PRESSED_TAB,
+				title: translate( 'Freshly Pressed' ),
+				path: '/discover',
+			},
+			{
+				slug: RECOMMENDED_TAB,
+				title: translate( 'Recommended' ),
+				path: '/discover/recommended',
+			},
+			{
+				slug: ADD_NEW_TAB,
+				title: translate( 'Add new' ),
+				path: '/discover/add-new',
+			},
+			{
+				slug: FIRST_POSTS_TAB,
+				title: translate( 'First posts' ),
+				path: '/discover/firstposts',
+			},
+			{
+				slug: 'tags',
+				title: translate( 'Tags' ),
+				path: '/discover/tags?selectedTag=dailyprompt',
+			},
+			{
+				slug: REDDIT_TAB,
+				title: translate( 'Reddit' ),
+				path: '/discover/reddit',
+			},
+			{
+				slug: LATEST_TAB,
+				title: translate( 'Latest', {
+					context: 'latest blog posts',
+				} ),
+				path: '/discover/latest',
+			},
+		];
+
+		return baseTabs
+			.filter( byProtectedTab( isLoggedIn ) )
+			.filter( byFeatureFlag )
+			.map( ( tab ) => ( {
+				...tab,
+				path: getLocalizedPath( tab.path ),
+			} ) );
+	}, [ isLoggedIn, currentLocale ] );
 
 	const selectedTabData = tabs.find( ( tab ) => tab.slug === selectedTab );
 
