@@ -39,6 +39,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isNewSubscriptionEnabled = isDiscoverV3Enabled();
 
 	const recordTabClick = ( tab: string ) => {
 		recordAction( 'click_discover_tab' );
@@ -63,7 +64,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 				title: translate( 'Recommended' ),
 				path: '/discover/recommended',
 			},
-			...( ! isDiscoverV3Enabled()
+			...( ! isNewSubscriptionEnabled
 				? [
 						{
 							slug: ADD_NEW_TAB,
@@ -82,7 +83,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 				title: translate( 'Tags' ),
 				path: '/discover/tags?selectedTag=dailyprompt',
 			},
-			...( ! isDiscoverV3Enabled()
+			...( ! isNewSubscriptionEnabled
 				? [
 						{
 							slug: REDDIT_TAB,
