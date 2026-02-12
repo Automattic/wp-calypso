@@ -4,6 +4,8 @@ import {
 	shouldLoadSurvicate,
 	loadSurvicateScript,
 	isSurvicateScriptLoaded,
+	setSurvicateVisitorTraits,
+	getSurvicateApi,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
@@ -38,16 +40,8 @@ const setCalypsoVisitorTraits = () => {
 		return;
 	}
 
-	// eslint-disable-next-line no-undef
-	if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
-		// eslint-disable-next-line no-undef
-		_sva.setVisitorTraits( {
-			email: user.email,
-		} );
-		survicateDebug( 'Survicate visitor traits set with email: ' + user.email );
-	} else {
-		survicateDebug( 'Survicate _sva object not available' );
-	}
+	setSurvicateVisitorTraits( { email: user.email } );
+	survicateDebug( 'Survicate visitor traits set with email: ' + user.email );
 };
 
 export function mayWeLoadSurvicateScript() {
@@ -86,7 +80,7 @@ export function addSurvicate() {
 	}
 
 	if ( isSurvicateScriptLoaded() ) {
-		setTimeout( setCalypsoVisitorTraits, 1000 );
+		setCalypsoVisitorTraits();
 		survicateDebug( 'Survicate script already loaded' );
 		return;
 	}
@@ -99,7 +93,7 @@ export function addSurvicate() {
 	loadSurvicateScript( SURVICATE_WORKSPACE_ID )
 		.then( () => {
 			survicateDebug( 'Survicate script loaded' );
-			setTimeout( setCalypsoVisitorTraits, 1000 );
+			setCalypsoVisitorTraits();
 		} )
 		.catch( () => {
 			survicateDebug( 'Failed to load Survicate script' );
@@ -113,9 +107,9 @@ export function addSurvicate() {
  * See: https://a8c.slack.com/archives/C04H4NY6STW/p1766088738895199?thread_ts=1765290523.386849&cid=C04H4NY6STW
  */
 export function showHelpCenterFeedbackSurvey() {
-	const survicate = window._sva;
+	const api = getSurvicateApi();
 
-	if ( ! survicate?.invokeEvent ) {
+	if ( ! api ) {
 		return;
 	}
 
@@ -127,13 +121,13 @@ export function showHelpCenterFeedbackSurvey() {
 		}
 
 		const handleOverlayClick = () => {
-			survicate.destroyVisitor?.();
+			api.destroyVisitor();
 		};
 
 		overlay.addEventListener( 'click', handleOverlayClick, { once: true } );
-		survicate.removeEventListener?.( 'survey_displayed', handleSurveyDisplayed );
+		api.removeEventListener( 'survey_displayed', handleSurveyDisplayed );
 	};
 
-	survicate.addEventListener?.( 'survey_displayed', handleSurveyDisplayed );
-	survicate.invokeEvent( 'showFeedbackSurveyFromHelpCenter' );
+	api.addEventListener( 'survey_displayed', handleSurveyDisplayed );
+	api.invokeEvent( 'showFeedbackSurveyFromHelpCenter' );
 }

@@ -35,6 +35,8 @@ jest.mock( '@automattic/survicate', () => ( {
 	shouldLoadSurvicate: jest.fn(),
 	loadSurvicateScript: jest.fn(),
 	isSurvicateScriptLoaded: jest.fn(),
+	setSurvicateVisitorTraits: jest.fn(),
+	getSurvicateApi: jest.fn(),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
@@ -56,6 +58,8 @@ import {
 	shouldLoadSurvicate,
 	loadSurvicateScript,
 	isSurvicateScriptLoaded,
+	setSurvicateVisitorTraits,
+	getSurvicateApi,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
 import { render } from '@testing-library/react';
@@ -91,9 +95,6 @@ describe( 'survicate', () => {
 			writable: true,
 		} );
 
-		// Reset global survicate object
-		global._sva = undefined;
-
 		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
@@ -101,14 +102,6 @@ describe( 'survicate', () => {
 			addSurvicate = survicateModule.addSurvicate;
 			isUserOnAnonymousPaths = survicateModule.isUserOnAnonymousPaths;
 		} );
-
-		// Mock setTimeout to be synchronous for testing
-		jest.spyOn( global, 'setTimeout' ).mockImplementation( ( fn ) => fn() );
-	} );
-
-	afterEach( () => {
-		// Restore setTimeout
-		jest.restoreAllMocks();
 	} );
 
 	afterAll( () => {
@@ -221,14 +214,10 @@ describe( 'survicate', () => {
 			};
 			getCurrentUser.mockReturnValue( mockUser );
 
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
 			addSurvicate();
 			await flushPromises();
 
-			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
+			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
@@ -237,22 +226,14 @@ describe( 'survicate', () => {
 		test( 'should not set visitor traits when user is not logged in', async () => {
 			getCurrentUser.mockReturnValue( null );
 
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
 			addSurvicate();
 			await flushPromises();
 
-			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
+			expect( setSurvicateVisitorTraits ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should log error when user is not logged in', async () => {
 			getCurrentUser.mockReturnValue( null );
-
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
 
 			addSurvicate();
 			await flushPromises();
@@ -275,14 +256,10 @@ describe( 'survicate', () => {
 			};
 			getCurrentUser.mockReturnValue( mockUser );
 
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
 			addSurvicate();
 			await flushPromises();
 
-			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
+			expect( setSurvicateVisitorTraits ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should log error when user has no email', async () => {
@@ -290,10 +267,6 @@ describe( 'survicate', () => {
 				id: 123,
 			};
 			getCurrentUser.mockReturnValue( mockUser );
-
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
 
 			addSurvicate();
 			await flushPromises();
@@ -310,29 +283,19 @@ describe( 'survicate', () => {
 			);
 		} );
 
-		test( 'should handle case when _sva object is not available', async () => {
+		test( 'should call setSurvicateVisitorTraits from the package', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
 			getCurrentUser.mockReturnValue( mockUser );
 
-			// _sva is undefined
-			global._sva = undefined;
-
 			addSurvicate();
-			await expect( flushPromises() ).resolves.toBeUndefined();
-		} );
+			await flushPromises();
 
-		test( 'should handle case when _sva exists but setVisitorTraits is not available', async () => {
-			const mockUser = {
+			// Trait setting is now delegated to the package
+			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			global._sva = {}; // No setVisitorTraits method
-
-			addSurvicate();
-			await expect( flushPromises() ).resolves.toBeUndefined();
+			} );
 		} );
 
 		test( 'should handle script load error', async () => {
@@ -340,26 +303,6 @@ describe( 'survicate', () => {
 
 			addSurvicate();
 			await expect( flushPromises() ).resolves.toBeUndefined();
-		} );
-
-		test( 'should use setTimeout for setting visitor traits', async () => {
-			const mockUser = {
-				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
-			// Restore real setTimeout for this test
-			jest.restoreAllMocks();
-			jest.spyOn( global, 'setTimeout' );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( setTimeout ).toHaveBeenCalledWith( expect.any( Function ), 1000 );
 		} );
 
 		test( 'should not load script twice when called multiple times', () => {
@@ -387,19 +330,15 @@ describe( 'survicate', () => {
 				writable: true,
 			} );
 
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
 			addSurvicate();
 			await flushPromises();
 
-			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
+			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
 		} );
 
-		test( 'should retry setting visitor traits when script is already loaded', async () => {
+		test( 'should set visitor traits without reloading script when script is already loaded', async () => {
 			const mockUser = {
 				email: 'test@example.com',
 			};
@@ -410,19 +349,15 @@ describe( 'survicate', () => {
 				writable: true,
 			} );
 
-			global._sva = {
-				setVisitorTraits: jest.fn(),
-			};
-
 			// Script is already loaded
 			isSurvicateScriptLoaded.mockReturnValue( true );
 
 			addSurvicate();
 			await flushPromises();
 
-			// Should have called setVisitorTraits via setTimeout without loading script again
+			// Should have called setSurvicateVisitorTraits without loading script again
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
-			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
+			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
 		} );
@@ -446,6 +381,7 @@ describe( 'HelpCenterMoreResources', () => {
 	beforeEach( () => {
 		delete window._sva;
 		recordTracksEvent.mockClear();
+		getSurvicateApi.mockReset();
 		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
@@ -479,7 +415,21 @@ describe( 'HelpCenterMoreResources', () => {
 
 	test( 'renders feedback button and triggers survicate event when available', async () => {
 		const invokeEvent = jest.fn();
+		const addEventListener = jest.fn();
+		const removeEventListener = jest.fn();
+		const destroyVisitor = jest.fn();
+
+		const mockApi = {
+			invokeEvent,
+			addEventListener,
+			removeEventListener,
+			destroyVisitor,
+		};
+
+		// HelpCenterMoreResources checks window._sva directly for rendering the button
 		window._sva = { invokeEvent };
+		// showHelpCenterFeedbackSurvey uses getSurvicateApi()
+		getSurvicateApi.mockReturnValue( mockApi );
 
 		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
 		const button = queryByRole( 'button', {
@@ -503,6 +453,15 @@ describe( 'HelpCenterMoreResources', () => {
 		);
 	} );
 
+	test( 'does not invoke events when getSurvicateApi returns null', () => {
+		getSurvicateApi.mockReturnValue( null );
+
+		showHelpCenterFeedbackSurvey();
+
+		// Should exit early without errors
+		expect( getSurvicateApi ).toHaveBeenCalled();
+	} );
+
 	test( 'invokes Survicate event and wires overlay click to destroy visitor', () => {
 		const overlay = document.createElement( 'div' );
 		overlay.className = 'sv__overlay sv__overlay--dark';
@@ -523,12 +482,14 @@ describe( 'HelpCenterMoreResources', () => {
 		} );
 
 		document.querySelector = jest.fn( () => overlay );
-		window._sva = {
+
+		const mockApi = {
 			addEventListener,
 			removeEventListener,
 			invokeEvent,
 			destroyVisitor,
 		};
+		getSurvicateApi.mockReturnValue( mockApi );
 
 		showHelpCenterFeedbackSurvey();
 
