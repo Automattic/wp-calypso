@@ -427,11 +427,14 @@ export default function AnnotationCanvas( { imageUrl, imageElement }: Annotation
 				ref={ committedCanvasRef }
 				className="annotation-canvas annotation-canvas-committed"
 				role="img"
-				aria-label={ __( 'Saved annotation markings', 'big-sky' ) }
+				aria-label={ __( 'Saved annotation markings', __i18n_text_domain__ ) }
 			/>
 			<canvas
 				ref={ liveCanvasRef }
-				aria-label={ __( 'Interactive drawing area for creating image annotations', 'big-sky' ) }
+				aria-label={ __(
+					'Interactive drawing area for creating image annotations',
+					__i18n_text_domain__
+				) }
 				className="annotation-canvas annotation-canvas-live annotation-canvas-pen"
 				onPointerDown={ handlePointerDown }
 				onPointerMove={ handlePointerMove }
