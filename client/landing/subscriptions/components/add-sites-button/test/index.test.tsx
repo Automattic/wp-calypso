@@ -24,7 +24,7 @@ jest.mock( 'calypso/reader/utils', () => ( {
 } ) );
 
 describe( 'AddSitesButton', () => {
-	it( 'shows a link to the discover v3 page when the feature is enabled', async () => {
+	it( 'shows a link to the "reader/new" page when the feature is enabled', async () => {
 		renderWithProvider(
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
 				<AddSitesButton />
@@ -36,7 +36,7 @@ describe( 'AddSitesButton', () => {
 		);
 	} );
 
-	it( 'triggers a notice when the user is not logged in', async () => {
+	it( 'triggers a notice when the user is not email verified', async () => {
 		( isCurrentUserEmailVerified as jest.Mock ).mockReturnValue( false );
 		jest.spyOn( noticesActions, 'errorNotice' );
 
@@ -45,7 +45,7 @@ describe( 'AddSitesButton', () => {
 				<AddSitesButton />
 			</SubscriptionManagerContextProvider>
 		);
-		await userEvent.click( screen.getByRole( 'link', { name: 'New subscription' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'New subscription' } ) );
 
 		expect( noticesActions.errorNotice ).toHaveBeenCalledWith(
 			'Please verify your email before subscribing.',
@@ -63,7 +63,7 @@ describe( 'AddSitesButton', () => {
 			( isCurrentUserEmailVerified as jest.Mock ).mockReturnValue( true );
 		} );
 
-		it( 'triggers the modal when the feature is disabled', async () => {
+		it( 'shows the add sites modal when the user clicks the button', async () => {
 			renderWithProvider(
 				<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
 					<AddSitesButton />
@@ -76,7 +76,7 @@ describe( 'AddSitesButton', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'triggers a notice when the user is not logged in', async () => {
+		it( 'triggers a notice when the user is not email verified', async () => {
 			( isCurrentUserEmailVerified as jest.Mock ).mockReturnValue( false );
 			jest.spyOn( noticesActions, 'errorNotice' );
 
