@@ -97,7 +97,7 @@ const UpcomingEvent = ( {
 						);
 					} ) }
 
-					{ extraContent }
+					<div className="a4a-event__extra-content">{ extraContent }</div>
 				</div>
 			</div>
 			<div
