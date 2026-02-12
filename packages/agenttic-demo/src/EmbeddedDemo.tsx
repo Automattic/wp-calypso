@@ -111,7 +111,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					{ ...props }
 					style={ {
 						borderLeft: '4px solid #007cba',
-						backgroundColor: '#f0f8ff',
+						backgroundColor: currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
 						margin: '16px 0',
 						padding: '12px 16px',
 						fontStyle: 'italic',
@@ -122,7 +122,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 				</blockquote>
 			),
 		} ),
-		[]
+		[ currentTheme ],
 	);
 
 	// Create custom message renderer with markdown components and extensions
@@ -311,6 +311,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 						position: 'fixed',
 						top: '0',
 						right: '0',
+						zIndex: 9999,
 						display: 'flex',
 						flexWrap: 'wrap',
 						gap: '2px',

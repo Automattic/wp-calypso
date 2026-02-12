@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider } from '@automattic/agenttic-client';
-import { AgentUI } from '@automattic/agenttic-ui';
+import { AgentUI, createMessageRenderer } from '@automattic/agenttic-ui';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import MessageTester from './MessageTester';
 import {
@@ -115,6 +115,18 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		console.log( 'Selected suggestion:', message );
 	}, [] );
 
+	const messageRenderer = useMemo(
+		() =>
+			createMessageRenderer( {
+				extensions: {
+					charts: { enabled: true },
+					gfm: { enabled: true },
+				},
+				enableStreaming: true,
+			} ),
+		[]
+	);
+
 	const isOnboarding = messages.length === 0;
 
 	return (
@@ -171,6 +183,11 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				/* Style the input container */
 				.site-spec-demo .agenttic {
 					background: transparent;
+				}
+
+				.site-spec-demo .agenttic [data-slot="message"] {
+					--color-foreground: #FFF;
+					--color-muted: #ffffff1a;
 				}
 
 				.site-spec-demo .agenttic [data-slot="footer"] {
@@ -254,6 +271,7 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 						variant="embedded"
 						suggestions={ promptSuggestions }
 						clearSuggestions={ clearSuggestions }
+						messageRenderer={ messageRenderer }
 						className="agenttic"
 						placeholder={ [
 							'Start a travel blog...',
