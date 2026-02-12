@@ -148,7 +148,7 @@ export default function MigrationsAddSitesTable( {
 				className="migrations-tag-sites-modal__table-control"
 			>
 				{ migrationSourceHost && (
-					<Spacer margin={ 4 }>
+					<Spacer marginY={ 4 }>
 						<div className="migrations-tag-sites-modal__instruction">
 							{ translate( 'Make sure you only select sites previously hosted on %s', {
 								args: [ migrationSourceHost ],
