@@ -28,10 +28,10 @@ setSurvicateVisitorTraits( { email: 'user@example.com' } );
 
 ## Exports
 
-| Export | Description |
-| --- | --- |
-| `shouldLoadSurvicate( options )` | Returns `true` if locale starts with `en` and `isMobile` is `false`. |
-| `loadSurvicateScript( workspaceId )` | Injects the Survicate script tag. Deduplicates concurrent calls. |
-| `isSurvicateScriptLoaded()` | Returns whether the script is loaded or loading. |
-| `setSurvicateVisitorTraits( traits )` | Sets visitor traits (e.g. email) on the global `_sva` object. |
-| `SURVICATE_WORKSPACE_ID` | The WordPress.com Survicate workspace identifier. |
+| Export                                | Description                                                          |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| `shouldLoadSurvicate( options )`      | Returns `true` if locale starts with `en` and `isMobile` is `false`. |
+| `loadSurvicateScript( workspaceId )`  | Injects the Survicate script tag. Deduplicates concurrent calls.     |
+| `isSurvicateScriptLoaded()`           | Returns whether the script is loaded or loading.                     |
+| `setSurvicateVisitorTraits( traits )` | Sets visitor traits (e.g. email) on the global `_sva` object.        |
+| `SURVICATE_WORKSPACE_ID`              | The WordPress.com Survicate workspace identifier.                    |
