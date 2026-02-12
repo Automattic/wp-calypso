@@ -1,4 +1,3 @@
-import { queryClient, dashboardSiteFiltersQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
 import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
@@ -91,41 +90,9 @@ const P2SitesDataViews = ( {
 			{
 				id: 'plan',
 				label: __( 'Plan' ),
-				getValue: ( { item } ) => item.plan?.product_name_en ?? '',
 				render: ( { item }: { item: SiteExcerptData } ) => (
 					<SitePlan site={ item } userId={ userId } />
 				),
-				getElements: async () => {
-					const { plan = [] } = await queryClient.ensureQueryData( {
-						...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
-						staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
-					} );
-
-					// A plan may have different product_slugs due to the period.
-					// However, a filter can only represent one value.
-					// As a result, it seems better to use the untranslated name as value for filters.
-					const elements = plan.reduce(
-						( acc, current ) => ( {
-							...acc,
-							[ current.name ]: current.name_en,
-						} ),
-						{}
-					);
-
-					return Object.entries( elements ).map( ( [ label, value ] ) => ( {
-						label,
-						value,
-					} ) );
-				},
-				filterBy: {
-					operators: [ 'isAny' ],
-				},
-				sort: ( a, b, direction ) => {
-					const planA = a.plan?.product_name_en ?? '';
-					const planB = b.plan?.product_name_en ?? '';
-
-					return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-				},
 				enableHiding: false,
 				enableSorting: true,
 			},
