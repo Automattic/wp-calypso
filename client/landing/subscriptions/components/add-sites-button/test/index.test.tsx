@@ -3,7 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import * as noticesActions from 'calypso/state/notices/actions';
