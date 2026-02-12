@@ -39,7 +39,6 @@ jest.mock(
 
 describe( 'GravatarProfileSection Notifications', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		( useDispatch as jest.Mock ).mockReturnValue( {
 			createSuccessNotice: mockCreateSuccessNotice,
 			createErrorNotice: mockCreateErrorNotice,
