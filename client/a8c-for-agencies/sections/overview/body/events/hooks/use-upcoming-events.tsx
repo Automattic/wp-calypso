@@ -59,7 +59,7 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
-			...( ! shouldShowPressablePromoOffer
+			...( shouldShowPressablePromoOffer
 				? [
 						{
 							id: 'a4a-pressable-promo-offer-2026-01-29',
