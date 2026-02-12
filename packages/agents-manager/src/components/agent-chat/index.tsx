@@ -10,7 +10,7 @@ import {
 	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -18,7 +18,7 @@ import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
-import type { ImageUploadHook } from '../../utils/load-external-providers';
+import type { UseImageUploadResult } from '../../utils/load-external-providers';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -63,7 +63,8 @@ interface AgentChatProps {
 	onInputChange?: ( value: string ) => void;
 	/** Whether to render the floating chat in compact mode. */
 	isCompactMode?: boolean;
-	useImageUpload?: ImageUploadHook;
+	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
+	imageUpload?: UseImageUploadResult;
 }
 
 export default function AgentChat( {
@@ -88,17 +89,13 @@ export default function AgentChat( {
 	inputValue,
 	onInputChange,
 	isCompactMode = false,
-	useImageUpload,
+	imageUpload,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-
-	const imageUpload = useImageUpload?.();
-	const pendingImages = imageUpload?.pendingImages || [];
-	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
 
 	const messageRenderer = useMemo(
 		() =>
@@ -116,45 +113,6 @@ export default function AgentChat( {
 		floatingChatState = 'compact';
 	}
 
-	const onSubmitHandler = useCallback(
-		async ( message: string ) => {
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
-				try {
-					// Upload files to WordPress media library
-					const mediaObjects = await uploadImagesToWordPress();
-
-					// Create image data objects with full metadata including attachment ID
-					const imageData = mediaObjects.map( ( media ) => ( {
-						url: media.url,
-						metadata: {
-							id: media.id, // WordPress attachment ID
-							title: media.title,
-							fileName: media.fileName,
-							fileType: media.fileType,
-							fileSize: media.fileSize,
-							dimensions: media.dimensions,
-							uploadDate: media.uploadDate,
-							alt: media.alt,
-							caption: media.caption,
-						},
-					} ) );
-
-					// Send message with images using agenttic's imageUrls option
-					// FileParts will be automatically persisted in conversation history with metadata
-					await onSubmit( message, { imageUrls: imageData } );
-				} catch ( uploadError ) {
-					throw new Error(
-						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
-					);
-				}
-			} else {
-				// No images, just send normally
-				onSubmit( message );
-			}
-		},
-		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
-	);
-
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
@@ -163,7 +121,7 @@ export default function AgentChat( {
 			messages={ messages }
 			isProcessing={ isProcessing }
 			error={ error }
-			onSubmit={ onSubmitHandler }
+			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
