@@ -17,6 +17,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';
 import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
+import useCanTagSitesForCommission from '../../hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
@@ -28,6 +29,7 @@ export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
+	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
 
 	const title = translate( 'Migrations: Commissions' );
 
@@ -55,17 +57,28 @@ export default function MigrationsCommissions() {
 		}
 
 		return showEmptyState ? (
-			<MigrationsCommissionsEmptyState setShowAddSitesModal={ setShowAddSitesModal } />
+			<MigrationsCommissionsEmptyState
+				setShowAddSitesModal={ setShowAddSitesModal }
+				canTagSitesForCommission={ canTagSitesForCommission }
+			/>
 		) : (
 			<div className="migrations-commissions__content">
 				<MigrationsConsolidatedCommissions items={ taggedSites } />
 				<MigrationsCommissionsList
 					items={ taggedSites }
 					fetchMigratedSites={ fetchMigratedSites }
+					migrationTags={ migrationTags }
 				/>
 			</div>
 		);
-	}, [ isLoading, showEmptyState, taggedSites, setShowAddSitesModal, fetchMigratedSites ] );
+	}, [
+		isLoading,
+		showEmptyState,
+		canTagSitesForCommission,
+		taggedSites,
+		fetchMigratedSites,
+		migrationTags,
+	] );
 
 	return (
 		<Layout
@@ -92,9 +105,11 @@ export default function MigrationsCommissions() {
 					/>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-						<Button variant="primary" onClick={ onTagSitesClick }>
-							{ translate( 'Tag sites for commission' ) }
-						</Button>
+						{ canTagSitesForCommission && (
+							<Button variant="primary" onClick={ onTagSitesClick }>
+								{ translate( 'Tag sites for commission' ) }
+							</Button>
+						) }
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
@@ -107,6 +122,7 @@ export default function MigrationsCommissions() {
 							onClose={ () => setShowAddSitesModal( false ) }
 							taggedSites={ taggedSites }
 							fetchMigratedSites={ fetchMigratedSites }
+							migrationTags={ migrationTags }
 						/>
 					) }
 				</>
