@@ -25,14 +25,15 @@ const getHeadingSubText = ( {
 		return null;
 	}
 
-	const tosOwner = isFromPassport ? 'WordPress.com’s' : translate( 'our' );
+	const tosOwner = isFromPassport ? 'WordPress.com\u2019s' : translate( 'our' );
+	const privacyOwner = isFromPassport ? translate( 'their' ) : translate( 'our' );
 
 	const tos = (
 		<span className="wp-login__one-login-layout-tos">
 			{ translate(
-				'By continuing with any of the options below, you agree to %(tosOwner)s {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				'By continuing with any of the options below, you agree to %(tosOwner)s {{tosLink}}Terms of Service{{/tosLink}} and have read %(privacyOwner)s {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				{
-					args: { tosOwner },
+					args: { tosOwner, privacyOwner },
 					components: {
 						tosLink: (
 							<a
