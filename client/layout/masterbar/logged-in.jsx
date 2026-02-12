@@ -82,6 +82,7 @@ class MasterbarLoggedIn extends Component {
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
+		isCIABSite: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -813,15 +814,16 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
+		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon, isCIABSite } =
+			this.props;
 
-		// Hide the masterbar entirely during the checkout pending state
-		if ( isCheckoutPending ) {
+		// Hide the masterbar entirely during the checkout pending state for CIAB flows
+		if ( isCheckoutPending && isCIABSite ) {
 			return <EmptyMasterbar />;
 		}
 
 		// Checkout flow uses it's own version of the masterbar
-		if ( isCheckout || isCheckoutFailed ) {
+		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 
@@ -904,6 +906,7 @@ export default connect(
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
 			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
+			isCIABSite: site?.is_garden && site.garden_name === 'commerce',
 		};
 	},
 	{

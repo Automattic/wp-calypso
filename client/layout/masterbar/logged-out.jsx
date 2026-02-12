@@ -25,6 +25,7 @@ class MasterbarLoggedOut extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
+		isCIABSite: PropTypes.bool,
 
 		// Connected props
 		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -233,14 +234,15 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName, isCIABSite } =
+			this.props;
 
-		// Hide the masterbar entirely during the checkout pending state
-		if ( isCheckoutPending ) {
+		// Hide the masterbar entirely during the checkout pending state for CIAB flows
+		if ( isCheckoutPending && isCIABSite ) {
 			return <EmptyMasterbar />;
 		}
 
-		if ( isCheckout || isCheckoutFailed ) {
+		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
