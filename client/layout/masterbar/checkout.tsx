@@ -108,7 +108,11 @@ const CheckoutMasterbar = ( {
 				{ checkoutType === 'passport' && <PassportLogo className="masterbar__passport-wordmark" /> }
 				{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
 				{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
-				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
+				{ checkoutType !== 'woo-hosted' && (
+					<span className="masterbar__secure-checkout-text">
+						{ translate( 'Secure checkout' ) }
+					</span>
+				) }
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
 			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }

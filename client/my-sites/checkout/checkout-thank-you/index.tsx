@@ -63,7 +63,12 @@ import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
-import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteHomeUrl,
+	getSiteSlug,
+	getSite,
+	isCommerceGardenSite,
+} from 'calypso/state/sites/selectors';
 import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -132,6 +137,7 @@ export interface CheckoutThankYouConnectedProps {
 	site: SiteDetails | null | undefined;
 	siteDomains: ResponseDomain[] | null | undefined;
 	isGravatarDomain: boolean;
+	isCommerceGarden: boolean;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
@@ -495,7 +501,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	getMasterBar = () => {
-		const { translate, isGravatarDomain } = this.props;
+		const { translate, isGravatarDomain, isCommerceGarden } = this.props;
 		const purchases = getPurchases( this.props );
 		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
 
@@ -509,6 +515,7 @@ export class CheckoutThankYou extends Component<
 				canGoBack={ !! siteId && ! wasEcommercePlanPurchased } // Back button is hidden for E-Commcerce Plans as a workaround to avoid taking users back to the loading page.
 				showContact
 				isGravatarDomain={ isGravatarDomain }
+				hideLogo={ isCommerceGarden }
 			/>
 		);
 	};
@@ -739,6 +746,7 @@ export default connect(
 			site: siteId ? getSite( state, siteId ) : null,
 			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
+			isCommerceGarden: isCommerceGardenSite( state, siteId ),
 		};
 	},
 	{

@@ -13,6 +13,7 @@ const MasterbarStyled = ( {
 	contact = <DefaultMasterbarContact />,
 	showContact = true,
 	isGravatarDomain = false,
+	hideLogo = false,
 }: {
 	onClick?: () => void;
 	backText?: string;
@@ -20,6 +21,7 @@ const MasterbarStyled = ( {
 	contact?: JSX.Element | null;
 	showContact?: boolean;
 	isGravatarDomain?: boolean;
+	hideLogo?: boolean;
 } ) => (
 	<Masterbar className="checkout-thank-you__masterbar">
 		<Global
@@ -29,11 +31,12 @@ const MasterbarStyled = ( {
 				}
 			` }
 		/>
-		{ isGravatarDomain ? (
-			<GravatarTextLogo />
-		) : (
-			<WordPressLogo className="checkout-thank-you__logo" size={ 24 } />
-		) }
+		{ ! hideLogo &&
+			( isGravatarDomain ? (
+				<GravatarTextLogo />
+			) : (
+				<WordPressLogo className="checkout-thank-you__logo" size={ 24 } />
+			) ) }
 		{ canGoBack && backText && onClick && (
 			<Item
 				icon="chevron-left"
