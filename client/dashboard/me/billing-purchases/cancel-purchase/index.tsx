@@ -1023,7 +1023,7 @@ export default function CancelPurchase() {
 		} );
 
 		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
-			cancelPurchaseSurveyCompleted( purchase.ID );
+			cancelPurchaseSurveyCompleted( purchase.ID )();
 		}
 
 		if ( onSurveyComplete ) {
