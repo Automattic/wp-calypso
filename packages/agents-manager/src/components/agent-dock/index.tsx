@@ -134,10 +134,11 @@ export default function AgentDock( {
 		const isNewChat = isOrcChatView && ! state?.sessionId && ! state?.shouldInitNewChat;
 		// The server generates the session ID after the first agent reply
 		const isFirstServerMsg = messages.length === 2;
+		const sessionId = getStoredSessionId();
 
 		// Only save the route once for a new chat
-		if ( isNewChat && isFirstServerMsg ) {
-			saveCurrentChatRoute( getStoredSessionId() );
+		if ( isNewChat && isFirstServerMsg && sessionId ) {
+			saveCurrentChatRoute( sessionId );
 		}
 	}, [ isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
 

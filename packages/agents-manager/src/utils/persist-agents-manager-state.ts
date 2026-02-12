@@ -3,7 +3,6 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 /**
  * Persists agents manager state to the server.
- * Uses wpcom API on WordPress.com, or apiFetch (REST API) on Jetpack sites.
  */
 export function persistAgentsManagerState( data: Record< string, unknown > ): void {
 	if ( canAccessWpcomApis() ) {
