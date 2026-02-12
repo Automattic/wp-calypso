@@ -817,8 +817,8 @@ class MasterbarLoggedIn extends Component {
 		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon, isCIABSite } =
 			this.props;
 
-		// Hide the masterbar entirely during checkout and pending states for CIAB flows
-		if ( ( isCheckout || isCheckoutPending ) && isCIABSite ) {
+		// Hide the masterbar entirely during the pending state for CIAB flows
+		if ( isCheckoutPending && isCIABSite ) {
 			return <EmptyMasterbar />;
 		}
 
