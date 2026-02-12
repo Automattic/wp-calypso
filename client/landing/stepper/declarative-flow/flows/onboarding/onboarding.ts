@@ -4,6 +4,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -77,6 +78,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const location = useLocation();
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -276,7 +278,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 				}
 				case 'playground': {
-					const backTo = window.location.pathname + window.location.search;
+					const backTo = location.pathname + location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
 					);
