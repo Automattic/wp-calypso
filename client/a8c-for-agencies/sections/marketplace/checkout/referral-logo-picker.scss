@@ -1,106 +1,86 @@
-.referral-logo-picker {
+.logo-upload-section {
 	margin-block-end: 24px;
 
-	.components-base-control__help {
-		margin-block-start: 4px;
-		margin-block-end: 16px;
-	}
-
-	.referral-logo-picker__options {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		margin-block-start: 8px;
-	}
-
-	.referral-logo-picker__option {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.referral-logo-picker__radio-label {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		gap: 8px;
-		margin: 0;
-	}
-
-	.referral-logo-picker__radio-input {
-		margin: 0;
-		cursor: pointer;
-	}
-
-	.referral-logo-picker__radio-text {
+	h3 {
+		margin-block-start: 0;
+		margin-block-end: 8px;
 		font-size: 14px;
-		line-height: 1.4;
+		font-weight: 600;
+		color: var(--color-text-primary);
 	}
 
-	.referral-logo-picker__logo-display {
-		margin-block-start: 12px;
-		margin-inline-start: 28px;
-		padding: 16px;
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 4px;
-		background-color: var(--color-surface);
-		max-width: 200px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		img {
-			max-width: 100%;
-			max-height: 60px;
-			height: auto;
-			display: block;
-		}
+	.logo-upload-description {
+		margin-block-start: 0;
+		margin-block-end: 16px;
+		font-size: 13px;
+		color: var(--color-text-secondary);
 	}
 
-	.referral-logo-picker__upload-section {
-		margin-block-start: 12px;
-		margin-inline-start: 28px;
+	.logo-upload-row {
 		display: flex;
-		flex-direction: column;
-		gap: 8px;
+		gap: 16px;
 		align-items: flex-start;
 	}
 
-	.referral-logo-picker__file-input {
-		display: none;
-	}
-
-	.referral-logo-picker__upload-placeholder {
-		padding: 24px;
+	.logo-placeholder {
+		flex-shrink: 0;
+		width: 120px;
+		height: 120px;
 		border: 2px dashed var(--color-neutral-20);
 		border-radius: 4px;
 		background-color: var(--color-neutral-0);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 200px;
-		min-height: 100px;
+		cursor: pointer;
+		transition: border-color 0.2s ease, background-color 0.2s ease;
+		padding: 8px;
+
+		&:hover {
+			border-color: var(--color-accent);
+			background-color: var(--color-neutral-5);
+		}
+
+		&:focus {
+			outline: 2px solid var(--color-accent);
+			outline-offset: 2px;
+		}
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		svg {
+			width: 32px;
+			height: 32px;
+			color: var(--color-neutral-40);
+		}
 	}
 
-	.referral-logo-picker__upload-icon {
-		color: var(--color-neutral-40);
+	.logo-upload-details {
+		flex: 1;
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		flex-direction: column;
+		gap: 8px;
+		align-items: flex-start;
 	}
 
-	.referral-logo-picker__upload-hint {
+	.help-text {
 		margin: 0;
-		color: var(--color-text-secondary);
 		font-size: 12px;
 		line-height: 1.5;
+		color: var(--color-text-secondary);
 	}
 
-	.referral-logo-picker__error {
+	.logo-upload-error {
 		padding: 8px 12px;
 		background-color: var(--color-error-5);
 		color: var(--color-error-50);
 		border-radius: 4px;
 		font-size: 13px;
+		margin-block-start: 4px;
 	}
 }
 

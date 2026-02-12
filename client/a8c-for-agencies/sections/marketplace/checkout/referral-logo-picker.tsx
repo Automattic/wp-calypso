@@ -1,6 +1,8 @@
-import { Button, BaseControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { upload, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
+import FormFileUpload from 'calypso/components/forms/form-file-upload';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -9,8 +11,6 @@ interface ReferralLogoPickerProps {
 	selectedLogoUrl: string | null;
 	selectedLogoFile: File | null;
 }
-
-type LogoSelectionType = 'profile' | 'custom';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [ 'image/png', 'image/svg+xml' ];
@@ -22,35 +22,13 @@ function ReferralLogoPicker( {
 }: ReferralLogoPickerProps ) {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
-	const fileInputRef = useRef< HTMLInputElement >( null );
 
 	const profileLogoUrl = agency?.profile?.company_details?.logo_url || '';
-	const hasProfileLogo = !! profileLogoUrl;
-
-	const [ selectionType, setSelectionType ] = useState< LogoSelectionType >(
-		hasProfileLogo ? 'profile' : 'custom'
-	);
 	const [ validationError, setValidationError ] = useState< string | null >( null );
 	const [ previewUrl, setPreviewUrl ] = useState< string | null >( null );
 
-	const handleSelectionChange = useCallback(
-		( type: LogoSelectionType ) => {
-			setSelectionType( type );
-			setValidationError( null );
-
-			if ( type === 'profile' && hasProfileLogo ) {
-				// Use profile logo
-				setPreviewUrl( null );
-				onLogoChange( profileLogoUrl, null );
-			} else {
-				// Custom logo selected but no file yet
-				if ( ! selectedLogoFile ) {
-					onLogoChange( null, null );
-				}
-			}
-		},
-		[ hasProfileLogo, profileLogoUrl, onLogoChange, selectedLogoFile ]
-	);
+	const displayUrl = previewUrl || selectedLogoUrl || profileLogoUrl;
+	const hasCustomLogo = !! ( previewUrl || selectedLogoUrl );
 
 	const validateFile = useCallback(
 		( file: File ): string | null => {
@@ -67,8 +45,8 @@ function ReferralLogoPicker( {
 		[ translate ]
 	);
 
-	const handleFileChange = useCallback(
-		( event: ChangeEvent< HTMLInputElement > ) => {
+	const handleFileSelect = useCallback(
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const file = event.target.files?.[ 0 ];
 			if ( ! file ) {
 				return;
@@ -92,121 +70,69 @@ function ReferralLogoPicker( {
 		[ validateFile, onLogoChange ]
 	);
 
-	const handleSelectFileClick = useCallback( () => {
-		fileInputRef.current?.click();
-	}, [] );
-
-	const displayLogoUrl = selectionType === 'profile' ? profileLogoUrl : previewUrl || selectedLogoUrl;
+	const handleRevert = useCallback( () => {
+		setPreviewUrl( null );
+		setValidationError( null );
+		onLogoChange( profileLogoUrl || null, null );
+	}, [ onLogoChange, profileLogoUrl ] );
 
 	return (
-		<div className="referral-logo-picker">
-			<BaseControl
-				label={ translate( 'Your logo' ) }
-				id="referral-logo-picker"
-				help={ translate( 'Build trust and show this referral comes from you.' ) }
-			>
-				<div className="referral-logo-picker__options">
-					{ hasProfileLogo && (
-						<div className="referral-logo-picker__option">
-							<label className="referral-logo-picker__radio-label">
-								<input
-									type="radio"
-									name="logo-selection"
-									value="profile"
-									checked={ selectionType === 'profile' }
-									onChange={ () => handleSelectionChange( 'profile' ) }
-									className="referral-logo-picker__radio-input"
-								/>
-								<span className="referral-logo-picker__radio-text">
-									{ translate( 'Use profile logo' ) }
-								</span>
-							</label>
-							{ selectionType === 'profile' && displayLogoUrl && (
-								<div className="referral-logo-picker__logo-display">
-									<img src={ displayLogoUrl } alt={ translate( 'Profile logo' ) } />
+		<FormFileUpload
+			accept={ ALLOWED_FILE_TYPES.join( ',' ) }
+			onChange={ handleFileSelect }
+			render={ ( { openFileDialog } ) => (
+				<div className="logo-upload-section">
+					<h3>{ translate( 'Your logo' ) }</h3>
+					<p className="logo-upload-description">
+						{ translate( 'Builds trust and shows this referral comes from you.' ) }
+					</p>
+
+					<div className="logo-upload-row">
+						<button
+							type="button"
+							className="logo-placeholder"
+							onClick={ openFileDialog }
+							aria-label={ translate( 'Upload logo' ) }
+						>
+							{ displayUrl ? (
+								<img src={ displayUrl } alt={ translate( 'Logo preview' ) } />
+							) : (
+								<Icon icon={ upload } />
+							) }
+						</button>
+
+						<div className="logo-upload-details">
+							<Button variant="secondary" onClick={ openFileDialog }>
+								{ displayUrl ? translate( 'Replace file' ) : translate( 'Select file' ) }
+							</Button>
+
+							<p className="help-text">
+								{ translate( 'Upload your logo. PNG or SVG. Max 5 MB.' ) }
+								<br />
+								{ translate( 'Transparent background works best.' ) }
+							</p>
+
+							{ hasCustomLogo && (
+								<>
+									<p className="help-text">
+										{ translate( 'Replacing the logo only affects this referral.' ) }
+									</p>
+									<Button variant="link" onClick={ handleRevert }>
+										{ translate( 'Revert to profile logo' ) }
+									</Button>
+								</>
+							) }
+
+							{ validationError && (
+								<div className="logo-upload-error" role="alert">
+									{ validationError }
 								</div>
 							) }
 						</div>
-					) }
-
-					<div className="referral-logo-picker__option">
-						<label className="referral-logo-picker__radio-label">
-							<input
-								type="radio"
-								name="logo-selection"
-								value="custom"
-								checked={ selectionType === 'custom' }
-								onChange={ () => handleSelectionChange( 'custom' ) }
-								className="referral-logo-picker__radio-input"
-							/>
-							<span className="referral-logo-picker__radio-text">
-								{ translate( 'Use a different logo for this referral' ) }
-							</span>
-						</label>
-
-						{ selectionType === 'custom' && (
-							<div className="referral-logo-picker__upload-section">
-								<input
-									ref={ fileInputRef }
-									type="file"
-									accept={ ALLOWED_FILE_TYPES.join( ',' ) }
-									onChange={ handleFileChange }
-									className="referral-logo-picker__file-input"
-								/>
-
-								{ displayLogoUrl ? (
-									<div className="referral-logo-picker__logo-display">
-										<img src={ displayLogoUrl } alt={ translate( 'Selected logo' ) } />
-									</div>
-								) : (
-									<div className="referral-logo-picker__upload-placeholder">
-										<span className="referral-logo-picker__upload-icon">
-											<svg
-												width="24"
-												height="24"
-												viewBox="0 0 24 24"
-												fill="none"
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<path
-													d="M12 4L12 16M12 4L8 8M12 4L16 8"
-													stroke="currentColor"
-													strokeWidth="2"
-													strokeLinecap="round"
-													strokeLinejoin="round"
-												/>
-												<path
-													d="M4 17V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17"
-													stroke="currentColor"
-													strokeWidth="2"
-													strokeLinecap="round"
-												/>
-											</svg>
-										</span>
-									</div>
-								) }
-
-								<Button variant="secondary" onClick={ handleSelectFileClick }>
-									{ translate( 'Select file' ) }
-								</Button>
-
-								<p className="referral-logo-picker__upload-hint">
-									{ translate(
-										'Upload your logo: PNG or SVG. Max 5 MB. Transparent background works best.'
-									) }
-								</p>
-
-								{ validationError && (
-									<div className="referral-logo-picker__error" role="alert">
-										{ validationError }
-									</div>
-								) }
-							</div>
-						) }
 					</div>
 				</div>
-			</BaseControl>
-		</div>
+			) }
+		/>
 	);
 }
 
