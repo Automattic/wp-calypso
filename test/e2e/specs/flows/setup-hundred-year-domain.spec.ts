@@ -23,14 +23,28 @@ test.describe(
 			componentDomainSearch,
 			helperData,
 			pageCartCheckout,
+			pageLogin,
 			pageUserSignUp,
 		} ) => {
 			const testUser = helperData.getNewTestUser();
 			let newUserDetails: NewUserResponse;
 			let selectedDomain: string;
 
-			await test.step( 'When I enter the 100-year domain flow', async function () {
+			await test.step( 'When I navigate to the Login page', async function () {
 				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
+				await pageLogin.visit();
+			} );
+
+			await test.step( 'And I click on button to create a new account', async function () {
+				await pageLogin.clickCreateNewAccount();
+			} );
+
+			await test.step( 'And I create the account', async function () {
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				accountsToCleanup.push( { testUser, newUserDetails } );
+			} );
+
+			await test.step( 'And I enter the 100-year domain flow', async function () {
 				// Use the flow URL (marketing entry is wordpress.com/100-year-domain/#search)
 				await page.goto( helperData.getCalypsoURL( '/setup/hundred-year-domain' ) );
 			} );
@@ -41,11 +55,6 @@ test.describe(
 
 			await test.step( 'And I pick the first .blog domain in the list', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion( false );
-			} );
-
-			await test.step( 'And I create the account', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-				accountsToCleanup.push( { testUser, newUserDetails } );
 			} );
 
 			await test.step( 'And I pay at checkout', async function () {
