@@ -151,7 +151,9 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	const handleStop = isAnnotationSaving ? undefined : agentChatProps.abortCurrentRequest;
+	// Disable stop button during upload phase to prevent orphan images
+	const isStopDisabled =
+		agentChatProps.currentPhase === 'uploading' || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -169,7 +171,7 @@ function ImageStudioAgentChat( {
 			placeholder={ placeholder }
 			className="image-studio-agent agenttic"
 			onSubmit={ handleSubmit }
-			onStop={ handleStop }
+			onStop={ agentChatProps.abortCurrentRequest }
 			isProcessing={ isProcessing }
 			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
 			inputValue={ inputValue }
@@ -181,7 +183,9 @@ function ImageStudioAgentChat( {
 				<AgentUI.Footer>
 					{ suggestionsComponent }
 					<AgentUI.Notice />
-					<AgentUI.Input />
+					<AgentUI.Input
+						disabled={ isStopDisabled ? true : undefined }
+					/>
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
 						<StylePicker disabled={ isProcessing } />
