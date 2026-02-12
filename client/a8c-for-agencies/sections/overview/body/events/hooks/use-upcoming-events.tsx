@@ -69,10 +69,10 @@ export const useUpcomingEvents = () => {
 							},
 							displayDate: ' ', // Empty string to hide the date
 							title: translate(
-								'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer {{br/}}Just Got Better 🎉',
+								'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer Just{{nbsp/}}Got{{nbsp/}}Better 🎉',
 								{
 									components: {
-										br: <br />,
+										nbsp: <>&nbsp;</>,
 									},
 								}
 							),
