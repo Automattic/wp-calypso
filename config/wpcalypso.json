@@ -38,6 +38,7 @@
 		"checkout/vgs-ebanx": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
+		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
 		"dashboard/v2/paginated-site-list": true,

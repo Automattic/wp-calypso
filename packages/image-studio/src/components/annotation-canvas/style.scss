@@ -1,0 +1,19 @@
+.annotation-canvas {
+	position: absolute;
+	pointer-events: none;
+}
+
+.annotation-canvas-committed {
+	z-index: 10;
+	pointer-events: none;
+}
+
+.annotation-canvas-live {
+	z-index: 11;
+	touch-action: none;
+	pointer-events: auto;
+}
+
+.annotation-canvas-pen {
+	cursor: crosshair;
+}

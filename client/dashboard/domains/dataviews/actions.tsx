@@ -18,9 +18,10 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { getCurrentDashboard } from '../../app/routing';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -258,7 +259,10 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
 					return (
-						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+						!! site &&
+						! site?.is_wpcom_atomic &&
+						! site?.is_garden &&
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
 					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {

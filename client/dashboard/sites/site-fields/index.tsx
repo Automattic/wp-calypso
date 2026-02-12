@@ -65,13 +65,22 @@ export const titleFieldTextOverflowStyles = {
 	whiteSpace: 'nowrap',
 } as const;
 
-export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+export function SiteLink( {
+	site,
+	expanded,
+	...props
+}: ComponentProps< typeof Link > & { site: Site; expanded?: boolean } ) {
 	return (
 		<Link
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+			style={ {
+				width: expanded ? '100%' : 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				...props.style,
+			} }
 		/>
 	);
 }

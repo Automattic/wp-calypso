@@ -45,9 +45,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
     <div
       class="jetpack-connect__authorize-form feature-flag-woocommerce-core-profiler-passwordless-auth"
     >
-      <div
-        class="jetpack-connect__logged-in-form"
-      >
+      <div>
         <div>
           <header
             class="formatted-header"

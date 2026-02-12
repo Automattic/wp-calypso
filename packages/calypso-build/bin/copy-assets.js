@@ -17,6 +17,7 @@ const copyOptions = {
 		'**/*.jpg',
 		'**/*.jpeg',
 		'**/*.png',
+		'**/*.webp',
 		'**/*.svg',
 		'**/*.scss',
 		'!**/test/**',

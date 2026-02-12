@@ -37,7 +37,7 @@ export const DEFAULT_PER_PAGE = 12;
 
 const DEFAULT_VIEW: Partial< View > = {
 	perPage: DEFAULT_PER_PAGE,
-	fields: [ 'visibility', 'visitors', 'subscribers_count', 'plan' ],
+	fields: [ 'visibility', 'plan' ],
 	sort: {
 		field: 'name',
 		direction: 'asc' as SortDirection,

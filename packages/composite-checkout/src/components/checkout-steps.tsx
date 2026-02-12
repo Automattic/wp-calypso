@@ -65,6 +65,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		totalSteps: 0,
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	},
 	actions: {
 		makeStepActive: noop,
@@ -98,6 +99,7 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepCompleteStatus: {},
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	};
 }
 
@@ -164,10 +166,12 @@ function createCheckoutStepGroupActions(
 	const setStepCompleteCallback = (
 		stepNumber: number,
 		stepId: string,
-		callback: StepCompleteCallback
+		callback: StepCompleteCallback,
+		skipValidationOnSubmit?: boolean
 	) => {
 		state.stepIdMap[ stepId ] = stepNumber;
 		state.stepCompleteCallbackMap[ stepNumber ] = callback;
+		state.stepSkipValidationOnSubmitMap[ stepNumber ] = skipValidationOnSubmit ?? false;
 	};
 
 	const getStepCompleteCallback = ( stepNumber: number ) => {
@@ -487,6 +491,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
+	skipValidationOnSubmit,
 	onPageLoadError,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
@@ -520,7 +525,7 @@ export const CheckoutStep = ( {
 		setFormReady();
 		return completeResult;
 	};
-	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep, skipValidationOnSubmit );
 
 	const classNames = [
 		'checkout-step',
@@ -668,8 +673,9 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 } ) {
-	const { state } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
+	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -682,6 +688,48 @@ export function CheckoutFormSubmit( {
 	const submitWrapperRef = useCustomPropertyForHeight< HTMLDivElement >(
 		customPropertyForSubmitButtonHeight
 	);
+
+	// Wrap validateForm to first validate any active step before submission
+	const wrappedValidateForm = useCallback( async () => {
+		// Only validate if there's an actual active step (within the range of registered steps)
+		const hasActiveStep = activeStepNumber > 0 && activeStepNumber <= totalSteps;
+
+		if ( hasActiveStep ) {
+			// Check if this step should skip validation on submit
+			const shouldSkipValidation = stepSkipValidationOnSubmitMap[ activeStepNumber ];
+
+			if ( ! shouldSkipValidation ) {
+				// Validate the active step (whether it's complete or incomplete)
+				debug( `Validating active step ${ activeStepNumber } before submission` );
+				const stepCompleteCallback = getStepCompleteCallback( activeStepNumber );
+				const isStepComplete = await stepCompleteCallback();
+				debug( `Active step ${ activeStepNumber } validation result: ${ isStepComplete }` );
+
+				if ( ! isStepComplete ) {
+					// Step validation failed, don't proceed with submission
+					return false;
+				}
+
+				// Step validated successfully, mark it as complete
+				setStepCompleteStatus( { [ activeStepNumber ]: true } );
+			}
+		}
+
+		// Now run the payment method validation if provided
+		if ( validateForm ) {
+			return await validateForm();
+		}
+
+		return true;
+	}, [
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		stepSkipValidationOnSubmitMap,
+		getStepCompleteCallback,
+		setStepCompleteStatus,
+		validateForm,
+	] );
 
 	const isDisabled = ( () => {
 		if ( disableSubmitButton ) {
@@ -704,7 +752,7 @@ export function CheckoutFormSubmit( {
 			{ submitButtonHeader || null }
 			{ submitButton || (
 				<CheckoutSubmitButton
-					validateForm={ validateForm }
+					validateForm={ wrappedValidateForm }
 					disabled={ isDisabled }
 					onLoadError={ onSubmitButtonLoadError }
 				/>

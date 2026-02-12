@@ -23,6 +23,21 @@ function getIndividualConfig( options = {} ) {
 			filename: '[name].min.js',
 			library: 'agentsManager',
 		},
+		module: {
+			...webpackConfig.module,
+			rules: [
+				...( webpackConfig.module?.rules || [] ),
+				// Handle image assets from image-studio package
+				{
+					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
+					include: /image-studio/,
+					type: 'asset/resource',
+					generator: {
+						filename: 'images/[name].[contenthash:8][ext]',
+					},
+				},
+			],
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
@@ -73,6 +88,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	return [
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
+		getIndividualConfig( { env, argv, name: 'image-studio' } ),
 	];
 }
 

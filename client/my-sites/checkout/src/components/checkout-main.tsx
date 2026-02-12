@@ -34,6 +34,7 @@ import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/use-create-existing-paypal-ppcp';
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
@@ -44,6 +45,7 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
+import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
@@ -361,7 +363,7 @@ export default function CheckoutMain( {
 		error: storedCardsError,
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
-		type: 'card',
+		type: 'all',
 		isForBusiness,
 	} );
 
@@ -544,6 +546,8 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
+			'existing-paypal-ppcp': ( transactionData: unknown ) =>
+				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
@@ -939,9 +943,19 @@ function getInitiallySelectedPaymentMethodId(
 	if ( ! firstRenewalWithPaymentMethod ) {
 		return undefined;
 	}
-	const matchingCheckoutPaymentMethod = paymentMethods.find(
+	// Check for existing card first
+	let matchingCheckoutPaymentMethod = paymentMethods.find(
 		( method ) =>
 			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
+	);
+	if ( matchingCheckoutPaymentMethod ) {
+		return matchingCheckoutPaymentMethod.id;
+	}
+	// Check for existing PayPal PPCP
+	matchingCheckoutPaymentMethod = paymentMethods.find(
+		( method ) =>
+			method.id ===
+			`${ existingPayPalPPCPPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
 	);
 	if ( matchingCheckoutPaymentMethod ) {
 		return matchingCheckoutPaymentMethod.id;
