@@ -49,9 +49,12 @@ test.describe(
 			} );
 
 			await test.step( 'And I pay at checkout', async function () {
+				const registrarDetails = helperData.getTestDomainRegistrarDetails( testUser.email );
+				await pageCartCheckout.enterDomainRegistrarDetails( registrarDetails );
+
 				const paymentDetails = helperData.getTestPaymentDetails();
-				await pageCartCheckout.enterBillingDetails( paymentDetails );
 				await pageCartCheckout.enterPaymentDetails( paymentDetails );
+
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
