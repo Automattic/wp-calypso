@@ -10,16 +10,27 @@ declare global {
 	}
 }
 
-const VISITOR_TRAITS_DELAY_MS = 1000;
-
 /**
  * Sets Survicate visitor traits (e.g. email) on the global `_sva` object.
  * Includes a delay to allow the Survicate SDK to initialize after script load.
  */
 export function setSurvicateVisitorTraits( traits: { email: string } ): void {
-	setTimeout( () => {
+	window.addEventListener( 'SurvicateReady', function () {
 		if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
 			window._sva.setVisitorTraits( traits );
 		}
-	}, VISITOR_TRAITS_DELAY_MS );
+	} );
+}
+
+/**
+ * Adds a listener for the survey_closed event and destroys the visitor if the survey is closed.
+ */
+export function addSurvicateSurveyClosedListener(): void {
+	window.addEventListener( 'SurvicateReady', function () {
+		if ( typeof window._sva !== 'undefined' && window._sva?.addEventListener ) {
+			window._sva?.addEventListener( 'survey_closed', function () {
+				window._sva?.destroyVisitor?.();
+			} );
+		}
+	} );
 }
