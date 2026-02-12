@@ -17,11 +17,10 @@ const AddSitesButton = () => {
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
-	const trackClick = () => {
+	const handleClick = (
+		event: React.MouseEvent< HTMLButtonElement > | React.MouseEvent< HTMLAnchorElement >
+	) => {
 		recordTracksEvent( 'calypso_subscriptions_add_sites_button_click' );
-	};
-	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
-		trackClick();
 		if ( ! isEmailVerified ) {
 			event.preventDefault();
 			return dispatch(
@@ -32,6 +31,7 @@ const AddSitesButton = () => {
 				} )
 			);
 		}
+
 		if ( ! isDiscoverV3Enabled() ) {
 			event.preventDefault();
 			return setIsAddSitesModalVisible( true );
