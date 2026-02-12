@@ -530,7 +530,7 @@ export default function CheckoutMainContent( {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading />
+					<Step.Loading hideLogo={ isWooHostedCheckout } />
 				</>
 			);
 		}
