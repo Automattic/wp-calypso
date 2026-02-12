@@ -36,9 +36,9 @@
 /* MARKDOWN */
 
 .message p {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: 400;
-    line-height: var(--text-base--line-height);
+    line-height: var(--text-sm--line-height);
     text-wrap-style: pretty;
     margin-top: 0;
     margin-bottom: var(--spacing-3);
