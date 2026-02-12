@@ -1,0 +1,54 @@
+/**
+ * Canvas Controls Styles
+ *
+ * Styles for the thumbs up/down feedback buttons below the image
+ * Now uses MessageActions component for consistent styling
+ */
+
+.canvas-controls {
+	z-index: 100;
+	width: 100%;
+	color: #f0f0f0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	bottom: -4px;
+	transform: translateY(100%);
+}
+
+.canvas-controls__left,
+.canvas-controls__right {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.canvas-controls__nav-button {
+	background: transparent;
+	border: none;
+	color: #f0f0f0;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1;
+	transition: opacity 0.2s ease;
+	&:hover:not(:disabled) {
+		opacity: 0.8;
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+}
+
+.canvas-controls__nav-text {
+	color: #f0f0f0;
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.canvas-controls__revision-navigator {
+	display: flex;
+	align-items: center;
+}

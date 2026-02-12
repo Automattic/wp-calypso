@@ -6,6 +6,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
+import { getCiabDashboardBasePath } from './routing';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -16,7 +17,7 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	basePath: '/ciab',
+	basePath: getCiabDashboardBasePath( window.location.hostname ),
 	mainRoute: '/sites',
 	Logo: null,
 	supports: {

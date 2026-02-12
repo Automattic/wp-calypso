@@ -18,11 +18,11 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import {
-	DASHBOARD_SECTION_PATHS,
-	DASHBOARD_SECTION_DEFINITION,
-	DASHBOARD_CIAB_SECTION_DEFINITION,
-} from 'calypso/dashboard/section';
+import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
+import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { shouldHideWooHostedLogo } from 'calypso/document/utils/should-hide-woo-hosted-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -1093,8 +1093,8 @@ export default function pages() {
 		);
 	}
 
-	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
-	if ( calypsoEnv !== 'production' && config.isEnabled( 'dashboard/v2' ) ) {
+	// Multi-site Dashboard routing.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1105,62 +1105,18 @@ export default function pages() {
 				serverRender
 			);
 		};
-
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) => {
-				// Allow dashboard routes under my.localhost.
-				return req.get( 'host' ).startsWith( 'my.localhost' );
-			} );
+			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
+				isAllowedDotcomDashboardHostname( req.hostname )
+			);
 		} );
-
-		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			// Allow CIAB routes under my.localhost.
-			return req.get( 'host' ).startsWith( 'my.localhost' );
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
+				isAllowedCiabDashboardHostname( req.hostname )
+			);
 		} );
-
-		// Temporary support redirection for the /v2 route for backwards compatibility.
-		app.get( [ '/v2', '/v2/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path.slice(
-					'/v2'.length
-				) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path.slice( '/v2'.length ) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
-		} );
-
-		// Temporary support redirection for the /ciab route for backwards compatibility.
-		// TODO: Remove /ciab once we no longer need to support the old testing link.
-		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
+		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
+			return isAllowedDotcomDashboardHostname( req.hostname );
 		} );
 	}
 
@@ -1187,14 +1143,9 @@ export default function pages() {
 	// Register CSP report route
 	registerCspReportRoute( app );
 
-	// Multi-site Dashboard routing for my.wordpress.com.
+	// Multi-site Dashboard routing.
 	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
-		} );
-
-		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 		return app;
 	}
 

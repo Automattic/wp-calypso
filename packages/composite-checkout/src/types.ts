@@ -24,6 +24,7 @@ export interface CheckoutStepProps {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
+	skipValidationOnSubmit?: boolean;
 	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
@@ -291,6 +292,7 @@ export interface CheckoutStepGroupState {
 	stepCompleteStatus: CheckoutStepCompleteStatus;
 	stepIdMap: StepIdMap;
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
+	stepSkipValidationOnSubmitMap: Record< number, boolean >;
 }
 
 export interface CheckoutStepGroupActions {
@@ -303,7 +305,8 @@ export interface CheckoutStepGroupActions {
 	setStepCompleteCallback: (
 		stepNumber: number,
 		stepId: string,
-		callback: StepCompleteCallback
+		callback: StepCompleteCallback,
+		skipValidationOnSubmit?: boolean
 	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;

@@ -59,6 +59,5 @@ interface AgentsManagerActions {
  * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
-	__agentManager?: import('@automattic/agenttic-client').AgentManager;
 	__agentsManagerActions?: AgentsManagerActions;
 }
