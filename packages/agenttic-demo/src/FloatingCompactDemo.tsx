@@ -23,6 +23,7 @@ import {
 
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import MessageTester from './MessageTester';
 
 const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -54,6 +55,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 		clearSuggestions,
 		registerMessageActions,
 		addMessage,
+		loadMessages,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -301,6 +303,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				>
 					Pattern
 				</button>
+				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
 			</div>
 			<AgentUI
 				className={ `agenttic ${ currentTheme }` }

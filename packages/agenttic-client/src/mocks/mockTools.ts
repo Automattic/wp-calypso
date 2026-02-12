@@ -98,8 +98,8 @@ export const getClientTools = ( addMessage: ( message: any ) => void ) => {
 		executeTool: async (
 			toolId: string,
 			args: any,
-			messageId: string,
-			toolCallId: string
+			messageId?: string,
+			toolCallId?: string
 		) => {
 			logger( 'Executing tool: %s with args: %O', toolId, {
 				args,

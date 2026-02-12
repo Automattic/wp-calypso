@@ -1,5 +1,7 @@
 .agenttic {
 	.chart-block {
+		--jp-gray-80: var(--color-foreground);
+
 		margin: var(--spacing-1) 0;
 		position: relative;
 		width: 100%;

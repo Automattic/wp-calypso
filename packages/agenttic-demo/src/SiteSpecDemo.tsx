@@ -3,6 +3,7 @@ import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider } from '@automattic/agenttic-client';
 import { AgentUI } from '@automattic/agenttic-ui';
 import type { Suggestion } from '@automattic/agenttic-ui';
+import MessageTester from './MessageTester';
 import {
 	getClientContext,
 	getClientTools,
@@ -46,6 +47,7 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		suggestions,
 		clearSuggestions,
 		addMessage,
+		loadMessages,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -117,6 +119,19 @@ const SiteSpecDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 
 	return (
 		<>
+			<div
+				style={ {
+					position: 'fixed',
+					top: '0',
+					right: '0',
+					display: 'flex',
+					flexWrap: 'wrap',
+					gap: '2px',
+					zIndex: 10000,
+				} }
+			>
+				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
+			</div>
 			<style>
 				{ `
 				.site-spec-demo {

@@ -24,6 +24,7 @@ import {
 
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import MessageTester from './MessageTester';
 
 const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -59,6 +60,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 		clearSuggestions,
 		registerMessageActions,
 		addMessage,
+		loadMessages,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -356,6 +358,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					>
 						Pattern
 					</button>
+					<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
 					<button
 						onClick={ () => {
 							setManualThinkingMessage(
