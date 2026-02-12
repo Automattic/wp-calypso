@@ -35,13 +35,6 @@ const byProtectedTab =
 		return ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn;
 	};
 
-const byFeatureFlag = ( tab: Tab ): boolean => {
-	if ( ! isDiscoverV3Enabled() ) {
-		return true;
-	}
-	return [ ADD_NEW_TAB, REDDIT_TAB ].includes( tab.slug ) ? false : true;
-};
-
 const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
@@ -70,11 +63,15 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 				title: translate( 'Recommended' ),
 				path: '/discover/recommended',
 			},
-			{
-				slug: ADD_NEW_TAB,
-				title: translate( 'Add new' ),
-				path: '/discover/add-new',
-			},
+			...( ! isDiscoverV3Enabled()
+				? [
+						{
+							slug: ADD_NEW_TAB,
+							title: translate( 'Add new' ),
+							path: '/discover/add-new',
+						},
+				  ]
+				: [] ),
 			{
 				slug: FIRST_POSTS_TAB,
 				title: translate( 'First posts' ),
@@ -85,11 +82,15 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 				title: translate( 'Tags' ),
 				path: '/discover/tags?selectedTag=dailyprompt',
 			},
-			{
-				slug: REDDIT_TAB,
-				title: translate( 'Reddit' ),
-				path: '/discover/reddit',
-			},
+			...( ! isDiscoverV3Enabled()
+				? [
+						{
+							slug: REDDIT_TAB,
+							title: translate( 'Reddit' ),
+							path: '/discover/reddit',
+						},
+				  ]
+				: [] ),
 			{
 				slug: LATEST_TAB,
 				title: translate( 'Latest', {
@@ -99,13 +100,10 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 			},
 		];
 
-		return baseTabs
-			.filter( byProtectedTab( isLoggedIn ) )
-			.filter( byFeatureFlag )
-			.map( ( tab ) => ( {
-				...tab,
-				path: getLocalizedPath( tab.path ),
-			} ) );
+		return baseTabs.filter( byProtectedTab( isLoggedIn ) ).map( ( tab ) => ( {
+			...tab,
+			path: getLocalizedPath( tab.path ),
+		} ) );
 	}, [ isLoggedIn, currentLocale ] );
 
 	const selectedTabData = tabs.find( ( tab ) => tab.slug === selectedTab );
