@@ -31,6 +31,9 @@ describe( 'DiscoverNavigation', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'First posts' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Tags' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Latest' } ) ).toBeVisible();
+
+		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'when the feature discover v3 is disabled', () => {
