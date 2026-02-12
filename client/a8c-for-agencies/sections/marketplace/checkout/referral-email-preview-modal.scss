@@ -1,20 +1,13 @@
 .referral-email-preview-modal {
-	.referral-email-preview-modal__content {
-		padding: 24px;
-		max-width: 700px;
-	}
+	max-width: 700px;
 
-	.referral-email-preview-modal__title {
-		margin-block-start: 0;
-		margin-block-end: 8px;
-		font-size: 24px;
-		font-weight: 600;
-		color: var(--color-text-primary);
+	.referral-email-preview-modal__content {
+		padding: 16px 0;
 	}
 
 	.referral-email-preview-modal__subtitle {
 		margin-block-start: 0;
-		margin-block-end: 24px;
+		margin-block-end: 20px;
 		color: var(--color-text-secondary);
 		font-size: 14px;
 	}
@@ -24,6 +17,7 @@
 		border-radius: 4px;
 		background-color: var(--color-surface);
 		overflow: hidden;
+		margin-block-end: 20px;
 	}
 
 	.referral-email-preview-modal__email-header {
@@ -106,5 +100,12 @@
 		font-size: 12px;
 		color: var(--color-text-secondary);
 		line-height: 1.6;
+	}
+
+	.referral-email-preview-modal__actions {
+		display: flex;
+		justify-content: flex-end;
+		padding-block-start: 16px;
+		border-top: 1px solid var(--color-neutral-10);
 	}
 }
