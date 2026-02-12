@@ -1,6 +1,6 @@
 .container {
-    font-size: var(--text-base);
-    line-height: var(--text-base--line-height);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
     font-weight: 400;
     font-family: var(--font-sans);
     letter-spacing: var(--text-base--tracking);
