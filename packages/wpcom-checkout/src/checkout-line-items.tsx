@@ -1,6 +1,8 @@
 import {
 	isAddOn,
+	isDomainProduct,
 	isDomainRegistration,
+	isDomainTransfer,
 	isPlan,
 	isMonthlyProduct,
 	isYearly,
@@ -182,6 +184,22 @@ const LineItemTitle = styled.div< {
 	gap: 0.5em;
 	font-size: inherit;
 `;
+
+function LineItemDomainLabel( { label }: { label: string } ) {
+	const dotIndex = label.indexOf( '.' );
+	if ( dotIndex === -1 ) {
+		return <>{ label }</>;
+	}
+	const domain = label.slice( 0, dotIndex );
+	const tld = label.slice( dotIndex );
+	return (
+		<span style={ { wordBreak: 'break-all' } }>
+			{ domain }
+			<span style={ { whiteSpace: 'nowrap' } }>{ tld }</span>
+		</span>
+	);
+}
+
 const LineItemSublabelTitle = styled.div`
 	flex: 1;
 `;
@@ -1545,7 +1563,11 @@ function CheckoutLineItem( {
 				</MobileGiftWrapper>
 			) }
 			<LineItemTitle isSummary={ isSummary }>
-				{ label }
+				{ isDomainProduct( product ) || isDomainTransfer( product ) ? (
+					<LineItemDomainLabel label={ label } />
+				) : (
+					label
+				) }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
 						<GiftBadgeWithText />
