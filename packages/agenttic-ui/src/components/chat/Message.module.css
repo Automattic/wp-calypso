@@ -1,12 +1,12 @@
 .message {
     display: flex;
     align-items: flex-start;
-    padding: 0 var(--spacing-3);
+    padding: var(--spacing) var(--spacing-4);
     color: var(--color-foreground);
 }
 
 .message.user {
-    padding-right: var(--spacing-4);
+    padding: 0 var(--spacing-4);
 }
 
 .message.user .bubble {

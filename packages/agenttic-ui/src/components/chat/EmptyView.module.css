@@ -4,13 +4,13 @@
   align-items: start;
   justify-content: end;
   height: 100%;
-  padding: var(--spacing-6) var(--spacing-3);
   gap: var(--spacing-6);
 }
 
 .icon {
   font-size: 3rem;
   line-height: 1;
+  padding: 0 var(--spacing-4);
 }
 
 .heading, .help {
@@ -19,6 +19,7 @@
   line-height: var(--text-sm--line-height);
   color: var(--color-foreground);
   margin: 0;
+  padding: var(--spacing) var(--spacing-4);
   max-width: 400px;
 }
 

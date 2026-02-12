@@ -3,15 +3,16 @@ import EmbeddedDemo from './EmbeddedDemo';
 import FloatingDemo from './FloatingDemo';
 import FloatingCompactDemo from './FloatingCompactDemo';
 import SiteSpecDemo from './SiteSpecDemo';
+import SidebarDemo from './SidebarDemo';
 
 const App: React.FC = () => {
 	const [ currentDemo, setCurrentDemo ] = useState<
-		'embedded' | 'floating' | 'floating-compact' | 'site-spec'
+		'embedded' | 'floating' | 'floating-compact' | 'site-spec' | 'sidebar'
 	>( () => {
 		// Get saved demo from localStorage or default to 'embedded'
 		const saved = localStorage.getItem( 'selectedDemo' );
-		if ( saved === 'floating' || saved === 'floating-compact' || saved === 'site-spec' ) {
-			return saved as 'floating' | 'floating-compact' | 'site-spec';
+		if ( saved === 'floating' || saved === 'floating-compact' || saved === 'site-spec' || saved === 'sidebar' ) {
+			return saved as 'floating' | 'floating-compact' | 'site-spec' | 'sidebar';
 		}
 		return 'embedded';
 	} );
@@ -99,6 +100,21 @@ const App: React.FC = () => {
 				>
 					Site Spec
 				</button>
+				<button
+					onClick={ () => setCurrentDemo( 'sidebar' ) }
+					style={ {
+						padding: '8px 10px',
+						background:
+							currentDemo === 'sidebar' ? '#000' : 'white',
+						color: currentDemo === 'sidebar' ? 'white' : '#000',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Sidebar
+				</button>
 				<div style={ { marginLeft: '30px' } }>
 					<button
 						onClick={ () => setCurrentTheme( 'dark' ) }
@@ -146,6 +162,7 @@ const App: React.FC = () => {
 			{ currentDemo === 'floating' && <FloatingDemo currentTheme={ currentTheme }  /> }
 			{ currentDemo === 'floating-compact' && <FloatingCompactDemo currentTheme={ currentTheme } /> }
 			{ currentDemo === 'site-spec' && <SiteSpecDemo currentTheme={ currentTheme } /> }
+			{ currentDemo === 'sidebar' && <SidebarDemo /> }
 		</>
 	);
 };

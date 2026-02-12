@@ -10,6 +10,7 @@
 
 .container.embedded {
     height: 100%;
+    padding: var(--spacing-4);
 }
 
 .container.floating {
@@ -24,6 +25,10 @@
     min-height: 56px;
     padding: var(--spacing-2);
     box-shadow: var(--shadow-lg);
+}
+
+.container.expanded .content {
+    padding: var(--spacing-3);
 }
 
 /* Override drag cursor for textarea and input elements */

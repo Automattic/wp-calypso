@@ -384,8 +384,9 @@ export function Chat( {
 			/>
 			<motion.div
 				ref={ chatRef }
-				data-slot="chat-floating"
+				data-slot="chat-floating test"
 				className={ cn( className, styles.container, styles.floating, {
+					[ styles.expanded ]: chat.state === 'expanded',
 					animating: isAnimating,
 				} ) }
 				onMouseLeave={
