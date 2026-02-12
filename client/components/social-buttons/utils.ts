@@ -7,6 +7,9 @@ import type { AppState } from 'calypso/types';
 
 export type SocialService = 'google' | 'apple' | 'github' | 'paypal';
 
+/** All service identifiers that can appear in allowedSocialServices lists. */
+export type AllowedSocialService = SocialService | 'magic-login' | 'qr-code' | 'email';
+
 export const getUxMode = ( state: AppState ) => {
 	const currentRoute = getCurrentRoute( state );
 	const oauth2Client = getCurrentOAuth2Client( state );

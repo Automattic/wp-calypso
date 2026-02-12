@@ -94,7 +94,7 @@ describe( 'SignupFormSocialFirst', () => {
 
 	describe( 'allowedSocialServices', () => {
 		test( 'passes allowedSocialServices to SocialSignupForm', () => {
-			const allowedServices = [ 'google', 'paypal' ];
+			const allowedServices: Array< 'google' | 'paypal' > = [ 'google', 'paypal' ];
 
 			render(
 				<SignupFormSocialFirst { ...defaultProps } allowedSocialServices={ allowedServices } />
