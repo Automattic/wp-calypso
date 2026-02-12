@@ -63,7 +63,7 @@ const UpcomingEvent = ( {
 			<div className="a4a-event__content">
 				<div className="a4a-event__header">
 					<div className="a4a-event__logo">
-						{ logoElement ?? <img src={ logoUrl } alt={ title } /> }
+						{ logoElement ?? <img src={ logoUrl } alt={ title as string } /> }
 					</div>
 					<div className="a4a-event__date-and-title">
 						<div className={ clsx( 'a4a-event__date', dateClassName ) }>
