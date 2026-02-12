@@ -65,8 +65,23 @@ const buildHref = (
 		const { source, unlinked, redirect_to: redirectTo } = urlQueryArgs;
 
 		// Redirect users coming from My Jetpack while unlinked
-		if ( unlinked === '1' && source === 'my-jetpack' && redirectTo ) {
-			return redirectTo;
+		try {
+			const url = new URL( redirectTo );
+			let sanitizedRedirectTo = null;
+
+			if ( url.protocol === 'http:' || url.protocol === 'https:' ) {
+				sanitizedRedirectTo = url.toString();
+			}
+
+			if (
+				unlinked === '1' &&
+				source === 'my-jetpack' &&
+				typeof sanitizedRedirectTo === 'string'
+			) {
+				return sanitizedRedirectTo;
+			}
+		} catch {
+			// Fallback to the default URL.
 		}
 
 		return '/pricing/jetpack-free/welcome';

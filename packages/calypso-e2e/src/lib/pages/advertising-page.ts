@@ -42,7 +42,7 @@ export class AdvertisingPage {
 	 * @returns The heading element for the Advertising page.
 	 */
 	get advertisingHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Advertising' } );
+		return this.page.getByRole( 'heading', { name: 'Dashboard' } );
 	}
 
 	/**

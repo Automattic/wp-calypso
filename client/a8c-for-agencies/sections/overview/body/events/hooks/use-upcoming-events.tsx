@@ -1,64 +1,67 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
-import avalaraLogo from 'calypso/assets/images/a8c-for-agencies/events/avalara-logo.svg';
-import pressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 export const useUpcomingEvents = () => {
 	const translate = useTranslate();
 	const localizedMoment = useLocalizedMoment();
 
+	const agency = useSelector( getActiveAgency );
+
+	const pressableOwnership = usePressableOwnershipType();
+
+	const shouldShowPressablePromoOffer =
+		agency?.billing_system === 'billingdragon' && pressableOwnership !== 'agency';
+
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
-			{
-				id: 'pressable-webinar-2025-11-06',
-				date: {
-					from: moment( '2025-11-06' ),
-					to: moment( '2025-11-06' ),
-				},
-				displayDate: translate( 'Thursday, November 6, 9:00-10:00 AM PT (4:00-5:00 PM UTC)' ),
-				title: translate( 'The Pressable advantage for Automattic for Agencies partners' ),
-				subtitle: translate( 'Automattic for Agencies and Pressable' ),
-				descriptions: [
-					translate(
-						"Ready to scale your agency without stretching your team thin? Join us for an exclusive live session where we'll reveal how top-performing agencies are using Pressable and Automattic for Agencies to drive faster client growth, increase recurring revenue, and hit year-end goals effortlessly."
-					),
-				],
-				cta: {
-					label: translate( 'Reserve your spot ↗' ),
-					url: 'https://us06web.zoom.us/webinar/register/WN_fUSevVhfRDOP-j7f-L-V2g',
-				},
-				logoUrl: pressableLogo,
-				trackEventName: 'calypso_a4a_overview_events_pressable_webinar_2025_11_06_click',
-				dateClassName: 'a4a-event__date--neutral',
-			},
-			{
-				id: 'avalara-webinar-2025-11-12',
-				date: {
-					from: moment( '2025-11-12' ),
-					to: moment( '2025-11-12' ),
-				},
-				displayDate: translate( 'Wednesday, November 12, 9:00-10:00 AM PT (4:00-5:00 PM UTC)' ),
-				title: translate(
-					'Global Trade & Tariff Shifts: Empowering Agencies to Navigate Compliance for WooCommerce Merchants'
-				),
-				subtitle: translate( 'Automattic for Agencies and our trusted partner, Avalara' ),
-				descriptions: [
-					translate(
-						'Is your agency ready to guide WooCommerce merchants through the evolving maze of international trade taxes and tariffs? Recent regulatory shifts are creating compliance headaches for global ecommerce sellers. Without expert insights, your clients risk costly fines, delays, and lost revenue.'
-					),
-					translate( 'Join our exclusive webinar to gain a competitive edge.' ),
-				],
-				cta: {
-					label: translate( 'Register for the webinar ↗' ),
-					url: 'https://event.on24.com/wcc/r/5101931/BB47ACD15628777E39129D43586D1C96',
-				},
-				logoUrl: avalaraLogo,
-				trackEventName: 'calso_a4a_overview_events_avalara_webinar_2025_11_12_click',
-				dateClassName: 'a4a-event__date--neutral',
-			},
+			...( shouldShowPressablePromoOffer
+				? [
+						{
+							id: 'a4a-pressable-promo-offer-2026-01-29',
+							date: {
+								from: moment( '2026-01-27' ),
+								to: moment( '2026-04-30' ),
+							},
+							displayDate: translate( 'Jan 27—April 30, 2026' ),
+							title: translate(
+								'Limited time offer: Get up to 6 months of free Pressable hosting on new plans!'
+							),
+							subtitle: translate( 'Automattic for Agencies & Pressable' ),
+							descriptions: [
+								translate(
+									'Enjoy up to 6 months free on Pressable Signature and Premium Plans with Automattic for Agencies. Choose annual billing for 6 months free or monthly billing for 3 months free, while still earning revenue share and reseller incentives.'
+								),
+							],
+							ctas: [
+								{
+									variant: 'primary',
+									label: translate( 'View promo details' ),
+									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+									trackEventName:
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_2026_01_29_view_click',
+								},
+								{
+									variant: 'secondary',
+									label: translate( 'See full terms' ),
+									url: 'https://pressable.com/legal/hosting-promotion-terms',
+									isExternal: true,
+									trackEventName:
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_2026_01_29_view_terms_click',
+								},
+							],
+							logoUrl: PressableLogo,
+							dateClassName: 'a4a-event__date--pressable',
+						},
+				  ]
+				: [] ),
 		];
 
 		return eventsData.filter( ( event ) => {
@@ -66,5 +69,5 @@ export const useUpcomingEvents = () => {
 			const today = localizedMoment().startOf( 'day' );
 			return eventDate.isSameOrAfter( today );
 		} );
-	}, [ localizedMoment, translate ] );
+	}, [ localizedMoment, shouldShowPressablePromoOffer, translate ] );
 };

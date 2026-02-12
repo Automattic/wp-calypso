@@ -37,7 +37,7 @@ jest.mock( '../components/domain-propagation-status', () => ( {
 	default: () => null,
 } ) );
 
-const createMockDomain = (): Domain => ( {
+const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	// DomainSummary properties
 	blog_id: 123,
 	domain: 'example.com',
@@ -89,6 +89,7 @@ const createMockDomain = (): Domain => ( {
 	is_pending_whois_update: false,
 	is_root_domain_registered_with_automattic: false,
 	is_redeemable: false,
+	is_mapped_to_atomic_site: false,
 	is_hundred_year_domain: false,
 	is_subdomain: false,
 	is_pending_icann_verification: false,
@@ -115,6 +116,9 @@ const createMockDomain = (): Domain => ( {
 	registration_date: '',
 	last_transfer_error: '',
 	current_user_can_add_email: true,
+	whois_update_unmodifiable_fields: [],
+	tld_maintenance_end_time: 0,
+	...overrides,
 } );
 
 const createMockDomainMappingStatus = (
@@ -157,6 +161,8 @@ describe( 'DomainConnectionVerification', () => {
 		siteSlug: 'example.wordpress.com',
 		domainMappingStatus: createMockDomainMappingStatus(),
 		domainConnectionSetupInfo: createMockDomainConnectionSetupInfo(),
+		onRestartConnection: jest.fn(),
+		isRestartingConnection: false,
 	};
 
 	describe( 'Basic Rendering', () => {
@@ -320,6 +326,50 @@ describe( 'DomainConnectionVerification', () => {
 
 			expect( screen.getByText( 'Name server verification' ) ).toBeVisible();
 		} );
+
+		test( 'displays "Recommended" section when domain is not primary but can be set as primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: false,
+						can_set_as_primary: true,
+					} ) }
+				/>
+			);
+
+			expect( screen.getByText( 'Recommended' ) ).toBeVisible();
+
+			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
+		} );
+
+		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: false,
+						can_set_as_primary: false,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not display "Recommended" section when domain is primary', () => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainData={ createMockDomain( {
+						primary_domain: true,
+						can_set_as_primary: false,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'While You Wait Section', () => {
@@ -354,6 +404,27 @@ describe( 'DomainConnectionVerification', () => {
 			);
 
 			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
+		} );
+
+		test( '"What happens next" card is expanded by default when domain is verifying', () => {
+			const domainMappingStatus = createMockDomainMappingStatus( {
+				has_wpcom_ip_addresses: false,
+				resolves_to_wpcom: false,
+			} );
+
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainMappingStatus={ domainMappingStatus }
+				/>
+			);
+
+			// Verify the "What happens next" section is visible and expanded
+			const whatHappensNextSection = screen.getByText( 'What happens next' );
+			expect( whatHappensNextSection ).toBeVisible();
+
+			// Verify content is visible (indicates expansion)
+			expect( screen.getByText( 'Automatic verification' ) ).toBeVisible();
 		} );
 	} );
 } );

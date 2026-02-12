@@ -233,9 +233,11 @@ class StatModuleChartTabs extends Component {
 				/>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				{ chartType === 'bar' || lineChartData.length === 0 ? (
-					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
-						{ emptyState }
-					</Chart>
+					! isActiveTabLoading && (
+						<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
+							{ emptyState }
+						</Chart>
+					)
 				) : (
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
@@ -305,7 +307,7 @@ const connectComponent = connect(
 		// If not provided we compute the value. (maintains previous behaviour)
 		const date = customRange
 			? customRange.chartEnd
-			: getQueryDate( queryDate, timezoneOffset, period, quantity );
+			: getQueryDate( queryDate, state, siteId, period, quantity );
 		const chartStart = customRange?.chartStart || '';
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

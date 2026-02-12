@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from '@wordpress/element';
+import { createContext, useContext, useState, useCallback, useEffect } from '@wordpress/element';
 import { type TranslateResult } from 'i18n-calypso';
 
 export interface LoginContextType {
@@ -16,18 +16,43 @@ export interface LoginContextType {
 	} ) => void;
 }
 
+export interface LoginContextProviderProps {
+	children: React.ReactNode;
+	initialHeading?: TranslateResult | null;
+	initialSubHeading?: TranslateResult | null;
+	initialSubHeadingSecondary?: TranslateResult | null;
+}
+
 export const LoginContext = createContext< LoginContextType >( {} as LoginContextType );
 
-const LoginContextProvider = ( { children }: { children: React.ReactNode } ) => {
+const LoginContextProvider = ( {
+	children,
+	initialHeading,
+	initialSubHeading,
+	initialSubHeadingSecondary,
+}: LoginContextProviderProps ) => {
 	const [ headingText, setHeadingText ] = useState< TranslateResult | undefined | null >(
-		undefined
+		initialHeading ?? undefined
 	);
 	const [ subHeadingText, setSubHeadingText ] = useState< TranslateResult | undefined | null >(
-		undefined
+		initialSubHeading ?? undefined
 	);
 	const [ subHeadingTextSecondary, setSubHeadingTextSecondary ] = useState<
 		TranslateResult | undefined | null
-	>( undefined );
+	>( initialSubHeadingSecondary ?? undefined );
+
+	// Sync state when initial values change (e.g., when locale changes)
+	useEffect( () => {
+		setHeadingText( initialHeading ?? undefined );
+	}, [ initialHeading ] );
+
+	useEffect( () => {
+		setSubHeadingText( initialSubHeading ?? undefined );
+	}, [ initialSubHeading ] );
+
+	useEffect( () => {
+		setSubHeadingTextSecondary( initialSubHeadingSecondary ?? undefined );
+	}, [ initialSubHeadingSecondary ] );
 
 	const setHeaders = useCallback(
 		( {

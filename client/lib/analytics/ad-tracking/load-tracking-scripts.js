@@ -4,6 +4,7 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
+import { hashPii } from '../utils';
 import {
 	debug,
 	TRACKING_IDS,
@@ -19,6 +20,7 @@ import {
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
 	REDDIT_TRACKING_SCRIPT_URL,
+	TIKTOK_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
@@ -122,6 +124,10 @@ function getTrackingScriptsToLoad() {
 	if ( mayWeTrackByTracker( 'reddit' ) ) {
 		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
 	}
+	// The pixel must be loaded with the ID in the URL.
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		scripts.push( TIKTOK_SCRIPT_URL + TRACKING_IDS.tiktokPixelId );
+	}
 
 	return scripts;
 }
@@ -173,6 +179,9 @@ function initLoadedTrackingScripts() {
 		};
 
 		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
+	}
+	if ( mayWeTrackByTracker( 'tiktok' ) ) {
+		initTikTok();
 	}
 
 	debug( 'loadTrackingScripts: init done' );
@@ -261,4 +270,28 @@ function initFacebook() {
 		window.fbq( 'init', TRACKING_IDS.facebookAkismetInit, advancedMatching );
 		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
 	}
+}
+/**
+ * When the user is logged in, additional hashed data is forwarded.
+ * @see https://business-api.tiktok.com/portal/docs?id=1739585700402178
+ */
+function initTikTok() {
+	// Track page on init, as retarget isn't triggered when accepting the banner.
+	window.ttq.page();
+	let advancedMatching = {};
+
+	const currentUser = getCurrentUser();
+	// TikTok specific email validation logic.
+	const notAllowedValues = [ '', 'null', 'undefined' ];
+	const processedEmail = currentUser.email.toLowerCase().replace( /\s/g, '' );
+
+	if ( currentUser && notAllowedValues.indexOf( processedEmail ) === -1 ) {
+		advancedMatching = {
+			email: hashPii( processedEmail ),
+			external_id: hashPii( currentUser.ID ),
+		};
+	}
+	window.ttq.identify( advancedMatching );
+
+	debug( 'initTikTok', advancedMatching );
 }

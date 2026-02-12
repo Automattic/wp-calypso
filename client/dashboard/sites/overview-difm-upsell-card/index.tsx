@@ -2,6 +2,7 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { wpcomLink } from '../../utils/link';
 import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -37,8 +38,7 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton
-					href="/start/do-it-for-me/new-or-existing-site?ref=site-overview"
-					target="_blank"
+					href={ wpcomLink( '/start/do-it-for-me/new-or-existing-site?ref=site-overview' ) }
 					text={ __( 'Build it for me' ) }
 					variant="secondary"
 					upsellId="site-overview-difm"

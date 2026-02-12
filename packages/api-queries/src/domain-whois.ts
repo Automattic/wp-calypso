@@ -14,14 +14,14 @@ export const domainWhoisQuery = ( domainName: string ) =>
 		queryFn: () => fetchDomainWhois( domainName ),
 	} );
 
-export const domainWhoisValidateMutation = ( domainName: string ) =>
+export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
 	mutationOptions( {
 		mutationFn: ( domainContactDetails: DomainContactDetails ) => {
 			const contactInformation = mapRecordKeysRecursively(
 				domainContactDetails,
 				camelToSnakeCase
 			) as ContactValidationRequestContactInformation;
-			return validateDomainWhois( domainName, contactInformation );
+			return validateDomainWhois( contactInformation, domainNames );
 		},
 	} );
 

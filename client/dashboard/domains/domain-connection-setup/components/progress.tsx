@@ -7,7 +7,7 @@ import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { ProgressStepList, StepNameValue } from '../types';
 
-import './style.scss';
+import './progress.scss';
 
 interface ProgressProps {
 	steps: ProgressStepList;

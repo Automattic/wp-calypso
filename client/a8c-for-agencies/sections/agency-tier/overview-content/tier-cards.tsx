@@ -18,27 +18,29 @@ import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
-import { ALL_TIERS } from './constants';
+import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
 import type { AgencyTierType } from './types';
+import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
 const TEXT_COLOR = 'var(--color-gray-700)';
 
 export default function TierCards( {
 	currentAgencyTierId,
-	isEarlyAccess,
+	tierStatus,
 }: {
 	currentAgencyTierId?: AgencyTierType;
-	isEarlyAccess: boolean;
+	tierStatus?: AgencyTierStatus;
 } ) {
 	const dispatch = useDispatch();
 
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
-	const isSmallViewport = useViewportMatch( 'huge', '<' );
+	const isSmallViewport = useViewportMatch( 'wide', '<' );
 
 	const [ showEarlyAccessModal, setShowEarlyAccessModal ] = useState( false );
+	const [ showTierProtectedModal, setShowTierProtectedModal ] = useState( false );
 
-	const handleLearnMore = () => {
+	const handleViewEarlyAccessInfo = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_early_access_learn_more_click', {
 				agency_tier: currentAgencyTierId,
@@ -47,6 +49,14 @@ export default function TierCards( {
 		setShowEarlyAccessModal( true );
 	};
 
+	const handleViewTierProtectedInfo = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_agency_tier_tier_protected_learn_more_click', {
+				agency_tier: currentAgencyTierId,
+			} )
+		);
+		setShowTierProtectedModal( true );
+	};
 	const handleViewBenefits = ( tierId: string ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_agency_tier_view_benefits_click', {
@@ -60,6 +70,9 @@ export default function TierCards( {
 		}
 	};
 
+	const isEarlyAccess = tierStatus === 'early_access';
+	const isTierProtected = tierStatus === 'tier_protected';
+
 	const content = (
 		<>
 			{ ALL_TIERS.map( ( tier ) => {
@@ -72,15 +85,18 @@ export default function TierCards( {
 					<Card
 						key={ tier.id }
 						style={ {
-							width: isSmallViewport ? '100%' : '33%',
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
 							...( isCurrentTier && {
 								boxShadow: '0 0 0 1px var(--color-primary-50)',
 							} ),
 						} }
 					>
 						<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-							<VStack spacing={ 2 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-								<HStack>
+							<VStack spacing={ 1 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+								<HStack style={ { marginBlockEnd: '4px' } }>
 									<Heading level={ 3 } weight={ 500 }>
 										{ tier.name }
 									</Heading>
@@ -96,7 +112,7 @@ export default function TierCards( {
 									<Badge
 										style={ { width: 'fit-content' } }
 										intent="default"
-										children={ __( 'Your Tier — Early Access' ) }
+										children={ __( 'Your tier — Early Access' ) }
 									/>
 								) }
 								<Text color={ TEXT_COLOR }>{ tier.description }</Text>
@@ -104,13 +120,32 @@ export default function TierCards( {
 									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
 										{ createInterpolateElement( __( 'You’re in early. <a>Learn more</a>' ), {
 											a: (
-												<Button onClick={ handleLearnMore } variant="link">
+												<Button onClick={ handleViewEarlyAccessInfo } variant="link">
 													{ __( 'Learn more.' ) }
 												</Button>
 											),
 										} ) }
 									</Text>
 								) }
+								{ isCurrentTier && isTierProtected && (
+									<Text color={ TEXT_COLOR } style={ { fontStyle: 'italic' } } weight={ 700 }>
+										{ createInterpolateElement(
+											__( 'Your tier level is protected. <a>Learn more</a>' ),
+											{
+												a: (
+													<Button onClick={ handleViewTierProtectedInfo } variant="link">
+														{ __( 'Learn more.' ) }
+													</Button>
+												),
+											}
+										) }
+									</Text>
+								) }
+							</VStack>
+							<VStack
+								spacing={ 1 }
+								style={ { flex: 1, justifyContent: 'flex-start', marginBlockStart: '8px' } }
+							>
 								<Text color={ TEXT_COLOR } weight={ 700 }>
 									{ tier.heading }
 								</Text>
@@ -119,7 +154,7 @@ export default function TierCards( {
 							<Button
 								onClick={ () => handleViewBenefits( tier.id as string ) }
 								variant={ isSecondary ? 'secondary' : 'primary' }
-								style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+								style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
 							>
 								{ hasHigherTier ? __( 'See what you’ll unlock' ) : __( 'View your benefits' ) }
 							</Button>
@@ -127,7 +162,7 @@ export default function TierCards( {
 					</Card>
 				);
 			} ) }
-			{ showEarlyAccessModal && (
+			{ showEarlyAccessModal && currentTier && (
 				<Modal
 					isDismissible
 					size="medium"
@@ -136,8 +171,12 @@ export default function TierCards( {
 				>
 					<VStack spacing={ 8 }>
 						<Text>
-							{ __(
-								'You’ve been given early access to the Pro Partner tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
+							{ sprintf(
+								/* translators: %s is the tier name */
+								__(
+									'You’ve been given early access to the %s tier in recognition of your partnership with Automattic. This is your head start to unlock powerful benefits, tools, and resources.'
+								),
+								currentTier.name
 							) }
 						</Text>
 						<Text>
@@ -147,7 +186,7 @@ export default function TierCards( {
 									__(
 										'To make the most of your early access and stay on track toward your %s Influenced Automattic Revenue goal, <b>stay connected with your Partner Manager</b>. Your manager is here to help you reach that goal by providing strategic guidance, growth opportunities, and ensure you maximize every advantage during this phase.'
 									),
-									formatCurrency( 5000, 'USD' )
+									formatCurrency( TARGET_INFLUENCED_REVENUE[ currentTier.id ], 'USD' )
 								),
 								{
 									b: <strong />,
@@ -156,6 +195,36 @@ export default function TierCards( {
 						</Text>
 						<ButtonStack justify="flex-end">
 							<Button variant="primary" onClick={ () => setShowEarlyAccessModal( false ) }>
+								{ __( 'Got it' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</Modal>
+			) }
+			{ showTierProtectedModal && currentTier && (
+				<Modal
+					isDismissible
+					size="medium"
+					onRequestClose={ () => setShowTierProtectedModal( false ) }
+					title={ __( 'Your tier level is protected' ) }
+				>
+					<VStack spacing={ 8 }>
+						<Text>
+							{ sprintf(
+								/* translators: %s is the tier name */
+								__(
+									'You earned the %s tier in the previous year, and your tier level is protected for the current year. This means you will not be downgraded during this year, regardless of your current influenced revenue.'
+								),
+								currentTier.name
+							) }
+						</Text>
+						<Text>
+							{ __(
+								'You can still move up to a higher tier if your influenced revenue qualifies. However, if you do not meet the minimum requirements for this tier, any downgrade will only occur when the next year’s cycle begins in January. This protection ensures you can continue to enjoy your current tier benefits throughout the year.'
+							) }
+						</Text>
+						<ButtonStack justify="flex-end">
+							<Button variant="primary" onClick={ () => setShowTierProtectedModal( false ) }>
 								{ __( 'Got it' ) }
 							</Button>
 						</ButtonStack>
@@ -174,8 +243,16 @@ export default function TierCards( {
 	}
 
 	return (
-		<HStack spacing={ 6 } style={ { justifyContent: 'space-between' } } alignment="stretch">
+		<div
+			style={ {
+				display: 'grid',
+				gridTemplateColumns: 'repeat(3, 1fr)',
+				gridAutoRows: '1fr',
+				gap: '24px',
+				alignItems: 'stretch',
+			} }
+		>
 			{ content }
-		</HStack>
+		</div>
 	);
 }

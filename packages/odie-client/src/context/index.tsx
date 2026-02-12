@@ -47,7 +47,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
-	setMessageLikedStatus: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
@@ -65,6 +64,7 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	newInteractionsBotSlug,
+	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
@@ -154,24 +154,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	/**
-	 * Set the liked status of a message.
-	 */
-	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
-		setMainChatState( ( prevChat ) => {
-			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
-			const updatedMessage = { ...message, liked };
-			return {
-				...prevChat,
-				messages: [
-					...prevChat.messages.slice( 0, messageIndex ),
-					updatedMessage,
-					...prevChat.messages.slice( messageIndex + 1 ),
-				],
-			};
-		} );
-	};
-
 	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
 
 	/**
@@ -180,7 +162,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
-	const overriddenVersion = versionParams || version;
+	const overriddenVersion = versionParams || version || newInteractionsBotVersion;
 
 	return (
 		<OdieAssistantContext.Provider
@@ -206,7 +188,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				userFieldFlowName,
 				setChatStatus,
 				setExperimentVariationName,
-				setMessageLikedStatus,
 				trackEvent,
 				version: overriddenVersion,
 				forceEmailSupport,

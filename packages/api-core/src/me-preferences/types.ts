@@ -1,7 +1,7 @@
 import type { View } from '@wordpress/dataviews';
 
 export interface HostingDashboardOptIn {
-	value: 'unset' | 'opt-in' | 'opt-out';
+	value: 'unset' | 'opt-in' | 'opt-out' | 'forced-opt-in' | 'forced-opt-out';
 	updated_at: string; // ISO date string
 }
 
@@ -19,6 +19,7 @@ export interface ReaderLandingPage extends LandingPagePreference {
 
 export interface UserPreferences {
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
+	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours

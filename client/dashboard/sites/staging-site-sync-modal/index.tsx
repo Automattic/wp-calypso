@@ -18,9 +18,10 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { useState, useCallback, useMemo } from 'react';
 import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
@@ -405,7 +406,11 @@ function StagingSiteSyncModalInner( {
 						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
-				<HStack spacing={ 4 } alignment="left" style={ { height: '40px' } }>
+				<HStack
+					spacing={ 4 }
+					alignment="left"
+					style={ { height: '40px', marginInlineStart: '-3px' } }
+				>
 					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
 					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
@@ -490,6 +495,7 @@ function StagingSiteSyncModalInner( {
 								<VStack spacing={ 4 }>
 									<HStack>
 										<FileBrowser
+											key={ rewindId }
 											rewindId={ rewindId }
 											siteId={ querySiteId }
 											siteSlug={ querySiteSlug as string }

@@ -17,7 +17,8 @@ type HelpCenterSearchProps = {
 };
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser } = useHelpCenterContext();
+	const { sectionName, site, currentUser, hideMoreResources, disableChatSupport } =
+		useHelpCenterContext();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
@@ -26,8 +27,12 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			<HelpCenterRecentConversations />
-			<BlockedZendeskNotice />
+			{ ! disableChatSupport && (
+				<>
+					<HelpCenterRecentConversations />
+					<BlockedZendeskNotice />
+				</>
+			) }
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
@@ -46,7 +51,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				location="help-center"
 				currentRoute={ currentRoute }
 			/>
-			{ ! searchQuery && <HelpCenterMoreResources /> }
+			{ ! searchQuery && ! hideMoreResources && <HelpCenterMoreResources /> }
 		</div>
 	);
 };

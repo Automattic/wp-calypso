@@ -37,6 +37,7 @@ export interface NotificationSettings {
 	draft_post_prompt: boolean;
 	recommended_blog: boolean;
 	comment_reply: boolean;
+	form_response: boolean;
 }
 
 export interface DeviceNotificationSettings extends NotificationSettings {

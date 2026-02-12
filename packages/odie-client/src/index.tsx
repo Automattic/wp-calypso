@@ -29,14 +29,11 @@ export const OdieAssistant: React.FC = () => {
 		</div>
 	);
 };
+export { GetSupport } from './components/message/get-support';
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export type {
-	Conversations,
-	OdieConversation,
-	OdieMessage,
-	SupportInteraction,
-	ZendeskConversation,
-	ZendeskMessage,
-} from './types';
+export type { Conversations, OdieConversation, OdieMessage, SupportInteraction } from './types';
+export type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
+export { convertOdieChatToOdieConversation } from './utils/chat-utils';
+export * from './types';

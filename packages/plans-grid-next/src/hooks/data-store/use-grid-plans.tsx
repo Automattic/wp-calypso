@@ -8,6 +8,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOO_HOSTED_BASIC,
+	TYPE_WOO_HOSTED_PRO,
 	getPlan,
 	isBloggerPlan,
 	applyTestFiltersToPlansList,
@@ -142,6 +144,8 @@ export const usePlanTypesWithIntent = ( {
 		...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 		TYPE_WOOEXPRESS_SMALL,
 		TYPE_WOOEXPRESS_MEDIUM,
+		TYPE_WOO_HOSTED_BASIC,
+		TYPE_WOO_HOSTED_PRO,
 		TYPE_P2_PLUS,
 	];
 
@@ -176,7 +180,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_BUSINESS ];
 			break;
 		case 'plans-ai-assembler-free-trial':
-			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
@@ -267,6 +271,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-website-builder':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
+		case 'plans-woo-hosted':
+			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
@@ -299,6 +306,7 @@ const useGridPlans: UseGridPlansType = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	isExperimentVariant,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -345,6 +353,7 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
+		isExperimentVariant,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package

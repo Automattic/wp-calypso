@@ -41,8 +41,8 @@ object WPComPlugins : Project({
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
 					"happy-blocks-release-build",
-					"command-palette-wp-admin-release-build",
 					"help-center-release-build",
+					"agents-manager-release-build",
 					"design-system-docs-release-build",
 				)
 			}
@@ -124,8 +124,8 @@ object CalypsoApps: BuildType({
 		apps/blaze-dashboard/dist => blaze-dashboard.zip
 		apps/o2-blocks/release-files => o2-blocks.zip
 		apps/happy-blocks/release-files => happy-blocks.zip
-		apps/command-palette-wp-admin/dist => command-palette-wp-admin.zip
 		apps/help-center/dist => help-center.zip
+		apps/agents-manager/dist => agents-manager.zip
 		apps/design-system-docs/dist => design-system-docs.zip
 	""".trimIndent()
 

@@ -21,7 +21,7 @@ import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-tab
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
@@ -47,7 +47,7 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
-import { purchaseSettingsRoute } from '../../../app/router/me';
+import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -60,6 +60,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -81,9 +82,13 @@ import {
 	isJetpackT1SecurityPlan,
 	isTemporarySitePurchase,
 	isWpcomFlexSubscription,
+	isAkismetFreeProduct,
+	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
+import AkismetApiKeyCard from './akismet-api-key-card';
+import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -104,24 +109,36 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting
 		// for immediate upgrades to the next plan. We will change this in the future
 		// with appropriate page.
-		const upgradeProductPath = AkismetUpgradesProductMap[ purchase.product_slug ];
-		if ( upgradeProductPath ) {
-			return upgradeProductPath;
+		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
+		if ( ! url ) {
+			return undefined;
 		}
-		return undefined;
+		const isAbsolute =
+			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
+		if ( ! isAbsolute ) {
+			return wpcomLink( url );
+		}
+		return url;
 	}
 
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
 	if ( upgradeProductSlug ) {
-		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
+		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
 	}
 
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
+	}
+
+	if ( purchase.is_woo_hosted_product ) {
+		return addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+			siteSlug: purchase.site_slug,
+			dashboard: getCurrentDashboard(),
+		} );
 	}
 
 	return getWpcomPlanGridUrl( purchase.site_slug );
@@ -129,26 +146,26 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return `/plans/storage/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return `/plans/${ purchase.site_slug }`;
+		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
 
 	if ( purchase.is_plan ) {
 		return getWpcomPlanGridUrl( purchase.site_slug );
 	}
 
-	return `/plans/${ purchase.site_slug }`;
+	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
 function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
-	const backUrl = window.location.href.replace( window.location.origin, '' );
-	return addQueryArgs( '/setup/plan-upgrade', {
+	const backUrl = redirectToDashboardLink();
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
-		redirect_to: backUrl,
 		cancel_to: backUrl,
+		dashboard: getCurrentDashboard(),
 	} );
 }
 
@@ -202,16 +219,6 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.is_plan && purchase.site_slug ) {
-		const url = '/plans/my-plan/' + purchase.site_slug;
-		const text = __( 'Plan features' );
-		return (
-			<MetadataItem>
-				<a href={ url }>{ text }</a>
-			</MetadataItem>
-		);
-	}
-
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -285,25 +292,28 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const navigate = useNavigate();
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem
-				title={ __( 'Downgrade or cancel your subscription' ) }
+				title={ __( 'Cancel subscription' ) }
 				description={ __( 'We’ll be sorry to see you go!' ) }
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
-							// FIXME: add refund, cancel, and downgrade action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/cancel` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
-						{ __( 'Downgrade or cancel' ) }
+						{ __( 'Cancel' ) }
 					</Button>
 				}
 			/>
@@ -317,14 +327,16 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<Button
 						variant="secondary"
+						isDestructive
 						size="compact"
 						onClick={ () =>
-							// FIXME: add remove action
-							// This is a stopgap solution to allow customers to cancel until the cancellation flow is migrated to the dashboard.
-							( window.location.href = `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/remove` )
+							navigate( {
+								to: cancelPurchaseRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+							} )
 						}
 					>
-						{ __( 'Remove subscription' ) }
+						{ __( 'Remove' ) }
 					</Button>
 				}
 			/>
@@ -358,7 +370,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade subscription' ) }
+					{ __( 'Upgrade' ) }
 				</Button>
 			}
 		/>
@@ -433,7 +445,7 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 	}
 
 	// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-	const path = `/purchases/crm-downloads/${ purchase.ID }`;
+	const path = wpcomLink( `/purchases/crm-downloads/${ purchase.ID }` );
 
 	return (
 		<ActionList.ActionItem
@@ -546,6 +558,9 @@ function getFields( {
 						Boolean( purchase.renew_date ) &&
 						isRenewing( purchase )
 					) {
+						if ( isInExpirationGracePeriod( purchase ) ) {
+							return __( 'Pending renewal' );
+						}
 						// translators: date is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
@@ -647,6 +662,15 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 						partnerName: purchase.partner_name,
 					} )
 				}
+			/>
+		);
+	}
+	if ( purchase.is_trial_plan ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ __( 'Free Trial' ) }
 			/>
 		);
 	}
@@ -796,7 +820,9 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							{
 								SubmitContent: (
 									<a
-										href={ `/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
+										href={ wpcomLink(
+											`/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }`
+										) }
 									>
 										{ __( 'Submit content' ) }
 									</a>
@@ -1044,7 +1070,20 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	return <MetadataItem title={ subtitle } />;
+	let title = subtitle;
+
+	if ( purchase.is_plan ) {
+		title = sprintf(
+			// translators: subtitle is the type of purchase (e.g. "Site plan"), site is the slug of the site the plan applies to.
+			__( '%(subtitle)s for %(site)s.' ),
+			{
+				subtitle,
+				site: purchase.site_slug,
+			}
+		);
+	}
+
+	return <MetadataItem title={ title } />;
 }
 
 export default function PurchaseSettings() {
@@ -1064,6 +1103,9 @@ export default function PurchaseSettings() {
 	);
 	const expiryDateTitle = ( () => {
 		if ( isExpired( purchase ) ) {
+			return __( 'Expired' );
+		}
+		if ( isInExpirationGracePeriod( purchase ) ) {
 			return __( 'Expired' );
 		}
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
@@ -1126,8 +1168,11 @@ export default function PurchaseSettings() {
 						icon={ calendar }
 						title={ expiryDateTitle }
 						heading={ ( () => {
-							if ( isOneTimePurchase( purchase ) ) {
+							if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
 								return __( 'Never expires' );
+							}
+							if ( isInExpirationGracePeriod( purchase ) ) {
+								return formattedExpiry;
 							}
 							if ( willRenew ) {
 								return formattedRenewal;
@@ -1138,6 +1183,9 @@ export default function PurchaseSettings() {
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
+							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
+								return __( 'Pending renewal' );
+							}
 							if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
 								return __( 'Auto-renew is enabled' );
 							}
@@ -1150,6 +1198,9 @@ export default function PurchaseSettings() {
 										{ __( 'Renews with plan' ) }
 									</Link>
 								);
+							}
+							if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+								return undefined;
 							}
 							if ( purchase.is_auto_renew_enabled ) {
 								return __( 'Will not auto-renew because there is no payment method' );
@@ -1179,6 +1230,12 @@ export default function PurchaseSettings() {
 							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
 						}
 					/>
+					{ purchase.is_jetpack_plan_or_product && (
+						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
+					) }
+					{ isAkismetProduct( purchase ) && isTemporarySitePurchase( purchase ) && (
+						<AkismetApiKeyCard />
+					) }
 				</Grid>
 				{ site && purchase.subscription_status === 'active' && (
 					<WPComResourceMeters purchase={ purchase } site={ site } />
@@ -1186,7 +1243,7 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ purchase.subscription_status === 'active' && (
+				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
 					<ManageSubscriptionCard purchase={ purchase } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />

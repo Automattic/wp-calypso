@@ -62,3 +62,12 @@ export interface UserSettings {
 	user_email_change_pending?: boolean;
 	new_user_email?: string;
 }
+
+export interface PasswordValidationResponse {
+	passed: boolean;
+	test_results: {
+		failed: {
+			explanation: string;
+		}[];
+	};
+}

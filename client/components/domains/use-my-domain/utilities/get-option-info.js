@@ -48,6 +48,7 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
+	dashboard,
 	isSignupStep,
 	onConnect,
 	onSkip,
@@ -181,7 +182,15 @@ export function getOptionInfo( {
 			};
 			break;
 		default: {
-			const availabilityNotice = getAvailabilityNotice( domain, availability.status );
+			const availabilityNotice = getAvailabilityNotice(
+				domain,
+				availability.status,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				dashboard
+			);
 			transferContent = {
 				...optionInfo.transferNotSupported,
 				topText: availabilityNotice.message,
@@ -205,23 +214,23 @@ export function getOptionInfo( {
 		) {
 			const action = isSignupStep ? () => onSkip() : () => page( `/plans/${ selectedSite?.slug }` );
 
+			const topText = createInterpolateElement(
+				sprintf(
+					/* translators: %s - the domain the user wanted to connect */
+					__(
+						"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that without a plan.<br /><br />Please purchase a plan first in order to connect your domain."
+					),
+					domain
+				),
+				{
+					strong: createElement( 'strong' ),
+					br: createElement( 'br' ),
+				}
+			);
+
 			connectContent = {
 				...connectContent,
-				benefits: [],
-				topText: createInterpolateElement(
-					sprintf(
-						/* translators: %s - the domain the user wanted to connect */
-						__(
-							"We need to verify you are the owner of <strong>%s</strong> before connecting it, but we're not able to do that without a plan.<br /><br />Please <a>purchase a plan</a> first in order to connect your domain."
-						),
-						domain
-					),
-					{
-						strong: createElement( 'strong' ),
-						br: createElement( 'br' ),
-						a: createElement( 'a', { onClick: action } ),
-					}
-				),
+				topText: topText,
 				pricing: null,
 				learnMoreLink: null,
 				onSelect: action,

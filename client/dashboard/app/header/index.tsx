@@ -2,11 +2,13 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import HeaderBar from '../../components/header-bar';
 import RouterLinkButton from '../../components/router-link-button';
+import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import PrimaryMenu from '../primary-menu';
 import SecondaryMenu from '../secondary-menu';
 
 function Header() {
+	const { recordTracksEvent } = useAnalytics();
 	const { Logo, name } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
 
@@ -21,12 +23,15 @@ function Header() {
 						aria-label={ sprintf( __( '%(name)s home' ), { name } ) }
 						icon={ <Logo /> }
 						to="/"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_logo_click' );
+						} }
 					/>
 				</div>
 			) }
 
 			<div style={ { flexGrow: 1 } }>{ isDesktop && <PrimaryMenu /> }</div>
-			<div>
+			<div style={ { flexShrink: 0 } }>
 				<SecondaryMenu />
 			</div>
 		</HeaderBar>

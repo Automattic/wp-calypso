@@ -11,9 +11,11 @@ export const useAnalyticsClient = ( router?: AnyRouter, currentPath?: string ) =
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
 				const path = currentPath || router?.state.matches.at( -1 )?.fullPath;
+				const normalizedPath = path?.replace( /\/$/, '' );
+
 				dispatch(
 					recordTracksEvent( eventName, {
-						path,
+						path: normalizedPath,
 						...properties,
 					} )
 				);

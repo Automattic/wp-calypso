@@ -1,9 +1,7 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
-	chevronRight,
-	chevronLeft,
 	caution,
 	check,
 	comment,
@@ -19,7 +17,7 @@ import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import type { Note } from '../types';
-import type { Action, Field } from '@wordpress/dataviews';
+import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
 
@@ -115,24 +113,6 @@ export function getFields(): Field< Note >[] {
 						<span>{ item.title }</span>
 					</HStack>
 				);
-			},
-		},
-	];
-}
-
-export function getActions( {
-	onSelect,
-}: {
-	onSelect: ( selection: string[] ) => void;
-} ): Action< Note >[] {
-	return [
-		{
-			id: 'view',
-			isPrimary: true,
-			icon: <Icon icon={ isRTL() ? chevronLeft : chevronRight } />,
-			label: __( 'View' ),
-			callback: ( items: Note[] ) => {
-				onSelect( items.map( ( item ) => item.id.toString() ) );
 			},
 		},
 	];

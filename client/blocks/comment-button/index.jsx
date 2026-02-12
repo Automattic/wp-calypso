@@ -16,27 +16,31 @@ function CommentButton( {
 	target,
 	icon,
 	defaultLabel,
+	alwaysShowTooltip = false,
 } ) {
 	const translate = useTranslate();
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
-	// Show a tooltip only when we are showing the number of existing comments.
-	const showTooltip = commentCount > 0;
+	// Show a tooltip when there are existing comments, or when explicitly requested.
+	const showTooltip = commentCount > 0 || alwaysShowTooltip;
 
 	return (
 		<TagName
 			className={ clsx( 'comment-button', {
 				tooltip: showTooltip,
 			} ) }
+			aria-label={ translate( 'Comment' ) }
 			data-tooltip={ showTooltip ? translate( 'Comment' ) : undefined }
 			onClick={ onClick }
 			href={ 'a' === TagName ? href : undefined }
 			target={ 'a' === TagName ? target : undefined }
 		>
 			{ icon || <Gridicon icon="comment" size={ size } className="comment-button__icon" /> }
-			<span className="comment-button__label">
-				{ showLabel && <span className="comment-button__label-count">{ label }</span> }
-			</span>
+			{ showLabel && (
+				<span className="comment-button__label">
+					<span className="comment-button__label-count">{ label }</span>
+				</span>
+			) }
 		</TagName>
 	);
 }
@@ -50,6 +54,7 @@ CommentButton.propTypes = {
 	target: PropTypes.string,
 	icon: PropTypes.object,
 	defaultLabel: PropTypes.string,
+	alwaysShowTooltip: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

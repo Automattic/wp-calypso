@@ -1,4 +1,4 @@
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 export type ShoppingCartItem = APIProductFamilyProduct & {
 	quantity: number;
@@ -27,3 +27,11 @@ export interface AssignLicenseProps {
 }
 
 export type HostingType = 'pressable-hosting' | 'wpcom-hosting';
+
+export type TermPricingType = 'monthly' | 'yearly';
+
+export interface TermPricingContext {
+	termPricing: TermPricingType;
+	setTermPricing: ( value: TermPricingType ) => void;
+	toggleTermPricing: () => void;
+}

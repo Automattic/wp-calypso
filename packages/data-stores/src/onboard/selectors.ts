@@ -83,3 +83,4 @@ export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;
 export const getPartnerBundle = ( state: State ) => state.partnerBundle;
 export const getGardenName = ( state: State ) => state.gardenName;
 export const getGardenPartnerName = ( state: State ) => state.gardenPartnerName;
+export const getBlueprint = ( state: State ) => state.blueprint;

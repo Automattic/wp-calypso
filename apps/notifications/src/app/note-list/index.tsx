@@ -12,7 +12,7 @@ import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
-import { getFields, getActions } from './dataviews';
+import { getFields } from './dataviews';
 import {
 	useNoteListFocusToLastSelectedNote,
 	useNoteListNavigationKeyboardShortcuts,
@@ -57,8 +57,6 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	const fields = getFields();
 
-	const actions = getActions( { onSelect: onChangeSelection } );
-
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		visibleNotes,
 		view,
@@ -87,7 +85,6 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 			<DataViews< Note >
 				data={ filteredData }
 				fields={ fields }
-				actions={ actions }
 				view={ view }
 				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }

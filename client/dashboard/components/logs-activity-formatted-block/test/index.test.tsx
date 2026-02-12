@@ -7,13 +7,20 @@ import userEvent from '@testing-library/user-event';
 import { renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
+import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import type { ActivityBlockContent, ActivityBlockMeta } from '../types';
 
 jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn() );
+jest.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: jest.fn(),
+} ) );
 
 const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
 const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
+const mockedIsDashboardBackport = isDashboardBackport as jest.MockedFunction<
+	typeof isDashboardBackport
+>;
 
 const renderFormatted = (
 	items: ActivityBlockContent | ActivityBlockContent[],
@@ -99,18 +106,6 @@ describe( 'Link blocks', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'relativizes wordpress.com links when not in Jetpack or A4A', () => {
-		renderFormatted( {
-			type: 'link',
-			url: 'https://wordpress.com/path/to/resource',
-			children: [ 'My link' ],
-		} );
-
-		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/path/to/resource' );
-		expect( link ).toHaveTextContent( 'My link' );
-	} );
-
 	test.each( [
 		[ 'Jetpack Cloud', true, false ],
 		[ 'A4A', false, true ],
@@ -143,7 +138,7 @@ describe( 'Link blocks', () => {
 			const link = screen.getByRole( 'link' );
 			expect( link ).toHaveAttribute( 'href', 'https://example.com/path' );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
-			expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+			expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
 		}
 	);
 } );
@@ -257,7 +252,7 @@ describe( 'Person blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/people/edit/site_id/tony' );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/people/edit/site_id/tony' );
 		expect( link.querySelector( 'strong' ) ).toHaveTextContent( 'Tony Stark' );
 	} );
 
@@ -285,10 +280,11 @@ describe( 'Plugin blocks', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
+		mockedIsDashboardBackport.mockReturnValue( false );
 		jest.clearAllMocks();
 	} );
 
-	test( 'links to the plugin details on Calypso', () => {
+	test( 'renders an external link when not in the backport', () => {
 		renderFormatted( {
 			type: 'plugin',
 			pluginSlug: 'plugin-slug',
@@ -297,7 +293,36 @@ describe( 'Plugin blocks', () => {
 		} );
 
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', '/plugins/plugin-slug/site-slug' );
+		expect( link.getAttribute( 'href' ) ).toMatch( /\/plugins\/plugin-slug\/site-slug$/ );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'external noreferrer noopener' );
+	} );
+
+	test( 'renders a regular link when in the backport', () => {
+		mockedIsDashboardBackport.mockReturnValue( true );
+
+		renderFormatted( {
+			type: 'plugin',
+			pluginSlug: 'plugin-slug',
+			siteSlug: 'site-slug',
+			children: [ 'A plugin' ],
+		} );
+
+		const link = screen.getByRole( 'link' );
+		expect( link.getAttribute( 'href' ) ).toMatch( /\/plugins\/plugin-slug\/site-slug$/ );
+		expect( link ).not.toHaveAttribute( 'target' );
+		expect( link ).not.toHaveAttribute( 'rel' );
+	} );
+
+	test( 'renders plain text when siteSlug is missing', () => {
+		renderFormatted( {
+			type: 'plugin',
+			pluginSlug: 'plugin-slug',
+			children: [ 'A plugin' ],
+		} );
+
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'A plugin' ) ).toBeInTheDocument();
 	} );
 
 	test.each( [

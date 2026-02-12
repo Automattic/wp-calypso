@@ -1,7 +1,8 @@
-import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 import './style.scss';
 
@@ -54,6 +55,7 @@ class FollowButton extends Component {
 
 		if ( this.props.following ) {
 			menuClasses.push( 'is-following' );
+			menuClasses.push( 'tooltip' );
 			label = this.props.followingLabel
 				? this.props.followingLabel
 				: this.props.translate( 'Subscribed' );
@@ -67,27 +69,31 @@ class FollowButton extends Component {
 			menuClasses.push( 'has-button-style' );
 		}
 
-		const followingIcon = this.props.followingIcon || (
-			<Gridicon key="following" icon="reader-following" size={ iconSize } />
-		);
-		const followIcon = this.props.followIcon || (
-			<Gridicon key="follow" icon="reader-follow" size={ iconSize } />
-		);
+		const followingIcon = this.props.followingIcon || ReaderFollowingFeedIcon( { iconSize } );
+		const followIcon = this.props.followIcon || ReaderFollowFeedIcon( { iconSize } );
 		const followLabelElement = ! this.props.isButtonOnly && (
 			<span key="label" className="follow-button__label">
 				{ label }
 			</span>
 		);
 
-		return createElement(
-			this.props.tagName,
-			{
-				onClick: this.toggleFollow,
-				className: menuClasses.join( ' ' ),
-				title: label,
-			},
-			[ followingIcon, followIcon, followLabelElement ]
-		);
+		const attributes = {
+			onClick: this.toggleFollow,
+			className: menuClasses.join( ' ' ),
+			'aria-label': this.props.following
+				? this.props.translate( 'Unsubscribe' )
+				: this.props.translate( 'Subscribe' ),
+		};
+
+		if ( this.props.following ) {
+			attributes[ 'data-tooltip' ] = this.props.translate( 'Unsubscribe' );
+		}
+
+		return createElement( this.props.tagName, attributes, [
+			followingIcon,
+			followIcon,
+			followLabelElement,
+		] );
 	}
 }
 

@@ -54,6 +54,11 @@
 	}
 }
 
+.stream__container {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
 .reader__content .reader-excerpt,
 .reader__content .reader-post-card__title {
 	-webkit-font-smoothing: antialiased;
@@ -1017,7 +1022,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 	display: flex;
 
 	.section-nav-tab.is-selected {
-		border-bottom: 2px solid var( --color-neutral-70 );
+		border-bottom: 2px solid var(--color-accent);
 	}
 
 	.is-selected .section-nav-tab__link {

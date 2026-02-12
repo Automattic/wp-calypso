@@ -365,6 +365,7 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		selectedSiteCategory,
 		isLetUsChooseSelected,
 		siteSlug,
+		siteId: selectedSiteId,
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];

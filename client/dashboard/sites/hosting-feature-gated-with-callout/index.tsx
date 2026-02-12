@@ -1,7 +1,11 @@
 import { useRouterState } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
-import { CalloutOverlay } from '../../components/callout-overlay';
-import SnackbarBackButton from '../../components/snackbar-back-button';
+import { useViewportMatch } from '@wordpress/compose';
+import EmptyState from '../../components/empty-state';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import SnackbarBackButton, {
+	getSnackbarBackButtonText,
+} from '../../components/snackbar-back-button';
 import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
@@ -14,15 +18,17 @@ type HostingFeatureGatedWithCalloutProps = Omit<
 > &
 	UpsellCalloutProps & {
 		/**
-		 * @deprecated Use `overlay` instead.
+		 * When true, wraps the callout in a PageLayout with EmptyState.Wrapper.
+		 * Use this for top-level feature pages (backups, scan, etc.).
+		 * When false or omitted, renders the callout inline (for settings subpages).
 		 */
-		asOverlay?: boolean;
-		overlay?: ReactNode;
+		fullPage?: boolean;
+		title?: string;
 	};
 
 export default function HostingFeatureGatedWithCallout( {
-	asOverlay,
-	overlay,
+	fullPage,
+	title,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
@@ -34,16 +40,36 @@ export default function HostingFeatureGatedWithCallout( {
 	} = useRouterState();
 
 	const { site, upsellId, upsellFeatureId, feature } = props;
+	const isDesktop = useViewportMatch( 'medium' );
 
-	const backButton = search.back_to === 'overview' && (
-		<SnackbarBackButton>{ __( 'Back to Overview' ) }</SnackbarBackButton>
+	const snackbarBackButtonText = getSnackbarBackButtonText( search.back_to );
+	const backButton = snackbarBackButtonText && (
+		<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 	);
+
+	const wrapCallout = ( callout: ReactNode ) => {
+		if ( ! fullPage ) {
+			return callout;
+		}
+
+		return (
+			<PageLayout header={ <PageHeader title={ title } /> }>
+				{ isDesktop ? (
+					<EmptyState.Wrapper>
+						<div style={ { maxWidth: '600px' } }>{ callout } </div>
+					</EmptyState.Wrapper>
+				) : (
+					callout
+				) }
+			</PageLayout>
+		);
+	};
 
 	return (
 		<HostingFeatureGate
 			{ ...props }
 			renderUpsellComponent={ () => {
-				let callout = (
+				const upsellCallout = (
 					<UpsellCallout
 						site={ site }
 						upsellId={ upsellId }
@@ -56,23 +82,29 @@ export default function HostingFeatureGatedWithCallout( {
 					/>
 				);
 
-				if ( asOverlay || overlay ) {
-					callout = <CalloutOverlay callout={ callout } main={ overlay } />;
-				}
-
 				return (
 					<>
-						{ callout }
+						{ wrapCallout( upsellCallout ) }
 						{ backButton }
 					</>
 				);
 			} }
-			renderActivationComponent={ ( { onClick } ) => (
-				<>
-					<ActivationCallout main={ overlay } onClick={ onClick } />
-					{ backButton }
-				</>
-			) }
+			renderActivationComponent={ () => {
+				const activationCallout = (
+					<ActivationCallout
+						site={ site }
+						feature={ feature }
+						tracksFeatureId={ upsellFeatureId ?? upsellId }
+					/>
+				);
+
+				return (
+					<>
+						{ wrapCallout( activationCallout ) }
+						{ backButton }
+					</>
+				);
+			} }
 		/>
 	);
 }

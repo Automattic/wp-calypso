@@ -9,15 +9,23 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
 import BillingDragonCheckout from '../billing-dragon-checkout';
-import withMarketplaceType from '../hoc/with-marketplace-type';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
 
 import './style-v2.scss';
 
-function CheckoutV2() {
-	const translate = useTranslate();
+interface CheckoutV2Props {
+	siteSlug?: string;
+	planSlug?: string;
+}
 
+function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
+	const translate = useTranslate();
 	const { selectedCartItems } = useShoppingCart();
+
+	// Fetch selected products by slug for site checkout
+	const { selectedProductsBySlug } = useProductsBySlug();
 
 	const title = translate( 'Checkout' );
 
@@ -46,10 +54,17 @@ function CheckoutV2() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<BillingDragonCheckout withA8cLogo={ false } cartItems={ selectedCartItems } />
+				<BillingDragonCheckout
+					withA8cLogo={ false }
+					cartItems={
+						selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
+					}
+					siteSlug={ siteSlug }
+					planSlug={ planSlug }
+				/>
 			</LayoutBody>
 		</Layout>
 	);
 }
 
-export default withMarketplaceType( CheckoutV2 );
+export default withMarketplaceProviders( CheckoutV2 );

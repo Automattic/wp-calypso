@@ -13,7 +13,7 @@ import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer'
 import { DomainSuggestionsList } from '../../../ui';
 
 describe( 'DomainSuggestionCTA', () => {
-	describe( 'add to cart cta', () => {
+	describe( 'Add to cart cta', () => {
 		it( 'allows adding a domain to the cart', async () => {
 			const user = userEvent.setup();
 
@@ -54,7 +54,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			expect( addToCartCta ).toBeInTheDocument();
 
@@ -127,7 +127,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			expect( addToCartCta ).toBeInTheDocument();
 
@@ -193,7 +193,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const [ dotCom, dotNet ] = await screen.findAllByRole( 'button', { name: 'Add to Cart' } );
+			const [ dotCom, dotNet ] = await screen.findAllByRole( 'button', { name: 'Add to cart' } );
 
 			await user.click( dotCom );
 
@@ -243,7 +243,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			await user.click( addToCartCta );
 
@@ -294,7 +294,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			await user.click( addToCartCta );
 
@@ -361,7 +361,7 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			await user.click( addToCartCta );
 
@@ -457,7 +457,7 @@ describe( 'DomainSuggestionCTA', () => {
 			expect( continueCta ).toBeInTheDocument();
 			expect( continueCta ).toBeEnabled();
 
-			const addToCartCta = screen.getByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = screen.getByRole( 'button', { name: 'Add to cart' } );
 
 			expect( addToCartCta ).toBeInTheDocument();
 			expect( addToCartCta ).toBeEnabled();
@@ -496,19 +496,19 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			expect( addToCartCta ).toBeInTheDocument();
 
 			await user.click( addToCartCta );
 
 			await waitFor( () => {
-				expect( screen.getByRole( 'button', { name: 'Add to Cart' } ) ).toHaveClass(
+				expect( screen.getByRole( 'button', { name: 'Add to cart' } ) ).toHaveClass(
 					'is-destructive'
 				);
 			} );
 
-			await user.hover( screen.getByRole( 'button', { name: 'Add to Cart' } ) );
+			await user.hover( screen.getByRole( 'button', { name: 'Add to cart' } ) );
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Failed to fetch the availability' ) ).toBeInTheDocument();
@@ -536,14 +536,14 @@ describe( 'DomainSuggestionCTA', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to Cart' } );
+			const addToCartCta = await screen.findByRole( 'button', { name: 'Add to cart' } );
 
 			expect( addToCartCta ).toBeInTheDocument();
 
 			await user.click( addToCartCta );
 
 			await waitFor( () => {
-				expect( screen.getByRole( 'button', { name: 'Add to Cart' } ) ).toHaveClass(
+				expect( screen.getByRole( 'button', { name: 'Add to cart' } ) ).toHaveClass(
 					'is-destructive'
 				);
 			} );
@@ -556,7 +556,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ),
 			} );
 
-			await user.click( screen.getByRole( 'button', { name: 'Add to Cart' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeInTheDocument();
@@ -597,7 +597,7 @@ describe( 'DomainSuggestionCTA', () => {
 			);
 
 			const [ errorCta, successCta ] = await screen.findAllByRole( 'button', {
-				name: 'Add to Cart',
+				name: 'Add to cart',
 			} );
 
 			expect( errorCta ).toBeInTheDocument();
@@ -607,7 +607,7 @@ describe( 'DomainSuggestionCTA', () => {
 
 			await waitFor( () => {
 				const [ errorCta, successCta ] = screen.getAllByRole( 'button', {
-					name: 'Add to Cart',
+					name: 'Add to cart',
 				} );
 
 				expect( errorCta ).toHaveClass( 'is-destructive' );

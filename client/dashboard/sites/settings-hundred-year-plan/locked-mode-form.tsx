@@ -4,11 +4,12 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import type { Site, SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -20,7 +21,7 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'wpcom_locked_mode' } ] as SimpleFormField[],
+	fields: [ { id: 'wpcom_locked_mode' } ] as FormField[],
 };
 
 export default function LockedModeForm( {
@@ -67,6 +68,7 @@ export default function LockedModeForm( {
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< SiteSettings >
 							data={ formData }
 							fields={ fields }

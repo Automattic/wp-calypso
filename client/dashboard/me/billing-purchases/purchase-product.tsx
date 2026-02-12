@@ -1,18 +1,12 @@
-import { ExternalLink, Button } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { purchasesRoute } from '../../app/router/me';
+import RouterLinkButton from '../../components/router-link-button';
 import { isTemporarySitePurchase, getSubtitleForDisplay } from '../../utils/purchase';
 import type { Purchase, Site } from '@automattic/api-core';
 
-export function PurchaseProduct( {
-	purchase,
-	site,
-	filterViewBySite,
-}: {
-	purchase: Purchase;
-	site?: Site;
-	filterViewBySite: ( site: Site ) => void;
-} ) {
+export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?: Site } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
 	}
@@ -39,9 +33,10 @@ export function PurchaseProduct( {
 						),
 						{
 							siteName: (
-								<Button
+								<RouterLinkButton
 									variant="link"
-									onClick={ () => filterViewBySite( site ) }
+									to={ purchasesRoute.fullPath }
+									search={ { site: site.ID } }
 									title={
 										// translators: the siteName is the name of the site
 										sprintf( __( 'View active upgrades for %(siteName)s' ), {
@@ -50,7 +45,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.name }
-								</Button>
+								</RouterLinkButton>
 							),
 							siteDomain: (
 								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
@@ -73,9 +68,10 @@ export function PurchaseProduct( {
 						} ),
 						{
 							siteDomain: (
-								<Button
+								<RouterLinkButton
 									variant="link"
-									onClick={ () => filterViewBySite( site ) }
+									to={ purchasesRoute.fullPath }
+									search={ { site: site.ID } }
 									title={
 										// translators: the siteDomain is the domain of the site
 										sprintf( __( 'View active upgrades for %(siteDomain)s' ), {
@@ -84,7 +80,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.slug }
-								</Button>
+								</RouterLinkButton>
 							),
 							viewSite: (
 								<ExternalLink
@@ -115,9 +111,10 @@ export function PurchaseProduct( {
 						__( 'for <siteName /> (<viewSite />)' ),
 						{
 							siteName: (
-								<Button
+								<RouterLinkButton
 									variant="link"
-									onClick={ () => filterViewBySite( site ) }
+									to={ purchasesRoute.fullPath }
+									search={ { site: site.ID } }
 									title={
 										// translators: the siteName is the name of the site
 										sprintf( __( 'View active upgrades for %(siteName)s' ), {
@@ -126,7 +123,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.name }
-								</Button>
+								</RouterLinkButton>
 							),
 							viewSite: (
 								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>

@@ -1,0 +1,20 @@
+.setup-your-site-ai-step {
+	.summary-button.has-density-low  {
+		border-radius: 8px;
+		
+		// adjust gap between title and strapline
+		[data-wp-component="VStack"]:has(.summary-button-title) {
+			gap: $grid-unit-05;
+		}
+
+		.summary-button-title{
+			text-align: start;
+			font-weight: 500;
+		}
+
+		.summary-button-description {
+			text-align: start;
+		}
+	}
+}
+

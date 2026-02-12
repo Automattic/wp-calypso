@@ -4,7 +4,13 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Domain } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
-export default function NameServersSettingsSummary( { domain }: { domain: Domain } ) {
+export default function NameServersSettingsSummary( {
+	domain,
+	isDisabled,
+}: {
+	domain: Domain;
+	isDisabled?: boolean;
+} ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	if ( domain.ssl_status === 'active' ) {
 		badges.push( { text: __( 'SSL active' ), intent: 'success' as const } );
@@ -28,6 +34,7 @@ export default function NameServersSettingsSummary( { domain }: { domain: Domain
 			title={ __( 'Domain security' ) }
 			badges={ badges }
 			density={ 'medium' as const }
+			disabled={ isDisabled }
 		/>
 	);
 }

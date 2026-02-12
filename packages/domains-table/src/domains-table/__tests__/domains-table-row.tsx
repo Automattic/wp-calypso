@@ -16,11 +16,19 @@ import { DomainsTableRow } from '../domains-table-row';
 
 const siteSlug = 'site123.com';
 
+// Mock fetchBulkActionStatus to prevent network requests
+const mockFetchBulkActionStatus = jest.fn().mockResolvedValue( {} );
+
 const render = ( el, props ) =>
 	renderWithProvider( el, {
 		wrapper: function Wrapper( { children } ) {
 			return (
-				<DomainsTableStateContext.Provider value={ useGenerateDomainsTableState( props ) }>
+				<DomainsTableStateContext.Provider
+					value={ useGenerateDomainsTableState( {
+						...props,
+						fetchBulkActionStatus: mockFetchBulkActionStatus,
+					} ) }
+				>
 					<table>
 						<tbody>{ children }</tbody>
 					</table>

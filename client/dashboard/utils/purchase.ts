@@ -10,10 +10,14 @@ import {
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { isAfter, parseISO, startOfDay } from 'date-fns';
+import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
+import { redirectToDashboardLink, wpcomLink } from './link';
 import { encodeProductForUrl } from './wpcom-checkout';
-import type { Product, Purchase, Site } from '@automattic/api-core';
+import type { Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -22,7 +26,8 @@ export const CANCEL_FLOW_TYPE = {
 	// When users effectively cancelling the auto-renewal by
 	// cancelling a subscription out of the refund window
 	CANCEL_AUTORENEW: 'cancel_autorenew',
-};
+} as const;
+export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
@@ -44,6 +49,27 @@ export function isExpiring( purchase: Purchase ) {
 
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
+}
+
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
+
+	if ( new Date( purchase.expiry_date ) >= new Date() ) {
+		return false;
+	}
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -104,7 +130,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -116,17 +142,25 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	) {
 		return false;
 	}
-	if (
-		new Date( purchase.expiry_date ).getTime() >
-		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
-	) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Both dates are in UTC (YYYY-MM-DD format), parse and compare them
+		return isAfter( parseISO( purchase.expiry_date ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		parseISO( purchase.expiry_date ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -138,10 +172,21 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Compare current UTC date with payment expiry date (both YYYY-MM-DD in UTC)
+		return isAfter( startOfDay( new Date() ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		startOfDay( new Date() ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function isTransferredOwnership(
@@ -262,6 +307,19 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
 		return purchase.meta;
 	}
+
+	if (
+		isAkismetPro500Plan( purchase.product_slug ) &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.renewal_price_tier_usage_quantity > 1
+	) {
+		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
+		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+		} );
+	}
+
 	return purchase.product_name;
 }
 
@@ -290,7 +348,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site Plan' );
+		return __( 'Site plan' );
 	}
 
 	if ( purchase.is_domain_registration ) {
@@ -430,6 +488,14 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 	return checkoutProductSlug;
 }
 
+function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		// Akismet checkout never uses a site slug.
+		return '';
+	}
+	return purchase.site_slug || '';
+}
+
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
 	checkoutSiteSlugForUrl?: string
@@ -448,10 +514,20 @@ export function getRenewUrlForPurchases(
 	const checkoutProductSlug = purchases
 		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
 		.join( ',' );
-	const checkoutSiteSlug = checkoutSiteSlugForUrl || firstPurchase.site_slug || '';
+	const checkoutSiteSlug =
+		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`;
+	const backUrl = redirectToDashboardLink();
+	return addQueryArgs(
+		wpcomLink(
+			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
+		),
+		{
+			cancel_to: backUrl,
+			redirect_to: backUrl,
+		}
+	);
 }
 
 /**
@@ -474,7 +550,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiry_date ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 export function isPartnerPurchase(
@@ -555,7 +633,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 /**
  * Returns the purchase cancellation flow.
  */
-export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
+export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
@@ -586,59 +664,3 @@ export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: stri
 			// SaaS products are also considered marketplace products
 			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);
-
-/**
- * Whether a purchase will trigger an Atomic revert when it is canceled or removed.
- * The backend has the final say on if this actually happens, see:
- * revert_atomic_site_on_subscription_removal() and deactivate_product().
- * This is a helper for UI elements only, it does not control actual revert decisions.
- */
-export const willAtomicSiteRevertAfterPurchaseDeactivation = (
-	purchase: Purchase,
-	sitePurchases: Purchase[],
-	site: Site | undefined,
-	productsList: Product[],
-	linkedPurchases: Purchase[]
-) => {
-	if ( ! purchase || ! site ) {
-		return false;
-	}
-
-	// Bail if the site not Atomic.
-	if ( ! site?.is_wpcom_atomic ) {
-		return false;
-	}
-
-	const isAtomicSupportedProduct = ( productSlug: string ) => {
-		if ( hasMarketplaceProduct( productsList ?? [], productSlug ) ) {
-			return true;
-		}
-
-		return site?.is_wpcom_atomic;
-	};
-
-	if ( ! Array.isArray( linkedPurchases ) ) {
-		linkedPurchases = [];
-	}
-
-	// Bail if none of the purchases to deactivate supports Atomic.
-	if (
-		! isAtomicSupportedProduct( purchase.product_slug ) &&
-		linkedPurchases.every(
-			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.product_slug )
-		)
-	) {
-		return false;
-	}
-
-	const remainingPurchases = sitePurchases.filter(
-		( sitePurchase: Purchase ) =>
-			sitePurchase.ID !== purchase.ID &&
-			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.ID !== linkedPurchase.ID )
-	);
-
-	// If there is at least one remaining Atomic supported purchase, the site will be kept in the Atomic infra.
-	return ! remainingPurchases.some( ( sitePurchase ) =>
-		isAtomicSupportedProduct( sitePurchase.product_slug )
-	);
-};

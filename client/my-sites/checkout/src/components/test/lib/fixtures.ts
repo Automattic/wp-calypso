@@ -103,7 +103,7 @@ export const storeData = () => ( {
 				payment_name: 'User Good',
 				payment_country_code: 'US',
 				payment_country_name: 'United States',
-				is_rechargable: true,
+				is_rechargeable: true,
 				payment_type: 'credit_card',
 			},
 			{
@@ -176,7 +176,7 @@ export const storeData = () => ( {
 				payment_name: 'User TwentyTwenty',
 				payment_country_code: 'US',
 				payment_country_name: 'United States',
-				is_rechargable: true,
+				is_rechargeable: true,
 				payment_type: 'credit_card',
 			},
 			{
@@ -248,7 +248,7 @@ export const storeData = () => ( {
 				payment_name: 'User TwentyTwenty',
 				payment_country_code: 'US',
 				payment_country_name: 'United States',
-				is_rechargable: true,
+				is_rechargeable: true,
 				payment_type: 'credit_card',
 			},
 		],

@@ -5,7 +5,7 @@ import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-gl
 type SiteIdOrSlug = number | string | null;
 
 export function useSiteGlobalStylesOnPersonal( siteIdOrSlug: SiteIdOrSlug = null ): boolean {
-	const { globalStylesInPersonalPlan } = useSiteGlobalStylesStatus( siteIdOrSlug );
+	const { globalStylesInPersonalPlan, variation } = useSiteGlobalStylesStatus( siteIdOrSlug );
 
 	// Return true if global styles are enabled in the Personal Plan through feature flag or experiment.
 	const isGlobalStylesOnPersonalEnabled =
@@ -14,8 +14,9 @@ export function useSiteGlobalStylesOnPersonal( siteIdOrSlug: SiteIdOrSlug = null
 	useEffect( () => {
 		if ( typeof window !== 'undefined' ) {
 			( window as any ).isGlobalStylesOnPersonal = isGlobalStylesOnPersonalEnabled;
+			( window as any ).globalStylesPersonalVariation = variation;
 		}
-	}, [ isGlobalStylesOnPersonalEnabled ] );
+	}, [ isGlobalStylesOnPersonalEnabled, variation ] );
 
 	return isGlobalStylesOnPersonalEnabled;
 }

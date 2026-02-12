@@ -1,10 +1,4 @@
-import {
-	DotcomPlans,
-	JetpackFeatures,
-	type JetpackFeatureSlug,
-	type Purchase,
-	type Site,
-} from '@automattic/api-core';
+import { JetpackPlans, JetpackFeatures } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -17,10 +11,13 @@ import {
 	shield,
 	video,
 } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
+import type { JetpackFeatureSlug, Purchase, Site } from '@automattic/api-core';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -77,7 +74,7 @@ export const JETPACK_PRODUCTS = [
 	},
 ];
 
-export function getJetpackProductsForSite( site: Site ) {
+export function getJetpackProductsForSite( site: Pick< Site, 'plan' > ) {
 	return JETPACK_PRODUCTS.filter( ( product ) =>
 		hasPlanFeature( site, product.id as JetpackFeatureSlug )
 	);
@@ -85,7 +82,7 @@ export function getJetpackProductsForSite( site: Site ) {
 
 export function getSitePlanDisplayName( site: Site ) {
 	if ( site.is_wpcom_staging_site ) {
-		return __( 'Staging site' );
+		return __( 'Staging Site' );
 	}
 
 	const plan = site.plan;
@@ -93,7 +90,7 @@ export function getSitePlanDisplayName( site: Site ) {
 		return '';
 	}
 
-	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
+	if ( plan.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
 			return products[ 0 ].label;
@@ -130,9 +127,18 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( site.plan?.is_free ) {
+		const backUrl = redirectToDashboardLink();
+
 		return isCommerceGarden( site )
-			? `${ protocol }//${ host }/plans/${ site.slug }`
-			: `${ protocol }//${ host }/setup/plan-upgrade?siteSlug=${ site.slug }`;
+			? addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+					siteSlug: site.slug,
+					dashboard: getCurrentDashboard(),
+			  } )
+			: addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
+					siteSlug: site.slug,
+					cancel_to: backUrl,
+					dashboard: getCurrentDashboard(),
+			  } );
 	}
 
 	if ( isDashboardBackport() ) {

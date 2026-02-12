@@ -11,9 +11,14 @@ interface BreadcrumbsProps {
 	 * screen, but all 3 will be presented by accessible technology.
 	 */
 	length: number;
+	/**
+	 * Optional callback function that is called when a breadcrumb item is clicked.
+	 * Receives the href and label of the clicked item.
+	 */
+	onItemClick?: ( href: string, label: string ) => void;
 }
 
-export default function Breadcrumbs( { length }: BreadcrumbsProps ) {
+export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps ) {
 	const matches = useMatches();
 
 	const items: BreadcrumbItemProps[] = matches
@@ -31,7 +36,12 @@ export default function Breadcrumbs( { length }: BreadcrumbsProps ) {
 		<BreadcrumbsComponent
 			items={ items }
 			renderItemLink={ ( { href, label, ...rest } ) => (
-				<Link to={ href } search={ getTransientQueryParamsAtPathname( href ) } { ...rest }>
+				<Link
+					to={ href }
+					search={ getTransientQueryParamsAtPathname( href ) }
+					onClick={ () => onItemClick?.( href, label ) }
+					{ ...rest }
+				>
 					{ label }
 				</Link>
 			) }

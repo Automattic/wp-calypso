@@ -70,6 +70,9 @@
 
 	&.is-group-reader .layout__content .layout__primary > div {
 		overflow-y: auto;
+		&:has( > .main) {
+			scrollbar-gutter: stable;
+		}
 	}
 
 	.tags__main {

@@ -37,6 +37,8 @@ type RazorpayTransactionRequest = {
 	razorpay: Razorpay;
 	razorpayConfiguration: RazorpayConfiguration;
 	name: string | undefined;
+	address1: string | undefined;
+	address2: string | undefined;
 };
 
 export default async function razorpayProcessor(
@@ -61,6 +63,8 @@ export default async function razorpayProcessor(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name ?? '',
+		address: submitData.address1 ?? '',
+		streetNumber: submitData.address2 ?? '',
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		domainDetails: getDomainDetails( contactDetails, {
@@ -196,11 +200,13 @@ function combineRazorpayOptions(
 	handler: ( response: RazorpayModalResponse ) => void,
 	ondismiss: () => void
 ): RazorpayOptions {
+	debug( 'Transaction response in combineRazorpayOptions', txnResponse );
 	if ( ! txnResponse.razorpay_order_id ) {
 		throw new Error( 'Missing order_id for razorpay transaction' );
 	}
 
 	const options = razorpayConfiguration.options;
+	debug( 'Initial razorpayConfiguration.options', options );
 	options.order_id = txnResponse.razorpay_order_id;
 	options.customer_id = txnResponse.razorpay_customer_id;
 	if ( txnResponse.razorpay_option_recurring ) {
@@ -218,6 +224,11 @@ function combineRazorpayOptions(
 		prefill.contact ?? ( contactDetails ? contactDetails.phone?.value.replace( '.', '' ) : '' );
 	prefill.email = prefill.email ?? ( contactDetails ? contactDetails.email?.value : '' );
 	options.prefill = prefill;
+
+	// Add notes with invoice number for tracking
+	const notes = options.notes ?? {};
+	notes.invoice_number = txnResponse.order_id?.toString() ?? '';
+	options.notes = notes;
 
 	return options;
 }

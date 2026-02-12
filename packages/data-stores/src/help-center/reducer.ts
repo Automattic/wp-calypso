@@ -1,8 +1,9 @@
 import { combineReducers } from '@wordpress/data';
+import { Location } from 'history';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
-import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -47,12 +48,23 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 };
 
 const helpCenterRouterHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
+	{ entries: Location[]; index: number } | null,
 	HelpCenterAction
-> = ( state, action ) => {
+> = ( state = null, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
 			return action.history;
+	}
+	return state;
+};
+
+const loggedOutOdieChat: Reducer<
+	{ odieId: number; sessionId: string; botSlug: string } | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session;
 	}
 	return state;
 };
@@ -148,9 +160,12 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+const navigateToRoute: Reducer<
+	{ route: string | undefined; coalesceParams: boolean } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
-		return action.route;
+		return { route: action.route, coalesceParams: action.coalesceParams };
 	}
 	return state;
 };
@@ -197,6 +212,13 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	return state;
 };
 
+const currentUser: Reducer< CurrentUser | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_USER' ) {
+		return action.user;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -216,9 +238,11 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	helpCenterRouterHistory,
+	loggedOutOdieChat,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
+	currentUser,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1,9 +1,9 @@
 import { TitanMailSlugs } from '@automattic/api-core';
-import { MinimalRequestCartProduct, RequestCartProductExtra } from '../../shopping-cart/types';
 import { MailboxForm, GSuiteProductUser } from '../entities/mailbox-form';
 import { MailboxProvider } from '../types';
 import { EmailProperties } from './get-email-product-properties';
 import { isMonthlyEmailProduct } from './is-monthly-email-product';
+import type { MinimalRequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 
 export interface TitanProductProps {
 	domain?: string;

@@ -19,6 +19,7 @@ import {
 	isCloseToExpiration,
 	isRenewable,
 	isExpired,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { useSelector } from 'calypso/state';
@@ -125,7 +126,8 @@ function PurchaseMetaExpiration( {
 			isAutorenewalEnabled &&
 			! hideAutoRenew &&
 			hasPaymentMethod( purchase ) &&
-			isRechargeable( purchase )
+			isRechargeable( purchase ) &&
+			! isInExpirationGracePeriod( purchase )
 		) {
 			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 				args: {
@@ -134,6 +136,16 @@ function PurchaseMetaExpiration( {
 				components: {
 					dateSpan,
 				},
+			} );
+		} else if ( isInExpirationGracePeriod( purchase ) ) {
+			subsBillingText = translate( 'Expired on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+				args: {
+					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+				comment: 'expireDate is a formatted date like "January 15, 2026"',
 			} );
 		} else {
 			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {

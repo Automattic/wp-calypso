@@ -19,11 +19,13 @@ import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 interface FilterOptions {
+	repositoryFilter?: string;
 	repositoryOptions: { value: string; label: string }[];
 	userNameOptions: { value: string; label: string }[];
 }
 
-export function useDeploymentFields( {
+export function useFields( {
+	repositoryFilter,
 	repositoryOptions = [],
 	userNameOptions = [],
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
@@ -32,13 +34,14 @@ export function useDeploymentFields( {
 	return useMemo(
 		() => [
 			{
-				id: 'repository_name',
+				id: 'repository',
 				label: __( 'Repository' ),
 				enableHiding: false,
 				enableGlobalSearch: true,
 				elements: repositoryOptions,
 				filterBy: {
 					operators: [ 'isAny' ],
+					...( repositoryFilter && { isPrimary: true } ),
 				},
 				getValue: ( { item } ) => item.repository_name,
 				render: ( { item } ) => {
@@ -48,7 +51,7 @@ export function useDeploymentFields( {
 						<Link
 							to={ siteSettingsRepositoriesManageRoute.fullPath }
 							params={ { siteSlug, deploymentId: item.code_deployment_id } }
-							search={ { back_to: 'deployments' } }
+							search={ { back_to: 'site-deployments' } }
 						>
 							{ repo }
 						</Link>
@@ -75,7 +78,7 @@ export function useDeploymentFields( {
 					return (
 						<VStack spacing={ 1 }>
 							<Text title={ commit_message }>{ commit_message }</Text>
-							<HStack spacing={ 3 } alignment="left" style={ { width: 'auto' } }>
+							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
@@ -100,7 +103,7 @@ export function useDeploymentFields( {
 										{ author.name }
 									</Text>
 								</HStack>
-								{ item.is_active_deployment && <Badge>{ __( 'Latest deployment' ) }</Badge> }
+								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);

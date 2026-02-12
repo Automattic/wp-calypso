@@ -9,7 +9,15 @@ import UsageInformationCard from './usage-information-card';
 
 export default function Privacy() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Privacy' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Privacy' ) }
+					description={ __( 'Manage your privacy settings and data usage preferences.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 8 }>
 				<UsageInformationCard />
 				<DpaCard />

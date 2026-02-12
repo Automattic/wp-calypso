@@ -26,6 +26,8 @@ export default function ThemeTierBadge( {
 	themeId,
 	showPartnerPrice = false,
 	isThemeList = false,
+	isThemeRetired,
+	isThemeActiveForSite,
 } ) {
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const { slug: themeTierSlug } = useThemeTierForTheme( themeId );
@@ -34,6 +36,12 @@ export default function ThemeTierBadge( {
 	const badge = useMemo( () => {
 		// We're still loading the theme tier, so don't render anything.
 		if ( ! themeTierSlug ) {
+			return null;
+		}
+
+		if ( isThemeRetired && ! isThemeActiveForSite ) {
+			// Don't make it seem like the theme is available via upgrade when it isn't.
+			// Do be clear whether use of the active and retired theme is contingent on the current plan.
 			return null;
 		}
 
@@ -100,6 +108,8 @@ export default function ThemeTierBadge( {
 		showPartnerPrice,
 		isThemeList,
 		showUpgradeBadge,
+		isThemeRetired,
+		isThemeActiveForSite,
 	] );
 
 	if ( ! badge ) {

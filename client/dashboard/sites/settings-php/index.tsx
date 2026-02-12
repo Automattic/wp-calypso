@@ -11,6 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -40,7 +41,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		version: currentVersion ?? '',
 	} );
 
-	const { phpVersions } = getPHPVersions();
+	const { phpVersions } = getPHPVersions( site.ID );
 
 	const fields: Field< { version: string } >[] = [
 		{
@@ -71,7 +72,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	};
 
 	const description = hasPlanFeature( site, HostingFeatures.PHP )
-		? undefined
+		? __( 'Configure the PHP version for your site.' )
 		: sprintf(
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),
@@ -98,6 +99,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
 								<DataForm< { version: string } >
 									data={ formData }
 									fields={ fields }

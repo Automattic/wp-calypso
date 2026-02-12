@@ -54,7 +54,10 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-async function pollForGardenProvisioning( siteId: number, maxAttempts = 10, delayMs = 3000 ) {
+async function pollForGardenProvisioning( siteId: number, maxAttempts = 22, delayMs = 5000 ) {
+	// Sleep for 10 seconds to allow for site creation to settle
+	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+
 	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 		try {
 			const siteResponse = ( await wpcomRequest( {
@@ -103,6 +106,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		partnerBundle,
 		gardenName,
 		gardenPartnerName,
+		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -116,6 +120,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			gardenName: select( ONBOARD_STORE ).getGardenName(),
 			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
+			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
 		[]
 	);
@@ -144,11 +149,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
-
-	const isPaidDomainItem = Boolean(
-		domainCartItem?.product_slug ||
-			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
-	);
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
@@ -214,7 +214,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const site = await createSiteWithCart(
 			flow,
 			true,
-			isPaidDomainItem,
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
@@ -232,7 +231,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteIntent,
 			undefined, // siteGoals
 			gardenName,
-			gardenPartnerName
+			gardenPartnerName,
+			urlQueryParams.get( 'spec_id' ),
+			blueprint
 		);
 
 		// Poll for garden provisioning status if this is a garden site

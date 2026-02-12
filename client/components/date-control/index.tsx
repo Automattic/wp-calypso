@@ -4,7 +4,7 @@ import { Moment } from 'moment';
 import { RefObject } from 'react';
 import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import useMomentSiteZone from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { DateControlProps } from './types';
 import './style.scss';
 
@@ -20,7 +20,8 @@ const DateControl = ( {
 	shortcutList,
 }: DateControlProps ) => {
 	const moment = useLocalizedMoment();
-	const siteToday = useMomentSiteZone();
+	const momentInSite = useMomentInSite();
+	const siteToday = momentInSite();
 
 	const getButtonLabel = () => {
 		const localizedStartDate = moment( dateRange.chartStart );

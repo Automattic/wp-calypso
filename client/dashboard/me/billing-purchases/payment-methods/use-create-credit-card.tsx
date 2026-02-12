@@ -8,12 +8,14 @@ export function useCreateCreditCard( {
 	stripeLoadingError,
 	hasExistingCardMethods,
 	allowUseForAllSubscriptions,
+	defaultToUseForAllSubscriptions,
 }: {
 	currency?: string | null | undefined;
 	isStripeLoading: boolean;
 	stripeLoadingError: Error | null | undefined;
 	hasExistingCardMethods?: boolean;
 	allowUseForAllSubscriptions?: boolean;
+	defaultToUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 
@@ -24,9 +26,16 @@ export function useCreateCreditCard( {
 						currency,
 						hasExistingCardMethods,
 						allowUseForAllSubscriptions,
+						defaultToUseForAllSubscriptions,
 				  } )
 				: null,
-		[ currency, shouldLoadStripeMethod, hasExistingCardMethods, allowUseForAllSubscriptions ]
+		[
+			currency,
+			shouldLoadStripeMethod,
+			hasExistingCardMethods,
+			allowUseForAllSubscriptions,
+			defaultToUseForAllSubscriptions,
+		]
 	);
 
 	return stripeMethod;

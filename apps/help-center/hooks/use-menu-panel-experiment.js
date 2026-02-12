@@ -25,15 +25,18 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 };
 
 const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
-	const cacheKey = `experiment-assignment-${ experimentName }-${ treatmentVariation }`;
+	const cacheKey = `menu-panel-experiment-assignment-v2-${ experimentName }-${ treatmentVariation }`;
 
-	const { data: isInTreatment } = useQuery( {
+	const { data: isInTreatment, isLoading } = useQuery( {
 		queryKey: [ 'experiment-assignment', experimentName, treatmentVariation ],
 		queryFn: async () => {
 			const result = await fetchExperimentAssignment( experimentName );
 			const isMatch = result?.variations?.[ experimentName ] === treatmentVariation;
 			try {
-				window.localStorage.setItem( cacheKey, JSON.stringify( isMatch ) );
+				window.localStorage.setItem(
+					cacheKey,
+					JSON.stringify( { value: isMatch, timestamp: Date.now() } )
+				);
 			} catch ( e ) {
 				// Silent fail if localStorage is unavailable
 			}
@@ -45,14 +48,20 @@ const useMenuPanelExperiment = ( experimentName, treatmentVariation ) => {
 		initialData: () => {
 			try {
 				const cached = window.localStorage.getItem( cacheKey );
-				return cached ? JSON.parse( cached ) : undefined;
+				if ( ! cached ) {
+					return undefined;
+				}
+				const { value, timestamp } = JSON.parse( cached );
+				const age = Date.now() - timestamp;
+				const maxAge = 10 * 60 * 1000; // 10 minutes
+				return age < maxAge ? value : undefined;
 			} catch ( e ) {
 				return undefined;
 			}
 		},
 	} );
 
-	return isInTreatment;
+	return { isInTreatment, isLoading };
 };
 
 export { useMenuPanelExperiment };

@@ -165,12 +165,6 @@ export class ConfigApi extends Function {
 	}
 }
 
-export function createOdysseyConfigFromKey( configKey = 'configData' ) {
-	const configApi = new ConfigApi();
-	configApi.init( configKey );
-	return configApi;
-}
-
 export default function createOdysseyConfigFromConfigData( configData: ConfigData ) {
 	const configApi = new ConfigApi();
 	configApi.setConfigData( configData );

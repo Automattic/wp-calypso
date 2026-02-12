@@ -72,6 +72,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
+import { isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
@@ -400,6 +401,10 @@ export default function CheckoutMainContent( {
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
 
+	const isWooHostedCheckout = useSelector( ( state ) =>
+		siteId ? isCommerceGardenSite( state, siteId ) : false
+	);
+
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
 	const shouldShowSitePreview =
 		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
@@ -458,7 +463,7 @@ export default function CheckoutMainContent( {
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
-	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl, siteId );
 	const previousPath = useSelector( getPreviousRoute );
 	const goToPreviousPage = () =>
 		leaveCheckout( {
@@ -807,6 +812,7 @@ export default function CheckoutMainContent( {
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
+						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
 						isCompleteCallback={ () => {
 							// We want to consider this step complete only if there is a
 							// payment method selected and it does not have required fields.
@@ -875,6 +881,7 @@ export default function CheckoutMainContent( {
 									</Step.LinkButton>
 								</span>
 							}
+							hideLogo={ isWooHostedCheckout }
 						/>
 					);
 

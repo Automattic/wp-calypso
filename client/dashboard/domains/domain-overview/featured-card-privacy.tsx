@@ -7,19 +7,26 @@ import OverviewCard from '../../components/overview-card';
 
 interface Props {
 	domain: Domain;
+	isDisabled?: boolean;
 }
 
-export default function FeaturedCardPrivacy( { domain }: Props ) {
+export default function FeaturedCardPrivacy( { domain, isDisabled }: Props ) {
 	const privacyWarning = __(
 		'Privacy protection is not available due to the registry’s policies.'
 	);
 	const privacyProtectionNote = domain.private_domain ? __( 'Enabled' ) : __( 'Disabled' );
+	const contactInfoLink =
+		domain.current_user_can_manage && domain.privacy_available && ! isDisabled
+			? `/domains/${ domain.domain }/contact-info`
+			: undefined;
 
 	return (
 		<OverviewCard
+			disabled={ isDisabled }
 			title={ __( 'Privacy' ) }
 			heading={ __( 'WHOIS Privacy' ) }
 			icon={ <Icon icon={ domain.private_domain ? unseen : seen } /> }
+			link={ contactInfoLink }
 			externalLink={ ! domain.privacy_available ? PRIVACY_PROTECTION : undefined }
 			description={ ! domain.privacy_available ? privacyWarning : privacyProtectionNote }
 			intent={ domain.private_domain ? 'success' : 'warning' }

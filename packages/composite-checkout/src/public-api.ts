@@ -12,6 +12,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	useCompleteAllSteps,
 	useMakeStepActive,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
@@ -24,6 +25,8 @@ import {
 	useAllPaymentMethods,
 	useAvailablePaymentMethodIds,
 	useTogglePaymentMethod,
+	useRegisterPaymentMethodLoading,
+	useArePaymentMethodsLoading,
 } from './lib/payment-methods';
 import {
 	usePaymentProcessor,
@@ -69,7 +72,10 @@ export {
 	usePaymentProcessors,
 	useProcessPayment,
 	useSetStepComplete,
+	useCompleteAllSteps,
 	useTogglePaymentMethod,
 	useTransactionStatus,
 	useMakeStepActive,
+	useRegisterPaymentMethodLoading,
+	useArePaymentMethodsLoading,
 };

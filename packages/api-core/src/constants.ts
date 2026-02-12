@@ -13,118 +13,11 @@ export const DotcomPlans = {
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
-	JETPACK_FREE: 'jetpack_free',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
 	PREMIUM_2_YEARS: 'value_bundle-2y',
 	PREMIUM_3_YEARS: 'value_bundle-3y',
-} as const;
-
-export const BusinessPlans = [
-	DotcomPlans.BUSINESS_MONTHLY,
-	DotcomPlans.BUSINESS,
-	DotcomPlans.BUSINESS_2_YEARS,
-	DotcomPlans.BUSINESS_3_YEARS,
-];
-
-export const EcommercePlans = [
-	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
-	DotcomPlans.ECOMMERCE_MONTHLY,
-	DotcomPlans.ECOMMERCE,
-	DotcomPlans.ECOMMERCE_2_YEARS,
-	DotcomPlans.ECOMMERCE_3_YEARS,
-];
-
-export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
-
-export const DotcomFeatures = {
-	ATOMIC: 'atomic',
-	BACKUPS: 'backups',
-	SUBSCRIPTION_GIFTING: 'subscription-gifting',
-	COPY_SITE: 'copy-site',
-	FULL_ACTIVITY_LOG: 'full-activity-log',
-	GITHUB_DEPLOYMENTS: 'github-deployments',
-	LEGACY_CONTACT: 'legacy-contact',
-	LOCKED_MODE: 'locked-mode',
-	LOGS: 'logs',
-	MONITORING: 'monitoring',
-	PERFORMANCE: 'performance',
-	SCAN: 'scan',
-	SECURITY_SETTINGS: 'security-settings',
-	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
-	SFTP: 'sftp',
-	SSH: 'ssh',
-	SITE_PREVIEW_LINKS: 'site-preview-links',
-	STAGING_SITES: 'staging-sites',
-} as const;
-
-export type DotcomFeatureSlug = ( typeof DotcomFeatures )[ keyof typeof DotcomFeatures ];
-
-// Features that are used to identify the paid product.
-// Feature slug extracted from https://github.com/Automattic/jetpack/tree/trunk/projects/packages/my-jetpack/src/products.
-export const JetpackFeatures = {
-	ANTISPAM: 'antispam',
-	BACKUPS: 'backups',
-	CLOUD_CRITICAL_CSS: 'cloud-critical-css',
-	MONITOR: 'monitor',
-	SCAN: 'scan',
-	SOCIAL_ENHANCED_PUBLISHING: 'social-enhanced-publishing',
-	STATS: 'stats-paid',
-	SEARCH: 'search',
-	VIDEOPRESS: 'videopress',
-} as const;
-
-export type JetpackFeatureSlug = ( typeof JetpackFeatures )[ keyof typeof JetpackFeatures ];
-
-export const JetpackModules = {
-	MONITOR: 'monitor',
-	PROTECT: 'protect',
-	SSO: 'sso',
-	STATS: 'stats',
-	WAF: 'waf',
-} as const;
-
-export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackModules ];
-
-// Features that needs Atomic or self-hosted infrastructure,
-// mapped to the required WordPress.com plan feature.
-export const HostingFeatures = {
-	BACKUPS: DotcomFeatures.BACKUPS,
-	CACHING: DotcomFeatures.ATOMIC,
-	DATABASE: DotcomFeatures.SFTP,
-	DEFENSIVE_MODE: DotcomFeatures.SFTP,
-	DEPLOYMENT: DotcomFeatures.GITHUB_DEPLOYMENTS,
-	LOGS: DotcomFeatures.LOGS,
-	ACTIVITY_LOG: DotcomFeatures.FULL_ACTIVITY_LOG,
-	MONITOR: DotcomFeatures.MONITORING,
-	PERFORMANCE: DotcomFeatures.PERFORMANCE,
-	PHP: DotcomFeatures.SFTP,
-	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
-	SCAN: DotcomFeatures.SCAN,
-	SECURITY_SETTINGS: DotcomFeatures.SECURITY_SETTINGS,
-	SFTP: DotcomFeatures.SFTP,
-	SSH: DotcomFeatures.SSH,
-	STAGING_SITE: DotcomFeatures.STAGING_SITES,
-	STATIC_FILE_404: DotcomFeatures.SFTP,
-} as const;
-
-export type HostingFeatureSlug = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
-
-export const SubscriptionBillPeriod = {
-	PLAN_ONE_TIME_PERIOD: -1,
-	PLAN_MONTHLY_PERIOD: 31,
-	PLAN_ANNUAL_PERIOD: 365,
-	PLAN_BIENNIAL_PERIOD: 730,
-	PLAN_TRIENNIAL_PERIOD: 1095,
-	PLAN_QUADRENNIAL_PERIOD: 1460,
-	PLAN_QUINQUENNIAL_PERIOD: 1825,
-	PLAN_SEXENNIAL_PERIOD: 2190,
-	PLAN_SEPTENNIAL_PERIOD: 2555,
-	PLAN_OCTENNIAL_PERIOD: 2920,
-	PLAN_NOVENNIAL_PERIOD: 3285,
-	PLAN_DECENNIAL_PERIOD: 3650,
-	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
 
 export const AkismetPlans = {
@@ -192,6 +85,138 @@ export const JetpackPlans = {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY: 'jetpack_security_daily_monthly',
 	PLAN_JETPACK_SECURITY_REALTIME: 'jetpack_security_realtime',
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY: 'jetpack_security_realtime_monthly',
+} as const;
+
+export const WooHostedPlans = {
+	WOO_HOSTED_FREE_PLAN: 'woo_hosted_free_plan',
+	WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY: 'woo_hosted_free_trial_plan_monthly',
+	WOO_HOSTED_BASIC_PLAN_MONTHLY: 'woo_hosted_basic_plan_monthly',
+	WOO_HOSTED_BASIC_PLAN_YEARLY: 'woo_hosted_basic_plan_yearly',
+	WOO_HOSTED_PRO_PLAN_MONTHLY: 'woo_hosted_pro_plan_monthly',
+	WOO_HOSTED_PRO_PLAN_YEARLY: 'woo_hosted_pro_plan_yearly',
+} as const;
+
+export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
+export type JetpackPlanSlug = ( typeof JetpackPlans )[ keyof typeof JetpackPlans ];
+export type AkismetPlanSlug = ( typeof AkismetPlans )[ keyof typeof AkismetPlans ];
+export type WooHostedPlanSlug = ( typeof WooHostedPlans )[ keyof typeof WooHostedPlans ];
+
+// Any valid plan slug sold through Store.
+export type StorePlanSlug = DotcomPlanSlug | JetpackPlanSlug | AkismetPlanSlug | WooHostedPlanSlug;
+
+export const BusinessPlans = [
+	DotcomPlans.BUSINESS_MONTHLY,
+	DotcomPlans.BUSINESS,
+	DotcomPlans.BUSINESS_2_YEARS,
+	DotcomPlans.BUSINESS_3_YEARS,
+];
+
+export const EcommercePlans = [
+	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+	DotcomPlans.ECOMMERCE_MONTHLY,
+	DotcomPlans.ECOMMERCE,
+	DotcomPlans.ECOMMERCE_2_YEARS,
+	DotcomPlans.ECOMMERCE_3_YEARS,
+];
+
+export const TrialPlans = [
+	DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+	DotcomPlans.HOSTING_TRIAL_MONTHLY,
+	DotcomPlans.MIGRATION_TRIAL_MONTHLY,
+	WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
+];
+
+export const DotcomFeatures = {
+	ATOMIC: 'atomic',
+	BACKUPS: 'backups',
+	BIG_SKY: 'big-sky',
+	DOMAIN_MAPPING: 'domain-mapping',
+	INSTALL_PLUGINS: 'install-plugins',
+	SUBSCRIPTION_GIFTING: 'subscription-gifting',
+	COPY_SITE: 'copy-site',
+	FULL_ACTIVITY_LOG: 'full-activity-log',
+	GITHUB_DEPLOYMENTS: 'github-deployments',
+	LEGACY_CONTACT: 'legacy-contact',
+	LOCKED_MODE: 'locked-mode',
+	LOGS: 'logs',
+	MONITORING: 'monitoring',
+	PERFORMANCE: 'performance',
+	SCAN: 'scan',
+	SECURITY_SETTINGS: 'security-settings',
+	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
+	SFTP: 'sftp',
+	SSH: 'ssh',
+	SITE_PREVIEW_LINKS: 'site-preview-links',
+	STAGING_SITES: 'staging-sites',
+} as const;
+
+export type DotcomFeatureSlug = ( typeof DotcomFeatures )[ keyof typeof DotcomFeatures ];
+
+// Features that are used to identify the paid product.
+// Feature slug extracted from https://github.com/Automattic/jetpack/tree/trunk/projects/packages/my-jetpack/src/products.
+export const JetpackFeatures = {
+	ANTISPAM: 'antispam',
+	BACKUPS: 'backups',
+	CLOUD_CRITICAL_CSS: 'cloud-critical-css',
+	MONITOR: 'monitor',
+	SCAN: 'scan',
+	SOCIAL_ENHANCED_PUBLISHING: 'social-enhanced-publishing',
+	STATS: 'stats-paid',
+	SEARCH: 'search',
+	VIDEOPRESS: 'videopress',
+} as const;
+
+export type JetpackFeatureSlug = ( typeof JetpackFeatures )[ keyof typeof JetpackFeatures ];
+
+export const JetpackModules = {
+	MONITOR: 'monitor',
+	PROTECT: 'protect',
+	SSO: 'sso',
+	STATS: 'stats',
+	WAF: 'waf',
+} as const;
+
+export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackModules ];
+
+// Features that needs Atomic or self-hosted infrastructure,
+// mapped to the required WordPress.com plan feature.
+export const HostingFeatures = {
+	BACKUPS: DotcomFeatures.BACKUPS,
+	BIG_SKY: DotcomFeatures.BIG_SKY,
+	CACHING: DotcomFeatures.ATOMIC,
+	DATABASE: DotcomFeatures.SFTP,
+	DEFENSIVE_MODE: DotcomFeatures.SFTP,
+	DEPLOYMENT: DotcomFeatures.GITHUB_DEPLOYMENTS,
+	LOGS: DotcomFeatures.LOGS,
+	ACTIVITY_LOG: DotcomFeatures.FULL_ACTIVITY_LOG,
+	MONITOR: DotcomFeatures.MONITORING,
+	PERFORMANCE: DotcomFeatures.PERFORMANCE,
+	PHP: DotcomFeatures.SFTP,
+	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
+	SCAN: DotcomFeatures.SCAN,
+	SECURITY_SETTINGS: DotcomFeatures.SECURITY_SETTINGS,
+	SFTP: DotcomFeatures.SFTP,
+	SSH: DotcomFeatures.SSH,
+	STAGING_SITE: DotcomFeatures.STAGING_SITES,
+	STATIC_FILE_404: DotcomFeatures.SFTP,
+} as const;
+
+export type HostingFeatureSlug = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
+
+export const SubscriptionBillPeriod = {
+	PLAN_ONE_TIME_PERIOD: -1,
+	PLAN_MONTHLY_PERIOD: 31,
+	PLAN_ANNUAL_PERIOD: 365,
+	PLAN_BIENNIAL_PERIOD: 730,
+	PLAN_TRIENNIAL_PERIOD: 1095,
+	PLAN_QUADRENNIAL_PERIOD: 1460,
+	PLAN_QUINQUENNIAL_PERIOD: 1825,
+	PLAN_SEXENNIAL_PERIOD: 2190,
+	PLAN_SEPTENNIAL_PERIOD: 2555,
+	PLAN_OCTENNIAL_PERIOD: 2920,
+	PLAN_NOVENNIAL_PERIOD: 3285,
+	PLAN_DECENNIAL_PERIOD: 3650,
+	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';

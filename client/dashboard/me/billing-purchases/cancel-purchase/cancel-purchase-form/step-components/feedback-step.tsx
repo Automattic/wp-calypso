@@ -1,4 +1,8 @@
-import { RadioControl, TextareaControl } from '@wordpress/components';
+import {
+	RadioControl,
+	TextareaControl,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Notice } from '../../../../../components/notice';
@@ -59,53 +63,45 @@ function CancellationReason( {
 	};
 
 	return (
-		<>
-			<div className="cancel-purchase-form__feedback-question">
-				<RadioControl
-					label={ __( 'Why would you like to cancel?' ) }
-					selected={ value }
-					options={ reasons.map( toSelectOption ) }
-					onChange={ ( val ) => {
-						onDetailsChange( '' );
-						setValue( val );
-						onChange( val );
-					} }
-				/>
-			</div>
+		<VStack spacing={ 6 }>
+			<RadioControl
+				label={ __( 'Why would you like to cancel?' ) }
+				selected={ value }
+				options={ reasons.map( toSelectOption ) }
+				onChange={ ( val ) => {
+					onDetailsChange( '' );
+					setValue( val );
+					onChange( val );
+				} }
+			/>
 
 			{ renderHelpMessage() }
 
 			{ selectedReason?.textPlaceholder && (
-				<div className="cancel-purchase-form__feedback-question">
-					<TextareaControl
-						label={ __( 'Can you please specify?' ) }
-						placeholder={ String( selectedReason.textPlaceholder ) }
-						value={ details }
-						onChange={ onDetailsChange }
-					/>
-				</div>
+				<TextareaControl
+					label={ __( 'Can you please specify?' ) }
+					placeholder={ String( selectedReason.textPlaceholder ) }
+					value={ details }
+					onChange={ onDetailsChange }
+				/>
 			) }
 			{ ! selectedReason?.textPlaceholder && selectedReason?.selectOptions && (
-				<div className="cancel-purchase-form__feedback-question">
-					<RadioControl
-						label={ __( 'Why is that?' ) }
-						selected={ details }
-						options={ selectedReason.selectOptions.map( toSelectOption ) }
-						onChange={ onDetailsChange }
-					/>
-				</div>
+				<RadioControl
+					label={ __( 'Why is that?' ) }
+					selected={ details }
+					options={ selectedReason.selectOptions.map( toSelectOption ) }
+					onChange={ onDetailsChange }
+				/>
 			) }
 			{ selectedSubOption?.textPlaceholder && (
-				<div className="cancel-purchase-form__feedback-question">
-					<TextareaControl
-						label={ __( 'Can you please specify?' ) }
-						placeholder={ String( selectedSubOption.textPlaceholder ) }
-						value={ feedbackValue }
-						onChange={ onTextAreaChange }
-					/>
-				</div>
+				<TextareaControl
+					label={ __( 'Can you please specify?' ) }
+					placeholder={ String( selectedSubOption.textPlaceholder ) }
+					value={ feedbackValue }
+					onChange={ onTextAreaChange }
+				/>
 			) }
-		</>
+		</VStack>
 	);
 }
 
@@ -173,7 +169,7 @@ export default function FeedbackStep( {
 	const showCancellationReason = isPlanPurchase || isGSuite || isDomain;
 
 	return (
-		<>
+		<VStack spacing={ 6 }>
 			{ showCancellationReason && (
 				<CancellationReason
 					plans={ plans }
@@ -186,6 +182,6 @@ export default function FeedbackStep( {
 			{ showCancellationReason && isImport && (
 				<ImportQuestion onChange={ onChangeImportFeedback } />
 			) }
-		</>
+		</VStack>
 	);
 }

@@ -3,7 +3,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './help-center.scss';
 
 function initHelpCenterTracking() {
-	const button = document.getElementById( 'wp-admin-bar-help-center' );
+	// Check for agents-manager-masterbar first, then fall back to help-center
+	const button =
+		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
+		document.getElementById( 'wp-admin-bar-help-center' );
 
 	if ( button && ! button.dataset.trackingInitialized ) {
 		button.addEventListener( 'click', () => {

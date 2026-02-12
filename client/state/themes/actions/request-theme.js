@@ -33,7 +33,7 @@ export function requestTheme( themeId, siteId, locale ) {
 		} );
 
 		if ( siteId === 'wporg' ) {
-			return fetchWporgThemeInformation( themeId )
+			return fetchWporgThemeInformation( themeId, locale )
 				.then( ( theme ) => {
 					// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
 					// if a theme can't be found.

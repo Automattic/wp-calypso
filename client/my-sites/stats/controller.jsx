@@ -6,7 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -192,11 +192,11 @@ export function site( context, next ) {
 
 	// startDate is the date the user clicked on the chart, which is basically the start of the period, i.e. Monday of weeks, 1st of months, or the selected date.
 	const date = isValidStartDate
-		? moment( queryOptions.startDate ).locale( 'en' )
-		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone().locale( 'en' ) ).startOf;
 
 	const parsedPeriod = isValidStartDate
-		? parseInt( getNumPeriodAgo( momentSiteZone, date, activeFilter.period ), 10 )
+		? parseInt( getNumPeriodAgo( momentSiteZone(), date, activeFilter.period ), 10 )
 		: 0;
 
 	// eslint-disable-next-line no-nested-ternary
@@ -262,7 +262,6 @@ export function summary( context, next ) {
 		'utm',
 		'devices',
 	];
-	let momentSiteZone = moment();
 
 	const selectedSite = getSite( context.store.getState(), siteId );
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
@@ -280,21 +279,18 @@ export function summary( context, next ) {
 		return next();
 	}
 
-	const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
-	if ( Number.isFinite( gmtOffset ) ) {
-		momentSiteZone = moment().utcOffset( gmtOffset );
-	}
+	const momentSiteZone = getMomentSiteZone( context.store.getState(), siteId );
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 	const date = isValidStartDate
-		? moment( queryOptions.startDate ).locale( 'en' )
-		: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: momentSiteZone().endOf( activeFilter.period ).locale( 'en' );
 	const period = rangeOfPeriod( activeFilter.period, date );
 
 	// Support for custom date ranges.
 	// Evaluate the endDate param if provided and create a date range object if valid.
 	// Valid means endDate is a valid date and is not before the startDate.
 	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
-	const endDate = isValidEndDate ? moment( queryOptions.endDate ).locale( 'en' ) : null;
+	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
 	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
 	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
 
@@ -411,11 +407,11 @@ export function wordAds( context, next ) {
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 	const date = isValidStartDate
-		? moment( queryOptions.startDate ).locale( 'en' )
-		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone().locale( 'en' ) ).startOf;
 
 	const parsedPeriod = isValidStartDate
-		? parseInt( getNumPeriodAgo( momentSiteZone, date, activeFilter.period ), 10 )
+		? parseInt( getNumPeriodAgo( momentSiteZone(), date, activeFilter.period ), 10 )
 		: 0;
 
 	// eslint-disable-next-line no-nested-ternary
@@ -459,8 +455,8 @@ export function emailStats( context, next ) {
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 	const date = isValidStartDate
-		? moment( queryOptions.startDate ).locale( 'en' )
-		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone().locale( 'en' ) ).startOf;
 
 	if ( 0 === siteId ) {
 		window.location = '/stats';
@@ -507,7 +503,8 @@ export function emailSummary( context, next ) {
 		);
 	} );
 
-	const date = moment().locale( 'en' );
+	const momentSiteZone = getMomentSiteZone( context.store.getState(), siteId );
+	const date = momentSiteZone().locale( 'en' );
 
 	context.primary = (
 		<StatsEmailSummary

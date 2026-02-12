@@ -1,22 +1,20 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
+import { Gridicon, EmbedContainer } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
-import CommentButton from 'calypso/blocks/comment-button';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -31,12 +29,9 @@ import {
 } from 'calypso/components/related-posts';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
-import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
@@ -52,7 +47,6 @@ import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { userCan } from 'calypso/state/posts/utils';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	getReaderFollowForFeed,
@@ -79,9 +73,11 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 import './style.scss';
@@ -149,15 +145,16 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		const scrollableContainer =
-			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
-			document.querySelector( '#primary > div > div' ); // for Recent Feed in Stream
+		const scrollableContainer = this.findScrollableContainer();
 		if ( scrollableContainer ) {
 			this.scrollableContainer = scrollableContainer;
-			this.scrollTracker.setContainer( scrollableContainer );
+			if ( scrollableContainer !== window ) {
+				this.scrollTracker.setContainer( scrollableContainer );
+			}
 			this.resetScroll();
 		}
 	}
+
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
@@ -177,6 +174,7 @@ export class FullPostView extends Component {
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
 				this.resetScroll();
+				this.focusPostTitle();
 			}
 
 			// Check comments API availability when post changes
@@ -218,6 +216,35 @@ export class FullPostView extends Component {
 		this.clearResetScrollTimeout();
 	}
 
+	findScrollableContainer = () => {
+		if ( ! this.readerMainWrapper.current ) {
+			return null;
+		}
+
+		let element = this.readerMainWrapper.current;
+
+		// Traverse up the DOM tree to find the first scrollable container
+		while ( element && element !== document.body ) {
+			const style = window.getComputedStyle( element );
+			const overflowY = style.overflowY || style.overflow;
+			const hasScrollableContent = element.scrollHeight > element.clientHeight;
+
+			// Check if element is scrollable
+			if (
+				overflowY === 'auto' ||
+				overflowY === 'scroll' ||
+				( hasScrollableContent && element.scrollTop !== undefined )
+			) {
+				return element;
+			}
+
+			element = element.parentElement;
+		}
+
+		// Fall back to window if no scrollable container found
+		return window;
+	};
+
 	setReadingStartTime = () => {
 		this.readingStartTime = new Date().getTime();
 	};
@@ -250,12 +277,12 @@ export class FullPostView extends Component {
 
 			// Next post - j
 			case 74: {
-				return this.goToPost( this.props.nextPost );
+				return this.goToPost( this.props.nextPostKey );
 			}
 
 			// Previous post - k
 			case 75: {
-				return this.goToPost( this.props.previousPost );
+				return this.goToPost( this.props.previousPostKey );
 			}
 		}
 	};
@@ -300,12 +327,28 @@ export class FullPostView extends Component {
 	resetScroll = () => {
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
-			this.scrollableContainer.scrollTo( {
-				top: 0,
-				left: 0,
-				behavior: 'instant',
-			} );
-			this.scrollTracker.resetMaxScrollDepth();
+			if ( ! this.scrollableContainer ) {
+				return;
+			}
+
+			if ( this.scrollableContainer === window ) {
+				window.scrollTo( {
+					top: 0,
+					left: 0,
+					behavior: 'instant',
+				} );
+			} else {
+				this.scrollableContainer.scrollTo( {
+					top: 0,
+					left: 0,
+					behavior: 'instant',
+				} );
+			}
+
+			// Only reset scroll depth if we have a container element (not window)
+			if ( this.scrollableContainer !== window ) {
+				this.scrollTracker.resetMaxScrollDepth();
+			}
 		}, 0 ); // Defer until after the DOM update
 	};
 
@@ -537,15 +580,39 @@ export class FullPostView extends Component {
 		}
 	};
 
-	goToPost = ( post ) => {
+	goToPost = ( postKey ) => {
 		const { layout, setSelectedItem, showSelectedPost: showPost } = this.props;
-		if ( post ) {
+		if ( postKey ) {
+			// Track navigation usage
+			let direction = 'unknown';
+			if ( postKey === this.props.nextPostKey ) {
+				direction = 'next';
+			} else if ( postKey === this.props.previousPostKey ) {
+				direction = 'previous';
+			}
+			recordTrackForPost( 'calypso_reader_article_navigation_clicked', this.props.post, {
+				direction,
+			} );
+
 			if ( layout === 'recent' && setSelectedItem ) {
-				setSelectedItem( post );
+				setSelectedItem( postKey );
 			} else {
-				showPost( { postKey: post } );
+				showPost( { postKey } );
 			}
 		}
+	};
+
+	focusPostTitle = () => {
+		// Small delay to ensure DOM has updated after navigation
+		setTimeout( () => {
+			// Try to focus the title link, or the title itself, or the back button as fallback
+			const focusTarget =
+				document.querySelector( '.reader-full-post__header-title-link' ) ||
+				document.querySelector( '.reader-full-post__header-title' ) ||
+				document.querySelector( '.reader-back-button' );
+
+			focusTarget?.focus();
+		}, 100 );
 	};
 
 	markAsSeen = () => {
@@ -678,7 +745,9 @@ export class FullPostView extends Component {
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
-		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		const feedUrl = get( post, 'feed_URL' );
+		const shouldShowMarkAsSeen =
+			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -698,6 +767,18 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.previousPostKey &&
+						! this.props.previousPost && (
+							<QueryReaderPost postKey={ this.props.previousPostKey } />
+						) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.nextPostKey &&
+						! this.props.nextPost && <QueryReaderPost postKey={ this.props.nextPostKey } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -707,94 +788,37 @@ export class FullPostView extends Component {
 						forceShow={ this.props.layout === 'recent' }
 						aria-label={ translate( 'Return to the list of posts.' ) }
 					/>
-					<div className="reader-full-post__visit-site-container">
-						<ExternalLink
-							icon
-							href={ post.URL }
-							onClick={ this.handleVisitSiteClick }
-							target="_blank"
-						>
-							<span className="reader-full-post__visit-site-label">
-								{ translate( 'Visit Site' ) }
-							</span>
-						</ExternalLink>
-					</div>
 					<div className="reader-full-post__content">
-						{ isDefaultLayout && (
-							<div className="reader-full-post__sidebar">
-								{ isLoading && <AuthorCompactProfile author={ null } /> }
-								{ ! isLoading && (
-									<AuthorCompactProfile
-										author={ post.author }
-										siteIcon={ get( site, 'icon.img' ) }
-										feedIcon={ feedIcon }
-										siteName={ siteName }
-										siteUrl={ post.site_URL }
-										feedUrl={ get( post, 'feed_URL' ) }
-										followCount={ site && site.subscribers_count }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-										feedId={ +post.feed_ID }
-										siteId={ +post.site_ID }
-										post={ post }
-									/>
-								) }
-								<div className="reader-full-post__sidebar-comment-like">
-									{ userCan( 'edit_post', post ) && (
-										<PostEditButton
-											post={ post }
-											site={ site }
-											iconSize={ 20 }
-											onClick={ this.onEditClick }
-										/>
-									) }
-
-									{ shouldShowComments( post ) && ! commentsApiDisabled && (
-										<CommentButton
-											key="comment-button"
-											commentCount={ commentCount }
-											onClick={ this.handleCommentClick }
-											tagName="div"
-											icon={ ReaderCommentIcon( { iconSize: 20 } ) }
-										/>
-									) }
-
-									{ shouldShowLikes( post ) && (
-										<LikeButton
-											siteId={ +post.site_ID }
-											postId={ +post.ID }
-											fullPost
-											tagName="div"
-											likeSource="reader"
-										/>
-									) }
-
-									{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-										canBeMarkedAsSeen( { post } ) &&
-										this.renderMarkAsSenButton() }
-								</div>
-							</div>
-						) }
 						<article className="reader-full-post__story">
 							<ReaderFullPostHeader
 								post={ post }
 								referralPost={ referralPost }
 								layout={ this.props.layout }
-								authorProfile={
-									<AuthorCompactProfile
-										author={ post.author }
-										siteIcon={ get( site, 'icon.img' ) }
-										feedIcon={ feedIcon }
-										siteName={ siteName }
-										siteUrl={ post.site_URL }
-										feedUrl={ get( post, 'feed_URL' ) }
-										followCount={ site && site.subscribers_count }
-										onFollowToggle={ this.openSuggestedFollowsModal }
-										feedId={ +post.feed_ID }
-										siteId={ +post.site_ID }
-										post={ post }
-									/>
-								}
+								author={ post.author }
+								siteName={ siteName }
+								followCount={ site && site.subscribers_count }
+								feedId={ +post.feed_ID }
+								siteId={ +post.site_ID }
+								tags={ isDefaultLayout ? <TagsList post={ post } tagsToShow={ 5 } /> : null }
 							/>
+
+							{ isDefaultLayout && (
+								<ReaderFullPostActionBar
+									post={ post }
+									site={ site }
+									commentCount={ commentCount }
+									onCommentClick={ this.handleCommentClick }
+									onEditClick={ this.onEditClick }
+									commentsApiDisabled={ commentsApiDisabled }
+									showComments={ shouldShowComments( post ) }
+									renderMarkAsSeenButton={
+										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
+									}
+									feedUrl={ feedUrl }
+									siteUrl={ post.site_URL }
+									onFollowToggle={ this.openSuggestedFollowsModal }
+								/>
+							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
 								<ReaderFeaturedImage
@@ -850,6 +874,16 @@ export class FullPostView extends Component {
 									/>
 								) }
 							</div>
+
+							{ isDefaultLayout && (
+								<ReaderFullPostNavigation
+									previousPost={ this.props.previousPost }
+									nextPost={ this.props.nextPost }
+									previousPostKey={ this.props.previousPostKey }
+									nextPostKey={ this.props.nextPostKey }
+									onNavigate={ this.goToPost }
+								/>
+							) }
 
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
@@ -945,8 +979,16 @@ export default connect(
 
 		const currentStreamKey = getCurrentStream( state );
 		if ( currentStreamKey ) {
-			props.previousPost = getPreviousItem( state, postKey );
-			props.nextPost = getNextItem( state, postKey );
+			const previousPostKey = getPreviousItem( state, postKey );
+			const nextPostKey = getNextItem( state, postKey );
+
+			// Fetch full post data for navigation
+			props.previousPost = previousPostKey ? getPostByKey( state, previousPostKey ) : null;
+			props.nextPost = nextPostKey ? getPostByKey( state, nextPostKey ) : null;
+
+			// Keep the keys for navigation
+			props.previousPostKey = previousPostKey;
+			props.nextPostKey = nextPostKey;
 		}
 
 		return props;

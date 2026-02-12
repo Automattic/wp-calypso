@@ -5,6 +5,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import type { AppState } from 'calypso/types';
 
+export type SocialService = 'google' | 'apple' | 'github' | 'paypal';
+
 export const getUxMode = ( state: AppState ) => {
 	const currentRoute = getCurrentRoute( state );
 	const oauth2Client = getCurrentOAuth2Client( state );
@@ -27,7 +29,7 @@ export const getUxMode = ( state: AppState ) => {
 };
 
 export const getRedirectUri = (
-	socialService: 'google' | 'apple' | 'github',
+	socialService: SocialService,
 	state: AppState,
 	isLogin: boolean
 ) => {
@@ -41,7 +43,7 @@ export const getRedirectUri = (
 
 	let flow = 'start';
 	// TODO: I am restricting this to certain flows for testing sake, but I think this should be the default behavior.
-	if ( flowName === 'ai-site-builder' && socialService === 'github' ) {
+	if ( flowName === 'ai-site-builder' && [ 'github', 'paypal' ].indexOf( socialService ) !== -1 ) {
 		flow = `setup/${ flowName }`;
 	}
 

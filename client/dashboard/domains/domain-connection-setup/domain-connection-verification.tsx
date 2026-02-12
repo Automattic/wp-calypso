@@ -1,13 +1,17 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import {
+	ExternalLink,
 	Icon,
+	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -28,6 +32,8 @@ interface DomainConnectionVerificationProps {
 	siteSlug: string;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 	domainMappingStatus: DomainMappingStatus;
+	onRestartConnection: () => void;
+	isRestartingConnection: boolean;
 }
 
 export default function DomainConnectionVerification( {
@@ -36,13 +42,21 @@ export default function DomainConnectionVerification( {
 	siteSlug,
 	domainMappingStatus,
 	domainConnectionSetupInfo,
+	onRestartConnection,
+	isRestartingConnection,
 }: DomainConnectionVerificationProps ) {
+	const { name: appName } = useAppContext();
 	const status: DomainConnectionStatus = isMappingVerificationSuccess(
 		domainMappingStatus.mode,
 		domainMappingStatus
 	)
 		? 'connected'
 		: 'verifying';
+
+	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
+
+	const connectedAndCanBeSetAsPrimary =
+		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
 
 	return (
 		<Card
@@ -63,28 +77,61 @@ export default function DomainConnectionVerification( {
 						</Badge>
 					</HStack>
 
-					<DnsPropagationProgressBar domainName={ domainName } />
+					<DnsPropagationProgressBar
+						domainMappingStatus={ domainMappingStatus }
+						domainConnectionSetupInfo={ domainConnectionSetupInfo }
+					/>
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
-							{ __(
-								'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-							) }
+							{ hasCloudflareIpAddresses
+								? createInterpolateElement(
+										__(
+											'<domainName/> is using Cloudflare, which hides DNS records, so we can’t verify them the usual way. We’ll still confirm that your domain name points to <appName/>.com. Please check that your <cloudflare/> DNS settings include the required records.'
+										),
+										{
+											domainName: <>{ domainName }</>,
+											appName: <>{ appName }</>,
+											cloudflare: (
+												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
+											),
+										}
+								  )
+								: __(
+										'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
+								  ) }
 						</Notice>
 					) }
 
 					<VStack spacing={ 4 }>
-						<Text size="medium" weight={ 500 }>
-							{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
-								? __( 'Name server verification' )
-								: __( 'DNS record verification' ) }
-						</Text>
+						{ ! hasCloudflareIpAddresses && (
+							<Text size="medium" weight={ 500 }>
+								{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+									? __( 'Name server verification' )
+									: __( 'DNS record verification' ) }
+							</Text>
+						) }
 
-						<DnsRecordsTable
-							domainData={ domainData }
-							domainConnectionStatus={ domainMappingStatus }
-							domainConnectionSetupInfo={ domainConnectionSetupInfo }
-						/>
+						{ ! hasCloudflareIpAddresses && (
+							<DnsRecordsTable
+								domainName={ domainName }
+								domainConnectionStatus={ domainMappingStatus }
+								domainConnectionSetupInfo={ domainConnectionSetupInfo }
+							/>
+						) }
+						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
+							<Notice variant="info">
+								{ createInterpolateElement(
+									__(
+										'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
+									),
+									{
+										domainName: <>{ domainName }</>,
+										appName: <>{ appName }</>,
+									}
+								) }
+							</Notice>
+						) }
 					</VStack>
 
 					<DomainPropagationStatus domainName={ domainName } />
@@ -96,15 +143,20 @@ export default function DomainConnectionVerification( {
 							</Text>
 						) }
 
-						{ status === 'connected' && (
-							<RouterLinkSummaryButton
-								to={ siteDomainsRoute.fullPath }
-								params={ { siteSlug } }
-								/* Translators: %s is the domain name. */
-								title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
-								description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
-								decoration={ <Icon icon={ atSymbol } /> }
-							/>
+						{ connectedAndCanBeSetAsPrimary && (
+							<>
+								<Text size="medium" weight={ 500 }>
+									{ __( 'Recommended' ) }
+								</Text>
+								<RouterLinkSummaryButton
+									to={ siteDomainsRoute.fullPath }
+									params={ { siteSlug } }
+									/* Translators: %s is the domain name. */
+									title={ sprintf( __( 'Set %s as your primary site address' ), domainName ) }
+									description={ __( 'It’s the URL visitors see in their browser’s address bar.' ) }
+									decoration={ <Icon icon={ atSymbol } /> }
+								/>
+							</>
 						) }
 						<RouterLinkSummaryButton
 							to={ siteOverviewRoute.fullPath }
@@ -118,19 +170,32 @@ export default function DomainConnectionVerification( {
 					</VStack>
 					{ status === 'verifying' && <VerificationInProgressNextSteps /> }
 
-					<Text size="medium" weight={ 500 }>
-						{ __( 'Need help?' ) }
-					</Text>
-					<VStack spacing={ 2 }>
-						<InlineSupportLink supportContext="map-domain-setup-instructions">
-							{ __( 'Domain connection guide' ) }
-						</InlineSupportLink>
-						<InlineSupportLink supportContext="general-support-options">
-							{ __( 'Contact support' ) }
-						</InlineSupportLink>
-						<InlineSupportLink supportContext="transfer-domain-registrar-login">
-							{ __( 'Registrar instructions' ) }
-						</InlineSupportLink>
+					<VStack spacing={ 4 }>
+						<Text size="medium" weight={ 500 }>
+							{ __( 'Need help?' ) }
+						</Text>
+						<VStack spacing={ 2 }>
+							<HStack>
+								<Button
+									variant="link"
+									onClick={ onRestartConnection }
+									isBusy={ isRestartingConnection }
+									disabled={ isRestartingConnection }
+									style={ { lineHeight: '20px' } }
+								>
+									{ __( 'Restart connection' ) }
+								</Button>
+							</HStack>
+							<InlineSupportLink supportContext="map-domain-setup-instructions">
+								{ __( 'Domain connection guide' ) }
+							</InlineSupportLink>
+							<InlineSupportLink supportContext="general-support-options">
+								{ __( 'Contact support' ) }
+							</InlineSupportLink>
+							<InlineSupportLink supportContext="transfer-domain-registrar-login">
+								{ __( 'Registrar instructions' ) }
+							</InlineSupportLink>
+						</VStack>
 					</VStack>
 				</VStack>
 			</CardBody>

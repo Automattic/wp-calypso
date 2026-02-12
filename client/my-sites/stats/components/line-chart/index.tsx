@@ -1,18 +1,10 @@
-import {
-	LineChart,
-	ThemeProvider,
-	jetpackTheme,
-	type EventHandlerParams,
-	type DataPointDate,
-} from '@automattic/charts';
+import { LineChart, type EventHandlerParams, type DataPointDate } from '@automattic/charts';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { DATE_FORMAT } from '../../constants';
+import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
@@ -42,14 +34,13 @@ function StatsLineChart( {
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
 	height?: number;
-	moment: Moment;
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
 	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
-	const moment = useLocalizedMoment();
+	const moment = useMomentInSite();
 
 	const formatTime = formatTimeTick
 		? formatTimeTick
@@ -175,56 +166,62 @@ function StatsLineChart( {
 				</div>
 			);
 		},
-		[ moment ]
+		[ moment, seriesIcons ]
 	);
 
 	const onPointerUp = useCallback(
 		( { datum }: EventHandlerParams< DataPointDate > ) => {
+			// datum.date is always in the timezone of the browser, we need to use literal date here.
 			if ( datum && datum.date ) {
-				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
+				onClick &&
+					onClick( {
+						data: {
+							period: `${ datum.date.getFullYear() }-${
+								datum.date.getMonth() + 1
+							}-${ datum.date.getDate() }`,
+						},
+					} );
 			}
 		},
-		[ moment, onClick ]
+		[ onClick ]
 	);
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && emptyState }
 			{ ! isEmpty && (
-				<ThemeProvider theme={ jetpackTheme }>
-					<LineChart
-						data={ chartData }
-						withTooltips
-						withGradientFill
-						height={ height }
-						curveType={ curveType }
-						onPointerUp={ onPointerUp }
-						margin={ {
-							left: 20,
-							top: 20,
-							bottom: 20,
-							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
-						} }
-						options={ {
-							yScale: {
-								type: yScaleType,
-								...( fixedDomain && { domain: [ 0, maxValue ] } ),
-								zero: zeroBaseline,
+				<LineChart
+					data={ chartData }
+					withTooltips
+					withGradientFill
+					height={ height }
+					curveType={ curveType }
+					onPointerUp={ onPointerUp }
+					margin={ {
+						left: 20,
+						top: 20,
+						bottom: 20,
+						right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
+					} }
+					options={ {
+						yScale: {
+							type: yScaleType,
+							...( fixedDomain && { domain: [ 0, maxValue ] } ),
+							zero: zeroBaseline,
+						},
+						axis: {
+							x: {
+								tickFormat: formatTime,
 							},
-							axis: {
-								x: {
-									tickFormat: formatTime,
-								},
-								y: {
-									orientation: 'right',
-									tickFormat: formatValue,
-									numTicks: yNumTicks,
-								},
+							y: {
+								orientation: 'right',
+								tickFormat: formatValue,
+								numTicks: yNumTicks,
 							},
-						} }
-						renderTooltip={ renderTooltip }
-					/>
-				</ThemeProvider>
+						},
+					} }
+					renderTooltip={ renderTooltip }
+				/>
 			) }
 		</div>
 	);

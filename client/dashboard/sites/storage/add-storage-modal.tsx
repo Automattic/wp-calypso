@@ -13,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import filesize from 'filesize';
 import { useState } from 'react';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { StorageCapacityStat } from './storage-capacity-stat';
 import {
 	getStorageAddOnProduct,
@@ -119,12 +120,15 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 			return;
 		}
 
-		const backUrl = window.location.href.replace( window.location.origin, '' );
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 		const checkoutUrl = addQueryArgs(
-			`/checkout/${ site.slug }/${ storageProduct.product_slug }:-q-${ selectedTier.quantity }`,
+			wpcomLink(
+				`/checkout/${ site.slug }/${ storageProduct.product_slug }:-q-${ selectedTier.quantity }`
+			),
 			{
 				cancel_to: backUrl,
 				return_to: backUrl,
+				dashboard: getCurrentDashboard(),
 			}
 		);
 

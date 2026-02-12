@@ -1,29 +1,36 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { queryClient } from '@automattic/api-queries';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
+import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { STATUS_LABELS, getSiteStatus } from '../../utils/site-status';
+import { getSiteBlockingStatus } from '../../utils/site-status';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import {
-	EngagementStat,
+	AsyncEngagementStat,
 	LastBackup,
 	MediaStorage,
 	Name,
 	PHPVersion,
 	Plan,
 	Preview,
-	Status,
 	URL,
 	Uptime,
+	Visibility,
 } from '../site-fields';
+import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, View } from '@wordpress/dataviews';
 
-function getDefaultFields(): Field< Site >[] {
+function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
+	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
 			id: 'name',
@@ -32,7 +39,6 @@ function getDefaultFields(): Field< Site >[] {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
 		},
 		{
 			id: 'URL',
@@ -60,19 +66,70 @@ function getDefaultFields(): Field< Site >[] {
 		{
 			id: 'plan',
 			label: __( 'Plan' ),
-			getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
-			render: ( { item } ) => <Plan site={ item } />,
+			getValue: ( { item } ) => item.plan?.product_name_en ?? '',
+			render: function PlanField( { item } ) {
+				const { user } = useAuth();
+				return (
+					<Plan
+						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
+						isJetpack={ item.jetpack }
+						isOwner={ item.site_owner === user.ID }
+						value={ getSitePlanDisplayName( item ) ?? '' }
+					/>
+				);
+			},
+			getElements: async () => {
+				const { plan = [] } = await queryClient.ensureQueryData( {
+					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
+				} );
+
+				// A plan may have different product_slugs due to the period.
+				// However, a filter can only represent one value.
+				// As a result, it seems better to use the untranslated name as value for filters.
+				const elements = plan.reduce(
+					( acc, current ) => ( {
+						...acc,
+						[ current.name ]: current.name_en,
+					} ),
+					{}
+				);
+
+				return Object.entries( elements ).map( ( [ label, value ] ) => ( {
+					label,
+					value,
+				} ) );
+			},
+			filterBy: {
+				operators: [ 'isAny' ],
+			},
+			sort: ( a, b, direction ) => {
+				const planA = getSitePlanDisplayName( a ) ?? '';
+				const planB = getSitePlanDisplayName( b ) ?? '';
+
+				return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
+			},
 		},
 		{
-			id: 'status',
-			label: __( 'Status' ),
-			getValue: ( { item } ) => getSiteStatus( item ),
-			elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+			id: 'visibility',
+			label: __( 'Visibility' ),
+			getValue: ( { item } ) => getSiteVisibility( item ),
+			elements: Object.entries( visibilityLabels ).map( ( [ value, label ] ) => ( {
+				value,
+				label,
+			} ) ),
 			filterBy: {
 				operators: [ 'isAny' as Operator ],
 			},
-			render: ( { item } ) => <Status site={ item } />,
-			enableSorting: ! isEnabled( 'dashboard/v2/es-site-list' ),
+			render: ( { item, field } ) => (
+				<Visibility
+					siteSlug={ item.slug }
+					visibility={ field.getValue( { item } ) }
+					status={ getSiteBlockingStatus( item ) }
+					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }
+				/>
+			),
 		},
 		{
 			id: 'wp_version',
@@ -91,6 +148,7 @@ function getDefaultFields(): Field< Site >[] {
 				operators: [ 'is' as Operator ],
 			},
 			render: ( { item } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+			enableSorting: false,
 		},
 		{
 			id: 'preview',
@@ -115,19 +173,19 @@ function getDefaultFields(): Field< Site >[] {
 		{
 			id: 'visitors',
 			label: __( '7-day visitors' ),
-			render: ( { item } ) => <EngagementStat site={ item } type="visitors" />,
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="visitors" />,
 			enableSorting: false,
 		},
 		{
 			id: 'views',
 			label: __( '7-day views' ),
-			render: ( { item } ) => <EngagementStat site={ item } type="views" />,
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="views" />,
 			enableSorting: false,
 		},
 		{
 			id: 'likes',
 			label: __( '7-day likes' ),
-			render: ( { item } ) => <EngagementStat site={ item } type="likes" />,
+			render: ( { item } ) => <AsyncEngagementStat site={ item } type="likes" />,
 			enableSorting: false,
 		},
 		{
@@ -150,30 +208,59 @@ function getDefaultFields(): Field< Site >[] {
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
 		},
+		{
+			id: 'is_deleted',
+			type: 'boolean',
+			label: __( 'Deleted' ),
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+			enableSorting: false,
+		},
 	];
 }
 
-export function getFields( {
+export function useFields( {
 	isAutomattician,
 	viewType,
 }: {
 	isAutomattician?: boolean;
 	viewType?: string;
 } ) {
-	const defaultFields = getDefaultFields();
-	return defaultFields.filter( ( field ) => {
-		if ( field.id === 'is_a8c' && ! isAutomattician ) {
-			return false;
+	const { queries } = useAppContext();
+
+	return useMemo( () => {
+		const defaultFields = getDefaultFields( queries );
+		return defaultFields.filter( ( field ) => {
+			if ( field.id === 'is_a8c' && ! isAutomattician ) {
+				return false;
+			}
+
+			if ( field.id === 'icon.ico' && viewType === 'grid' ) {
+				return false;
+			}
+
+			if ( field.id === 'preview' && viewType === 'table' ) {
+				return false;
+			}
+
+			return true;
+		} );
+	}, [ isAutomattician, viewType, queries ] );
+}
+
+export function sanitizeFields( fields: View[ 'fields' ] ) {
+	return fields?.map( ( field ) => {
+		// Replace the `Status` column with `Visibility` column.
+		if ( field === 'status' ) {
+			return 'visibility';
 		}
 
-		if ( field.id === 'icon.ico' && viewType === 'grid' ) {
-			return false;
-		}
-
-		if ( field.id === 'preview' && viewType === 'table' ) {
-			return false;
-		}
-
-		return true;
+		return field;
 	} );
 }

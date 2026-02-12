@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
@@ -29,11 +32,22 @@ const PostCheckoutOnboarding: StepType< {
 	submits: {
 		siteId: number;
 		siteSlug: string;
+		postCheckoutBigSky?: boolean;
 	};
 } > = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
+
+	const eligibleForExperiment =
+		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
+		!! site?.plan &&
+		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calyso_post_onboarding_big_sky_202601_v1',
+		{ isEligible: eligibleForExperiment }
+	);
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -109,7 +123,8 @@ const PostCheckoutOnboarding: StepType< {
 			! site ||
 			! siteSlug ||
 			isLoadingMarketplaceThemeProducts ||
-			isLoadingSiteTransferStatusData
+			isLoadingSiteTransferStatusData ||
+			isLoadingExperiment
 		) {
 			return;
 		}
@@ -119,6 +134,12 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
+				...( eligibleForExperiment
+					? {
+							postCheckoutBigSky: true,
+							postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control',
+					  }
+					: {} ),
 			};
 
 			if ( isJetpackOrAtomic ) {
@@ -144,6 +165,7 @@ const PostCheckoutOnboarding: StepType< {
 		siteSlug,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
+		isLoadingExperiment,
 		isJetpackOrAtomic,
 		siteTransferStatusData,
 		selectedDesign,

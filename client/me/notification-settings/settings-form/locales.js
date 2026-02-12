@@ -21,6 +21,7 @@ export const settingLabels = {
 	blogging_prompt: () => i18n.translate( 'Daily writing prompts' ),
 	draft_post_prompt: () => i18n.translate( 'Draft post reminders' ),
 	store_order: () => i18n.translate( 'New order' ),
+	form_response: () => i18n.translate( 'Form responses' ),
 };
 
 export const getLabelForStream = ( stream ) =>

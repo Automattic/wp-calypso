@@ -1,9 +1,12 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
+import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
+import type { ErrorInfo } from 'react';
 
 const settingsRoute = createRoute( {
 	...appRouterSites.siteSettingsRoute.options,
@@ -27,6 +30,17 @@ const siteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const aiToolsRoute = createRoute( {
+	...appRouterSites.siteSettingsAIToolsRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
+		createLazyRoute( 'ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -66,8 +80,9 @@ const phpRoute = createRoute( {
 );
 
 const databaseRoute = createRoute( {
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
-	path: 'database', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
@@ -154,8 +169,9 @@ const sftpSshRoute = createRoute( {
 );
 
 const transferSiteRoute = createRoute( {
+	// Bypass type issue by omitting the loader.
+	...Object.assign( appRouterSites.siteSettingsTransferSiteRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
-	path: 'transfer-site', // Bypass type issue by hard-coding the path instead of reusing the route.
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
@@ -186,12 +202,24 @@ const wpcomLoginRoute = createRoute( {
 	)
 );
 
+const experimentalRoute = createRoute( {
+	...appRouterSites.siteSettingsExperimentalRoute.options,
+	getParentRoute: () => settingsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'ai-assistant' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
 			settingsRoute.addChildren( [
 				settingsIndexRoute,
 				siteVisibilityRoute,
+				aiToolsRoute,
 				subscriptionGiftingRoute,
 				wordpressRoute,
 				phpRoute,
@@ -206,6 +234,7 @@ const createRouteTree = () =>
 				sftpSshRoute,
 				webApplicationFirewallRoute,
 				wpcomLoginRoute,
+				experimentalRoute,
 			] ),
 		] ),
 		dashboardSitesCompatibilityRoute,
@@ -219,6 +248,12 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = new Router( {
 		...getRouterOptions( config ),
 		routeTree,
+		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+			handleOnCatch( error, errorInfo, router, {
+				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
+				dashboard_backport: true,
+			} );
+		},
 	} );
 
 	return router;

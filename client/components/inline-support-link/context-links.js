@@ -19,6 +19,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
+	'ai-tools': {
+		link: 'https://wordpress.com/support/ai-website-builder/',
+		post_id: 404989,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
 		post_id: 267092,
@@ -160,6 +164,11 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/database/',
 		post_id: 420896,
 	},
+	'hosting-cron': {
+		link: 'https://developer.wordpress.com/docs/developer-tools/server-cron-jobs/',
+		post_id: 129967,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'hosting-elasticsearch': {
 		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',
 		post_id: 99387,
@@ -223,6 +232,10 @@ const contextLinks = {
 	},
 	'map-domain-change-name-servers': {
 		link: 'https://wordpress.com/support/domains/connect-existing-domain/#step-2-change-your-domains-name-servers',
+		post_id: 2789,
+	},
+	'map-domain-update-name-servers': {
+		link: 'https://wordpress.com/support/domains/connect-existing-domain/#option-2-manual-setup',
 		post_id: 2789,
 	},
 	'map-domain-update-a-records': {
@@ -579,15 +592,15 @@ const contextLinks = {
 		post_id: 6595,
 	},
 	'dns-default-mx-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-mx-records',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-email-records',
 		post_id: 386585,
 	},
 	'dns-default-a-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-a-records',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-a-records',
 		post_id: 386585,
 	},
 	'dns-default-cname-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-cname-record',
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#restore-default-cname-record',
 		post_id: 386585,
 	},
 	'add-a-new-dns-record': {
@@ -626,6 +639,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/add-email/add-email-through-office-365/',
 		post_id: 78065,
 	},
+	'domain-email-authentication': {
+		link: 'https://wordpress.com/support/domains/set-up-email-authentication-for-your-domain/',
+		post_id: 323153,
+	},
 	'domain-designated-agent': {
 		link: 'https://wordpress.com/support/domains/update-contact-information/#designated-agent',
 		post_id: 3441,
@@ -636,6 +653,10 @@ const contextLinks = {
 	},
 	'transfer-domain-registrar-login': {
 		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/#step-3-log-into-your-domain-provider-s-account',
+		post_id: 137759,
+	},
+	'transfer-domain-name-to-wordpress-com': {
+		link: 'https://wordpress.com/support/domains/incoming-domain-transfer/',
 		post_id: 137759,
 	},
 	'domain-registrations-and-privacy': {

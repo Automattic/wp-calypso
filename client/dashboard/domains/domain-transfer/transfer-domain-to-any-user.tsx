@@ -316,6 +316,7 @@ export default function TransferDomainToAnyUser() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Transfer to another user' ) }
+					description={ __( 'Transfer your domain to any WordPress.com user.' ) }
 				/>
 			}
 		>

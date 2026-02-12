@@ -1,38 +1,32 @@
-import { ComboboxControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { CustomSelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { Text } from '../../components/text';
 import type { SitePerformancePage } from '@automattic/api-core';
-
+import type { CSSProperties } from 'react';
 import './page-selector.scss';
 
 interface PageOption {
-	url: string;
-	path: string;
-	label: string;
-	value: string;
-	disabled: boolean;
-	wpcom_performance_report_hash: string;
+	key: string;
+	name: string;
+	hint?: string;
+	style?: CSSProperties;
 }
 
-/**
- * Map a PerformanceProfilerPage to a PageReport
- * @param page - The PerformanceProfilerPage to map
- * @param siteUrl - The URL of the site
- * @returns The PageReport
- */
+const defaultStyle = {
+	lineHeight: 1.2,
+};
+
 function mapPageToPageOption( page: SitePerformancePage, siteUrl: string ): PageOption {
-	let path = page.link.replace( siteUrl ?? '', '' );
-	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
+	const key = page.id.toString();
+	const name = page.title.rendered || __( 'No title' );
+	const path = page.link.replace( siteUrl ?? '', '' );
 
 	return {
-		url: page.link,
-		path,
-		label: page.title.rendered || __( 'No Title' ),
-		value: page.id.toString(),
-		disabled: false,
-		wpcom_performance_report_hash: page.wpcom_performance_report_hash,
+		key,
+		name: name.replace( /&nbsp;/g, ' ' ),
+		hint: path.length > 1 ? path.replace( /\/$/, '' ) : path,
+		style: defaultStyle,
 	};
 }
 
@@ -48,11 +42,6 @@ export default function PageSelector( {
 	onChange: ( page_id: string | null | undefined ) => void;
 } ) {
 	const isDesktop = useViewportMatch( 'medium' );
-
-	const currentPageOption: PageOption | undefined = currentPage
-		? mapPageToPageOption( currentPage, siteUrl )
-		: undefined;
-
 	const pageOptions = useMemo( () => {
 		if ( ! pages ) {
 			return [];
@@ -62,39 +51,37 @@ export default function PageSelector( {
 			mapPageToPageOption( page, siteUrl )
 		);
 
-		return [ ...mappedPages, { label: '', value: '-1', path: '', disabled: true } ];
+		return [
+			...mappedPages,
+			{
+				key: '-1',
+				name: __( 'Performance testing is available for the 20 most popular pages.' ),
+				style: {
+					...defaultStyle,
+					color: '#949494',
+					pointerEvents: 'none' as const,
+				},
+			},
+		];
 	}, [ pages, siteUrl ] );
 
-	return (
-		<div className="performance-page-selector">
-			<ComboboxControl
-				label={ __( 'Page' ) }
-				allowReset={ false }
-				options={ pageOptions }
-				hideLabelFromVision={ isDesktop ? false : true }
-				value={ currentPageOption?.value }
-				onChange={ onChange }
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				__experimentalRenderItem={ ( { item } ) => {
-					if ( item.value === '-1' ) {
-						return pages.length ? (
-							<Text variant="muted">
-								{ __( 'Performance testing is available for the 20 most popular pages.' ) }
-							</Text>
-						) : (
-							<Text variant="muted">{ __( 'No pages found.' ) }</Text>
-						);
-					}
+	const currentPageOption: PageOption | undefined = currentPage
+		? pageOptions.find( ( pageOptions ) => pageOptions.key === currentPage.id.toString() )
+		: undefined;
 
-					return (
-						<VStack spacing="0">
-							<Text>{ item.label }</Text>
-							<Text variant="muted">{ item.path }</Text>
-						</VStack>
-					);
-				} }
-			/>
-		</div>
+	const handleChange = ( { selectedItem }: { selectedItem: PageOption } ) => {
+		onChange( selectedItem.key );
+	};
+
+	return (
+		<CustomSelectControl
+			className="performance-page-selector"
+			label={ __( 'Page' ) }
+			value={ currentPageOption }
+			options={ pageOptions }
+			__next40pxDefaultSize
+			hideLabelFromVision={ isDesktop ? false : true }
+			onChange={ handleChange }
+		/>
 	);
 }

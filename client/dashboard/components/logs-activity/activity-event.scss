@@ -15,7 +15,8 @@
 .site-activity-logs__event-content {
 	flex: 1 0 0;
 	flex-wrap: wrap;
-	span {
+
+	> span {
 		color: $gray-700;
 	}
 }

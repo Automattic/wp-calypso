@@ -40,6 +40,18 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 };
 
 /**
+ * Normalize the path by removing leading double slashes and trailing slashes.
+ */
+export function getNormalizedPath( router: AnyRouter ) {
+	const leafMatch = router.state.matches.at( -1 );
+	const basePath = router.basepath ?? '';
+	const routeId = leafMatch?.routeId ?? '';
+
+	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
+	return normalizedBasePath + routeId.replace( /\/$/, '' );
+}
+
+/**
  * Attempts to retrieve the site information from the tanstack cache.
  *
  * It looks for the site slug in both the "site" and "sites" caches. Perhaps it's
@@ -47,7 +59,7 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
  * hoping to attach site info if it happens to be available. So I think checking
  * both caches represents a "best effort" attempt.
  */
-function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
+export function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
 	const site = queryClient.getQueryData< Site >( siteBySlugQuery( siteSlug ).queryKey );
 	if ( site ) {
 		return site;

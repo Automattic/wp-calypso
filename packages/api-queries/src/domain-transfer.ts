@@ -9,6 +9,7 @@ import {
 	domainTransferToUser,
 	transferDomainToSite,
 	fetchDomainInboundTransferStatus,
+	startDomainInboundTransfer,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
@@ -94,4 +95,14 @@ export const domainInboundTransferStatusQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'inbound-transfer-status' ],
 		queryFn: () => fetchDomainInboundTransferStatus( domainName ),
+	} );
+
+export const startDomainInboundTransferMutation = ( domain: string, siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( authCode: string ) => startDomainInboundTransfer( siteId, domain, authCode ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainQuery( domain ) );
+			queryClient.invalidateQueries( domainInboundTransferStatusQuery( domain ) );
+			queryClient.invalidateQueries( domainsQuery() );
+		},
 	} );

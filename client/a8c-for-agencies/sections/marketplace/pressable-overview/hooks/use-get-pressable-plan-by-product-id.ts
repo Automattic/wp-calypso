@@ -12,6 +12,13 @@ export default function useGetPressablePlanByProductId( { product_id }: Props ) 
 	} );
 
 	return useMemo( () => {
-		return pressablePlans.find( ( plan ) => plan.product_id === product_id ) ?? null;
+		return (
+			pressablePlans.find(
+				( plan ) =>
+					plan.product_id === product_id ||
+					plan.monthly_product_id === product_id ||
+					plan.yearly_product_id === product_id
+			) ?? null
+		);
 	}, [ pressablePlans, product_id ] );
 }

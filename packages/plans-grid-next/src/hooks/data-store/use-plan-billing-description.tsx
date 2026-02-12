@@ -13,6 +13,7 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
+import { getRenewalPricingText } from './get-renewal-pricing-text';
 import type { GridPlan } from '../../types';
 
 interface UsePlanBillingDescriptionProps {
@@ -35,8 +36,12 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-	const { reflectStorageSelectionInPlanPrices, showSimplifiedBillingDescription } =
-		usePlansGridContext();
+	const {
+		reflectStorageSelectionInPlanPrices,
+		showSimplifiedBillingDescription,
+		showBillingDescriptionForIncreasedRenewalPrice,
+		enableCategorisedFeatures,
+	} = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -65,11 +70,25 @@ export default function usePlanBillingDescription( {
 		yearlyVariantPricing &&
 		( ! introOffer || introOffer.isOfferComplete )
 	) {
-		const yearlyVariantMaybeDiscountedPrice = Number.isFinite(
+		// For renewal pricing experiment in FeaturesGrid, show "per month" and move savings text to post-button area
+		// For ComparisonGrid, keep the original savings text above the button
+		if ( showBillingDescriptionForIncreasedRenewalPrice && enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+
+		let yearlyVariantMaybeDiscountedPrice = Number.isFinite(
 			yearlyVariantPricing.discountedPrice?.monthly
 		)
 			? yearlyVariantPricing.discountedPrice?.monthly
 			: yearlyVariantPricing.originalPrice?.monthly;
+
+		if ( showBillingDescriptionForIncreasedRenewalPrice ) {
+			yearlyVariantMaybeDiscountedPrice = Number.isFinite(
+				yearlyVariantPricing.discountedPrice?.monthly
+			)
+				? yearlyVariantPricing.discountedPrice?.monthly
+				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
+		}
 
 		if (
 			yearlyVariantMaybeDiscountedPrice &&
@@ -108,7 +127,12 @@ export default function usePlanBillingDescription( {
 	 *   1. We only expose introOffers to monthly & yearly plans for now (so no need to introduce more translations just yet)
 	 *   2. We only expose month & year based intervals for now (so no need to introduce more translations just yet)
 	 */
-	if ( introOffer?.intervalCount && introOffer.intervalUnit && ! introOffer.isOfferComplete ) {
+	if (
+		introOffer?.intervalCount &&
+		introOffer.intervalUnit &&
+		! introOffer.isOfferComplete &&
+		! showBillingDescriptionForIncreasedRenewalPrice
+	) {
 		const discountedPriceFull =
 			typeof discountedPrice?.full === 'number' ? discountedPrice.full : introOffer?.rawPrice?.full;
 
@@ -254,7 +278,15 @@ export default function usePlanBillingDescription( {
 		return null;
 	}
 
-	if ( discountedPriceFullTermText ) {
+	// For renewal pricing experiment with intro pricing
+	if ( showBillingDescriptionForIncreasedRenewalPrice && discountedPriceFullTermText ) {
+		// In FeaturesGrid, show "per month" above button
+		if ( enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+		// In ComparisonGrid, continue to renewal pricing section below (don't return here)
+	} else if ( discountedPriceFullTermText ) {
+		// Show intro pricing for non-experiment users
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate(
 				'per month, %(fullTermDiscountedPriceText)s for the first year, excl. taxes',
@@ -284,6 +316,21 @@ export default function usePlanBillingDescription( {
 				}
 			);
 		}
+	}
+
+	if ( showBillingDescriptionForIncreasedRenewalPrice ) {
+		// For renewal pricing experiment, show variation-specific text
+		// In FeaturesGrid (enableCategorisedFeatures), show "per month" and move renewal text below CTA
+		// In ComparisonGrid, show full renewal text above CTA
+		if ( enableCategorisedFeatures ) {
+			return translate( 'per month' );
+		}
+
+		return getRenewalPricingText( {
+			pricing,
+			showBillingDescriptionForIncreasedRenewalPrice,
+			translate,
+		} );
 	} else if ( showSimplifiedBillingDescription ) {
 		// Use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {

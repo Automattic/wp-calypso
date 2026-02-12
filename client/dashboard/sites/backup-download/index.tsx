@@ -4,10 +4,11 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, cloud } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
@@ -137,7 +138,11 @@ function SiteBackupDownload() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Download backup' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Download backup' ) }
+					description={ __( 'Download a backup of your site from a specific point in time.' ) }
+				/>
 			}
 		>
 			{ currentStep !== 'success' ? (

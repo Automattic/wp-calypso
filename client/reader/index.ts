@@ -26,6 +26,8 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 	setupReadRoutes,
+	setBeforePrimary,
+	loadNewSubscriptionPage,
 } from './controller';
 import { userProfile } from './user-profile/controller';
 
@@ -38,7 +40,7 @@ function forceTeamA8C( context: Context, next: () => void ): void {
 
 export async function lazyLoadDependencies(): Promise< void > {
 	const isBrowser = typeof window === 'object';
-	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
+	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
 		const lasagnaMiddleware = await import(
 			/* webpackChunkName: "lasagnaMiddleware" */ 'calypso/state/lasagna/middleware.js'
 		);
@@ -50,69 +52,83 @@ export default async function (): Promise< void > {
 	await lazyLoadDependencies();
 	setupReadRoutes();
 
-	if ( config.isEnabled( 'reader' ) ) {
-		page(
-			[ '/reader', '/reader/recent/:feed_id' ],
-			redirectLoggedOutToDiscover,
-			sidebar,
-			setSelectedSiteIdByOrigin,
-			following,
-			makeLayout,
-			clientRender
-		);
+	page(
+		[ '/reader', '/reader/recent/:feed_id' ],
+		redirectLoggedOutToDiscover,
+		sidebar,
+		setBeforePrimary,
+		setSelectedSiteIdByOrigin,
+		following,
+		makeLayout,
+		clientRender
+	);
 
-		// Feed stream
-		page(
-			'/reader/feeds/:feed_id',
-			blogDiscoveryByFeedId,
-			redirectLoggedOutToSignup,
-			sidebar,
-			feedDiscovery,
-			feedListing,
-			makeLayout,
-			clientRender
-		);
+	page(
+		[ '/reader/new', '/reader/new/reddit' ],
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		setSelectedSiteIdByOrigin,
+		loadNewSubscriptionPage,
+		makeLayout,
+		clientRender
+	);
 
-		// Blog stream
-		page(
-			'/reader/blogs/:blog_id',
-			redirectLoggedOutToSignup,
-			sidebar,
-			blogListing,
-			makeLayout,
-			clientRender
-		);
+	// Feed stream
+	page(
+		'/reader/feeds/:feed_id',
+		blogDiscoveryByFeedId,
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		feedDiscovery,
+		feedListing,
+		makeLayout,
+		clientRender
+	);
 
-		// User profile
-		page(
-			'/reader/users/id/:user_id',
-			blogDiscoveryByFeedId,
-			redirectLoggedOutToSignup,
-			sidebar,
-			userProfile,
-			makeLayout,
-			clientRender
-		);
+	// Blog stream
+	page(
+		'/reader/blogs/:blog_id',
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		setSelectedSiteIdByOrigin,
+		blogListing,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
-			blogDiscoveryByFeedId,
-			redirectLoggedOutToSignup,
-			sidebar,
-			userProfile,
-			makeLayout,
-			clientRender
-		);
+	// User profile
+	page(
+		'/reader/users/id/:user_id',
+		blogDiscoveryByFeedId,
+		redirectLoggedOutToSignup,
+		sidebar,
+		setBeforePrimary,
+		userProfile,
+		makeLayout,
+		clientRender
+	);
 
-		page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
+	page(
+		[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
+		blogDiscoveryByFeedId,
+		redirectLoggedOutToSignup,
+		setBeforePrimary,
+		sidebar,
+		userProfile,
+		makeLayout,
+		clientRender
+	);
 
-		setupReaderRedirects();
-	}
+	page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 	// Automattic Employee Posts
 	page(
 		'/reader/a8c',
 		redirectLoggedOut,
+		setBeforePrimary,
 		sidebar,
 		forceTeamA8C,
 		readA8C,
@@ -121,13 +137,22 @@ export default async function (): Promise< void > {
 	);
 
 	// new P2 Posts
-	page( '/reader/p2', redirectLoggedOut, sidebar, readFollowingP2, makeLayout, clientRender );
+	page(
+		'/reader/p2',
+		redirectLoggedOut,
+		sidebar,
+		setBeforePrimary,
+		readFollowingP2,
+		makeLayout,
+		clientRender
+	);
 
 	// Sites subscription management
 	page(
 		'/reader/subscriptions',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -136,6 +161,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/comments',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		commentSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -144,6 +170,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/pending',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		pendingSubscriptionsManager,
 		makeLayout,
 		clientRender
@@ -152,6 +179,7 @@ export default async function (): Promise< void > {
 		'/reader/subscriptions/:subscription_id',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender
@@ -160,10 +188,13 @@ export default async function (): Promise< void > {
 		'/reader/site/subscription/:blog_id',
 		redirectLoggedOut,
 		sidebar,
+		setBeforePrimary,
 		siteSubscription,
 		makeLayout,
 		clientRender
 	);
+
+	setupReaderRedirects();
 }
 
 /**

@@ -7,7 +7,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import { sidebar } from 'calypso/reader/controller';
+import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchTrendingTags } from '../tags/controller';
 import { search } from './controller';
@@ -31,6 +31,7 @@ export default function () {
 		[ '/reader/search', `/${ langParam }/reader/search` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
+		setBeforePrimary,
 		fetchTrendingTagsIfLoggedOut,
 		sidebar,
 		search,

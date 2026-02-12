@@ -22,6 +22,48 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
+// var1d experiment: Badge displayed after feature title
+const FeatureBadge = styled.span`
+	display: inline-flex;
+	height: 18px;
+	padding: 0 6px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	border-radius: 4px;
+	background: #d7ffba;
+	color: #008a20;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 16px;
+	margin-inline-start: 8px;
+	vertical-align: baseline;
+	text-decoration: none;
+	white-space: nowrap;
+
+	@media ( max-width: 480px ) {
+		height: 16px;
+		padding: 0 4px;
+		margin-inline-start: 6px;
+	}
+`;
+
+// var1d experiment: Checkmark bullet icon for differentiator features
+const DifferentiatorCheckIcon = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="16"
+		height="20"
+		viewBox="0 0 16 20"
+		fill="none"
+		style={ { flexShrink: 0, marginInlineEnd: '8px', verticalAlign: 'top' } }
+	>
+		<circle opacity="0.13" cx="8" cy="10" r="8" fill="#9CA0B2" />
+		<path d="M5 9.77778L7.14286 12L11 8" stroke="#5B5E6C" strokeWidth="1.2" />
+	</svg>
+);
+
 const FreePlanCustomDomainFeature: React.FC< {
 	paidDomainName: string;
 	generatedWPComSubdomain?: DataResponse< { domain_name: string } >;
@@ -72,7 +114,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips } = usePlansGridContext();
+	const { enableFeatureTooltips, isExperimentVariant, isVar1dVariant, isVar4Variant } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -96,8 +139,31 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
 					  ! currentFeature.availableForCurrentPlan;
 
+				const featureSlug = currentFeature.getSlug();
+				const featuresWithMinHeight = [
+					'support-from-experts',
+					'priority-24-7-support',
+					'upload-video',
+				];
+
+				// Apply green styling for domain feature in experiment variants (not var1d, var4, or control)
+				const isCustomDomainFeatureWithPaidDomain =
+					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
+					paidDomainName &&
+					! isFreePlan( planSlug );
+				const shouldHighlightDomainFeature =
+					isCustomDomainFeatureWithPaidDomain &&
+					isExperimentVariant &&
+					! isVar1dVariant &&
+					! isVar4Variant;
+
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
+					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-header-feature': currentFeature.isHeaderFeature,
+					'is-var1d-last-feature': currentFeature.isVar1dLastFeature,
+					'is-experiment-last-feature': currentFeature.isExperimentLastFeature,
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {
 					'is-annual-plan-feature': currentFeature.availableOnlyForAnnualPlans,
@@ -106,6 +172,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				} );
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
+					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-domain-included-highlight': shouldHighlightDomainFeature,
 				} );
 
 				return (
@@ -142,13 +210,19 @@ const PlanFeatures2023GridFeatures: React.FC< {
 											id={ key }
 										>
 											<>
-												{ currentFeature.getTitle( {
-													domainName: paidDomainName,
-												} ) }
+												{ currentFeature.isDifferentiatorFeature && <DifferentiatorCheckIcon /> }
+												<span className="plan-features-2023-grid__item-text-content">
+													{ currentFeature.getTitle( {
+														domainName: paidDomainName,
+													} ) }
+													{ currentFeature.badgeText && (
+														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
+													) }
+												</span>
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
-															<li>{ subFeature?.getTitle() }</li>
+															<li key={ subFeature.getSlug() }>{ subFeature?.getTitle() }</li>
 														) ) }
 													</ul>
 												) : null }

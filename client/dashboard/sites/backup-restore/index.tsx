@@ -3,10 +3,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement, useState } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, cloud } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -113,7 +114,11 @@ function SiteBackupRestore() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Site restore' ) }
+					description={ __( 'Restore your site to a previous point in time.' ) }
+				/>
 			}
 		>
 			{ currentStep !== 'success' ? (

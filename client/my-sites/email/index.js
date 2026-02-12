@@ -1,6 +1,11 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import {
 	navigation,
@@ -30,7 +35,15 @@ const emailMailboxesSiteSelectionHeader = ( context, next ) => {
 };
 
 export default function () {
-	page( paths.getEmailManagementPath(), siteSelection, sites, makeLayout, clientRender );
+	page(
+		paths.getEmailManagementPath(),
+		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/emails' ),
+		sites,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		paths.getMailboxesPath(),
@@ -49,13 +62,27 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		paths.getEmailManagementPath( ':site' ),
+		...commonHandlers,
+		controller.emailManagement,
+		makeLayout,
+		clientRender
+	);
+
 	registerMultiPage( {
 		paths: [
 			paths.getEmailManagementPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.getEmailManagementPath( ':site', ':domain' ),
-			paths.getEmailManagementPath( ':site' ),
 		],
-		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
+		handlers: [
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( params ) => `/emails?domainName=${ params.domain }` ),
+			...commonHandlers,
+			controller.emailManagement,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	const productType = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
@@ -137,6 +164,10 @@ export default function () {
 			paths.getPurchaseNewEmailAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard(
+				( params ) => `/emails/choose-email-solution/${ params.domain }`
+			),
 			...commonHandlers,
 			controller.emailManagementPurchaseNewEmailAccount,
 			makeLayout,

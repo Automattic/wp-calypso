@@ -1,7 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { MarketplaceTypeContext } from '../context';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { MarketplaceTypeContext, TermPricingContext } from '../context';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import { type ShoppingCartItem } from '../types';
 
@@ -9,8 +12,11 @@ const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
 export default function useShoppingCart() {
+	const dispatch = useDispatch();
+
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
 
 	const [ showCart, setShowCart ] = useState( window.location.hash === CART_URL_HASH_FRAGMENT );
 
@@ -21,6 +27,12 @@ export default function useShoppingCart() {
 	}, [ marketplaceType ] );
 
 	const toggleCart = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_toggle_cart', {
+				purchase_mode: marketplaceType,
+				term_pricing: termPricing,
+			} )
+		);
 		setShowCart( ( prevState ) => {
 			const nextState = ! prevState;
 
@@ -108,13 +120,34 @@ export default function useShoppingCart() {
 		[ storageKey ]
 	);
 
+	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
+
+	const updatedSelectedCartItems = useMemo( () => {
+		return selectedCartItems.map( ( item ) => {
+			const termBasedProductId =
+				( termPricing === 'yearly' ? item.yearly_product_id : item.monthly_product_id ) ||
+				item.product_id;
+			const termBasedAlternativeProductId =
+				( termPricing === 'yearly'
+					? item.yearly_alternative_product_id
+					: item.monthly_alternative_product_id ) || item.alternative_product_id;
+			return {
+				...item,
+				product_id: isTermPricingEnabled ? termBasedProductId : item.product_id,
+				alternative_product_id: isTermPricingEnabled
+					? termBasedAlternativeProductId
+					: item.alternative_product_id,
+			};
+		} );
+	}, [ isTermPricingEnabled, selectedCartItems, termPricing ] );
+
 	const onRemoveCartItem = useCallback(
 		( item: ShoppingCartItem ) => {
 			setAndCacheSelectedItems(
-				selectedCartItems.filter( ( selectedCartItem ) => selectedCartItem !== item )
+				updatedSelectedCartItems.filter( ( selectedCartItem ) => selectedCartItem !== item )
 			);
 		},
-		[ selectedCartItems, setAndCacheSelectedItems ]
+		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
 	);
 
 	const onClearCart = useCallback( () => {
@@ -122,7 +155,7 @@ export default function useShoppingCart() {
 	}, [ setAndCacheSelectedItems ] );
 
 	return {
-		selectedCartItems,
+		selectedCartItems: updatedSelectedCartItems,
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
 		onClearCart,

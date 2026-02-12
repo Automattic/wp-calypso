@@ -74,9 +74,12 @@ export async function assignNewCardProcessor(
 			cardElement,
 		} = submitData;
 
-		// Create Stripe Setup Intent
+		// @todo: we should pass the countryCode to createStripeSetupIntent,
+		// but since `prepareAndConfirmStripeSetupIntent()` uses the `stripe`
+		// object created by `StripeHookProvider`, that object must also be
+		// created with the same countryCode, and right now it is not.
 		const setupIntentResult = await createStripeSetupIntent( {
-			country: countryCode,
+			country: undefined,
 		} );
 
 		if ( ! setupIntentResult.setup_intent_id ) {

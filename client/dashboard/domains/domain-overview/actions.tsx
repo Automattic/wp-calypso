@@ -5,7 +5,7 @@ import {
 	removePurchaseMutation,
 	purchaseQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -18,7 +18,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
+import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
+import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
@@ -36,12 +37,12 @@ import {
 	getDeleteDescription,
 } from './actions.utils';
 
-export default function Actions() {
+export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const router = useRouter();
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: purchase } = useQuery(
+	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
@@ -79,7 +80,7 @@ export default function Actions() {
 					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
 						type: 'snackbar',
 					} );
-					router.navigate( { to: domainsRoute.fullPath } );
+					router.navigate( { to: domainsIndexRoute.fullPath } );
 				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 				onSettled: () => {
@@ -90,7 +91,7 @@ export default function Actions() {
 	);
 
 	const availableActions = {
-		renew: purchase?.is_renewable && domain.current_user_is_owner,
+		renew: purchase.is_renewable && domain.current_user_is_owner,
 		transfer: shouldShowTransferAction( domain ),
 		transferIn: shouldShowTransferInAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),
@@ -115,7 +116,8 @@ export default function Actions() {
 							<Button
 								size="compact"
 								variant="secondary"
-								href={ getDomainRenewalUrl( domain, purchase! ) }
+								href={ getDomainRenewalUrl( domain, purchase ) }
+								disabled={ isDisabled }
 							>
 								{ __( 'Renew' ) }
 							</Button>
@@ -136,6 +138,7 @@ export default function Actions() {
 								variant="secondary"
 								to={ domainTransferRoute.fullPath }
 								params={ { domainName } }
+								disabled={ isDisabled }
 							>
 								{ __( 'Transfer' ) }
 							</RouterLinkButton>
@@ -162,7 +165,11 @@ export default function Actions() {
 				{ availableActions.disconnect && (
 					<ActionList.ActionItem
 						title={ __( 'Detach' ) }
-						description={ __( 'Detach this domain from the site.' ) }
+						description={ sprintf(
+							/* translators: %s is the site slug, e.g. "mysite.wordpress.com" */
+							__( 'Detach this domain from %s.' ),
+							domain.site_slug
+						) }
 						actions={
 							<Button
 								size="compact"
@@ -181,14 +188,15 @@ export default function Actions() {
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
 						actions={
-							<Button
+							<RouterLinkButton
 								size="compact"
 								variant="secondary"
 								isDestructive
-								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }` }
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
 							>
 								{ getDeleteLabel( domain ) }
-							</Button>
+							</RouterLinkButton>
 						}
 					/>
 				) }
@@ -197,14 +205,15 @@ export default function Actions() {
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
 						actions={
-							<Button
+							<RouterLinkButton
 								size="compact"
 								variant="secondary"
 								isDestructive
-								href={ `/me/purchases/${ purchase?.site_slug }/${ purchase?.ID }/cancel` }
+								to={ cancelPurchaseRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
 							>
 								{ getDeleteLabel( domain ) }
-							</Button>
+							</RouterLinkButton>
 						}
 					/>
 				) }
@@ -219,11 +228,15 @@ export default function Actions() {
 				<SectionHeader
 					title={ sprintf(
 						/* translators: %s is the domain name */
-						__( 'Detach domain %s' ),
+						__( 'Detach %s' ),
 						domainName
 					) }
 					description={ createInterpolateElement(
-						__( 'Are you sure you want to detach this domain? <learnMoreLink />' ),
+						sprintf(
+							/* translators: %s is the site slug, e.g. "mysite.wordpress.com" */
+							__( 'Are you sure you want to detach this domain from %s? <learnMoreLink />' ),
+							domain.site_slug
+						),
 						{
 							learnMoreLink: (
 								<InlineSupportLink

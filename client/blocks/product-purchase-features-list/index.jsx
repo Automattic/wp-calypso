@@ -21,6 +21,8 @@ import {
 	WPCOM_FEATURES_WORDADS,
 	TYPE_WOOEXPRESS_MEDIUM,
 	TYPE_WOOEXPRESS_SMALL,
+	TYPE_WOO_HOSTED_BASIC,
+	TYPE_WOO_HOSTED_PRO,
 	TYPE_100_YEAR,
 	TYPE_STARTER,
 } from '@automattic/calypso-products';
@@ -395,6 +397,8 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_ECOMMERCE ]: () => this.getEcommerceFeatures(),
 				[ TYPE_WOOEXPRESS_MEDIUM ]: () => this.getEcommerceFeatures(),
 				[ TYPE_WOOEXPRESS_SMALL ]: () => this.getEcommerceFeatures(),
+				[ TYPE_WOO_HOSTED_BASIC ]: () => this.getEcommerceFeatures(),
+				[ TYPE_WOO_HOSTED_PRO ]: () => this.getEcommerceFeatures(),
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),

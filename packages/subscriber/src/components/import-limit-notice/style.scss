@@ -1,0 +1,16 @@
+.import-limit-notice {
+	font-size: $font-body-small;
+	line-height: 1.25;
+	color: var(--studio-gray-50);
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--color-text-subtle);
+		}
+	}
+}

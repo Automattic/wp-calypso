@@ -1,5 +1,10 @@
 import page, { type Callback, type Context } from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { LOGS_PHP, LOGS_WEB } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
@@ -16,6 +21,10 @@ export default function () {
 	page(
 		'/site-logs/:site/php',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) => `/sites/${ params.site }/logs/php`
+		),
 		navigation,
 		phpErrorLogs,
 		siteLogsCallout,
@@ -26,6 +35,10 @@ export default function () {
 	page(
 		'/site-logs/:site/web',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(
+			( params: Record< string, string > ) => `/sites/${ params.site }/logs/server`
+		),
 		navigation,
 		webServerLogs,
 		siteLogsCallout,

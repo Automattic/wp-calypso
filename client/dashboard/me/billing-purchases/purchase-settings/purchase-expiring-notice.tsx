@@ -1,4 +1,4 @@
-import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,8 +13,8 @@ import {
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
 	isTemporarySitePurchase,
-	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
+	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -23,12 +23,6 @@ export function shouldShowExpiringNotice(
 	purchase: Purchase,
 	purchaseAttachedTo: Purchase | undefined
 ) {
-	const EXCLUDED_PRODUCTS: string[] = [
-		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
-		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
-		DotcomPlans.HOSTING_TRIAL_MONTHLY,
-	];
-
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
 	// there are other upcoming renewals to display, so for consistency it
@@ -39,11 +33,10 @@ export function shouldShowExpiringNotice(
 	);
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
-
 	if (
 		! isExpiring( currentPurchase ) ||
-		EXCLUDED_PRODUCTS.includes( currentPurchase?.product_slug ) ||
-		isAkismetFreeProduct( currentPurchase )
+		currentPurchase?.is_trial_plan ||
+		isInExpirationGracePeriod( currentPurchase )
 	) {
 		return false;
 	}
@@ -236,7 +229,7 @@ export function ExpiringLaterText( {
 	}
 
 	if ( purchase.payment_type ) {
-		if ( purchase.is_rechargable ) {
+		if ( purchase.is_rechargeable ) {
 			if ( autoRenewingUpgradesAction ) {
 				return createInterpolateElement(
 					sprintf(

@@ -85,7 +85,7 @@ export default function useSiteActions( {
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/sites/settings/v2/${ url }/site-visibility`,
+				href: `https://wordpress.com/sites/${ siteSlug }/settings/site-visibility`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,
@@ -276,7 +276,7 @@ export function useSiteActionsDataViews( {
 				},
 				callback( items: SiteData[] ) {
 					window.open(
-						`https://wordpress.com/sites/settings/v2/${ getSiteSlug( items[ 0 ] ) }/site-visibility`
+						`https://wordpress.com/sites/${ getSiteSlug( items[ 0 ] ) }/settings/site-visibility`
 					);
 					dispatch(
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )

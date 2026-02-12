@@ -1,7 +1,6 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
@@ -19,8 +18,8 @@ import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-li
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
-import { TypingPlaceholder } from './typing-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
+import { ZendeskTypingIndicator } from './zendesk-typing-indicator';
 import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
@@ -30,23 +29,15 @@ interface ChatMessagesProps {
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
+	const isTestMode = isTestModeEnvironment();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
-	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
-	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const navType: NavigationType = useNavigationType();
-	const typingStatus = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getSupportTypingStatus(
-				chat.conversationId ?? ''
-			),
-		[ chat.conversationId ]
-	);
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
@@ -76,37 +67,20 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
 			searchParams.delete( 'provider' );
-			setChatMessagesLoaded( true );
 		}
-	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded, searchParams ] );
-
-	useEffect( () => {
-		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
-			return;
-		}
-
-		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, searchParams ] );
 
 	/**
 	 * Handle the case where we are directly forwarding to Zendesk without AI first.
 	 */
 	useEffect( () => {
-		if (
-			isForwardingToZendesk &&
-			! hasForwardedToZendesk &&
-			! chat.conversationId &&
-			isChatLoaded &&
-			! forceEmailSupport
-		) {
+		if ( isForwardingToZendesk && ! chat.conversationId && isChatLoaded && ! forceEmailSupport ) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
-			setHasForwardedToZendesk( true );
 
 			// when forwarding to zd avoid creating new chats
 			if ( alreadyHasActiveZendeskChatId ) {
-				setChatMessagesLoaded( true );
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
 				return navigate( '/odie?' + searchParams.toString() );
@@ -116,14 +90,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setSearchParams( searchParams );
 			createZendeskConversation( {
 				createdFrom: 'direct_url',
-			} ).then( () => {
-				setChatMessagesLoaded( true );
 			} );
 		}
 	}, [
 		navigate,
 		isForwardingToZendesk,
-		hasForwardedToZendesk,
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,
@@ -156,40 +127,34 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			<>
 				<div
 					className={ clx( 'chatbox-loading-chat__spinner', {
-						'is-visible': ! chatMessagesLoaded || isScrolling,
+						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
 					<Spinner />
 				</div>
-				{ ( chat.odieId || chat.provider === 'odie' ) && (
+				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
 							currentUser?.display_name
 						) }
 						key={ 0 }
-						currentUser={ currentUser }
-						displayChatWithSupportLabel={ false }
 					/>
 				) }
 				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
-				{ chat.provider === 'odie' && chat.status === 'sending' && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<ThinkingPlaceholder />
-					</div>
+				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
+				{ chat.provider === 'odie' && chat.status === 'transfer' && (
+					<ThinkingPlaceholder
+						content={
+							__( 'Requesting human support', __i18n_text_domain__ ) +
+							( isTestMode ? '… (ZENDESK STAGING)' : '…' )
+						}
+					/>
 				) }
-				{ chat.provider.startsWith( 'zendesk' ) && typingStatus && (
-					<div
-						className="odie-chatbox__action-message"
-						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
-					>
-						<TypingPlaceholder />
-					</div>
+				{ chat.provider.startsWith( 'zendesk' ) && (
+					<ZendeskTypingIndicator conversationId={ chat.conversationId } />
 				) }
 			</>
 		</div>

@@ -10,9 +10,10 @@ import type { Site } from '@automattic/api-core';
  * installations.
  */
 export function getSiteDisplayUrl( site: Site ) {
-	if ( site.options?.is_redirect ) {
+	if ( site.is_garden || site.options?.is_redirect ) {
 		return site.slug;
 	}
+
 	return site.URL.replace( 'https://', '' ).replace( 'http://', '' );
 }
 
@@ -52,10 +53,10 @@ export function getSiteEditUrl( site: Site, isSiteUsingBlockTheme?: boolean ) {
 /**
  * Returns the URL for the site visibility settings page.
  */
-export function getSiteVisibilityURL( site: Site ) {
+export function getSiteVisibilityURL( site: Site, queryArgs?: { back_to: 'site-overview' } ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		return undefined;
 	}
 
-	return `/sites/${ site.slug }/settings/site-visibility`;
+	return addQueryArgs( `/sites/${ site.slug }/settings/site-visibility`, queryArgs );
 }

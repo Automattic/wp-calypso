@@ -6,6 +6,7 @@ import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { removeTrailingSlash } from 'calypso/lib/string';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
@@ -34,7 +35,9 @@ function renderFeed( feed: Feed ) {
 					<div className="list-item__title">
 						<FeedTitle feed={ feed } />
 					</div>
-					<div className="list-item__domain">{ feed.feed_URL }</div>
+					<div className="list-item__domain">
+						{ removeTrailingSlash( feed.URL ) || feed.feed_URL }
+					</div>
 				</div>
 			</a>
 		</div>
@@ -86,12 +89,13 @@ export default function FeedItem( props: {
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
-		item.feed_ID && dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+		item.feed_ID &&
+		dispatch( addReaderListFeed( list.ID, owner, list.slug, Number( item.feed_ID ) ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
 		shouldDelete &&
 			item.feed_ID &&
-			dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+			dispatch( deleteReaderListFeed( list.ID, owner, list.slug, Number( item.feed_ID ) ) );
 	};
 
 	if ( isInList && props.hideIfInList ) {

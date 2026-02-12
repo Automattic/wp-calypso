@@ -1,33 +1,27 @@
-import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	paginatedSitesQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
-import Logo from './logo';
+import { getCiabDashboardBasePath } from './routing';
 import './translations';
-import type { FetchSitesOptions, FetchDashboardSiteListParams } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchPaginatedSitesOptions,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	basePath: '/ciab',
+	basePath: getCiabDashboardBasePath( window.location.hostname ),
 	mainRoute: '/sites',
-	Logo,
+	Logo: null,
 	supports: {
-		sites: {
-			deployments: false,
-			performance: false,
-			monitoring: false,
-			logs: false,
-			backups: false,
-			scan: false,
-			domains: true,
-			emails: false,
-			settings: {
-				general: {
-					redirect: false,
-				},
-				server: false,
-				security: false,
-			},
-		},
+		sites: true,
 		domains: true,
 		emails: true,
 		themes: false,
@@ -35,11 +29,18 @@ boot( {
 		help: true,
 		notifications: false,
 		me: {
+			billing: {
+				monetizeSubscriptions: false,
+			},
+			security: {
+				sshKey: false,
+			},
 			privacy: false,
 			apps: false,
 		},
 		plugins: false,
 		commandPalette: false,
+		domainOnlySites: false,
 	},
 	optIn: false,
 	components: {
@@ -49,9 +50,9 @@ boot( {
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
 			sitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
-		dashboardSiteListQuery: ( params?: FetchDashboardSiteListParams ) => {
-			// TODO: Add a filter for commerce garden types to the params.
-			return dashboardSiteListQuery( params );
-		},
+		paginatedSitesQuery: ( fetchSitesOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
 	},
 } );

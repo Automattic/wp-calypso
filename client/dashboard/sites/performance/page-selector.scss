@@ -1,36 +1,11 @@
 .performance-page-selector {
-	position: relative;
-	width: 240px;
-	align-self: flex-start;
-}
-
-.performance-page-selector > * {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-}
-
-.performance-page-selector .components-combobox-control__suggestions-container {
-	background-color: #fff;
-}
-
-.performance-page-selector .components-base-control__field {
 	display: flex;
+	align-items: baseline;
+	justify-content: end;
 	gap: 8px;
-}
+	width: 240px;
 
-.performance-page-selector .components-base-control__field label {
-	line-height: 40px;
-	margin-bottom: 0; /* Override the default margin-bottom of the ComboboxControl */
-}
-
-.performance-page-selector .components-form-token-field__suggestions-list {
-	max-height: 300px;
-	z-index: 100;
-}
-
-.performance-page-selector li.is-selected .components-text {
-	// TODO Use the correct color variables for displaying white text on a blue background
-	filter: invert(1) brightness(1.6);
+	.components-custom-select-control__item-hint {
+		width: 100%;
+	}
 }

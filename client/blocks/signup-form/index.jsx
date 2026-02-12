@@ -101,6 +101,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		disableTosText: PropTypes.bool,
+		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -823,6 +824,7 @@ class SignupForm extends Component {
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							compact
 							disableTosText
+							allowedSocialServices={ this.props.allowedSocialServices }
 						/>
 					</>
 				) }

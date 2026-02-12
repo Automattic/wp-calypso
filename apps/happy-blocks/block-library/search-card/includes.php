@@ -7,6 +7,10 @@
  * @package happy-blocks
  */
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
+$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' )
+	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' ) );
+
 if ( ! function_exists( 'happy_blocks_get_search_card_asset' ) ) {
 	/**
 	 * Find the URL of the asset file from happy-blocks.
@@ -22,6 +26,12 @@ if ( ! function_exists( 'happy_blocks_get_search_card_asset' ) ) {
 }
 
 $happy_blocks_get_search_card_css = happy_blocks_get_search_card_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
-$happy_blocks_get_search_card_js  = happy_blocks_get_search_card_asset( 'view.js' );
 wp_enqueue_style( 'happy-blocks-support-search-card-style', $happy_blocks_get_search_card_css['path'], array(), $happy_blocks_get_search_card_css['version'] );
-wp_enqueue_script( 'happy-blocks-support-search-card-script', $happy_blocks_get_search_card_js['path'], array(), $happy_blocks_get_search_card_js['version'], true );
+
+if ( $enable_odie_answers ) {
+	$happy_blocks_get_search_card_js = happy_blocks_get_search_card_asset( 'view-odie.js' );
+	wp_enqueue_script( 'happy-blocks-support-search-card-script', $happy_blocks_get_search_card_js['path'], array(), $happy_blocks_get_search_card_js['version'], true );
+} else {
+	$happy_blocks_get_search_card_js = happy_blocks_get_search_card_asset( 'view.js' );
+	wp_enqueue_script( 'happy-blocks-support-search-card-script', $happy_blocks_get_search_card_js['path'], array(), $happy_blocks_get_search_card_js['version'], true );
+}

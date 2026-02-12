@@ -1,4 +1,6 @@
+import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import {
+	domainDiagnosticsQuery,
 	domainQuery,
 	domainDnsQuery,
 	domainForwardingQuery,
@@ -15,6 +17,8 @@ import {
 	rawUserPreferencesQuery,
 	domainAvailabilityQuery,
 	domainInboundTransferStatusQuery,
+	purchaseQuery,
+	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -23,6 +27,7 @@ import {
 	notFound,
 	redirect,
 	lazyRouteComponent,
+	Outlet,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -32,10 +37,11 @@ import {
 	checkDomainDnsRecordsPermissions,
 	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
+import { queryParamToArray } from '../../utils/url';
+import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 
-// Standalone domains route - requires rootRoute
-export const domainsRoute = createRoute( {
+const domainsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -45,14 +51,69 @@ export const domainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
+} );
+
+// Standalone domains route - requires rootRoute
+export const domainsIndexRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-list', { fullPageLoad } );
+		}
+	},
 	loader: async ( { context } ) => {
-		queryClient.ensureQueryData( domainsQuery() );
-		queryClient.ensureQueryData( context.config.queries.sitesQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainsContactInfoRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain contact details' ),
+			},
+		],
+	} ),
+	path: 'contact-info',
+	beforeLoad: async ( { search } ) => {
+		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
+
+		if ( selected.length === 0 ) {
+			throw redirect( { to: '/domains' } );
+		}
+	},
+	loaderDeps: ( { search } ) => {
+		return {
+			selectedDomains: queryParamToArray( ( search as { selected: unknown } ).selected ),
+		};
+	},
+	loader: async ( { deps: { selectedDomains } } ) => {
+		return {
+			domainDetails: await Promise.all(
+				selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainQuery( domain ) ) )
+			),
+			whoisData: await Promise.all(
+				selectedDomains.map( ( domain ) =>
+					queryClient.ensureQueryData( domainWhoisQuery( domain ) )
+				)
+			),
+		};
+	},
+} ).lazy( () =>
+	import( '../../domains/domains-contact-details' ).then( ( d ) =>
+		createLazyRoute( 'domains-contact-info' )( {
 			component: d.default,
 		} )
 	)
@@ -115,8 +176,11 @@ export const domainOverviewRoute = createRoute( {
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
-		queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
-		queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
+		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
+		await queryClient.ensureQueryData(
+			purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
+		);
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
@@ -201,6 +265,27 @@ export const domainDnsEditRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainDiagnosticsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Diagnostics' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'diagnostics',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-diagnostics' ).then( ( d ) =>
+		createLazyRoute( 'domain-diagnostics' )( {
 			component: d.default,
 		} )
 	)
@@ -300,13 +385,11 @@ export const domainContactInfoRoute = createRoute( {
 			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 		] );
 	},
-} ).lazy( () =>
-	import( '../../domains/domain-contact-details' ).then( ( d ) =>
-		createLazyRoute( 'domain-contact-info' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: lazyRouteComponent( () => import( '../../domains/domain-contact-details' ) ),
+	errorComponent: lazyRouteComponent(
+		() => import( '../../domains/domain-contact-details/error' )
+	),
+} );
 
 export const domainContactVerificationRoute = createRoute( {
 	head: () => ( {
@@ -360,6 +443,8 @@ export const domainGlueRecordsRoute = createRoute( {
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+	component: Outlet,
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain-glue-records/error' ) ),
 } );
 
 export const domainGlueRecordsIndexRoute = createRoute( {
@@ -444,6 +529,36 @@ export const domainSecurityRoute = createRoute( {
 	)
 );
 
+export const domainTransferSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain transfer setup' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'domain-transfer-setup',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
+			queryClient.ensureQueryData( domainInboundTransferStatusQuery( domainName ) ),
+		] );
+	},
+} ).lazy( () =>
+	config.isEnabled( 'domain-transfer-redesign' )
+		? import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
+		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
+				createLazyRoute( 'domain-transfer-setup' )( {
+					component: d.default,
+				} )
+		  )
+);
+
 export const domainTransferRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -459,6 +574,32 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+
+		const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
+
+		if ( ! isInboundTransfer ) {
+			return;
+		}
+
+		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
+			if ( ! domain.last_transfer_error ) {
+				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+			}
+			// If there was a transfer error, the user should see the transfer failed page
+			return domain;
+		}
+
+		if (
+			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
+			DomainTransferStatus.CANCELLED !== domain.transfer_status
+		) {
+			throw redirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+		}
+
+		return domain;
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer' )( {
@@ -501,7 +642,10 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	path: 'other-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) ),
+			queryClient.ensureQueryData( siteUsersWpcomQuery( domain.blog_id, 'administrator' ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-other-user' ).then( ( d ) =>
@@ -562,38 +706,8 @@ export const domainConnectionSetupRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	config.isEnabled( 'domain-connection-redesign' )
-		? import( '../../domains/domain-connection-setup' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-		: import( '../../domains/domain-connection-setup/legacy-connection-flow' ).then( ( d ) =>
-				createLazyRoute( 'domain-connection-setup' )( {
-					component: d.default,
-				} )
-		  )
-);
-
-export const domainTransferSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Domain transfer setup' ),
-			},
-		],
-	} ),
-	getParentRoute: () => domainRoute,
-	path: 'domain-transfer-setup',
-	loader: async ( { params: { domainName } } ) => {
-		await Promise.all( [
-			queryClient.ensureQueryData( domainAvailabilityQuery( domainName ) ),
-			queryClient.ensureQueryData( domainInboundTransferStatusQuery( domainName ) ),
-		] );
-	},
-} ).lazy( () =>
-	import( '../../domains/domain-connection-setup/transfer-setup' ).then( ( d ) =>
-		createLazyRoute( 'domain-transfer-setup' )( {
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
 			component: d.default,
 		} )
 	)
@@ -601,10 +715,11 @@ export const domainTransferSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute,
+		domainsRoute.addChildren( [ domainsIndexRoute, domainsContactInfoRoute ] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
+			domainDiagnosticsRoute,
 			domainConnectionSetupRoute,
 			domainTransferSetupRoute,
 			domainForwardingRoute.addChildren( [

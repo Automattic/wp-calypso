@@ -1,6 +1,17 @@
 import ConsolidatedViews from '../consolidated-view';
-import type { Referral } from '../types';
+import type { Referral, ReferralCommissionPayoutResponse } from '../types';
 
-export default function ReferralCommissions( { referral }: { referral: Referral } ) {
-	return <ConsolidatedViews referrals={ [ referral ] } />;
+interface Props {
+	referral: Referral;
+	referralCommissionPayout?: ReferralCommissionPayoutResponse | undefined;
+}
+
+export default function ReferralCommissions( { referral, referralCommissionPayout }: Props ) {
+	return (
+		<ConsolidatedViews
+			isSingleClient
+			referrals={ [ referral ] }
+			referralCommissionPayout={ referralCommissionPayout }
+		/>
+	);
 }

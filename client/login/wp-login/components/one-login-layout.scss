@@ -27,8 +27,10 @@
 }
 
 .wp-login__one-login-layout-tos {
+	color: var( --studio-gray-50, #646970 );
+
 	a {
-		color: var( --color-text );
+		color: inherit;
 		text-decoration: underline;
 	}
 }

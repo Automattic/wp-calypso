@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -77,6 +78,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< { version: string } >
 								data={ formData }
 								fields={ fields }
@@ -133,7 +135,13 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title="WordPress" /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
 		>
 			{ canView ? renderForm() : renderNotice() }
 		</PageLayout>

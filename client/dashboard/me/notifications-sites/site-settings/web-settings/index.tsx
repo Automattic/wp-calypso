@@ -138,6 +138,11 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 				label: getFieldLabel( 'blogging_prompt' ),
 				value: timelineSettings?.blogging_prompt ?? false,
 			},
+			{
+				id: 'form_response',
+				label: getFieldLabel( 'form_response' ),
+				value: timelineSettings?.form_response ?? false,
+			},
 		],
 		[ timelineSettings ]
 	);

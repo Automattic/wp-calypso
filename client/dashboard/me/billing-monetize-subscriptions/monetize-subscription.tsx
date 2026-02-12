@@ -162,6 +162,7 @@ function StopSubscriptionButton( {
 			actions={
 				<Button
 					variant="secondary"
+					isDestructive
 					size="compact"
 					onClick={ () => {
 						stopSubscription( null, {
@@ -246,6 +247,7 @@ export default function MonetizeSubscriptionDetails() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ isProduct ? __( 'Product details' ) : __( 'Subscription details' ) }
+					description={ __( 'View and manage details for this subscription.' ) }
 				/>
 			}
 		>

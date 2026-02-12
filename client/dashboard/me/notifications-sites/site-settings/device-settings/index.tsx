@@ -131,6 +131,11 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 				label: getFieldLabel( 'scheduled_publicize' ),
 				value: settings?.scheduled_publicize ?? false,
 			},
+			{
+				id: 'form_response',
+				label: getFieldLabel( 'form_response' ),
+				value: settings?.form_response ?? false,
+			},
 		],
 		[ settings ]
 	);

@@ -1,4 +1,5 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -8,15 +9,17 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { useState, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
 interface OptInFormData {
@@ -49,9 +52,12 @@ const fields: Field< OptInFormData >[] = [
 	},
 ];
 
+const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
+
 export default function PreferencesOptInForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
@@ -66,7 +72,7 @@ export default function PreferencesOptInForm() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle', {
+		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_submit', {
 			enabled: formData.enabled,
 		} );
 
@@ -81,7 +87,7 @@ export default function PreferencesOptInForm() {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = '/me/account?flash=dashboard';
+						window.location.href = wpcomLink( '/me/account?flash=dashboard' );
 					}
 				},
 				onError( _, data ) {
@@ -98,22 +104,36 @@ export default function PreferencesOptInForm() {
 		);
 	};
 
+	// Only users created before 22 December 2025 can manually opt in or out.
+	if ( user.ID > OLDEST_ELIGIBLE_USER ) {
+		return null;
+	}
+
 	return (
 		<Card>
 			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
 			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 3 } alignment="flex-start">
-					<SectionHeader title={ __( 'Try the new Hosting Dashboard' ) } level={ 3 } />
-					<Text as="p" variant="muted">
-						{ __(
+				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
+					<SectionHeader
+						title={ __( 'Try the new Hosting Dashboard' ) }
+						description={ __(
 							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
 						) }
-					</Text>
+						level={ 3 }
+					/>
 					<DataForm< OptInFormData >
 						data={ formData }
 						fields={ fields }
 						form={ form }
 						onChange={ ( edits ) => {
+							if ( edits.hasOwnProperty( 'enabled' ) ) {
+								recordTracksEvent(
+									'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click',
+									{
+										enabled: edits.enabled,
+									}
+								);
+							}
 							setFormData( ( current ) => ( { ...current, ...edits } ) );
 						} }
 					/>
@@ -126,7 +146,7 @@ export default function PreferencesOptInForm() {
 								{
 									surveyLink: (
 										<ExternalLink
-											href="https://automattic.survey.fm/new-hosting-dashboard-opt-out-survey"
+											href="https://automattic.survey.fm/msd-survey-for-opt-out"
 											onClick={ () =>
 												recordTracksEvent(
 													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'

@@ -4,13 +4,14 @@ import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ReferralPurchase } from '../../types';
-import './style.scss';
 import AssignedTo from '../components/assigned-to';
 import DateAssigned from '../components/date';
 import ProductDetails from '../components/product-details';
 import TotalAmount from '../components/total-amount';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
+
+import './style.scss';
 
 type PurchaseItemProps = {
 	purchase: ReferralPurchase;

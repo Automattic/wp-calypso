@@ -75,7 +75,6 @@ export default function TwoStepAuthActions() {
 			<ConfirmModal
 				__experimentalHideHeader={ false }
 				title={ __( 'Generate new backup codes' ) }
-				size="medium"
 				isOpen={ showGenerateBackupCodesDialog }
 				onCancel={ () => setShowGenerateBackupCodesDialog( false ) }
 				onConfirm={ () => router.navigate( { to: securityTwoStepAuthBackupCodesRoute.fullPath } ) }

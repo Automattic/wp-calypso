@@ -1,4 +1,9 @@
-import { isDomainProduct, isDomainTransfer, isPlan } from '@automattic/calypso-products';
+import {
+	isDomainProduct,
+	isDomainTransfer,
+	isDomainMoveInternal,
+	isPlan,
+} from '@automattic/calypso-products';
 import { DomainSearch } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -74,7 +79,7 @@ export const useWPCOMDomainSearchCart = ( {
 		// we'll also not set it as free here, which is correct since monthly plans don't have a free domain.
 		// We have to check if there's a plan in the cart here since the user's cart might not be empty
 		// when they start a domain search flow.
-		const shouldFirstDomainBeFree = isFirstDomainFreeForFirstYear && ! isPlanInCart;
+		const forceFirstNonPremiumDomainToBeFree = isFirstDomainFreeForFirstYear && ! isPlanInCart;
 
 		// Order domains from most expensive to least expensive
 		domainItems.sort( ( a, b ) => {
@@ -87,10 +92,16 @@ export const useWPCOMDomainSearchCart = ( {
 			return b.item_subtotal_integer - a.item_subtotal_integer;
 		} );
 
+		const firstNonPremiumDomain = domainItems.find(
+			( item ) => ! isDomainMoveInternal( item ) && ! item.extra?.premium
+		);
+		const freeDomainName = forceFirstNonPremiumDomainToBeFree
+			? firstNonPremiumDomain?.meta
+			: undefined;
+
 		const total = formatCurrency(
 			domainItems.reduce(
-				( acc, item, index ) =>
-					acc + ( index === 0 && shouldFirstDomainBeFree ? 0 : item.item_subtotal_integer ),
+				( acc, item ) => acc + ( freeDomainName === item.meta ? 0 : item.item_subtotal_integer ),
 				0
 			),
 			responseCart.currency ?? 'USD',
@@ -101,8 +112,8 @@ export const useWPCOMDomainSearchCart = ( {
 		);
 
 		const cart: ComponentProps< typeof DomainSearch >[ 'cart' ] = {
-			items: domainItems.map( ( domainItem, index ) =>
-				wpcomCartToDomainSearchCart( domainItem, index === 0 && shouldFirstDomainBeFree )
+			items: domainItems.map( ( domainItem ) =>
+				wpcomCartToDomainSearchCart( domainItem, freeDomainName === domainItem.meta )
 			),
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
@@ -132,8 +143,8 @@ export const useWPCOMDomainSearchCart = ( {
 
 		return {
 			cart,
-			isNextDomainFree: shouldFirstDomainBeFree
-				? domainItems.length === 0
+			isNextDomainFree: forceFirstNonPremiumDomainToBeFree
+				? freeDomainName === undefined
 				: responseCart.next_domain_is_free,
 			onContinue: () => onContinue( domainItems ),
 		};

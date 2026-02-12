@@ -1,6 +1,7 @@
 import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -122,11 +123,19 @@ export const leaveCheckout = ( {
 
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
-			// Only allow redirecting to relative paths.
+
 			if ( isRelativeUrl( cancelPath ) ) {
-				navigate( cancelPath );
+				// We use window.location.href instead of navigate() because navigate() uses page.show()
+				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
+				// the SPA optimization from navigate() provides no meaningful benefit.
+				window.location.href = cancelPath;
 				return;
 			}
+			if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+				window.location.href = cancelPath;
+				return;
+			}
+			// If cancel_to is invalid (e.g., external URL), fall through to default close URL.
 		}
 	} catch ( error ) {
 		// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).

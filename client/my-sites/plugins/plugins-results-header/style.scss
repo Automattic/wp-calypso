@@ -23,6 +23,27 @@
 			color: var(--studio-gray-80);
 			margin-bottom: 0;
 		}
+
+		.full-width-section & {
+			.plugins-results-header__title {
+				font-family: $brand-serif;
+				font-size: rem(50px);
+				line-height: 1.32;
+
+				@media (max-width: 660px) {
+					font-size: rem(40px);
+					line-height: 1;
+				}
+			}
+			.plugins-results-header__subtitle {
+				font-size: $font-body-large;
+				line-height: 1.4;
+				color: var(--studio-gray-80);
+			}
+		}
+		.plugins-browser__category-results & {
+			margin-bottom: 32px;
+		}
 	}
 
 	.plugins-results-header__actions {
@@ -38,8 +59,13 @@
 			justify-content: flex-end;
 			align-items: center;
 			flex-grow: 4;
+			text-decoration: underline;
 			svg {
 				margin-left: 2px;
+			}
+			.full-width-section & {
+				font-size: $font-body;
+				text-decoration: none;
 			}
 		}
 	}

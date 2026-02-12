@@ -2,6 +2,7 @@ import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
+import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
@@ -22,7 +23,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-
 import './style.scss';
 
 function ReaderSubscriptionListItem( {
@@ -58,23 +58,29 @@ function ReaderSubscriptionListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
+	const hasSiteError = site?.is_error || feed?.is_error;
 
-	if ( ! site && ! feed ) {
-		return <ReaderSubscriptionListItemPlaceholder />;
-	}
+	const recordEvent = useCallback(
+		( name ) => {
+			const props = {
+				blog_id: siteId,
+				feed_id: feedId,
+				source: followSource,
+			};
+			if ( railcar ) {
+				recordTrackWithRailcar( name, railcar, props );
+			} else {
+				recordTrack( name, props );
+			}
+		},
+		[ feedId, followSource, railcar, siteId ]
+	);
 
-	function recordEvent( name ) {
-		const props = {
-			blog_id: siteId,
-			feed_id: feedId,
-			source: followSource,
-		};
-		if ( railcar ) {
-			recordTrackWithRailcar( name, railcar, props );
-		} else {
-			recordTrack( name, props );
+	useEffect( () => {
+		if ( hasSiteError ) {
+			recordEvent( 'calypso_reader_subscription_list_item_site_error' );
 		}
-	}
+	}, [ feedId, followSource, hasSiteError, recordEvent, siteId ] );
 
 	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
 	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
@@ -116,6 +122,14 @@ function ReaderSubscriptionListItem( {
 	const handleClick = () => {
 		onItemClick();
 	};
+
+	if ( hasSiteError ) {
+		return null;
+	}
+
+	if ( ! site && ! feed ) {
+		return <ReaderSubscriptionListItemPlaceholder />;
+	}
 
 	return (
 		<div

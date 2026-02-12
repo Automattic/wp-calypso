@@ -18,9 +18,39 @@ describe( 'normalization-rules', () => {
 			verifyClassification( {}, [ DISPLAY_TYPES.UNCLASSIFIED ] );
 		} );
 
+		test( 'should classify a GALLERY post', () => {
+			verifyClassification(
+				{
+					images: [
+						{ src: 'http://example.com/foo1.jpg', width: 800, height: 600 },
+						{ src: 'http://example.com/foo2.jpg', width: 1024, height: 768 },
+						{ src: 'http://example.com/foo3.jpg', width: 640, height: 480 },
+						{ src: 'http://example.com/foo4.jpg', width: 1024, height: 768 },
+						{ src: 'http://example.com/foo5.jpg', width: 1024, height: 768 },
+					],
+				},
+				[ DISPLAY_TYPES.GALLERY ]
+			);
+		} );
+
+		test( 'should classify as UNCLASSIFIED if the post has more than 1 image', () => {
+			verifyClassification(
+				{
+					canonical_media: {
+						mediaType: 'image',
+						width: 1000,
+					},
+					content_images: [ { width: 1000 }, { width: 50 }, { width: 50 }, { width: 50 } ],
+					better_excerpt_no_html: 'no '.repeat( 5 ),
+				},
+				[ DISPLAY_TYPES.UNCLASSIFIED ]
+			);
+		} );
+
 		test( 'should classify a PHOTO_ONLY post', () => {
 			verifyClassification(
 				{
+					content_images: [ { src: 'http://example.com/foo.jpg' } ],
 					canonical_media: {
 						mediaType: 'image',
 						width: 1000,
@@ -34,6 +64,7 @@ describe( 'normalization-rules', () => {
 		test( 'should not classify a PHOTO_ONLY post if the content is too long', () => {
 			verifyClassification(
 				{
+					content_images: [ { src: 'http://example.com/foo.jpg' } ],
 					canonical_media: {
 						mediaType: 'image',
 						width: 1000,
@@ -44,31 +75,14 @@ describe( 'normalization-rules', () => {
 			);
 		} );
 
-		test( 'should classify a PHOTO_ONLY post if it has enough images for a gallery, but not all of them are big enough', () => {
-			verifyClassification(
-				{
-					canonical_media: {
-						mediaType: 'image',
-						width: 1000,
-					},
-					content_images: [
-						{
-							width: 1000,
-						},
-						{
-							width: 50,
-						},
-						{
-							width: 50,
-						},
-						{
-							width: 50,
-						},
-					],
-					better_excerpt_no_html: 'no '.repeat( 5 ),
-				},
-				[ DISPLAY_TYPES.PHOTO_ONLY ]
-			);
+		test( 'should classify a FEATURED_VIDEO post', () => {
+			verifyClassification( { canonical_media: { mediaType: 'video' } }, [
+				DISPLAY_TYPES.FEATURED_VIDEO,
+			] );
+		} );
+
+		test( 'should classify an X_POST post', () => {
+			verifyClassification( { tags: { 'p2-xpost': true } }, [ DISPLAY_TYPES.X_POST ] );
 		} );
 	} );
 

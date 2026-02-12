@@ -11,8 +11,60 @@ import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { WooPaymentsData } from '../types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
+
+interface IneligibleReasonInfo {
+	message: TranslateResult;
+	link: string;
+	linkText: TranslateResult;
+}
+
+const getIneligibleReasonInfo = (
+	reason: string,
+	translate: ( text: string ) => TranslateResult
+): IneligibleReasonInfo => {
+	const defaultLink =
+		'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+	const defaultLinkText = translate( 'Learn more about the incentive ↗' );
+
+	switch ( reason ) {
+		case 'rejected_stripe_account':
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because its Stripe account was rejected."
+				),
+				link: 'https://support.stripe.com/',
+				linkText: translate( 'Contact Stripe support ↗' ),
+			};
+		case 'internal_account_owner':
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because it's owned by an internal account."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
+		case 'existing_merchant_after_30_days':
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission because it's an existing site that was connected to the agency account more than 30 days after the account was created."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
+		// Add more error code mappings here as needed
+		default:
+			return {
+				message: translate(
+					"This WooPayments site isn't eligible for commission under the current program criteria."
+				),
+				link: defaultLink,
+				linkText: defaultLinkText,
+			};
+	}
+};
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -39,19 +91,9 @@ export const TimeframeCommissionsColumn = memo(
 );
 TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
-export const WooPaymentsStatusColumn = ( {
-	state,
-	siteId,
-	woopaymentsData,
-}: {
-	state: string;
-	siteId: number;
-	woopaymentsData?: WooPaymentsData;
-} ) => {
+export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ showPopover, setShowPopover ] = useState( false );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
 
 	if ( ! state ) {
 		return (
@@ -68,31 +110,16 @@ export const WooPaymentsStatusColumn = ( {
 	}
 
 	const getStatusProps = () => {
-		// Check if site is commission eligible.
-		const siteExistsInWooPaymentsData =
-			woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
-
-		// If site is active but not commission eligible, show "Not eligible" status.
-		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
-			return {
-				statusText: translate( 'Not eligible' ),
-				statusType: 'error',
-				showInfoIcon: true,
-			};
-		}
-
 		switch ( state ) {
 			case 'active':
 				return {
 					statusText: translate( 'Active' ),
 					statusType: 'success',
-					showInfoIcon: false,
 				};
 			case 'disconnected':
 				return {
 					statusText: translate( 'Disconnected' ),
 					statusType: 'error',
-					showInfoIcon: false,
 				};
 			default:
 				return null;
@@ -105,22 +132,70 @@ export const WooPaymentsStatusColumn = ( {
 		return null;
 	}
 
+	return (
+		<div className="woopayments-status-column">
+			<StatusBadge
+				statusProps={ {
+					children: statusProps.statusText,
+					type: statusProps.statusType as BadgeType,
+				} }
+			/>
+		</div>
+	);
+};
+
+export const CommissionEligibilityColumn = ( {
+	state,
+	siteId,
+	woopaymentsData,
+}: {
+	state: string;
+	siteId: number;
+	woopaymentsData?: WooPaymentsData;
+} ) => {
+	const translate = useTranslate();
+	const [ showPopover, setShowPopover ] = useState( false );
+	const wrapperRef = useRef< HTMLDivElement | null >( null );
+
+	// Don't show eligibility status if WooPayments is not active.
+	if ( state !== 'active' ) {
+		return <Gridicon icon="minus" />;
+	}
+
+	// Check if site is commission eligible.
+	const isCommissionEligible = woopaymentsData?.data?.commission_eligible_sites?.includes( siteId );
+
+	// Find ineligibility reason if site is in commission_ineligible_sites.
+	const ineligibleSite = woopaymentsData?.data?.commission_ineligible_sites?.find(
+		( site ) => site.blog_id === siteId
+	);
+
+	const statusProps = isCommissionEligible
+		? {
+				statusText: translate( 'Eligible' ),
+				statusType: 'success' as BadgeType,
+				showInfoIcon: false,
+				ineligibleReason: undefined,
+		  }
+		: {
+				statusText: translate( 'Not eligible' ),
+				statusType: 'error' as BadgeType,
+				showInfoIcon: true,
+				ineligibleReason: ineligibleSite?.ineligible_reason,
+		  };
+
+	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '', translate );
+
 	const popoverContent = (
 		<div className="woopayments-status-popover">
-			<p className="woopayments-status-popover__text">
-				{ translate(
-					'This WooPayments site is not eligible for commission since it was connected after the incentive expiration date.'
-				) }
-			</p>
+			<p className="woopayments-status-popover__text">{ reasonInfo.message }</p>
 			<Button
 				variant="link"
 				className="woopayments-status-popover__link"
-				href={ localizeUrl(
-					'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/'
-				) }
+				href={ localizeUrl( reasonInfo.link ) }
 				target="_blank"
 			>
-				{ translate( 'Learn more about the incentive ↗' ) }
+				{ reasonInfo.linkText }
 			</Button>
 		</div>
 	);
@@ -130,7 +205,7 @@ export const WooPaymentsStatusColumn = ( {
 			<StatusBadge
 				statusProps={ {
 					children: statusProps.statusText,
-					type: statusProps.statusType as BadgeType,
+					type: statusProps.statusType,
 				} }
 			/>
 			{ statusProps.showInfoIcon && (

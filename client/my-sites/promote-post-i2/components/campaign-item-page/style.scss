@@ -21,20 +21,7 @@ body.is-section-promote-post-i2 {
 
 				.section-nav-tabs__list {
 					margin: 0 64px;
-					max-width: 1040px;
 					width: 100%;
-				}
-
-				.promote-post-i2__search-bar-wrapper,
-				.promote-post-i2__aux-wrapper,
-				.posts-list__table,
-				.campaigns-list__table,
-				.posts-list__loading-container,
-				.promote-post-i2__table,
-				.campaigns-list__loading-container {
-					margin: 0 64px;
-					max-width: 1040px;
-					width: calc(100% - 128px);
 				}
 
 				// Align vertical align of a campaign status badge.
@@ -54,6 +41,7 @@ body.is-section-promote-post-i2 {
 					font-size: 1.5rem;
 					letter-spacing: 0.36px;
 					line-height: 1.33;
+					text-decoration: none;
 				}
 
 				// With a banner

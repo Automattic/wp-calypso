@@ -1,13 +1,12 @@
 import { Card } from '@automattic/components';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { useDispatch } from '@wordpress/data';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getDashboardFromString } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -15,6 +14,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
@@ -22,7 +22,7 @@ import {
 	getOptionInfo,
 	connectDomainAction,
 } from '../utilities';
-import OptionContent from './option-content';
+import OptionContentV2 from './option-content-v2';
 
 import './style.scss';
 
@@ -39,6 +39,7 @@ function DomainTransferOrConnect( {
 	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
+	dashboard,
 	recordMappingButtonClickInUseYourDomain,
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
@@ -51,8 +52,6 @@ function DomainTransferOrConnect( {
 		domainInboundTransferStatusInfo
 	);
 	const [ isFetching, setIsFetching ] = useState( false );
-
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -75,6 +74,7 @@ function DomainTransferOrConnect( {
 		currencyCode,
 		domain,
 		domainInboundTransferStatusInfo: inboundTransferStatusInfo,
+		dashboard,
 		isSignupStep,
 		onConnect: handleConnect,
 		onSkip,
@@ -124,39 +124,25 @@ function DomainTransferOrConnect( {
 	const baseClassName = 'domain-transfer-or-connect';
 
 	return (
-		<>
+		<div className={ clsx( baseClassName, baseClassName + '--redesign' ) }>
 			<QueryProductsList />
+			{ selectedSite?.ID && <QuerySitePlans siteId={ selectedSite.ID } /> }
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent
+					<OptionContentV2
 						isPlaceholder={ isFetching }
 						key={ 'option-' + index }
 						disabled={ actionClicked }
 						{ ...optionProps }
 					/>
 				) ) }
-				{ ! isFetching && (
-					<div className={ baseClassName + '__support-link' }>
-						{ createInterpolateElement(
-							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-							{
-								a: createElement( 'button', {
-									onClick: () => {
-										setNavigateToRoute( '/odie' );
-										setShowHelpCenter( true );
-									},
-								} ),
-							}
-						) }
-					</div>
-				) }
 			</Card>
-		</>
+		</div>
 	);
 }
 
 DomainTransferOrConnect.propTypes = {
-	availability: PropTypes.object.isRequired,
+	availability: PropTypes.object,
 	defaultConnectHandler: PropTypes.func,
 	defaultTransferHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,
@@ -180,6 +166,9 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 			productsList: getProductsList( state ),
+			dashboard:
+				getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
+				undefined,
 			selectedSite,
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};

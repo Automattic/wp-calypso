@@ -15,10 +15,6 @@ const mockCreateErrorNotice = jest.fn();
 const mockMutate = jest.fn();
 const mockInvalidateQueries = jest.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,

@@ -1,8 +1,10 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
 	DropdownMenu,
@@ -27,6 +29,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { Suspense, lazy, useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useExperiment } from 'calypso/lib/explat';
+import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
@@ -50,9 +53,10 @@ function Help() {
 	const { isLoading, isShown, setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const [ helpCenterPage, setHelpCenterPage ] = useState( '' );
+	const isUnifiedAgentEnabled = useShouldUseUnifiedAgent();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_help_center_menu_popover'
+		'calypso_help_center_menu_popover_increase_exposure'
 	);
 	const isMenuPanelExperimentEnabled =
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
@@ -62,6 +66,7 @@ function Help() {
 			is_help_center_visible: isShown,
 			section: 'dashboard',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+			is_assignment_loaded: ! isLoadingExperimentAssignment,
 		} );
 	};
 
@@ -224,7 +229,7 @@ function Help() {
 				onClick={ handleToggleHelpCenter }
 			/>
 			<Suspense fallback={ null }>
-				{ isShown && (
+				{ ( isShown || isUnifiedAgentEnabled ) && (
 					<AsyncHelpCenterApp
 						currentUser={ user }
 						handleClose={ handleCloseHelpCenterApp }
@@ -293,10 +298,14 @@ function UserProfile() {
 				}
 			/>
 			<Menu.Popover style={ { minWidth: '250px' } }>
-				<Menu.Item disabled>
-					<Text>{ user.display_name }</Text>
-					<Text variant="muted">@{ user.username }</Text>
-				</Menu.Item>
+				<VStack style={ { gridColumn: '1 / -1', padding: '8px 12px' } } spacing={ 1 }>
+					<Text truncate numberOfLines={ 1 } title={ user.display_name }>
+						{ user.display_name }
+					</Text>
+					<Text truncate numberOfLines={ 1 } title={ user.username } variant="muted">
+						@{ user.username }
+					</Text>
+				</VStack>
 				<Menu.Separator />
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
@@ -343,14 +352,14 @@ function SecondaryMenu() {
 	const isDesktop = useViewportMatch( 'medium' );
 
 	return (
-		<HStack spacing={ 2 } justify="flex-end">
+		<HStack spacing={ isDesktop ? 2 : 0 } justify="flex-end">
 			{ supports.reader && (
 				<Button
 					className="dashboard-secondary-menu__item"
 					icon={ <ReaderIcon /> }
 					label={ __( 'Reader' ) }
 					text={ isDesktop ? __( 'Reader' ) : undefined }
-					href="/reader"
+					href={ wpcomLink( '/reader' ) }
 				/>
 			) }
 			{ supports.help && <Help /> }

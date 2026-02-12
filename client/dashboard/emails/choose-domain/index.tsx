@@ -14,12 +14,12 @@ import { isRTL, __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
 
 import './styles.css';
 
@@ -62,7 +62,15 @@ export default function ChooseDomain() {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+		<PageLayout
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __( 'Select a domain to set up email for.' ) }
+				/>
+			}
+			size="small"
+		>
 			<Text size={ 16 }>{ __( 'Which domain name would you like to add a mailbox for?' ) }</Text>
 			<VStack spacing={ 6 }>
 				{ isLoading ? (

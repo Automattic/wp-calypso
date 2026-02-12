@@ -1,11 +1,13 @@
+import { zendeskMessageConverter } from '@automattic/zendesk-client';
 import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
-import { hasSubmittedCSATRating, isCSATMessage, zendeskMessageConverter } from '../../utils';
+import { hasSubmittedCSATRating, isCSATMessage } from '../../utils';
 import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message/introduction-message';
 import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
-import type { ZendeskMessage, Message } from '../../types';
+import type { Message } from '../../types';
+import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 export const MessageContent = ( {
 	message,
@@ -51,7 +53,7 @@ export const MessageContent = ( {
 	};
 
 	const shouldParseMessage = () => {
-		return message.type === 'message' && message.role !== 'bot';
+		return ( message.type === 'message' || message.message_id ) && message.role === 'user';
 	};
 
 	// message type === message are messages being sent from users to zendesk.

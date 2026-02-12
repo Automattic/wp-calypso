@@ -147,8 +147,10 @@ export class AppBanner extends Component {
 					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
 					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
-				case READER:
-					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+				case READER: {
+					const readerPath = getReaderPath( currentRoute );
+					return `intent://details?id=${ packageName }&url=${ scheme }:/${ readerPath }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+				}
 				case STATS:
 					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
@@ -244,6 +246,26 @@ function getEditorPath( currentRoute ) {
 }
 
 /**
+ * Returns the Reader path for deep linking.
+ * Transforms /reader routes to /read for app compatibility.
+ * @param {string} currentRoute The current route.
+ * @returns {string} The Reader path for the deep link.
+ */
+function getReaderPath( currentRoute ) {
+	// The Reader is generally accessed at the root of WordPress.com ('/').
+	// In this case, we need to manually add the section name to the
+	// URL so that the iOS app knows which section to open.
+	const hasRoute = currentRoute && currentRoute !== '/' && currentRoute !== null;
+
+	if ( ! hasRoute ) {
+		return '/read';
+	}
+
+	// Replacing '/reader' with '/read' to ensure backwards compatibility i.e. updating the URL on web app should not break the deep link.
+	return currentRoute.replace( /^\/reader/, '/read' );
+}
+
+/**
  * Builds the deep link fragment for the iOS app.
  * @param {string} currentRoute The current route.
  * @param {string} currentSection The current section.
@@ -259,15 +281,7 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 			case NOTES:
 				return '/notifications';
 			case READER:
-				// The Reader is generally accessed at the root of WordPress.com ('/').
-				// In this case, we need to manually add the section name to the
-				// URL so that the iOS app knows which section to open.
-				if ( ! hasRoute ) {
-					return '/read';
-				}
-
-				// Replacing '/reader' with '/read' to ensure backwards compatibility i.e. updating the URL on web app should not break the deep link.
-				return currentRoute.replace( /^\/reader/, '/read' );
+				return getReaderPath( currentRoute );
 			case STATS:
 				return hasRoute ? currentRoute : '/stats';
 			default:

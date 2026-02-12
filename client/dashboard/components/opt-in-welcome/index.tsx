@@ -12,6 +12,9 @@ import ComponentViewTracker from '../component-view-tracker';
 
 export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 	const { optIn } = useAppContext();
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
@@ -27,7 +30,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 		} );
 	};
 
-	if ( ! optIn ) {
+	if ( ! optIn || dashboardOptIn?.value === 'forced-opt-in' ) {
 		return null;
 	}
 
@@ -59,7 +62,7 @@ export function OptInWelcome( { tracksContext }: { tracksContext: string } ) {
 					),
 					feedbackLink: (
 						<ExternalLink
-							href="https://automattic.survey.fm/new-hosting-dashboard-opt-in-survey"
+							href="https://automattic.survey.fm/msd-survey-for-opt-in"
 							onClick={ () =>
 								recordTracksEvent( 'calypso_dashboard_welcome_banner_survey_click', {
 									context: tracksContext,

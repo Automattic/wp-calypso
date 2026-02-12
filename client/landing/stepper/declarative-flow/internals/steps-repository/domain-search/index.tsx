@@ -1,4 +1,3 @@
-import { useDomainSearchEscapeHatch } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isCopySiteFlow,
@@ -19,8 +18,8 @@ import { useSelector } from 'react-redux';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { useWPCOMDomainSearchEvents } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -35,7 +34,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -74,15 +73,17 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
-	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
-	const initialQuery = useQuery().get( 'new' ) ?? '';
-	const tldQuery = useQuery().get( 'tld' );
-	const source = useQuery().get( 'source' );
-	const backTo = useQuery().get( 'back_to' );
-	const sourceSlug = useQuery().get( 'sourceSlug' );
+	const queryParams = useQuery();
+	const initialQuery = queryParams.get( 'new' ) ?? '';
+	const tldQuery = queryParams.get( 'tld' );
+	const source = queryParams.get( 'source' );
+	const backTo = queryParams.get( 'back_to' ) ?? '';
+	const sourceSlug = queryParams.get( 'sourceSlug' );
+	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
 
 	// eslint-disable-next-line no-nested-ternary
@@ -94,8 +95,6 @@ const DomainSearchStep: StepType< {
 		initialQuery,
 		currentSiteUrl,
 	} );
-
-	const [ isLoadingExperiment, experimentVariation ] = useDomainSearchEscapeHatch();
 
 	const config = useMemo( () => {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
@@ -130,13 +129,6 @@ const DomainSearchStep: StepType< {
 		};
 	}, [ flow, tldQuery, query ] );
 
-	const analyticsEvents = useWPCOMDomainSearchEvents( {
-		vendor: config.vendor,
-		flowName: flow,
-		analyticsSection: 'signup',
-		query: query,
-	} );
-
 	const { submit } = navigation;
 
 	const events = useMemo( () => {
@@ -158,6 +150,10 @@ const DomainSearchStep: StepType< {
 			onQueryChange: setQuery,
 			onQueryClear: clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer/other-site` ) );
+					return;
+				}
 				window.location.assign(
 					domainManagementTransferToOtherSite( otherSiteDomain, domainName )
 				);
@@ -167,17 +163,32 @@ const DomainSearchStep: StepType< {
 					return;
 				}
 
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ siteSlug }` ) );
+					return;
+				}
+
 				window.location.assign( domainManagementList( siteSlug ) );
 			},
 			onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => {
 				window.location.assign( domainAddNew( otherSiteDomain, domainName ) );
 			},
 			onCheckTransferStatusClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer` ) );
+					return;
+				}
 				window.location.assign(
 					siteSlug ? domainManagementTransferIn( siteSlug, domainName ) : domainManagementRoot()
 				);
 			},
 			onMapDomainClick: ( domainName: string ) => {
+				if ( dashboard ) {
+					window.location.assign(
+						dashboardLink( `/domains/${ domainName }/domain-connection-setup` )
+					);
+					return;
+				}
 				window.location.assign( domainMapping( siteSlug, domainName ) );
 			},
 			onExternalDomainClick: ( domainName?: string ) => {
@@ -208,16 +219,9 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
-				let signupDomainOrigin = suggestion
+				const signupDomainOrigin = suggestion
 					? SIGNUP_DOMAIN_ORIGIN.FREE
 					: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
-
-				if (
-					! isLoadingExperiment &&
-					experimentVariation === 'treatment_paid_domain_area_skip_emphasis'
-				) {
-					signupDomainOrigin = SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER;
-				}
 
 				submit( {
 					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
@@ -228,7 +232,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug, isLoadingExperiment, experimentVariation ] );
+	}, [ submit, setQuery, clearQuery, flow, siteSlug, dashboard ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow
@@ -318,7 +322,7 @@ const DomainSearchStep: StepType< {
 	const [ sitesBackLabelText, defaultBackUrl ] =
 		userSiteCount === 1
 			? [ __( 'Back to My Home' ), '/home' ]
-			: [ __( 'Back to sites' ), hostingDashboardOptIn ? '/v2/sites' : '/sites' ];
+			: [ __( 'Back to sites' ), dashboardOptIn ? dashboardLink( '/sites' ) : '/sites' ];
 
 	if ( isHundredYearDomainFlow( flow ) || isHundredYearPlanFlow( flow ) ) {
 		return (
@@ -363,7 +367,11 @@ const DomainSearchStep: StepType< {
 				backDestination = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 
-				if ( backTo && isRelativeUrl( backTo ) ) {
+				const isSafeBackTo =
+					isRelativeUrl( backTo ) ||
+					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+				if ( isSafeBackTo ) {
 					backDestination = backTo;
 					backLabelText = __( 'Back' );
 				}
@@ -391,18 +399,6 @@ const DomainSearchStep: StepType< {
 							{ __( 'Use a domain I already own' ) }
 						</Step.LinkButton>
 					) }
-
-					{ ! isLoadingExperiment &&
-						experimentVariation === 'treatment_paid_domain_area_free_emphasis_extra_cta' && (
-							<Step.LinkButton
-								onClick={ () => {
-									analyticsEvents.onSkip?.();
-									events.onSkip();
-								} }
-							>
-								{ __( 'Skip this step' ) }
-							</Step.LinkButton>
-						) }
 				</>
 			);
 		};

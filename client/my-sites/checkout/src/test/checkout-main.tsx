@@ -15,7 +15,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
@@ -68,6 +68,7 @@ describe( 'CheckoutMain', () => {
 		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
+		( isCommerceGardenSite as jest.Mock ).mockImplementation( () => false );
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
@@ -807,5 +808,37 @@ describe( 'CheckoutMain', () => {
 			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
+	} );
+
+	it( 'Disables email field in A4A express checkout', async () => {
+		const cartChanges = {
+			products: [
+				{
+					...planWithoutDomain,
+					extra: { ...planWithoutDomain.extra, isA4ASitelessCheckout: true },
+				},
+			],
+		};
+
+		// For A4A, we supply email during pre-load.
+		dispatch( CHECKOUT_STORE ).updateEmail( 'test@example.com' );
+
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				setCart={ mockSetCartEndpoint }
+				cartChanges={ cartChanges }
+				additionalProps={ {
+					sitelessCheckoutType: 'a4a' as SitelessCheckoutType,
+					isLoggedOutCart: true,
+					siteSlug: '',
+					siteId: 0,
+				} }
+			/>
+		);
+		await waitFor( () => {
+			const emailField = screen.getByLabelText( 'Email' );
+			expect( emailField ).toBeDisabled();
+		}, [] );
 	} );
 } );

@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -25,7 +25,8 @@ const DomainGlueRecordDeleteModal = ( {
 		...domainGlueRecordDeleteMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Glue record deleted.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Glue record for %s deleted.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

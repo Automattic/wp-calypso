@@ -1,4 +1,5 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, size, delay, pickBy } from 'lodash';
@@ -8,7 +9,6 @@ import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import {
 	requestPostComments,
@@ -680,10 +680,9 @@ class PostCommentList extends Component {
 										post={ this.props.post }
 										followSource={ followSource }
 										followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
-										followingIcon={ ReaderFollowingConversationIcon( {
-											iconSize: 24,
-											className: 'reader-following-conversation',
-										} ) }
+										followingIcon={
+											<Icon className="reader-following-conversation" icon={ published } />
+										}
 									/>
 								) }
 							</div>

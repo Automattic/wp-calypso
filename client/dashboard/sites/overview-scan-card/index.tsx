@@ -6,6 +6,7 @@ import { shield } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import type { SiteScan, Site } from '@automattic/api-core';
@@ -22,23 +23,28 @@ function getScanURL( site: Site ) {
 	}
 
 	return isDashboardBackport()
-		? `https://wordpress.com/scan/${ site.slug }`
+		? wpcomLink( `/scan/${ site.slug }` )
 		: `/sites/${ site.slug }/scan/active`;
 }
 
 function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 	const threatCount = scan.threats?.length ?? 0;
-	const description = sprintf(
+	const heading = sprintf(
 		/* translators: %d: number of risks */
 		_n( '%d risk found', '%d risks found', threatCount ),
 		threatCount
 	);
 
+	const hasFixableThreats = scan.threats?.some( ( threat ) => threat.fixable ) ?? false;
+	const description = hasFixableThreats
+		? __( 'Auto fixes are available.' )
+		: __( 'Manual review required.' );
+
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			heading={ description }
-			description={ __( 'Auto fixes are available.' ) }
+			heading={ heading }
+			description={ description }
 			link={ getScanURL( site ) }
 			intent="error"
 		/>

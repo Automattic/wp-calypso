@@ -1,6 +1,8 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
+import { addQueryArgs } from '@wordpress/url';
+import { DataViewsEmptyState } from '../../components/dataviews';
+import { getCurrentDashboard, wpcomLink } from '../../utils/link';
 import DomainEmptyIllustration from '../resources/domain-empty-illustration';
 
 const NoDomainsAvailableEmptyState = () => {
@@ -12,7 +14,12 @@ const NoDomainsAvailableEmptyState = () => {
 			) }
 			illustration={ <DomainEmptyIllustration /> }
 			actions={
-				<Button variant="primary" href="/setup/domain">
+				<Button
+					variant="primary"
+					href={ addQueryArgs( wpcomLink( '/setup/domain' ), {
+						dashboard: getCurrentDashboard(),
+					} ) }
+				>
 					{ __( 'Choose a domain' ) }
 				</Button>
 			}

@@ -10,7 +10,9 @@ const WooBlazeHeader = ( { className = '', children } ) => {
 
 	return (
 		<header className={ clsx( 'blaze-plugin-header', className ) }>
-			<h2>{ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }</h2>
+			<h1 className="formatted-header__title wp-brand-font">
+				{ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }
+			</h1>
 			{ children }
 		</header>
 	);

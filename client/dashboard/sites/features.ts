@@ -2,28 +2,28 @@ import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
-import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
-	if ( site.is_deleted || ! site.capabilities.manage_options ) {
+	// Edge case: slug can be missing when the current user does not have
+	// permission to manage the site.
+	if ( ! site.slug ) {
 		return false;
 	}
 
-	// P2 sites are not supported.
-	if ( isP2( site ) ) {
+	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
 		return false;
 	}
 
-	// VIP sites are not supported, yet.
-	if ( site.is_vip ) {
+	// Unsupported site types
+	if ( isP2( site ) || site.is_vip ) {
 		return false;
 	}
 
-	// Self-hosted Jetpack-connected sites are not supported, yet.
-	// Disable this check for v2 for development purposes, as it's not yet user-facing.
-	if ( isSelfHostedJetpackConnected( site ) && isDashboardBackport() ) {
-		return false;
+	// Self-hosted Jetpack-connected sites are not supported in the dashboard backport.
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return ! isDashboardBackport();
 	}
 
 	return true;
@@ -57,15 +57,24 @@ export function canViewSiteActions( site: Site ) {
 
 export function canTransferSite( site: Site, user: User ) {
 	const isSiteOwner = site.site_owner === user.ID;
-	return ! site.is_wpcom_staging_site && isSiteOwner;
+	return ! site.is_wpcom_staging_site && isSiteOwner && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canLeaveSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
+	return (
+		! site.is_wpcom_staging_site &&
+		! site.is_deleted &&
+		! isP2( site ) &&
+		! isSelfHostedJetpackConnected( site )
+	);
 }
 
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
+	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
+}
+
+export function canRestoreSite( site: Site ) {
+	return site.is_deleted && ! isP2( site ) && ! isSelfHostedJetpackConnected( site );
 }
 
 export function canSwitchEnvironment( site: Site ) {

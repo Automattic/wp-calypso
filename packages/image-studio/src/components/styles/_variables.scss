@@ -1,0 +1,16 @@
+$admin-bar-z-index: 999999;
+$header-toolbar-height: 64px;
+$footer-height: 200px;
+$header-height: $header-toolbar-height * 2;
+$footer-margin-bottom: 32px;
+$transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+$sidebar-width: 300px;
+$modal-padding: 16px;
+$color-link: #d3e1ff;
+$color-background: #1e1e1e;
+$color-foreground: #fff;
+$color-border: rgba(70, 70, 70, 0.5);
+$color-hover-overlay: rgba(255, 255, 255, 0.1);
+
+$breakpoint-medium-up: "min-width: 768px";
+$breakpoint-medium-down: "max-width: 767px";

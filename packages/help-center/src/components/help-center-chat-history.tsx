@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { translationExists } from '@automattic/i18n-utils';
-import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
+import { calculateUnread } from '@automattic/zendesk-client';
 import {
 	Spinner,
 	__experimentalText as Text,
@@ -10,7 +10,7 @@ import {
 import { useI18n } from '@wordpress/react-i18n';
 import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getLastMessage } from './utils';
+import { getFirstMessage } from './utils';
 import type { ZendeskConversation } from '@automattic/odie-client';
 
 const EmptyStateArtWork = () => {
@@ -108,9 +108,9 @@ export const HelpCenterChatHistory = () => {
 				const { numberOfUnreadMessages } = calculateUnread( [
 					conversation as ZendeskConversation,
 				] );
-				const lastMessage = getLastMessage( { conversation } );
+				const firstMessage = getFirstMessage( { conversation } );
 
-				if ( ! lastMessage ) {
+				if ( ! firstMessage ) {
 					return null;
 				}
 
@@ -118,7 +118,7 @@ export const HelpCenterChatHistory = () => {
 					<HelpCenterSupportChatMessage
 						sectionName="chat_history"
 						key={ conversation.id }
-						message={ lastMessage }
+						message={ firstMessage }
 						conversation={ conversation }
 						numberOfUnreadMessages={ numberOfUnreadMessages }
 					/>

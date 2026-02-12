@@ -33,27 +33,23 @@
 			height: 40px;
 			display: flex;
 			align-items: center;
-			margin-bottom: 40px;
+			margin-bottom: 0;
 
 			.promote-post-i2__top-bar-buttons {
-				height: 100%;
+				height: 36px;
 
 				.inline-support-link {
-					font-weight: 600;
-					font-size: 1rem;
-					padding: 8px 24px;
+					padding: 6px 12px;
 					line-height: 22px;
-					min-width: 110px;
-					background-color: var(--color-surface);
+					color: var(--color-neutral-70);
 				}
 
 				button {
-					font-weight: 600;
-					font-size: 1rem;
-					padding: 8px 24px;
-					height: 100%;
-					min-width: 110px;
-					justify-content: center;
+					line-height: 1;
+
+					&.posts-list-banner__border-button {
+						color: var(--color-neutral-70);
+					}
 				}
 			}
 		}
@@ -192,35 +188,20 @@ $break-medium-expanded-menu: $break-medium + 272px;
 // Specific Woo Blaze styles
 .woo-blaze-dashboard {
 	.promote-post-i2 {
+
+		a:focus {
+			box-shadow: none;
+		}
+
 		// Header
 		.promote-post-i2__top-bar {
 			height: 40px;
 			display: flex;
 			align-items: center;
-			margin-bottom: 16px;
 
 			.promote-post-i2__top-bar-buttons {
-				height: 100%;
-
-				.inline-support-link {
-					font-size: rem(14px);
-					font-weight: 400;
-
-					height: 36px;
-					line-height: 22px;
-					min-width: auto;
-					padding: 6px 12px;
-					background-color: var(--color-surface);
-				}
-
 				button {
-					font-size: rem(13px);
-					font-weight: 400;
-					height: 36px;
-					justify-content: center;
-					line-height: 22px;
-					min-width: auto;
-					padding: 6px 12px;
+					line-height: rem(22px);
 				}
 			}
 		}

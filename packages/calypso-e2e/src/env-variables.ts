@@ -17,10 +17,13 @@ class EnvVariables implements SupportedEnvVariables {
 		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
+		DASHBOARD_BASE_URL: 'http://my.localhost:3000',
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
 		HEADLESS: false,
+		MAILOSAUR_LIMIT_REACHED: false,
 		JETPACK_TARGET: 'wpcom-production',
+		PARTNER_DIRECTORY_BASE_URL: 'https://wordpress.com/development-services',
 		RETRY_COUNT: 0,
 		RUN_ID: '',
 		SLOW_MO: 0,
@@ -92,6 +95,13 @@ class EnvVariables implements SupportedEnvVariables {
 		return value
 			? castAsBoolean( 'GUTENBERG_NIGHTLY', value )
 			: this._defaultEnvVariables.GUTENBERG_NIGHTLY;
+	}
+
+	get MAILOSAUR_LIMIT_REACHED(): boolean {
+		const value = process.env.MAILOSAUR_LIMIT_REACHED;
+		return value
+			? castAsBoolean( 'MAILOSAUR_LIMIT_REACHED', value )
+			: this._defaultEnvVariables.MAILOSAUR_LIMIT_REACHED;
 	}
 
 	get COBLOCKS_EDGE(): boolean {
@@ -185,6 +195,10 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 		return value as JetpackTarget;
 	}
+
+	get PARTNER_DIRECTORY_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'PARTNER_DIRECTORY_BASE_URL' );
+	}
 	/**
 	 * Helper to get and validate a URL environment variable.
 	 */
@@ -212,10 +226,18 @@ class EnvVariables implements SupportedEnvVariables {
 
 	/**
 	 * Returns the Calypso base URL.
-	 * @example 'http://localhost:3000'
+	 * @example 'http://calypso.localhost:3000'
 	 */
 	get CALYPSO_BASE_URL(): string {
 		return this.getValidatedUrlEnvVar( 'CALYPSO_BASE_URL' );
+	}
+
+	/**
+	 * Returns the Dashboard base URL.
+	 * @example 'http://my.localhost:3000'
+	 */
+	get DASHBOARD_BASE_URL(): string {
+		return this.getValidatedUrlEnvVar( 'DASHBOARD_BASE_URL' );
 	}
 
 	/**

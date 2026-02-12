@@ -1,24 +1,30 @@
-import { DomainProductSlugs, DotcomPlans } from '@automattic/api-core';
+import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
 import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
+import { getRelativeTimeString } from '../../../utils/datetime';
+import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
+	isRecentMonthlyPurchase,
 	needsToRenewSoon,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
+	isInExpirationGracePeriod,
+	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import {
 	OtherRenewablePurchasesNotice,
@@ -47,11 +53,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if (
-		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
-		purchase.product_slug === DotcomPlans.MIGRATION_TRIAL_MONTHLY ||
-		purchase.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY
-	) {
+	if ( purchase.is_trial_plan ) {
 		return <TrialNotice purchase={ purchase } />;
 	}
 
@@ -112,7 +114,11 @@ function shouldShowExpiredRenewNotice(
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
-	if ( ! isExpired( currentPurchase ) ) {
+	if ( ! isExpired( currentPurchase ) && ! isInExpirationGracePeriod( currentPurchase ) ) {
+		return false;
+	}
+
+	if ( isAkismetFreeProduct( currentPurchase ) ) {
 		return false;
 	}
 
@@ -151,6 +157,23 @@ function ExpiredRenewNotice( {
 	const includedPurchase = purchase;
 
 	if ( purchase.is_renewable ) {
+		const noticeText = ( () => {
+			if ( isExpired( currentPurchase ) ) {
+				return __( 'This purchase has expired and is no longer in use.' );
+			}
+			const purchaseName = currentPurchase.is_domain
+				? currentPurchase.meta ?? ''
+				: currentPurchase.product_name;
+			const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
+			return sprintf(
+				// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+				__(
+					'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.'
+				),
+				{ purchaseName, expiry }
+			);
+		} )();
+
 		return (
 			<Notice
 				variant="error"
@@ -165,7 +188,7 @@ function ExpiredRenewNotice( {
 					) : undefined
 				}
 			>
-				{ __( 'This purchase has expired and is no longer in use.' ) }
+				{ noticeText }
 			</Notice>
 		);
 	}
@@ -243,15 +266,26 @@ function InAppPurchaseNotice( { purchase }: { purchase: Purchase } ) {
 function TrialNotice( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const onClickUpgrade = () => {
-		const isEcommerceTrialMonthly = purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY;
-
-		if ( isEcommerceTrialMonthly ) {
+		if ( purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ) {
 			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
 				current_plan_slug: purchase.product_slug,
 				to_checkout: false,
 			} );
 
-			window.location.href = `/plans/${ purchase.site_slug ?? '' }`;
+			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+				siteSlug: purchase.site_slug ?? '',
+				dashboard: getCurrentDashboard(),
+			} );
+			return;
+		}
+
+		if ( purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ) {
+			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
+				current_plan_slug: purchase.product_slug,
+				to_checkout: false,
+			} );
+
+			window.location.href = wpcomLink( `/plans/${ purchase.site_slug ?? '' }` );
 			return;
 		}
 
@@ -262,16 +296,20 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		} );
 
 		const siteSlug = purchase.site_slug ?? purchase.blog_id;
-		window.location.href = `/checkout/${ siteSlug }/business?redirectTo=/plans/my-plan/trial-upgraded/${ siteSlug }`;
+		window.location.href = wpcomLink(
+			`/checkout/${ siteSlug }/business?redirectTo=/plans/my-plan/trial-upgraded/${ siteSlug }`
+		);
 		return;
 	};
 
-	const daysToExpiry = isExpired( purchase )
-		? 0
-		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
+	const daysToExpiry =
+		isExpired( purchase ) || isInExpirationGracePeriod( purchase )
+			? 0
+			: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
-		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY
-			? __( 'Ecommerce' )
+		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
+		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY
+			? __( 'Commerce' )
 			: // translators: Business is a plan name
 			  __( 'Business' );
 	const noticeText = daysToExpiry
@@ -299,7 +337,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 
 	return (
 		<Notice
-			variant="info"
+			variant={
+				isCloseToExpiration( purchase ) && ! isRecentMonthlyPurchase( purchase ) ? 'error' : 'info'
+			}
 			actions={
 				<Button variant="primary" onClick={ onClickUpgrade }>
 					{ __( 'Upgrade now' ) }

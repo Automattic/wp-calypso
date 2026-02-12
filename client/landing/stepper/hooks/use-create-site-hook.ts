@@ -16,7 +16,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 type Params = {
 	flowName: string;
 	userIsLoggedIn: boolean;
-	isPurchasingDomainItem: boolean;
 	themeSlugWithRepo: string;
 	siteVisibility: Site.Visibility;
 	siteTitle: string;
@@ -30,6 +29,7 @@ type Params = {
 	siteIntent?: string;
 	siteGoals?: SiteGoal[];
 	planCartItems?: MinimalRequestCartProduct[] | null;
+	blueprint?: string | null;
 };
 
 async function fillCart(
@@ -65,7 +65,6 @@ async function fillCart(
 export const createSite = async ( {
 	flowName,
 	userIsLoggedIn,
-	isPurchasingDomainItem,
 	themeSlugWithRepo,
 	siteVisibility,
 	siteTitle,
@@ -78,10 +77,10 @@ export const createSite = async ( {
 	sourceSlug,
 	siteIntent,
 	planCartItems,
+	blueprint = null,
 }: Params ) => {
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
-		isPurchasingDomainItem,
 		themeSlugWithRepo,
 		siteTitle,
 		siteAccentColor,
@@ -91,6 +90,7 @@ export const createSite = async ( {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} );
 
 	const locale = getLocaleSlug();
@@ -179,7 +179,6 @@ export const useCreateSite = () => {
 			return createSite( {
 				flowName,
 				userIsLoggedIn,
-				isPurchasingDomainItem: false,
 				themeSlugWithRepo: theme,
 				siteVisibility: 1,
 				siteTitle,

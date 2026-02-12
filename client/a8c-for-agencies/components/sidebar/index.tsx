@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, starEmpty } from '@wordpress/icons';
@@ -133,19 +134,21 @@ const A4ASidebar = ( {
 						/>
 					) }
 
-					<SidebarNavigatorMenuItem
-						title={ contactUsText }
-						link={ CONTACT_URL_HASH_FRAGMENT }
-						path=""
-						icon={ <Icon icon={ starEmpty } /> }
-						onClickMenuItem={ onShowUserSupportForm }
-					/>
+					{ ! isEnabled( 'a4a-help-center' ) && (
+						<SidebarNavigatorMenuItem
+							title={ contactUsText }
+							link={ CONTACT_URL_HASH_FRAGMENT }
+							path=""
+							icon={ <Icon icon={ starEmpty } /> }
+							onClickMenuItem={ onShowUserSupportForm }
+						/>
+					) }
 
 					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
 
-			<A4AContactSupportWidget />
+			{ ! isEnabled( 'a4a-help-center' ) && <A4AContactSupportWidget /> }
 			<ProvideFeedback />
 		</Sidebar>
 	);

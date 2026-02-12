@@ -7,6 +7,8 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -78,7 +80,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, redirect_to } ) {
+function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } ) {
 	// If a redirect_to parameter is provided, use it as the destination
 	if ( redirect_to ) {
 		return redirect_to;
@@ -87,38 +89,45 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, red
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug, siteId };
-	if ( domainItem ) {
-		// If the user is purchasing a domain then the site's primary url might change from
-		// `siteSlug` to something else during the checkout process, which means the
-		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
-		// case we use the ID because we know it won't change depending on whether the user
-		// successfully completes the checkout process or not.
-		queryParam = { siteId };
-	}
 
-	// Add referral param to query args
-	if ( refParameter ) {
-		queryParam.ref = refParameter;
-	}
+	const [ redirectTo ] = getOnboardingPostCheckoutDestination( {
+		flowName,
+		locale: localeSlug,
+		siteSlug,
+	} );
 
-	return addQueryArgs( queryParam, '/setup/site-setup' );
+	return redirectTo;
 }
 
 function getLaunchDestination( dependencies ) {
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
-	if ( domainItem && cartItem && designType !== 'existing-site' ) {
+function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
+	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
+
+	// This designType represents a new site.
+	if ( designType === 'page' ) {
+		if ( dashboardType ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
+
 		return addQueryArgs( { siteId }, '/start/setup-site' );
 	} else if ( designType === 'existing-site' ) {
-		return `/checkout/thank-you/${ siteSlug }`;
+		if ( dashboardType ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
+
+		// Redirection URL handled by the checkout controller
+		return '';
 	}
 
-	// `getThankYouPageUrl` appends a receipt ID to this slug even if it doesn't contain the
-	// `:receipt_id` placeholder
-	return '/checkout/thank-you/no-site';
+	if ( dashboardType ) {
+		return dashboardLink( '/domains' );
+	}
+
+	// Redirection URL handled by the checkout controller
+	return '';
 }
 
 function getEmailSignupFlowDestination( { siteId, siteSlug } ) {

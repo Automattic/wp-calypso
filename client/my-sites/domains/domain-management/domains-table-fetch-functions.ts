@@ -1,9 +1,9 @@
 import { addQueryArgs } from '@wordpress/url';
 import wp from 'calypso/lib/wp';
+import type { BulkDomainUpdateStatusQueryFnData } from '@automattic/api-core';
 import type {
 	AllDomainsQueryArgs,
 	AllDomainsQueryFnData,
-	BulkDomainUpdateStatusQueryFnData,
 	BulkUpdateVariables,
 	SiteDetails,
 	SiteDomainsQueryFnData,

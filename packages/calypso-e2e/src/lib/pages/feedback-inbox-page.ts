@@ -27,34 +27,26 @@ export class FeedbackInboxPage {
 	}
 
 	/**
-	 * Click on a response row that has the provided text.
+	 * View a response row that has the provided text.
+	 * Doesn't verify the row is selected, it just makes sure the response
+	 * is visible (inspector on desktop, modal on mobile)
 	 *
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
 	 */
-	async clickResponseRowByText( text: string ): Promise< void > {
+	async viewResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
-		await responseRowLocator.waitFor();
-		await responseRowLocator.isVisible();
+		await responseRowLocator.waitFor( { state: 'visible' } );
+		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
+		// The menu item is on a popover portal, so outside of the response row locator
+		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
+		await viewMenuItem.click();
+
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			// Check if the row is already selected to avoid de-selecting it
-			const isAlreadySelected = await responseRowLocator.evaluate( ( el ) =>
-				el.classList.contains( 'is-selected' )
-			);
-			if ( ! isAlreadySelected ) {
-				await responseRowLocator.click();
-			}
-			await this.page
-				.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row.is-selected' )
-				.filter( { hasText: text } )
-				.waitFor();
+			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
 		} else {
-			await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
-			// The menu item is on a popover portal, so outside of the response row locator
-			const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
-			await viewMenuItem.click();
 			await this.page
 				.getByRole( 'dialog' )
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
@@ -308,7 +300,7 @@ export class FeedbackInboxPage {
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
 		const responseRowLocator = this.page
-			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.locator( '.dataviews-view-table__row' )
 			.filter( { hasText: text } )
 			.first();
 
@@ -320,9 +312,11 @@ export class FeedbackInboxPage {
 		await menu.waitFor();
 
 		// Verify the specified action exists in the dropdown menu
-		await this.page.getByRole( 'menuitem', { name: actionName } ).waitFor();
+		const menuItem = this.page.getByRole( 'menuitem', { name: actionName } );
+		await menuItem.waitFor( { state: 'visible' } );
 
 		// Close the menu by pressing Escape key (trying to click the "Dismiss popup" button didn't work)
 		await this.page.keyboard.press( 'Escape' );
+		await menuItem.waitFor( { state: 'detached' } );
 	}
 }

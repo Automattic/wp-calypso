@@ -51,6 +51,7 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 		stripeLoadingError,
 		hasExistingCardMethods,
 		allowUseForAllSubscriptions: true,
+		defaultToUseForAllSubscriptions: false,
 	} );
 
 	const currentPaymentMethodId = purchase ? getPaymentMethodIdFromPayment( purchase ) : null;

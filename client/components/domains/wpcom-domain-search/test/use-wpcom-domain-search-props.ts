@@ -279,37 +279,212 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				expect.objectContaining( { uuid: 'dotcom2', salePrice: undefined, price: '$99' } ),
 			] );
 		} );
+
+		it( 'does not render any domain as free if there are only premium domains in the cart and config.priceRules.freeForFirstYear is true', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								product_slug: 'dotcom_domain',
+								meta: 'my-premium-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 1000_00,
+								item_original_subtotal_integer: 1000_00,
+								item_subtotal_integer: 1000_00,
+								extra: {
+									premium: true,
+								},
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( { uuid: 'dotcom', salePrice: undefined, price: '$1,000' } ),
+			] );
+		} );
+
+		it( 'renders the first non-premium domain as free if config.priceRules.freeForFirstYear is true and there is a premium domain in the cart', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								product_slug: 'dotcom_domain',
+								meta: 'my-premium-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 1000_00,
+								item_original_subtotal_integer: 1000_00,
+								item_subtotal_integer: 1000_00,
+								extra: {
+									premium: true,
+								},
+							} ),
+							buildProduct( {
+								uuid: 'dotcom2',
+								product_slug: 'dotcom_domain',
+								meta: 'my-regular-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 10_00,
+								item_original_subtotal_integer: 10_00,
+								item_subtotal_integer: 10_00,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( { uuid: 'dotcom', salePrice: undefined, price: '$1,000' } ),
+				expect.objectContaining( { uuid: 'dotcom2', salePrice: '$0', price: '$10' } ),
+			] );
+		} );
+
+		it( 'renders the first non-premium domain as free if config.priceRules.freeForFirstYear is true and there is more than one premium domain in the cart', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								product_slug: 'dotcom_domain',
+								meta: 'my-premium-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 1000_00,
+								item_original_subtotal_integer: 1000_00,
+								item_subtotal_integer: 1000_00,
+								extra: {
+									premium: true,
+								},
+							} ),
+							buildProduct( {
+								uuid: 'dotcom2',
+								product_slug: 'dotcom_domain',
+								meta: 'my-premium-domain2.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 5_00,
+								item_original_subtotal_integer: 5_00,
+								item_subtotal_integer: 5_00,
+								extra: {
+									premium: true,
+								},
+							} ),
+							buildProduct( {
+								uuid: 'dotcom3',
+								product_slug: 'dotcom_domain',
+								meta: 'my-regular-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 10_00,
+								item_original_subtotal_integer: 10_00,
+								item_subtotal_integer: 10_00,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.cart.items ).toEqual( [
+				expect.objectContaining( { uuid: 'dotcom', salePrice: undefined, price: '$1,000' } ),
+				expect.objectContaining( { uuid: 'dotcom3', salePrice: '$0', price: '$10' } ),
+				expect.objectContaining( { uuid: 'dotcom2', salePrice: undefined, price: '$5' } ),
+			] );
+		} );
 	} );
 
-	it( 'returns the total price for the cart', () => {
-		mockUseShoppingCart.mockReturnValue(
-			buildShoppingCart( {
-				responseCart: {
-					products: [
-						buildProduct( {
-							uuid: 'dotcom',
-							item_subtotal_integer: 50_00,
-							item_original_cost_integer: 100_00,
-							is_domain_registration: true,
-							meta: 'my-domain.com',
-							product_slug: 'dotcom_domain',
-						} ),
-						buildProduct( {
-							uuid: 'dotcom2',
-							item_subtotal_integer: 10_00,
-							item_original_cost_integer: 20_00,
-							is_domain_registration: true,
-							meta: 'my-domain2.com',
-							product_slug: 'dotcom_domain',
-						} ),
-					],
-				},
-			} )
-		);
+	describe( 'total price', () => {
+		it( 'returns the total price for the cart', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								item_subtotal_integer: 50_00,
+								item_original_cost_integer: 100_00,
+								is_domain_registration: true,
+								meta: 'my-domain.com',
+								product_slug: 'dotcom_domain',
+							} ),
+							buildProduct( {
+								uuid: 'dotcom2',
+								item_subtotal_integer: 10_00,
+								item_original_cost_integer: 20_00,
+								is_domain_registration: true,
+								meta: 'my-domain2.com',
+								product_slug: 'dotcom_domain',
+							} ),
+						],
+					},
+				} )
+			);
 
-		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
 
-		expect( result.current.cart.total ).toEqual( '$60' );
+			expect( result.current.cart.total ).toEqual( '$60' );
+		} );
+
+		it( 'returns the total price for the cart with the first non-premium domain free if config.priceRules.freeForFirstYear is true', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								item_subtotal_integer: 1000_00,
+								item_original_cost_integer: 1000_00,
+								is_domain_registration: true,
+								meta: 'my-premium-domain.com',
+								product_slug: 'dotcom_domain',
+								extra: {
+									premium: true,
+								},
+							} ),
+							buildProduct( {
+								uuid: 'dotcom2',
+								item_subtotal_integer: 50_00,
+								item_original_cost_integer: 50_00,
+								is_domain_registration: true,
+								meta: 'my-premium-domain2.com',
+								product_slug: 'dotcom_domain',
+								extra: {
+									premium: true,
+								},
+							} ),
+							buildProduct( {
+								uuid: 'dotcom3',
+								item_subtotal_integer: 10_00,
+								item_original_cost_integer: 20_00,
+								is_domain_registration: true,
+								meta: 'my-regular-domain3.com',
+								product_slug: 'dotcom_domain',
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.cart.total ).toEqual( '$1,050' );
+		} );
 	} );
 
 	it( 'returns the promotional price if there is one', () => {

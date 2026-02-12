@@ -1,11 +1,5 @@
-import {
-	siteAgencyBlogQuery,
-	siteBySlugQuery,
-	siteSettingsMutation,
-	siteSettingsQuery,
-} from '@automattic/api-queries';
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
@@ -17,17 +11,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import type { Site, SiteSettings } from '@automattic/api-core';
-import type { Field, SimpleFormField } from '@wordpress/dataviews';
-
-export function canUpdateA4AFullyManagedSetting( site: Site ) {
-	return site.is_wpcom_atomic;
-}
+import type { SiteSettings } from '@automattic/api-core';
+import type { Field, FormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -54,16 +45,12 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
+	fields: [ { id: 'is_fully_managed_agency_site' } as FormField ],
 };
 
 export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
-	const { data: agencyBlog, isLoading: isLoadingAgencyBlog } = useQuery( {
-		...siteAgencyBlogQuery( site.ID ),
-		enabled: site.is_wpcom_atomic,
-	} );
 	const mutation = useMutation( {
 		...siteSettingsMutation( site.ID ),
 		meta: {
@@ -77,10 +64,6 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	const [ formData, setFormData ] = useState( {
 		is_fully_managed_agency_site: siteSettings?.is_fully_managed_agency_site,
 	} );
-
-	if ( ! agencyBlog && ! isLoadingAgencyBlog ) {
-		throw notFound();
-	}
 
 	const isAgencyDevelopmentSite = site.is_a4a_dev_site;
 	const renderContent = () => {
@@ -107,6 +90,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
 							<DataForm< SiteSettings >
 								data={ formData }
 								fields={ fields }

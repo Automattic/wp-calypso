@@ -5,6 +5,10 @@ type ShouldUseMagicCodeProps = {
 	 * Whether the login is for a Jetpack site.
 	 */
 	isJetpack?: boolean;
+	/**
+	 * Whether the login is for a Woo Jetpack Connection.
+	 */
+	isWooJPC?: boolean;
 };
 
 /**
@@ -12,7 +16,11 @@ type ShouldUseMagicCodeProps = {
  * @param {ShouldUseMagicCodeProps} options
  * @returns {boolean}
  */
-export function shouldUseMagicCode( { isJetpack }: ShouldUseMagicCodeProps ): boolean {
+export function shouldUseMagicCode( { isJetpack, isWooJPC }: ShouldUseMagicCodeProps ): boolean {
+	if ( isWooJPC ) {
+		return false;
+	}
+
 	const isMagicCodeEnabled = config.isEnabled( 'login/use-magic-code' );
 
 	if ( isJetpack && isMagicCodeEnabled ) {

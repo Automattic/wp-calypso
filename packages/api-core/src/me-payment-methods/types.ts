@@ -1,5 +1,5 @@
 /**
- * A saved payment method (card, PayPal agreement, or Razorpay emandate).
+ * A saved payment method (card, PayPal agreement or vaulted method, or Razorpay emandate).
  *
  * Used by the `/me/payment-methods` endpoint after version 1.1.
  */
@@ -27,7 +27,7 @@ export interface StoredPaymentMethodBase {
 	remember: boolean;
 	source: string | null;
 	original_stored_details_id: string;
-	is_rechargable: boolean;
+	is_rechargeable: boolean;
 	payment_type: string | null;
 	is_expired: boolean;
 	is_backup: boolean;

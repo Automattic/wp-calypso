@@ -8,6 +8,8 @@ import {
 	selectNextItem,
 	selectPrevItem,
 	requestPage,
+	receiveStreamError,
+	clearStream,
 } from '../actions';
 import {
 	items,
@@ -16,6 +18,7 @@ import {
 	pageHandle,
 	isRequesting,
 	lastPage,
+	error,
 	PENDING_ITEMS_DEFAULT,
 } from '../reducer';
 
@@ -292,6 +295,34 @@ describe( 'streams.isRequesting', () => {
 	it( 'should set to false after page is received', () => {
 		const action = receivePage( { streamKey: 'following' } );
 		expect( isRequesting( true, action ) ).toBe( false );
+	} );
+} );
+
+describe( 'streams.error', () => {
+	it( 'should default to null', () => {
+		expect( error( undefined, {} ) ).toBe( null );
+	} );
+
+	it( 'should return the error', () => {
+		const action = receiveStreamError(
+			{ payload: { streamKey: 'following' } },
+			new Error( 'test error' )
+		);
+		expect( error( undefined, action ) ).toEqual( new Error( 'test error' ) );
+	} );
+
+	it( 'should cleanup the error after a page request', () => {
+		const previousError = new Error( 'test error' );
+		const action = requestPage( { streamKey: 'following' } );
+
+		expect( error( previousError, action ) ).toBe( null );
+	} );
+
+	it( 'should cleanup the error after a stream is cleared', () => {
+		const previousError = new Error( 'test error' );
+		const action = clearStream( { streamKey: 'following' } );
+
+		expect( error( previousError, action ) ).toBe( null );
 	} );
 } );
 

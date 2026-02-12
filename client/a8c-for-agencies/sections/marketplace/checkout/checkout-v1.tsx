@@ -23,8 +23,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
-import { MarketplaceTypeContext } from '../context';
-import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import { MarketplaceTypeContext, TermPricingContext } from '../context';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useReferralDevSite from '../hooks/use-referral-dev-site';
@@ -58,6 +59,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
 	const { selectedCartItems, onRemoveCartItem, onClearCart, setSelectedCartItems } =
@@ -214,7 +216,9 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	);
 
 	if ( isAutomatedReferrals && ! onlyFreeItems ) {
-		actionContent = <RequestClientPayment checkoutItems={ checkoutItems } />;
+		actionContent = (
+			<RequestClientPayment checkoutItems={ checkoutItems } termPricing={ termPricing } />
+		);
 	}
 
 	if ( isClient ) {
@@ -309,6 +313,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 							onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
 							isAutomatedReferrals={ isAutomatedReferrals && ! onlyFreeItems }
 							isClient={ isClient }
+							termPricing={ termPricing }
 						/>
 
 						{ actionContent }
@@ -319,4 +324,4 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	);
 }
 
-export default withMarketplaceType( CheckoutV1 );
+export default withMarketplaceProviders( CheckoutV1 );

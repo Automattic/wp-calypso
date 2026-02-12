@@ -16,4 +16,29 @@
 	.collapsible-card__toggle {
 		margin-inline-start: auto;
 	}
+
+	// Make header clickable with visual feedback
+	.collapsible-card__header {
+		cursor: pointer;
+		user-select: none;
+
+		// Ensure interactive elements within header have pointer cursor and allow text selection
+		button,
+		a,
+		[role="button"],
+		[role="link"],
+		[role="menuitem"],
+		[role="tab"] {
+			cursor: pointer;
+			user-select: auto;
+		}
+
+		// Form inputs should use default cursor
+		input,
+		select,
+		textarea {
+			cursor: auto;
+			user-select: auto;
+		}
+	}
 }

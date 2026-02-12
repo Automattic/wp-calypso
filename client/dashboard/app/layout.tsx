@@ -10,7 +10,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
-import { getSuperProps } from './analytics/super-props';
+import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider } from './context';
 import { I18nProvider } from './i18n';
@@ -35,7 +35,7 @@ function AnalyticsProviderWithClient( {
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				const path = router.basepath + router.state.matches.at( -1 )?.fullPath;
+				const path = getNormalizedPath( router );
 				recordTracksEvent( eventName, {
 					path,
 					...properties,

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -19,7 +18,7 @@ const ReaderPostActions = ( {
 	post,
 	site,
 	onCommentClick,
-	iconSize = 20,
+	iconSize = 24,
 	className,
 	fullPost,
 	commentsApiDisabled = false,
@@ -32,20 +31,13 @@ const ReaderPostActions = ( {
 	const showLikes = shouldShowLikes( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const isAutomattician = useSelector( isA8cTeamMember );
-	const shouldShowFreshlyPressed =
-		fullPost && isEnabled( 'reader/discover/freshly-pressed' ) && isAutomattician;
+	const shouldShowFreshlyPressed = fullPost && isAutomattician;
 
 	return (
 		<ul className={ listClassnames }>
 			{ showShare && (
 				<li className="reader-post-actions__item">
-					<ShareButton
-						post={ post }
-						position="bottom"
-						tagName="div"
-						iconSize={ iconSize }
-						showLabel
-					/>
+					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
 				</li>
 			) }
 
@@ -57,7 +49,6 @@ const ReaderPostActions = ( {
 						tagName="div"
 						iconSize={ iconSize }
 						isReblogSelection
-						showLabel
 					/>
 				</li>
 			) }
@@ -74,6 +65,7 @@ const ReaderPostActions = ( {
 							viewBox: '0 -1 20 20',
 						} ) }
 						defaultLabel={ translate( 'Comment' ) }
+						alwaysShowTooltip
 					/>
 				</li>
 			) }

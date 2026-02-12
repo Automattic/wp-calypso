@@ -4,6 +4,7 @@ import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;
+	newInteractionsBotVersion?: string;
 	locale: string;
 	sectionName: string;
 	currentUser: CurrentUser;
@@ -14,6 +15,15 @@ export type HelpCenterRequiredInformation = {
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
 	isCommerceGarden: boolean;
+	source: '' | 'wpcom' | 'a4a';
+	disableChatSupport: boolean;
+	hideMoreResources: boolean;
+	// This is specific to A4A
+	agency: {
+		id: number;
+		pressableId?: number;
+	} | null;
+	haveSurvicateEnabled: boolean;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -62,6 +72,11 @@ const defaultContext: HelpCenterRequiredInformation = {
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	isCommerceGarden: false,
+	source: 'wpcom',
+	disableChatSupport: false,
+	hideMoreResources: false,
+	agency: null,
+	haveSurvicateEnabled: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
@@ -74,7 +89,7 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 	return (
 		<HelpCenterRequiredContext.Provider
 			value={ {
-				...Object.assign( defaultContext, value ),
+				...Object.assign( {}, defaultContext, value ),
 			} }
 		>
 			{ children }

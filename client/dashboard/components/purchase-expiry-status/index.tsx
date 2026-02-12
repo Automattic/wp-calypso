@@ -1,8 +1,9 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import {
@@ -23,6 +24,7 @@ import {
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
+	isInExpirationGracePeriod,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -46,6 +48,7 @@ export function PurchaseExpiryStatus( {
 	isDisconnectedSite?: boolean;
 } ) {
 	const locale = useLocale();
+	const { setShowHelpCenter } = useHelpCenter();
 
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
@@ -101,11 +104,18 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{ createInterpolateElement(
-					__(
-						'You no longer have access to this site and its purchases. <button>Contact support</button>'
-					),
+					__( 'You no longer have access to this site and its purchases. <contactSupportLink/>' ),
 					{
-						button: <a href="/help/contact" />,
+						contactSupportLink: (
+							<Button
+								variant="link"
+								onClick={ () => {
+									setShowHelpCenter( true );
+								} }
+							>
+								{ __( 'Contact support' ) }
+							</Button>
+						),
 					}
 				) }
 			</span>
@@ -127,7 +137,8 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		isRenewing( purchase )
+		isRenewing( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
 	) {
 		return createInterpolateElement(
 			sprintf(
@@ -151,7 +162,11 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if ( purchase.introductory_offer?.is_within_period && isIntroductoryOfferFreeTrial ) {
+	if (
+		purchase.introductory_offer?.is_within_period &&
+		isIntroductoryOfferFreeTrial &&
+		! isInExpirationGracePeriod( purchase )
+	) {
 		return (
 			<span>
 				{
@@ -180,6 +195,27 @@ export function PurchaseExpiryStatus( {
 					}
 				) }
 			</span>
+		);
+	}
+
+	// Check if expired within the grace period (not actually expired)
+	if ( isInExpirationGracePeriod( purchase ) ) {
+		if ( isRenewing( purchase ) ) {
+			// Auto-renew ON, renewal failing
+			return <Text intent="error">{ __( 'Pending renewal' ) }</Text>;
+		}
+
+		// Auto-renew OFF (isExpiring)
+		return (
+			<Text intent="error">
+				{ sprintf(
+					// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
+					__( 'Expired %(timeSinceExpiry)s' ),
+					{
+						timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+					}
+				) }
+			</Text>
 		);
 	}
 

@@ -2,7 +2,7 @@ import './style.scss';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 document.addEventListener( 'DOMContentLoaded', function () {
-	const links = document.querySelectorAll( 'a[data-search-query]' );
+	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const input = document.getElementById( 'support-search-input' );
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );

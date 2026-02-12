@@ -26,6 +26,10 @@ export const FEATURE_GROUP_MARKETING_EMAIL = 'feature-group-marketing-email';
 export const FEATURE_GROUP_SHIPPING = 'feature-group-shipping';
 /* END: Woo Express Feature Groups */
 
+/* START: Woo Hosted Feature Groups */
+export const FEATURE_GROUP_WOO_HOSTED = 'feature-group-woo-hosted';
+/* END: Woo Hosted Feature Groups */
+
 export const FEATURE_GROUP_STORAGE = 'feature-group-storage';
 export const FEATURE_GROUP_ALL_FEATURES = 'feature-group-all-freatures';
 
@@ -33,6 +37,7 @@ export const FEATURE_GROUP_ADS = 'feature-group-ads';
 export const FEATURE_GROUP_ANALYTICS = 'feature-group-analytics';
 export const FEATURE_GROUP_CUSTOM_PLUGINS = 'feature-group-custom-plugins';
 export const FEATURE_GROUP_CUSTOMIZE_STYLE = 'feature-group-customize-style';
+export const FEATURE_GROUP_WORDADS = 'feature-group-wordads';
 export const FEATURE_GROUP_DEV_TOOLS = 'feature-group-dev-tools';
 export const FEATURE_GROUP_DOMAIN = 'feature-group-domain';
 export const FEATURE_GROUP_ENTITIES = 'feature-group-entities';

@@ -1,10 +1,7 @@
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
-import {
-	APIError,
-	APILicense,
-	APIProductFamilyProductBundlePrice,
-} from 'calypso/state/partner-portal/types';
 import useIssueLicenseMutation from '../../hooks/use-issue-license-mutation';
+import type { APIProductFamilyProductBundlePrice } from 'calypso/a8c-for-agencies/types/products';
+import type { APIError, APILicense } from 'calypso/state/partner-portal/types';
 
 const NO_OP = () => {
 	/* Do nothing */

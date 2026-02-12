@@ -3,9 +3,10 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, lazy, Suspense } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
@@ -13,8 +14,8 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
+import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -24,6 +25,15 @@ import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 import './help-center-content.scss';
+
+// Lazy load HelpCenterA4AContactForm to code-split @wordpress/dataviews (and @wordpress/ui).
+// The webpack config bundles these packages instead of externalizing them,
+// so they won't appear in the asset.json dependencies list.
+const HelpCenterA4AContactForm = lazy( () =>
+	import( './help-center-a4a-contact-form' ).then( ( module ) => ( {
+		default: module.HelpCenterA4AContactForm,
+	} ) )
+);
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -48,8 +58,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, site, source, disableChatSupport } = useHelpCenterContext();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
+	const { forceEmailSupport } = useChatStatus();
+	const currentSiteDomain = site?.domain;
 
 	const { navigateToRoute, isMinimized, hasPremiumSupport } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -71,14 +83,25 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
-	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
+	}, [ location.pathname, location.search, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
-		if ( navigateToRoute ) {
+		if ( navigateToRoute?.route ) {
+			const { route, coalesceParams } = navigateToRoute;
 			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
-			// On navigate once to keep the back button responsive.
-			if ( fullLocation !== navigateToRoute ) {
-				navigate( navigateToRoute );
+			// Only navigate once to keep the back button responsive.
+			if ( fullLocation !== route ) {
+				if ( coalesceParams ) {
+					const url = new URL( route, window.location.origin );
+					const originalParams = new URLSearchParams( location.search );
+					const newParams = new URLSearchParams( url.search );
+					newParams.forEach( ( value, key ) => {
+						originalParams.set( key, value );
+					} );
+					navigate( { pathname: url.pathname, search: originalParams.toString() } );
+				} else {
+					navigate( route );
+				}
 			}
 			setNavigateToRoute( null );
 		}
@@ -113,15 +136,36 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				container?.removeEventListener( 'scroll', handler );
 			};
 		}
-	}, [ location ] );
+	}, [ location.hash, location.pathname ] );
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
-					<Route path="/post" element={ <HelpCenterArticle /> } />
-					<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
+					<Route
+						path="/post"
+						element={
+							<HelpCenterArticle
+								sectionName={ sectionName }
+								currentSiteDomain={ currentSiteDomain }
+								isEligibleForChat={ isUserEligibleForPaidSupport }
+								forceEmailSupport={ !! forceEmailSupport || disableChatSupport }
+							/>
+						}
+					/>
+					<Route
+						path="/contact-form"
+						element={
+							source === 'a4a' ? (
+								<Suspense fallback={ null }>
+									<HelpCenterA4AContactForm />
+								</Suspense>
+							) : (
+								<HelpCenterContactForm />
+							)
+						}
+					/>
 					<Route path="/success" element={ <SuccessScreen /> } />
 					<Route
 						path="/support-guides"

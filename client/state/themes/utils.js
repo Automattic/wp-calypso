@@ -256,24 +256,6 @@ export function isDelistedTaxonomyTermSlug( slug ) {
 }
 
 /**
- * Returns the list of available theme filters, excluding the delisted taxonomy terms.
- * @param {Object}  filters A list of filters.
- * @returns {Object}        A nested list of theme filters, keyed by term slug
- */
-export function filterDelistedTaxonomyTermSlugs( filters ) {
-	const result = {};
-	for ( const taxonomy in filters ) {
-		result[ taxonomy ] = Object.fromEntries(
-			Object.entries( filters[ taxonomy ] || {} ).filter(
-				( [ slug ] ) => ! isDelistedTaxonomyTermSlug( slug )
-			)
-		);
-	}
-
-	return result;
-}
-
-/**
  * Is wp.org theme delisted?
  * @param  {Object} theme  Theme object
  * @returns {boolean}         True if theme is delisted

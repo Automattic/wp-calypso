@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { domainQuery } from '.';
 
 export const domainNameServersQuery = ( domainName: string ) =>
 	queryOptions( {
@@ -19,11 +20,15 @@ export const domainNameServersMutation = ( domainName: string ) =>
 			const oldData = queryClient.getQueryData( domainNameServersQuery( domainName ).queryKey ) as
 				| DomainNameServersResponse
 				| undefined;
+
 			// optimistically update the query data
 			queryClient.setQueryData( domainNameServersQuery( domainName ).queryKey, {
 				isUsingDefaultNameServers: oldData?.isUsingDefaultNameServers ?? false,
 				nameServers: data,
+				defaultNameServers: oldData?.defaultNameServers ?? [],
 			} );
+
 			queryClient.invalidateQueries( domainNameServersQuery( domainName ) );
+			queryClient.invalidateQueries( domainQuery( domainName ) );
 		},
 	} );

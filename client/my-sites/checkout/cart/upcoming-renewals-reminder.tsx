@@ -8,7 +8,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
+import { getName, isExpired, isRenewing, isInExpirationGracePeriod } from 'calypso/lib/purchases';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -154,7 +154,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 						onConfirm={ onConfirm }
 						onClose={ onClose }
 						showManagePurchaseLinks={ false }
-						submitButtonText={ translate( 'Add to Cart' ) }
+						submitButtonText={ translate( 'Add to cart' ) }
 					/>
 					<SectionHeader
 						className="cart__header cart__upsell-header"
@@ -216,7 +216,7 @@ function getMessages( {
 	}
 
 	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
-	const buttonLabel = translate( 'Add to Cart' );
+	const buttonLabel = translate( 'Add to cart' );
 	let message: TranslateResult = '';
 	const translateOptions = {
 		comment:
@@ -227,7 +227,7 @@ function getMessages( {
 		},
 	};
 
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			message = translate(
 				'Your %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',

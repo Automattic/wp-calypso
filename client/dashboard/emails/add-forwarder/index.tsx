@@ -1,6 +1,11 @@
-import { addEmailForwarderMutation } from '@automattic/api-queries';
+import { EmailProvider } from '@automattic/api-core';
+import {
+	addEmailForwarderMutation,
+	domainQuery,
+	userMailboxesQuery,
+} from '@automattic/api-queries';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -10,11 +15,13 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
 import { ButtonStack } from '../../components/button-stack';
@@ -24,8 +31,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AddNewDomain from '../components/add-new-domain';
-import { BackToEmailsPrefix } from '../components/back-to-emails-prefix';
-import { useDomains } from '../hooks/use-domains';
+import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
 import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
@@ -47,49 +53,50 @@ function AddEmailForwarder() {
 		addEmailForwarderMutation()
 	);
 	const navigate = useNavigate();
-	const { domains, isLoading: isLoadingDomains } = useDomains();
 
-	const eligibleDomains = useMemo(
-		() =>
-			domains?.filter(
-				( {
-					current_user_can_add_email,
-					current_user_is_owner,
-					google_apps_subscription,
-					titan_mail_subscription,
-					wpcom_domain,
-				} ) =>
-					current_user_can_add_email &&
-					current_user_is_owner &&
-					google_apps_subscription?.status === 'no_subscription' &&
-					titan_mail_subscription?.status === 'no_subscription' &&
-					! wpcom_domain
-			) || [],
-		[ domains ]
+	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
+		userMailboxesQuery()
 	);
+
+	const eligibleDomains = useMemo( () => {
+		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
+			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
+		);
+
+		return forwardingAccounts.flatMap( ( account ) =>
+			account.domains.map( ( { domain } ) => domain )
+		);
+	}, [ allEmailAccounts ] );
 
 	const [ formData, setFormData ] = useState< FormData >( {
 		localPart: '',
 		domain: '',
 		forwardingAddresses: [],
 	} );
+	const mailbox = `${ formData.localPart }@${ formData.domain }`;
 	const [ untokenizedInput, setUntokenizedInput ] = useState< string >( '' );
 	const isUntokenizedInputValidEmail = emailValidator.validate( untokenizedInput );
+	const forwardingAddresses = formData.forwardingAddresses.concat(
+		isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
+	);
 	const {
 		isLoading: isLoadingNewForwardingAddresses,
 		forwardsByMailbox,
 		newForwardingAddresses,
 	} = useForwardingAddresses( {
 		domains: eligibleDomains,
-		forwardingAddresses: formData.forwardingAddresses.concat(
-			isUntokenizedInputValidEmail ? [ untokenizedInput ] : []
-		),
+		forwardingAddresses,
 	} );
 	const {
 		isLoading: isLoadingDomainMaxForwards,
 		forwards,
 		maxForwards,
 	} = useDomainMaxForwards( formData.domain );
+
+	const { data: domainData } = useQuery( {
+		...domainQuery( formData.domain ),
+		enabled: !! formData.domain,
+	} );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -104,7 +111,7 @@ function AddEmailForwarder() {
 						label: __( 'Select a domain' ),
 						value: '',
 					},
-					...( eligibleDomains.map( ( d ) => ( { label: d.domain, value: d.domain } ) ) || [] ),
+					...( eligibleDomains.map( ( domain ) => ( { label: domain, value: domain } ) ) || [] ),
 				],
 				id: 'domain',
 				label: __( 'Domain' ),
@@ -130,21 +137,18 @@ function AddEmailForwarder() {
 
 	const isBusy =
 		isAddingEmailForwarder ||
-		isLoadingDomains ||
+		isLoadingEmailAccounts ||
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
-	const allFieldsSet =
-		!! formData.localPart &&
-		!! formData.domain &&
-		( !! formData.forwardingAddresses.length || isUntokenizedInputValidEmail );
+	const allFieldsSet = !! formData.localPart && !! formData.domain && !! forwardingAddresses.length;
 	const isDomainMaxForwardsReached =
 		( forwards?.length ?? 0 ) >= ( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 	const willDomainMaxForwardsBeReached =
-		( forwards?.length ?? 0 ) + formData.forwardingAddresses.length >
+		( forwards?.length ?? 0 ) + forwardingAddresses.length >
 		( maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS );
 
-	const duplicateForwardAddress = formData.forwardingAddresses.find(
-		( addr ) => forwardsByMailbox.get( `${ formData.localPart }@${ formData.domain }` ) === addr
+	const duplicateForwardAddresses = forwardingAddresses.filter(
+		( addr ) => forwardsByMailbox.get( mailbox )?.includes( addr )
 	);
 
 	const { isValid: isFormValid } = useFormValidity( formData, fields, form );
@@ -153,7 +157,7 @@ function AddEmailForwarder() {
 		( isUntokenizedInputValidEmail || untokenizedInput.trim() === '' ) &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&
-		! duplicateForwardAddress;
+		! duplicateForwardAddresses.length;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -226,9 +230,9 @@ function AddEmailForwarder() {
 		);
 	};
 
-	if ( isLoadingDomains ) {
+	if ( isLoadingEmailAccounts ) {
 		return (
-			<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+			<PageLayout header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> } size="small">
 				<Spinner
 					style={ {
 						alignSelf: 'center',
@@ -243,7 +247,18 @@ function AddEmailForwarder() {
 	}
 
 	return (
-		<PageLayout header={ <PageHeader prefix={ <BackToEmailsPrefix /> } /> } size="small">
+		<PageLayout
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __( 'Set where your emails should be forwarded.' ) }
+				/>
+			}
+			size="small"
+		>
+			{ formData.domain && domainData && (
+				<DnsRequirementsNotice domainName={ formData.domain } domainData={ domainData } />
+			) }
 			{ eligibleDomains.length === 0 ? (
 				<>
 					<Text size={ 16 }>
@@ -252,122 +267,124 @@ function AddEmailForwarder() {
 					<AddNewDomain origin="add-forwarder" />
 				</>
 			) : (
-				<>
-					<Text size={ 16 }>{ __( 'Set where your emails should be forwarded.' ) }</Text>
-					<Card>
-						<CardBody>
-							<form onSubmit={ handleSubmit }>
-								<VStack spacing={ 6 }>
-									<DataForm
-										data={ formData }
-										fields={ fields }
-										form={ form }
-										onChange={ ( edits: Partial< FormData > ) => {
-											setFormData( ( data ) => ( { ...data, ...edits } ) );
-										} }
-									/>
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 6 }>
+								<DataForm
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: Partial< FormData > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
 
-									<FormTokenField
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-										label={ __( 'Forward to' ) }
-										onInputChange={ ( val ) => {
-											setUntokenizedInput( val );
-										} }
-										value={ formData.forwardingAddresses }
-										onChange={ ( newTokens ) => {
-											// Clear the untokenized input if a new token was added (the value added is what was in the untokenized input)
-											// A token is removed by clicking on Token component's X, so in that case we keep the untokenized input as-is
-											const shouldClearUntokenizedInput =
-												newTokens.length > formData.forwardingAddresses.length;
+								<FormTokenField
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									label={ __( 'Forward to' ) }
+									onInputChange={ ( val ) => {
+										setUntokenizedInput( val );
+									} }
+									value={ formData.forwardingAddresses }
+									onChange={ ( newTokens ) => {
+										// Clear the untokenized input if a new token was added (the value added is what was in the untokenized input)
+										// A token is removed by clicking on Token component's X, so in that case we keep the untokenized input as-is
+										const shouldClearUntokenizedInput =
+											newTokens.length > formData.forwardingAddresses.length;
 
-											if ( shouldClearUntokenizedInput ) {
-												setUntokenizedInput( '' );
+										if ( shouldClearUntokenizedInput ) {
+											setUntokenizedInput( '' );
+										}
+
+										setFormData( ( data ) => ( {
+											...data,
+											forwardingAddresses: newTokens as string[],
+										} ) );
+									} }
+								/>
+
+								{ newForwardingAddresses.length > 0 && (
+									<Notice>
+										{ sprintf(
+											/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+											_n(
+												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
+												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
+												newForwardingAddresses.length
+											),
+											{
+												emailAddresses: newForwardingAddresses.join( ', ' ),
 											}
+										) }
+									</Notice>
+								) }
 
-											setFormData( ( data ) => ( {
-												...data,
-												forwardingAddresses: newTokens as string[],
-											} ) );
-										} }
-									/>
+								{ isDomainMaxForwardsReached && (
+									<Notice variant="warning">
+										{ sprintf(
+											// translators: %(maxForwards) is the maximum number of email forwards allowed for a domain.
+											__(
+												"You can't add another email forwarder for this domain because you've reached the maximum number %(maxForwards)d of Email Forwards allowed on it. Please delete an existing forwarder in order to add a new one."
+											),
+											{
+												maxForwards,
+											}
+										) }
+									</Notice>
+								) }
 
-									{ newForwardingAddresses.length > 0 && (
-										<Notice>
-											{ sprintf(
-												/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
-												_n(
-													"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
-													"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
-													newForwardingAddresses.length
-												),
-												{
-													emailAddresses: newForwardingAddresses.join( ', ' ),
-												}
-											) }
-										</Notice>
-									) }
+								{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
+									<Notice variant="warning">
+										{ sprintf(
+											// translators: %(forwardingAddressesCount)d is the number of new email forwards the user is attempting to add, %(maxForwards)d is the maximum number of email forwards allowed for a domain, %(existingForwardersCount)d is the number of existing email forwards already set up for the domain.
+											__(
+												'You are adding too many new email forwarders for this domain (%(forwardingAddressesCount)d); the maximum number is %(maxForwards)d and there are already %(existingForwardersCount)d before this change. Please edit your changes or delete any of the existing forwarders.'
+											),
+											{
+												forwardingAddressesCount: forwardingAddresses.length,
+												maxForwards,
+												existingForwardersCount: forwards?.length ?? 0,
+											}
+										) }
+									</Notice>
+								) }
 
-									{ isDomainMaxForwardsReached && (
-										<Notice variant="warning">
-											{ sprintf(
-												// translators: %(maxForwards) is the maximum number of email forwards allowed for a domain.
-												__(
-													"You can't add another email forwarder for this domain because you've reached the maximum number %(maxForwards)d of Email Forwards allowed on it. Please delete an existing forwarder in order to add a new one."
-												),
-												{
-													maxForwards,
-												}
-											) }
-										</Notice>
-									) }
-
-									{ ! isDomainMaxForwardsReached && willDomainMaxForwardsBeReached && (
-										<Notice variant="warning">
-											{ sprintf(
-												// translators: %(forwardingAddressesCount)d is the number of new email forwards the user is attempting to add, %(maxForwards)d is the maximum number of email forwards allowed for a domain, %(existingForwardersCount)d is the number of existing email forwards already set up for the domain.
-												__(
-													'You are adding too many new email forwarders for this domain (%(forwardingAddressesCount)d); the maximum number is %(maxForwards)d and there are already %(existingForwardersCount)d before this change. Please edit your changes or delete any of the existing forwarders.'
-												),
-												{
-													forwardingAddressesCount: formData.forwardingAddresses.length,
-													maxForwards,
-													existingForwardersCount: forwards?.length ?? 0,
-												}
-											) }
-										</Notice>
-									) }
-
-									{ duplicateForwardAddress && (
-										<Notice variant="error">
-											{ sprintf(
+								{ duplicateForwardAddresses.length && (
+									<Notice variant="error">
+										{ createInterpolateElement(
+											sprintf(
 												// translators: %(mailbox)s is the email address the user is attempting to add a forwarder for, %(forwardingAddress)s is the duplicate forwarding email address.
-												__(
-													'There is already a forwarding set from %(mailbox)s to %(forwardingAddress)s. Please remove the duplicate and try again.'
+												_n(
+													'There is already a forwarding set from <code>%(mailbox)s</code> to <code>%(forwardingAddress)s</code>. Please remove the duplicate and try again.',
+													'There are already forwardings set from <code>%(mailbox)s</code> to <code>%(forwardingAddress)s</code>. Please remove the duplicates and try again.',
+													duplicateForwardAddresses.length
 												),
 												{
-													mailbox: `${ formData.localPart }@${ formData.domain }`,
-													forwardingAddress: duplicateForwardAddress,
+													mailbox,
+													forwardingAddress: duplicateForwardAddresses.join( ', ' ),
 												}
-											) }
-										</Notice>
-									) }
+											),
+											{ code: <code /> }
+										) }
+									</Notice>
+								) }
 
-									<ButtonStack justify="flex-start">
-										<Button
-											variant="primary"
-											type="submit"
-											isBusy={ isBusy }
-											disabled={ isBusy || ! allFieldsSet || ! isValid }
-										>
-											{ __( 'Save' ) }
-										</Button>
-									</ButtonStack>
-								</VStack>
-							</form>
-						</CardBody>
-					</Card>
-				</>
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isBusy }
+										disabled={ isBusy || ! allFieldsSet || ! isValid || ! domainData }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
 			) }
 		</PageLayout>
 	);

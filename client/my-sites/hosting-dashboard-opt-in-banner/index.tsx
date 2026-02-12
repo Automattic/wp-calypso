@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -43,7 +44,7 @@ export default function HostingDashboardOptInBanner( {
 
 	const handleClick = async () => {
 		if ( hasOptedIn ) {
-			window.location.href = '/v2';
+			window.location.href = dashboardLink();
 			return;
 		}
 
@@ -66,7 +67,7 @@ export default function HostingDashboardOptInBanner( {
 				} )
 			);
 		} else {
-			window.location.href = '/v2';
+			window.location.href = dashboardLink();
 		}
 	};
 

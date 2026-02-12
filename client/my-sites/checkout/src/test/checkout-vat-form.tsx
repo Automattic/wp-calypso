@@ -84,11 +84,11 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockMatchMediaOnWindow();
 		mockGetVatInfoEndpoint( {} );
 		mockSetCachedContactDetailsEndpoint();
 		mockCachedContactDetailsEndpoint( {} );
-		mockGetVatInfoEndpoint( {} );
 	} );
 
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
@@ -97,6 +97,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( screen.queryByLabelText( 'Add VAT details' ) ).not.toBeInTheDocument();
 	} );
@@ -107,6 +108,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeInTheDocument();
 	} );
@@ -117,6 +119,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).not.toBeChecked();
 		expect( screen.queryByLabelText( 'VAT ID' ) ).not.toBeInTheDocument();
@@ -128,6 +131,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
@@ -140,6 +144,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'ES' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( screen.queryByLabelText( 'Is VAT for Northern Ireland?' ) ).not.toBeInTheDocument();
@@ -151,6 +156,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) ).toBeInTheDocument();
@@ -162,6 +168,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) ).toBeInTheDocument();
@@ -172,6 +179,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the VAT fields and checks the box on load if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
@@ -203,6 +211,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the VAT fields pre-filled if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
@@ -235,6 +244,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'renders the Northern Ireland checkbox pre-filled if the VAT endpoint returns XI', async () => {
 		nock.cleanAll();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
@@ -265,6 +275,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {
 		nock.cleanAll();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
@@ -522,6 +533,7 @@ describe( 'Checkout contact step VAT form', () => {
 	it( 'when there is a cached contact country that differs from the cached VAT country, the contact country is sent to the VAT endpoint', async () => {
 		nock.cleanAll();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
 		const cachedContactCountry = 'ES';
 		mockCachedContactDetailsEndpoint( {
@@ -586,6 +598,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.click( await screen.findByLabelText( 'Is VAT for Northern Ireland?' ) );
@@ -614,6 +627,7 @@ describe( 'Checkout contact step VAT form', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,
 		} );
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		// Check the box
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );

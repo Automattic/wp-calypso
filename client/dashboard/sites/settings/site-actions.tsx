@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
+import { wpcomLink } from '../../utils/link';
 import { hasPlanFeature } from '../../utils/site-features';
 import { canViewSiteActions } from '../features';
 import type { Site } from '@automattic/api-core';
@@ -54,7 +55,7 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 				<Button
 					variant="secondary"
 					size="compact"
-					href={ addQueryArgs( '/setup/copy-site', {
+					href={ addQueryArgs( wpcomLink( '/setup/copy-site' ), {
 						sourceSlug: site.slug,
 					} ) }
 				>

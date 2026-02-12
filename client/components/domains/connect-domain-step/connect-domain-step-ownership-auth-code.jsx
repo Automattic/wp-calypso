@@ -16,6 +16,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 	pageSlug,
 	connectDomainActionHandler,
 	progressStepList,
+	onConnect,
 } ) => {
 	const { __ } = useI18n();
 	const recordMappingButtonClickInUseYourDomain = useCallback(
@@ -71,7 +72,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 			className={ className }
 			domain={ domain }
 			onBeforeValidate={ recordMappingButtonClickInUseYourDomain }
-			validateHandler={ connectDomainActionHandler }
+			validateHandler={ onConnect ?? connectDomainActionHandler }
 			pageSlug={ pageSlug }
 			progressStepList={ progressStepList }
 		/>

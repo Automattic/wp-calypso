@@ -1,0 +1,17 @@
+{
+	"permissions": {
+		"deny": [
+			"Read(.env)",
+			"Read(.env.*)",
+			"Read(**/.envrc)",
+			"Read(**/*.pem)",
+			"Read(**/id_rsa)",
+			"Read(**/id_rsa.*)",
+			"Read(config/secrets.json)",
+			"Read(config/*.local.json)",
+			"Read(desktop/resource/certificates/*)",
+			"Read(packages/calypso-e2e/dist/**)",
+			"Read(packages/calypso-e2e/src/secrets/*)"
+		]
+	}
+}

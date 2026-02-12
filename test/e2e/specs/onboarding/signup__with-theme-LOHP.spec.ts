@@ -10,7 +10,7 @@ import { apiCloseAccount } from '../shared';
 test.describe(
 	'Signup: Lifecycle: Logged Out Home Page, signup, onboard, launch and cancel subscription',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_RELEASE, tags.CALYPSO_PR ],
 		annotation: {
 			type: 'flowchart',
 			description:

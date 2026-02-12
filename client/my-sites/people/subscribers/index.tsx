@@ -152,6 +152,8 @@ function Subscribers( props: Props ) {
 									submitBtnAlwaysEnable
 									onImportFinished={ refetch }
 									hasSubscriberLimit={ hasSubscriberLimit }
+									isFreePlan={ isFreeSite }
+									siteSlug={ site?.slug || '' }
 								/>
 							</EmailVerificationGate>
 						</>

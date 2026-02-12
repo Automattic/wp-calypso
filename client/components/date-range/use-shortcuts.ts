@@ -55,7 +55,7 @@ export const getShortcuts = createSelector(
 	) => {
 		const translate = translateFromProps ?? i18nCalypsoTranslate;
 		const siteId = getSelectedSiteId( state );
-		const siteToday = getMomentSiteZone( state, siteId );
+		const siteToday = getMomentSiteZone( state, siteId )();
 		const siteTodayStr = siteToday.format( DATE_FORMAT );
 
 		const supportedShortcutList = [
@@ -129,7 +129,7 @@ export const getShortcuts = createSelector(
 		}
 	) => {
 		const siteId = getSelectedSiteId( state );
-		const siteToday = getMomentSiteZone( state, siteId );
+		const siteToday = getMomentSiteZone( state, siteId )();
 
 		return [
 			siteId,

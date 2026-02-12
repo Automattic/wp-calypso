@@ -2,10 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "../../style";
 
-$post-item-background-color: var(--color-surface);
-body.is-section-promote-post-i2 {
-	background-color: $post-item-background-color;
-}
+$post-item-background-color: var(--studio-white);
 
 .promote-post-i2 {
 	@include promote-post-i2-font;
@@ -15,8 +12,14 @@ body.is-section-promote-post-i2 {
 		padding-bottom: 8px;
 	}
 
+	.posts-lists__table tbody,
+	.campaigns-list__table tbody,
 	.post-item__row {
 		width: 100%;
+
+		@media (max-width: 1054px) {
+			display: block;
+		}
 	}
 
 	.post-item__post {
@@ -200,11 +203,11 @@ body.is-section-promote-post-i2 {
 		border: 1px solid #eee;
 		border-radius: 4px;
 		display: block;
-		height: 78px;
-		min-width: 108px;
+		height: 60px;
+		min-width: 80px;
 		overflow: hidden;
 		position: relative;
-		width: 108px;
+		width: 80px;
 
 		&_no-image {
 			align-items: center;

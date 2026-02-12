@@ -30,6 +30,12 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	useLongSetFeatures,
+	useLongSetStackedFeatures,
+	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
+	isVar1dVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -48,6 +54,7 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
+		isExperimentVariant,
 	} );
 
 	// Get summer special status
@@ -61,6 +68,12 @@ const useGridPlansForComparisonGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		isSummerSpecial,
+		useLongSetFeatures,
+		useLongSetStackedFeatures,
+		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	return useMemo( () => {

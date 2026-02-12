@@ -8,8 +8,10 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 
 export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -20,12 +22,10 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 
 	const handleGetStarted = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_get_started_click' );
-		window.location.href = `/domains/add/${ site.slug }`;
 	};
 
 	const handleDoLater = () => {
 		recordTracksEvent( 'calypso_dashboard_ssh_migration_complete_do_later_click' );
-		window.location.href = `/sites/${ site.slug }`;
 	};
 
 	const handlePreviewClick = () => {
@@ -71,12 +71,20 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 									) }
 							</Text>
 							<ButtonStack justify="flex-start" expanded={ false }>
-								<Button variant="primary" onClick={ handleGetStarted }>
+								<Button
+									variant="primary"
+									onClick={ handleGetStarted }
+									href={ getAddSiteDomainUrl( site.slug ) }
+								>
 									{ __( 'Get started' ) }
 								</Button>
-								<Button variant="secondary" onClick={ handleDoLater }>
+								<RouterLinkButton
+									variant="secondary"
+									onClick={ handleDoLater }
+									to={ `/sites/${ site.slug }` }
+								>
 									{ __( 'I’ll do this later' ) }
-								</Button>
+								</RouterLinkButton>
 							</ButtonStack>
 						</VStack>
 					</CardBody>

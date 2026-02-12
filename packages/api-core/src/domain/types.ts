@@ -68,6 +68,7 @@ export interface Domain extends DomainSummary {
 	is_gravatar_domain: boolean;
 	is_gravatar_restricted_domain: boolean;
 	is_locked: boolean;
+	is_mapped_to_atomic_site: boolean;
 	is_pending_whois_update: boolean;
 	is_root_domain_registered_with_automattic: boolean;
 	is_redeemable: boolean;
@@ -87,6 +88,7 @@ export interface Domain extends DomainSummary {
 	pending_registration: boolean;
 	pending_registration_at_registry: boolean;
 	pending_transfer: boolean;
+	whois_update_unmodifiable_fields: string[];
 	renewable_until: string;
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;
@@ -101,4 +103,5 @@ export interface Domain extends DomainSummary {
 	transfer_start_date?: string;
 	last_transfer_error: string;
 	current_user_can_add_email: boolean;
+	tld_maintenance_end_time: number;
 }

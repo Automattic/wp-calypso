@@ -71,6 +71,10 @@ type ReceiptIdPlaceholder = ':receiptId';
 type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 
 const allowedExternalSites = [
+	'my.wordpress.com',
+	'my.localhost',
+	'my.woo.com',
+	'my.woo.localhost',
 	'cloud.jetpack.com',
 	'jetpack.cloud.localhost',
 	'jetpack.com',

@@ -126,10 +126,10 @@ export interface Purchase {
 	can_explicit_renew: boolean;
 
 	/**
-	 * If this upgrade is a plan and its domain credit was used to purchase a
-	 * domain registration, and the plan is within its refund period, then
-	 * `cost_to_unbundle_display` will be the formatted amount of the amount that
-	 * would be withheld to keep the domain if the plan is cancelled.
+	 * If this upgrade is a domain and a domain credit was used to purchase it,
+	 * and the plan is within its refund period, then `cost_to_unbundle_display`
+	 * will be the formatted amount of the amount that would be withheld to keep
+	 * the domain if the plan is cancelled.
 	 *
 	 * If there is nothing that would be withheld, this will be null.
 	 */
@@ -153,7 +153,14 @@ export interface Purchase {
 		| 'expired'
 		| 'one-time-purchase';
 	iap_purchase_management_link: string | null;
+
+	/**
+	 * If this subscription is for a plan with a bundled domain, this will
+	 * contain the domain name for that domain subscription. Otherwise this will
+	 * be an empty string.
+	 */
 	included_domain: string;
+
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 
@@ -193,6 +200,7 @@ export interface Purchase {
 	 */
 	is_domain_registration: boolean;
 
+	is_trial_plan: boolean;
 	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_jetpack_backup_t1: boolean;
@@ -205,7 +213,8 @@ export interface Purchase {
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_plan: boolean;
-	is_rechargable: boolean;
+	is_rechargeable: boolean;
+	is_woo_hosted_product: boolean;
 
 	/**
 	 * Determine if this is a kind of subscription that can currently be manually
@@ -344,7 +353,18 @@ export interface Purchase {
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
+
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `payment_expiry_date` if possible as it will be more accurate.
+	 */
 	payment_expiry: string | undefined;
+
+	/**
+	 * The expiry date in ISO 8601 (YYYY-MM-DD) if the payment method has one.
+	 */
+	payment_expiry_date: string | undefined;
 
 	/**
 	 * True if this subscription can be upgraded to a different one.
@@ -355,6 +375,22 @@ export interface Purchase {
 	 * a product directly to the cart, also set `upgrade_product_slug`.
 	 */
 	is_upgradable: boolean;
+
+	/**
+	 * True if deactivating this subscription will cause the site to be reverted
+	 * from an Atomic site to a Simple site. This is only true if the site is
+	 * currently on the Atomic architecture and removing this subscription would
+	 * leave the site with no other products that provide the ATOMIC feature.
+	 */
+	will_atomic_revert_after_removal: boolean;
+
+	/**
+	 * True if this purchase should prevent the site from being deleted.
+	 *
+	 * When a site has any purchase with this flag set to true, the site
+	 * deletion flow should require the user to cancel these purchases first.
+	 */
+	blocks_site_deletion: boolean;
 }
 
 export type RawPurchase = Purchase & {

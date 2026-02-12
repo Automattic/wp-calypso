@@ -6,7 +6,10 @@ export const currentClientId = ( state = null, action ) => {
 	switch ( action.type ) {
 		case ROUTE_SET: {
 			const { path, query } = action;
-			if ( startsWith( path, '/log-in' ) && query.client_id ) {
+			if (
+				( startsWith( path, '/log-in' ) || startsWith( path, '/oauth2/authorize' ) ) &&
+				query.client_id
+			) {
 				return Number( query.client_id );
 			}
 

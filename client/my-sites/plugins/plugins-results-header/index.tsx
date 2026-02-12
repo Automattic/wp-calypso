@@ -1,8 +1,5 @@
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BrowseAllAction from './browse-all-action';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -24,8 +21,6 @@ export default function PluginsResultsHeader( {
 	listName?: string;
 	isRootPage?: boolean;
 } ) {
-	const { __ } = useI18n();
-	const selectedSite = useSelector( getSelectedSite );
 	const TitleTag = isRootPage ? 'h2' : 'h1';
 
 	return (
@@ -39,19 +34,7 @@ export default function PluginsResultsHeader( {
 			{ ( browseAllLink || resultCount ) && (
 				<div className="plugins-results-header__actions">
 					{ browseAllLink && (
-						<a
-							className="plugins-results-header__action"
-							href={ browseAllLink }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_plugin_browser_all_click', {
-									site: selectedSite?.domain,
-									list_name: listName,
-									blog_id: selectedSite?.ID,
-								} );
-							} }
-						>
-							{ __( 'Browse all' ) }
-						</a>
+						<BrowseAllAction browseAllLink={ browseAllLink } listName={ listName } />
 					) }
 					{ resultCount && <span className="plugins-results-header__action">{ resultCount }</span> }
 				</div>
@@ -59,3 +42,5 @@ export default function PluginsResultsHeader( {
 		</div>
 	);
 }
+
+export { default as BrowseAllAction } from './browse-all-action';

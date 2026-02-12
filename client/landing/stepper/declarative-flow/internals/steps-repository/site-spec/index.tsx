@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSpec } from 'calypso/lib/site-spec';
+import { getCiabSiteSpecConfig, type SiteSpecConfig } from 'calypso/lib/site-spec/utils';
 import type { Step as StepType } from '../../types';
 
 const SiteSpec: StepType = function SiteSpec() {
@@ -10,15 +11,9 @@ const SiteSpec: StepType = function SiteSpec() {
 	const queryParams = useQuery();
 	const source = queryParams.get( 'source' );
 
-	let siteSpecConfig;
+	let siteSpecConfig: SiteSpecConfig | undefined;
 	if ( source && source.startsWith( 'ciab-' ) ) {
-		siteSpecConfig = {
-			buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
-			backButton: {
-				enabled: true,
-				url: '/ciab/sites',
-			},
-		};
+		siteSpecConfig = getCiabSiteSpecConfig() as SiteSpecConfig;
 	}
 
 	useSiteSpec( { siteSpecConfig } );

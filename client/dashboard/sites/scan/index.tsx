@@ -12,6 +12,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardHeader, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import TimeMismatchNotice from '../../components/time-mismatch-notice';
 import { useTimeSince } from '../../components/time-since';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from '../scan-active';
@@ -37,6 +38,10 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ showBulkFixModal, setShowBulkFixModal ] = useState( false );
+
+	const settingsUrl = site.options?.admin_url
+		? `${ site.options.admin_url }options-general.php`
+		: '';
 
 	const { data: siteSettings } = useSuspenseQuery( {
 		...siteSettingsQuery( site.ID ),
@@ -69,6 +74,10 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
+		if ( scanTab === tab ) {
+			return;
+		}
+
 		if ( tab === 'active' ) {
 			router.navigate( { to: `/sites/${ siteSlug }/scan/active` } );
 		} else {
@@ -93,8 +102,9 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.SCAN }
+			fullPage
+			title={ __( 'Scan' ) }
 			upsellId="site-scan"
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Scan' ) } /> } /> }
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
 			upsellImage={ illustrationUrl }
@@ -138,7 +148,16 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						}
 					/>
 				}
-				notices={ <ScanNotices status={ status } threatCount={ threatCount } /> }
+				notices={
+					<>
+						<TimeMismatchNotice
+							settingsUrl={ settingsUrl }
+							siteTime={ gmtOffset }
+							siteId={ site.ID }
+						/>
+						<ScanNotices status={ status } threatCount={ threatCount } />
+					</>
+				}
 			>
 				<Card>
 					<CardHeader style={ { paddingBottom: '0' } }>

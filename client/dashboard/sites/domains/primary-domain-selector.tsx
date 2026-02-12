@@ -1,4 +1,10 @@
-import { type DomainSummary, type Site, type User, DomainSubtype } from '@automattic/api-core';
+import {
+	type DomainSummary,
+	type Site,
+	type User,
+	DomainSubtype,
+	DomainStatus,
+} from '@automattic/api-core';
 import { siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -11,8 +17,11 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import type { Field } from '@wordpress/dataviews';
 
@@ -23,6 +32,7 @@ interface PrimaryDomainSelectorProps {
 }
 
 const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorProps ) => {
+	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< { primaryDomain: string } >( {
 		primaryDomain: '',
 	} );
@@ -59,7 +69,8 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 					domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
 					domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) &&
 				domain.can_set_as_primary &&
-				! domain.primary_domain;
+				! domain.primary_domain &&
+				domain.domain_status.id !== DomainStatus.CONNECTION_ERROR;
 
 			if ( ! isEligible ) {
 				return false;
@@ -99,15 +110,30 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
-			return createInterpolateElement(
+			const message = createInterpolateElement(
 				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink />',
 				{
-					upgradeLink: <a href={ `/plans/${ site.slug }` } />,
+					upgradeLink: (
+						<a
+							href={ wpcomLink( `/plans/${ site.slug }` ) }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_primary_domain_selector_upgrade_link_click' );
+							} }
+						/>
+					),
 					br: <br />,
 					learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
 				}
 			);
+
+			return (
+				<>
+					<ComponentViewTracker eventName="calypso_dashboard_primary_domain_selector_upgrade_link_impression" />
+					{ message }
+				</>
+			);
 		}
+
 		if ( domainsList.length === 0 ) {
 			return createInterpolateElement(
 				'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />',
@@ -130,6 +156,12 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 		if ( ! formData.primaryDomain ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
+			site: site.slug,
+			domain: formData.primaryDomain,
+		} );
+
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: formData.primaryDomain },
 			{

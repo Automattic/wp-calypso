@@ -5,6 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
 import InlineSupportLink from '../../components/inline-support-link';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { wpcomLink } from '../../utils/link';
 import illustrationUrl from './upsell-nudge-illustration.svg';
 
 interface Props {
@@ -42,7 +43,7 @@ export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 					upsellId="domain-nameservers-primary-domain"
 					upsellFeatureId="domain"
 					variant="primary"
-					href={ `/checkout/${ domainSiteSlug }/business` }
+					href={ wpcomLink( `/checkout/${ domainSiteSlug }/business` ) }
 				/>
 			}
 		/>

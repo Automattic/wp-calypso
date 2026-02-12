@@ -27,13 +27,14 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/use-create-existing-paypal-ppcp';
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
@@ -44,6 +45,7 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
+import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
@@ -138,7 +140,10 @@ export default function CheckoutMain( {
 
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
-			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+			const isCommerce = siteId && isCommerceGardenSite( state, siteId );
+			return (
+				siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) && ! isCommerce
+			);
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
@@ -358,7 +363,7 @@ export default function CheckoutMain( {
 		error: storedCardsError,
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
-		type: 'card',
+		type: 'all',
 		isForBusiness,
 	} );
 
@@ -432,6 +437,7 @@ export default function CheckoutMain( {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
 					new_product_slug: newProductSlug,
+					volume: newProductVolume,
 				} )
 			);
 
@@ -540,6 +546,8 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
+			'existing-paypal-ppcp': ( transactionData: unknown ) =>
+				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
@@ -567,22 +575,18 @@ export default function CheckoutMain( {
 	}
 
 	// Jetpack Theme
-	// Woo Hosted sites are technically Jetpack, but are supposed to default to
-	// WPcom colors. We should update this once we have a better way to identify
-	// Garden sites outside of the Hosting Dashboard.
-	const jetpackColors =
-		isJetpackNotAtomic && ! updatedSiteSlug?.endsWith( '.commerce-garden.com' )
-			? {
-					primary: colors[ 'Jetpack Green' ],
-					primaryBorder: colors[ 'Jetpack Green 80' ],
-					primaryOver: colors[ 'Jetpack Green 60' ],
-					success: colors[ 'Jetpack Green' ],
-					discount: colors[ 'Jetpack Green' ],
-					highlight: colors[ 'WordPress Blue 50' ],
-					highlightBorder: colors[ 'WordPress Blue 80' ],
-					highlightOver: colors[ 'WordPress Blue 60' ],
-			  }
-			: {};
+	const jetpackColors = isJetpackNotAtomic
+		? {
+				primary: colors[ 'Jetpack Green' ],
+				primaryBorder: colors[ 'Jetpack Green 80' ],
+				primaryOver: colors[ 'Jetpack Green 60' ],
+				success: colors[ 'Jetpack Green' ],
+				discount: colors[ 'Jetpack Green' ],
+				highlight: colors[ 'WordPress Blue 50' ],
+				highlightBorder: colors[ 'WordPress Blue 80' ],
+				highlightOver: colors[ 'WordPress Blue 60' ],
+		  }
+		: {};
 
 	// A4A Theme
 	const a4aColors =
@@ -653,7 +657,6 @@ export default function CheckoutMain( {
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
-		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
@@ -940,9 +943,19 @@ function getInitiallySelectedPaymentMethodId(
 	if ( ! firstRenewalWithPaymentMethod ) {
 		return undefined;
 	}
-	const matchingCheckoutPaymentMethod = paymentMethods.find(
+	// Check for existing card first
+	let matchingCheckoutPaymentMethod = paymentMethods.find(
 		( method ) =>
 			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
+	);
+	if ( matchingCheckoutPaymentMethod ) {
+		return matchingCheckoutPaymentMethod.id;
+	}
+	// Check for existing PayPal PPCP
+	matchingCheckoutPaymentMethod = paymentMethods.find(
+		( method ) =>
+			method.id ===
+			`${ existingPayPalPPCPPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
 	);
 	if ( matchingCheckoutPaymentMethod ) {
 		return matchingCheckoutPaymentMethod.id;

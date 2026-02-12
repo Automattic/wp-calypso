@@ -55,47 +55,26 @@ export const DomainsFullCartItem = ( {
 						<VStack className="domains-full-cart-items__price">
 							<HStack alignment="right" spacing={ 2 }>
 								{ domain.salePrice ? (
-									<>
-										<Text
-											size="small"
-											className="domains-full-cart-items__original-price"
-											aria-label={ sprintf(
-												// translators: %(price)s is the original price of the domain.
-												__( 'Original price: %(price)s/year' ),
-												{ price: domain.price }
-											) }
-										>
-											{ sprintf(
-												// translators: %(price)s is the price of the domain.
-												__( '%(price)s/year' ),
-												{ price: domain.price }
-											) }
-										</Text>
-										<Text
-											size="small"
-											aria-label={ sprintf(
-												// translators: %(price)s is the sale price of the domain.
-												__( 'Sale price: %(price)s/year' ),
-												{ price: domain.salePrice }
-											) }
-										>
-											{ domain.salePrice }
-										</Text>
-									</>
+									<Text
+										size="small"
+										aria-label={ sprintf(
+											// translators: %(price)s is the sale price of the domain.
+											__( 'Sale price: %(price)s' ),
+											{ price: domain.salePrice }
+										) }
+									>
+										{ domain.salePrice }
+									</Text>
 								) : (
 									<Text
 										size="small"
 										aria-label={ sprintf(
 											// translators: %(price)s is the price of the domain.
-											__( 'Price: %(price)s/year' ),
+											__( 'Price: %(price)s' ),
 											{ price: domain.price }
 										) }
 									>
-										{ sprintf(
-											// translators: %(price)s is the price of the domain.
-											__( '%(price)s/year' ),
-											{ price: domain.price }
-										) }
+										{ domain.price }
 									</Text>
 								) }
 							</HStack>

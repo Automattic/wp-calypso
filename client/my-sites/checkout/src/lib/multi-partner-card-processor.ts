@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
@@ -11,6 +12,7 @@ import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
+import { createEbanxTokenVgs } from './create-ebanx-token-vgs';
 import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
@@ -24,6 +26,7 @@ import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
+import type { EbanxTokenizeResponse, VgsTokens } from './create-ebanx-token-vgs';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
@@ -50,9 +53,9 @@ type StripeCardTransactionRequest = {
 type EbanxCardTransactionRequest = {
 	name: string;
 	countryCode: string;
-	number: string;
-	cvv: string;
-	'expiration-date': string;
+	number?: string;
+	cvv?: string;
+	'expiration-date'?: string;
 	state: string;
 	city: string;
 	postalCode: string;
@@ -60,6 +63,7 @@ type EbanxCardTransactionRequest = {
 	streetNumber: string;
 	phoneNumber: string;
 	document: string;
+	vgsTokens?: VgsTokens;
 };
 
 type EbanxToken = {
@@ -204,14 +208,26 @@ async function ebanxCardProcessor(
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
 	let paymentMethodToken;
+	let ebanxTokenResponse: EbanxToken | EbanxTokenizeResponse;
 	try {
-		const ebanxTokenResponse: EbanxToken = await createEbanxToken( 'new_purchase', {
-			country: submitData.countryCode,
-			name: submitData.name,
-			number: submitData.number,
-			cvv: submitData.cvv,
-			'expiration-date': submitData[ 'expiration-date' ],
-		} );
+		if ( isEnabled( 'checkout/vgs-ebanx' ) ) {
+			if ( ! submitData.vgsTokens ) {
+				throw new Error( 'VGS tokens are required for VGS checkout' );
+			}
+			ebanxTokenResponse = await createEbanxTokenVgs( 'new_purchase', {
+				country: submitData.countryCode,
+				name: submitData.name,
+				vgsTokens: submitData.vgsTokens,
+			} );
+		} else {
+			ebanxTokenResponse = await createEbanxToken( 'new_purchase', {
+				country: submitData.countryCode,
+				name: submitData.name,
+				number: submitData.number ?? '',
+				cvv: submitData.cvv ?? '',
+				'expiration-date': submitData[ 'expiration-date' ] ?? '',
+			} );
+		}
 		paymentMethodToken = ebanxTokenResponse;
 	} catch ( error ) {
 		debug( 'transaction failed' );

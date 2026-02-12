@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
+import { getSiteVisibilityURL } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
 export default function AgencySiteShareCard( { site }: { site: Site } ) {
@@ -14,7 +15,7 @@ export default function AgencySiteShareCard( { site }: { site: Site } ) {
 			icon={ link }
 			heading={ heading }
 			description={ __( 'Collaborators with the link can view your site.' ) }
-			link={ `/sites/${ site.slug }/settings/site-visibility` }
+			link={ getSiteVisibilityURL( site, { back_to: 'site-overview' } ) }
 			title={ __( 'Share' ) }
 			tracksId="site-overview-agency-site-share"
 		/>

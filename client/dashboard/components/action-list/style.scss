@@ -14,8 +14,12 @@
 	.action-list__actions {
 		margin: -$grid-unit-20 0;
 	}
-
-	&:has(.action-list__actions:empty) {
-		display: none;
+	.action-item {
+		border-bottom: 1px solid $gray-100;
+		padding: $grid-unit-20 0;
+		&:last-child {
+			border-bottom: none;
+		}
 	}
+
 }

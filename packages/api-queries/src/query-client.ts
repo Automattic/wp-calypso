@@ -20,6 +20,11 @@ const reactQueryCacheKey = 'REACT_QUERY_OFFLINE_CACHE';
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
+			// Do not hesitate to set a different `staleTime` on specific queries where
+			// you have more context around how the data is typically get/set.
+			// We are intentionally using TanStack's default of 0 because much of the
+			// data in a8c dashboards can be updated in multiple places (e.g. wp-admin)
+			// so should be considered stale when switching between tabs.
 			staleTime: 0,
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,

@@ -1,32 +1,26 @@
-import { sitesQuery, dashboardSiteListQuery } from '@automattic/api-queries'; // eslint-disable-line no-restricted-imports
+/* eslint-disable no-restricted-imports */
+import {
+	sitesQuery,
+	paginatedSitesQuery,
+	dashboardSiteFiltersQuery,
+} from '@automattic/api-queries';
+/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import Logo from './logo';
-import type { FetchSitesOptions } from '@automattic/api-core';
+import type {
+	FetchSitesOptions,
+	FetchPaginatedSitesOptions,
+	FetchDashboardSiteFiltersParams,
+} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
-	basePath: '/v2',
+	basePath: '/',
 	mainRoute: '/sites',
 	Logo,
 	supports: {
-		sites: {
-			deployments: true,
-			performance: true,
-			monitoring: true,
-			logs: true,
-			backups: true,
-			scan: true,
-			domains: true,
-			emails: true,
-			settings: {
-				general: {
-					redirect: true,
-				},
-				server: true,
-				security: true,
-			},
-		},
+		sites: true,
 		domains: true,
 		emails: true,
 		themes: true,
@@ -34,11 +28,18 @@ boot( {
 		help: true,
 		notifications: true,
 		me: {
+			billing: {
+				monetizeSubscriptions: true,
+			},
+			security: {
+				sshKey: true,
+			},
 			privacy: true,
 			apps: true,
 		},
 		plugins: true,
 		commandPalette: false,
+		domainOnlySites: true,
 	},
 	optIn: true,
 	components: {
@@ -47,6 +48,9 @@ boot( {
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery,
+		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( 'all', fetchSiteOptions ),
+		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
+			dashboardSiteFiltersQuery( 'all', fields ),
 	},
 } );

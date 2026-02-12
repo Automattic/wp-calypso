@@ -8,7 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, plus } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
-import { domainsRoute } from '../../app/router/domains';
+import { domainsIndexRoute } from '../../app/router/domains';
 import './add-new-domain.css';
 
 export type AddNewDomainOrigin = 'choose-domain' | 'add-forwarder' | 'emails';
@@ -28,7 +28,7 @@ export default function AddNewDomain( { origin = 'emails' }: Props ) {
 					recordTracksEvent( 'calypso_dashboard_emails_add_new_domain_click', {
 						origin,
 					} );
-					navigate( { to: domainsRoute.fullPath } );
+					navigate( { to: domainsIndexRoute.fullPath } );
 				} }
 			>
 				<HStack justify="flex-start">

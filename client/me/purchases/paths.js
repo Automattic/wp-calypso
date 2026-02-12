@@ -38,15 +38,6 @@ export function managePurchaseByOwnership( ownershipId ) {
 	return '/me/purchases-by-owner/' + ownershipId;
 }
 
-export function removePurchase( siteName, purchaseId ) {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
-			throw new Error( 'siteName and purchaseId must be provided' );
-		}
-	}
-	return managePurchase( siteName, purchaseId ) + '/remove';
-}
-
 export function cancelPurchase( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {

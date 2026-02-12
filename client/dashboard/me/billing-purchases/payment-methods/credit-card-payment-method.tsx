@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Fragment, useState } from 'react';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
 import { PaymentMethodImage } from '../payment-method-image';
 import { CreditCardFields } from './credit-card-fields';
@@ -21,22 +23,34 @@ export interface CreditCardFormData {
 	useForAllSubscriptions: boolean;
 }
 
-const defaultFormData: CreditCardFormData = {
-	cardholderName: '',
-	taxLocation: defaultTaxLocation,
-	useForAllSubscriptions: false,
-};
+function getDefaultFormData( {
+	defaultToUseForAllSubscriptions,
+}: {
+	defaultToUseForAllSubscriptions?: boolean;
+} ): CreditCardFormData {
+	const defaultFormData: Omit< CreditCardFormData, 'useForAllSubscriptions' > = {
+		cardholderName: '',
+		taxLocation: defaultTaxLocation,
+	};
+
+	return {
+		...defaultFormData,
+		useForAllSubscriptions: defaultToUseForAllSubscriptions ?? false,
+	};
+}
 
 export function createCreditCardMethod( {
 	currency,
 	hasExistingCardMethods,
 	allowUseForAllSubscriptions,
+	defaultToUseForAllSubscriptions,
 }: {
 	currency?: string | null | undefined;
 	hasExistingCardMethods?: boolean;
 	allowUseForAllSubscriptions?: boolean;
+	defaultToUseForAllSubscriptions?: boolean;
 } ): PaymentMethod {
-	let sharedFormData = defaultFormData;
+	let sharedFormData = getDefaultFormData( { defaultToUseForAllSubscriptions } );
 	let sharedCardNumberElement: StripeCardNumberElement | undefined;
 
 	const CreditCardFieldsWithData = () => (
@@ -44,6 +58,7 @@ export function createCreditCardMethod( {
 			allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
 			onDataChange={ ( data ) => ( sharedFormData = data ) }
 			onCardElementReady={ ( element ) => ( sharedCardNumberElement = element ) }
+			defaultToUseForAllSubscriptions={ defaultToUseForAllSubscriptions }
 		/>
 	);
 
@@ -116,12 +131,16 @@ function CreditCardFieldsWrapper( {
 	allowUseForAllSubscriptions,
 	onDataChange,
 	onCardElementReady,
+	defaultToUseForAllSubscriptions,
 }: {
 	allowUseForAllSubscriptions?: boolean;
 	onDataChange: ( data: CreditCardFormData ) => void;
 	onCardElementReady: ( element: StripeCardNumberElement | undefined ) => void;
+	defaultToUseForAllSubscriptions?: boolean;
 } ) {
-	const [ formData, setFormData ] = useState< CreditCardFormData >( defaultFormData );
+	const [ formData, setFormData ] = useState< CreditCardFormData >(
+		getDefaultFormData( { defaultToUseForAllSubscriptions } )
+	);
 	const elements = useElements();
 
 	// Notify parent of card element when available
@@ -155,7 +174,14 @@ function CreditCardFieldsWrapper( {
 						checked={ formData.useForAllSubscriptions }
 						onChange={ ( e ) => handleFieldChange( { useForAllSubscriptions: e.target.checked } ) }
 					/>
-					{ __( 'Use this card for all my subscriptions' ) }
+					{ createInterpolateElement(
+						__(
+							'Use this payment method for all subscriptions on my account. <link>Learn more.</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="payment_method_all_subscriptions" />,
+						}
+					) }
 				</label>
 			) }
 		</VStack>

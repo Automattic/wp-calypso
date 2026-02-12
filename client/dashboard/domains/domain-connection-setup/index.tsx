@@ -108,6 +108,33 @@ export default function DomainConnection() {
 		} );
 	};
 
+	const onRestartConnection = () => {
+		// Reset connection mode to null to restart the flow
+		updateConnectionMode( null, {
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_dashboard_domain_connection_restart', {
+					domain: domainName,
+				} );
+
+				// Set local state to null to show setup step
+				setConnectionMode( null );
+
+				// Navigate to the setup route
+				router.navigate( {
+					to: domainConnectionSetupRoute.fullPath,
+					params: { domainName },
+					search: {},
+					replace: true,
+				} );
+			},
+			onError: () => {
+				createErrorNotice( __( 'We could not restart your domain connection. Please try again.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
+
 	// If returning from successful Domain Connect, update the server
 	useEffect( () => {
 		if ( step === 'dc_return' && ! queryError && ! isUpdatingConnectionMode ) {
@@ -155,9 +182,7 @@ export default function DomainConnection() {
 			header={
 				<PageHeader
 					title={
-						isVerificationStep
-							? __( 'Domain connection verification' )
-							: __( 'Connect your domain name' )
+						isVerificationStep ? __( 'Connection verification' ) : __( 'Connect your domain name' )
 					}
 					description={
 						isVerificationStep
@@ -174,6 +199,8 @@ export default function DomainConnection() {
 					siteSlug={ siteSlug }
 					domainConnectionSetupInfo={ domainConnectionSetupInfo }
 					domainMappingStatus={ domainMappingStatus }
+					onRestartConnection={ onRestartConnection }
+					isRestartingConnection={ isUpdatingConnectionMode }
 				/>
 			) : (
 				<DomainConnectionSetup

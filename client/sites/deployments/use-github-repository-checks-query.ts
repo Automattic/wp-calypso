@@ -41,5 +41,6 @@ export const useGithubRepositoryChecksQuery = (
 		meta: {
 			persist: false,
 		},
+		enabled: !! installationId && !! repositoryOwner && !! repositoryName && !! repositoryBranch,
 	} );
 };

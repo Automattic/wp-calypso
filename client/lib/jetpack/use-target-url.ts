@@ -2,7 +2,6 @@ import { useSelector } from 'calypso/state';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -55,9 +54,4 @@ export function useTargetUrl( siteId: number | null ) {
 	};
 
 	return sourceToUrl;
-}
-
-export function useTargetUrlForSelected() {
-	const siteId = useSelector( getSelectedSiteId );
-	return useTargetUrl( siteId );
 }

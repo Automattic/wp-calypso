@@ -5,9 +5,10 @@ import { useContext, useEffect } from 'react';
 import useReferralsGuide from 'calypso/a8c-for-agencies/components/guide-modal/guides/useReferralsGuide';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { MarketplaceTypeContext } from '../../context';
+import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 
 import './style.scss';
 
@@ -17,11 +18,22 @@ const ReferralToggle = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
+	const { termPricing } = useContext( TermPricingContext );
 	const { guideModal, openGuide } = useReferralsGuide();
 
 	const guideModalSeen = useSelector( ( state ) => getPreference( state, PREFERENCE_NAME ) );
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+
+	const handleToggle = () => {
+		toggleMarketplaceType();
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
+				purchase_mode: marketplaceType === 'referral' ? 'regular' : 'referral',
+				term_pricing: termPricing,
+			} )
+		);
+	};
 
 	useEffect( () => {
 		if ( marketplaceType === 'referral' && ! guideModalSeen ) {
@@ -35,7 +47,7 @@ const ReferralToggle = () => {
 			{ guideModal }
 
 			<ToggleControl
-				onChange={ toggleMarketplaceType }
+				onChange={ handleToggle }
 				checked={ marketplaceType === 'referral' }
 				id="a4a-marketplace__toggle-marketplace-type"
 				label={ translate( 'Refer products' ) }

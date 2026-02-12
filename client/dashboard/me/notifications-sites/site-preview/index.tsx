@@ -13,7 +13,12 @@ export const SitePreview = ( { site }: Props ) => {
 	return (
 		<HStack className="site-preview" spacing={ 3 }>
 			<SiteIconLink site={ site } size={ 44 } />
-			<Grid columns={ 1 } templateRows="24px 1fr" gap={ 0 } style={ { width: '100%' } }>
+			<Grid
+				columns={ 1 }
+				templateRows="24px 1fr"
+				gap={ 0 }
+				style={ { width: '100%', justifyItems: 'start' } }
+			>
 				<div className="site-preview__name">
 					<SiteLink site={ site }>
 						<Name site={ site } value={ getSiteDisplayName( site ) } />

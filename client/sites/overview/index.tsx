@@ -22,10 +22,8 @@ import {
 	EDIT_CONTACT_INFO,
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
 import emailController from 'calypso/my-sites/email/controller';
-import { OVERVIEW } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
-import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-overview/controller';
-import { overview } from './controller';
+import { redirectToSiteOverview } from './controller';
 
 function registerSiteDomainPage( { path, controllers }: { path: string; controllers: any[] } ) {
 	page(
@@ -52,14 +50,7 @@ export default function () {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectToHostingDashboardBackportIfEnabled,
-		redirectIfP2,
-		redirectIfJetpackNonAtomic,
-		navigation,
-		overview,
-		siteDashboard( OVERVIEW ),
-		makeLayout,
-		clientRender
+		redirectToSiteOverview
 	);
 
 	// Domain pages under site overview's context.

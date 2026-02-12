@@ -2,13 +2,45 @@ import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { ActivityLogEntry } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
+import type { ActivityLogEntry, ActivityLogGroupCountResponse } from '@automattic/api-core';
+import type { Field, Operator } from '@wordpress/dataviews';
+
+const getActivityLogTypeSlugFromName = ( name?: string ): string => {
+	if ( ! name ) {
+		return '';
+	}
+	const [ group ] = name.split( '__' );
+	return group ?? name;
+};
+
+const getActivityLogTypeDescriptionFromName = (
+	name?: string,
+	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined
+): string => {
+	if ( ! name ) {
+		return '';
+	}
+	const slug = getActivityLogTypeSlugFromName( name );
+	return activityLogTypes?.[ slug ]?.name ?? slug;
+};
 
 export function getFields(
+	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ],
 	timezoneString?: string,
 	gmtOffset?: number
 ): Field< ActivityLogEntry >[] {
+	const activityLogTypeElements = activityLogTypes
+		? Object.entries( activityLogTypes )
+				.map( ( [ value, { name } ] ) => {
+					// Override "Backups and Restores" (rewind) to just "Backups" for backup list context
+					const displayName = value === 'rewind' ? __( 'Backups' ) : name;
+					return {
+						value,
+						label: `${ displayName }`,
+					};
+				} )
+				.sort( ( a, b ) => a.label.localeCompare( b.label ) )
+		: [];
 	return [
 		{
 			id: 'icon',
@@ -51,6 +83,18 @@ export function getFields(
 			label: __( 'Content' ),
 			getValue: ( { item } ) => item.content.text,
 			enableGlobalSearch: true,
+		},
+		{
+			id: 'activity_type',
+			label: __( 'Type' ),
+			getValue: ( { item } ) => getActivityLogTypeSlugFromName( item.name ),
+			render: ( { item } ) => (
+				<span>{ getActivityLogTypeDescriptionFromName( item.name, activityLogTypes ) }</span>
+			),
+			elements: activityLogTypeElements,
+			enableHiding: false,
+			enableSorting: false,
+			filterBy: { operators: [ 'isAny' as Operator ] },
 		},
 	];
 }

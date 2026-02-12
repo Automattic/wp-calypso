@@ -1,7 +1,13 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	setSelectedSiteIdByOrigin,
+	maybeRedirectToMultiSiteDashboard,
+} from 'calypso/controller';
+import { setupPreferences } from 'calypso/controller/preferences';
 import { siteSelection, navigation } from 'calypso/my-sites/controller';
-import { siteDashboard } from 'calypso/sites/controller';
+import { maybeRedirectToDashboard, siteDashboard } from 'calypso/sites/controller';
 import { OVERVIEW, SETTINGS_SITE } from './components/site-preview-pane/constants';
 import {
 	maybeRemoveCheckoutSuccessNotice,
@@ -13,11 +19,13 @@ import { dashboardBackportSiteSettings } from './settings/controller';
 
 export default function () {
 	/**
-	 * Backport dashboard v2
+	 * Backport Multi-site Dashboard
 	 */
 	page(
 		'/sites/:site/settings/:feature?',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(),
 		navigation,
 		dashboardBackportSiteSettings,
 		siteDashboard( SETTINGS_SITE ),
@@ -28,6 +36,8 @@ export default function () {
 	page(
 		'/sites/:site',
 		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(),
 		navigation,
 		dashboardBackportSiteOverview,
 		siteDashboard( OVERVIEW ),
@@ -49,6 +59,9 @@ export default function () {
 	page(
 		'/sites',
 		maybeRemoveCheckoutSuccessNotice,
+		maybeRedirectToDashboard,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(),
 		sanitizeQueryParameters,
 		navigation,
 		setSelectedSiteIdByOrigin,

@@ -15,12 +15,6 @@ const mockNavigate = jest.fn();
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -61,6 +55,9 @@ jest.mock( '@tanstack/react-router', () => ( {
 jest.mock( '../../../../app/router/sites', () => ( {
 	siteBackupDetailRoute: {
 		fullPath: '/sites/$siteSlug/backups/$rewindId',
+	},
+	siteLogsActivityRoute: {
+		useSearch: () => ( {} ),
 	},
 } ) );
 
@@ -142,6 +139,10 @@ const mockActivityLogsData = {
 
 function renderActivityLogsDataViews() {
 	nock( API_BASE )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
 		.query( true )
 		.reply( 200, {
@@ -190,7 +191,7 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 		{ timeout: 5000 }
 	);
 
-	const backupButton = screen.getByRole( 'button', { name: /See restore point/i } );
+	const backupButton = screen.getByRole( 'button', { name: /Manage backup/i } );
 	await user.click( backupButton );
 
 	expect( mockNavigate ).toHaveBeenCalledWith( {
@@ -220,11 +221,11 @@ test( 'data is properly displayed', async () => {
 	// actor
 	expect( screen.getByText( 'Server' ) ).toBeInTheDocument();
 
-	// actor avatar
-	expect( screen.getByAltText( 'Server' ) ).toHaveAttribute(
-		'src',
-		'https://secure.gravatar.com/avatar/bb916f3b04845914b0ab60201e5e440bbf6fa99465af2f0beccec7a52e234559?s=96&d=identicon&r=g'
+	// actor avatar for server should be the icon, not the gravatar image
+	expect( screen.getByText( 'Server' ).previousSibling ).toHaveClass(
+		'site-activity-logs__actor-icon-server'
 	);
+
 	// check the link
 	expect( screen.getByRole( 'link', { name: 'Jetpack 15.1' } ) ).toHaveAttribute(
 		'href',

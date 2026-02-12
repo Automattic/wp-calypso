@@ -164,10 +164,10 @@ describe( 'SecondaryCartPromotions', () => {
 					</TestWrapper>
 				);
 				expect( await screen.findByText( 'Upgrade and save' ) ).toBeInTheDocument();
-				expect( await screen.findByText( 'Add to Cart' ) ).toBeInTheDocument();
+				expect( await screen.findByText( 'Add to cart' ) ).toBeInTheDocument();
 			} );
 
-			test( 'adds the plan to the cart when "Add to Cart" is clicked', async () => {
+			test( 'adds the plan to the cart when "Add to cart" is clicked', async () => {
 				const mockAddItemToCart = jest.fn();
 				render(
 					<TestWrapper initialCart={ responseCartWithRenewal }>
@@ -177,7 +177,7 @@ describe( 'SecondaryCartPromotions', () => {
 						/>
 					</TestWrapper>
 				);
-				await userEvent.click( await screen.findByText( 'Add to Cart' ) );
+				await userEvent.click( await screen.findByText( 'Add to cart' ) );
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
 				expect( mockAddItemToCart ).toHaveBeenCalledWith( {
 					product_slug: 'personal-bundle',

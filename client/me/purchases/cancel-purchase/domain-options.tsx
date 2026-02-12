@@ -25,7 +25,7 @@ export const willShowDomainOptionsRadioButtons = (
 	return (
 		isDomainRegistration( includedDomainPurchase ) &&
 		isRefundable( purchase ) &&
-		isRefundable( includedDomainPurchase )
+		!! includedDomainPurchase.costToUnbundleText
 	);
 };
 
@@ -137,7 +137,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							}
 					  ) }
 			</p>
-			{ isRefundable( planPurchase ) && (
+			{ isRefundable( planPurchase ) && includedDomainPurchase.costToUnbundleText && (
 				<p>
 					{ translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
@@ -253,7 +253,7 @@ const CancelPurchaseDomainOptions = ( {
 	if (
 		isDomainTransfer( includedDomainPurchase ) ||
 		! isRefundable( purchase ) ||
-		! isRefundable( includedDomainPurchase )
+		! includedDomainPurchase.costToUnbundleText
 	) {
 		return (
 			<CancelPlanWithoutCancellingDomainMessage

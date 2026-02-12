@@ -1,7 +1,7 @@
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../components/dataviews-card';
+import { DataViewsCard } from '../../../components/dataviews';
 import SiteIcon from '../../../components/site-icon';
 import { Name, URL, SiteLink } from '../../../sites/site-fields';
 import { getSiteDisplayName } from '../../../utils/site-name';

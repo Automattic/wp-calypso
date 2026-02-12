@@ -8,14 +8,17 @@ export type UpcomingEventProps = {
 	title: string;
 	subtitle: string;
 	descriptions: TranslateResult[];
-	logoUrl: string;
+	logoUrl?: string;
+	logoElement?: React.ReactNode;
 	imageUrl?: string;
-	trackEventName: string;
 	dateClassName?: string;
 	imageClassName?: string;
-	cta: {
+	ctas: {
 		label: string;
 		url: string;
-	};
+		trackEventName: string;
+		variant: string;
+		isExternal?: boolean;
+	}[];
 	extraContent?: React.ReactNode;
 };

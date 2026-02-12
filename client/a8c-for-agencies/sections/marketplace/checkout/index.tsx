@@ -1,16 +1,19 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useContext } from 'react';
 import { MarketplaceTypeContext } from '../context';
-import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import withMarketplaceProviders from '../hoc/with-marketplace-providers';
+import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import CheckoutV1 from './checkout-v1';
 import CheckoutV2 from './checkout-v2';
 
 interface CheckoutProps {
 	referralBlogId?: number;
 	isClient?: boolean;
+	siteSlug?: string;
+	planSlug?: string;
 }
 
-function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
+function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutProps ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
@@ -21,11 +24,10 @@ function Checkout( { referralBlogId, isClient }: CheckoutProps ) {
 		! isClient &&
 		! referralBlogId
 	) {
-		return <CheckoutV2 />;
+		return <CheckoutV2 siteSlug={ siteSlug } planSlug={ planSlug } />;
 	}
 
-	// Fallback to the original Checkout V1
 	return <CheckoutV1 referralBlogId={ referralBlogId } isClient={ isClient } />;
 }
 
-export default withMarketplaceType( Checkout );
+export default withMarketplaceProviders( Checkout );

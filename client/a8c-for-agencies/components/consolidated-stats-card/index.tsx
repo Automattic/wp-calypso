@@ -15,9 +15,10 @@ interface CardInfoProps {
 	children?: React.ReactNode;
 	wrapperRef: React.RefObject< HTMLElement >;
 	footerText: string;
+	footerAction?: React.ReactNode;
 }
 
-const CardInfo = ( { children, wrapperRef, footerText, title }: CardInfoProps ) => {
+const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: CardInfoProps ) => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
@@ -57,6 +58,9 @@ const CardInfo = ( { children, wrapperRef, footerText, title }: CardInfoProps ) 
 					</Button>
 				) }
 			</div>
+			{ footerAction && (
+				<div className="consolidated-stats-card__footer-action">{ footerAction }</div>
+			) }
 			{ showPopover &&
 				( isMobile ? (
 					<InfoModal title={ title ?? '' } onClose={ () => setShowPopover( false ) }>
@@ -79,6 +83,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title }: CardInfoProps ) 
 interface ConsolidatedStatsCardProps {
 	value: string | number;
 	footerText: string;
+	footerAction?: React.ReactNode;
 	popoverTitle?: string;
 	popoverContent: React.ReactNode;
 	isLoading?: boolean;
@@ -87,6 +92,7 @@ interface ConsolidatedStatsCardProps {
 export function ConsolidatedStatsCard( {
 	value,
 	footerText,
+	footerAction,
 	popoverTitle,
 	popoverContent,
 	isLoading = false,
@@ -98,7 +104,12 @@ export function ConsolidatedStatsCard( {
 			<div className="consolidated-stats-card__value">
 				{ isLoading ? <TextPlaceholder /> : value }
 			</div>
-			<CardInfo title={ popoverTitle } wrapperRef={ cardRef } footerText={ footerText }>
+			<CardInfo
+				title={ popoverTitle }
+				wrapperRef={ cardRef }
+				footerText={ footerText }
+				footerAction={ footerAction }
+			>
 				<div className="consolidated-stats-card__popover-content">{ popoverContent }</div>
 			</CardInfo>
 		</Card>

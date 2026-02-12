@@ -12,8 +12,10 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
+	isWooHostedPlan,
 	isBusinessTrial,
 	getPlan,
 } from '@automattic/calypso-products';
@@ -30,6 +32,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
+import useRenewalPricingPostButtonText from './use-renewal-pricing-post-button-text';
 import type {
 	GridAction,
 	PlansIntent,
@@ -57,6 +60,8 @@ type UseActionHookProps = {
 	 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
 	 */
 	planTitle?: TranslateResult;
+	pricing?: Plans.PricingMetaForGridPlan | null;
+	isMonthlyPlan?: boolean;
 };
 
 export default function useGenerateActionHook( {
@@ -68,6 +73,11 @@ export default function useGenerateActionHook( {
 	isLaunchPage,
 	showModalAndExit,
 	coupon,
+	useCheckPlanAvailabilityForPurchase,
+	showBillingDescriptionForIncreasedRenewalPrice,
+	enableCategorisedFeatures,
+	reflectStorageSelectionInPlanPrices,
+	isGatingBusinessQ1,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -77,6 +87,15 @@ export default function useGenerateActionHook( {
 	isLaunchPage: boolean | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	coupon?: string;
+	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
+	enableCategorisedFeatures?: boolean;
+	reflectStorageSelectionInPlanPrices?: boolean;
+	/**
+	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
+	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 */
+	isGatingBusinessQ1?: boolean;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -107,6 +126,7 @@ export default function useGenerateActionHook( {
 		sitePlanSlug,
 		siteId,
 		coupon,
+		isGatingBusinessQ1,
 	} );
 
 	const useActionHook = ( {
@@ -121,7 +141,21 @@ export default function useGenerateActionHook( {
 		billingPeriod,
 		currentPlanBillingPeriod,
 		planTitle,
+		pricing,
+		isMonthlyPlan,
 	}: UseActionHookProps ): GridAction => {
+		// Get renewal pricing text - this will be used as postButtonText if available
+		const renewalPricingText = useRenewalPricingPostButtonText( {
+			planSlug,
+			pricing,
+			isMonthlyPlan,
+			coupon,
+			siteId,
+			useCheckPlanAvailabilityForPurchase,
+			showBillingDescriptionForIncreasedRenewalPrice,
+			enableCategorisedFeatures,
+			reflectStorageSelectionInPlanPrices,
+		} );
 		/**
 		 * 1. Enterprise Plan actions
 		 */
@@ -157,7 +191,7 @@ export default function useGenerateActionHook( {
 		 * 3. Onboarding actions
 		 */
 		if ( isInSignup ) {
-			return getSignupAction( {
+			const action = getSignupAction( {
 				getActionCallback,
 				planSlug,
 				cartItemForPlan,
@@ -171,12 +205,16 @@ export default function useGenerateActionHook( {
 				eligibleForFreeHostingTrial,
 				plansIntent,
 			} );
+			return {
+				...action,
+				postButtonText: action.postButtonText || renewalPricingText || undefined,
+			};
 		}
 
 		/**
 		 * 4. Logged-In (Admin) Plans actions
 		 */
-		return getLoggedInPlansAction( {
+		const action = getLoggedInPlansAction( {
 			getActionCallback,
 			planSlug,
 			cartItemForPlan,
@@ -197,6 +235,10 @@ export default function useGenerateActionHook( {
 			isLoading,
 			plansIntent,
 		} );
+		return {
+			...action,
+			postButtonText: renewalPricingText || action.postButtonText || undefined,
+		};
 	};
 
 	return useActionHook;
@@ -406,14 +448,17 @@ function getLoggedInPlansAction( {
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
+	const isUpgradeFlow =
+		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
 	const current =
-		plansIntent === 'plans-upgrade' && sitePlanSlug
+		isUpgradeFlow && sitePlanSlug
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
 			: sitePlanSlug === planSlug;
 	const isTrialPlan =
 		sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY ||
+		sitePlanSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
 
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
@@ -448,7 +493,7 @@ function getLoggedInPlansAction( {
 	// All actions for the current plan
 	if ( current ) {
 		// For the plans-upgrade intent, show "Your plan" as a non-clickable indicator
-		if ( plansIntent === 'plans-upgrade' ) {
+		if ( isUpgradeFlow ) {
 			return {
 				primary: {
 					callback: () => {},
@@ -548,12 +593,12 @@ function getLoggedInPlansAction( {
 		);
 	}
 
+	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 	if (
 		sitePlanSlug &&
 		getPlanClass( planSlug ) === getPlanClass( sitePlanSlug ) &&
 		! isTrialPlan
 	) {
-		// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return createLoggedInPlansAction( translate( 'Upgrade to Triennial' ) );
 		}
@@ -567,14 +612,13 @@ function getLoggedInPlansAction( {
 		}
 	}
 
-	if ( isWooExpressMediumPlan( planSlug ) && ! isWooExpressMediumPlan( sitePlanSlug || '' ) ) {
-		return createLoggedInPlansAction( translate( 'Get Performance', { textOnly: true } ) );
-	}
-	if ( isWooExpressSmallPlan( planSlug ) && ! isWooExpressSmallPlan( sitePlanSlug || '' ) ) {
-		return createLoggedInPlansAction( translate( 'Get Essential', { textOnly: true } ) );
-	}
-
-	if ( isBusinessTrial( sitePlanSlug || '' ) ) {
+	// Some flows prefer to have the CTA read "Get {plan name} plan".
+	if (
+		isBusinessTrial( sitePlanSlug || '' ) ||
+		isWooHostedPlan( sitePlanSlug || '' ) ||
+		isWooExpressMediumPlan( sitePlanSlug || '' ) ||
+		isWooExpressSmallPlan( sitePlanSlug || '' )
+	) {
 		return createLoggedInPlansAction(
 			translate( 'Get %(plan)s', {
 				textOnly: true,

@@ -7,21 +7,20 @@ import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import TimeMismatchNotice from '../index';
 
-const mockRecordTracksEvent = jest.fn();
-
-jest.mock( '../../../app/analytics', () => ( {
-	useAnalytics: jest.fn( () => ( {
-		recordTracksEvent: mockRecordTracksEvent,
-	} ) ),
-} ) );
-
 jest.mock( '@automattic/api-queries', () => ( {
 	userPreferenceQuery: jest.fn( ( key: string ) => ( { queryKey: [ 'pref', key ] } ) ),
 	userPreferenceMutation: jest.fn( ( key: string ) => ( { mutationKey: [ 'pref', key ] } ) ),
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {} ) ),
+	QueryClient: jest.fn().mockImplementation( () => ( {
+		getQueryCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+		getMutationCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+	} ) ),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 	useSuspenseQuery: jest.fn(),
 	useMutation: jest.fn(),
@@ -113,7 +112,7 @@ describe( 'TimeMismatchNotice', () => {
 		useSuspenseQuery.mockReturnValue( { data: null } );
 
 		const offsetHours = getOffsetHours();
-		render(
+		const { recordTracksEvent } = render(
 			<TimeMismatchNotice
 				siteId={ 987 }
 				siteTime={ offsetHours + 1 }
@@ -123,7 +122,7 @@ describe( 'TimeMismatchNotice', () => {
 
 		await user.click( await screen.findByRole( 'link', { name: /update it if needed/i } ) );
 
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_time_mismatch_banner_settings_link_click',
 			expect.objectContaining( { site_id: 987 } )
 		);
@@ -134,7 +133,7 @@ describe( 'TimeMismatchNotice', () => {
 		useSuspenseQuery.mockReturnValue( { data: null } );
 
 		const offsetHours = getOffsetHours();
-		render(
+		const { recordTracksEvent } = render(
 			<TimeMismatchNotice
 				siteId={ 321 }
 				siteTime={ offsetHours + 1 }
@@ -151,7 +150,7 @@ describe( 'TimeMismatchNotice', () => {
 		// Avoid -0 vs 0 strict-equality issue
 		expect( parsed.offsetHours ).toBeCloseTo( offsetHours, 10 );
 
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_time_mismatch_banner_close',
 			expect.objectContaining( {
 				site_id: 321,

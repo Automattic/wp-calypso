@@ -15,7 +15,7 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
 
-	const { recommendedValue } = getPHPVersions();
+	const { recommendedValue } = getPHPVersions( site.ID );
 
 	const getBadge = () => {
 		if ( ! version ) {

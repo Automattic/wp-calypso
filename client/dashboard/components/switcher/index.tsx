@@ -4,11 +4,12 @@ import {
 	Button,
 	ScrollLock,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
+import { useState, type ComponentProps } from 'react';
 import SwitcherContent from './switcher-content';
 import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
-import type { Field } from '@wordpress/dataviews';
-import type { ComponentProps } from 'react';
+import type { Field, View } from '@wordpress/dataviews';
 
 interface RenderCallbackProps {
 	onClose: () => void;
@@ -23,7 +24,15 @@ export type SwitcherProps< T > = {
 	renderItemMedia: RenderItemMedia< T >;
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
+	onItemClick?: () => void;
 } & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
+
+const DEFAULT_VIEW: View = {
+	type: 'list',
+	page: 1,
+	perPage: 10,
+	sort: { field: 'name', direction: 'asc' },
+};
 
 export default function Switcher< T >( {
 	items,
@@ -34,10 +43,13 @@ export default function Switcher< T >( {
 	renderItemMedia,
 	renderItemTitle,
 	renderItemDescription,
+	onItemClick,
 	open,
 	onToggle,
 	defaultOpen,
 }: SwitcherProps< T > ) {
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const isDesktop = useViewportMatch( 'medium' );
 	return (
 		<Dropdown
 			open={ open }
@@ -57,8 +69,12 @@ export default function Switcher< T >( {
 					} }
 					aria-haspopup="true"
 					aria-expanded={ isOpen }
+					style={ { width: '100%', justifyContent: 'flex-start' } }
 				>
-					<HStack alignment="center">
+					<HStack
+						alignment="center"
+						style={ { overflow: 'hidden', maxWidth: isDesktop ? 'calc(30vw)' : '100%' } }
+					>
 						{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
 						{ renderItemTitle( { item: value, context: 'dropdown' } ) }
 					</HStack>
@@ -74,7 +90,10 @@ export default function Switcher< T >( {
 						renderItemMedia={ renderItemMedia }
 						renderItemTitle={ renderItemTitle }
 						renderItemDescription={ renderItemDescription }
+						view={ view }
+						onChangeView={ setView }
 						onClose={ onClose }
+						onItemClick={ onItemClick }
 					>
 						{ children?.( { onClose } ) }
 					</SwitcherContent>

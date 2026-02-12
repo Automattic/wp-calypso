@@ -21,11 +21,13 @@ import {
 	code,
 	external as externalIcon,
 	Icon,
+	details,
 	page as pageIcon,
+	verse,
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
@@ -36,7 +38,7 @@ import type { SearchResult } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
-const MAX_VISIBLE_RESULTS = 5;
+const MAX_VISIBLE_RESULTS = 8;
 
 type HelpLinkProps = {
 	result: SearchResult;
@@ -53,6 +55,16 @@ type HelpLinkProps = {
 const isResultFromDeveloperWordpress = ( url: string ) => {
 	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
 	return developerSiteRegex.test( url );
+};
+
+const isResultFromCourses = ( url: string ) => {
+	const coursesRegex: RegExp = /support\.wordpress\.com\/courses/;
+	return coursesRegex.test( url );
+};
+
+const isResultFromBlog = ( url: string ) => {
+	const blogRegex: RegExp = /wordpress\.com\/blog|\.blog\.wordpress\.com/;
+	return blogRegex.test( url );
 };
 
 const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
@@ -75,7 +87,18 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		return <Icon icon={ pageIcon } />;
 	};
 
-	const DeveloperResourceIndicator = () => <Icon icon={ code } />;
+	const getResultIcon = () => {
+		if ( isResultFromCourses( result.link ) ) {
+			return <Icon icon={ details } />;
+		}
+		if ( isResultFromDeveloperWordpress( result.link ) ) {
+			return <Icon icon={ code } />;
+		}
+		if ( isResultFromBlog( result.link ) ) {
+			return <Icon icon={ verse } />;
+		}
+		return <LinkIcon />;
+	};
 
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
@@ -94,11 +117,7 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 							rel: 'noreferrer',
 						} ) }
 					>
-						{ isResultFromDeveloperWordpress( result.link ) ? (
-							<DeveloperResourceIndicator />
-						) : (
-							<LinkIcon />
-						) }
+						{ getResultIcon() }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						<Icon
 							width={ 20 }
@@ -187,7 +206,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
@@ -213,13 +232,12 @@ function HelpSearchResults( {
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
-		currentRoute
+		currentRoute,
+		source
 	);
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
-
-	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
 
 	useEffect( () => {
 		// Cancel all queued speak messages.
@@ -229,7 +247,6 @@ function HelpSearchResults( {
 
 		// If there's no query, then we don't need to announce anything.
 		if ( ! searchQuery ) {
-			setVisibleResults( MAX_VISIBLE_RESULTS );
 			return;
 		}
 
@@ -238,7 +255,6 @@ function HelpSearchResults( {
 		} else if ( ! hasAPIResults ) {
 			errorSpeak();
 		} else if ( hasAPIResults ) {
-			setVisibleResults( MAX_VISIBLE_RESULTS );
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
@@ -327,7 +343,7 @@ function HelpSearchResults( {
 					className="help-center-search-results__list help-center-articles__list"
 					aria-labelledby={ title ? id : undefined }
 				>
-					{ results.slice( 0, visibleResults ).map( ( result, index ) => (
+					{ results.slice( 0, MAX_VISIBLE_RESULTS ).map( ( result, index ) => (
 						<HelpLink
 							key={ `${ id }-${ index }` }
 							result={ result }
@@ -348,13 +364,13 @@ function HelpSearchResults( {
 			title: searchQuery
 				? __( 'Search Results', __i18n_text_domain__ )
 				: __( 'Recommended guides', __i18n_text_domain__ ),
-			results: searchResults,
+			results: searchResults as unknown as SearchResult[],
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
 			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
-			results: contextualResults.slice( 0, 6 ),
+			results: contextualResults.slice( 0, 6 ) as unknown as SearchResult[],
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 		},
 	].map( renderSearchResultsSection );
@@ -376,7 +392,9 @@ function HelpSearchResults( {
 					</p>
 					<Button
 						variant="secondary"
-						onClick={ () => setNavigateToRoute( '/odie' ) }
+						onClick={ () =>
+							setNavigateToRoute( `/odie?query=${ encodeURIComponent( searchQuery ) }` )
+						}
 						className="show-more-button"
 					>
 						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }

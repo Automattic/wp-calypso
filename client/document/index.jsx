@@ -63,6 +63,7 @@ class Document extends Component {
 			renderedLayout,
 			sectionGroup,
 			sectionName,
+			hideWooHostedLogo,
 			storeSandboxHelper,
 			target,
 			user,
@@ -185,6 +186,7 @@ class Document extends Component {
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
+										hideWooHostedLogo={ hideWooHostedLogo }
 									/>
 								</div>
 							</div>
@@ -212,13 +214,17 @@ class Document extends Component {
 							__html: inlineScript,
 						} }
 					/>
-					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
+					{ i18nLocaleScript && ! useTranslationChunks && (
+						<script nonce={ inlineScriptNonce } src={ i18nLocaleScript } />
+					) }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/runtime.js` } /> }
+					{ env === 'development' && (
+						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
+					) }
 					{ env !== 'development' &&
 						manifests.map( ( manifest ) => (
 							<script
@@ -231,6 +237,7 @@ class Document extends Component {
 
 					{ isBilmurEnabled() && (
 						<script
+							nonce={ inlineScriptNonce }
 							defer
 							id="bilmur"
 							src={ getBilmurUrl() }
@@ -241,14 +248,16 @@ class Document extends Component {
 						/>
 					) }
 
-					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
+					{ entrypoint?.language?.manifest && (
+						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />
+					) }
 
 					{ ( entrypoint?.language?.translations || [] ).map( ( translationChunk ) => (
-						<script key={ translationChunk } src={ translationChunk } />
+						<script key={ translationChunk } nonce={ inlineScriptNonce } src={ translationChunk } />
 					) ) }
 
 					{ entrypoint.js.map( ( asset ) => (
-						<script key={ asset } src={ asset } />
+						<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
 					) ) }
 					<script
 						nonce={ inlineScriptNonce }
@@ -274,8 +283,12 @@ class Document extends Component {
 						dangerouslySetInnerHTML={ {
 							__html: `
 							if ('serviceWorker' in navigator) {
-								window.addEventListener('load', function() {
-									navigator.serviceWorker.register('/service-worker.js');
+								window.addEventListener('load', async function() {
+									try {
+										await navigator.serviceWorker.register('/service-worker.js');
+									} catch ( err ) {
+										console.error( 'Error registering service worker', err );
+									}
 								});
 							}
 						 `,
@@ -296,6 +309,7 @@ function LoadingPlaceholder( {
 	isWCCOM,
 	isOneTapAuth,
 	showStepContainerV2Loader,
+	hideWooHostedLogo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
@@ -305,7 +319,7 @@ function LoadingPlaceholder( {
 
 	if ( shouldNotShowLoadingLogo ) {
 		return showStepContainerV2Loader || isOneTapAuth ? (
-			<Step.Loading />
+			<Step.Loading hideLogo={ hideWooHostedLogo } />
 		) : (
 			<Loading className="wpcom-loading__boot" />
 		);

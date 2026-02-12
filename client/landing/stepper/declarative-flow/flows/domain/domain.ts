@@ -1,4 +1,5 @@
-import { isDomainMapping } from '@automattic/calypso-products';
+import { DotcomFeatures } from '@automattic/api-core';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
@@ -10,6 +11,8 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -22,8 +25,9 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
@@ -58,12 +62,16 @@ const domain: FlowV2< typeof initialize > = {
 	initialize,
 	useAssertConditions() {
 		const { site, siteSlug } = useSiteData();
+		const selectedSite = useSelector( getSelectedSite );
 
 		if ( ! siteSlug ) {
 			return { state: AssertConditionState.SUCCESS };
 		}
 
-		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+		// We want to render the step only if the site and selected site are in the Redux store
+		return {
+			state: site && selectedSite ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING,
+		};
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
@@ -88,18 +96,46 @@ const domain: FlowV2< typeof initialize > = {
 		);
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
-		const defaultRedirect = `/v2/sites/${ siteSlug }/domains`;
+		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
 
 		const goToCheckout = ( siteSlug: string ) => {
-			const destination = `/v2/sites/${ siteSlug }/domains`;
+			// Check if cart contains only one domain product and it's a domain connection
+			// Domain connections require a paid plan. When purchased with a plan, after checkout
+			// completes, we redirect to the domain connection setup page instead of the generic
+			// domains page to guide users through the connection process.
+			const hasOnlyDomainConnection =
+				domainCartItems && domainCartItems.length === 1 && isDomainMapping( domainCartItems[ 0 ] );
+			const hasOnlyDomainTransfer =
+				domainCartItems && domainCartItems.length === 1 && isDomainTransfer( domainCartItems[ 0 ] );
+
+			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
+			let destination = redirectTo || dashboardLink( `/sites/${ siteSlug }/domains` );
+
+			// But send domain-only connects to domain-connection-setup.
+			if ( ! redirectTo && hasOnlyDomainConnection ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = dashboardLink( `/domains/${ domain }/domain-connection-setup` );
+				}
+			}
+
+			// Send single domain transfers to domain-transfer-setup.
+			if ( hasOnlyDomainTransfer ) {
+				const domain = domainCartItems[ 0 ].meta;
+				if ( domain ) {
+					destination = dashboardLink( `/domains/${ domain }/domain-transfer-setup` );
+				}
+			}
 
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
-					cancel_to: new URL( addQueryArgs( '/setup/domain', { siteSlug } ), window.location.href )
-						.href,
+					cancel_to: new URL(
+						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						window.location.href
+					).href,
 				} )
 			);
 		};
@@ -151,6 +187,22 @@ const domain: FlowV2< typeof initialize > = {
 						} )
 					);
 				case STEPS.USE_MY_DOMAIN.slug:
+					// Handle ownership verification completed
+					if (
+						providedDependencies &&
+						'ownershipVerificationCompleted' in providedDependencies &&
+						providedDependencies.ownershipVerificationCompleted &&
+						'domain' in providedDependencies
+					) {
+						const queryArgs = getQueryArgs( window.location.href );
+						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+							| string
+							| undefined;
+						window.location.href = domainConnectionSetupUrl
+							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
+							: defaultRedirect;
+					}
+
 					if (
 						providedDependencies &&
 						'mode' in providedDependencies &&
@@ -165,32 +217,53 @@ const domain: FlowV2< typeof initialize > = {
 						return navigate( destination as typeof currentStepSlug );
 					}
 
+					// Handle skip to plan when user needs paid plan for ownership verification
+					if ( providedDependencies && 'skipToPlan' in providedDependencies ) {
+						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
+						setHideFreePlan( true );
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
+
 					if ( ! providedDependencies || ! ( 'domainCartItem' in providedDependencies ) ) {
 						throw new Error( 'No domain cart item found' );
 					}
 
-					if ( site ) {
-						if ( isDomainMapping( providedDependencies.domainCartItem ) ) {
-							const isGardenSite = ( site as { is_garden?: boolean } ).is_garden;
-							const hasPaidPlan = siteHasPaidPlan( site );
+					if (
+						site &&
+						siteSlug &&
+						providedDependencies &&
+						'domainCartItem' in providedDependencies
+					) {
+						const isDomainMapping =
+							providedDependencies.domainCartItem?.product_slug === 'domain_map';
+						const mappingIsFree = hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING );
+						const hasPaidPlan = siteHasPaidPlan( site );
 
-							if ( isGardenSite || hasPaidPlan ) {
-								setPendingAction( async () => {
-									const domain = providedDependencies.domainCartItem.meta;
+						if ( isDomainMapping && ( mappingIsFree || hasPaidPlan ) ) {
+							const queryArgs = getQueryArgs( window.location.href );
+							const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
+								| string
+								| undefined;
+							const domain = providedDependencies.domainCartItem.meta;
 
-									await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
+							// Use pending action for domain mapping
+							// Note: Verification (if required) is handled in the step before submission
+							setPendingAction( async () => {
+								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
+								/// Redirect to appropriate domains page
+								const redirectUrl =
+									domainConnectionSetupUrl && domain
+										? domainConnectionSetupUrl.replace( '%s', domain )
+										: defaultRedirect;
+								return {
+									redirectTo: redirectUrl,
+								};
+							} );
 
-									return {
-										redirectTo: isGardenSite
-											? `/ciab/sites/${ domain }/domains`
-											: `/v2/domains/${ domain }/domain-connection-setup`,
-									};
-								} );
-
-								return navigate( STEPS.PROCESSING.slug );
-							}
+							return navigate( STEPS.PROCESSING.slug );
 						}
 
+						// Regular flow: add to cart and go through checkout
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setSignupCompleteFlowName( this.name );
@@ -228,7 +301,7 @@ const domain: FlowV2< typeof initialize > = {
 					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {
 						return window.location.assign(
 							addQueryArgs( '/checkout/no-site', {
-								redirect_to: '/v2/domains',
+								redirect_to: dashboardLink( '/domains' ),
 								signup: 0,
 								isDomainOnly: 1,
 								cancel_to: new URL(
@@ -272,7 +345,7 @@ const domain: FlowV2< typeof initialize > = {
 								);
 
 								return {
-									redirectTo: `/v2/domains/${ domain }/domain-connection-setup`,
+									redirectTo: dashboardLink( `/domains/${ domain }/domain-connection-setup` ),
 								};
 							}
 
@@ -348,15 +421,20 @@ const domain: FlowV2< typeof initialize > = {
 							return window.location.replace( providedDependencies.redirectTo );
 						}
 
-						const destination = `/v2/sites/${ providedDependencies.siteSlug }/domains`;
+						const destination = dashboardLink(
+							`/sites/${ providedDependencies.siteSlug }/domains`
+						);
+
+						// When going to checkout, rely on the redirect_to param instead of
+						// the signup destination cookie. Setting signupFlowName to 'domain'
+						// causes checkout to incorrectly append receipt ID to the cookie URL.
+						if ( providedDependencies.goToCheckout ) {
+							return goToCheckout( providedDependencies.siteSlug as string );
+						}
 
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( this.name );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
-
-						if ( providedDependencies.goToCheckout ) {
-							return goToCheckout( providedDependencies.siteSlug as string );
-						}
 
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
@@ -377,6 +455,17 @@ const domain: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { siteId } = useSiteData();
+
+		/**
+		 * Sync site ID from stepper context to Redux store
+		 * This ensures components using Redux connect() can access the selected site
+		 */
+		useEffect( () => {
+			if ( siteId ) {
+				reduxDispatch( setSelectedSiteId( siteId ) );
+			}
+		}, [ siteId, reduxDispatch ] );
+
 		/**
 		 * Clears every state we're persisting during the flow
 		 * when entering it. This is to ensure that the user
@@ -385,7 +474,6 @@ const domain: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( ! currentStepSlug ) {
 				resetOnboardStore();
-				reduxDispatch( setSelectedSiteId( siteId ) );
 				clearStepPersistedState( this.name );
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();

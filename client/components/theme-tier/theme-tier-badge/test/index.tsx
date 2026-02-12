@@ -96,6 +96,20 @@ describe( 'ThemeTierBadge', () => {
 		expect( screen.getByText( 'Partner' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should render nothing for inactive & retired themes', () => {
+		const { container } = render(
+			<ThemeTierBadge
+				themeId="drinkify"
+				siteId={ 123 }
+				siteSlug="test-site"
+				isLockedStyleVariation={ false }
+				isThemeRetired
+				isThemeActiveForSite={ false }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	it( 'should render upgrade badge for non-allowed themes', async () => {
 		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
 

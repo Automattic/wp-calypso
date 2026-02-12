@@ -12,7 +12,7 @@ import {
 	pluginsScheduledUpdatesNewRoute,
 } from '../../app/router/plugins';
 import ConfirmModal from '../../components/confirm-modal';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -161,7 +161,7 @@ export const defaultView: View = {
 	titleField: 'site',
 	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'plugins', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
-	groupByField: 'scheduleId',
+	groupBy: { field: 'scheduleId', direction: 'asc' },
 	mediaField: 'icon.ico',
 	showMedia: true,
 };
@@ -228,6 +228,7 @@ export default function PluginsScheduledUpdates() {
 				header={
 					<PageHeader
 						title={ __( 'Scheduled updates' ) }
+						description={ __( 'Schedule automatic plugin updates for your sites.' ) }
 						actions={
 							<RouterLinkButton
 								variant="primary"

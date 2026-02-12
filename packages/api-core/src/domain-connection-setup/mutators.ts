@@ -3,7 +3,7 @@ import type { DomainMappingStatus } from './types';
 
 export function updateConnectionModeAndGetMappingStatus(
 	domainName: string,
-	connectionMode: string
+	connectionMode: string | null
 ): Promise< DomainMappingStatus > {
 	return wpcom.req.post( `/domains/${ domainName }/mapping-status`, {
 		mode: connectionMode,

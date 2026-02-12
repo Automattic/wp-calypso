@@ -96,7 +96,8 @@
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__status {
 		margin-right: 16px;
-		max-width: 250px;
+		width: 250px;
+		white-space: break-spaces;
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {

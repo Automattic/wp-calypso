@@ -6,15 +6,29 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
-export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksContext: string } ) {
+export function SiteLaunchButton( {
+	site,
+	tracksContext,
+	launchUrl,
+	LaunchModal,
+}: {
+	site: Site;
+	tracksContext: string;
+	launchUrl?: string;
+	LaunchModal?: React.ComponentType< {
+		isLaunching: boolean;
+		onClose: () => void;
+		onLaunch: () => void;
+	} >;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( {
 		...domainsQuery(),
@@ -29,8 +43,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 			},
 		},
 	} );
-	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
-		useState( false );
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 
 	const handleTracksEvent = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
@@ -40,7 +53,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSettled: () => {
-				setIsAgencyDevelopmentSiteLaunchModalOpen( false );
+				setIsLaunchModalOpen( false );
 			},
 		} );
 	};
@@ -53,7 +66,7 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 
 	const getLaunchUrl = () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
-			return addQueryArgs( '/setup/ai-site-builder/domains', {
+			return addQueryArgs( wpcomLink( '/setup/ai-site-builder/domains' ), {
 				siteId: site.ID,
 				source: 'general-settings',
 				redirect: 'site-launch',
@@ -62,11 +75,12 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 			} );
 		}
 
-		return addQueryArgs( '/start/launch-site', {
+		return addQueryArgs( wpcomLink( '/start/launch-site' ), {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
-			back_to: window.location.href.replace( window.location.origin, '' ),
+			back_to: redirectToDashboardLink( { supportBackport: true } ),
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 
@@ -83,16 +97,21 @@ export function SiteLaunchButton( { site, tracksContext }: { site: Site; tracksC
 	}
 
 	if ( site.is_a4a_dev_site ) {
+		if ( launchUrl ) {
+			return <Button { ...commonProps } onClick={ handleTracksEvent } href={ launchUrl } />;
+		}
+
+		if ( ! LaunchModal ) {
+			return null;
+		}
+
 		return (
 			<>
-				<Button
-					{ ...commonProps }
-					onClick={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( true ) }
-				/>
-				{ isAgencyDevelopmentSiteLaunchModalOpen && (
-					<AgencyDevelopmentSiteLaunchModal
+				<Button { ...commonProps } onClick={ () => setIsLaunchModalOpen( true ) } />
+				{ isLaunchModalOpen && (
+					<LaunchModal
 						isLaunching={ launchMutation.isPending }
-						onClose={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( false ) }
+						onClose={ () => setIsLaunchModalOpen( false ) }
 						onLaunch={ handleLaunch }
 					/>
 				) }

@@ -16,12 +16,14 @@ module.exports = {
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
+							// Allowed: calypso/lib/logstash
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
 							'!calypso/lib/load-dev-helpers',
+							'!calypso/lib/logstash',
 							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
@@ -29,8 +31,8 @@ module.exports = {
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
-							// Please do not add exceptions unless agreed on
-							// with the #architecture group.
+							// Please do not add exceptions which pull in Calypso code/concepts.
+							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from calypso/ is not allowed in the dashboard folder.',
 					},
@@ -41,6 +43,7 @@ module.exports = {
 							'!@automattic/api-queries',
 							'!@automattic/calypso-analytics',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-sentry',
 							'!@automattic/calypso-support-session',
 							'!@automattic/charts',
 							'!@automattic/components',
@@ -52,10 +55,12 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
+							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
 							'!@automattic/load-script',
@@ -67,9 +72,11 @@ module.exports = {
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
 							'!@automattic/urls',
+							'!@automattic/js-utils',
 							'!@automattic/viewport',
-							// Please do not add exceptions unless agreed on
-							// with the #architecture group.
+							'!@automattic/browser-data-collector',
+							// Please do not add exceptions which pull in Calypso code/concepts.
+							// See docs/package-imports.md for policy.
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},
@@ -115,8 +122,45 @@ module.exports = {
 					},
 					{
 						name: '@automattic/api-queries',
-						importNames: [ 'sitesQuery', 'dashboardSiteListQuery' ],
+						importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
 						message: 'Use local queries exported from either context or useAppContext instead.',
+					},
+					{
+						name: '@wordpress/element',
+						importNames: [
+							'useState',
+							'useEffect',
+							'useCallback',
+							'useMemo',
+							'useRef',
+							'useLayoutEffect',
+							'useContext',
+							'useReducer',
+							'useDebugValue',
+							'useImperativeHandle',
+							'useSyncExternalStore',
+							'useId',
+							'useDeferredValue',
+							'useTransition',
+							'useInsertionEffect',
+							'memo',
+							'forwardRef',
+							'createRef',
+							'createContext',
+							'lazy',
+							'Suspense',
+							'StrictMode',
+							'Fragment',
+							'createElement',
+							'cloneElement',
+							'isValidElement',
+							'Children',
+						],
+						// The dashboard has a hard dependency on React (unlike Gutenberg,
+						// where `@wordpress/element` is from), so we can depend directly
+						// on the `react` package. Some imports are still needed from
+						// `@wordpress/element` (e.g. `createInterpolateElement`).
+						message: 'Import React primitives from "react" instead of "@wordpress/element".',
 					},
 				],
 			},

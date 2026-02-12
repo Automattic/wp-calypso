@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
+import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import {
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
+	AI_SITE_BUILDER_FLOW,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -21,7 +23,6 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 interface GetNewSiteParams {
 	flowToCheck: string;
-	isPurchasingDomainItem: boolean;
 	themeSlugWithRepo: string;
 	siteUrl?: string;
 	siteTitle: string;
@@ -32,6 +33,7 @@ interface GetNewSiteParams {
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
+	blueprint?: string | null;
 }
 
 type NewSiteParams = {
@@ -53,6 +55,7 @@ type NewSiteParams = {
 		wpcom_public_coming_soon: 0 | 1;
 		site_accent_color?: string;
 		site_intent?: string;
+		blueprint?: string;
 	};
 	validate: boolean;
 };
@@ -62,12 +65,14 @@ const getBlogNameGenerationParams = ( {
 	siteTitle,
 	flowToCheck,
 	username,
-	isPurchasingDomainItem,
 }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
+		const blogName = siteUrl.replace( '.wordpress.com', '' );
+
 		return {
-			blog_name: siteUrl.replace( '.wordpress.com', '' ),
-			find_available_url: !! isPurchasingDomainItem,
+			blog_name: blogName,
+			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
+			find_available_url: !! getTld( blogName ),
 		};
 	}
 
@@ -102,6 +107,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -126,6 +132,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
+			...( blueprint && { blueprint: blueprint } ),
 		},
 		validate: false,
 	};
@@ -136,7 +143,6 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 export const createSiteWithCart = async (
 	flowName: string,
 	userIsLoggedIn: boolean,
-	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
@@ -151,14 +157,15 @@ export const createSiteWithCart = async (
 	siteIntent?: string,
 	siteGoals?: SiteGoal[],
 	gardenName?: string | null,
-	gardenPartnerName?: string | null
+	gardenPartnerName?: string | null,
+	specId?: string | null,
+	blueprint?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
-		isPurchasingDomainItem,
 		themeSlugWithRepo,
 		siteUrl,
 		siteTitle,
@@ -169,6 +176,7 @@ export const createSiteWithCart = async (
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
+		blueprint,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -200,6 +208,9 @@ export const createSiteWithCart = async (
 					garden_name: gardenName,
 					garden_partner_name: gardenPartnerName,
 				} ),
+			...( specId && {
+				spec_id: specId,
+			} ),
 			options: {
 				...newSiteParams.options,
 				has_segmentation_survey: hasSegmentationSurvey,
@@ -208,12 +219,15 @@ export const createSiteWithCart = async (
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
 				...( refParam && { ref: refParam } ),
+				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
+				...( flowName === AI_SITE_BUILDER_FLOW &&
+					gardenName === 'commerce' &&
+					specId && {
+						trigger_backend_build: true,
+					} ),
 			},
 		},
 	} );
-
-	// Sleep for 10 seconds to allow for site creation to settle
-	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors

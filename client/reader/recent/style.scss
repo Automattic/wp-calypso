@@ -102,6 +102,14 @@ body.is-reader-full-post {
 			list-style: none;
 			margin: 0;
 
+			.dataviews-view-list__item-wrapper > div {
+				min-width: 0;
+			}
+
+			.dataviews-view-list__field-wrapper {
+				min-width: 0;
+			}
+
 			div[role='row'] {
 				border-top: 1px solid var( --studio-gray-0 );
 
@@ -196,7 +204,7 @@ body.is-reader-full-post {
 
 		&-engagement-bar {
 			position: fixed;
-			bottom: var( --content-padding-bottom );
+			bottom: calc(var( --content-padding-bottom ) - 1px);
 			height: 60px;
 			background: var( --color-surface );
 			border-radius: 0 0 $feed-card-border-radius $feed-card-border-radius;
@@ -226,6 +234,7 @@ body.is-reader-full-post {
 			}
 
 			.reader-post-actions {
+				padding: 8px 0;
 				margin: 0;
 				justify-content: space-evenly;
 

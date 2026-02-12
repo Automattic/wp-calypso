@@ -26,9 +26,11 @@ import './style.scss';
 const ReaderOnboarding = ( {
 	onRender,
 	forceShow = false,
+	isSuppressed = false,
 }: {
 	onRender?: ( shown: boolean ) => void;
 	forceShow?: boolean;
+	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
@@ -58,15 +60,16 @@ const ReaderOnboarding = ( {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	}
 
+	const meetsEligibility =
+		preferencesLoaded &&
+		! hasCompletedOnboarding &&
+		userRegistrationDate !== null &&
+		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
 	const shouldShowOnboarding =
-		forceShow ||
-		isEnabled( 'reader/force-onboarding' ) ||
-		!! (
-			preferencesLoaded &&
-			! hasCompletedOnboarding &&
-			userRegistrationDate &&
-			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' )
-		);
+		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
+
+	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
 	// Modal state handlers with tracking.
 	const openInterestsModal = () => {
@@ -112,17 +115,17 @@ const ReaderOnboarding = ( {
 
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
-		if ( shouldShowOnboarding ) {
+		if ( shouldRenderOnboarding ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
 		}
-	}, [ shouldShowOnboarding, dispatch ] );
+	}, [ shouldRenderOnboarding, dispatch ] );
 
 	// Auto-open the interests modal if onboarding should render and it has never been opened before
 	useEffect( () => {
-		if ( shouldShowOnboarding && ! hasSeenOnboarding ) {
+		if ( shouldRenderOnboarding && ! hasSeenOnboarding ) {
 			openInterestsModal();
 		}
-	}, [ shouldShowOnboarding, hasSeenOnboarding, dispatch ] );
+	}, [ shouldRenderOnboarding, hasSeenOnboarding, dispatch ] );
 
 	// Reopen subscription onboarding page if prompted by query param.
 	useEffect( () => {
@@ -141,12 +144,12 @@ const ReaderOnboarding = ( {
 	// Fetch gravatar info when component mounts
 	useEffect( () => {
 		dispatch( requestGravatarDetails() );
-	}, [ hasGravatar, dispatch ] );
+	}, [ dispatch ] );
 
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
 
-	if ( ! shouldShowOnboarding ) {
+	if ( ! shouldRenderOnboarding ) {
 		return null;
 	}
 

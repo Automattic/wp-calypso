@@ -120,14 +120,15 @@ export function requestSites() {
 					const isJetpack =
 						site?.jetpack || Boolean( site?.options?.jetpack_connection_active_plugins?.length );
 
-					// Filter Jetpack Cloud sites to exclude P2 and Simple non-Classic sites by default.
+					// Filter Jetpack Cloud sites to exclude P2, Simple non-Classic, and Garden sites by default.
 					const isP2 = site?.options?.is_wpforteams_site;
 					const isSimpleClassic =
 						! isJetpack &&
 						! site?.is_wpcom_atomic &&
 						site?.options?.wpcom_admin_interface !== 'wp-admin';
+					const isGarden = site?.is_garden;
 
-					return ! isP2 && ! isSimpleClassic;
+					return ! isP2 && ! isSimpleClassic && ! isGarden;
 				} );
 				dispatch( receiveSites( isJetpackCloud() ? jetpackCloudSites : response.sites ) );
 				dispatch( {

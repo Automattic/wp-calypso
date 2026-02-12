@@ -18,25 +18,44 @@
 
 .campaigns-total-stats {
 	&__container {
-		display: flex;
-		gap: 50px;
-
+		padding: 0 !important;
 	}
 
 	&__label {
 		font-size: 0.875rem;
-		color: $studio-gray-100;
+		color: var(--studio-gray-40);
 		font-family: $font-sf-pro-text;
-		font-weight: 500;
-		margin-top: 34px;
+		font-weight: 400;
 	}
+
+	&__header {
+		padding: 16px;
+		border-bottom: 1px solid var(--studio-gray-5);
+	}
+
+	&__title {
+		font-size: 20px;
+		line-height: 28px;
+		color: var(--color-text);
+		font-weight: 400;
+	}
+
+	&__items {
+		display: flex;
+		flex-direction: row;
+	}
+
 	&__item {
 		font-size: 1.75rem;
 		color: $studio-gray-100;
-		font-family: $font-recoleta;
 		font-weight: 400;
-		margin-top: 8px;
-		margin-bottom: 42px;
+		padding: 32px 16px;
+		border-right: 1px solid var(--studio-gray-5);
+		flex: 1;
+
+		&:last-child {
+			border-right: none;
+		}
 	}
 
 	&__flexible-skeleton {

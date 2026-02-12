@@ -5,8 +5,8 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useRouter } from '@tanstack/react-router';
-import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -25,7 +25,8 @@ export default function EditDomainForwarding() {
 		...domainForwardingSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: __( 'Domain forwarding rule saved.' ),
+				/* translators: %s is the domain name */
+				success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},
@@ -68,7 +69,15 @@ export default function EditDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					description={ __( 'Update where your domain redirects visitors.' ) }
+				/>
+			}
+		>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

@@ -13,6 +13,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useFormStatus,
+	useArePaymentMethodsLoading,
 } from '../public-api';
 import { CheckoutPageErrorCallback, FormStatus } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
@@ -21,12 +22,52 @@ import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
-const CheckoutPaymentMethodsWrapper = styled.div`
+const CheckoutPaymentMethodsWrapper = styled.div< { isLoading: boolean } >`
+	position: relative;
 	padding-top: 4px;
+	pointer-events: ${ ( props ) => ( props.isLoading ? 'none' : 'auto' ) };
 	> div > div:not( [disabled] ):has( + div:hover )::before,
 	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
 		border-bottom: none;
 	}
+`;
+
+const LoadingOverlay = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba( 255, 255, 255, 0.9 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999;
+	cursor: not-allowed;
+`;
+
+const LoadingSpinner = styled.div`
+	border: 3px solid #f3f3f3;
+	border-top: 3px solid #3498db;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	animation: spin 1s linear infinite;
+
+	@keyframes spin {
+		0% {
+			transform: rotate( 0deg );
+		}
+		100% {
+			transform: rotate( 360deg );
+		}
+	}
+`;
+
+const PaymentMethodsContainer = styled.div< { isLoading: boolean } >`
+	position: relative;
+	min-height: 100px;
+	opacity: ${ ( props ) => ( props.isLoading ? 0.3 : 1 ) };
 `;
 
 export default function CheckoutPaymentMethods( {
@@ -34,11 +75,13 @@ export default function CheckoutPaymentMethods( {
 	isComplete,
 	className,
 	onPageLoadError,
+	waitForPaymentMethodIds = [],
 }: {
 	summary?: boolean;
 	isComplete: boolean;
 	className?: string;
 	onPageLoadError?: CheckoutPageErrorCallback;
+	waitForPaymentMethodIds?: string[];
 } ) {
 	const { __ } = useI18n();
 	const { onPaymentMethodChanged } = useContext( PaymentMethodProviderContext );
@@ -55,12 +98,14 @@ export default function CheckoutPaymentMethods( {
 		setPaymentMethod( newMethod );
 	};
 	const paymentMethods = useAllPaymentMethods();
+	const arePaymentMethodsLoading = useArePaymentMethodsLoading( waitForPaymentMethodIds );
 
 	if ( summary && isComplete && paymentMethod ) {
 		debug( 'rendering selected paymentMethod', paymentMethod );
 		return (
 			<CheckoutPaymentMethodsWrapper
 				className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+				isLoading={ false }
 			>
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with this payment method.' ) }
@@ -94,30 +139,38 @@ export default function CheckoutPaymentMethods( {
 	return (
 		<CheckoutPaymentMethodsWrapper
 			className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }
+			isLoading={ arePaymentMethodsLoading }
 		>
-			<div>
-				{ paymentMethods.map( ( method ) => (
-					<CheckoutErrorBoundary
-						key={ method.id }
-						errorMessage={ sprintf(
-							/* translators: %s is the payment method name that has an error, like "PayPal" */
-							__( 'There was a problem with the payment method: %s' ),
-							method.id
-						) }
-						onError={ onError }
-					>
-						<PaymentMethod
-							id={ method.id }
-							label={ method.label }
-							activeContent={ method.activeContent }
-							inactiveContent={ method.inactiveContent }
-							checked={ paymentMethod?.id === method.id }
-							onClick={ onClickPaymentMethod }
-							ariaLabel={ method.getAriaLabel( __ as ( text: string ) => string ) }
-						/>
-					</CheckoutErrorBoundary>
-				) ) }
-			</div>
+			{ arePaymentMethodsLoading && (
+				<LoadingOverlay>
+					<LoadingSpinner />
+				</LoadingOverlay>
+			) }
+			<PaymentMethodsContainer isLoading={ arePaymentMethodsLoading }>
+				<div>
+					{ paymentMethods.map( ( method ) => (
+						<CheckoutErrorBoundary
+							key={ method.id }
+							errorMessage={ sprintf(
+								/* translators: %s is the payment method name that has an error, like "PayPal" */
+								__( 'There was a problem with the payment method: %s' ),
+								method.id
+							) }
+							onError={ onError }
+						>
+							<PaymentMethod
+								id={ method.id }
+								label={ method.label }
+								activeContent={ method.activeContent }
+								inactiveContent={ method.inactiveContent }
+								checked={ paymentMethod?.id === method.id }
+								onClick={ onClickPaymentMethod }
+								ariaLabel={ method.getAriaLabel( __ as ( text: string ) => string ) }
+							/>
+						</CheckoutErrorBoundary>
+					) ) }
+				</div>
+			</PaymentMethodsContainer>
 		</CheckoutPaymentMethodsWrapper>
 	);
 }

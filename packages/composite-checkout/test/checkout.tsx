@@ -18,6 +18,7 @@ import {
 	CheckoutFormSubmit,
 	CheckoutStepGroup,
 	useSetStepComplete,
+	useCompleteAllSteps,
 	useTogglePaymentMethod,
 	makeErrorResponse,
 	useMakeStepActive,
@@ -615,6 +616,82 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
+		it( 'completes all steps when useCompleteAllSteps is used and all steps can be completed', async () => {
+			function CompleteAllButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-one',
+				className: 'step-one',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				id: 'step-two',
+				className: 'step-two',
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Two Active</span>
+						<CompleteAllButton />
+					</div>
+				),
+			};
+			const stepThree = {
+				...steps[ 1 ],
+				id: 'step-three',
+				className: 'step-three',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const { getByText } = render( <MyCheckout steps={ [ stepOne, stepTwo, stepThree ] } /> );
+			const completeAllButton = getByText( 'Complete all steps' );
+			const user = userEvent.setup();
+			await user.click( completeAllButton );
+			await waitFor( () => {
+				const submitButton = getByText( 'Pay Please' );
+				expect( submitButton ).not.toBeDisabled();
+			} );
+		} );
+
+		it( 'does not complete all steps when useCompleteAllSteps is used and one step cannot be completed', async () => {
+			function CompleteAllButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-one',
+				className: 'step-one',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				id: 'step-two',
+				className: 'step-two',
+				isCompleteCallback: () => Promise.resolve( false ),
+			};
+			const stepThree = {
+				...steps[ 1 ],
+				id: 'step-three',
+				className: 'step-three',
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Three Active</span>
+						<CompleteAllButton />
+					</div>
+				),
+			};
+			const { getByText } = render( <MyCheckout steps={ [ stepOne, stepTwo, stepThree ] } /> );
+			const completeAllButton = getByText( 'Complete all steps' );
+			const user = userEvent.setup();
+			await user.click( completeAllButton );
+			const submitButton = getByText( 'Pay Please' );
+			expect( submitButton ).toBeDisabled();
+		} );
+
 		it( 'renders the continue button enabled if the step is active and complete', async () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
@@ -714,6 +791,57 @@ describe( 'Checkout', () => {
 				expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 			} );
 		} );
+
+		it( 'validates an active completed non-final step when continuing', async () => {
+			// This test verifies that when a step is marked complete but is still active
+			// (e.g., user went back to edit it), attempting to proceed past it will
+			// revalidate the step instead of skipping validation.
+			const firstStepCallback = jest.fn();
+			firstStepCallback.mockResolvedValue( true );
+
+			const { getAllByText, getByText } = render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'editable-step',
+							className: 'editable-step',
+							hasStepNumber: true,
+							titleContent: <span>First Step</span>,
+							activeStepContent: <span>First step content</span>,
+							completeStepContent: <span>First step complete</span>,
+							isCompleteCallback: firstStepCallback,
+							getEditButtonAriaLabel: () => 'Edit first step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+						steps[ 1 ], // Contact step
+					] }
+				/>
+			);
+
+			const user = userEvent.setup();
+
+			// Complete the first step (moves to second step)
+			const firstContinue = getAllByText( 'Continue' )[ 0 ];
+			await user.click( firstContinue );
+
+			await waitFor( () => {
+				expect( firstStepCallback ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			// Go back to the first step
+			const editButton = getByText( 'Edit' );
+			await user.click( editButton );
+
+			// The first step is now active but marked complete. Click Continue again.
+			// This should revalidate the step (call the callback again).
+			const continueAgain = getAllByText( 'Continue' )[ 0 ];
+			await user.click( continueAgain );
+
+			// Verify the callback was called again for revalidation
+			await waitFor( () => {
+				expect( firstStepCallback ).toHaveBeenCalledTimes( 2 );
+			} );
+		} );
 	} );
 
 	describe( 'submitting the form', function () {
@@ -793,6 +921,78 @@ describe( 'Checkout', () => {
 			await user.click( submitButton );
 
 			expect( processor ).toHaveBeenCalled();
+		} );
+
+		it( 'skips validation for a step with skipValidationOnSubmit set to true', async () => {
+			const stepCallback = jest.fn();
+			stepCallback.mockResolvedValue( false ); // Step validation would fail
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+
+			render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'skip-validation-step',
+							className: 'skip-validation-step',
+							hasStepNumber: true,
+							titleContent: <span>Skip Validation Step</span>,
+							activeStepContent: <span>Skip validation content</span>,
+							completeStepContent: <span>Skip validation complete</span>,
+							isCompleteCallback: stepCallback,
+							skipValidationOnSubmit: true,
+							getEditButtonAriaLabel: () => 'Edit skip validation step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+					] }
+					paymentProcessor={ processor }
+				/>
+			);
+
+			const submitButton = screen.getByText( 'Pay Please' );
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			// Payment processor should be called even though step validation would fail
+			expect( processor ).toHaveBeenCalled();
+			// Step callback should not be called during submit validation
+			expect( stepCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'validates a step without skipValidationOnSubmit and blocks submission if invalid', async () => {
+			const stepCallback = jest.fn();
+			stepCallback.mockResolvedValue( false ); // Step validation fails
+			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+
+			render(
+				<MyCheckout
+					steps={ [
+						{
+							id: 'normal-step',
+							className: 'normal-step',
+							hasStepNumber: true,
+							titleContent: <span>Normal Step</span>,
+							activeStepContent: <span>Normal content</span>,
+							completeStepContent: <span>Normal complete</span>,
+							isCompleteCallback: stepCallback,
+							getEditButtonAriaLabel: () => 'Edit normal step',
+							getNextStepButtonAriaLabel: () => 'Continue',
+						},
+					] }
+					paymentProcessor={ processor }
+				/>
+			);
+
+			const submitButton = screen.getByText( 'Pay Please' );
+			const user = userEvent.setup();
+			await user.click( submitButton );
+
+			// Step callback should be called for validation
+			await waitFor( () => {
+				expect( stepCallback ).toHaveBeenCalled();
+			} );
+
+			// Payment processor should NOT be called because validation failed
+			expect( processor ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
@@ -912,6 +1112,7 @@ function createStepObjectConverter( paymentData ) {
 					isCompleteCallback={ () => stepObject.isCompleteCallback( { paymentData } ) }
 					editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 					nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
+					skipValidationOnSubmit={ stepObject.skipValidationOnSubmit }
 					className={ stepObject.className }
 				/>
 			);

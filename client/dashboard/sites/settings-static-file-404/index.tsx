@@ -10,6 +10,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -100,6 +101,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 					<CardBody>
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
 								<DataForm< { setting: string } >
 									data={ formData }
 									fields={ fields }

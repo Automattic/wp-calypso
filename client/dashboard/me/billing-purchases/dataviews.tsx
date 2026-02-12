@@ -27,28 +27,28 @@ import type { ReactNode, ComponentProps } from 'react';
 
 import './style.scss';
 
-export const purchasesWideFields = [ 'status', 'payment-method' ];
-export const purchasesDesktopFields = [ 'status' ];
-export const purchasesMobileFields: string[] = [];
-const defaultPerPage = 10;
-const defaultSort = {
-	field: 'site',
-	direction: 'desc' as SortDirection,
-};
-export const purchasesDataView: View = {
+export const WIDE_FIELDS = [ 'status', 'payment-method' ];
+export const DESKTOP_FIELDS = [ 'status' ];
+export const MOBILE_FIELDS: string[] = [];
+
+export const DEFAULT_VIEW: View = {
 	type: 'table',
-	page: 1,
-	search: '',
-	perPage: defaultPerPage,
+	perPage: 10,
 	titleField: 'product',
 	showTitle: true,
 	mediaField: 'site',
 	showMedia: true,
 	descriptionField: 'description',
 	showDescription: true,
-	fields: purchasesDesktopFields,
-	sort: defaultSort,
-	layout: {},
+	showLevels: false,
+	fields: DESKTOP_FIELDS,
+	sort: {
+		field: 'site',
+		direction: 'desc' as SortDirection,
+	},
+	layout: {
+		density: 'balanced',
+	},
 };
 
 export function BillingPurchaseInfoPopover( { children }: { children: ReactNode } ) {
@@ -79,13 +79,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.is_free_jetpack_stats_product
 	) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="Jetpack icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="Jetpack icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
@@ -94,45 +92,35 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.product_slug.startsWith( 'passport' )
 	) {
 		return (
-			<div>
-				<img
-					src={ passportIcon }
-					alt="Passport icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ passportIcon }
+				alt="Passport icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( isAkismetTemporarySitePurchase( purchase ) ) {
 		return (
-			<div>
-				<img
-					src={ akismetIcon }
-					alt="Akismet icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ akismetIcon }
+				alt="Akismet icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
 	if ( ! site ) {
 		return (
-			<div>
-				<img
-					src={ jetpackIcon }
-					alt="No site icon"
-					style={ { width: size, height: size, minWidth: size } }
-				/>
-			</div>
+			<img
+				src={ jetpackIcon }
+				alt="No site icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
 		);
 	}
 
-	return (
-		<div>
-			<SiteIcon site={ site } size={ size } />
-		</div>
-	);
+	return <SiteIcon site={ site } size={ size } />;
 }
 
 function BackupPaymentMethodNotice() {
@@ -208,12 +196,12 @@ export function getFields( {
 	sites,
 	paymentMethods,
 	transferredPurchases,
-	filterViewBySite,
+	siteFilter,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
-	filterViewBySite: ( site: Site ) => void;
+	siteFilter?: number;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -234,7 +222,7 @@ export function getFields( {
 						elements: sites.map( ( site ) => {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
-						filterBy: { operators: [ 'isAny' ] },
+						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
 				  }
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
@@ -300,9 +288,7 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
-				return (
-					<PurchaseProduct purchase={ item } site={ site } filterViewBySite={ filterViewBySite } />
-				);
+				return <PurchaseProduct purchase={ item } site={ site } />;
 			},
 		},
 		{

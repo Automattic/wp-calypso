@@ -64,12 +64,12 @@
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": true,
+		"oauth/unified-experience": false,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": false,
-		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {

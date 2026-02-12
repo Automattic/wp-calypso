@@ -70,8 +70,8 @@ function isImage( url: string ) {
  * This is used to load and filter the blocks that we want to use.
  * We only want to load the blocks that we need to avoid extra bloat.
  */
-export const loadBlocksWithCustomizations = () => {
-	[ paragraph, image, list, listItem, quote, embed ].forEach( ( block ) => {
+export const loadBlocksWithCustomizations = ( optionalBlocks: Block[] = [] ) => {
+	[ paragraph, image, list, listItem, quote, embed, ...optionalBlocks ].forEach( ( block ) => {
 		const { metadata, settings, name } = block as any;
 
 		/**

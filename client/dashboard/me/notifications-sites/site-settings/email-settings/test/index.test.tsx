@@ -76,6 +76,7 @@ const buildEmailNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 				},
 				devices: [],
 				email: {
@@ -91,6 +92,7 @@ const buildEmailNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 					...settings,
 				},
 			},

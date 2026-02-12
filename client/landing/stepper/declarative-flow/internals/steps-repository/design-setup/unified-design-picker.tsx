@@ -226,6 +226,10 @@ const UnifiedDesignPickerStep: StepType< {
 			siteId={ siteId }
 			siteSlug={ siteSlug }
 			themeId={ themeId }
+			isThemeActiveForSite={
+				themeId === siteActiveTheme?.[ 0 ]?.stylesheet?.replace( /pub\/|premium\//, '' )
+			}
+			isThemeRetired={ false } // assuming starter designs are not retired - they're filtered out on backend.
 		/>
 	);
 

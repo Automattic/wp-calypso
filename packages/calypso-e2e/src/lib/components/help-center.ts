@@ -170,7 +170,7 @@ export class HelpCenterComponent {
 			this.page.waitForResponse(
 				( response ) => {
 					return (
-						response.request().url().includes( '/help/search/wpcom' ) &&
+						response.request().url().includes( '/help/search' ) &&
 						response
 							.request()
 							.url()
@@ -196,8 +196,7 @@ export class HelpCenterComponent {
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) =>
-					( response.url().includes( '/odie/chat/wpcom-workflow-support_chat' ) ||
-						response.url().includes( '/odie/chat/wpcom-support-chat' ) ) &&
+					response.url().includes( '/odie/chat/wpcom-workflow-support_chat' ) &&
 					response.status() === 200
 			),
 			sendMessageForm

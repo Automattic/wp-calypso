@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import {
 	pluginsScheduledUpdatesEditRoute,
@@ -48,7 +48,12 @@ export default function PluginsScheduledUpdatesEdit() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					description={ __( 'Edit your scheduled plugin update configuration.' ) }
+				/>
+			}
 			notices={
 				error && (
 					<Notice status="error" isDismissible={ false }>

@@ -31,6 +31,7 @@ import {
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { getPartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -382,17 +383,13 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, loginButtonText, isJetpack } = this.props;
+		const { translate, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
 		if ( this.isUsernameOrEmailView() ) {
-			if ( isJetpack && ! isWoo ) {
-				return translate( 'Continue with email' );
-			}
-
 			return translate( 'Continue' );
 		}
 
@@ -434,8 +431,6 @@ export class LoginForm extends Component {
 			return this.renderChangeUsername();
 		}
 
-		const showLabel = ! this.props.isJetpack || this.props.isWoo;
-
 		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
@@ -444,9 +439,7 @@ export class LoginForm extends Component {
 				<span className="screen-reader-text">
 					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</span>
-				{ showLabel && (
-					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
-				) }
+				<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 			</>
 		);
 	}
@@ -511,6 +504,7 @@ export class LoginForm extends Component {
 			oauth2ClientId: this.props.oauth2Client?.id,
 			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
+			from: this.props.currentQuery?.from,
 		} );
 	}
 
@@ -920,6 +914,7 @@ export class LoginForm extends Component {
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 							isJetpack={ isJetpack }
+							allowedSocialServices={ this.props.allowedSocialServices }
 						/>
 					</Fragment>
 				) }
@@ -986,6 +981,10 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
+			allowedSocialServices: getPartnerAllowedSocialServices(
+				get( getCurrentQueryArguments( state ), 'from' ) ||
+					get( getInitialQueryArguments( state ), 'from' )
+			),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),

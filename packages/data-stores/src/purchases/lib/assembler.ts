@@ -15,9 +15,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canReenableAutoRenewal: Boolean( purchase.can_reenable_auto_renewal ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
-		costToUnbundleText: purchase.cost_to_unbundle_display
-			? purchase.cost_to_unbundle_display
-			: purchase.price_text,
+		costToUnbundleText: purchase.cost_to_unbundle_display ?? '',
 		currencyCode: purchase.currency_code,
 		currencySymbol: purchase.currency_symbol,
 		description: purchase.description,
@@ -25,6 +23,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
+		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
@@ -57,7 +56,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
-		isRechargeable: Boolean( purchase.is_rechargable ),
+		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),

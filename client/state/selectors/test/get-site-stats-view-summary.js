@@ -13,6 +13,9 @@ describe( 'getSiteStatsViewSummary()', () => {
 						items: {},
 					},
 				},
+				siteSettings: {
+					items: {},
+				},
 			},
 			2916284
 		);
@@ -37,6 +40,9 @@ describe( 'getSiteStatsViewSummary()', () => {
 							},
 						},
 					},
+				},
+				siteSettings: {
+					items: {},
 				},
 			},
 			2916284
@@ -68,6 +74,9 @@ describe( 'getSiteStatsViewSummary()', () => {
 							},
 						},
 					},
+				},
+				siteSettings: {
+					items: {},
 				},
 			},
 			2916284
@@ -122,6 +131,9 @@ describe( 'getSiteStatsViewSummary()', () => {
 							},
 						},
 					},
+				},
+				siteSettings: {
+					items: {},
 				},
 			},
 			2916284

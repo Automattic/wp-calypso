@@ -82,6 +82,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetVatInfoEndpoint( {} );
 		mockSetCachedContactDetailsEndpoint();
 		mockCachedContactDetailsEndpoint( {} );

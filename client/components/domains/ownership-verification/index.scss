@@ -1,0 +1,12 @@
+@import 'calypso/dashboard/app-dotcom/style.scss';
+
+.ownership-verification {
+	&.components-card {
+		max-width: 660px;
+		margin: 0 auto;
+		.components-card__body {
+			max-width: inherit;
+			margin: inherit;
+		}
+	}
+}

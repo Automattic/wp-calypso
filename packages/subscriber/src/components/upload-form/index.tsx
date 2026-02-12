@@ -18,6 +18,7 @@ import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import { CategoriesSection } from '../add-form/categories-section';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
+import { ImportLimitNotice } from '../import-limit-notice';
 import { tip } from './icon';
 
 import './style.scss';
@@ -34,6 +35,8 @@ interface Props {
 	disabled?: boolean;
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
+	isFreePlan?: boolean;
+	siteSlug?: string;
 }
 
 export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
@@ -53,6 +56,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 		hidden,
 		disabled,
 		isWPCOMSite = false,
+		isFreePlan = false,
+		siteSlug = '',
 	} = props;
 
 	const { importCsvSubscribers, importCsvSubscribersUpdate, getSubscribersImports } = useDispatch(
@@ -335,6 +340,8 @@ export const UploadSubscribersForm: FunctionComponent< Props > = ( props ) => {
 								isWPCOMSite={ isWPCOMSite }
 							/>
 						) }
+
+					<ImportLimitNotice isFreePlan={ isFreePlan } siteSlug={ siteSlug } />
 
 					<AddSubscribersDisclaimer buttonLabel={ __( 'Add subscribers' ) } />
 					<Button

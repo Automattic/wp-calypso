@@ -1,10 +1,13 @@
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .dashboard-overview-card {
 	&--disabled {
 		background-color: transparent !important;
 		box-shadow: 0 0 0 1px $gray-100 !important;
+		cursor: default;
 	}
 
 	.components-card__body {
@@ -46,6 +49,7 @@
 }
 
 .dashboard-overview-card__title {
+	.dashboard-overview-card--activate &,
 	.dashboard-overview-card--upsell & {
 		color: var( --wp-admin-theme-color );
 	}

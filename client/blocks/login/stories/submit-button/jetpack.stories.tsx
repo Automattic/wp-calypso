@@ -14,7 +14,7 @@ import type { Meta } from '@storybook/react';
 const meta: Meta = {
 	title: 'client/blocks/Login/Submit Button/Brands',
 	component: LoginSubmitButton,
-	args: { ...submitButtonArgs, buttonText: 'Continue with email' },
+	args: { ...submitButtonArgs, buttonText: 'Continue' },
 };
 
 export default meta;

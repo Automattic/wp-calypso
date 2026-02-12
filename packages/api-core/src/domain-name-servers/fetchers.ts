@@ -3,11 +3,13 @@ import { wpcom } from '../wpcom-fetcher';
 interface FetchNameServersResponse {
 	is_using_default_nameservers: boolean;
 	nameservers: string[];
+	default_nameservers: string[];
 }
 
 export interface DomainNameServersResponse {
 	nameServers: string[];
 	isUsingDefaultNameServers: boolean;
+	defaultNameServers: string[];
 }
 
 export async function fetchDomainNameServers(
@@ -22,6 +24,7 @@ export async function fetchDomainNameServers(
 			return {
 				nameServers: data.nameservers,
 				isUsingDefaultNameServers: data.is_using_default_nameservers,
+				defaultNameServers: data.default_nameservers,
 			};
 		} );
 }

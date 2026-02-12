@@ -17,11 +17,13 @@ export function Grid( {
 	editMode = false,
 	onChangeLayout,
 }: GridProps ) {
-	// Temporary layout to avoid updaing the layout while dragging
-	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
-		layout
-	);
-	const activeLayout = temporaryLayout || layout;
+	/*
+	 * Temporary layout holds pending changes during drag/resize
+	 * to show preview without triggering parent re-renders
+	 */
+	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >();
+	const activeLayout = temporaryLayout ?? layout;
+
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
@@ -109,6 +111,10 @@ export function Grid( {
 	} );
 	const debouncedHandleDragOver = useDebounce( handleDragOver, 100 );
 
+	/*
+	 * Commit temporary changes to parent and clear local state
+	 * Called when user finishes drag/resize on mouse up
+	 */
 	function persistTemporaryLayout() {
 		if ( ! onChangeLayout || ! temporaryLayout ) {
 			return;

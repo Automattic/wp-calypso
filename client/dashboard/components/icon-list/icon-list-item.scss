@@ -1,0 +1,23 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.icon-list-item {
+	.icon-list-item__decoration {
+		display: inline-flex;
+		flex-shrink: 0;
+
+		svg {
+			flex-shrink: 0;
+			fill: $gray-700;
+		}
+	}
+
+	.icon-list-item__suffix {
+		flex-shrink: 0;
+	}
+
+	.icon-list-item__content--wrap {
+		flex: 1;
+	}
+}
+

@@ -5,14 +5,20 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
-import { usePersistentView, DataViews } from '../../app/dataviews';
+import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViewsCard } from '../../components/dataviews-card';
+import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { AddDomainButton } from '../../domains/add-domain-button';
-import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
+import AddDomainButton from '../../domains/add-domain-button';
+import {
+	useActions,
+	useFields,
+	DEFAULT_LAYOUTS,
+	SITE_CONTEXT_VIEW,
+	BulkActionsProgressNotice,
+} from '../../domains/dataviews';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -30,6 +36,7 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
+
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
 
@@ -53,14 +60,15 @@ function SiteDomains() {
 		fields
 	);
 
+	// Hide actions column when no domain has eligible actions.
+	const hasEligibleActions = siteDomains?.some( ( item ) =>
+		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
+	);
+
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={ <AddDomainButton siteSlug={ site.slug } /> }
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			notices={ <BulkActionsProgressNotice /> }
 		>
 			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && (
 				<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
@@ -91,7 +99,7 @@ function SiteDomains() {
 					onChangeView={ updateView }
 					onResetView={ resetView }
 					view={ view }
-					actions={ actions }
+					actions={ hasEligibleActions ? actions : [] }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }

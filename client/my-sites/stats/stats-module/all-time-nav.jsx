@@ -3,7 +3,6 @@ import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -18,6 +17,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 } from '../constants';
+import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import DatePicker from '../stats-date-picker';
 import { trackStatsAnalyticsEvent } from '../utils';
@@ -38,6 +38,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	} = props;
 
 	const dispatch = useDispatch();
+	const momentInSite = useMomentInSite( siteId );
 	const getSummaryPeriodLabel = () => {
 		if ( query.start_date ) {
 			return translate( 'Custom Range Summary' );
@@ -85,7 +86,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const getSummaryPathForDaysRange = ( numberDays ) => {
 		const queryParams = new URLSearchParams( context.query );
 
-		queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
+		queryParams.set( 'startDate', momentInSite().format( 'YYYY-MM-DD' ) );
 		queryParams.set( 'summarize', 1 );
 		queryParams.set( 'num', numberDays );
 		queryParams.delete( 'endDate' );

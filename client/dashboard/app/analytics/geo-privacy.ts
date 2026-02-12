@@ -68,15 +68,22 @@ export function isRegionInCcpaZone(
 		'california', // CA
 		'colorado', // CO
 		'connecticut', // CT
+		'delaware', // DE
+		'florida', // FL
+		'indiana', // IN
+		'iowa', // IA
+		'kentucky', // KY
+		'maryland', // MD
+		'minnesota', // MN
+		'montana', // MT
+		'nebraska', // NE
+		'new hampshire', // NH
+		'new jersey', // NJ
+		'oregon', // OR
+		'rhode island', // RI
+		'tennessee', // TN
+		'texas', // TX
 		'utah', // UT
 		'virginia', // VA
-		'texas', // TX
-		'tennessee', // TN
-		'oregon', // OR
-		'new jersey', // NJ
-		'montana', // MT
-		'iowa', // IA
-		'indiana', // IN
-		'delaware', // DE
 	].includes( region.toLowerCase() );
 }

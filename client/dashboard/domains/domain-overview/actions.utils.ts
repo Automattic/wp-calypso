@@ -33,6 +33,11 @@ export const shouldShowTransferAction = ( domain: Domain ) => {
 		return false;
 	}
 
+	// If the domain cannot be transferred to any user or another site, we shouldn't show the transfer action
+	if ( ! domain.can_transfer_to_any_user && ! domain.can_transfer_to_other_site ) {
+		return false;
+	}
+
 	return true;
 };
 

@@ -1,4 +1,3 @@
-import { JobStatus } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -6,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { useDomainsDataViewsContext } from './use-context';
+import type { JobStatus } from '@automattic/api-core';
 
 type TranslateFunction = typeof translate;
 type HasTranslation = ( single: string, context?: string, domain?: string ) => boolean;

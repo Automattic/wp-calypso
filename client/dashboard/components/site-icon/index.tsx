@@ -1,15 +1,19 @@
 import clsx from 'clsx';
 import { useMemo } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getSiteStatus } from '../../utils/site-status';
+import { getSiteBlockingStatus } from '../../utils/site-status';
 import SiteMigrationIcon from './site-migration-icon';
 import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
+	const status = getSiteBlockingStatus( site );
+	const isMigration = status === 'migration_pending' || status === 'migration_started';
+	const fallbackInitial = getSiteDisplayName( site ).charAt( 0 );
 	const dims = { width: size, height: size };
 	const ico = site.icon?.img || site.icon?.ico;
+
 	const src = useMemo( () => {
 		if ( ! ico ) {
 			return;
@@ -39,14 +43,13 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 		);
 	}
 
-	const status = getSiteStatus( site );
-	if ( status === 'migration_pending' || status === 'migration_started' ) {
+	if ( isMigration ) {
 		return <SiteMigrationIcon className={ clsx( 'site-icon', className ) } size={ size } />;
 	}
 
 	return (
 		<div className={ clsx( 'site-letter', className ) } style={ { ...dims, fontSize: size * 0.5 } }>
-			<span>{ getSiteDisplayName( site ).charAt( 0 ) }</span>
+			<span>{ fallbackInitial }</span>
 		</div>
 	);
 }

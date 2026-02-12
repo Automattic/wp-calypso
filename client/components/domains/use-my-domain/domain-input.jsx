@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useId } from 'react';
 import { connect } from 'react-redux';
@@ -26,8 +24,6 @@ function UseMyDomainInput( {
 } ) {
 	const domainNameInput = useRef( null );
 	const inputId = 'use-my-domain-input-' + useId();
-	const isDomainConnectionRedesign = config.isEnabled( 'domain-connection-redesign' );
-	const classNameModifier = isDomainConnectionRedesign ? baseClassName + '--redesign' : '';
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -50,7 +46,7 @@ function UseMyDomainInput( {
 	};
 
 	return (
-		<Card className={ clsx( baseClassName, classNameModifier ) } isBorderless>
+		<Card className={ baseClassName } isBorderless>
 			<CardBody size="none">
 				{ ! isSignupStep && (
 					<div className={ baseClassName + '__domain-illustration' }>
@@ -58,11 +54,7 @@ function UseMyDomainInput( {
 					</div>
 				) }
 				<div className={ baseClassName + '__domain-input' }>
-					<label htmlFor={ inputId }>
-						{ isDomainConnectionRedesign
-							? __( 'Domain name' )
-							: __( 'Enter the domain you would like to use:' ) }
-					</label>
+					<label htmlFor={ inputId }>{ __( 'Domain name' ) }</label>
 					<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 						<FormTextInput
 							id={ inputId }

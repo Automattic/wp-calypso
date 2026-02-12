@@ -181,7 +181,17 @@ export default function DomainContactVerification() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact Verification' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Contact verification' ) }
+					description={ __(
+						'Verify your domain contact information to comply with ICANN requirements.'
+					) }
+				/>
+			}
+		>
 			{ submitted && renderSubmittedMessage() }
 			{ error && renderErrorMessage() }
 			<Card>

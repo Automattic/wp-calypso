@@ -12,11 +12,13 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ComponentProps } from 'react';
 
 interface HostingActivationButtonProps {
+	path?: string;
 	redirectUrl?: string;
 }
 
 export default function HostingActivationButton( {
 	text,
+	path = '',
 	redirectUrl,
 	...props
 }: HostingActivationButtonProps & ComponentProps< typeof Button > ) {
@@ -29,6 +31,15 @@ export default function HostingActivationButton( {
 
 	const handleTransfer = ( options: { geo_affinity?: string } ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_features_activate_confirm' ) );
+
+		// Additional event to align analysis across dashboards.
+		// See: https://wp.me/pgz0xU-qp
+		dispatch(
+			recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_confirm', {
+				path,
+			} )
+		);
+
 		const params = new URLSearchParams( {
 			siteId: String( siteId ),
 			redirect_to: addQueryArgs( redirectUrl, {
@@ -48,6 +59,15 @@ export default function HostingActivationButton( {
 				text={ text ?? translate( 'Activate now' ) }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
+
+					// Additional event to align analysis across dashboards.
+					// See: https://wp.me/pgz0xU-qp
+					dispatch(
+						recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
+							path,
+						} )
+					);
+
 					return setShowEligibility( true );
 				} }
 			/>
@@ -67,6 +87,7 @@ export default function HostingActivationButton( {
 						showDataCenterPicker
 						standaloneProceed
 						currentContext="hosting-features"
+						path={ path }
 					/>
 				</Modal>
 			) }

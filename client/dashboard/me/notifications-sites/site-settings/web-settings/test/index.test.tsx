@@ -76,6 +76,7 @@ const buildWebNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 					...settings,
 				},
 				devices: [],
@@ -92,6 +93,7 @@ const buildWebNotificationSettings = (
 					draft_post_prompt: false,
 					store_order: false,
 					recommended_blog: false,
+					form_response: false,
 				},
 			},
 		],
@@ -125,6 +127,10 @@ describe( 'WebSettings', () => {
 
 		expect(
 			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'new_comment' ) } )
+		).not.toBeChecked();
+
+		expect(
+			await screen.findByRole( 'checkbox', { name: getFieldLabel( 'form_response' ) } )
 		).not.toBeChecked();
 	} );
 

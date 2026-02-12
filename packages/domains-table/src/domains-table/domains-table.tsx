@@ -6,11 +6,8 @@ import {
 	SiteDetails,
 	SiteDomainsQueryFnData,
 	useDomainsBulkActionsMutation,
-	DomainUpdateStatus,
-	JobStatus,
 	BulkUpdateVariables,
 	AllDomainsQueryFnData,
-	BulkDomainUpdateStatusQueryFnData,
 	AllDomainsQueryArgs,
 } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
@@ -35,6 +32,11 @@ import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 import { DomainAction } from './domains-table-row-actions';
+import type {
+	BulkDomainUpdateStatusQueryFnData,
+	JobStatus,
+	DomainUpdateStatus,
+} from '@automattic/api-core';
 
 type DomainActionDescription = {
 	message?: string;

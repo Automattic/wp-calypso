@@ -1,0 +1,108 @@
+.image-studio-editable-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	position: relative;
+
+	> * {
+		position: relative;
+		z-index: 1;
+	}
+
+	.components-text-control__input,
+	.components-textarea-control__input {
+		background-color: #2f2f2f;
+		border-color: #3f3f3f;
+		color: #fff;
+		font-size: 13px;
+
+		&:focus {
+			border-color: #0073aa;
+			box-shadow: 0 0 0 1px #0073aa;
+		}
+
+		&::placeholder {
+			color: #666;
+		}
+	}
+
+	.components-textarea-control__input {
+		field-sizing: content;
+		min-height: 4lh;
+		max-height: 13lh;
+	}
+}
+
+.image-studio-editable-field-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.image-studio-editable-field-label {
+	font-size: 15px;
+	font-weight: 500;
+	color: #fff;
+	margin: 0;
+}
+
+.image-studio-editable-field-actions {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.image-studio-editable-field-value {
+	font-size: 13px;
+	color: #ccc;
+	line-height: 1.5;
+	min-height: 20px;
+	padding: 0;
+	margin: 0;
+	white-space: pre-wrap;
+}
+
+.image-studio-editable-field-empty {
+	color: #666;
+	font-style: italic;
+}
+
+.image-studio-editable-field--shimmer {
+	margin: -16px;
+	padding: 16px;
+	opacity: 0.5;
+
+	.components-base-control {
+		overflow: hidden;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: -50%;
+			left: -50%;
+			width: 200%;
+			height: 200%;
+			background: repeating-linear-gradient(
+				135deg,
+				transparent 0%,
+				transparent 30%,
+				rgba(255, 255, 255, 0.45) 50%,
+				transparent 70%,
+				transparent 100%
+			);
+			animation: image-studio-shimmer-diagonal 3s infinite;
+			z-index: 2;
+			pointer-events: none;
+		}
+	}
+}
+
+@keyframes image-studio-shimmer-diagonal {
+	0% {
+		transform: translateX(-100%) translateY(-100%);
+	}
+
+	100% {
+		transform: translateX(100%) translateY(100%);
+	}
+}

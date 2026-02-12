@@ -8,13 +8,28 @@ import { render } from '../../../test-utils';
 import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 import GravatarProfileSection from '../index';
 
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	userSettingsQuery: jest.fn(),
+} ) );
+
 describe( 'GravatarProfileSection Form Validation', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+
+		const { userSettingsQuery } = require( '@automattic/api-queries' );
+		userSettingsQuery.mockReturnValue( {
+			queryKey: [ 'me', 'settings' ],
+			queryFn: () => Promise.resolve( mockUserSettings ),
+		} );
+	} );
+
 	describe( 'Display Name Validation', () => {
 		it( 'should show validation error for display names longer than 250 characters', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const displayNameInput = screen.getByDisplayValue( 'Test User' );
+			const displayNameInput = await screen.findByDisplayValue( 'Test User' );
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
@@ -28,9 +43,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should accept display names at the character limit', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const displayNameInput = screen.getByDisplayValue( 'Test User' );
+			const displayNameInput = await screen.findByDisplayValue( 'Test User' );
 			const maxLengthName = 'a'.repeat( 250 );
 
 			await user.clear( displayNameInput );
@@ -44,9 +59,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should disable save button when display name validation fails', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const displayNameInput = screen.getByDisplayValue( 'Test User' );
+			const displayNameInput = await screen.findByDisplayValue( 'Test User' );
 			const longName = 'a'.repeat( 251 );
 
 			await user.clear( displayNameInput );
@@ -60,9 +75,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'URL Validation', () => {
 		it( 'should show validation error for invalid URLs', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const urlInput = screen.getByDisplayValue( 'https://example.com' );
+			const urlInput = await screen.findByDisplayValue( 'https://example.com' );
 
 			await user.clear( urlInput );
 			await user.type( urlInput, 'not-a-url' );
@@ -73,9 +88,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should accept valid URLs', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const urlInput = screen.getByDisplayValue( 'https://example.com' );
+			const urlInput = await screen.findByDisplayValue( 'https://example.com' );
 
 			await user.clear( urlInput );
 			await user.type( urlInput, 'https://valid-url.com' );
@@ -86,9 +101,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should allow empty URLs (optional field)', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const urlInput = screen.getByDisplayValue( 'https://example.com' );
+			const urlInput = await screen.findByDisplayValue( 'https://example.com' );
 
 			await user.clear( urlInput );
 			fireEvent.blur( urlInput );
@@ -98,9 +113,9 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should disable save button when URL validation fails', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockUserSettings } /> );
+			render( <GravatarProfileSection /> );
 
-			const urlInput = screen.getByDisplayValue( 'https://example.com' );
+			const urlInput = await screen.findByDisplayValue( 'https://example.com' );
 
 			await user.clear( urlInput );
 			await user.type( urlInput, 'invalid-url' );

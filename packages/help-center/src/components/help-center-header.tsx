@@ -25,6 +25,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -58,6 +59,8 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
+	const { currentUser } = useHelpCenterContext();
+	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -109,23 +112,27 @@ const EllipsisMenu = () => {
 				>
 					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
 				</Menu.Item>
-				<Menu.Separator />
-				<Menu.Item
-					onClick={ toggleSoundNotifications }
-					prefix={
-						areSoundNotificationsEnabled ? (
-							<MutedBellIcon />
-						) : (
-							<Icon icon={ bell } width={ 24 } height={ 24 } />
-						)
-					}
-				>
-					<Menu.ItemLabel>
-						{ areSoundNotificationsEnabled
-							? __( 'Turn off sound notifications', __i18n_text_domain__ )
-							: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
-					</Menu.ItemLabel>
-				</Menu.Item>
+				{ isLoggedIn && (
+					<>
+						<Menu.Separator />
+						<Menu.Item
+							onClick={ toggleSoundNotifications }
+							prefix={
+								areSoundNotificationsEnabled ? (
+									<MutedBellIcon />
+								) : (
+									<Icon icon={ bell } width={ 24 } height={ 24 } />
+								)
+							}
+						>
+							<Menu.ItemLabel>
+								{ areSoundNotificationsEnabled
+									? __( 'Turn off sound notifications', __i18n_text_domain__ )
+									: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
+							</Menu.ItemLabel>
+						</Menu.Item>
+					</>
+				) }
 			</Menu.Popover>
 		</Menu>
 	);
@@ -207,6 +214,8 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		};
 	}, [] );
 
+	const { disableChatSupport } = useHelpCenterContext();
+
 	const classNames = clsx(
 		'help-center__container-header',
 		location?.pathname?.replace( /^\//, '' ),
@@ -248,7 +257,18 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
-				<EllipsisMenu />
+				{ disableChatSupport ? (
+					<Button
+						label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
+						icon={ lineSolid }
+						onClick={ () => setIsMinimized( true ) }
+					/>
+				) : (
+					// We only show the ellipsis menu if chat support is enabled
+					<EllipsisMenu />
+				) }
+
 				<Button
 					className="help-center-header__close"
 					label={ __( 'Close Help Center', __i18n_text_domain__ ) }

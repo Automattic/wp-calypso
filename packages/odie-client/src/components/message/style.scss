@@ -54,6 +54,10 @@ $blueberry-color: #3858e9;
 			display: none;
 		}
 	}
+
+	.odie-chatbox-thinking-placeholder {
+		align-items: center;
+	}
 }
 
 .odie-chatbox-message {
@@ -68,6 +72,10 @@ $blueberry-color: #3858e9;
 	text-wrap: pretty;
 	word-break: break-word;
 	max-width: 100%;
+
+	p {
+		font-size: 100%;
+	}
 
 	&.is-sending {
 		opacity: 0.5;
@@ -166,7 +174,7 @@ $blueberry-color: #3858e9;
 				color: inherit;
 
 				&:hover {
-					text-decoration: none;
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 				}
 			}
 		}
@@ -285,7 +293,12 @@ $blueberry-color: #3858e9;
 			margin-top: 8px;
 
 			.components-external-link {
-				color: var( --studio-gray-20 );
+				color: var( --studio-gray-60 );
+			}
+
+			.components-external-link__icon {
+
+				display: none;
 			}
 		}
 	}
@@ -319,7 +332,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-chatbox-message__content {
-			flex-basis: calc( 100% - 78px );
+			flex-basis: 100%;
 		}
 
 		.odie-conversation__feedback {
@@ -338,7 +351,11 @@ $blueberry-color: #3858e9;
 
 			.odie-conversation-feedback__thumbs {
 				display: flex;
-				gap: 8px;
+				gap: var(--spacing-1, .25rem);
+
+				.odie-conversation-feedback__thumbs-button:hover svg {
+					color: var(--color-foreground, oklch(.241 0 0));
+				}
 
 				&-button {
 					padding: 0;
@@ -366,13 +383,9 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-conversation-feedback__message {
-			h3 {
-				font-weight: 500;
-				line-height: 24px;
-			}
-
 			p {
-				padding: 12px 0;
+				padding-top: 12px;
+				padding-bottom: 20px;
 				background-color: unset !important;
 				color: var( --studio-gray-80 );
 				line-height: 20px;
@@ -383,8 +396,8 @@ $blueberry-color: #3858e9;
 			}
 
 			button.is-primary {
-				margin-top: 10px;
-				margin-right: 8px;
+				margin-block: 16px;
+				margin-inline-end: 8px;
 				background: var( --studio-wordpress-blue, #3858e9 );
 			}
 
@@ -449,7 +462,6 @@ $blueberry-color: #3858e9;
 	gap: 4px;
 	align-self: stretch;
 	border-radius: 4px;
-	background-color: var( --studio-gray-0 );
 	width: fit-content;
 	padding: 0;
 	margin: 4px 0;
@@ -459,10 +471,6 @@ $blueberry-color: #3858e9;
 		font-style: normal;
 		padding: 4px 16px;
 		color: inherit;
-
-		&:hover {
-			text-decoration: none;
-		}
 	}
 
 	svg.gridicons-external {
@@ -477,6 +485,7 @@ $blueberry-color: #3858e9;
 
 	.odie-sources-link {
 		padding: 0;
+		text-decoration: underline;
 	}
 }
 

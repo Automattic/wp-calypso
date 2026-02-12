@@ -23,6 +23,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -33,6 +34,7 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
 	saveSignupStep as saveSignupStepAction,
@@ -40,7 +42,6 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
@@ -118,6 +119,7 @@ export interface UnifiedPlansStepProps {
 		isExtraWideLayout: boolean;
 	};
 
+	hideLogo?: boolean;
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
 	onIntentChange?: ( intent: PlansIntent ) => void;
@@ -218,6 +220,7 @@ function UnifiedPlansStep( {
 	step,
 	signupDependencies,
 	displayedIntervals,
+	hideLogo,
 	headerText,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
@@ -240,13 +243,13 @@ function UnifiedPlansStep( {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
-	const hostingDashboardOptIn = useSelector( hasHostingDashboardOptIn );
+	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
 		}
 
-		return hostingDashboardOptIn ? '/v2/sites' : '/sites/';
+		return dashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
 
 	useSiteGlobalStylesOnPersonal();
@@ -398,14 +401,21 @@ function UnifiedPlansStep( {
 		}
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate( 'The right plan for the right project' );
+			return translate( 'Host with the best' );
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
 			return translate( 'Managed hosting without limits' );
-		} else if ( intent === 'plans-website-builder' ) {
+		}
+
+		if ( intent === 'plans-website-builder' ) {
 			return translate( 'Create a beautiful WordPress website' );
 		}
+
+		if ( intent === 'plans-woo-hosted' ) {
+			return translate( 'Select a plan to launch your store' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -443,7 +453,7 @@ function UnifiedPlansStep( {
 
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
+				'Create a site with WordPress.com, and get all the power of lightning-fast, secure, and managed WordPress hosting.'
 			);
 		}
 
@@ -453,6 +463,10 @@ function UnifiedPlansStep( {
 
 		if ( intent === 'plans-website-builder' ) {
 			return null; // Use PlansFeaturesMain subheader for website-builder
+		}
+
+		if ( intent === 'plans-woo-hosted' ) {
+			return translate( 'Your free trial ends soon - select a plan to keep your online store.' );
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -586,6 +600,7 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
+							hideLogo={ hideLogo }
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>

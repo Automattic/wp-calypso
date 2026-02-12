@@ -193,6 +193,10 @@ $delay: 0.055s;
 		color: #101517;
 		font-size: 18px;
 		transition: background 0.1s;
+
+		&:has( .sale-banner ) {
+			padding-top: 0;
+		}
 	}
 	@media ( max-width: 900px ) {
 		.header {

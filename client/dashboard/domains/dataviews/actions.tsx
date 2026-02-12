@@ -1,22 +1,27 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
+import config from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, Suspense, lazy } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
 	domainDnsRoute,
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
-	domainTransferToAnyUserRoute,
+	domainTransferRoute,
 	domainTransferToOtherSiteRoute,
+	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -31,9 +36,19 @@ const noop = () => {};
 
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
-	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
+
+	const setPrimaryDomainMutation = useMutation( {
+		...siteSetPrimaryDomainMutation(),
+		meta: {
+			snackbar: {
+				error: { source: 'server' },
+			},
+		},
+	} );
+
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
 			return {};
@@ -82,10 +97,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-					item.domain_status.id === 'connection_error',
+					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
 			},
 			{
 				id: 'manage-domain',
+				isPrimary: true,
 				label: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					return domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER
@@ -96,8 +112,14 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 
+					const targetRoute =
+						domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
+						config.isEnabled( 'domain-transfer-redesign' )
+							? domainTransferRoute
+							: domainOverviewRoute;
+
 					router.navigate( {
-						to: domainOverviewRoute.fullPath,
+						to: targetRoute.fullPath,
 						params: {
 							domainName: domain.domain,
 						},
@@ -129,27 +151,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
-				id: 'manage-contact-info',
-				label: __( 'Manage contact information' ),
-				supportsBulk: false,
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					router.navigate( {
-						to: domainContactInfoRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
-				},
-				isEligible: ( item: DomainSummary ) => {
-					return (
-						item.current_user_is_owner === true &&
-						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
-					);
-				},
-			},
-			{
 				id: 'set-primary-site-address',
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
@@ -160,10 +161,23 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					if ( ! site ) {
 						return;
 					}
+
+					// Track the set primary domain action
+					recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link', {
+						domain: domain.domain,
+						origin: 'dataviews_actions',
+					} );
+
 					setPrimaryDomainMutation.mutate(
 						{ siteId: site.ID, domain: domain.domain },
 						{
 							onSuccess: () => {
+								// Track success
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_success', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+								} );
+
 								createSuccessNotice(
 									sprintf(
 										/* translators: %s is domain */
@@ -175,13 +189,13 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 									}
 								);
 							},
-							onError: () => {
-								createErrorNotice(
-									__( 'Something went wrong and we couldn’t change your primary domain.' ),
-									{
-										type: 'snackbar',
-									}
-								);
+							onError: ( error: Error ) => {
+								// Track failure
+								recordTracksEvent( 'calypso_dashboard_domain_list_change_primary_link_failure', {
+									domain: domain.domain,
+									origin: 'dataviews_actions',
+									error_message: error.message,
+								} );
 							},
 						}
 					);
@@ -199,13 +213,22 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+					const siteSlug = sitesByBlogId[ domain.blog_id ]?.slug ?? domain.site_slug;
+					const queryArgs: Record< string, string > = {
+						initialQuery: domain.domain,
+						initialMode: 'transfer-domain',
+						dashboard: getCurrentDashboard(),
+						back_to: redirectToDashboardLink(),
+					};
 
-					router.navigate( {
-						to: domainTransferToAnyUserRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
+					if ( siteSlug ) {
+						queryArgs.siteSlug = siteSlug;
+					}
+
+					window.location.href = addQueryArgs(
+						wpcomLink( '/setup/domain/use-my-domain' ),
+						queryArgs
+					);
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return isTransferrableToWpcom( item );
@@ -234,7 +257,12 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
+					return (
+						!! site &&
+						! site?.is_wpcom_atomic &&
+						! site?.is_garden &&
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
 					const site = sitesByBlogId[ items[ 0 ].blog_id ];
@@ -250,11 +278,52 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 			},
 			{
+				id: 'manage-contact-info',
+				label: __( 'Manage contact information' ),
+				supportsBulk: true,
+				callback: ( domains ) => {
+					if ( domains.length === 0 ) {
+						return;
+					}
+
+					if ( domains.length === 1 ) {
+						return router.navigate( {
+							to: domainContactInfoRoute.fullPath,
+							params: {
+								domainName: domains[ 0 ].domain,
+							},
+						} );
+					}
+
+					return router.navigate( {
+						to: domainsContactInfoRoute.fullPath,
+						search: {
+							selected: domains.map( ( domain ) => domain.domain ).join( ',' ),
+						},
+					} );
+				},
+				isEligible: ( item ) => {
+					return (
+						item.current_user_is_owner === true &&
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: false,
+				supportsBulk: true,
 				callback: () => {},
-				isEligible: () => false,
+				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
+					<AutoRenewModal
+						items={ items }
+						onSuccess={ () => {
+							onActionPerformed( items );
+							closeModal();
+						} }
+					/>
+				),
+				isEligible: ( item ) => isDomainRenewable( item ),
 			},
 		],
 		[
@@ -265,6 +334,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			createSuccessNotice,
 			createErrorNotice,
 			sitesByBlogId,
+			recordTracksEvent,
 		]
 	);
 

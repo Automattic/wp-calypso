@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-code';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -36,20 +36,56 @@ import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-lo
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import LoginContextProvider from '../login-context';
 import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginCode from './request-login-code';
 import RequestLoginEmailForm from './request-login-email-form';
+import {
+	getCheckYourEmailHeaders,
+	getEmailCodeHeaders,
+	getEmailLinkHeaders,
+} from './utils/heading-utils';
 import './style.scss';
 
-export const MagicLoginLocaleSuggestions = ( { path, showCheckYourEmail } ) => {
-	const locale = useSelector( getCurrentLocaleSlug );
-
+const MagicLoginLocaleSuggestionsBase = ( { locale, path, showCheckYourEmail } ) => {
 	if ( showCheckYourEmail ) {
 		return null;
 	}
 
 	return <LocaleSuggestions locale={ locale } path={ path } />;
+};
+
+export const MagicLoginLocaleSuggestions = localize( MagicLoginLocaleSuggestionsBase );
+
+export const buildEnterPasswordLoginParameters = (
+	{
+		isJetpackLogin,
+		locale,
+		userEmail,
+		query,
+		twoFactorNotificationSent,
+		redirectToOriginal,
+		oauth2Client,
+	},
+	{ forceUsernameOnly = false } = {}
+) => {
+	const loginParameters = {
+		isJetpack: isJetpackLogin,
+		locale,
+		emailAddress: userEmail,
+		signupUrl: query?.signup_url,
+		twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+		redirectTo: redirectToOriginal,
+		oauth2ClientId: oauth2Client?.id,
+		from: query?.from,
+	};
+
+	if ( forceUsernameOnly || query?.username_only === 'true' ) {
+		loginParameters.usernameOnly = true;
+	}
+
+	return loginParameters;
 };
 
 class MagicLogin extends Component {
@@ -94,26 +130,16 @@ class MagicLogin extends Component {
 		 * at wp.com/log-in
 		 */
 		if ( 'login_link_not_allowed' === emailRequestError?.code && query?.auto_trigger ) {
-			this.onClickEnterPasswordInstead();
+			this.onClickEnterPasswordInstead( undefined, { forceUsernameOnly: true } );
 		}
 	}
 
-	onClickEnterPasswordInstead = ( event ) => {
+	onClickEnterPasswordInstead = ( event, options = {} ) => {
 		event?.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
-		const loginParameters = {
-			isJetpack: this.props.isJetpackLogin,
-			locale: this.props.locale,
-			emailAddress: this.props.userEmail,
-			signupUrl: this.props.query?.signup_url,
-			usernameOnly: true,
-			twoFactorAuthType: this.props.twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
-			redirectTo: this.props.redirectToOriginal,
-			oauth2ClientId: this.props.oauth2Client?.id,
-			from: this.props.query?.from,
-		};
+		const loginParameters = buildEnterPasswordLoginParameters( this.props, options );
 
 		page( login( loginParameters ) );
 	};
@@ -296,6 +322,41 @@ class MagicLogin extends Component {
 	}
 }
 
+const getMagicLoginInitialHeaders = ( props, translate ) => {
+	if ( isGravPoweredOAuth2Client( props.oauth2Client ) ) {
+		return {};
+	}
+
+	if ( props.isWooJPC ) {
+		const emailAddress = props.userEmail?.includes( '@' ) ? props.userEmail : null;
+		return getCheckYourEmailHeaders( translate, { emailAddress } );
+	}
+
+	const isMagicCodeFlow = shouldUseMagicCode( { isJetpack: props.isJetpackLogin } );
+
+	if ( isMagicCodeFlow ) {
+		return getEmailCodeHeaders( translate );
+	}
+
+	if ( props.showCheckYourEmail ) {
+		const emailAddress = props.userEmail?.includes( '@' ) ? props.userEmail : null;
+		return getCheckYourEmailHeaders( translate, { emailAddress } );
+	}
+
+	return getEmailLinkHeaders( translate );
+};
+
+const MagicLoginWithContext = ( props ) => {
+	const { translate } = props;
+	const { heading, subHeading } = getMagicLoginInitialHeaders( props, translate );
+
+	return (
+		<LoginContextProvider initialHeading={ heading } initialSubHeading={ subHeading }>
+			<MagicLogin { ...props } translate={ translate } />
+		</LoginContextProvider>
+	);
+};
+
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
@@ -323,4 +384,7 @@ const mapDispatch = {
 	recordTracksEvent: withEnhancers( recordTracksEvent, [ enhanceWithSiteType ] ),
 };
 
-export default connect( mapState, mapDispatch )( localize( MagicLogin ) );
+const ConnectedMagicLogin = connect( mapState, mapDispatch )( MagicLoginWithContext );
+
+export default ConnectedMagicLogin;
+export const LocalizedMagicLogin = localize( ConnectedMagicLogin );

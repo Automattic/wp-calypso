@@ -24,6 +24,7 @@ export interface CheckoutStepProps {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
+	skipValidationOnSubmit?: boolean;
 	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
@@ -94,6 +95,8 @@ export interface PaymentMethodProviderContextInterface {
 	paymentMethodId: string | null | undefined;
 	setPaymentMethodId: ( id: string ) => void;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
+	loadingPaymentMethodIds: string[];
+	setLoadingPaymentMethodIds: ( methods: string[] ) => void;
 }
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void
@@ -271,6 +274,8 @@ export type StepCompleteCallbackMap = Record< string, StepCompleteCallback >;
 
 export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
 
+export type CompleteAllSteps = () => Promise< boolean >;
+
 export type MakeStepActive = ( stepId: string ) => Promise< boolean >;
 
 export type CheckoutStepCompleteStatus = Record< string, boolean >;
@@ -287,18 +292,21 @@ export interface CheckoutStepGroupState {
 	stepCompleteStatus: CheckoutStepCompleteStatus;
 	stepIdMap: StepIdMap;
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
+	stepSkipValidationOnSubmitMap: Record< number, boolean >;
 }
 
 export interface CheckoutStepGroupActions {
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: ( newStatus: CheckoutStepCompleteStatus ) => void;
 	setStepComplete: SetStepComplete;
+	completeAllSteps: CompleteAllSteps;
 	makeStepActive: MakeStepActive;
 	getStepNumberFromId: ( stepId: string ) => number | undefined;
 	setStepCompleteCallback: (
 		stepNumber: number,
 		stepId: string,
-		callback: StepCompleteCallback
+		callback: StepCompleteCallback,
+		skipValidationOnSubmit?: boolean
 	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;

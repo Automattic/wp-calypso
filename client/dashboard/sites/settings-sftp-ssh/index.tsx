@@ -38,7 +38,15 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'SFTP/SSH' ) } /> }
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'SFTP/SSH' ) }
+					description={ __(
+						'Securely access and manage your website files using SFTP, or use SSH for advanced command-line operations and troubleshooting.'
+					) }
+				/>
+			}
 		>
 			<HostingFeatureGatedWithCallout
 				site={ site }

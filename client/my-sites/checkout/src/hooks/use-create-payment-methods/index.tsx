@@ -4,9 +4,7 @@ import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createP24Method,
-	createP24PaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createIdealMethod,
@@ -39,6 +37,7 @@ import { createPayPal } from '../../payment-methods/paypal-js';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
+import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -49,6 +48,7 @@ import type { ReactNode } from 'react';
 const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
+export { default as useCreateExistingPayPalPPCP } from './use-create-existing-paypal-ppcp';
 
 export function useCreatePayPalExpress( {
 	labelText,
@@ -65,8 +65,15 @@ export function useCreatePayPalExpress( {
 	return paypalMethod;
 }
 
-export function useCreatePayPalPPCP(): PaymentMethod | null {
-	return useMemo( () => createPayPal(), [] );
+export function useCreatePayPalPPCP( {
+	hasExistingPayPalPPCPMethods,
+}: {
+	hasExistingPayPalPPCPMethods?: boolean;
+} = {} ): PaymentMethod | null {
+	return useMemo(
+		() => createPayPal( { hasExistingPayPalPPCPMethods } ),
+		[ hasExistingPayPalPPCPMethods ]
+	);
 }
 
 export function useCreateCreditCard( {
@@ -99,6 +106,8 @@ export function useCreateCreditCard( {
 			} ),
 		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
 	);
+	const shouldUseVgs = isEnabled( 'checkout/vgs-ebanx' ) && shouldUseEbanx;
+
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
@@ -106,6 +115,7 @@ export function useCreateCreditCard( {
 						currency,
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
+						shouldUseVgs,
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
@@ -117,6 +127,7 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,
+			shouldUseVgs,
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
@@ -168,16 +179,14 @@ function useCreateP24( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createP24Method( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -189,16 +198,14 @@ function useCreateBancontact( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createBancontactMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -424,8 +431,6 @@ export default function useCreatePaymentMethods( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { currency } = responseCart;
-	const paypalExpressMethod = useCreatePayPalExpress( {} );
-	const paypalPPCPMethod = useCreatePayPalPPCP();
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
@@ -473,7 +478,17 @@ export default function useCreatePaymentMethods( {
 		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
+	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
+		storedPaymentMethods: storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
+	} );
+
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+	const hasExistingPayPalPPCPMethods =
+		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
+
+	const paypalExpressMethod = useCreatePayPalExpress( {} );
+	const paypalPPCPMethod = useCreatePayPalPPCP( { hasExistingPayPalPPCPMethods } );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
@@ -526,9 +541,10 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
-		stripeMethod,
+		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
+		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
 		paypalPPCPMethod,
@@ -549,11 +565,12 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			...existingPayPalPPCPMethods,
+			applePayMethod,
+			googlePayMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,
-			applePayMethod,
-			googlePayMethod,
 			freePaymentMethod,
 			idealMethod,
 			sofortMethod,

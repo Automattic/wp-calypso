@@ -1,60 +1,245 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import privateSiteGraphic from 'calypso/assets/images/blaze/site-private-graphic@3x.png';
+import blazeFire from 'calypso/assets/images/blaze/blaze-fire.svg';
+import getStarted from 'calypso/assets/images/blaze/get-started.png';
+import wooGraphic from 'calypso/assets/images/blaze/more-followers.jpg';
+import ConnectIcon from './connect-icon';
+import FaqAccordion from './faq-accordion';
 
 export default function DisconnectedSite() {
 	const translate = useTranslate();
 	const connectUrl = config( 'connect_url' );
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+	const minDailyBudget = formatCurrency( 5, 'USD' );
 
 	return (
-		<>
-			<div className="promote-post-i2__inner-container">
-				<div className="promote-post-i2__setup-icon">
-					<img src={ privateSiteGraphic } alt="" />
+		<div className={ clsx( 'blaze-disconnected-site', { 'is-woo': isWooStore } ) }>
+			{ /* Hero Section */ }
+			<div className="blaze-disconnected-site__hero blaze-disconnected-site__section">
+				<div className="blaze-disconnected-site__hero-content">
+					<div className="blaze-disconnected-site__hero-body">
+						<h1 className="blaze-disconnected-site__title">
+							{ isWooStore
+								? translate( 'Create ads from your products in a snap with Blaze' )
+								: translate( 'Create ads from your content in a snap with Blaze' ) }
+							<span className="blaze-title-logo" aria-hidden="true">
+								<img
+									className="blaze-title-logo__icon"
+									alt=""
+									aria-hidden="true"
+									src={ blazeFire }
+								/>
+							</span>
+						</h1>
+						<p className="blaze-disconnected-site__description">
+							{ translate(
+								'The simplest way to promote your site to over 100 million users across WordPress and Tumblr.'
+							) }
+							<br />
+							{ isWooStore
+								? translate( 'Turn your products into ads in just a few clicks.' )
+								: translate( 'Turn your content into ads in just a few clicks.' ) }
+						</p>
+						<Button className="is-primary" href={ connectUrl } target="_self">
+							<ConnectIcon />
+							{ translate( 'Connect now' ) }
+						</Button>
+					</div>
 				</div>
-				<h3 className="setup-pages__title wp-brand-font width-fix">
-					{ translate( 'Welcome to Blaze Ads' ) }
-				</h3>
-				<p className="setup-pages__body">
-					{ translate( 'One-click advertising for your posts, pages and products.' ) }
-				</p>
-
-				<ul className="promote-post-i2__active-steps">
-					<li>
-						<div className="promote-post-i2__step-icon-container">
-							<svg
-								width="32"
-								height="33"
-								viewBox="0 0 32 33"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<circle cx="16" cy="16.3325" r="16" fill="#B99AD3" />
-								<path
-									d="M16.414 20.3325L18.414 18.3325L17 16.9185L15 18.9185L13.414 17.3325L15.414 15.3325L14 13.9185L12 15.9185L10.671 14.5905C10.4835 14.403 10.2292 14.2977 9.96399 14.2977C9.69883 14.2977 9.44452 14.403 9.25699 14.5905L7.75699 16.0905C6.75394 17.0922 6.13875 18.4172 6.02082 19.8299C5.9029 21.2426 6.2899 22.6513 7.11299 23.8055L4.29299 26.6255C4.19748 26.7177 4.1213 26.828 4.06889 26.9501C4.01648 27.0721 3.98889 27.2033 3.98774 27.3361C3.98659 27.4688 4.01189 27.6005 4.06217 27.7234C4.11245 27.8463 4.1867 27.958 4.28059 28.0519C4.37449 28.1457 4.48614 28.22 4.60904 28.2703C4.73193 28.3206 4.86361 28.3459 4.99639 28.3447C5.12917 28.3436 5.26039 28.316 5.38239 28.2636C5.5044 28.2111 5.61474 28.135 5.70699 28.0395L8.52699 25.2195C9.68135 26.0427 11.0903 26.4297 12.5032 26.3116C13.9161 26.1935 15.2413 25.5779 16.243 24.5745L17.743 23.0745C17.9305 22.8869 18.0358 22.6326 18.0358 22.3675C18.0358 22.1023 17.9305 21.848 17.743 21.6605L16.414 20.3325Z"
-									fill="#F7F7F7"
-								/>
-								<path
-									d="M21.329 18.0744C21.5165 18.2618 21.7708 18.3671 22.036 18.3671C22.3012 18.3671 22.5555 18.2618 22.743 18.0744L24.243 16.5744C25.246 15.5726 25.8612 14.2476 25.9792 12.8349C26.0971 11.4222 25.7101 10.0135 24.887 8.85936L27.707 6.03936C27.8025 5.94711 27.8787 5.83677 27.9311 5.71476C27.9835 5.59276 28.0111 5.46154 28.0122 5.32876C28.0134 5.19598 27.9881 5.0643 27.9378 4.9414C27.8875 4.81851 27.8133 4.70685 27.7194 4.61296C27.6255 4.51907 27.5138 4.44482 27.3909 4.39453C27.268 4.34425 27.1364 4.31895 27.0036 4.32011C26.8708 4.32126 26.7396 4.34885 26.6176 4.40126C26.4956 4.45366 26.3852 4.52985 26.293 4.62536L23.473 7.44536C22.3186 6.62213 20.9096 6.23514 19.4967 6.35325C18.0838 6.47136 16.7587 7.0869 15.757 8.09036L14.257 9.59036C14.0695 9.77788 13.9642 10.0322 13.9642 10.2974C13.9642 10.5625 14.0695 10.8168 14.257 11.0044L21.329 18.0744Z"
-									fill="#F7F7F7"
-								/>
-							</svg>
-						</div>
-						<div>
-							<h4>{ translate( 'Connect your site' ) }</h4>
-							<p>
-								{ translate(
-									"You'll need to connect your WordPress.com account to integrate Blaze Ads with your site. Don’t have an account? Not to worry - we’ll help you create one!"
-								) }
-							</p>
-							<Button className="is-primary" href={ connectUrl } target="_self">
-								{ translate( 'Connect now' ) }
-							</Button>
-						</div>
-					</li>
-				</ul>
 			</div>
-		</>
+
+			{ /* Features Section */ }
+			<div className="blaze-disconnected-site__features blaze-disconnected-site__section">
+				<div className="blaze-disconnected-site__features-graphic">
+					<img src={ wooGraphic } alt="Blaze Ads" />
+				</div>
+				<div className="blaze-disconnected-site__features-body">
+					<ul className="blaze-disconnected-site__features-list">
+						{ isWooStore ? (
+							<>
+								<li>{ translate( 'Drive traffic to your products' ) }</li>
+								<li>{ translate( 'Boost sales and revenue' ) }</li>
+								<li>{ translate( 'Reach a wider audience' ) }</li>
+								<li>{ translate( 'Grow your customer base' ) }</li>
+							</>
+						) : (
+							<>
+								<li>{ translate( 'Grow your audience and subscribers' ) }</li>
+								<li>{ translate( 'Tap into a network of 100 million users' ) }</li>
+								<li>{ translate( 'Turn content into compelling ads' ) }</li>
+								<li>
+									{ translate( 'Start with just %(minDailyBudget)s per day', {
+										args: { minDailyBudget },
+									} ) }
+								</li>
+							</>
+						) }
+					</ul>
+					<p className="blaze-disconnected-site__features-description">
+						{ isWooStore
+							? translate(
+									'Blaze is built for merchants who have a business to run and no time for endless settings. You can start driving traffic in just a few minutes.'
+							  )
+							: translate(
+									'Blaze is built for creators who have stories to tell but no time for complex ad platforms. You can launch a campaign in just a few minutes.'
+							  ) }
+					</p>
+					<p className="blaze-disconnected-site__features-description">
+						{ isWooStore
+							? translate(
+									'Create ads directly from your product catalog or upload custom images to showcase your brand. The AI assistant helps draft compelling copy, while geographic and interest targeting connects you with the customers most likely to buy.'
+							  )
+							: translate(
+									'Instantly turn your existing posts into ads, or upload custom images. The AI assistant helps refine your message, while interest targeting ensures you connect with the people who matter most.'
+							  ) }
+					</p>
+				</div>
+			</div>
+
+			{ /* Three Steps Section */ }
+			<div className="blaze-disconnected-site__steps blaze-disconnected-site__section">
+				<div className="blaze-disconnected-site__steps-grid">
+					<div className="blaze-disconnected-site__step-card">
+						<div className="blaze-disconnected-site__step-card-number">1</div>
+						<h3 className="blaze-disconnected-site__step-card-title">
+							{ isWooStore
+								? translate( 'Promote your products.' )
+								: translate( 'Choose your best content.' ) }
+						</h3>
+						<p className="blaze-disconnected-site__step-card-text">
+							{ isWooStore
+								? translate(
+										'Select items directly from your inventory and transform them into ads with a single click.'
+								  )
+								: translate(
+										'Transform your top-performing posts and pages into ads with a single click.'
+								  ) }
+						</p>
+					</div>
+
+					<div className="blaze-disconnected-site__step-card">
+						<div className="blaze-disconnected-site__step-card-number">2</div>
+						<h3 className="blaze-disconnected-site__step-card-title">
+							{ isWooStore
+								? translate( 'Find the right customers.' )
+								: translate( 'Find your ideal crowd.' ) }
+						</h3>
+						<p className="blaze-disconnected-site__step-card-text">
+							{ isWooStore
+								? translate(
+										'We present your products to interested shoppers right where they are browsing.'
+								  )
+								: translate(
+										'We display your stories where interested users are already looking to discover new content.'
+								  ) }
+						</p>
+					</div>
+
+					<div className="blaze-disconnected-site__step-card">
+						<div className="blaze-disconnected-site__step-card-number">3</div>
+						<h3 className="blaze-disconnected-site__step-card-title">
+							{ isWooStore ? translate( 'Drive results.' ) : translate( 'Experience growth.' ) }
+						</h3>
+						<p className="blaze-disconnected-site__step-card-text">
+							{ isWooStore
+								? translate(
+										'See the impact on your store traffic for just %(minDailyBudget)s per day and gain the momentum you need.',
+										{
+											args: { minDailyBudget },
+										}
+								  )
+								: translate(
+										'Start building momentum and traffic for just %(minDailyBudget)s per day.',
+										{
+											args: { minDailyBudget },
+										}
+								  ) }
+						</p>
+					</div>
+				</div>
+			</div>
+
+			{ /* FAQ Section */ }
+			<div className="blaze-disconnected-site__faq blaze-disconnected-site__section">
+				<h2 className="blaze-disconnected-site__section-title">
+					{ translate( 'Frequently asked questions' ) }
+				</h2>
+				<FaqAccordion
+					question={ translate( 'How does Blaze differ from organic traffic growth?' ) }
+					answer={ translate(
+						'Organic growth is essential but often slow. Blaze amplifies your reach immediately. Instead of waiting for users to find you via search, it proactively places your content or products in the feeds of users who are already reading about related topics. It is designed to supplement your SEO efforts with immediate visibility.'
+					) }
+				/>
+				<FaqAccordion
+					question={ translate( 'Do I need design skills to create ad creatives?' ) }
+					answer={ translate(
+						'No. The tool automates the creative process by pulling the featured image and title from your existing post or product page. You have full control to edit the text or crop the image within the dashboard, but you do not need external design software to launch a professional-looking campaign.'
+					) }
+				/>
+				<FaqAccordion
+					question={ translate( 'What can I expect from a minimum budget?' ) }
+					answer={ translate(
+						'Campaigns start at %(minDailyBudget)s per day. While higher budgets reach more people, the minimum spend is sufficient to generate thousands of impressions. This allows you to cost-effectively test different products or headlines to see what converts before committing to a larger budget.',
+						{
+							args: { minDailyBudget },
+						}
+					) }
+				/>
+				{ isWooStore && (
+					<FaqAccordion
+						question={ translate( 'How does this integrate with WooCommerce?' ) }
+						answer={ translate(
+							'Blaze is fully compatible with WooCommerce. You\'ll see all of your inventory, allowing you to select specific products to promote. You can target audiences based on interests (e.g., "Fashion," "Tech," "DIY"), sending high-intent traffic directly to your product.'
+						) }
+					/>
+				) }
+				<FaqAccordion
+					question={ translate( 'Where exactly do the ads appear?' ) }
+					answer={ translate(
+						'Your ads run as "Sponsored Content" across the WordPress.com and Tumblr networks, reaching a potential audience of over 100 million users. The ads appear natively within user feeds or website content that users are actively consuming.'
+					) }
+				/>
+				<FaqAccordion
+					question={ translate( 'Why is a WordPress.com connection required?' ) }
+					answer={ translate(
+						'The connection provides the necessary infrastructure for ad delivery and billing. It authenticates your site to broadcast content across the network and ensures secure payment processing. If you do not have an account, the setup process will guide you through creating one quickly.'
+					) }
+				/>
+			</div>
+
+			{ /* Connection Section */ }
+			<div className="blaze-disconnected-site__connect blaze-disconnected-site__section">
+				<div className="blaze-disconnected-site__connect-content">
+					<div className="blaze-disconnected-site__connect-graphic">
+						<img src={ getStarted } alt="" />
+					</div>
+					<div className="blaze-disconnected-site__connect-body">
+						<h4 className="blaze-disconnected-site__connect-title">
+							{ translate( 'Ready to get started?' ) }
+							<span className="blaze-title-logo" aria-hidden="true">
+								<img
+									className="blaze-title-logo__icon"
+									alt=""
+									aria-hidden="true"
+									src={ blazeFire }
+								/>
+							</span>
+						</h4>
+						<p className="blaze-disconnected-site__connect-description">
+							{ translate(
+								'Connect your site now to unlock the dashboard and start your first campaign.'
+							) }
+						</p>
+						<Button className="is-primary" href={ connectUrl } target="_self">
+							<ConnectIcon />
+							{ translate( 'Connect now' ) }
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }
