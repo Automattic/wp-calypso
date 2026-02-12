@@ -1,0 +1,110 @@
+.referral-email-preview-modal {
+	.referral-email-preview-modal__content {
+		padding: 24px;
+		max-width: 700px;
+	}
+
+	.referral-email-preview-modal__title {
+		margin-block-start: 0;
+		margin-block-end: 8px;
+		font-size: 24px;
+		font-weight: 600;
+		color: var(--color-text-primary);
+	}
+
+	.referral-email-preview-modal__subtitle {
+		margin-block-start: 0;
+		margin-block-end: 24px;
+		color: var(--color-text-secondary);
+		font-size: 14px;
+	}
+
+	.referral-email-preview-modal__email {
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 4px;
+		background-color: var(--color-surface);
+		overflow: hidden;
+	}
+
+	.referral-email-preview-modal__email-header {
+		padding: 16px;
+		background-color: var(--color-neutral-5);
+		border-bottom: 1px solid var(--color-neutral-10);
+		font-size: 13px;
+		line-height: 1.8;
+
+		strong {
+			font-weight: 600;
+		}
+	}
+
+	.referral-email-preview-modal__email-body {
+		padding: 32px 24px;
+	}
+
+	.referral-email-preview-modal__email-logo {
+		margin-block-end: 24px;
+		text-align: center;
+
+		img {
+			max-width: 300px;
+			max-height: 100px;
+			height: auto;
+		}
+	}
+
+	.referral-email-preview-modal__email-greeting {
+		margin-block-end: 16px;
+		font-size: 15px;
+	}
+
+	.referral-email-preview-modal__email-intro {
+		margin-block-end: 16px;
+		font-size: 15px;
+		line-height: 1.6;
+	}
+
+	.referral-email-preview-modal__email-products {
+		margin-block-start: 12px;
+		margin-block-end: 24px;
+		padding-inline-start: 24px;
+
+		li {
+			margin-block-end: 8px;
+			font-size: 15px;
+		}
+	}
+
+	.referral-email-preview-modal__email-message {
+		margin-block-end: 24px;
+		padding: 16px;
+		background-color: var(--color-neutral-5);
+		border-left: 3px solid var(--color-accent);
+		border-radius: 4px;
+	}
+
+	.referral-email-preview-modal__email-message-label {
+		margin-block-end: 8px;
+		font-size: 14px;
+	}
+
+	.referral-email-preview-modal__email-message-content {
+		font-size: 15px;
+		line-height: 1.6;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.referral-email-preview-modal__email-cta {
+		margin-block-end: 24px;
+		text-align: center;
+	}
+
+	.referral-email-preview-modal__email-footer {
+		padding-block-start: 24px;
+		border-top: 1px solid var(--color-neutral-10);
+		font-size: 12px;
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+	}
+}

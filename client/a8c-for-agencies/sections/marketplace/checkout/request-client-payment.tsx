@@ -22,9 +22,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { useUploadLogo } from '../../partner-directory/agency-details/hooks/use-upload-logo';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -33,7 +35,12 @@ import {
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import NoticeSummary from './notice-summary';
+import ReferralLogoPicker from './referral-logo-picker';
+import ReferralEmailPreviewModal from './referral-email-preview-modal';
 import type { ShoppingCartItem, TermPricingType } from '../types';
+
+import './referral-logo-picker.scss';
+import './referral-email-preview-modal.scss';
 interface Props {
 	checkoutItems: ShoppingCartItem[];
 	termPricing: TermPricingType;
@@ -54,12 +61,17 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ selectedLogoUrl, setSelectedLogoUrl ] = useState< string | null >( null );
+	const [ selectedLogoFile, setSelectedLogoFile ] = useState< File | null >( null );
 
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
 	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
+	const [ isPreviewModalOpen, setIsPreviewModalOpen ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
+	const agencyId = useSelector( getActiveAgencyId );
+	const uploadLogo = useUploadLogo();
 
 	const onEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setEmail( event.currentTarget.value );
@@ -72,9 +84,28 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		setMessage( event.currentTarget.value );
 	}, [] );
 
+	const onLogoChange = useCallback( ( logoUrl: string | null, logoFile: File | null ) => {
+		setSelectedLogoUrl( logoUrl );
+		setSelectedLogoFile( logoFile );
+	}, [] );
+
+	const handlePreviewEmail = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_client_referral_preview_email_click' ) );
+		setIsPreviewModalOpen( true );
+	}, [ dispatch ] );
+
+	const handleClosePreview = useCallback( () => {
+		setIsPreviewModalOpen( false );
+	}, [] );
+
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
 
 	const hasCompletedForm = !! email && !! message;
+
+	const productNames = useMemo(
+		() => checkoutItems.map( ( item ) => item.name || item.slug ),
+		[ checkoutItems ]
+	);
 
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 
@@ -92,7 +123,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
 	const handleRequestPayment = useCallback(
-		( flowType: ReferralOrderFlowType ) => {
+		async ( flowType: ReferralOrderFlowType ) => {
 			if ( flowType === 'send' && ! hasCompletedForm ) {
 				return;
 			}
@@ -112,9 +143,25 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
 					{
 						term_pricing: termPricing,
+						has_custom_logo: !! selectedLogoFile,
 					}
 				)
 			);
+			let logoUrl = selectedLogoUrl;
+
+			// Upload custom logo if a file was selected
+			if ( selectedLogoFile && agencyId ) {
+				try {
+					const uploadResult = await uploadLogo( agencyId, selectedLogoFile );
+					logoUrl = uploadResult?.logo_url || selectedLogoUrl;
+				} catch ( error ) {
+					dispatch(
+						errorNotice( translate( 'Failed to upload logo. Please try again.' ) )
+					);
+					return;
+				}
+			}
+
 			requestPayment(
 				{
 					client_email: email,
@@ -122,6 +169,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					product_ids: productIds,
 					licenses: licenses,
 					flow_type: flowType,
+					logo_url: logoUrl || undefined,
 				},
 				{
 					onSuccess: ( referral ) => {
@@ -145,6 +193,8 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						);
 						setEmail( '' );
 						setMessage( '' );
+						setSelectedLogoUrl( null );
+						setSelectedLogoFile( null );
 						onClearCart();
 					},
 					onError: ( error ) => {
@@ -183,12 +233,23 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			productIds,
 			requestPayment,
 			translate,
+			termPricing,
+			selectedLogoFile,
+			selectedLogoUrl,
+			agencyId,
+			uploadLogo,
 		]
 	);
 
 	return (
 		<>
 			<div className="checkout__client-referral-form">
+				<ReferralLogoPicker
+					onLogoChange={ onLogoChange }
+					selectedLogoUrl={ selectedLogoUrl }
+					selectedLogoFile={ selectedLogoFile }
+				/>
+
 				<FormFieldset>
 					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
 					<FormTextInput
@@ -223,6 +284,25 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					/>
 				</FormFieldset>
 			</div>
+
+			<div className="checkout__client-referral-preview">
+				<Button
+					variant="link"
+					onClick={ handlePreviewEmail }
+					disabled={ ! email || ! message }
+				>
+					{ translate( 'Preview referral email' ) }
+				</Button>
+			</div>
+
+			<ReferralEmailPreviewModal
+				isOpen={ isPreviewModalOpen }
+				onClose={ handleClosePreview }
+				logoUrl={ selectedLogoUrl }
+				clientEmail={ email }
+				customMessage={ message }
+				productNames={ productNames }
+			/>
 
 			<NoticeSummary type="request-client-payment" />
 
