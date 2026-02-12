@@ -105,6 +105,13 @@ const getSitesLink = ( isDashboardOptIn ) => {
 	return '/sites';
 };
 
+const getDomainsLink = ( isDashboardOptIn ) => {
+	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+		return dashboardLink( '/domains' );
+	}
+	return '/domains/manage';
+};
+
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
@@ -125,7 +132,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const visibleSiteCount = getCurrentUserVisibleSiteCount( getState() ) ?? 0;
 
 	if ( visibleSiteCount === 0 && hasDomainOnlySites( getState() ) ) {
-		return '/domains/manage';
+		return getDomainsLink( dashboardOptIn );
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
