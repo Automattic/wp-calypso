@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCalypsoTools, mergeToolProviders } from '../../calypso-tools';
-import { ORCHESTRATOR_AGENT_ID } from '../../constants';
+import { getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -115,7 +115,16 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 		}
 
 		initializeAgent();
-	}, [ calypsoToolProvider, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+	}, [
+		agentId,
+		calypsoToolProvider,
+		currentRoute,
+		isNewChat,
+		navigate,
+		sessionId,
+		site?.ID,
+		version,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 
