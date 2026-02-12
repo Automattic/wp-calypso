@@ -11,8 +11,10 @@ export function getCiabDashboardBasePath( hostname: string ): string {
 }
 
 export function buildCiabDashboardLink( path: string = '' ) {
+	// TODO: replace the base URL with the new domain when it's ready.
+
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.woo.localhost:3000' ).href;
+		return new URL( `/ciab${ path }`, 'http://my.localhost:3000' ).href;
 	}
-	return new URL( path, 'https://my.woo.com' ).href;
+	return new URL( `/ciab${ path }`, 'https://my.wordpress.com' ).href;
 }
