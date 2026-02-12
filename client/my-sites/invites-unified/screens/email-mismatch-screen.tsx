@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
@@ -26,9 +27,9 @@ export function EmailMismatchScreen( {
 	const translate = useTranslate();
 
 	const getLoginUrl = useCallback( () => {
-		let loginUrl = login( { redirectTo: window.location.href } );
+		const loginUrl = login( { redirectTo: window.location.href } );
 		if ( inviteSentTo ) {
-			loginUrl += '&email_address=' + encodeURIComponent( inviteSentTo );
+			return addQueryArgs( loginUrl, { email_address: inviteSentTo } );
 		}
 		return loginUrl;
 	}, [ inviteSentTo ] );
