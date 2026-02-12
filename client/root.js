@@ -1,12 +1,16 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import hasDomainOnlySites from 'calypso/state/selectors/has-domain-only-sites';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	canCurrentUserUseCustomerHome,
@@ -114,6 +118,14 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( useReaderAsLandingPage ) {
 		return '/reader';
+	}
+
+	// Domain-only users (no visible sites but have a domain-only site) get a blank page if we
+	// send them to /home or /stats. Redirect only those to domains management.
+	const visibleSiteCount = getCurrentUserVisibleSiteCount( getState() ) ?? 0;
+
+	if ( visibleSiteCount === 0 && hasDomainOnlySites( getState() ) ) {
+		return '/domains/manage';
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
