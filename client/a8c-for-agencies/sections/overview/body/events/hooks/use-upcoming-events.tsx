@@ -59,7 +59,7 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
-			...( shouldShowPressablePromoOffer
+			...( ! shouldShowPressablePromoOffer
 				? [
 						{
 							id: 'a4a-pressable-promo-offer-2026-01-29',
@@ -69,7 +69,12 @@ export const useUpcomingEvents = () => {
 							},
 							displayDate: ' ', // Empty string to hide the date
 							title: translate(
-								'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer Just Got Better 🎉'
+								'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer {{br/}}Just Got Better 🎉',
+								{
+									components: {
+										br: <br />,
+									},
+								}
 							),
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
