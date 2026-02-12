@@ -48,6 +48,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
@@ -665,6 +666,7 @@ export class UserStep extends Component {
 			twoFactorAuthType: false,
 			translate: this.props.translate,
 			isWooJPC: this.props.isWooJPC,
+			isFromPassport: this.props.isFromPassport,
 		} );
 
 		return (
@@ -696,6 +698,7 @@ const ConnectedUser = connect(
 		const isBlazePro = getIsBlazePro( state );
 		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
 		const isAkismet = getIsAkismet( state );
+		const isFromPassport = getIsPassport( state );
 		const isVIPClient = isVIPOAuth2Client( oauth2Client );
 		const isJetpackCloud = isJetpackCloudOAuth2Client( oauth2Client );
 		const isStudioApp = isStudioAppOAuth2Client( oauth2Client );
@@ -713,6 +716,7 @@ const ConnectedUser = connect(
 			isA4A,
 			isCrowdsignal,
 			isAkismet,
+			isFromPassport,
 			isVIPClient,
 			isJetpackCloud,
 			isStudioApp,

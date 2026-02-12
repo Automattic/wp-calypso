@@ -22,7 +22,6 @@ import {
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { getCiabConfig } from 'calypso/lib/partner-branding';
-import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
@@ -39,6 +38,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -423,6 +423,7 @@ function getInitialHeadingState( props, translate ) {
 		action,
 		translate,
 		isWooJPC,
+		isFromPassport,
 	} );
 
 	return {
@@ -472,7 +473,7 @@ export default connect(
 			isFromAkismet: isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
-			isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+			isFromPassport: getIsPassport( state ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),

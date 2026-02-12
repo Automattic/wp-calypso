@@ -6,6 +6,7 @@ interface Props {
 	twoFactorAuthType: string;
 	action?: string;
 	isWooJPC?: boolean;
+	isFromPassport?: boolean;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -18,16 +19,20 @@ const getHeadingSubText = ( {
 	action,
 	translate,
 	isWooJPC,
+	isFromPassport,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
 	}
 
+	const tosOwner = isFromPassport ? 'WordPress.com’s' : translate( 'our' );
+
 	const tos = (
 		<span className="wp-login__one-login-layout-tos">
 			{ translate(
-				'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				'By continuing with any of the options below, you agree to %(tosOwner)s {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				{
+					args: { tosOwner },
 					components: {
 						tosLink: (
 							<a
