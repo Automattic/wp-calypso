@@ -398,7 +398,7 @@ export default function AgentDock( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
-			//imageUpload={ imageUpload }
+			imageUpload={ imageUpload }
 		/>
 	);
 
