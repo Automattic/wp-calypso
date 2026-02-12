@@ -1,20 +1,18 @@
-import type { DomainSummary } from '@automattic/api-core';
-
 export function sortByExpiry(
-	a: Pick< DomainSummary, 'expiry' >,
-	b: Pick< DomainSummary, 'expiry' >,
+	a: string | null | undefined,
+	b: string | null | undefined,
 	direction: string
 ) {
-	if ( a.expiry == null && b.expiry == null ) {
+	if ( a == null && b == null ) {
 		return 0;
 	}
-	if ( a.expiry == null ) {
+	if ( a == null ) {
 		return 1;
 	}
-	if ( b.expiry == null ) {
+	if ( b == null ) {
 		return -1;
 	}
 
 	const factor = direction === 'asc' ? 1 : -1;
-	return a.expiry.localeCompare( b.expiry ) * factor;
+	return a.localeCompare( b ) * factor;
 }
