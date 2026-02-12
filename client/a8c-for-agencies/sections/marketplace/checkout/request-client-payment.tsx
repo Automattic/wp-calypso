@@ -244,12 +244,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	return (
 		<>
 			<div className="checkout__client-referral-form">
-				<ReferralLogoPicker
-					onLogoChange={ onLogoChange }
-					selectedLogoUrl={ selectedLogoUrl }
-					selectedLogoFile={ selectedLogoFile }
-				/>
-
 				<FormFieldset>
 					<FormLabel htmlFor="email">{ translate( 'Client’s email address' ) }</FormLabel>
 					<FormTextInput
@@ -283,6 +277,12 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						}
 					/>
 				</FormFieldset>
+
+				<ReferralLogoPicker
+					onLogoChange={ onLogoChange }
+					selectedLogoUrl={ selectedLogoUrl }
+					selectedLogoFile={ selectedLogoFile }
+				/>
 			</div>
 
 			<div className="checkout__client-referral-preview">
