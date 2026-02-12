@@ -61,8 +61,13 @@ function getIndividualConfig( options = {} ) {
 				requestToExternal( request ) {
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
-					// shortcuts the logic such that react-i18n will be bundled.
+					// shortcuts the logic such that the package will be bundled.
 					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+					// Bundle @wordpress/abilities into image-studio so it works on
+					// self-hosted sites where the package isn't registered as a script.
+					if ( name === 'image-studio' && request === '@wordpress/abilities' ) {
 						return null;
 					}
 				},
