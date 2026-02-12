@@ -4,8 +4,9 @@ import { Icon, search, globe } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
+import { getCurrentDashboard } from '../../app/routing';
 import EmptyState from '../../components/empty-state';
-import { getCurrentDashboard, wpcomLink } from '../../utils/link';
+import { wpcomLink } from '../../utils/link';
 
 function SearchDomainsActionItem( { url }: { url: string } ) {
 	const { recordTracksEvent } = useAnalytics();

@@ -1,4 +1,6 @@
+import { ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -9,6 +11,8 @@ import { getBlueprintID } from '../../lib/blueprint';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import type { PlaygroundClient } from '../../lib/types';
+
+import './style.scss';
 
 export function PlaygroundIframe( {
 	className,
@@ -24,6 +28,7 @@ export function PlaygroundIframe( {
 	const recommendedPHPVersion = getPHPVersions( siteId ).recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< string | null >( null );
+	const [ isLoading, setIsLoading ] = useState( true );
 	const { setBlueprint } = useDispatch( ONBOARD_STORE );
 	const [ query ] = useSearchParams();
 
@@ -43,7 +48,11 @@ export function PlaygroundIframe( {
 			return;
 		}
 
-		initializeWordPressPlayground( iframeRef.current, recommendedPHPVersion, setSearchParams )
+		setIsLoading( true );
+
+		initializeWordPressPlayground( iframeRef.current, recommendedPHPVersion, setSearchParams, () =>
+			setIsLoading( false )
+		)
 			.then( ( result ) => {
 				setPlaygroundClient( result.client );
 
@@ -55,6 +64,7 @@ export function PlaygroundIframe( {
 				}
 			} )
 			.catch( ( error ) => {
+				setIsLoading( false );
 				if ( error.message === 'WordPress installation has failed.' ) {
 					setPlaygroundError( 'PLAYGROUND_NOT_FOUND' );
 				} else {
@@ -69,6 +79,13 @@ export function PlaygroundIframe( {
 	}
 
 	return (
-		<iframe ref={ iframeRef } id="wp" title="WordPress Playground" className={ className }></iframe>
+		<div className={ clsx( 'playground-iframe', className ) }>
+			{ isLoading && (
+				<div className="playground-iframe__loading">
+					<ProgressBar className="playground-iframe__progress-bar" />
+				</div>
+			) }
+			<iframe ref={ iframeRef } id="wp" title="WordPress Playground" />
+		</div>
 	);
 }

@@ -20,7 +20,7 @@ export const DiscoverDocumentHead = () => {
 			rel: 'alternate',
 			type: 'application/rss+xml',
 			title: translate( 'Discover RSS Feed' ),
-			href: 'https://public-api.wordpress.com/rest/v1.2/freshly-pressed/?format=rss',
+			href: 'https://public-api.wordpress.com/rest/v1.2/freshly-pressed/feed',
 		},
 	];
 

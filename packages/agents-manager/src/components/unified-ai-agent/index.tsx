@@ -6,7 +6,6 @@ import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAgentConfig } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
-import '../../types'; // Import for Window type augmentation
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getSessionId, clearSessionId } from '../../utils/agent-session';
@@ -106,15 +105,6 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 
 		initializeAgent();
 	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
-
-	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
-	useEffect( () => {
-		if ( agentConfig ) {
-			window.__agentManager = getAgentManager();
-			// eslint-disable-next-line no-console
-			console.log( '[UnifiedAIAgent] Exposed agentManager on window' );
-		}
-	}, [ agentConfig ] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

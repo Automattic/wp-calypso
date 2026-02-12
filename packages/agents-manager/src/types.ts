@@ -1,4 +1,4 @@
-import { ServerConversationListItem } from '@automattic/agenttic-client';
+import type { ServerConversationListItem } from '@automattic/agenttic-client';
 import type Smooch from 'smooch';
 
 /**

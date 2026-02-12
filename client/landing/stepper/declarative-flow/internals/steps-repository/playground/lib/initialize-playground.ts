@@ -9,7 +9,8 @@ const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
-	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void
+	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void,
+	onPlaygroundClientLoaded?: () => void
 ): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;
 
@@ -45,6 +46,7 @@ export async function initializeWordPressPlayground(
 		const { startPlaygroundWeb } = await import(
 			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
 		);
+		onPlaygroundClientLoaded?.();
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: PLAYGROUND_HOST + '/remote.html',

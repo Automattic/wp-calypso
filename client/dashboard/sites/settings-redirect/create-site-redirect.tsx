@@ -6,9 +6,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
 import { Notice } from '../../components/notice';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
 
 export default function CreateSiteRedirect( {

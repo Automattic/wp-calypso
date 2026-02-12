@@ -5,14 +5,13 @@ import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
-import { MobileHeader } from 'calypso/reader/components/mobile-header';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { getLastPath, isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -167,7 +166,11 @@ export function feedLookup( context ) {
 }
 
 export const setBeforePrimary = ( context, next ) => {
-	context.beforePrimary = createElement( MobileHeader );
+	const state = context.store.getState();
+	const isMSDEnabledForReader = isReaderMSDEnabled( state );
+	context.beforePrimary = isMSDEnabledForReader ? (
+		<AsyncLoad require="calypso/reader/components/mobile-header" />
+	) : null;
 	next();
 };
 

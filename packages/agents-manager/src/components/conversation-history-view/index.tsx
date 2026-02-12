@@ -62,7 +62,7 @@ export default function ConversationHistoryView( {
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
-								key={ conversation.session_id }
+								key={ conversation.session_id ?? conversation.conversation_id }
 								conversation={ conversation }
 								onClick={ ( conversation ) => onSelectConversationRef.current( conversation ) }
 							/>
