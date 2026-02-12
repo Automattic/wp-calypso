@@ -169,6 +169,12 @@ body.is-reader-full-post {
 						font-weight: 700;
 						font-size: rem( 13px );
 						@extend %text-shared;
+
+						&.is-untitled {
+							font-weight: 400;
+							font-style: italic;
+							color: var( --studio-gray-50 );
+						}
 					}
 
 					&__site-name {
