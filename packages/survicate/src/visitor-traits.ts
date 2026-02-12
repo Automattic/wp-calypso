@@ -13,7 +13,6 @@ declare global {
 /**
  * Sets Survicate visitor traits (e.g. email) on the global `_sva` object.
  * Waits for the `SurvicateReady` window event before setting traits.
- *
  * @returns A cleanup function that removes the event listener.
  */
 export function setSurvicateVisitorTraits( traits: { email: string } ): () => void {
@@ -28,21 +27,4 @@ export function setSurvicateVisitorTraits( traits: { email: string } ): () => vo
 	return () => {
 		window.removeEventListener( 'SurvicateReady', handler );
 	};
-}
-
-/**
- * Adds a listener for the survey_closed event and destroys the visitor if the survey is closed.
- */
-export function addSurvicateSurveyClosedListener(): void {
-	window.addEventListener(
-		'SurvicateReady',
-		function () {
-			if ( typeof window._sva !== 'undefined' && window._sva?.addEventListener ) {
-				window._sva?.addEventListener( 'survey_closed', function () {
-					window._sva?.destroyVisitor?.();
-				} );
-			}
-		},
-		{ once: true }
-	);
 }
