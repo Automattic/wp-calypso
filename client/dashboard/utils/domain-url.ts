@@ -1,7 +1,8 @@
 import { addQueryArgs } from '@wordpress/url';
 import { domainConnectionSetupRoute } from '../app/router/domains';
+import { getCurrentDashboard } from '../app/routing';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { dashboardLink, getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
 
 export function getDomainConnectionSetupTemplateUrl() {
 	const domainConnectionSetupTemplateUrl = domainConnectionSetupRoute.fullPath.replace(

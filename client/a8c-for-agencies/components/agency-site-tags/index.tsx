@@ -2,7 +2,9 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { KeyboardEvent, useState } from 'react';
 import AgencySiteTag from 'calypso/a8c-for-agencies/components/agency-site-tag';
+import useCanTagSitesForCommission from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-can-tag-sites-for-commission';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+
 import './style.scss';
 
 interface Props {
@@ -30,6 +32,12 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 	};
 
 	const isTagsSubmitDisabled = tagsInput === '' || ! tagsInput;
+
+	const { migrationTags } = useCanTagSitesForCommission();
+
+	const isTagRemovable = ( tag: string ) => {
+		return ! migrationTags.includes( tag );
+	};
 
 	return (
 		<div className="agency-site-tags">
@@ -68,7 +76,7 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 								key={ tag }
 								tag={ tag }
 								onRemoveTag={ onRemoveTag }
-								isRemovable={ tag !== 'a4a_self_migrated_site' }
+								isRemovable={ isTagRemovable( tag ) }
 							/>
 						</li>
 					) ) }

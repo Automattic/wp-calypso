@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { getDashboardFromString } from 'calypso/dashboard/utils/link';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -14,7 +14,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
@@ -166,9 +165,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 			productsList: getProductsList( state ),
-			dashboard:
-				getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
-				undefined,
+			dashboard: getDashboardFromQuery(),
 			selectedSite,
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};

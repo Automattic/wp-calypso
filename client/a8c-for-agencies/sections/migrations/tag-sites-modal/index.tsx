@@ -1,4 +1,9 @@
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	SelectControl,
+	TextControl,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -7,8 +12,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useUpdateTagsForSitesMutation from '../../../hooks/use-update-tags-for-sites';
-import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
+import useTagSitesForCommissionMutation from '../../../hooks/use-tag-sites-for-commission';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { TaggedSite } from '../types';
@@ -19,23 +23,48 @@ export default function MigrationsTagSitesModal( {
 	onClose,
 	taggedSites,
 	fetchMigratedSites,
+	migrationTags,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
 	fetchMigratedSites: () => void;
+	migrationTags: string[];
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { mutate: tagSitesForMigration, isPending } = useUpdateTagsForSitesMutation();
+	const { mutate: tagSitesForMigration, isPending } = useTagSitesForCommissionMutation();
 
 	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
+	const [ migrationSourceHost, setMigrationSourceHost ] = useState( '' );
+	const [ otherHostingProvider, setOtherHostingProvider ] = useState( '' );
+
+	const OTHER_OPTION_VALUE = 'other';
+
+	const migrationSourceOptions = [
+		{ label: translate( 'Select a host' ), value: '' },
+		{ label: translate( 'WP Engine' ), value: 'wpengine' },
+		{ label: translate( 'Kinsta' ), value: 'kinsta' },
+		{ label: translate( 'Pantheon' ), value: 'pantheon' },
+		{ label: translate( 'Cloudways' ), value: 'cloudways' },
+		{ label: translate( 'SiteGround' ), value: 'siteground' },
+		{ label: translate( 'Bluehost' ), value: 'bluehost' },
+		{ label: translate( 'Liquid Web' ), value: 'liquidweb' },
+		{ label: translate( 'Other' ), value: OTHER_OPTION_VALUE },
+	];
+
+	const isOtherSelected = migrationSourceHost === OTHER_OPTION_VALUE;
+	const finalMigrationSourceHost = isOtherSelected ? otherHostingProvider : migrationSourceHost;
+	const isValidHostingProvider = isOtherSelected
+		? otherHostingProvider.trim().length > 0
+		: migrationSourceHost.length > 0;
 
 	const handleAddSites = () => {
 		tagSitesForMigration(
 			{
 				siteIds: selectedSites.map( ( site ) => site.id ),
-				tags: [ A4A_MIGRATED_SITE_TAG ],
+				tags: migrationTags,
+				migrationSourceHost: finalMigrationSourceHost,
 			},
 			{
 				onSuccess: () => {
@@ -44,6 +73,7 @@ export default function MigrationsTagSitesModal( {
 					dispatch(
 						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
 							count: selectedSites.length,
+							migration_source_host: finalMigrationSourceHost,
 						} )
 					);
 					const hasSingleSite = selectedSites.length === 1;
@@ -76,6 +106,7 @@ export default function MigrationsTagSitesModal( {
 		dispatch(
 			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
 				count: selectedSites.length,
+				migration_source_host: finalMigrationSourceHost,
 			} )
 		);
 	};
@@ -85,6 +116,18 @@ export default function MigrationsTagSitesModal( {
 		dispatch( recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' ) );
 	};
 
+	const handleMigrationSourceHostChange = ( value: string ) => {
+		setMigrationSourceHost( value );
+		if ( value !== OTHER_OPTION_VALUE ) {
+			setOtherHostingProvider( '' );
+		}
+	};
+
+	const selectedMigrationSourceHost = isOtherSelected
+		? otherHostingProvider
+		: migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
+		  '';
+
 	return (
 		<A4AModal
 			onClose={ handleOnClose }
@@ -92,7 +135,7 @@ export default function MigrationsTagSitesModal( {
 				<Button
 					variant="primary"
 					onClick={ handleAddSites }
-					disabled={ isPending }
+					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
 					isBusy={ isPending }
 				>
 					{ selectedSites.length > 0
@@ -119,11 +162,32 @@ export default function MigrationsTagSitesModal( {
 					)
 				) }
 			</div>
-			<MigrationsAddSitesTable
-				taggedSites={ taggedSites }
-				selectedSites={ selectedSites }
-				setSelectedSites={ setSelectedSites }
+			<Spacer marginBottom={ 4 } />
+			<SelectControl
+				label={ translate( 'Hosting provider' ) }
+				value={ migrationSourceHost }
+				options={ migrationSourceOptions }
+				onChange={ handleMigrationSourceHostChange }
 			/>
+			{ isOtherSelected && (
+				<>
+					<Spacer marginBottom={ 4 } />
+					<TextControl
+						label={ translate( 'Other hosting provider' ) }
+						value={ otherHostingProvider }
+						onChange={ setOtherHostingProvider }
+						placeholder={ translate( 'Enter hosting provider name' ) }
+					/>
+				</>
+			) }
+			{ isValidHostingProvider && (
+				<MigrationsAddSitesTable
+					taggedSites={ taggedSites }
+					selectedSites={ selectedSites }
+					setSelectedSites={ setSelectedSites }
+					migrationSourceHost={ selectedMigrationSourceHost }
+				/>
+			) }
 		</A4AModal>
 	);
 }

@@ -10,9 +10,10 @@ import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { getCurrentDashboard } from '../../../app/routing';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
-import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
 	isIncludedWithPlan,
