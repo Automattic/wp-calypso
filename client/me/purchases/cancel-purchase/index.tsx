@@ -939,10 +939,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// When a plan has an included domain that can be cancelled together,
 		// show the higher (full) refund amount in the notice since the user
 		// can get this amount by choosing to cancel both.
+		const includedDomainHasRadioButtons =
+			this.props.includedDomainPurchase &&
+			willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, purchase );
 		const refundAmountString = this.renderRefundAmountString(
 			purchase,
-			willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, purchase ) ||
-				this.state.cancelBundledDomain,
+			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
 		const shouldShowRefundEligibilityNotice =
