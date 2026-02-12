@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
-import { upload, Icon } from '@wordpress/icons';
+import { Button, FormFileUpload } from '@wordpress/components';
+import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
-import FormFileUpload from 'calypso/components/forms/form-file-upload';
+import { useCallback, useRef, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -22,6 +21,7 @@ function ReferralLogoPicker( {
 }: ReferralLogoPickerProps ) {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
+	const fileInputRef = useRef< HTMLInputElement >( null );
 
 	const profileLogoUrl = agency?.profile?.company_details?.logo_url || '';
 	const [ validationError, setValidationError ] = useState< string | null >( null );
@@ -66,6 +66,9 @@ function ReferralLogoPicker( {
 
 			// Notify parent component
 			onLogoChange( objectUrl, file );
+
+			// Clear input so same file can be selected again
+			event.target.value = '';
 		},
 		[ validateFile, onLogoChange ]
 	);
@@ -76,63 +79,67 @@ function ReferralLogoPicker( {
 		onLogoChange( profileLogoUrl || null, null );
 	}, [ onLogoChange, profileLogoUrl ] );
 
+	const handlePlaceholderClick = useCallback( () => {
+		fileInputRef.current?.click();
+	}, [] );
+
 	return (
-		<FormFileUpload
-			accept={ ALLOWED_FILE_TYPES.join( ',' ) }
-			onChange={ handleFileSelect }
-			render={ ( { openFileDialog } ) => (
-				<div className="logo-upload-section">
-					<h3>{ translate( 'Your logo' ) }</h3>
-					<p className="logo-upload-description">
-						{ translate( 'Builds trust and shows this referral comes from you.' ) }
+		<div className="logo-upload-section">
+			<h3>{ translate( 'Your logo' ) }</h3>
+			<p className="logo-upload-description">
+				{ translate( 'Builds trust and shows this referral comes from you.' ) }
+			</p>
+
+			<div className="logo-upload-row">
+				<button
+					type="button"
+					className="logo-placeholder"
+					onClick={ handlePlaceholderClick }
+					aria-label={ translate( 'Upload logo' ) }
+				>
+					{ displayUrl ? (
+						<img src={ displayUrl } alt={ translate( 'Logo preview' ) } />
+					) : (
+						<Icon icon={ upload } />
+					) }
+				</button>
+
+				<div className="logo-upload-details">
+					<FormFileUpload
+						accept={ ALLOWED_FILE_TYPES.join( ',' ) }
+						onChange={ handleFileSelect }
+						ref={ fileInputRef }
+					>
+						<Button variant="secondary">
+							{ displayUrl ? translate( 'Replace file' ) : translate( 'Select file' ) }
+						</Button>
+					</FormFileUpload>
+
+					<p className="help-text">
+						{ translate( 'Upload your logo. PNG or SVG. Max 5 MB.' ) }
+						<br />
+						{ translate( 'Transparent background works best.' ) }
 					</p>
 
-					<div className="logo-upload-row">
-						<button
-							type="button"
-							className="logo-placeholder"
-							onClick={ openFileDialog }
-							aria-label={ translate( 'Upload logo' ) }
-						>
-							{ displayUrl ? (
-								<img src={ displayUrl } alt={ translate( 'Logo preview' ) } />
-							) : (
-								<Icon icon={ upload } />
-							) }
-						</button>
-
-						<div className="logo-upload-details">
-							<Button variant="secondary" onClick={ openFileDialog }>
-								{ displayUrl ? translate( 'Replace file' ) : translate( 'Select file' ) }
-							</Button>
-
+					{ hasCustomLogo && (
+						<>
 							<p className="help-text">
-								{ translate( 'Upload your logo. PNG or SVG. Max 5 MB.' ) }
-								<br />
-								{ translate( 'Transparent background works best.' ) }
+								{ translate( 'Replacing the logo only affects this referral.' ) }
 							</p>
+							<Button variant="link" onClick={ handleRevert }>
+								{ translate( 'Revert to profile logo' ) }
+							</Button>
+						</>
+					) }
 
-							{ hasCustomLogo && (
-								<>
-									<p className="help-text">
-										{ translate( 'Replacing the logo only affects this referral.' ) }
-									</p>
-									<Button variant="link" onClick={ handleRevert }>
-										{ translate( 'Revert to profile logo' ) }
-									</Button>
-								</>
-							) }
-
-							{ validationError && (
-								<div className="logo-upload-error" role="alert">
-									{ validationError }
-								</div>
-							) }
+					{ validationError && (
+						<div className="logo-upload-error" role="alert">
+							{ validationError }
 						</div>
-					</div>
+					) }
 				</div>
-			) }
-		/>
+			</div>
+		</div>
 	);
 }
 
