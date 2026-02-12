@@ -45,7 +45,8 @@ export function useSurvicate() {
 					return;
 				}
 
-				setSurvicateVisitorTraits( { email: user.email } );
+				const cleanupTraits = setSurvicateVisitorTraits( { email: user.email } );
+				controller.signal.addEventListener( 'abort', cleanupTraits );
 			} )
 			.catch( () => {
 				// Script failed to load — nothing to do.

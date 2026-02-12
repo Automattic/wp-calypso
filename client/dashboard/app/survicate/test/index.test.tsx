@@ -80,6 +80,7 @@ describe( 'useSurvicate', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockedLoadScript.mockResolvedValue( undefined );
+		mockedSetTraits.mockReturnValue( jest.fn() );
 	} );
 
 	test( 'loads script when all conditions are met', async () => {
