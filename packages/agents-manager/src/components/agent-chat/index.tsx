@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../utils/load-external-providers';
@@ -65,6 +66,14 @@ interface AgentChatProps {
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
 	imageUpload?: UseImageUploadResult;
+	/** Whether to show the feedback text input (after thumbs down). */
+	showFeedbackInput?: boolean;
+	/** The message ID the feedback is for. */
+	feedbackMessageId?: string | null;
+	/** Called when the user submits feedback text. */
+	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
+	/** Called when the user cancels the feedback input. */
+	onCancelFeedback?: () => void;
 }
 
 export default function AgentChat( {
@@ -90,6 +99,10 @@ export default function AgentChat( {
 	onInputChange,
 	isCompactMode = false,
 	imageUpload,
+	showFeedbackInput = false,
+	feedbackMessageId,
+	onSubmitFeedbackText,
+	onCancelFeedback,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -152,6 +165,9 @@ export default function AgentChat( {
 			<AgentUI.ConversationView>
 				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ showFeedbackInput && feedbackMessageId && onSubmitFeedbackText && onCancelFeedback && (
+					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
+				) }
 				<AgentUI.Footer>
 					<AgentUI.Suggestions />
 					<AgentUI.Notice />

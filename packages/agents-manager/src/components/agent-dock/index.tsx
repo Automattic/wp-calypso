@@ -18,6 +18,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import useFeedback from '../../hooks/use-feedback';
 import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -124,6 +125,7 @@ export default function AgentDock( {
 		abortCurrentRequest,
 		clearSuggestions,
 		registerSuggestions,
+		registerMessageActions,
 	} = useAgentChat( agentConfig );
 
 	const imageUpload = useImageUpload?.();
@@ -167,6 +169,16 @@ export default function AgentDock( {
 			}
 		},
 		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
+	);
+
+	const { showFeedbackInput, feedbackMessageId, submitFeedbackText, cancelFeedback } = useFeedback(
+		{
+			registerMessageActions,
+			messages,
+			agentId,
+			siteId: site?.ID,
+			sessionId,
+		}
 	);
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
@@ -399,6 +411,10 @@ export default function AgentDock( {
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
 			imageUpload={ imageUpload }
+			showFeedbackInput={ showFeedbackInput }
+			feedbackMessageId={ feedbackMessageId }
+			onSubmitFeedbackText={ submitFeedbackText }
+			onCancelFeedback={ cancelFeedback }
 		/>
 	);
 

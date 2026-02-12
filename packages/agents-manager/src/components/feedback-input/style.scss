@@ -1,0 +1,116 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+.agents-manager-feedback-input {
+	padding: 8px 16px 12px;
+	border-top: 1px solid rgba($black, 0.08);
+
+	.dark & {
+		border-top-color: rgba($white, 0.12);
+	}
+
+	&__label {
+		display: block;
+		font-size: 12px;
+		font-weight: 500;
+		margin-bottom: 6px;
+		color: $gray-700;
+
+		.dark & {
+			color: rgba($white, 0.7);
+		}
+	}
+
+	&__textarea {
+		display: block;
+		width: 100%;
+		padding: 8px;
+		border: 1px solid rgba($black, 0.15);
+		border-radius: 4px;
+		font-size: 13px;
+		font-family: inherit;
+		line-height: 1.4;
+		resize: vertical;
+		background: $white;
+		color: $gray-900;
+
+		&::placeholder {
+			color: $gray-600;
+		}
+
+		&:focus {
+			border-color: var(--wp-components-color-accent, #3858e9);
+			box-shadow: 0 0 0 1px var(--wp-components-color-accent, #3858e9);
+			outline: none;
+		}
+
+		&:disabled {
+			opacity: 0.6;
+		}
+
+		.dark & {
+			background: rgba($white, 0.08);
+			border-color: rgba($white, 0.2);
+			color: $white;
+
+			&::placeholder {
+				color: rgba($white, 0.4);
+			}
+
+			&:focus {
+				border-color: #6b8aff;
+				box-shadow: 0 0 0 1px #6b8aff;
+			}
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-top: 8px;
+
+		.components-button {
+			font-size: 13px;
+
+			&.is-tertiary {
+				color: $gray-700;
+
+				.dark & {
+					color: rgba($white, 0.7);
+
+					&:hover {
+						color: $white;
+					}
+				}
+			}
+
+			&.is-primary {
+				font-size: 13px;
+				padding: 4px 12px;
+			}
+		}
+	}
+
+	&__status {
+		padding: 8px 0;
+		font-size: 13px;
+		text-align: center;
+
+		&--success {
+			color: #00a32a;
+
+			.dark & {
+				color: #68de7c;
+			}
+		}
+
+		&--error {
+			color: #cc1818;
+
+			.dark & {
+				color: #f86368;
+			}
+		}
+	}
+}
