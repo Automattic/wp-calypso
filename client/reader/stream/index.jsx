@@ -188,7 +188,7 @@ class ReaderStream extends Component {
 	};
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
+		if ( this.props.selectedPostKey ) {
 			this.scrollToSelectedPost( false );
 		}
 	};

@@ -465,8 +465,7 @@ export default class InfiniteList extends Component {
 	 * HTML5 history.
 	 */
 	_overrideHistoryScroll() {
-		// If we have a selected item, assume scroll is handled elsewhere.
-		if ( ! this._contextLoaded() || this.props.selectedItem ) {
+		if ( ! this._contextLoaded() ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
