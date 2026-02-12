@@ -437,7 +437,7 @@ export default function AgentDock( {
 				<Route path="/history" element={ History } />
 				<Route
 					path="*"
-					// The `shouldInitNewChat` flag is used to trigger new chat initialization logic in the `AgentSetup` component of `UnifiedAIAgent`
+					// The `shouldInitNewChat` flag is used to trigger new chat initialization logic in `UnifiedAIAgent`
 					element={ <Navigate to="/chat" state={ { shouldInitNewChat: true } } replace /> }
 				/>
 			</Routes>
