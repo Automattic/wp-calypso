@@ -193,6 +193,7 @@ export default function QuickPost(): JSX.Element | null {
 			<div className="verbum-editor-wrapper">
 				<Editor
 					key={ editorKey }
+					focusOnMount={ false }
 					initialContent={ postContent }
 					onChange={ setPostContent }
 					isRTL={ isLocaleRtl( locale ) ?? false }

@@ -4,15 +4,17 @@ import {
 	BlockTools,
 	BlockList,
 	BlockCanvas,
+	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import React, { useState, useCallback } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
@@ -21,6 +23,7 @@ import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mod
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
+const EDITOR_MAIN_CLASS: string = 'editor__main';
 const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
 	return css + '\n' + item;
 }, '' );
@@ -30,6 +33,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
  */
 export const Editor: FC< EditorProps > = ( {
 	initialContent = '',
+	focusOnMount = true,
 	onChange,
 	isRTL,
 	isDarkMode,
@@ -105,6 +109,10 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
+					<InitialBlockSelector
+						focusOnMount={ focusOnMount }
+						onBlockSelect={ () => setIsEditing( true ) }
+					/>
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
@@ -113,7 +121,7 @@ export const Editor: FC< EditorProps > = ( {
 							<Popover.Slot />
 						</div>
 					</div>
-					<div className="editor__main">
+					<div className={ EDITOR_MAIN_CLASS }>
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas
@@ -145,3 +153,95 @@ export const Editor: FC< EditorProps > = ( {
 		</SlotFillProvider>
 	);
 };
+
+/**
+ * Component to select the last block on initial load.
+ *
+ * NOTE: Must be rendered inside BlockEditorProvider to access the correct store context.
+ */
+function InitialBlockSelector( {
+	focusOnMount,
+	onBlockSelect,
+}: {
+	focusOnMount: boolean;
+	onBlockSelect: () => void;
+} ): null {
+	const { selectBlock } = useDispatch( blockEditorStore );
+	const storeBlocks = useSelect( ( select ) => select( blockEditorStore ).getBlocks(), [] );
+	const hasInitialized = useRef( false );
+
+	/**
+	 * Waits for the selected block to be available in the DOM and then overrides the "scrollIntoView" function to prevent scrolling on initial load.
+	 *
+	 * As of v15.12 Gutenberg is using "useScrollIntoView" hook to scroll the selected block into view even when `initialPosition` of the block is set to "null" (no focus).
+	 * This is bringing the block into the view when the user doesn't want it.
+	 */
+	const waitForSelectedElementAndOverrideScroll = useCallback( () => {
+		// If we are focusing on mount then keep the default behavior of scrolling.
+		if ( focusOnMount ) {
+			return;
+		}
+
+		const blockSelector = '.wp-block.is-selected';
+		const editorIframe = document.querySelector(
+			`.${ EDITOR_MAIN_CLASS } iframe`
+		) as HTMLIFrameElement | null;
+
+		if ( ! editorIframe?.contentDocument ) {
+			return;
+		}
+
+		let selectedElement: HTMLElement | null | undefined;
+		let originalScrollIntoView: ( arg?: boolean | ScrollIntoViewOptions ) => void;
+
+		const interval = setInterval( () => {
+			selectedElement = editorIframe?.contentDocument?.querySelector( blockSelector );
+
+			if ( ! selectedElement ) {
+				return;
+			}
+
+			// Store original and replace with empty function.
+			originalScrollIntoView = selectedElement.scrollIntoView;
+			selectedElement.scrollIntoView = () => {};
+			clearInterval( interval );
+		}, 50 );
+
+		// Clear interval and restore the original scrollIntoView to prevent breaking any future calls.
+		setTimeout( () => {
+			clearInterval( interval );
+
+			// Restore original scrollIntoView if it was replaced
+			if ( selectedElement && originalScrollIntoView ) {
+				selectedElement.scrollIntoView = originalScrollIntoView;
+			}
+		}, 5000 );
+	}, [ focusOnMount ] );
+
+	useEffect( () => {
+		// To ensure we only run this useEffect once.
+		if ( hasInitialized.current ) {
+			return;
+		}
+
+		const lastBlock = storeBlocks[ storeBlocks.length - 1 ];
+		if ( ! lastBlock ) {
+			return;
+		}
+
+		hasInitialized.current = true;
+
+		selectBlock( lastBlock.clientId, focusOnMount ? 0 : null ).then( () => {
+			waitForSelectedElementAndOverrideScroll();
+			onBlockSelect();
+		} );
+	}, [
+		selectBlock,
+		storeBlocks,
+		onBlockSelect,
+		focusOnMount,
+		waitForSelectedElementAndOverrideScroll,
+	] );
+
+	return null;
+}
