@@ -67,7 +67,7 @@ export const useUpcomingEvents = () => {
 								from: moment( '2026-02-12' ),
 								to: moment( '2026-04-30' ),
 							},
-							displayDate: '',
+							displayDate: ' ', // Empty string to hide the date
 							title: translate(
 								'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer Just Got Better 🎉'
 							),
