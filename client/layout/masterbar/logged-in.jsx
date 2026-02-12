@@ -60,6 +60,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
+import EmptyMasterbar from './empty';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './masterbar-notifications/notifications-button';
@@ -814,8 +815,13 @@ class MasterbarLoggedIn extends Component {
 	render() {
 		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
 
+		// Hide the masterbar entirely during the checkout pending state
+		if ( isCheckoutPending ) {
+			return <EmptyMasterbar />;
+		}
+
 		// Checkout flow uses it's own version of the masterbar
-		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
+		if ( isCheckout || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 

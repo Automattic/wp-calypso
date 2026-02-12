@@ -13,6 +13,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import EmptyMasterbar from './empty';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -234,7 +235,12 @@ class MasterbarLoggedOut extends Component {
 	render() {
 		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
 
-		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
+		// Hide the masterbar entirely during the checkout pending state
+		if ( isCheckoutPending ) {
+			return <EmptyMasterbar />;
+		}
+
+		if ( isCheckout || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
