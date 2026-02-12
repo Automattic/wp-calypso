@@ -3,6 +3,7 @@
  *
  * Provides context about the current Image Studio state to the AI agent.
  */
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
 
@@ -74,23 +75,19 @@ function processTemplatePartBlocks(
  */
 function getCurrentPageContent(): PageContentBlock[] | null {
 	try {
-		const blockEditorSelect = select( 'core/block-editor' ) as any;
+		const blockEditorSelect = select( blockEditorStore ) as any;
 		if ( ! blockEditorSelect ) {
 			return null;
 		}
 
 		const { getBlocks, getBlocksByName, getBlock } = blockEditorSelect;
 
-		// Try to get section root client ID (may not be available via public API)
-		let sectionRootClientId: string | null = null;
-		try {
-			sectionRootClientId = blockEditorSelect.getSectionRootClientId?.() ?? null;
-		} catch {
-			sectionRootClientId = null;
+		// Bail early if not in a block editor context (e.g. uploads.php).
+		// The store is registered globally but has no blocks outside the editor.
+		const rootBlocks = getBlocks();
+		if ( ! rootBlocks?.length ) {
+			return null;
 		}
-
-		// Get blocks from section root or all root-level blocks
-		const sectionRootBlocks = sectionRootClientId ? getBlocks( sectionRootClientId ) : getBlocks();
 
 		// Find header and footer template parts
 		const templatePartBlockIds: string[] = getBlocksByName?.( 'core/template-part' ) || [];
@@ -108,7 +105,7 @@ function getCurrentPageContent(): PageContentBlock[] | null {
 		);
 
 		// Filter content blocks (exclude known template parts)
-		const contentBlocks = sectionRootBlocks.filter(
+		const contentBlocks = rootBlocks.filter(
 			( b: any ) =>
 				b.name !== 'core/template-part' || ! TEMPLATE_PART_SLUGS.includes( b.attributes?.slug )
 		);
@@ -136,14 +133,7 @@ function getCurrentPageContent(): PageContentBlock[] | null {
 		}
 
 		// Add content
-		if ( sectionRootClientId ) {
-			allBlocks.push( {
-				name: getBlock( sectionRootClientId )?.name,
-				type: 'content',
-				clientId: sectionRootClientId,
-				innerBlocks: processedContentBlocks,
-			} );
-		} else if ( processedContentBlocks.length ) {
+		if ( processedContentBlocks.length ) {
 			allBlocks.push( ...processedContentBlocks );
 		}
 
