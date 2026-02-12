@@ -122,9 +122,17 @@ function getMessageText( message: Message ): string | null {
 	if ( ! text ) {
 		return null;
 	}
-	// Replace raw placeholder with a human-readable description
+	// Replace tool placeholders/JSON with a human-readable description
 	if ( text === LOCAL_TOOL_RUNNING_MESSAGE ) {
 		return '[Displayed an interactive tool in the chat]';
+	}
+	try {
+		const parsed = JSON.parse( text );
+		if ( parsed?.tool_id === 'big_sky__show_component' ) {
+			return '[Displayed an interactive tool in the chat]';
+		}
+	} catch {
+		// Not JSON, continue with normal text handling
 	}
 	if ( text.length > MAX_MESSAGE_TEXT_LENGTH ) {
 		return text.substring( 0, MAX_MESSAGE_TEXT_LENGTH ) + '...';
