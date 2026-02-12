@@ -31,6 +31,13 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url ) => url,
 } ) );
 
+jest.mock( '@automattic/survicate', () => ( {
+	shouldLoadSurvicate: jest.fn(),
+	loadSurvicateScript: jest.fn(),
+	isSurvicateScriptLoaded: jest.fn(),
+	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
+} ) );
+
 jest.mock( 'debug', () => () => jest.fn() );
 
 jest.mock( '@wordpress/react-i18n', () => ( {
@@ -45,6 +52,11 @@ jest.mock( 'react-router-dom', () => ( {
 
 import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import {
+	shouldLoadSurvicate,
+	loadSurvicateScript,
+	isSurvicateScriptLoaded,
+} from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,19 +68,9 @@ import { HelpCenterRequiredContextProvider } from '../../../../packages/help-cen
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 describe( 'survicate', () => {
-	let mockScript;
-	let mockScriptElement;
-	let originalCreateElement;
-	let originalGetElementsByTagName;
 	let mayWeLoadSurvicateScript;
 	let addSurvicate;
 	let isUserOnAnonymousPaths;
-
-	beforeAll( () => {
-		// Set up DOM mocks
-		originalCreateElement = document.createElement;
-		originalGetElementsByTagName = document.getElementsByTagName;
-	} );
 
 	beforeEach( () => {
 		// Reset all mocks
@@ -89,38 +91,10 @@ describe( 'survicate', () => {
 			writable: true,
 		} );
 
-		// Mock DOM methods
-		mockScript = {
-			src: '',
-			async: false,
-			onload: null,
-			onerror: null,
-		};
-
-		mockScriptElement = {
-			parentNode: {
-				insertBefore: jest.fn(),
-			},
-		};
-
-		document.createElement = jest.fn( ( tagName ) => {
-			if ( tagName === 'script' ) {
-				return mockScript;
-			}
-			return originalCreateElement.call( document, tagName );
-		} );
-
-		document.getElementsByTagName = jest.fn( ( tagName ) => {
-			if ( tagName === 'script' ) {
-				return [ mockScriptElement ];
-			}
-			return originalGetElementsByTagName.call( document, tagName );
-		} );
-
 		// Reset global survicate object
 		global._sva = undefined;
 
-		// Set up fresh module imports (after DOM mocks so the package picks them up)
+		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
@@ -138,10 +112,6 @@ describe( 'survicate', () => {
 	} );
 
 	afterAll( () => {
-		// Restore original DOM methods
-		document.createElement = originalCreateElement;
-		document.getElementsByTagName = originalGetElementsByTagName;
-
 		// Clean up document and window objects
 		document.body.innerHTML = '';
 		window.location = null;
@@ -191,22 +161,27 @@ describe( 'survicate', () => {
 			getLocaleSlug.mockReturnValue( 'en' );
 			isMobile.mockReturnValue( false );
 			config.mockReturnValue( true );
+			shouldLoadSurvicate.mockReturnValue( true );
+			isSurvicateScriptLoaded.mockReturnValue( false );
+			loadSurvicateScript.mockResolvedValue();
 		} );
 
 		test( 'should not load script for non-English languages', () => {
+			shouldLoadSurvicate.mockReturnValue( false );
 			getLocaleSlug.mockReturnValue( 'fr' );
 
 			addSurvicate();
 
-			expect( document.createElement ).not.toHaveBeenCalled();
+			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not load script for non-English languages starting with different prefix', () => {
+			shouldLoadSurvicate.mockReturnValue( false );
 			getLocaleSlug.mockReturnValue( 'es-ES' );
 
 			addSurvicate();
 
-			expect( document.createElement ).not.toHaveBeenCalled();
+			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should load script for English language variants', () => {
@@ -214,15 +189,16 @@ describe( 'survicate', () => {
 
 			addSurvicate();
 
-			expect( document.createElement ).toHaveBeenCalledWith( 'script' );
+			expect( loadSurvicateScript ).toHaveBeenCalledWith( 'test-workspace-id' );
 		} );
 
 		test( 'should not load script on mobile devices', () => {
+			shouldLoadSurvicate.mockReturnValue( false );
 			isMobile.mockReturnValue( true );
 
 			addSurvicate();
 
-			expect( document.createElement ).not.toHaveBeenCalled();
+			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not load script when survicate is disabled', () => {
@@ -230,21 +206,13 @@ describe( 'survicate', () => {
 
 			addSurvicate();
 
-			expect( document.createElement ).not.toHaveBeenCalled();
+			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should create script element with correct properties', () => {
+		test( 'should call loadSurvicateScript with workspace ID', () => {
 			addSurvicate();
 
-			expect( document.createElement ).toHaveBeenCalledWith( 'script' );
-			expect( mockScript.src ).toBe(
-				'https://survey.survicate.com/workspaces/e4794374cce15378101b63de24117572/web_surveys.js'
-			);
-			expect( mockScript.async ).toBe( true );
-			expect( mockScriptElement.parentNode.insertBefore ).toHaveBeenCalledWith(
-				mockScript,
-				mockScriptElement
-			);
+			expect( loadSurvicateScript ).toHaveBeenCalledWith( 'test-workspace-id' );
 		} );
 
 		test( 'should set visitor traits when script loads successfully with logged-in user', async () => {
@@ -258,9 +226,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
@@ -277,9 +242,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
@@ -293,9 +255,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -321,9 +280,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
@@ -340,9 +296,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -367,9 +320,6 @@ describe( 'survicate', () => {
 			global._sva = undefined;
 
 			addSurvicate();
-
-			// Simulate script load - should not throw error
-			mockScript.onload();
 			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
@@ -382,17 +332,13 @@ describe( 'survicate', () => {
 			global._sva = {}; // No setVisitorTraits method
 
 			addSurvicate();
-
-			// Simulate script load - should not throw error
-			mockScript.onload();
 			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
 		test( 'should handle script load error', async () => {
-			addSurvicate();
+			loadSurvicateScript.mockRejectedValue( new Error( 'load failed' ) );
 
-			// Simulate script error - should not throw
-			mockScript.onerror();
+			addSurvicate();
 			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
@@ -411,23 +357,22 @@ describe( 'survicate', () => {
 			jest.spyOn( global, 'setTimeout' );
 
 			addSurvicate();
-			mockScript.onload();
 			await flushPromises();
 
 			expect( setTimeout ).toHaveBeenCalledWith( expect.any( Function ), 1000 );
 		} );
 
 		test( 'should not load script twice when called multiple times', () => {
-			// First call should create script
+			// First call should load script
 			addSurvicate();
-			expect( document.createElement ).toHaveBeenCalledTimes( 1 );
+			expect( loadSurvicateScript ).toHaveBeenCalledTimes( 1 );
 
-			// Reset the mock to track subsequent calls
-			document.createElement.mockClear();
-
-			// Second call should not create another script
+			// Second call: script is now "loaded"
+			isSurvicateScriptLoaded.mockReturnValue( true );
 			addSurvicate();
-			expect( document.createElement ).not.toHaveBeenCalled();
+
+			// loadSurvicateScript should still have been called only once
+			expect( loadSurvicateScript ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should set visitor traits when user is not on anonymous paths', async () => {
@@ -447,9 +392,6 @@ describe( 'survicate', () => {
 			};
 
 			addSurvicate();
-
-			// Simulate script load
-			mockScript.onload();
 			await flushPromises();
 
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
@@ -472,18 +414,14 @@ describe( 'survicate', () => {
 				setVisitorTraits: jest.fn(),
 			};
 
-			// First call - loads script
+			// Script is already loaded
+			isSurvicateScriptLoaded.mockReturnValue( true );
+
 			addSurvicate();
-			mockScript.onload();
 			await flushPromises();
 
-			// Clear the mock to track subsequent calls
-			global._sva.setVisitorTraits.mockClear();
-
-			// Second call - should retry setting visitor traits without loading script again
-			addSurvicate();
-
-			// Should have called setVisitorTraits again via setTimeout
+			// Should have called setVisitorTraits via setTimeout without loading script again
+			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
