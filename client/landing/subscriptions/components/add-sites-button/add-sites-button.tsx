@@ -16,14 +16,14 @@ const AddSitesButton = () => {
 	const [ isAddSitesModalVisible, setIsAddSitesModalVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const isDashboardV3Enabled = isDiscoverV3Enabled();
 
 	const trackClick = () => {
 		recordTracksEvent( 'calypso_subscriptions_add_sites_button_click' );
 	};
-	const handleClick = () => {
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		trackClick();
 		if ( ! isEmailVerified ) {
+			event.preventDefault();
 			return dispatch(
 				errorNotice( translate( 'Please verify your email before subscribing.' ), {
 					id: 'resend-verification-email',
@@ -32,7 +32,10 @@ const AddSitesButton = () => {
 				} )
 			);
 		}
-		return setIsAddSitesModalVisible( true );
+		if ( ! isDiscoverV3Enabled() ) {
+			event.preventDefault();
+			return setIsAddSitesModalVisible( true );
+		}
 	};
 
 	return (
@@ -40,8 +43,8 @@ const AddSitesButton = () => {
 			<Button
 				variant="primary"
 				className="button subscriptions-add-sites__button"
-				onClick={ isDashboardV3Enabled ? trackClick : handleClick }
-				href={ isDashboardV3Enabled ? '/reader/new' : undefined }
+				onClick={ handleClick }
+				href={ isDiscoverV3Enabled() && isEmailVerified ? '/reader/new' : undefined }
 			>
 				<Gridicon className="subscriptions-add-sites__button-icon" icon="plus" size={ 24 } />
 				<span className="subscriptions-add-sites__button-text">
