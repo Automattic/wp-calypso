@@ -47,9 +47,7 @@ describe( '<SelectSite>', () => {
 		const user = userEvent.setup();
 		render( <SelectSite onSiteSelect={ jest.fn() } /> );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'My Blog' ) ).toBeVisible();
-		} );
+		await screen.findByText( 'My Blog' );
 
 		const searchInput = screen.getByRole( 'searchbox' );
 		await user.type( searchInput, 'Online Store' );
@@ -65,9 +63,7 @@ describe( '<SelectSite>', () => {
 		const user = userEvent.setup();
 		render( <SelectSite onSiteSelect={ jest.fn() } /> );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'My Blog' ) ).toBeVisible();
-		} );
+		await screen.findByText( 'My Blog' );
 
 		const searchInput = screen.getByRole( 'searchbox' );
 		await user.type( searchInput, 'casually-left-cherryblossom' );
