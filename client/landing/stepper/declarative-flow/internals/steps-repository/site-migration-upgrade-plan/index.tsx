@@ -9,6 +9,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { getIntervalType } from '../unified-plans/util';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -34,8 +35,9 @@ const SiteMigrationUpgradePlan: StepType< {
 
 	const [ intervalType, setIntervalType ] = useState< 'yearly' | '2yearly' >( 'yearly' );
 
-	const handlePlanIntervalUpdate = useCallback( ( newInterval: string ) => {
-		setIntervalType( newInterval as 'yearly' | '2yearly' );
+	const handlePlanIntervalUpdate = useCallback( ( path: string ) => {
+		const interval = getIntervalType( path );
+		setIntervalType( interval as 'yearly' | '2yearly' );
 	}, [] );
 
 	const handleUpgradeClick = useCallback(
