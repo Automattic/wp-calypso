@@ -718,6 +718,10 @@ export class EditorPage {
 	 * @param {string} param0.description SEO description.
 	 */
 	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
 		await this.editorSettingsSidebarComponent.expandSection( 'SEO' );
 		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
 		await this.editorSettingsSidebarComponent.enterText( description, {
