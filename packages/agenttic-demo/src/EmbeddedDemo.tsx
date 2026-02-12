@@ -24,6 +24,7 @@ import {
 
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import MessageTester from './MessageTester';
 
 const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
@@ -59,6 +60,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 		clearSuggestions,
 		registerMessageActions,
 		addMessage,
+		loadMessages,
 		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
@@ -109,7 +111,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					{ ...props }
 					style={ {
 						borderLeft: '4px solid #007cba',
-						backgroundColor: '#f0f8ff',
+						backgroundColor: currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
 						margin: '16px 0',
 						padding: '12px 16px',
 						fontStyle: 'italic',
@@ -120,7 +122,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 				</blockquote>
 			),
 		} ),
-		[]
+		[ currentTheme ],
 	);
 
 	// Create custom message renderer with markdown components and extensions
@@ -309,6 +311,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 						position: 'fixed',
 						top: '0',
 						right: '0',
+						zIndex: 9999,
 						display: 'flex',
 						flexWrap: 'wrap',
 						gap: '2px',
@@ -356,6 +359,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					>
 						Pattern
 					</button>
+					<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
 					<button
 						onClick={ () => {
 							setManualThinkingMessage(
