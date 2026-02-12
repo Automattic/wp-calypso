@@ -31,8 +31,15 @@
 			overflow: hidden;
 			justify-content: space-between;
 			align-items: center;
-			min-height: 52px;
 			border-bottom: solid 1px #dcdcde;
+			height: 10px;
+			opacity: 0;
+			transition: height 0.2s ease, border-bottom 0.15s ease, opacity 0.2s ease;
+			&:has(.block-editor-block-contextual-toolbar) {
+				border-bottom: solid 1px #dcdcde;
+				height: 52px;
+				opacity: 1;
+			}
 
 			button {
 				box-shadow: none;

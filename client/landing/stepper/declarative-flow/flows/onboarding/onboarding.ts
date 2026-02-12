@@ -275,8 +275,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 					return;
 				}
-				case 'playground':
-					return navigate( 'domains' );
+				case 'playground': {
+					const backTo = window.location.pathname + window.location.search;
+					return navigate(
+						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
 				default:
 					return;
 			}
