@@ -5,6 +5,13 @@ const BASE_VIEW_PROPS: View = {
 	type: 'table',
 	layout: {
 		density: 'balanced',
+		styles: {
+			domain: { minWidth: '200px' },
+			blog_name: { minWidth: '100px', maxWidth: '200px' },
+			ssl_status: { maxWidth: '80px' },
+			expiry: { minWidth: '150px', maxWidth: '200px' },
+			domain_status: { minWidth: '100px', maxWidth: '200px' },
+		},
 	},
 	sort: {
 		field: 'domain',

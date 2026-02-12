@@ -3,10 +3,10 @@ import config from '@automattic/calypso-config';
 import { Link, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
-import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 export const DomainNameField = ( {
@@ -30,14 +30,25 @@ export const DomainNameField = ( {
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
+	const wrappableDomainName = useMemo( () => {
+		const [ domainName, ...tlds ] = value.split( '.' );
+		const tld = tlds.join( '.' );
+
+		return (
+			<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+				{ domainName }
+				<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
+			</span>
+		);
+	}, [ value ] );
+
 	const content = (
 		<VStack spacing={ 1 }>
-			<span style={ textOverflowStyles }>{ value }</span>
+			{ wrappableDomainName }
 			{ showPrimaryDomainBadge && domain.primary_domain && (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
-							...textOverflowStyles,
 							color: 'var(--dashboard__foreground-color-success)',
 							fontWeight: 'normal',
 							textDecoration: 'underline',
@@ -49,7 +60,7 @@ export const DomainNameField = ( {
 				</Tooltip>
 			) }
 			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+				<Text variant="muted" style={ { fontWeight: 'normal' } }>
 					{ domain.subtype.label }
 				</Text>
 			) }
