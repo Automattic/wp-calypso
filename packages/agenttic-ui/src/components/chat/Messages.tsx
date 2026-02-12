@@ -2,6 +2,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
+import { cn } from '../../utils/classNames';
 import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
@@ -16,6 +17,7 @@ interface MessagesProps {
 	messageRenderer?: ComponentType< { children: string } >;
 	thinkingMessage?: string;
 	className?: string;
+	messagesPosition?: 'top' | 'bottom';
 }
 
 export function Messages( {
@@ -25,6 +27,7 @@ export function Messages( {
 	emptyView,
 	messageRenderer,
 	thinkingMessage,
+	messagesPosition = 'top',
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );
@@ -126,7 +129,10 @@ export function Messages( {
 			</div>
 			<div
 				data-slot="messages"
-				className={ styles.container }
+				className={ cn(
+					styles.container,
+					messagesPosition === 'bottom' ? styles.bottomMessages : ''
+				) }
 				ref={ scrollAreaRef }
 			>
 				<AnimatePresence mode="popLayout">

@@ -13,6 +13,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 		error,
 		emptyView,
 		messageRenderer,
+		messagesPosition,
 		thinkingMessage,
 	} = useAgentUIContext();
 
@@ -25,6 +26,7 @@ export function AgentUIMessages( { className }: AgentUIMessagesProps = {} ) {
 			messageRenderer={ messageRenderer }
 			thinkingMessage={ thinkingMessage }
 			className={ className }
+			messagesPosition={ messagesPosition }
 		/>
 	);
 }

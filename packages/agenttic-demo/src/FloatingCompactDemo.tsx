@@ -315,6 +315,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }
 				messageRenderer={ messageRenderer }
+				messagesPosition="bottom"
 				expandOnClick={ false }
 				notice={ {
 					message: 'Upgrade now to launch.',

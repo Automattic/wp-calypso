@@ -31,6 +31,7 @@ export interface AgentUIContextValue {
 	placeholder?: string | string[];
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
+	messagesPosition?: 'top' | 'bottom';
 
 	// Floating chat specific
 	floatingChatState?: ChatState;
