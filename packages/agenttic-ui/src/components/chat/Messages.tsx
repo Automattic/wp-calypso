@@ -2,7 +2,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
-import { cn } from '../../utils/classNames.ts';
+import { cn } from '../../utils/classNames';
 import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
