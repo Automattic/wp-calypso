@@ -54,7 +54,7 @@ function processTemplatePartBlocks(
 	return blocks.map( ( block: any ) => {
 		const processed = { ...block };
 
-		if ( block.name === 'core/template-part' ) {
+		if ( block.name === 'core/template-part' || block.name === 'core/post-content' ) {
 			processed.innerBlocks = getBlocks( block.clientId );
 		}
 
