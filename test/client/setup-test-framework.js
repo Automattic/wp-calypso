@@ -33,6 +33,28 @@ global.CSS = {
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
+// JSDOM doesn't implement IntersectionObserver, but various UI components rely on it
+// (e.g. `client/components/section-nav/tabs.jsx`). Provide a minimal mock for tests.
+if ( typeof global.IntersectionObserver !== 'function' ) {
+	class MockIntersectionObserver {
+		constructor( callback, options ) {
+			this.callback = callback;
+			this.options = options;
+		}
+
+		observe = jest.fn();
+		unobserve = jest.fn();
+		disconnect = jest.fn();
+		takeRecords = jest.fn( () => [] );
+	}
+
+	Object.defineProperty( global, 'IntersectionObserver', {
+		value: MockIntersectionObserver,
+		writable: true,
+		configurable: true,
+	} );
+}
+
 global.fetch = jest.fn( () =>
 	Promise.resolve( {
 		json: () => Promise.resolve(),
