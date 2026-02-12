@@ -1,9 +1,9 @@
-import { Button, FormLabel } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { upload } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -17,7 +17,7 @@ interface ReferralLogoPickerProps {
 type LogoSelectionType = 'profile' | 'custom';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml' ];
+const ALLOWED_FILE_TYPES = [ 'image/png', 'image/svg+xml' ];
 
 function ReferralLogoPicker( {
 	onLogoChange,
@@ -59,9 +59,7 @@ function ReferralLogoPicker( {
 	const validateFile = useCallback(
 		( file: File ): string | null => {
 			if ( ! ALLOWED_FILE_TYPES.includes( file.type ) ) {
-				return translate(
-					'Invalid file format. Please upload a JPG, PNG, or SVG file.'
-				);
+				return translate( 'Invalid file format. Please upload a PNG or SVG file.' );
 			}
 
 			if ( file.size > MAX_FILE_SIZE ) {
@@ -98,49 +96,19 @@ function ReferralLogoPicker( {
 		[ validateFile, onLogoChange ]
 	);
 
-	const handleUploadClick = useCallback( () => {
+	const handleSelectFileClick = useCallback( () => {
 		fileInputRef.current?.click();
 	}, [] );
 
-	const handleDrop = useCallback(
-		( event: React.DragEvent< HTMLDivElement > ) => {
-			event.preventDefault();
-			event.stopPropagation();
-
-			const file = event.dataTransfer.files?.[ 0 ];
-			if ( ! file ) {
-				return;
-			}
-
-			const error = validateFile( file );
-			if ( error ) {
-				setValidationError( error );
-				return;
-			}
-
-			setValidationError( null );
-
-			// Create preview URL
-			const objectUrl = URL.createObjectURL( file );
-			setPreviewUrl( objectUrl );
-
-			// Notify parent component
-			onLogoChange( objectUrl, file );
-		},
-		[ validateFile, onLogoChange ]
-	);
-
-	const handleDragOver = useCallback( ( event: React.DragEvent< HTMLDivElement > ) => {
-		event.preventDefault();
-		event.stopPropagation();
-	}, [] );
-
-	const displayLogoUrl = previewUrl || selectedLogoUrl;
+	const displayLogoUrl = selectionType === 'profile' ? profileLogoUrl : previewUrl || selectedLogoUrl;
 
 	return (
 		<div className="referral-logo-picker">
 			<FormFieldset>
 				<FormLabel>{ translate( 'Your logo' ) }</FormLabel>
+				<p className="referral-logo-picker__description">
+					{ translate( 'Build trust and show this referral comes from you.' ) }
+				</p>
 
 				<div className="referral-logo-picker__options">
 					{ hasProfileLogo && (
@@ -153,9 +121,9 @@ function ReferralLogoPicker( {
 								onChange={ () => handleSelectionChange( 'profile' ) }
 								label={ translate( 'Use profile logo' ) }
 							/>
-							{ selectionType === 'profile' && (
-								<div className="referral-logo-picker__preview">
-									<img src={ profileLogoUrl } alt={ translate( 'Profile logo' ) } />
+							{ selectionType === 'profile' && displayLogoUrl && (
+								<div className="referral-logo-picker__logo-display">
+									<img src={ displayLogoUrl } alt={ translate( 'Profile logo' ) } />
 								</div>
 							) }
 						</div>
@@ -172,7 +140,7 @@ function ReferralLogoPicker( {
 						/>
 
 						{ selectionType === 'custom' && (
-							<div className="referral-logo-picker__upload-area">
+							<div className="referral-logo-picker__upload-section">
 								<input
 									ref={ fileInputRef }
 									type="file"
@@ -181,32 +149,45 @@ function ReferralLogoPicker( {
 									className="referral-logo-picker__file-input"
 								/>
 
-								{ ! displayLogoUrl ? (
-									<div
-										className="referral-logo-picker__dropzone"
-										onDrop={ handleDrop }
-										onDragOver={ handleDragOver }
-									>
-										<p className="referral-logo-picker__dropzone-text">
-											{ translate( 'Drag and drop your logo here, or' ) }
-										</p>
-										<Button onClick={ handleUploadClick } icon={ upload }>
-											{ translate( 'Select file' ) }
-										</Button>
-										<p className="referral-logo-picker__dropzone-hint">
-											{ translate( 'JPG, PNG, or SVG (max 5MB)' ) }
-										</p>
+								{ displayLogoUrl ? (
+									<div className="referral-logo-picker__logo-display">
+										<img src={ displayLogoUrl } alt={ translate( 'Selected logo' ) } />
 									</div>
 								) : (
-									<div className="referral-logo-picker__preview-container">
-										<div className="referral-logo-picker__preview">
-											<img src={ displayLogoUrl } alt={ translate( 'Selected logo' ) } />
-										</div>
-										<Button onClick={ handleUploadClick } compact>
-											{ translate( 'Change logo' ) }
-										</Button>
+									<div className="referral-logo-picker__upload-placeholder">
+										<span className="referral-logo-picker__upload-icon">
+											<svg
+												width="24"
+												height="24"
+												viewBox="0 0 24 24"
+												fill="none"
+												xmlns="http://www.w3.org/2000/svg"
+											>
+												<path
+													d="M12 4L12 16M12 4L8 8M12 4L16 8"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+												/>
+												<path
+													d="M4 17V19C4 20.1046 4.89543 21 6 21H18C19.1046 21 20 20.1046 20 19V17"
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+												/>
+											</svg>
+										</span>
 									</div>
 								) }
+
+								<Button variant="secondary" onClick={ handleSelectFileClick }>
+									{ translate( 'Select file' ) }
+								</Button>
+
+								<p className="referral-logo-picker__upload-hint">
+									{ translate( 'Upload your logo: PNG or SVG. Max 5 MB. Transparent background works best.' ) }
+								</p>
 
 								{ validationError && (
 									<div className="referral-logo-picker__error" role="alert">
@@ -217,14 +198,6 @@ function ReferralLogoPicker( {
 						) }
 					</div>
 				</div>
-
-				{ ! hasProfileLogo && (
-					<p className="referral-logo-picker__info-text">
-						{ translate(
-							'This logo will be saved to your profile and used for future referrals.'
-						) }
-					</p>
-				) }
 			</FormFieldset>
 		</div>
 	);

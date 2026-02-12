@@ -1,6 +1,13 @@
 .referral-logo-picker {
 	margin-block-end: 24px;
 
+	.referral-logo-picker__description {
+		margin-block-start: 4px;
+		margin-block-end: 16px;
+		color: var(--color-text-secondary);
+		font-size: 13px;
+	}
+
 	.referral-logo-picker__options {
 		display: flex;
 		flex-direction: column;
@@ -10,87 +17,72 @@
 	.referral-logo-picker__option {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
 	}
 
-	.referral-logo-picker__preview {
+	.referral-logo-picker__logo-display {
+		margin-block-start: 12px;
 		margin-inline-start: 28px;
-		padding: 12px;
+		padding: 16px;
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 4px;
 		background-color: var(--color-surface);
-		max-width: 300px;
+		max-width: 200px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		img {
 			max-width: 100%;
+			max-height: 60px;
 			height: auto;
 			display: block;
 		}
 	}
 
-	.referral-logo-picker__upload-area {
+	.referral-logo-picker__upload-section {
+		margin-block-start: 12px;
 		margin-inline-start: 28px;
-		margin-block-start: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		align-items: flex-start;
 	}
 
 	.referral-logo-picker__file-input {
 		display: none;
 	}
 
-	.referral-logo-picker__dropzone {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 32px 24px;
+	.referral-logo-picker__upload-placeholder {
+		padding: 24px;
 		border: 2px dashed var(--color-neutral-20);
 		border-radius: 4px;
-		background-color: var(--color-surface);
-		text-align: center;
-		gap: 12px;
-		cursor: pointer;
-		transition: border-color 0.2s ease;
-
-		&:hover {
-			border-color: var(--color-accent);
-		}
+		background-color: var(--color-neutral-0);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 200px;
+		min-height: 100px;
 	}
 
-	.referral-logo-picker__dropzone-text {
-		margin: 0;
-		color: var(--color-text-primary);
-		font-size: 14px;
+	.referral-logo-picker__upload-icon {
+		color: var(--color-neutral-40);
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.referral-logo-picker__dropzone-hint {
+	.referral-logo-picker__upload-hint {
 		margin: 0;
 		color: var(--color-text-secondary);
 		font-size: 12px;
-	}
-
-	.referral-logo-picker__preview-container {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		align-items: flex-start;
+		line-height: 1.5;
 	}
 
 	.referral-logo-picker__error {
-		margin-block-start: 8px;
 		padding: 8px 12px;
 		background-color: var(--color-error-5);
 		color: var(--color-error-50);
 		border-radius: 4px;
-		font-size: 13px;
-	}
-
-	.referral-logo-picker__info-text {
-		margin-block-start: 12px;
-		margin-block-end: 0;
-		padding: 12px;
-		background-color: var(--color-neutral-5);
-		border-radius: 4px;
-		color: var(--color-text-secondary);
 		font-size: 13px;
 	}
 }
