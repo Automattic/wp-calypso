@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { translate } from 'i18n-calypso';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import AutoDirection from 'calypso/components/auto-direction';
 import type { PostItem } from './types';
@@ -16,7 +17,9 @@ const RecentPostField = forwardRef< HTMLDivElement, RecentPostFieldProps >( ( { 
 		<div className="recent-post-field" ref={ ref } role="button" tabIndex={ 0 }>
 			<AutoDirection>
 				<div className="recent-post-field__title">
-					<div className="recent-post-field__title-text">{ post?.title }</div>
+					<div className="recent-post-field__title-text">
+						{ post?.title || `(${ translate( 'no title' ) })` }
+					</div>
 					<div className="recent-post-field__site-name">{ post?.site_name }</div>
 				</div>
 			</AutoDirection>
