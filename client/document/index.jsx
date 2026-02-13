@@ -1,6 +1,6 @@
 import { parse } from 'path';
 import config from '@automattic/calypso-config';
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo, WooDashboardLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -69,6 +69,7 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
+			selectedSite,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -80,6 +81,9 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( selectedSite
+				? `var currentSelectedSite = ${ jsonStringifyForHtml( selectedSite ) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -184,6 +188,7 @@ class Document extends Component {
 										app={ app }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
+										isGarden={ selectedSite.is_garden }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 										hideWooHostedLogo={ hideWooHostedLogo }
@@ -307,6 +312,7 @@ function LoadingPlaceholder( {
 	app,
 	sectionName,
 	isWCCOM,
+	isGarden,
 	isOneTapAuth,
 	showStepContainerV2Loader,
 	hideWooHostedLogo,
@@ -329,11 +335,12 @@ function LoadingPlaceholder( {
 		isWpMobileApp: app?.isWpMobileApp,
 		isWcMobileApp: app?.isWcMobileApp,
 		isWCCOM,
+		isGarden: isGarden,
 	} );
 	return <LoadingLogo size={ 72 } className="wpcom-site__logo" />;
 }
 
-function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
+function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM, isGarden } ) {
 	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
 	}
@@ -344,6 +351,10 @@ function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
 
 	if ( isA8CForAgencies() ) {
 		return A4ALogo;
+	}
+
+	if ( isGarden ) {
+		return WooDashboardLogo;
 	}
 
 	return WordPressLogo;

@@ -33,6 +33,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import { getSiteFragment } from 'calypso/lib/route';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -56,6 +57,8 @@ import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 import { deserialize } from 'calypso/state/utils';
 import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
@@ -494,6 +497,37 @@ function setUpLoggedInRoute( req, res, next ) {
 			performanceMark( req.context, 'err_logged_in_setup' );
 			next( error );
 		} );
+}
+
+async function setUpSelectedSite( req, res, next ) {
+	const siteFragment = getSiteFragment( req.path );
+
+	// Do nothing if the path fragment does not resemble a site.
+	if (
+		! ( typeof siteFragment === 'string' && siteFragment ) &&
+		typeof siteFragment !== 'number'
+	) {
+		next();
+		return;
+	}
+
+	let site = getSite( req.context.store.getState(), siteFragment );
+	if ( site ) {
+		req.context.selectedSite = site;
+		next();
+		return;
+	}
+
+	// Fetch the site by siteFragment.
+	try {
+		site = await req.context.store.dispatch( requestSite( siteFragment ) );
+		req.context.selectedSite = site;
+	} catch {
+		// Do nothing
+	}
+
+	next();
+	return;
 }
 
 /**
@@ -1089,6 +1123,7 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			setUpSelectedSite,
 			serverRender
 		);
 	}
@@ -1102,6 +1137,7 @@ export default function pages() {
 				setupDefaultContext( entrypoint, section.name ),
 				setUpSectionContext( section, entrypoint ),
 				setUpRoute,
+				setUpSelectedSite,
 				serverRender
 			);
 		};
