@@ -2872,42 +2872,44 @@ const FEATURES_LIST: FeatureList = {
 	/* START: Woo Hosted (CIAB) Features */
 	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
-		getTitle: () => 'All-in-one solution to create and manage your ecommerce store',
+		getTitle: () =>
+			i18n.translate( 'All-in-one solution to create and manage your ecommerce store' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
-		getTitle: () => 'AI-powered builder to help you design and set up your store',
+		getTitle: () => i18n.translate( 'AI-powered builder to help you design and set up your store' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
-		getTitle: () => 'Connected seamlessly to your PayPal account',
+		getTitle: () => i18n.translate( 'Connected seamlessly to your PayPal account' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		getTitle: () => 'Built-in email marketing and advertising tools to grow your business',
+		getTitle: () =>
+			i18n.translate( 'Built-in email marketing and advertising tools to grow your business' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		getTitle: () => 'Send up to 5,000 emails/month',
+		getTitle: () => i18n.translate( 'Send up to 5,000 emails/month' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_MAILPOET ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		getTitle: () => 'Send up to 250,000 emails/month',
+		getTitle: () => i18n.translate( 'Send up to 250,000 emails/month' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		getTitle: () => 'One store admin account',
+		getTitle: () => i18n.translate( 'One store admin account' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		getTitle: () => 'Unlimited store admin accounts',
+		getTitle: () => i18n.translate( 'Unlimited store admin accounts' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Hosted (CIAB) Features */
