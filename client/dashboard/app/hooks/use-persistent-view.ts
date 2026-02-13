@@ -32,11 +32,6 @@ export interface UseViewOptions {
 	queryParamFilterFields?: string[];
 
 	/**
-	 * Properties that should be persistent. Defaults to all properties of the view.
-	 */
-	persistentProperties?: string[];
-
-	/**
 	 * Sanitize the field by removing any invalid or malformed entries and migrating deprecated fields.
 	 */
 	sanitizeFields?: ( fields: View[ 'fields' ] ) => View[ 'fields' ];
@@ -63,7 +58,6 @@ export function useBasePersistentView( {
 	defaultView,
 	queryParams,
 	queryParamFilterFields = [],
-	persistentProperties,
 	matches,
 	sanitizeFields,
 	navigate,
@@ -188,11 +182,7 @@ export function useBasePersistentView( {
 				}
 			}
 
-			let viewToPersist = pickPersistentPropertiesFromView(
-				baseView,
-				newView,
-				persistentProperties
-			);
+			let viewToPersist = newView;
 			viewToPersist = removeTransientPropertiesFromView( viewToPersist );
 			viewToPersist = removeTransientFiltersFromView( viewToPersist, newTransientFilterFields );
 			viewToPersist = removeEmptyFiltersFromView( viewToPersist );
@@ -210,7 +200,6 @@ export function useBasePersistentView( {
 			queryParams,
 			transientProperties,
 			transientFilterFields,
-			persistentProperties,
 			navigate,
 			baseView,
 			defaultView,
@@ -229,25 +218,6 @@ export function useBasePersistentView( {
 	}, [ persistView, navigate, queryParams ] );
 
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
-}
-
-function pickPersistentPropertiesFromView(
-	baseView: View,
-	newView: View,
-	persistentProperties?: string[]
-): View {
-	if ( ! persistentProperties ) {
-		return newView;
-	}
-
-	return {
-		...baseView,
-		...Object.fromEntries(
-			persistentProperties
-				.filter( ( key ) => key in newView )
-				.map( ( key ) => [ key, newView[ key as keyof View ] ] )
-		),
-	};
 }
 
 function removeTransientPropertiesFromView( view: View ): View {

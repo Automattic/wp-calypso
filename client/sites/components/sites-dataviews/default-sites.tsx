@@ -59,7 +59,6 @@ export default function DefaultSitesDataViews( {
 		slug: 'sites',
 		defaultView,
 		queryParams,
-		persistentProperties: [ 'filters', 'perPage', 'sort' ],
 		sanitizeFields,
 		navigate,
 	} );
@@ -78,7 +77,7 @@ export default function DefaultSitesDataViews( {
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
-		updateView( nextView );
+		updateView( { ...nextView, type: view.type, fields: [] } );
 	};
 
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
