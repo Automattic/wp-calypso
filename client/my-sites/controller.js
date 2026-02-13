@@ -492,6 +492,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const is100YearCheckoutFlow = context.pathname.includes( '/checkout/100-year' );
 
 	// /checkout/marketplace/ is for standard siteless checkout, while
 	// /checkout/passport/ allows to use customized URL for Passport as well as custom branding.
@@ -512,6 +513,7 @@ export function noSite( context, next ) {
 		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
+		! is100YearCheckoutFlow &&
 		// We allow renewals without a site through because we want to show these
 		// users an error message on the checkout page.
 		! isRenewal &&

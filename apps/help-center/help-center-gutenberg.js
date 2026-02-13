@@ -202,7 +202,7 @@ function HelpCenterContentWithProvider() {
 	);
 }
 
-if ( helpCenterData.isNextAdmin ) {
+if ( helpCenterData.isCommerceGarden ) {
 	const unsubscribe = subscribe( () => {
 		// Make sure the wp-logo menu item is registered before unregistering its default items.
 		// Use optional chaining since 'next-admin' store only exists in next-admin context

@@ -2297,6 +2297,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/survicate@workspace:^, @automattic/survicate@workspace:packages/survicate":
+  version: 0.0.0-use.local
+  resolution: "@automattic/survicate@workspace:packages/survicate"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/load-script": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/tree-select@workspace:^, @automattic/tree-select@workspace:packages/tree-select":
   version: 0.0.0-use.local
   resolution: "@automattic/tree-select@workspace:packages/tree-select"
@@ -14863,6 +14874,7 @@ __metadata:
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
     "@automattic/support-articles": "workspace:^"
+    "@automattic/survicate": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@automattic/urls": "workspace:^"

@@ -1,6 +1,10 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, Notice } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
+import { UserCard, UserCardUser } from 'calypso/components/connect-screen/user-card';
 import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -9,10 +13,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { handleApprove, handleDeny } from '../hooks/use-authorize-actions';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
-import AuthorizeActions from './authorize-actions';
-import PermissionsList from './permissions-list';
+import { getPermissionIcon } from '../utils/permission-icons';
 import SuccessMessage from './success-message';
-import UserCard from './user-card';
 
 export interface AuthorizeActionsRenderProps {
 	onApprove: () => void;
@@ -102,7 +104,8 @@ function Authorize( {
 
 	// Set initial headers only after confirming user is authenticated
 	// This prevents flashing the layout before redirect to login
-	useEffect( () => {
+	// Use useLayoutEffect to ensure headers are set synchronously before paint
+	useLayoutEffect( () => {
 		// Don't set headers until we know user is authenticated
 		if ( ! userCheckComplete || ! isLoggedIn ) {
 			return;
@@ -193,12 +196,44 @@ function Authorize( {
 			</Notice>
 		);
 	} else {
+		// Transform API user to UserCardUser interface
+		const userCardUser: UserCardUser | null = meta.user
+			? {
+					displayName: meta.user.display_name,
+					email: meta.user.email,
+					avatarUrl: meta.user.avatar_URL,
+					username: meta.user.username,
+					siteCount: meta.user.site_count,
+			  }
+			: null;
+
+		// Map variant names: 'horizontal' -> 'small', 'centered' -> 'large'
+		const userCardSize = userCardVariant === 'centered' ? 'large' : 'small';
+
+		// Transform permissions for PermissionsList component
+		const permissions = meta.permissions.map( ( permission ) => ( {
+			name: permission.name,
+			label: permission.description,
+		} ) );
+
 		content = (
 			<div className="oauth2-connect">
-				{ meta.user && <UserCard user={ meta.user } variant={ userCardVariant } /> }
+				{ userCardUser && <UserCard user={ userCardUser } size={ userCardSize } showSiteCount /> }
 
 				{ showPermissions && (
-					<PermissionsList permissions={ meta.permissions } clientTitle={ meta.client.title } />
+					<PermissionsList
+						title={ translate( '%(client)s is requesting access to:', {
+							args: { client: meta.client.title },
+						} ) }
+						permissions={ permissions }
+						getIconForPermission={ getPermissionIcon }
+						learnMoreText={ translate( 'Learn more about how %(client)s uses your data', {
+							args: { client: meta.client.title },
+						} ) }
+						learnMoreUrl={ localizeUrl(
+							'https://wordpress.com/support/third-party-applications/'
+						) }
+					/>
 				) }
 
 				{ showSuccessMessage && <SuccessMessage clientTitle={ meta.client.title } /> }
@@ -207,17 +242,17 @@ function Authorize( {
 					( renderActions ? (
 						renderActions( { onApprove, onDeny } )
 					) : (
-						<AuthorizeActions
-							onApprove={ onApprove }
-							onDeny={ onDeny }
-							approveButtonText={ approveButtonText }
-							denyButtonText={ denyButtonText }
-							approveButtonClassName={ approveButtonClassName }
-							denyButtonClassName={ denyButtonClassName }
+						<ActionButtons
+							primaryLabel={ approveButtonText || translate( 'Approve' ) }
+							primaryOnClick={ onApprove }
+							primaryClassName={ approveButtonClassName }
+							secondaryLabel={ denyButtonText || translate( 'Deny' ) }
+							secondaryOnClick={ onDeny }
+							secondaryClassName={ denyButtonClassName }
 						/>
 					) ) }
 
-				{ meta.user && (
+				{ userCardUser && ! showSuccessMessage && (
 					<div className="oauth2-connect__switch-account-link">
 						<Button variant="link" onClick={ onSwitch } className="oauth2-connect__switch-account">
 							{ translate( 'Log in with a different account' ) }
@@ -229,8 +264,15 @@ function Authorize( {
 	}
 
 	// Don't render OneLoginLayout until headers are set
+	// Using headersSet ensures we wait for the effect to complete
 	if ( ! headersSet ) {
-		return null;
+		return (
+			<div className="oauth2-connect oauth2-connect--loading">
+				<div className="oauth2-connect__loading">
+					<Spinner />
+				</div>
+			</div>
+		);
 	}
 
 	return (

@@ -95,7 +95,6 @@ function renderPreferencesPrimarySite() {
 }
 
 afterEach( () => {
-	jest.clearAllMocks();
 	mockSitesQuery.mockClear();
 } );
 

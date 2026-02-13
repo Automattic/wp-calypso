@@ -24,8 +24,6 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	beforeEach( () => {
-		nock.disableNetConnect();
-		nock.cleanAll();
 		window.scrollTo = jest.fn();
 
 		Object.defineProperty( window, 'navigator', {

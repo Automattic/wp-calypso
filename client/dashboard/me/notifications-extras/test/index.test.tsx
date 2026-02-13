@@ -70,14 +70,8 @@ const notificationSnackBar = () => {
 
 describe( 'NotificationsExtras', () => {
 	beforeEach( () => {
-		nock.disableNetConnect();
-		nock.cleanAll();
 		// Snackbar requires window.scrollTo to be defined
 		window.scrollTo = jest.fn();
-	} );
-
-	afterEach( () => {
-		nock.cleanAll();
 	} );
 
 	it( 'renders the page header and sections correctly', async () => {
