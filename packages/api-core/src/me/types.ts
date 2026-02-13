@@ -47,6 +47,7 @@ export interface User {
 	primary_blog_url: string;
 	profile_URL: string;
 	site_count: number;
+	garden_site_count: number;
 	social_login_connections: SocialLoginConnection[];
 	use_fallback_for_incomplete_languages: boolean;
 	user_ip_country_code: string;
