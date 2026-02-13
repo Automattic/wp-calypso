@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { createElement, ReactNode, useCallback, useState } from 'react';
 import { isSiteActive } from 'calypso/a8c-for-agencies/components/form/utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsPayload } from '../types';
@@ -13,7 +13,7 @@ type ValidationState = {
 	firstName?: string;
 	lastName?: string;
 	agencyName?: string;
-	agencyUrl?: string;
+	agencyUrl?: string | ReactNode;
 	line1?: string;
 	city?: string;
 	country?: string;
@@ -51,7 +51,14 @@ const useSignupFormValidation = () => {
 			) {
 				newValidationError.agencyUrl = preventWidows(
 					translate(
-						"Please enter a valid site URL for your business. If you're experiencing issues contact us at partnerships@automattic.com"
+						'No website was found at that URL, please check it and try again. If the issue persists, {{contactLink}}contact us{{/contactLink}}.',
+						{
+							components: {
+								contactLink: createElement( 'a', {
+									href: 'mailto:partnerships@automattic.com',
+								} ),
+							},
+						}
 					)
 				);
 			}

@@ -13,7 +13,7 @@ type Props = {
 	showOptionalLabel?: boolean;
 	children: ReactNode;
 	isRequired?: boolean;
-	error?: string;
+	error?: string | ReactNode;
 };
 
 function FormField( {
