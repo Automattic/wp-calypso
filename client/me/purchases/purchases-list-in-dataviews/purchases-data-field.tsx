@@ -76,10 +76,16 @@ export function getPurchasesFieldDefinitions( {
 	transferredOwnershipPurchases?: Purchases.Purchase[];
 } ): Fields< Purchases.Purchase > {
 	const getListTitle = ( item: Purchases.Purchase ) => {
-		if ( item.isDomainRegistration ) {
+		if ( item.isDomainRegistration && item.meta ) {
+			if ( item.isHundredYearDomain ) {
+				// translators: %(domain)s is the domain name, e.g. "100-Year Domain Registration: example.com"
+				return translate( '100-Year Domain Registration: %(domain)s', {
+					args: { domain: item.meta },
+				} );
+			}
 			// translators: %(domain)s is the domain name, e.g. "Domain Registration: example.com"
 			return translate( 'Domain Registration: %(domain)s', {
-				args: { domain: String( getDisplayName( item ) ) },
+				args: { domain: item.meta },
 			} );
 		}
 		return getDisplayName( item );

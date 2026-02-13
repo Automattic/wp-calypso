@@ -334,12 +334,15 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 }
 
 export function getTitleForListDisplay( purchase: Purchase ): string {
-	const title = getTitleForDisplay( purchase );
-	if ( purchase.is_domain_registration ) {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
 		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
-		return sprintf( __( 'Domain Registration: %s' ), title );
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
 	}
-	return title;
+	return getTitleForDisplay( purchase );
 }
 
 /**
