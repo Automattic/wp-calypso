@@ -151,10 +151,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__header-meta-date-link {
 	color: inherit;
 	text-decoration: none;
-
-	&:hover {
-		color: var( --color-link );
-	}
 }
 
 
