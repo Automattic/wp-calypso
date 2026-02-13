@@ -37,7 +37,7 @@ export const PlaygroundSetupStep: Step< {
 						siteId,
 					} );
 				} catch ( error ) {
-					console.error( 'Failed to import blueprint:', error );
+					// Add error handling
 				}
 			};
 			runBlueprintImport();
