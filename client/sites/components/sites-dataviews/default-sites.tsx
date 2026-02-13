@@ -77,7 +77,7 @@ export default function DefaultSitesDataViews( {
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
-		updateView( { ...nextView, ...listView } as View );
+		updateView( { ...nextView, type: view.type, fields: view.fields } as View );
 	};
 
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
