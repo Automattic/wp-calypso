@@ -10,7 +10,6 @@
 
 .container.embedded {
     height: 100%;
-    padding: var(--spacing-4);
 }
 
 .container.floating {
