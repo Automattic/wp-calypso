@@ -8,12 +8,13 @@ import { MemoExoticComponent } from 'react';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
-	FEATURE_13GB_STORAGE,
-	FEATURE_200GB_STORAGE,
-	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
-	FEATURE_50GB_STORAGE,
+	FEATURE_3GB_STORAGE,
 	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
+	FEATURE_200GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -944,6 +945,15 @@ const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+
+	// This is only available for Woo Hosted Plans
+	[ FEATURE_100GB_STORAGE ]: {
+		getSlug: () => FEATURE_100GB_STORAGE,
+		getTitle: () => i18n.translate( '100 GB' ),
+		getCompareTitle: () => i18n.translate( '100 GB' ),
+		getDescription: () =>
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	// TODO: Consider removing this because it is no longer standard on any plans
