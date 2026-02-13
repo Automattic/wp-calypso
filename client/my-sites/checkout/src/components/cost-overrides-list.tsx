@@ -1,6 +1,8 @@
 import {
 	isBiennially,
 	isDIFMProduct,
+	isDomainProduct,
+	isDomainTransfer,
 	isMonthlyProduct,
 	isTriennially,
 	isWpComPlan,
@@ -22,6 +24,7 @@ import {
 	filterCostOverridesForLineItem,
 	getLabel,
 	isOverrideCodeIntroductoryOffer,
+	LineItemDomainLabel,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
@@ -425,7 +428,13 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		<SimplifiedSingleProductAndCostOverridesListWrapper>
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
-				<span className="cost-overrides-list-product__title">{ label }</span>
+				<span className="cost-overrides-list-product__title">
+					{ isDomainProduct( product ) || isDomainTransfer( product ) ? (
+						<LineItemDomainLabel label={ label } />
+					) : (
+						label
+					) }
+				</span>
 				<SimplifiedLineItemPrice
 					actualAmount={ actualAmountDisplay }
 					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }

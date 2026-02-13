@@ -185,7 +185,7 @@ const LineItemTitle = styled.div< {
 	font-size: inherit;
 `;
 
-function LineItemDomainLabel( { label }: { label: string } ) {
+export function LineItemDomainLabel( { label }: { label: string } ) {
 	const dotIndex = label.indexOf( '.' );
 	if ( dotIndex === -1 ) {
 		return <>{ label }</>;
