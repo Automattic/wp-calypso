@@ -8,7 +8,7 @@ import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
-interface AgentHistoryProps {
+interface Props {
 	/** Agent ID for fetching conversation history. */
 	agentId: string;
 	/** Authentication provider for API requests. */
@@ -19,8 +19,6 @@ interface AgentHistoryProps {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
-	/** Called when the user submits a message. */
-	onSubmit: ( message: string ) => void;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -39,13 +37,12 @@ export default function AgentHistory( {
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
-	onSubmit,
 	onAbort,
 	onClose,
 	onExpand,
 	onSelectConversation,
 	onNewChat,
-}: AgentHistoryProps ) {
+}: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -60,7 +57,7 @@ export default function AgentHistory( {
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
-			onSubmit={ onSubmit }
+			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }

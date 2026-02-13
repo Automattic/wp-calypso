@@ -1,11 +1,12 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
+import { forwardRef, useImperativeHandle } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
-interface ZendeskChatProps {
+interface Props {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -22,17 +23,34 @@ interface ZendeskChatProps {
 	markdownExtensions?: MarkdownExtensions;
 }
 
-export function ZendeskChat( {
-	chatHeaderOptions,
-	isDocked,
-	isOpen,
-	onClose,
-	onExpand,
-	markdownComponents = {},
-	markdownExtensions = {},
-}: ZendeskChatProps ) {
+export interface ZendeskChatHandle {
+	/** Returns the number of messages in the current Zendesk conversation. */
+	getMessagesCount: () => number;
+}
+
+function ZendeskChatInner(
+	{
+		chatHeaderOptions,
+		isDocked,
+		isOpen,
+		onClose,
+		onExpand,
+		markdownComponents = {},
+		markdownExtensions = {},
+	}: Props,
+	ref: React.ForwardedRef< ZendeskChatHandle >
+) {
 	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
 		useManagedZendeskChat();
+
+	// Expose imperative methods to parent component
+	useImperativeHandle(
+		ref,
+		() => ( {
+			getMessagesCount: () => agentticMessages.length,
+		} ),
+		[ agentticMessages.length ]
+	);
 
 	return (
 		<AgentChat
@@ -54,3 +72,6 @@ export function ZendeskChat( {
 		/>
 	);
 }
+
+const ZendeskChat = forwardRef( ZendeskChatInner );
+export default ZendeskChat;

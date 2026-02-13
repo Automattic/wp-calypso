@@ -1,8 +1,3 @@
-/**
- * ConversationHistoryView Component
- * Displays the list of past conversations with a "new chat" action
- */
-
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -13,9 +8,13 @@ import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
+	/** Agent ID for fetching conversation history. */
 	agentId: string;
+	/** Authentication provider for API requests. */
 	authProvider?: () => Promise< Record< string, string > >;
+	/** Called when a conversation is selected. */
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
+	/** Called when the user starts a new chat. */
 	onNewChat: () => void;
 }
 
