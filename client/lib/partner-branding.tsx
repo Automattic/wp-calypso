@@ -73,6 +73,27 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 };
 
 /**
+ * Get CIAB partner config from garden info
+ * Maps garden partner/name combinations to CIAB branding configs
+ */
+export function getCiabConfigFromGarden(
+	gardenPartner?: string,
+	gardenName?: string
+): CiabPartnerConfig | null {
+	if ( ! gardenPartner || ! gardenName ) {
+		return null;
+	}
+
+	// Map garden partners to branding configs
+	if ( gardenPartner === 'woo' && gardenName === 'commerce' ) {
+		return CIAB_PARTNERS.woo ?? null;
+	}
+
+	// Future: add mappings for other partners like "paypal"
+	return null;
+}
+
+/**
  * Get CIAB partner config from URL 'from' param
  * Returns the full partner config or null if not a CIAB partner
  */

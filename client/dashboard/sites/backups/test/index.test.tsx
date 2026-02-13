@@ -189,18 +189,6 @@ function renderBackupsListPage( {
 	return render( <BackupsListPage /> );
 }
 
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-afterAll( () => {
-	nock.enableNetConnect();
-} );
-
 test.each( summaryTestCases )(
 	'renders the details section correctly for rewindId %s',
 	async ( rewindId, summary ) => {

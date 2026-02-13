@@ -62,7 +62,6 @@ function renderPreferencesDefaultLanding() {
 }
 
 afterEach( () => {
-	jest.clearAllMocks();
 	const { rawUserPreferencesQuery } = require( '@automattic/api-queries' );
 	rawUserPreferencesQuery.mockClear();
 } );

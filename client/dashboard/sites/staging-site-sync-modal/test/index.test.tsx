@@ -194,7 +194,6 @@ const setup = ( props = {} ) => {
 
 describe( 'StagingSiteSyncModal', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		mockUseMutation();
 	} );
 

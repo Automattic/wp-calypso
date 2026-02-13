@@ -102,9 +102,6 @@ const buildEmailNotificationSettings = (
 
 describe( 'EmailSettings', () => {
 	beforeEach( () => {
-		nock.disableNetConnect();
-		nock.cleanAll();
-
 		// nock.ls
 		//Snackbar requires window.scrollTo to be defined
 		window.scrollTo = jest.fn();

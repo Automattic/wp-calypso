@@ -16,10 +16,6 @@ const defaultProps = {
 };
 
 describe( 'AccountDeletionModal', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'renders the alternatives screen by default', () => {
 		render( <AccountDeletionModal { ...defaultProps } /> );
 

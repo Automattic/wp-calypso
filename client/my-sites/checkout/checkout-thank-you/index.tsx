@@ -518,7 +518,7 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	isSingleHundredYearDomainPurchase = () => {
+	getSingleHundredYearDomainPurchase = () => {
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 		const domainPurchase = purchases[ 0 ];
 		const domain = this.props.siteDomains?.find(
@@ -526,9 +526,8 @@ export class CheckoutThankYou extends Component<
 		);
 
 		if ( domain?.isHundredYearDomain ) {
-			return true;
+			return domain;
 		}
-		return false;
 	};
 
 	render() {
@@ -569,6 +568,8 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
+		const hundredYearDomainPurchase = this.getSingleHundredYearDomainPurchase();
+
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
@@ -585,7 +586,7 @@ export class CheckoutThankYou extends Component<
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
-			} else if ( this.props.receipt.data && this.isSingleHundredYearDomainPurchase() ) {
+			} else if ( this.props.receipt.data && hundredYearDomainPurchase ) {
 				pageContent = (
 					<>
 						<Global
@@ -612,8 +613,8 @@ export class CheckoutThankYou extends Component<
 							` }
 						/>
 						<HundredYearThankYou
-							siteSlug={ String( domainPurchase?.blogId ) }
-							receiptId={ Number( this.props.receiptId ) }
+							siteSlug={ hundredYearDomainPurchase.siteSlug }
+							receiptId={ this.props.receiptId }
 							productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
 						/>
 					</>

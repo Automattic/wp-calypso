@@ -123,6 +123,16 @@ export default function () {
 	);
 
 	page(
+		'/checkout/100-year/thank-you/no-site/:receiptId',
+		refreshUserSession, // Load user session into state in userless checkout
+		redirectLoggedOut,
+		noSite,
+		checkoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/100-year/thank-you/:site/:receiptId',
 		loggedInSiteSelection,
 		hundredYearCheckoutThankYou,

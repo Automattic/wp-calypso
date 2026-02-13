@@ -708,13 +708,21 @@ export class EditorPage {
 	}
 
 	/**
-	 * Enters SEO details on the Editor sidebar.
+	 * Enters SEO details on the document sidebar.
+	 *
+	 * The SEO fields are located in the main document sidebar under the
+	 * Post/Page tab, not the Jetpack sidebar.
 	 *
 	 * @param param0 Keyed object parameter.
 	 * @param {string} param0.title SEO title.
 	 * @param {string} param0.description SEO description.
 	 */
 	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'SEO' );
 		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
 		await this.editorSettingsSidebarComponent.enterText( description, {
 			label: 'SEO DESCRIPTION',
