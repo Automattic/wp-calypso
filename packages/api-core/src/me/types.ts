@@ -25,6 +25,7 @@ export interface User {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
+	garden_site_count: number;
 	had_hosting_trial: boolean;
 	has_jetpack_partner_access?: boolean;
 	has_unseen_notes: boolean;
@@ -47,7 +48,6 @@ export interface User {
 	primary_blog_url: string;
 	profile_URL: string;
 	site_count: number;
-	garden_site_count: number;
 	social_login_connections: SocialLoginConnection[];
 	use_fallback_for_incomplete_languages: boolean;
 	user_ip_country_code: string;
