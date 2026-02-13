@@ -41,12 +41,9 @@ export const EditLayout = ( {
 	const [ imageKey, setImageKey ] = useState< number | null >( originalAttachmentId ?? null );
 
 	// Track the last loaded image URL for the placeholder
-	const [ placeholderUrl, setPlaceholderUrl ] = useState< string | null >(
-		null
-	);
+	const [ placeholderUrl, setPlaceholderUrl ] = useState< string | null >( null );
 	// Tracks whether enter animation has started (exit animation completed)
-	const [ exitTransitionComplete, setExitTransitionComplete ] =
-		useState( false );
+	const [ exitTransitionComplete, setExitTransitionComplete ] = useState( false );
 
 	const prevAttachmentId = useRef< typeof attachmentId >( null );
 
@@ -58,8 +55,7 @@ export const EditLayout = ( {
 
 	useEffect( () => {
 		// Only update the image key when the attachmentId changes, skipping annotated images
-		const hasAttachmentChanged =
-			!! attachmentId && prevAttachmentId.current !== attachmentId;
+		const hasAttachmentChanged = !! attachmentId && prevAttachmentId.current !== attachmentId;
 
 		if ( hasAttachmentChanged && ! isAnnotatedImage ) {
 			setImageKey( attachmentId );
@@ -113,10 +109,7 @@ export const EditLayout = ( {
 						className="image-studio-placeholder-image"
 					/>
 				) }
-				<AnimatePresence
-					mode="wait"
-					onExitComplete={ () => setExitTransitionComplete( true ) }
-				>
+				<AnimatePresence mode="wait" onExitComplete={ () => setExitTransitionComplete( true ) }>
 					<motion.div
 						key={ effectiveImageKey }
 						className={ cn( 'image-studio-image-container', {

@@ -54,8 +54,8 @@ export const Header = ( {
 	hasPreviousImage = false,
 	hasNextImage = false,
 }: HeaderProps ) => {
-	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } =
-		useSelect( ( select ) => {
+	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } = useSelect(
+		( select ) => {
 			const selectors = select( imageStudioStore ) as any;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
@@ -63,7 +63,9 @@ export const Header = ( {
 				isAnnotationMode: selectors.getIsAnnotationMode(),
 				hasDrafts: selectors.getDraftIds().length > 0,
 			};
-		}, [] );
+		},
+		[]
+	);
 
 	const { setAnnotationMode, addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
@@ -103,10 +105,7 @@ export const Header = ( {
 
 	let navButtonDisabledTooltip: string | undefined;
 	if ( hasDrafts || hasUpdatedMetadata ) {
-		navButtonDisabledTooltip = __(
-			'Save or discard your changes',
-			'big-sky'
-		);
+		navButtonDisabledTooltip = __( 'Save or discard your changes', 'big-sky' );
 	}
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
@@ -186,9 +185,7 @@ export const Header = ( {
 									)
 								}
 								showTooltip
-								accessibleWhenDisabled={
-									!! navButtonDisabledTooltip
-								}
+								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
@@ -208,9 +205,7 @@ export const Header = ( {
 									)
 								}
 								showTooltip
-								accessibleWhenDisabled={
-									!! navButtonDisabledTooltip
-								}
+								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 						</div>
