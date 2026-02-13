@@ -14,8 +14,8 @@ import { mockStepProps, renderStep } from '../../test/helpers';
 
 const planSlug = PLAN_MIGRATION_TRIAL_MONTHLY;
 
-// Mock PlansFeaturesMain with a simplified version that triggers onUpgradeClick
-jest.mock( 'calypso/my-sites/plans-features-main', () => {
+// Mock MigrationPlansGrid with a simplified version that triggers onUpgradeClick
+jest.mock( '../migration-plans-grid', () => {
 	const { PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } = jest.requireActual(
 		'@automattic/calypso-products'
 	);
@@ -26,7 +26,7 @@ jest.mock( 'calypso/my-sites/plans-features-main', () => {
 		}: {
 			onUpgradeClick: ( items: { product_slug: string }[] ) => void;
 		} ) => (
-			<div data-testid="plans-features-main">
+			<div data-testid="migration-plans-grid">
 				<button onClick={ () => onUpgradeClick( [ { product_slug: PLAN_BUSINESS_MONTHLY } ] ) }>
 					Get Monthly
 				</button>
