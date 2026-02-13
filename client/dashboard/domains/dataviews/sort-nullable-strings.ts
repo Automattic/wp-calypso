@@ -3,10 +3,6 @@ import type { SortDirection } from '@wordpress/dataviews';
 /**
  * Sort comparator for nullable string field values. Null/undefined values sort
  * to the end regardless of direction.
- *
- * Note: Despite the Field<Item> type declaring sort as (a: Item, b: Item, ...),
- * the dataviews library's normalizeFields wraps it and actually passes getValue
- * results at runtime. We use `any` to bridge this type mismatch.
  */
 export function sortNullableStrings( a: any, b: any, direction: SortDirection ) {
 	if ( a == null && b == null ) {
