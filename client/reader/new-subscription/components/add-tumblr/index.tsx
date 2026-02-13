@@ -95,15 +95,15 @@ export default function AddTumblr(): JSX.Element {
 						<ul className="reader-add-tumblr__instructions-list">
 							<li>
 								<strong>{ translate( 'Staff Picks:' ) }</strong>
-								{ ' https://staff.tumblr.com/rss' }
+								{ ' staff.tumblr.com/rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'A blog:' ) }</strong>
-								{ ' https://{ BLOG_NAME }.tumblr.com/rss' }
+								{ ' { BLOG_NAME }.tumblr.com/rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'Blog tag:' ) }</strong>
-								{ ' https://{ BLOG_NAME }.tumblr.com/tagged/{ TAG_NAME }/rss' }
+								{ ' { BLOG_NAME }.tumblr.com/tagged/{ TAG_NAME }/rss' }
 							</li>
 						</ul>
 					</div>
