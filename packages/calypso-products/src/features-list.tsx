@@ -367,6 +367,32 @@ import {
 	FEATURE_WOO_HOSTED_PRO_MAILPOET,
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_CSV_IMPORTER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_TAP_TO_PAY,
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_BASIC_STORAGE,
+	FEATURE_WOO_HOSTED_PRO_STORAGE,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_GOOGLE_ADS,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2920,6 +2946,139 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 		getTitle: () => i18n.translate( 'Unlimited store admin accounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+		getTitle: () => i18n.translate( 'Powerful commerce tools to start and grow your business' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_CSV_IMPORTER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_CSV_IMPORTER,
+		getTitle: () => i18n.translate( 'Smart CSV importer to add products and services in bulk' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+		getTitle: () => i18n.translate( 'Free custom web address for one year' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+		getTitle: () => i18n.translate( 'Seamless and fast checkout' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
+		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
+	},
+	[ FEATURE_WOO_HOSTED_TAP_TO_PAY ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_TAP_TO_PAY,
+		getTitle: () => i18n.translate( 'Take payments in person' ),
+		getDescription: () => i18n.translate( 'Tap-to-pay rates start at 2.29%%' ),
+	},
+	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+		getTitle: () => i18n.translate( 'List physical, downloadable, and affiliate products' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BOOKINGS,
+		getTitle: () => i18n.translate( 'Accept and manage bookings for services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_TEAM_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+		getTitle: () => i18n.translate( 'Add team members and set their availability for bookings' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+		getTitle: () =>
+			i18n.translate( 'Offer upsells and cross-sells across all products and services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_GIFT_CARDS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_GIFT_CARDS,
+		getTitle: () => i18n.translate( 'Sell digital gift cards with flexible amounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Shipment tracking' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_USPS_UPS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_USPS_UPS,
+		getTitle: () => i18n.translate( 'USPS and UPS shipping' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ANALYTICS_REPORTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+		getTitle: () => i18n.translate( "Analytics and reports to monitor your store's performance" ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		getTitle: () => i18n.translate( 'Storage space for product images and store data' ),
+		getDescription: () => i18n.translate( '50 GB storage' ),
+	},
+	[ FEATURE_WOO_HOSTED_PRO_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_STORAGE,
+		getTitle: () => i18n.translate( 'Storage space for product images and store data' ),
+		getDescription: () =>
+			i18n.translate( '100GB storage with option to purchase additional storage' ),
+	},
+	[ FEATURE_WOO_HOSTED_SECURITY ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SECURITY,
+		getTitle: () => i18n.translate( 'Security tools to ensure your store and data are protected' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Email subscriber management' ),
+		getDescription: () => i18n.translate( 'Up to 500 email subscribers' ),
+	},
+	[ FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Email subscriber management' ),
+		getDescription: () => i18n.translate( 'Unlimited email subscribers' ),
+	},
+	[ FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+		getTitle: () => i18n.translate( 'Automated email marketing flows to build customer relations' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+		getTitle: () => i18n.translate( 'Abandoned cart emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+		getTitle: () => i18n.translate( 'Post-purchase emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_EMAIL_TEMPLATES ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+		getTitle: () =>
+			i18n.translate( 'Predesigned subscription forms and email marketing templates' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_GOOGLE_ADS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_GOOGLE_ADS,
+		getTitle: () => i18n.translate( 'Create and manage Google Ad campaigns' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEO_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEO_TOOLS,
+		getTitle: () => i18n.translate( 'SEO tools to help customers find your online store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_COUPONS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_COUPONS,
+		getTitle: () => i18n.translate( 'Create coupons to drive more sales' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Hosted (CIAB) Features */
