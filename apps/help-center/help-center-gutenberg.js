@@ -6,13 +6,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
-import { useDispatch, useSelect, dispatch, select, subscribe } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
@@ -184,6 +183,7 @@ function HelpCenterContent() {
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
+				source={ helpCenterData.isCommerceGarden ? 'commerce-garden' : null }
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
@@ -202,55 +202,6 @@ function HelpCenterContentWithProvider() {
 	);
 }
 
-if ( helpCenterData.isCommerceGarden ) {
-	const unsubscribe = subscribe( () => {
-		// Make sure the wp-logo menu item is registered before unregistering its default items.
-		// Use optional chaining since 'next-admin' store only exists in next-admin context
-		if ( select( 'next-admin' )?.getMetaMenuItems?.( 'wp-logo' )?.length > 1 ) {
-			unsubscribe();
-			// wait for the next tick to ensure the menu items are registered
-			queueMicrotask( () => {
-				select( 'next-admin' )
-					?.getMetaMenuItems?.( 'wp-logo' )
-					?.forEach( ( item ) => {
-						dispatch( 'next-admin' )?.unregisterSiteHubHelpMenuItem?.( item.id );
-					} );
-				dispatch( 'next-admin' )?.registerSiteHubHelpMenuItem?.( 'help-center', {
-					label: __( 'Help Center', __i18n_text_domain__ ),
-					parent: 'wp-logo',
-					callback: () => {
-						const state = select( 'automattic/help-center' ).isHelpCenterShown();
-						dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
-					},
-				} );
-				const container = document.createElement( 'div' );
-				container.id = 'jetpack-help-center';
-				document.body.appendChild( container );
-				const botProps = helpCenterData.isCommerceGarden
-					? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-					: {};
-
-				createRoot( container ).render(
-					<QueryClientProvider client={ queryClient }>
-						<HelpCenter
-							locale={ helpCenterData.locale }
-							sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
-							currentUser={ helpCenterData.currentUser }
-							site={ helpCenterData.site }
-							source={ helpCenterData.isCommerceGarden ? 'commerce-garden' : null }
-							hasPurchases={ false }
-							onboardingUrl="https://wordpress.com/start"
-							handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-							isCommerceGarden={ helpCenterData.isCommerceGarden }
-							{ ...botProps }
-						/>
-					</QueryClientProvider>
-				);
-			} );
-		}
-	} );
-} else {
-	registerPlugin( 'jetpack-help-center', {
-		render: () => <HelpCenterContentWithProvider />,
-	} );
-}
+registerPlugin( 'jetpack-help-center', {
+	render: () => <HelpCenterContentWithProvider />,
+} );
