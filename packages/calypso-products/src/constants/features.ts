@@ -493,6 +493,7 @@ export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-desc
 // Woo Hosted Features
 export const FEATURE_WOO_HOSTED_PACKAGE = 'woo-hosted-package';
 export const FEATURE_WOO_HOSTED_AI_BUILDER = 'woo-hosted-ai-builder';
+export const FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON = 'woo-hosted-paypal-integration';
 export const FEATURE_WOO_HOSTED_MARKETING_TOOLS = 'woo-hosted-marketing-tools';
 export const FEATURE_WOO_HOSTED_BASIC_MAILPOET = 'woo-hosted-basic-mailpoet';
 export const FEATURE_WOO_HOSTED_PRO_MAILPOET = 'woo-hosted-pro-mailpoet';

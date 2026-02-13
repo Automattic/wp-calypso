@@ -360,6 +360,7 @@ import {
 	FEATURE_GROUP_WORDADS,
 	FEATURE_WOO_HOSTED_PACKAGE,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
 	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 	FEATURE_WOO_HOSTED_PRO_MAILPOET,
@@ -2871,17 +2872,22 @@ const FEATURES_LIST: FeatureList = {
 	/* START: Woo Hosted (CIAB) Features */
 	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
-		getTitle: () => 'All-in-one solution to build and manage your ecommerce store',
+		getTitle: () => 'All-in-one solution to create and manage your ecommerce store',
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
-		getTitle: () => 'Build your store quickly with our AI-powered site-building tool',
+		getTitle: () => 'AI-powered builder to help you design and set up your store',
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
+		getTitle: () => 'Connected seamlessly to your PayPal account',
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		getTitle: () => 'Build your business with included marketing tools',
+		getTitle: () => 'Built-in email marketing and advertising tools to grow your business',
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
