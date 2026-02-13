@@ -47,7 +47,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tab_clicked', { tab } ) );
 	};
 
-	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
+	// Only show the "Add new" and "Reddit" tabs when the user is logged in and Discover v3 is disabled.
 	const tabs = useMemo( () => {
 		const getLocalizedPath = ( path: string ) => {
 			return addLocaleToPathLocaleInFront( path, currentLocale );
