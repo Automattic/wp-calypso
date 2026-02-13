@@ -11,11 +11,6 @@ const mockSetImageStudioOriginalImageUrl = jest.fn();
 const mockSetImageStudioAiProcessing = jest.fn();
 const mockSetIsAnnotationSaving = jest.fn();
 const mockAddAnnotatedAttachmentId = jest.fn();
-const mockTrackImageStudioAnnotationSave = jest.fn();
-const mockTrackImageStudioAnnotationUndo = jest.fn();
-const mockTrackImageStudioAnnotationRedo = jest.fn();
-const mockTrackImageStudioImageGenerated = jest.fn();
-const mockUploadAnnotation = jest.fn();
 
 const mockAnnotationCanvas = {
 	getBlob: jest.fn(),

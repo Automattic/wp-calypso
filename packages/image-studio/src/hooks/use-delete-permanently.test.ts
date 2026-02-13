@@ -9,6 +9,8 @@
  * - Double-click guard prevents concurrent calls
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { trackImageStudioError, trackImageStudioImageDeletedPermanently } from '../utils/tracking';
+import { useDeletePermanently } from './use-delete-permanently';
 
 // Mutable selector state used by the mocks
 let mockSelectorState: {
@@ -65,7 +67,7 @@ jest.mock( '@wordpress/core-data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/element', () => ( {
-	useCallback: ( fn: Function ) => fn,
+	useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
 	useRef: ( initial: unknown ) => ( { current: initial } ),
 	useState: ( initial: unknown ) => [ initial, jest.fn() ],
 } ) );
@@ -82,7 +84,7 @@ jest.mock( '../types', () => ( {
 	ImageStudioMode: { Edit: 'edit', Generate: 'generate' },
 } ) );
 
-jest.mock( '@utils/image-studio-tracking', () => ( {
+jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioImageDeletedPermanently: jest.fn(),
 	trackImageStudioError: jest.fn(),
 } ) );
@@ -94,13 +96,6 @@ jest.mock( './use-draft-cleanup', () => ( {
 		cleanupOnExit: jest.fn(),
 	} ),
 } ) );
-
-// Import after mocks are set up
-import { useDeletePermanently } from './use-delete-permanently';
-import {
-	trackImageStudioError,
-	trackImageStudioImageDeletedPermanently,
-} from '@utils/image-studio-tracking';
 
 describe( 'useDeletePermanently', () => {
 	beforeEach( () => {
