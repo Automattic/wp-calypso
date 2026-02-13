@@ -18,8 +18,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useGenerateActionHook from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook';
-import { getIntervalType } from '../unified-plans/util';
-import type { DataResponse } from '@automattic/plans-grid-next';
+import type { DataResponse, SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
 interface MigrationPlansGridProps {
 	siteId: number;
@@ -36,8 +35,7 @@ export default function MigrationPlansGrid( {
 }: MigrationPlansGridProps ) {
 	const [ intervalType, setIntervalType ] = useState< 'yearly' | '2yearly' >( 'yearly' );
 
-	const handlePlanIntervalUpdate = useCallback( ( path: string ) => {
-		const interval = getIntervalType( path );
+	const handlePlanIntervalUpdate = useCallback( ( interval: SupportedUrlFriendlyTermType ) => {
 		setIntervalType( interval as 'yearly' | '2yearly' );
 	}, [] );
 
@@ -123,6 +121,7 @@ export default function MigrationPlansGrid( {
 			displayedIntervals: DISPLAYED_INTERVALS,
 			useCheckPlanAvailabilityForPurchase,
 			coupon,
+			layoutClassName: 'migration-plans-grid__plan-type-selector-layout',
 		} ),
 		[ siteId, intervalType, handlePlanIntervalUpdate, gridPlansForPlanTypeSelector, coupon ]
 	);

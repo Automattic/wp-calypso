@@ -1,6 +1,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/onboarding/styles/mixins';
 
+// Migration plans grid dropdown centering
+.migration-plans-grid__plan-type-selector-layout {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 24px;
+}
+
 :root .site-migration-upgrade-plan {
 	@include onboarding-block-margin;
 
