@@ -51,32 +51,15 @@
 		border-top: 1px solid var( --studio-gray-5 );
 	}
 
-	&__trial-button {
-		background: none;
-		border: none;
-		color: var( --studio-wordpress-blue-50 );
-		font-size: 1rem;
-		font-weight: 500;
-		cursor: pointer;
-		text-decoration: underline;
-		padding: 0;
-		margin-bottom: 0.5rem;
-
-		&:hover {
-			color: var( --studio-wordpress-blue-70 );
-		}
-
-		&:focus {
-			outline: 2px solid var( --studio-wordpress-blue-50 );
-			outline-offset: 2px;
-		}
-	}
-
 	&__trial-description {
 		color: var( --color-text-subtle );
 		font-size: 0.875rem;
 		text-align: center;
-		margin: 0;
+		margin: 0 0 1rem;
 		max-width: 400px;
+	}
+
+	&__trial-button.components-button.is-secondary {
+		font-weight: 500;
 	}
 }

@@ -107,7 +107,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		render( { navigation } );
 
 		await userEvent.click(
-			await screen.findByRole( 'button', { name: /Or try a free 7-day trial/ } )
+			await screen.findByRole( 'button', { name: /Try a free 7-day trial/ } )
 		);
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
