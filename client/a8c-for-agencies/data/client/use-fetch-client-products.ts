@@ -10,7 +10,7 @@ function queryClientProducts(): Promise< APIProductFamily[] > {
 	return wpcom.req
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: '/agency-client/public/pricing',
+			path: '/agency-client/public/products',
 		} )
 		.then( ( data: APIProductFamily[] ) => {
 			const exclude = [
