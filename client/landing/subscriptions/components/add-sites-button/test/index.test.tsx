@@ -23,6 +23,10 @@ jest.mock( 'calypso/reader/utils', () => ( {
 	isDiscoverV3Enabled: jest.fn().mockReturnValue( true ),
 } ) );
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 describe( 'AddSitesButton', () => {
 	it( 'shows a link to the "reader/new" page when the feature is enabled', async () => {
 		renderWithProvider(
