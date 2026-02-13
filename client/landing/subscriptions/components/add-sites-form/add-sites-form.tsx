@@ -19,6 +19,7 @@ export type AddSitesFormProps = {
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
+	transformUrl?: ( url: string ) => string;
 };
 
 type SubscriptionError = {
@@ -33,6 +34,7 @@ const AddSitesForm = ( {
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
+	transformUrl,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -81,26 +83,26 @@ const AddSitesForm = ( {
 		if ( isValidInput ) {
 			setIsSubmitting( true );
 			subscribe(
-				{ url: parseUrl( inputValue ).toString() },
+				{ url: parseUrl( getTransformedInputValue() ).toString() },
 				{
 					onSuccess: ( data ) => {
 						if ( data?.info === 'already_subscribed' ) {
-							showWarningNotice( inputValue );
+							showWarningNotice( getTransformedInputValue() );
 						} else {
 							if ( data?.subscription?.blog_ID ) {
 								recordSiteSubscribed( {
 									blog_id: data?.subscription?.blog_ID,
-									url: inputValue,
+									url: getTransformedInputValue(),
 									source,
 								} );
 							}
 
-							showSuccessNotice( inputValue );
+							showSuccessNotice( getTransformedInputValue() );
 							onSubscribeToggle( true );
 						}
 					},
 					onError: ( error: SubscriptionError ) => {
-						showErrorNotice( inputValue, error );
+						showErrorNotice( getTransformedInputValue(), error );
 						onChangeSubscribe?.( false );
 					},
 					onSettled: (): void => {
@@ -119,6 +121,10 @@ const AddSitesForm = ( {
 		onChangeSubscribe?.( subscribed );
 	}
 
+	function getTransformedInputValue(): string {
+		return transformUrl ? transformUrl( inputValue ) : inputValue;
+	}
+
 	return (
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
@@ -135,7 +141,6 @@ const AddSitesForm = ( {
 						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
@@ -154,7 +159,7 @@ const AddSitesForm = ( {
 			</form>
 
 			<FeedPreview
-				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
+				url={ isValidInput ? getTransformedInputValue() : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
 				source={ source }
 				onChangeFeedPreview={ onChangeFeedPreview }
 				onChangeSubscribe={ onSubscribeToggle }

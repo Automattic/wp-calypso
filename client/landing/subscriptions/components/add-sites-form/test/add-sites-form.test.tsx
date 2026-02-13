@@ -93,4 +93,29 @@ describe( 'AddSitesForm', () => {
 
 		expect( addButton ).toBeDisabled();
 	} );
+
+	describe( 'transformUrl prop', () => {
+		test( 'calls transformUrl with the input value', () => {
+			const transformUrl = jest.fn( ( url: string ) => `${ url }/transformed` );
+			renderWithContextProvider( <AddSitesForm { ...mockProps } transformUrl={ transformUrl } /> );
+
+			const input = screen.getByRole( 'textbox' );
+			fireEvent.change( input, { target: { value: 'https://www.example.com' } } );
+			fireEvent.blur( input );
+
+			expect( transformUrl ).toHaveBeenCalledWith( 'https://www.example.com' );
+			expect( transformUrl ).toHaveReturnedWith( 'https://www.example.com/transformed' );
+		} );
+
+		test( 'does not call transformUrl when input is empty', () => {
+			const transformUrl = jest.fn( ( url: string ) => `${ url }/transformed` );
+			renderWithContextProvider( <AddSitesForm { ...mockProps } transformUrl={ transformUrl } /> );
+
+			const input = screen.getByRole( 'textbox' );
+			fireEvent.change( input, { target: { value: '' } } );
+			fireEvent.blur( input );
+
+			expect( transformUrl ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
