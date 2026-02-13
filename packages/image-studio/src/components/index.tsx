@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
+import { useDeletePermanently } from '../hooks/use-delete-permanently';
 import { useDraftCleanup } from '../hooks/use-draft-cleanup';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
@@ -22,9 +23,6 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
-import { useDraftCleanup } from '../hooks/use-draft-cleanup';
-import { useDeletePermanently } from '../hooks/use-delete-permanently';
-import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
@@ -153,7 +151,7 @@ function ImageStudioAgentChat( {
 
 	// Disable stop button during upload phase to prevent orphan images
 	const isStopDisabled =
-		agentChatProps.currentPhase === 'uploading' || isAnnotationSaving;
+		( agentChatProps as any ).currentPhase === 'uploading' || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -183,9 +181,7 @@ function ImageStudioAgentChat( {
 				<AgentUI.Footer>
 					{ suggestionsComponent }
 					<AgentUI.Notice />
-					<AgentUI.Input
-						disabled={ isStopDisabled ? true : undefined }
-					/>
+					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
 						<StylePicker disabled={ isProcessing } />

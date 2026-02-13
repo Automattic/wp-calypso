@@ -79,7 +79,7 @@ export function openImageStudioForBlock(
 	const handleClose = ( image: ImageData | null ) => {
 		if ( image === null ) {
 			// Image was deleted - clear the block's image reference
-			dispatch( blockEditorStore ).updateBlockAttributes( clientId, {
+			( dispatch( blockEditorStore ) as any ).updateBlockAttributes( clientId, {
 				url: undefined,
 				id: undefined,
 				alt: '',

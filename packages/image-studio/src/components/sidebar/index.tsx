@@ -1,17 +1,15 @@
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import './style.scss';
 import { __ } from '@wordpress/i18n';
-import { EditableField } from './editable-field';
-import { FileDetails } from './file-details';
-import { ConfirmationDialog } from '../confirmation-dialog';
+import { close, external } from '@wordpress/icons';
 import { store as imageStudioStore } from '../../store';
 import { MetadataField } from '../../types';
 import {
 	trackImageStudioMetadataUpdated,
 	trackImageStudioSidebarClose,
 } from '../../utils/tracking';
+import { ConfirmationDialog } from '../confirmation-dialog';
 import { EditableField } from './editable-field';
 import { FileDetails } from './file-details';
 import './style.scss';

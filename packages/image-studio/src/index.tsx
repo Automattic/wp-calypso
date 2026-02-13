@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { store as coreStore } from '@wordpress/core-data';
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
@@ -89,17 +88,13 @@ function ImageStudioIntegration(): JSX.Element | null {
 	);
 
 	// Use navigation hook
-	const {
-		handleNavigatePrevious,
-		handleNavigateNext,
-		hasPreviousImage,
-		hasNextImage,
-	} = useImageFileNavigation( {
-		isOpen,
-		originalAttachmentId,
-		attachmentId,
-		hasUnsavedChanges,
-	} );
+	const { handleNavigatePrevious, handleNavigateNext, hasPreviousImage, hasNextImage } =
+		useImageFileNavigation( {
+			isOpen,
+			originalAttachmentId,
+			attachmentId,
+			hasUnsavedChanges,
+		} );
 
 	useEffect( () => {
 		const handleImageStudioClick = async ( event: MouseEvent ) => {

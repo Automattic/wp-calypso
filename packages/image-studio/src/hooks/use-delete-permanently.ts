@@ -5,16 +5,12 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
 /**
  * Internal dependencies
  */
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
-import {
-	trackImageStudioError,
-	trackImageStudioImageDeletedPermanently,
-} from '@utils/image-studio-tracking';
+import { trackImageStudioError, trackImageStudioImageDeletedPermanently } from '../utils/tracking';
 import { useDraftCleanup } from './use-draft-cleanup';
 
 /**

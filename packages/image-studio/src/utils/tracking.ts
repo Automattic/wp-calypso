@@ -475,6 +475,11 @@ export function trackImageStudioFileNavigated( {
 	} );
 }
 
+interface TrackImageStudioStyleSelectedOptions {
+	style: string;
+	mode: ImageStudioMode;
+}
+
 /**
  * Tracks when a user selects a style in Image Studio
  *
@@ -490,6 +495,11 @@ export function trackImageStudioStyleSelected( {
 		style,
 		mode,
 	} );
+}
+
+interface TrackImageStudioAspectRatioSelectedOptions {
+	aspectRatio: string;
+	mode: ImageStudioMode;
 }
 
 /**
