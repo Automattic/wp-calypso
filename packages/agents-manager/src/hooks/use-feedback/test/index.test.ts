@@ -9,6 +9,50 @@ import { getSessionId as getStoredSessionId } from '../../../utils/agent-session
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
+jest.mock(
+	'@automattic/agenttic-ui',
+	() => {
+		let onFeedbackCb: ( messageId: string, feedback: 'up' | 'down' ) => void;
+
+		return {
+			createFeedbackActions: jest.fn(
+				( {
+					onFeedback,
+					condition,
+				}: {
+					onFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
+					condition?: ( message: Message ) => boolean;
+				} ) => {
+					onFeedbackCb = onFeedback;
+					return {
+						getActionsForMessage: ( message: Message ) => {
+							if ( condition && ! condition( message ) ) {
+								return [];
+							}
+							return [
+								{
+									id: 'feedback-up',
+									label: 'Thumbs Up',
+									onClick: ( msg: Message ) => onFeedbackCb( msg.id, 'up' ),
+								},
+								{
+									id: 'feedback-down',
+									label: 'Thumbs Down',
+									onClick: ( msg: Message ) => onFeedbackCb( msg.id, 'down' ),
+								},
+							];
+						},
+						onChange: jest.fn(),
+						offChange: jest.fn(),
+					};
+				}
+			),
+			ThumbsUpIcon: () => null,
+			ThumbsDownIcon: () => null,
+		};
+	},
+	{ virtual: true }
+);
 jest.mock( '@automattic/calypso-analytics' );
 jest.mock( '@wordpress/api-fetch' );
 jest.mock( 'wpcom-proxy-request' );
@@ -379,10 +423,14 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'conversation context extraction', () => {
-		it( 'skips tool messages in conversation context', async () => {
+		it( 'replaces tool messages with placeholder in conversation context', async () => {
+			const toolJson = JSON.stringify( {
+				tool_id: 'big_sky__show_component',
+				data: { type: 'site-analytics' },
+			} );
 			const messages = [
 				createMessage( 'msg-1', 'user', 'Show me analytics' ),
-				createMessage( 'msg-2', 'agent', '{"tool_id": "big_sky__show_component"}' ),
+				createMessage( 'msg-2', 'agent', toolJson ),
 				createMessage( 'msg-3', 'agent', 'Here are your analytics' ),
 			];
 
@@ -401,11 +449,14 @@ describe( 'useFeedback', () => {
 			} );
 
 			const callBody = mockWpcomRequest.mock.calls[ 1 ][ 0 ].body;
-			expect( callBody.previous_messages ).toHaveLength( 2 );
-			expect( callBody.previous_messages[ 1 ].text ).toBe( 'Here are your analytics' );
-			// Tool message replaced with placeholder
+			expect( callBody.previous_messages ).toHaveLength( 3 );
+			expect( callBody.previous_messages[ 2 ].text ).toBe( 'Here are your analytics' );
+			// Tool JSON is replaced with a human-readable placeholder
 			expect( callBody.previous_messages ).not.toContainEqual(
 				expect.objectContaining( { text: expect.stringContaining( 'tool_id' ) } )
+			);
+			expect( callBody.previous_messages[ 1 ].text ).toBe(
+				'🔨 Tool: `big_sky__show_component` (site-analytics)'
 			);
 		} );
 	} );

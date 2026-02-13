@@ -239,7 +239,7 @@ describe( 'FeedbackInput', () => {
 			expect( submitButton ).toBeDisabled();
 		} );
 
-		it( 'clears textarea after successful submission', async () => {
+		it( 'removes textarea after successful submission', async () => {
 			const user = userEvent.setup();
 			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
 
@@ -253,8 +253,8 @@ describe( 'FeedbackInput', () => {
 				expect( screen.getByText( /feedback submitted/i ) ).toBeInTheDocument();
 			} );
 
-			// Textarea should be cleared (though hidden by success message)
-			expect( textarea ).toHaveValue( '' );
+			// Textarea is replaced by the success message
+			expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

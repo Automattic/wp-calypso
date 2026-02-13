@@ -124,12 +124,13 @@ function getMessageText( message: Message ): string | null {
 	}
 	// Replace tool placeholders/JSON with a human-readable description
 	if ( text === LOCAL_TOOL_RUNNING_MESSAGE ) {
-		return '[Displayed an interactive tool in the chat]';
+		return '🔨 Tool';
 	}
 	try {
 		const parsed = JSON.parse( text );
-		if ( parsed?.tool_id === 'big_sky__show_component' ) {
-			return '[Displayed an interactive tool in the chat]';
+		if ( parsed?.tool_id ) {
+			const suffix = parsed.data?.type ? ` (${ parsed.data.type })` : '';
+			return `🔨 Tool: \`${ parsed.tool_id }\`${ suffix }`;
 		}
 	} catch {
 		// Not JSON, continue with normal text handling
@@ -186,8 +187,6 @@ export default function useFeedback( {
 	sessionIdRef.current = sessionId;
 	messagesRef.current = messages;
 
-	const hasRegistered = useRef( false );
-
 	const handleFeedback = useCallback( ( messageId: string, feedback: 'up' | 'down' ) => {
 		const currentSiteId = siteIdRef.current;
 		// agentConfig.sessionId can be empty for new chats — the server-assigned
@@ -214,10 +213,6 @@ export default function useFeedback( {
 	}, [] );
 
 	useEffect( () => {
-		if ( hasRegistered.current ) {
-			return;
-		}
-
 		const feedbackManager = createFeedbackActions( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
@@ -239,18 +234,15 @@ export default function useFeedback( {
 		};
 		feedbackManager.onChange( handleFeedbackChange );
 
-		hasRegistered.current = true;
-
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback ] );
+	}, [ registerMessageActions, handleFeedback, sessionId ] );
 
 	// Reset feedback input when session changes
 	useEffect( () => {
 		setShowFeedbackInput( false );
 		setFeedbackMessageId( null );
-		hasRegistered.current = false;
 	}, [ sessionId ] );
 
 	const handleSubmitFeedbackText = useCallback(
