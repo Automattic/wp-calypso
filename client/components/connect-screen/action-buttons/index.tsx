@@ -9,9 +9,11 @@ export interface ActionButtonsProps {
 	primaryOnClick: () => void;
 	primaryLoading?: boolean;
 	primaryDisabled?: boolean;
+	primaryClassName?: string;
 	secondaryLabel?: ReactNode;
 	secondaryOnClick?: () => void;
 	secondaryDisabled?: boolean;
+	secondaryClassName?: string;
 	tertiaryLabel?: ReactNode;
 	tertiaryOnClick?: () => void;
 	className?: string;
@@ -24,8 +26,10 @@ export interface ActionButtonsProps {
  *   primaryLabel="Accept Invite"
  *   primaryOnClick={() => handleAccept()}
  *   primaryLoading={isSubmitting}
+ *   primaryClassName="custom-primary-class"
  *   secondaryLabel="Cancel"
  *   secondaryOnClick={() => handleCancel()}
+ *   secondaryClassName="custom-secondary-class"
  *   tertiaryLabel="Sign in with another account"
  *   tertiaryOnClick={() => handleSignIn()}
  * />
@@ -35,9 +39,11 @@ export function ActionButtons( {
 	primaryOnClick,
 	primaryLoading = false,
 	primaryDisabled = false,
+	primaryClassName,
 	secondaryLabel,
 	secondaryOnClick,
 	secondaryDisabled = false,
+	secondaryClassName,
 	tertiaryLabel,
 	tertiaryOnClick,
 	className,
@@ -50,7 +56,7 @@ export function ActionButtons( {
 						variant="secondary"
 						onClick={ secondaryOnClick }
 						disabled={ secondaryDisabled || primaryLoading }
-						className="connect-screen-action-buttons__secondary"
+						className={ clsx( 'connect-screen-action-buttons__secondary', secondaryClassName ) }
 					>
 						{ secondaryLabel }
 					</Button>
@@ -59,7 +65,7 @@ export function ActionButtons( {
 					variant="primary"
 					onClick={ primaryOnClick }
 					disabled={ primaryDisabled || primaryLoading }
-					className="connect-screen-action-buttons__primary"
+					className={ clsx( 'connect-screen-action-buttons__primary', primaryClassName ) }
 				>
 					{ primaryLoading && <Spinner /> }
 					{ ! primaryLoading && primaryLabel }

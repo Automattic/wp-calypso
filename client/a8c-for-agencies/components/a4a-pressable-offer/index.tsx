@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -26,6 +27,8 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 
 	const pressableOwnership = usePressableOwnershipType();
 
+	const { showSupportGuide } = useHelpCenter();
+
 	// Make sure we only show the offer if the agency is a Billing Dragon agency and does not have a Pressable license through A4A, unless we are in referral mode
 	const shouldShowOffer =
 		agency?.billing_system === 'billingdragon' &&
@@ -47,9 +50,42 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 		);
 	}, [ dispatch ] );
 
-	const onSeeFullTermClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_see_full_terms_click' ) );
-	}, [ dispatch ] );
+	const onSeeFullTermClick = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_pressable_promo_offer_2026_see_full_terms_click' )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const onSeeMigrationBonusTermsClick = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch(
+				recordTracksEvent(
+					'calypso_a4a_pressable_promo_offer_2026_see_migration_bonus_terms_click'
+				)
+			);
+		},
+		[ dispatch ]
+	);
+
+	const onSeeMigrationIncentivesTrackingGuideClick = useCallback(
+		( e: React.MouseEvent< HTMLButtonElement > ) => {
+			e.stopPropagation();
+			dispatch(
+				recordTracksEvent(
+					'calypso_a4a_pressable_promo_offer_2026_see_migration_incentives_tracking_guide_click'
+				)
+			);
+			showSupportGuide(
+				'https://agencieshelp.automattic.com/knowledge-base/migration-incentive-tracking/'
+			);
+		},
+		[ dispatch, showSupportGuide ]
+	);
 
 	if ( ! shouldShowOffer ) {
 		return null;
@@ -71,12 +107,7 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 				<h3 className="a4a-pressable-offer__title">
 					<span>
 						{ translate(
-							'{{b}}Limited time offer:{{/b}} Get up to 6 months of free Pressable hosting on new plans!',
-							{
-								components: {
-									b: <b />,
-								},
-							}
+							'Your Exclusive Automattic for Agencies Limited-Time Pressable Offer Just Got Better 🎉'
 						) }
 					</span>
 
@@ -90,7 +121,7 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 						<SimpleList
 							items={ [
 								translate(
-									'{{b}}6 Months Free on Annual Plans:{{/b}} Purchase a 12-month plan and receive a 50% discount on the upfront cost.',
+									'{{b}}6 months of free hosting on annual Premium or Signature plans:{{/b}} Purchase a 12-month plan and receive a 50% discount on your first year.',
 									{
 										components: {
 											b: <b />,
@@ -98,7 +129,7 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 									}
 								),
 								translate(
-									'{{b}}3 Months Free on Monthly Plans:{{/b}} Choose a monthly billing cycle and receive savings equal to 3 free months (applied as a discount evenly across the first 12 invoices).',
+									'{{b}}3 months of free hosting on monthly plans:{{/b}} Choose a monthly billing cycle and receive savings equal to 3 free months (applied as a discount evenly across the first 12 invoices).',
 									{
 										components: {
 											b: <b />,
@@ -106,10 +137,15 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 									}
 								),
 								translate(
-									'{{b}}Automattic for Agencies Exclusive:{{/b}} As a partner, you can unlock these savings on Pressable’s full Signature Plan suite in addition to Premium plans.',
+									'PLUS earn up to $200 for each Signature site and up to $1,000 for each Premium site successfully migrated and {{a}}tagged{{/a}} by the deadline.',
 									{
 										components: {
-											b: <b />,
+											a: (
+												<Button
+													variant="link"
+													onClick={ onSeeMigrationIncentivesTrackingGuideClick }
+												/>
+											),
 										},
 									}
 								),
@@ -130,18 +166,30 @@ const PressableOffer = ( { isReferMode }: Props ) => {
 								</Button>
 							) }
 
-							<Button
-								variant="secondary"
-								href="https://pressable.com/legal/hosting-promotion-terms/"
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ onSeeFullTermClick }
-							>
-								{ translate( 'See full terms ↗' ) }
-							</Button>
-
 							<span className="a4a-pressable-offer__body-actions-footnote">
-								{ translate( '*Offer valid January 27 - April 30, 2026' ) }
+								{ translate(
+									'See terms of Hosting Promotion {{TermLink}}here{{/TermLink}} and the Migration Bonus {{MigrationBonusLink}}here{{/MigrationBonusLink}}',
+									{
+										components: {
+											TermLink: (
+												<Button
+													variant="link"
+													onClick={ onSeeFullTermClick }
+													href="https://pressable.com/legal/hosting-promotion-terms/"
+													target="_blank"
+												/>
+											),
+											MigrationBonusLink: (
+												<Button
+													variant="link"
+													onClick={ onSeeMigrationBonusTermsClick }
+													href="https://pressable.com/legal/migration-bonus-2026/"
+													target="_blank"
+												/>
+											),
+										},
+									}
+								) }
 							</span>
 						</div>
 					</div>

@@ -45,9 +45,6 @@ describe( 'useFixThreats', () => {
 	const mockThreatIds = [ 100001, 100002, 100003 ];
 
 	beforeEach( () => {
-		// Reset all mocks
-		jest.clearAllMocks();
-
 		// Setup default mock implementation
 		mockFetchFixThreatsStatus.mockResolvedValue( createFixThreatsStatusResponse( {} ) );
 	} );

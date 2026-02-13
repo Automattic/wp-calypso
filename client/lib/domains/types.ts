@@ -138,6 +138,7 @@ export type ResponseDomain = {
 	registrationDate: string;
 	registryExpiryDate: string;
 	renewableUntil: string;
+	siteSlug: string;
 	sslStatus: 'active' | 'pending' | 'disabled' | 'newly_registered' | null;
 	subdomainPart?: string;
 	subscriptionId: string | null;

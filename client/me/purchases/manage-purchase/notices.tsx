@@ -28,18 +28,19 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getName,
+	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpired,
 	isExpiring,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
 	isRenewable,
-	isRenewing,
 	isRechargeable,
+	isRenewing,
 	needsToRenewSoon,
-	hasPaymentMethod,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
@@ -535,7 +536,12 @@ class PurchaseNotice extends Component<
 			noticeActionText = translate( 'Renew all' );
 			noticeImpressionName = 'current-expires-soon-others-expire-soon';
 
-			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
+				noticeText = translate(
+					'There was a problem processing your renewal. You have {{link}}other upgrades{{/link}} on this site that may also be affected. Please renew now to avoid disruption to your service.',
+					translateOptions
+				);
+			} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s, and you have {{link}}other upgrades{{/link}} on this site that will also be removed soon unless you take action.',
@@ -617,7 +623,12 @@ class PurchaseNotice extends Component<
 			noticeStatus = suppressErrorStylingForCurrentPurchase ? 'is-info' : 'is-error';
 			noticeImpressionName = 'current-expires-soon-others-renew-soon';
 
-			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
+				noticeText = translate(
+					'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
+					translateOptions
+				);
+			} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
@@ -795,9 +806,14 @@ class PurchaseNotice extends Component<
 			noticeStatus = 'is-info';
 			noticeImpressionName = 'current-expires-later-others-renew-soon';
 
-			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
 				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
-
+				noticeText = translate(
+					'There was a problem processing your renewal. You also have {{link}}other upgrades{{/link}} scheduled to renew soon. Please renew now to avoid disruption to your service.',
+					translateOptions
+				);
+			} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
+				noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 				if ( isDomainRegistration( currentPurchase ) ) {
 					noticeText = translate(
 						'Your %(purchaseName)s domain expired %(expiry)s and will be removed soon unless you take action. You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
@@ -1042,9 +1058,15 @@ class PurchaseNotice extends Component<
 
 		if ( isRenewable( purchase ) ) {
 			const noticeText = ( () => {
-				if ( isInExpirationGracePeriod( purchase ) ) {
-					const purchaseName = getName( purchase );
-					const expiry = moment( purchase.expiryDate ).fromNow();
+				if ( isFailedAutoRenewal( currentPurchase ) ) {
+					return translate(
+						'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+					);
+				}
+				if ( isInExpirationGracePeriod( currentPurchase ) ) {
+					// Auto-renew OFF - intentional expiry
+					const purchaseName = getName( currentPurchase );
+					const expiry = moment( currentPurchase.expiryDate ).fromNow();
 					return translate(
 						'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.',
 						{

@@ -5,7 +5,7 @@ export type UpcomingEventProps = {
 	id: string;
 	date: { from: Moment; to: Moment };
 	displayDate?: string;
-	title: string;
+	title: TranslateResult;
 	subtitle: string;
 	descriptions: TranslateResult[];
 	logoUrl?: string;

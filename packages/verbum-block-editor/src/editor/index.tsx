@@ -4,17 +4,14 @@ import {
 	BlockTools,
 	BlockList,
 	BlockCanvas,
-	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useState, useEffect, useCallback, useRef } from '@wordpress/element';
+import React, { useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
-import clsx from 'clsx';
 import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
@@ -46,8 +43,6 @@ export const Editor: FC< EditorProps > = ( {
 	} = useStateWithHistory(
 		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
 	) as unknown as StateWithUndoManager;
-	const [ isEditing, setIsEditing ] = useState( false );
-
 	/**
 	 * This prevents the editor from copying the theme styles inside the iframe. We don't want to copy the styles inside.
 	 * See: https://github.com/WordPress/gutenberg/blob/4c319590947b5f7853411e3c076861193942c6d2/packages/block-editor/src/components/iframe/index.js#L160
@@ -107,8 +102,7 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
-					<InitialBlockSelector onBlockSelect={ () => setIsEditing( true ) } />
-					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
+					<div className="editor__header">
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
 								<BlockToolbar hideDragHandle />
@@ -148,32 +142,3 @@ export const Editor: FC< EditorProps > = ( {
 		</SlotFillProvider>
 	);
 };
-
-/**
- * Component to select the last block on initial load.
- *
- * NOTE: Must be rendered inside BlockEditorProvider to access the correct store context.
- */
-function InitialBlockSelector( { onBlockSelect }: { onBlockSelect: () => void } ) {
-	const { selectBlock } = useDispatch( blockEditorStore );
-	const storeBlocks = useSelect( ( select ) => select( blockEditorStore ).getBlocks(), [] );
-	const hasInitialized = useRef( false );
-
-	useEffect( () => {
-		// To ensure we only run this useEffect once.
-		if ( hasInitialized.current ) {
-			return;
-		}
-
-		const lastBlock = storeBlocks[ storeBlocks.length - 1 ];
-		if ( ! lastBlock ) {
-			return;
-		}
-
-		hasInitialized.current = true;
-		selectBlock( lastBlock.clientId );
-		onBlockSelect();
-	}, [ selectBlock, storeBlocks, onBlockSelect ] );
-
-	return null;
-}

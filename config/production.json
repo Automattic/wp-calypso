@@ -45,6 +45,7 @@
 		"dashboard/v2/paginated-site-list": true,
 		"dashboard/v2/backport/site-overview": true,
 		"domain-transfer-redesign": true,
+		"domains/new-thank-you-page": false,
 		"global-styles/on-personal-plan": true,
 		"google-my-business": true,
 		"help": true,

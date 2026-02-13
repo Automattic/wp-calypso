@@ -21,10 +21,6 @@ describe( 'DomainConnectCard', () => {
 		registrar_url: null,
 	};
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Basic Rendering', () => {
 		test( 'renders the card with basic elements', () => {
 			render( <DomainConnectCard { ...defaultProps } /> );
