@@ -1,4 +1,4 @@
-export default function TumblrIcon( { iconSize } ) {
+export default function TumblrIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg
 			fill="#35465c"
