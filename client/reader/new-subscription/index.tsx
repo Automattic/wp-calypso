@@ -10,6 +10,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import ReaderMain from '../components/reader-main';
 import AddNew from './components/add-new';
 import AddReddit from './components/add-reddit';
+import AddSubstack from './components/add-substack';
 
 interface Tab {
 	slug: string;
@@ -20,6 +21,7 @@ interface Tab {
 enum Tabs {
 	ADD_NEW = 'add-new',
 	REDDIT = 'reddit',
+	SUBSTACK = 'substack',
 }
 
 export const NEW_SUBSCRIPTION_TABS: typeof Tabs = Tabs;
@@ -47,10 +49,16 @@ export default function ReaderNewSubscriptionPage(
 			title: translate( 'Reddit' ),
 			path: `/${ pathPrefix }/reddit`,
 		},
+		{
+			slug: Tabs.SUBSTACK,
+			title: translate( 'Substack' ),
+			path: `/${ pathPrefix }/substack`,
+		},
 	];
 	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
 		[ Tabs.ADD_NEW ]: <AddNew />,
 		[ Tabs.REDDIT ]: <AddReddit />,
+		[ Tabs.SUBSTACK ]: <AddSubstack />,
 	};
 
 	function recordTabClick( tabSlug: string ): void {

@@ -64,7 +64,7 @@ export default async function (): Promise< void > {
 	);
 
 	page(
-		[ '/reader/new', '/reader/new/reddit' ],
+		[ '/reader/new', '/reader/new/reddit', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
 		setBeforePrimary,
