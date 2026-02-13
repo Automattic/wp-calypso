@@ -3,6 +3,7 @@ import {
 	PLAN_CATEGORY_ENTERPRISE,
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
 
 export type PressablePlan = {
@@ -11,6 +12,7 @@ export type PressablePlan = {
 	visits: number;
 	storage: number;
 	category: string;
+	worker?: number;
 };
 
 const PLAN_DATA: Record< string, PressablePlan > = {
@@ -20,6 +22,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 50000,
 		storage: 20,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-2': {
@@ -27,6 +30,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 5,
 		visits: 100000,
 		storage: 50,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-3': {
@@ -34,6 +38,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 10,
 		visits: 250000,
 		storage: 80,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-4': {
@@ -41,6 +46,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 25,
 		visits: 500000,
 		storage: 175,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-5': {
@@ -48,6 +54,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 50,
 		visits: 1000000,
 		storage: 250,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-6': {
@@ -55,6 +62,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 75,
 		visits: 1500000,
 		storage: 350,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-wp-7': {
@@ -62,6 +70,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 100,
 		visits: 2000000,
 		storage: 500,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 
@@ -71,6 +80,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 30000,
 		storage: 20,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-growth': {
@@ -78,6 +88,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 3,
 		visits: 50000,
 		storage: 30,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-advanced': {
@@ -85,6 +96,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 5,
 		visits: 75000,
 		storage: 35,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-pro': {
@@ -92,6 +104,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 10,
 		visits: 150000,
 		storage: 50,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-premium': {
@@ -99,6 +112,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 20,
 		visits: 400000,
 		storage: 80,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-business': {
@@ -106,6 +120,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 50,
 		visits: 1000000,
 		storage: 200,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-business-80': {
@@ -113,6 +128,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 80,
 		visits: 1600000,
 		storage: 275,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-business-100': {
@@ -120,6 +136,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 100,
 		visits: 2000000,
 		storage: 325,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-business-120': {
@@ -127,6 +144,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 120,
 		visits: 2400000,
 		storage: 375,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 	'pressable-business-150': {
@@ -134,6 +152,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 150,
 		visits: 3000000,
 		storage: 450,
+		worker: 10,
 		category: PLAN_CATEGORY_STANDARD,
 	},
 
@@ -143,6 +162,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 200,
 		visits: 4000000,
 		storage: 500,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-5': {
@@ -150,6 +170,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 250,
 		visits: 5000000,
 		storage: 550,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-6': {
@@ -157,6 +178,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 300,
 		visits: 6000000,
 		storage: 600,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-7': {
@@ -164,6 +186,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 350,
 		visits: 7000000,
 		storage: 700,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-8': {
@@ -171,6 +194,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 400,
 		visits: 8000000,
 		storage: 800,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-9': {
@@ -178,6 +202,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 450,
 		visits: 9000000,
 		storage: 900,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	'pressable-enterprise-10': {
@@ -185,6 +210,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 500,
 		visits: 10000000,
 		storage: 1000,
+		worker: 10,
 		category: PLAN_CATEGORY_ENTERPRISE,
 	},
 	// [New] Pressable Signature Plans 2025-06
@@ -193,6 +219,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 1,
 		visits: 30000,
 		storage: 20,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-2': {
@@ -200,6 +227,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 3,
 		visits: 50000,
 		storage: 30,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-3': {
@@ -207,6 +235,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 5,
 		visits: 75000,
 		storage: 35,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-4': {
@@ -214,6 +243,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 10,
 		visits: 150000,
 		storage: 50,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-5': {
@@ -221,6 +251,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 20,
 		visits: 400000,
 		storage: 80,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-6': {
@@ -228,6 +259,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 50,
 		visits: 1000000,
 		storage: 200,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-7': {
@@ -235,6 +267,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 80,
 		visits: 1600000,
 		storage: 275,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-8': {
@@ -242,6 +275,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 100,
 		visits: 2000000,
 		storage: 325,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-9': {
@@ -249,6 +283,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 120,
 		visits: 2400000,
 		storage: 375,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-10': {
@@ -256,6 +291,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 150,
 		visits: 3000000,
 		storage: 450,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE,
 	},
 	'pressable-signature-11': {
@@ -263,6 +299,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 200,
 		visits: 4000000,
 		storage: 500,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-12': {
@@ -270,6 +307,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 250,
 		visits: 5000000,
 		storage: 550,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-13': {
@@ -277,6 +315,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 300,
 		visits: 6000000,
 		storage: 600,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-14': {
@@ -284,6 +323,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 350,
 		visits: 7000000,
 		storage: 700,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-15': {
@@ -291,6 +331,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 400,
 		visits: 8000000,
 		storage: 800,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-16': {
@@ -298,6 +339,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 450,
 		visits: 9000000,
 		storage: 900,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
 	},
 	'pressable-signature-17': {
@@ -305,7 +347,98 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		install: 500,
 		visits: 10000000,
 		storage: 1000,
+		worker: 5,
 		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+	},
+
+	// [New] Pressable Premium Plans 2026-02
+	'pressable-premium-1': {
+		slug: 'pressable-premium-1',
+		install: 1,
+		visits: 150000,
+		storage: 30,
+		worker: 10,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-2': {
+		slug: 'pressable-premium-2',
+		install: 1,
+		visits: 250000,
+		storage: 40,
+		worker: 10,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-3': {
+		slug: 'pressable-premium-3',
+		install: 1,
+		visits: 350000,
+		storage: 50,
+		worker: 13,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-4': {
+		slug: 'pressable-premium-4',
+		install: 1,
+		visits: 500000,
+		storage: 60,
+		worker: 15,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-5': {
+		slug: 'pressable-premium-5',
+		install: 1,
+		visits: 750000,
+		storage: 70,
+		worker: 15,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-6': {
+		slug: 'pressable-premium-6',
+		install: 1,
+		visits: 1000000,
+		storage: 80,
+		worker: 17,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-7': {
+		slug: 'pressable-premium-7',
+		install: 1,
+		visits: 2000000,
+		storage: 90,
+		worker: 17,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-8': {
+		slug: 'pressable-premium-8',
+		install: 1,
+		visits: 3000000,
+		storage: 100,
+		worker: 20,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-9': {
+		slug: 'pressable-premium-9',
+		install: 1,
+		visits: 5000000,
+		storage: 125,
+		worker: 20,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-10': {
+		slug: 'pressable-premium-10',
+		install: 1,
+		visits: 7000000,
+		storage: 150,
+		worker: 25,
+		category: PLAN_CATEGORY_PREMIUM,
+	},
+	'pressable-premium-11': {
+		slug: 'pressable-premium-11',
+		install: 1,
+		visits: 10000000,
+		storage: 175,
+		worker: 25,
+		category: PLAN_CATEGORY_PREMIUM,
 	},
 };
 
