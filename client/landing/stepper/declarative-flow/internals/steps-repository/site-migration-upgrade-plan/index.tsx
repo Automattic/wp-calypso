@@ -86,7 +86,7 @@ const SiteMigrationUpgradePlan: StepType< {
 				<div className="site-migration-upgrade-plan__trial-section">
 					<p className="site-migration-upgrade-plan__trial-description">
 						{ translate(
-							'Not sure which plan is right for you? Start a 7-day trial to test the migration process.'
+							'Not sure which plan is right for you? Try our 7-day trial to see how your site turns out.'
 						) }
 					</p>
 					<Button
