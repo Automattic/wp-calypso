@@ -69,10 +69,11 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem } = useSelect(
+		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
 			[]
 		);
@@ -93,22 +94,29 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId ) {
+			if ( playgroundId || blueprint ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree ) {
+				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null ];
 				}
 
+				const params: Record< string, string | number > = {
+					siteSlug: providedDependencies.siteSlug as string,
+					siteId: providedDependencies.siteId as number,
+				};
+
+				if ( blueprint ) {
+					params.blueprint = blueprint;
+				} else if ( playgroundId ) {
+					params.playground = playgroundId;
+				}
+
 				return [
-					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-						siteSlug: providedDependencies.siteSlug,
-						siteId: providedDependencies.siteId,
-						playground: playgroundId,
-					} ),
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
 				];
 			}

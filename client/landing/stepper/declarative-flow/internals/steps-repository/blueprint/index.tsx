@@ -22,7 +22,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 			if ( id ) {
 				// Save the Blueprint library ID to the store
-				setBlueprint( { id } );
+				setBlueprint( id );
 				submit();
 			}
 		};

@@ -162,11 +162,6 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	return 'unknown';
 }
 
-export function isBlueprintLibraryURL( url: string ): boolean {
-	const src = new URL( url );
-	return src.host === BLUEPRINT_LIB_HOST;
-}
-
 async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Blueprint > {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
