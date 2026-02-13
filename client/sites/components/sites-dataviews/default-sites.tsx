@@ -24,7 +24,7 @@ import type { SitePreviewPane } from '../types';
 import type { Site } from '@automattic/api-core';
 import type { Action, View } from '@wordpress/dataviews';
 
-const viewType = 'list';
+const listView: Pick< View, 'type' | 'fields' > = { type: 'list', fields: [] };
 
 const navigate = ( { search, replace }: { search: any; replace?: boolean } ) => {
 	const params = new URLSearchParams( search );
@@ -72,12 +72,12 @@ export default function DefaultSitesDataViews( {
 		}
 	);
 
-	const fields = useFields( { isAutomattician, viewType } );
-	const actions = useActions( { viewType } );
+	const fields = useFields( { isAutomattician, viewType: listView.type } );
+	const actions = useActions( { viewType: listView.type } );
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
-		updateView( { ...nextView, type: view.type, fields: [] } );
+		updateView( { ...nextView, ...listView } as View );
 	};
 
 	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
@@ -111,13 +111,7 @@ export default function DefaultSitesDataViews( {
 			data={ filteredData }
 			fields={ fields.map( ( field ) => ( { ...field, enableHiding: false } ) ) }
 			actions={ actions as unknown as Action< Site >[] }
-			view={
-				{
-					...view,
-					type: viewType,
-					fields: [],
-				} as View
-			}
+			view={ { ...view, ...listView } as View }
 			isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 			isPlaceholderData={ isPlaceholderData }
 			onChangeView={ handleViewChange }
