@@ -10,7 +10,8 @@ test.describe(
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page );
+				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {
@@ -29,7 +30,8 @@ test.describe(
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page );
+				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {
