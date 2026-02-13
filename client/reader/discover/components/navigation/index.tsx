@@ -105,7 +105,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 			...tab,
 			path: getLocalizedPath( tab.path ),
 		} ) );
-	}, [ isLoggedIn, currentLocale ] );
+	}, [ isLoggedIn, currentLocale, isNewSubscriptionEnabled ] );
 
 	const selectedTabData = tabs.find( ( tab ) => tab.slug === selectedTab );
 
