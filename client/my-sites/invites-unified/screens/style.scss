@@ -1,7 +1,16 @@
+@import "@wordpress/base-styles/variables";
+
 // Remove layout padding for the unified invite accept screen
 body.is-section-accept-invite-unified {
 	.layout__content {
 		padding: 0 !important;
+	}
+}
+
+// CIAB partner branding: override heading font to system font
+body.is-section-accept-invite-unified.is-ciab-font-system {
+	.wp-brand-font {
+		font-family: $default-font;
 	}
 }
 

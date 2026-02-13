@@ -76,7 +76,12 @@ export function AlreadyMemberScreen( { blogDetails }: AlreadyMemberScreenProps )
 	return (
 		<>
 			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
-			<BodySectionCssClass bodyClass={ [ 'is-section-accept-invite-unified' ] } />
+			<BodySectionCssClass
+				bodyClass={ [
+					'is-section-accept-invite-unified',
+					...( branding?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] ),
+				] }
+			/>
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				heading={ heading }
