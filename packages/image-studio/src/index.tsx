@@ -267,30 +267,24 @@ function ImageStudioIntegration(): JSX.Element | null {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
-		const url = new URL( window.location.href );
-		const param = parseInt( url.searchParams.get( 'item' ) ?? '0', 10 );
+		const hash = window.location.hash;
+		let param = 0;
+
+		if ( hash ) {
+			const hashParams = new URLSearchParams( hash.substring( 1 ) );
+			param = parseInt( hashParams.get( 'ai-image-editor' ) ?? '0', 10 );
+		}
 
 		if ( ! param ) {
 			return;
 		}
 
-		// If 'item' param is present, we remove it immediately so that the legacy modal is closed.
-		// It will be re-added later as part of the image-studio modal opening.
-		url.searchParams.delete( 'item' );
-		window.history.replaceState( {}, '', url.toString() );
-
-		// We are doing the timeout because the legacy modal is closed immediately
-		// when the 'item' param is removed.
-		const timeout = setTimeout( () => {
-			openImageStudio( param, undefined, ImageStudioEntryPoint.MediaLibrary );
-			trackImageStudioOpened( {
-				mode: ImageStudioMode.Edit,
-				attachmentId: param,
-				entryPoint: ImageStudioEntryPoint.MediaLibrary,
-			} );
-		}, 1000 );
-
-		return () => clearTimeout( timeout );
+		openImageStudio( param, undefined, ImageStudioEntryPoint.MediaLibrary );
+		trackImageStudioOpened( {
+			mode: ImageStudioMode.Edit,
+			attachmentId: param,
+			entryPoint: ImageStudioEntryPoint.MediaLibrary,
+		} );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Sync URL with open state
@@ -303,9 +297,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 		const url = new URL( window.location.href );
 
 		if ( isOpen && attachmentId ) {
-			url.searchParams.set( 'item', attachmentId.toString() );
+			url.hash = `ai-image-editor=${ attachmentId.toString() }`;
 		} else {
-			url.searchParams.delete( 'item' );
+			url.hash = '';
 		}
 
 		window.history.replaceState( {}, '', url );
@@ -418,10 +412,10 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 				// Reload the page if on upload.php to show updated images
 				if ( window.location.pathname.includes( 'upload.php' ) ) {
-					// Clear the item param from URL before reload to prevent
+					// Clear the ai-image-editor hash from URL before reload to prevent
 					// reopening Image Studio with a potentially deleted attachment ID
 					const url = new URL( window.location.href );
-					url.searchParams.delete( 'item' );
+					url.hash = '';
 					window.history.replaceState( {}, '', url.toString() );
 					window.location.reload();
 					return; // Don't close the modal yet, page will reload
