@@ -596,6 +596,10 @@ export class CheckoutThankYou extends Component<
 										&.main {
 											max-width: unset;
 										}
+
+										.masterbar {
+											transition: none;
+										}
 									}
 								}
 
