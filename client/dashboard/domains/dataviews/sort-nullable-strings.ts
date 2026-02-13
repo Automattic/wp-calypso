@@ -1,14 +1,14 @@
 import type { SortDirection } from '@wordpress/dataviews';
 
 /**
- * Sort comparator for the expiry field.
+ * Sort comparator for nullable string field values. Null/undefined values sort
+ * to the end regardless of direction.
  *
  * Note: Despite the Field<Item> type declaring sort as (a: Item, b: Item, ...),
  * the dataviews library's normalizeFields wraps it and actually passes getValue
- * results (category strings like '1-expired', '2-next-90-days', etc.) at runtime.
- * We use `any` to bridge this type mismatch.
+ * results at runtime. We use `any` to bridge this type mismatch.
  */
-export function sortByExpiry( a: any, b: any, direction: SortDirection ) {
+export function sortNullableStrings( a: any, b: any, direction: SortDirection ) {
 	if ( a == null && b == null ) {
 		return 0;
 	}
