@@ -372,12 +372,12 @@ import {
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
-	FEATURE_WOO_HOSTED_TAP_TO_PAY,
 	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
 	FEATURE_WOO_HOSTED_BOOKINGS,
 	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
 	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
 	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_MOBILE_APP,
 	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
 	FEATURE_WOO_HOSTED_USPS_UPS,
 	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
@@ -390,7 +390,6 @@ import {
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
 	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
-	FEATURE_WOO_HOSTED_GOOGLE_ADS,
 	FEATURE_WOO_HOSTED_SEO_TOOLS,
 	FEATURE_WOO_HOSTED_COUPONS,
 } from './constants';
@@ -2973,11 +2972,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
 		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
 	},
-	[ FEATURE_WOO_HOSTED_TAP_TO_PAY ]: {
-		getSlug: () => FEATURE_WOO_HOSTED_TAP_TO_PAY,
-		getTitle: () => i18n.translate( 'Take payments in person' ),
-		getDescription: () => i18n.translate( 'Tap-to-pay rates start at 2.29%%' ),
-	},
 	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_LIST_PRODUCTS,
 		getTitle: () => i18n.translate( 'List physical, downloadable, and affiliate products' ),
@@ -3004,6 +2998,11 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Sell digital gift cards with flexible amounts' ),
 		getDescription: () => '',
 	},
+	[ FEATURE_WOO_HOSTED_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MOBILE_APP,
+		getTitle: () => i18n.translate( 'Mobile app to run your store on the go' ),
+		getDescription: () => '',
+	},
 	[ FEATURE_WOO_HOSTED_SHIPMENT_TRACKING ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
 		getTitle: () => i18n.translate( 'Shipment tracking' ),
@@ -3021,14 +3020,13 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_STORAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		getTitle: () => i18n.translate( 'Storage space for product images and store data' ),
-		getDescription: () => i18n.translate( '50 GB storage' ),
+		getTitle: () => i18n.translate( '50 GB storage for product images and store data' ),
+		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_STORAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_STORAGE,
-		getTitle: () => i18n.translate( 'Storage space for product images and store data' ),
-		getDescription: () =>
-			i18n.translate( '100GB storage with option to purchase additional storage' ),
+		getTitle: () => i18n.translate( '100GB storage for product images and store data' ),
+		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_SECURITY ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_SECURITY,
@@ -3037,13 +3035,13 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Email subscriber management' ),
-		getDescription: () => i18n.translate( 'Up to 500 email subscribers' ),
+		getTitle: () => i18n.translate( 'Up to 500 email subscribers' ),
+		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Email subscriber management' ),
-		getDescription: () => i18n.translate( 'Unlimited email subscribers' ),
+		getTitle: () => i18n.translate( 'Unlimited email subscribers' ),
+		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
@@ -3064,11 +3062,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
 		getTitle: () =>
 			i18n.translate( 'Predesigned subscription forms and email marketing templates' ),
-		getDescription: () => '',
-	},
-	[ FEATURE_WOO_HOSTED_GOOGLE_ADS ]: {
-		getSlug: () => FEATURE_WOO_HOSTED_GOOGLE_ADS,
-		getTitle: () => i18n.translate( 'Create and manage Google Ad campaigns' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_SEO_TOOLS ]: {
