@@ -26,17 +26,19 @@ interface MigrationPlansGridProps {
 	coupon?: string;
 }
 
-const DISPLAYED_INTERVALS: UrlFriendlyTermType[] = [ 'yearly', '2yearly' ];
+const DISPLAYED_INTERVALS: UrlFriendlyTermType[] = [ 'monthly', 'yearly', '2yearly' ];
 
 export default function MigrationPlansGrid( {
 	siteId,
 	onUpgradeClick,
 	coupon,
 }: MigrationPlansGridProps ) {
-	const [ intervalType, setIntervalType ] = useState< 'yearly' | '2yearly' >( 'yearly' );
+	const [ intervalType, setIntervalType ] = useState< 'monthly' | 'yearly' | '2yearly' >(
+		'yearly'
+	);
 
 	const handlePlanIntervalUpdate = useCallback( ( interval: SupportedUrlFriendlyTermType ) => {
-		setIntervalType( interval as 'yearly' | '2yearly' );
+		setIntervalType( interval as 'monthly' | 'yearly' | '2yearly' );
 	}, [] );
 
 	const term = usePlanBillingPeriod( { intervalType } );
@@ -100,8 +102,8 @@ export default function MigrationPlansGrid( {
 
 	const featureGroupMap = useMemo( () => getPlanFeaturesGroupedForFeaturesGrid(), [] );
 
-	// Key behavior: Only show term savings when viewing 2-year plans (comparing against yearly)
-	const enableTermSavingsPriceDisplay = intervalType === '2yearly';
+	// Key behavior: Show term savings for yearly and 2-yearly plans (monthly is the base term)
+	const enableTermSavingsPriceDisplay = intervalType !== 'monthly';
 
 	const planTypeSelectorProps = useMemo(
 		() => ( {
@@ -117,7 +119,7 @@ export default function MigrationPlansGrid( {
 			isInSignup: true,
 			isStepperUpgradeFlow: false,
 			plans: gridPlansForPlanTypeSelector as PlanSlug[],
-			eligibleForWpcomMonthlyPlans: false,
+			eligibleForWpcomMonthlyPlans: true,
 			displayedIntervals: DISPLAYED_INTERVALS,
 			useCheckPlanAvailabilityForPurchase,
 			coupon,
