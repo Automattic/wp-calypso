@@ -24,7 +24,7 @@ export default function ConversationAvatar( { isHe, className = '' }: Props ) {
 	}, [] );
 
 	if ( isHe ) {
-		// Happiness Engineer - Blue circle with WordPress icon
+		// Happiness Engineer - WP.com icon
 		return (
 			<div className={ fullClassName }>
 				<SVG
@@ -47,7 +47,7 @@ export default function ConversationAvatar( { isHe, className = '' }: Props ) {
 		);
 	}
 
-	// Default avatar - Sparkle icon (dark when docked, light when floating)
+	// Default avatar - Sparkle icon
 	return (
 		<div className={ fullClassName }>
 			{ isDocked ? (
