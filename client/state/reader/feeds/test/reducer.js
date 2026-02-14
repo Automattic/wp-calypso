@@ -41,6 +41,8 @@ describe( 'reducer', () => {
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
@@ -71,6 +73,8 @@ describe( 'reducer', () => {
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
@@ -100,6 +104,8 @@ describe( 'reducer', () => {
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
@@ -130,6 +136,8 @@ describe( 'reducer', () => {
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
@@ -161,6 +169,8 @@ describe( 'reducer', () => {
 				image: undefined,
 				organization_id: undefined,
 				unseen_count: undefined,
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
@@ -248,6 +258,8 @@ describe( 'reducer', () => {
 					organization_id: undefined,
 					unseen_count: undefined,
 				},
+				blog_owner: undefined,
+				subscription_id: undefined,
 			} );
 		} );
 
