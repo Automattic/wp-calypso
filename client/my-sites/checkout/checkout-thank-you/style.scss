@@ -602,6 +602,7 @@
 	}
 }
 
+.is-section-checkout,
 .is-section-checkout-pending,
 .is-section-checkout-thank-you {
 	&:not( :has( .step-container-v2 ) ) {
