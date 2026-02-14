@@ -26,6 +26,7 @@ import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
+import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
@@ -78,7 +79,6 @@ import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import DomainOnlyNew from './redesign-v2/pages/domain-only-new';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
-import { PlaceholderThankYou } from './redesign-v2/pages/placeholder';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import { shouldShowNewDomainThankYou } from './redesign-v2/utils/domain-thank-you-feature-flag';
@@ -542,7 +542,7 @@ export class CheckoutThankYou extends Component<
 			return (
 				<>
 					{ this.getMasterBar() }
-					<PlaceholderThankYou />
+					<Loading />
 				</>
 			);
 		}
@@ -595,6 +595,10 @@ export class CheckoutThankYou extends Component<
 									&.is-redesign-v2 {
 										&.main {
 											max-width: unset;
+										}
+
+										.masterbar {
+											transition: none;
 										}
 									}
 								}

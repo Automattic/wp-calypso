@@ -8,12 +8,13 @@ import { MemoExoticComponent } from 'react';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
-	FEATURE_13GB_STORAGE,
-	FEATURE_200GB_STORAGE,
-	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
-	FEATURE_50GB_STORAGE,
+	FEATURE_3GB_STORAGE,
 	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
+	FEATURE_200GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -360,11 +361,37 @@ import {
 	FEATURE_GROUP_WORDADS,
 	FEATURE_WOO_HOSTED_PACKAGE,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
 	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 	FEATURE_WOO_HOSTED_PRO_MAILPOET,
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_CSV_IMPORTER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_BASIC_STORAGE,
+	FEATURE_WOO_HOSTED_PRO_STORAGE,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -943,6 +970,15 @@ const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+
+	// This is only available for Woo Hosted Plans
+	[ FEATURE_100GB_STORAGE ]: {
+		getSlug: () => FEATURE_100GB_STORAGE,
+		getTitle: () => i18n.translate( '100 GB' ),
+		getCompareTitle: () => i18n.translate( '100 GB' ),
+		getDescription: () =>
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	// TODO: Consider removing this because it is no longer standard on any plans
@@ -2871,37 +2907,171 @@ const FEATURES_LIST: FeatureList = {
 	/* START: Woo Hosted (CIAB) Features */
 	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
-		getTitle: () => 'All-in-one solution to build and manage your ecommerce store',
+		getTitle: () =>
+			i18n.translate( 'All-in-one solution to create and manage your ecommerce store' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
-		getTitle: () => 'Build your store quickly with our AI-powered site-building tool',
+		getTitle: () => i18n.translate( 'AI-powered builder to help you design and set up your store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
+		getTitle: () => i18n.translate( 'Connected seamlessly to your PayPal account' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		getTitle: () => 'Build your business with included marketing tools',
+		getTitle: () =>
+			i18n.translate( 'Built-in email marketing and advertising tools to grow your business' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		getTitle: () => 'Send up to 5,000 emails/month',
+		getTitle: () => i18n.translate( 'Send up to 5,000 emails/month' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_MAILPOET ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		getTitle: () => 'Send up to 250,000 emails/month',
+		getTitle: () => i18n.translate( 'Send up to 250,000 emails/month' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		getTitle: () => 'One store admin account',
+		getTitle: () => i18n.translate( 'One store admin account' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		getTitle: () => 'Unlimited store admin accounts',
+		getTitle: () => i18n.translate( 'Unlimited store admin accounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+		getTitle: () => i18n.translate( 'Powerful commerce tools to start and grow your business' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_CSV_IMPORTER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_CSV_IMPORTER,
+		getTitle: () => i18n.translate( 'Smart CSV importer to add products and services in bulk' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+		getTitle: () => i18n.translate( 'Free custom web address for one year' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+		getTitle: () => i18n.translate( 'Seamless and fast checkout' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
+		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
+	},
+	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+		getTitle: () => i18n.translate( 'List physical, downloadable, and affiliate products' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BOOKINGS,
+		getTitle: () => i18n.translate( 'Accept and manage bookings for services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_TEAM_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+		getTitle: () => i18n.translate( 'Add team members and set their availability for bookings' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+		getTitle: () =>
+			i18n.translate( 'Offer upsells and cross-sells across all products and services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_GIFT_CARDS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_GIFT_CARDS,
+		getTitle: () => i18n.translate( 'Sell digital gift cards with flexible amounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MOBILE_APP,
+		getTitle: () => i18n.translate( 'Mobile app to run your store on the go' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Shipment tracking' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_USPS_UPS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_USPS_UPS,
+		getTitle: () => i18n.translate( 'USPS and UPS shipping' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ANALYTICS_REPORTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+		getTitle: () => i18n.translate( "Analytics and reports to monitor your store's performance" ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		getTitle: () => i18n.translate( '50 GB storage for product images and store data' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_STORAGE,
+		getTitle: () => i18n.translate( '100GB storage for product images and store data' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SECURITY ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SECURITY,
+		getTitle: () => i18n.translate( 'Security tools to ensure your store and data are protected' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Up to 500 email subscribers' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Unlimited email subscribers' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+		getTitle: () => i18n.translate( 'Automated email marketing flows to build customer relations' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+		getTitle: () => i18n.translate( 'Abandoned cart emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+		getTitle: () => i18n.translate( 'Post-purchase emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_EMAIL_TEMPLATES ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+		getTitle: () =>
+			i18n.translate( 'Predesigned subscription forms and email marketing templates' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEO_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEO_TOOLS,
+		getTitle: () => i18n.translate( 'SEO tools to help customers find your online store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_COUPONS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_COUPONS,
+		getTitle: () => i18n.translate( 'Create coupons to drive more sales' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Hosted (CIAB) Features */
