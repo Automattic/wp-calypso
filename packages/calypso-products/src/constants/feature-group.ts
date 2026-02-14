@@ -28,6 +28,11 @@ export const FEATURE_GROUP_SHIPPING = 'feature-group-shipping';
 
 /* START: Woo Hosted Feature Groups */
 export const FEATURE_GROUP_WOO_HOSTED = 'feature-group-woo-hosted';
+export const FEATURE_GROUP_WOO_HOSTED_CREATE_STORE = 'feature-group-woo-hosted-create-store';
+export const FEATURE_GROUP_WOO_HOSTED_PAYMENTS = 'feature-group-woo-hosted-payments';
+export const FEATURE_GROUP_WOO_HOSTED_PRODUCTS = 'feature-group-woo-hosted-products';
+export const FEATURE_GROUP_WOO_HOSTED_MANAGE = 'feature-group-woo-hosted-manage';
+export const FEATURE_GROUP_WOO_HOSTED_GROW = 'feature-group-woo-hosted-grow';
 /* END: Woo Hosted Feature Groups */
 
 export const FEATURE_GROUP_STORAGE = 'feature-group-storage';
