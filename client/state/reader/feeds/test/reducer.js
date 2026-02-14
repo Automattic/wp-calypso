@@ -74,6 +74,65 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should fall back to subscribe_URL when feed_URL is missing', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 0,
+							subscribe_URL: 'http://example.com',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 0,
+				feed_URL: 'http://example.com',
+				URL: undefined,
+				is_following: undefined,
+				name: undefined,
+				subscribers_count: undefined,
+				description: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+			} );
+		} );
+
+		test( 'should prefer feed_URL over subscribe_URL', () => {
+			expect(
+				items(
+					{},
+					{
+						type: READER_FEED_REQUEST_SUCCESS,
+						payload: {
+							feed_ID: 1,
+							blog_ID: 0,
+							feed_URL: 'http://example.com/feed',
+							subscribe_URL: 'http://example.com',
+						},
+					}
+				)[ 1 ]
+			).toEqual( {
+				feed_ID: 1,
+				blog_ID: 0,
+				feed_URL: 'http://example.com/feed',
+				URL: undefined,
+				is_following: undefined,
+				name: undefined,
+				subscribers_count: undefined,
+				description: undefined,
+				last_update: undefined,
+				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
+			} );
+		} );
+
 		test( 'should reject unsafe links', () => {
 			expect(
 				items(
