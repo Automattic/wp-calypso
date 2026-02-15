@@ -60,6 +60,7 @@ import {
 	NewSiteResponse,
 	NoticeComponent,
 	PeoplePage,
+	PluginsPage,
 	PreviewComponent,
 	PurchasesPage,
 	RestAPIClient,
@@ -309,6 +310,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com plans page.
 		 */
 		pagePlans: PlansPage;
+		/**
+		 * Page object representing the WordPress.com plugins page.
+		 */
+		pagePlugins: PluginsPage;
 		/**
 		 * Page object representing the WordPress.com purchases page.
 		 */
@@ -570,6 +575,10 @@ export const test = base.extend<
 	pagePlans: async ( { page }, use ) => {
 		const plansPage = new PlansPage( page );
 		await use( plansPage );
+	},
+	pagePlugins: async ( { page }, use ) => {
+		const pluginsPage = new PluginsPage( page );
+		await use( pluginsPage );
 	},
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
