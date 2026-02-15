@@ -8,9 +8,9 @@ import {
 	PostResponse,
 } from '@automattic/calypso-e2e';
 import { Page } from '@playwright/test';
-import { test } from '../../lib/pw-base';
+import { test, tags } from '../../lib/pw-base';
 
-test.describe( 'Notifications: General Interactions', () => {
+test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.skip( ( { viewportName } ) => viewportName === 'mobile', 'Skipped on mobile viewports' );
 
 	let comment: string;
