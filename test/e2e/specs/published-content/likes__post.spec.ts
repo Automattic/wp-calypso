@@ -90,9 +90,9 @@ test.describe(
 		test( 'Like post while unauthenticated via popup login', async ( {
 			browser,
 			helperElement,
+			accountDefaultUser,
 		} ) => {
 			let publishedPostPage: PublishedPostPage;
-			const otherUser = new TestAccount( 'defaultUser' );
 
 			await test.step( 'Given I have an unauthenticated browser session', async function () {
 				// This step is implicit - we're using a fresh page without authentication
@@ -112,7 +112,7 @@ test.describe(
 
 			await test.step( 'And I can like the post by logging in via a popup', async function () {
 				newPage.on( 'popup', async ( popup ) => {
-					await otherUser.logInViaPopupPage( popup );
+					await accountDefaultUser.logInViaPopupPage( popup );
 				} );
 
 				publishedPostPage = new PublishedPostPage( newPage );
