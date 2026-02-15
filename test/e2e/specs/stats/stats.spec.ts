@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	StatsPage,
 	envVariables,
 	envToFeatureKey,
 	getTestAccountByFeature,
@@ -13,12 +12,11 @@ import { expect, tags, test } from '../../lib/pw-base';
  * Keywords: Stats, Jetpack, Odyssey Stats
  */
 test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] }, () => {
-	let statsPage: StatsPage;
-
 	test( 'View stats for Traffic, Insights, and Subscribers', async ( {
 		accountGivenByEnvironment,
 		componentSidebar,
 		page,
+		pageStats,
 	} ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
 			{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
@@ -29,10 +27,8 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I navigate to Stats', async function () {
-			statsPage = new StatsPage( page );
-
 			if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-				await statsPage.visit( DataHelper.getAccountSiteURL( accountName, { protocol: false } ) );
+				await pageStats.visit( DataHelper.getAccountSiteURL( accountName, { protocol: false } ) );
 			} else {
 				await componentSidebar.navigate( 'Stats' );
 			}
@@ -43,7 +39,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I click on the Traffic tab', async function () {
-			await statsPage.clickTab( 'Traffic' );
+			await pageStats.clickTab( 'Traffic' );
 		} );
 
 		await test.step( 'Then I see the Traffic stats', async function () {
@@ -51,7 +47,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I filter traffic activity to Likes', async function () {
-			await statsPage.showStatsOfType( { tab: 'Traffic', type: 'Likes' } );
+			await pageStats.showStatsOfType( { tab: 'Traffic', type: 'Likes' } );
 		} );
 
 		await test.step( 'Then I see the Likes stats', async function () {
@@ -60,7 +56,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I click on the Insights tab', async function () {
-			await statsPage.clickTab( 'Insights' );
+			await pageStats.clickTab( 'Insights' );
 		} );
 
 		await test.step( 'Then I see the Insights stats', async function () {
@@ -68,7 +64,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I click to view all annual insights', async function () {
-			await statsPage.clickViewAllAnnualInsights();
+			await pageStats.clickViewAllAnnualInsights();
 		} );
 
 		await test.step( 'Then I see the annual insights page', async function () {
@@ -86,7 +82,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I click on the Subscribers tab', async function () {
-			await statsPage.clickTab( 'Subscribers' );
+			await pageStats.clickTab( 'Subscribers' );
 		} );
 
 		await test.step( 'Then I see the Subscribers stats', async function () {
@@ -96,7 +92,12 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 
 	// The Store tab is not present unless Business or higher plan is on the site and the
 	// site has gone AT.
-	test( 'View Store stats', async ( { accountGivenByEnvironment, componentSidebar, page } ) => {
+	test( 'View Store stats', async ( {
+		accountGivenByEnvironment,
+		componentSidebar,
+		page,
+		pageStats,
+	} ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
 			{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
 		] );
@@ -111,17 +112,15 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I navigate to Stats', async function () {
-			statsPage = new StatsPage( page );
-
 			if ( envVariables.ATOMIC_VARIATION === 'ecomm-plan' ) {
-				await statsPage.visit( DataHelper.getAccountSiteURL( accountName, { protocol: false } ) );
+				await pageStats.visit( DataHelper.getAccountSiteURL( accountName, { protocol: false } ) );
 			} else {
 				await componentSidebar.navigate( 'Stats' );
 			}
 		} );
 
 		await test.step( 'When I click on the Store tab', async function () {
-			await statsPage.clickTab( 'Store' );
+			await pageStats.clickTab( 'Store' );
 		} );
 
 		await test.step( 'Then I see the Store stats', async function () {
@@ -129,7 +128,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I select "Years" stats period', async function () {
-			await statsPage.selectStatsPeriod( 'Years' );
+			await pageStats.selectStatsPeriod( 'Years' );
 		} );
 
 		await test.step( 'Then the Years period is selected', async function () {
@@ -138,7 +137,7 @@ test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION
 		} );
 
 		await test.step( 'When I select "Gross Sales" stats type', async function () {
-			await statsPage.showStatsOfType( { tab: 'Store', type: 'Gross Sales' } );
+			await pageStats.showStatsOfType( { tab: 'Store', type: 'Gross Sales' } );
 		} );
 
 		await test.step( 'Then I see the Gross Sales stats', async function () {

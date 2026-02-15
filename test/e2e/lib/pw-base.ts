@@ -71,6 +71,7 @@ import {
 	SignupPickPlanPage,
 	StartImportFlow,
 	StartWritingFlow,
+	StatsPage,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -318,6 +319,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com purchases page.
 		 */
 		pagePurchases: PurchasesPage;
+		/**
+		 * Page object representing the Stats page.
+		 */
+		pageStats: StatsPage;
 		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
@@ -583,6 +588,10 @@ export const test = base.extend<
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
 		await use( purchasesPage );
+	},
+	pageStats: async ( { page }, use ) => {
+		const statsPage = new StatsPage( page );
+		await use( statsPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
