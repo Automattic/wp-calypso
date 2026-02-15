@@ -33,6 +33,7 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	EditorPage,
+	ElementHelper,
 	EmailClient,
 	envToFeatureKey,
 	envVariables,
@@ -191,6 +192,10 @@ export const test = base.extend<
 		 * Helper data and utilities for tests.
 		 */
 		helperData: typeof DataHelper;
+		/**
+		 * Helper for element-related tasks in tests.
+		 */
+		helperElement: typeof ElementHelper;
 		/**
 		 * Helper for media-related tasks in tests.
 		 */
@@ -458,6 +463,9 @@ export const test = base.extend<
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
+	},
+	helperElement: async ( {}, use ) => {
+		await use( ElementHelper );
 	},
 	helperMedia: async ( {}, use ) => {
 		await use( MediaHelper );

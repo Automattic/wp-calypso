@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	ElementHelper,
 	PostResponse,
 	PublishedPostPage,
 	RestAPIClient,
@@ -56,7 +55,7 @@ test.describe(
 			}
 		} );
 
-		test( 'Like and unlike post while authenticated', async ( { page } ) => {
+		test( 'Like and unlike post while authenticated', async ( { page, helperElement } ) => {
 			let publishedPostPage: PublishedPostPage;
 
 			await test.step( `Given I am authenticated as '${ accountName }'`, async function () {
@@ -64,7 +63,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I view the published post', async function () {
-				await ElementHelper.reloadAndRetry( page, async () => {
+				await helperElement.reloadAndRetry( page, async () => {
 					await page.goto( newPost.URL, { timeout: 20 * 1000 } );
 				} );
 			} );
@@ -74,21 +73,24 @@ test.describe(
 			} );
 
 			await test.step( 'And I can like the post', async function () {
-				await ElementHelper.reloadAndRetry( page, async () => {
+				await helperElement.reloadAndRetry( page, async () => {
 					publishedPostPage = new PublishedPostPage( page );
 					await publishedPostPage.likePost();
 				} );
 			} );
 
 			await test.step( 'And I can unlike the post', async function () {
-				await ElementHelper.reloadAndRetry( page, async () => {
+				await helperElement.reloadAndRetry( page, async () => {
 					publishedPostPage = new PublishedPostPage( page );
 					await publishedPostPage.unlikePost();
 				} );
 			} );
 		} );
 
-		test( 'Like post while unauthenticated via popup login', async ( { browser } ) => {
+		test( 'Like post while unauthenticated via popup login', async ( {
+			browser,
+			helperElement,
+		} ) => {
 			let publishedPostPage: PublishedPostPage;
 			const otherUser = new TestAccount( 'defaultUser' );
 
@@ -99,7 +101,7 @@ test.describe(
 			const newPage = await browser.newPage();
 
 			await test.step( 'When I navigate to the published post', async function () {
-				await ElementHelper.reloadAndRetry( newPage, async () => {
+				await helperElement.reloadAndRetry( newPage, async () => {
 					await newPage.goto( newPost.URL, { timeout: 20 * 1000 } );
 				} );
 			} );
