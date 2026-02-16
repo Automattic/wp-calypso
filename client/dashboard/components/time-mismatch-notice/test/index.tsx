@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import TimeMismatchNotice from '../index';
-import type { CalypsoUserPreferencesRequestBody } from '@automattic/api-core';
 
 function getOffsetHours() {
 	const now = new Date();
@@ -116,10 +115,18 @@ describe( 'TimeMismatchNotice', () => {
 		const offsetHours = getOffsetHours();
 		mockPreferences();
 
-		let requestBody: CalypsoUserPreferencesRequestBody | undefined;
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				requestBody = body;
+				expect(
+					JSON.parse(
+						body.calypso_preferences[ 'hosting-dashboard-time-mismatch-warning-dismissed-321' ]
+					)
+				).toEqual(
+					expect.objectContaining( {
+						dismissedAt: expect.any( String ),
+						offsetHours: expect.closeTo( offsetHours, 10 ),
+					} )
+				);
 				return true;
 			} )
 			.reply( 200, {
@@ -140,19 +147,6 @@ describe( 'TimeMismatchNotice', () => {
 		);
 
 		await user.click( await screen.findByRole( 'button', { name: /dismiss/i } ) );
-
-		expect(
-			JSON.parse(
-				requestBody?.calypso_preferences[
-					'hosting-dashboard-time-mismatch-warning-dismissed-321'
-				] ?? ''
-			)
-		).toEqual(
-			expect.objectContaining( {
-				dismissedAt: expect.any( String ),
-				offsetHours: expect.closeTo( offsetHours, 10 ),
-			} )
-		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_time_mismatch_banner_close',

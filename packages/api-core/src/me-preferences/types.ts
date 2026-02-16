@@ -1,13 +1,5 @@
 import type { View } from '@wordpress/dataviews';
 
-export interface CalypsoUserPreferencesRequestBody {
-	calypso_preferences: Partial< UserPreferences >;
-}
-
-export interface CalypsoUserPreferencesResponseBody {
-	calypso_preferences: UserPreferences;
-}
-
 export interface HostingDashboardOptIn {
 	value: 'unset' | 'opt-in' | 'opt-out' | 'forced-opt-in' | 'forced-opt-out';
 	updated_at: string; // ISO date string
