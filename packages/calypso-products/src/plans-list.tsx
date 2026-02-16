@@ -4587,7 +4587,7 @@ PLANS_LIST[ PLAN_PERSONAL_TRIAL_MONTHLY ] = {
 	...getMonthlyTimeframe(),
 	availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].includes( plan ),
 	getProductId: () => 1059,
-	getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
+	getStoreSlug: () => PLAN_PERSONAL_TRIAL_MONTHLY,
 	getPathSlug: () => 'personal-trial-monthly',
 	getPlanCompareFeatures: () =>
 		compact(
