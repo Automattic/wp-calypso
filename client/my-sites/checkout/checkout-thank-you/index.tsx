@@ -653,20 +653,15 @@ export class CheckoutThankYou extends Component<
 						return this.renderLoading();
 					}
 
-					return (
-						<>
-							<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-							<DomainOnlyNew />
-						</>
+					pageContent = <DomainOnlyNew />;
+				} else {
+					pageContent = (
+						<DomainOnlyThankYou
+							purchases={ purchases }
+							isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
+						/>
 					);
 				}
-
-				pageContent = (
-					<DomainOnlyThankYou
-						purchases={ purchases }
-						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
-					/>
-				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = (
 					<PlanOnlyThankYou

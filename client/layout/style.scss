@@ -145,6 +145,11 @@ body.is-focus-sites {
 		}
 	}
 
+	.is-section-checkout-thank-you:has( .step-container-v2 ) & {
+		--_layout__content-top-spacing: 0;
+		padding: 0;
+	}
+
 	.is-section-checkout & {
 		.wpcom-loading__boot {
 			margin-top: calc( 32vh + var( --_layout__content-top-spacing ) );

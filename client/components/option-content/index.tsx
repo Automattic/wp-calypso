@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import type { ReactNode, ReactElement } from 'react';
 
-import '../style.scss';
+import './style.scss';
 
-type OptionContentV2Props = {
+interface OptionContentProps {
 	benefits?: ReadonlyArray< ReactNode >;
 	disabled?: boolean;
 	illustration: ReactElement;
@@ -21,9 +21,9 @@ type OptionContentV2Props = {
 	titleText: string;
 	topText: ReactNode;
 	etaText?: ReactNode;
-};
+}
 
-export default function OptionContentV2( {
+export function OptionContent( {
 	benefits,
 	disabled,
 	illustration,
@@ -33,25 +33,25 @@ export default function OptionContentV2( {
 	titleText,
 	topText,
 	etaText,
-}: OptionContentV2Props ) {
+}: OptionContentProps ) {
 	const isMobile = useBreakpoint( '<480px' );
 
 	return (
 		<VStack
-			className={ clsx( 'option-content-v2', {
-				'option-content-v2--is-placeholder': isPlaceholder,
+			className={ clsx( 'option-content', {
+				'option-content--is-placeholder': isPlaceholder,
 			} ) }
 			spacing={ 0 }
 		>
 			<SummaryButton
-				className="option-content-v2__button"
+				className="option-content__button"
 				title={ titleText }
 				description={
-					<VStack className="option-content-v2__description">
-						<Text variant="muted" className="option-content-v2__top-text">
+					<VStack className="option-content__description">
+						<Text variant="muted" className="option-content__top-text">
 							{ topText }
 						</Text>
-						{ etaText && <Text className="option-content-v2__eta-text">{ etaText }</Text> }
+						{ etaText && <Text className="option-content__eta-text">{ etaText }</Text> }
 					</VStack>
 				}
 				decoration={ illustration }
@@ -62,22 +62,22 @@ export default function OptionContentV2( {
 			{ benefits && (
 				<VStack
 					spacing={ 1 }
-					className={ clsx( 'option-content-v2__benefits', {
-						'option-content-v2__benefits--clickable': ! disabled && ! isPlaceholder && onSelect,
+					className={ clsx( 'option-content__benefits', {
+						'option-content__benefits--clickable': ! disabled && ! isPlaceholder && onSelect,
 					} ) }
 					onClick={ disabled || isPlaceholder || ! onSelect ? undefined : onSelect }
 				>
 					{ benefits.map( ( benefit, index ) => {
 						return (
 							<HStack
-								className="option-content-v2__benefits-item"
+								className="option-content__benefits-item"
 								alignment="left"
 								spacing={ isMobile ? 3 : 4 }
 								key={ 'benefit-' + index }
 							>
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 								<Gridicon size={ 18 } icon="checkmark" />
-								<Text className="option-content-v2__benefits-item-text">{ benefit }</Text>
+								<Text className="option-content__benefits-item-text">{ benefit }</Text>
 							</HStack>
 						);
 					} ) }
