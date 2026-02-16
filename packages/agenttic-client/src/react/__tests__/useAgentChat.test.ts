@@ -1,0 +1,119 @@
+import { describe, expect, it } from 'vitest';
+import type { UIMessage } from '../useAgentChat';
+
+function filterUiOnlyMessages(
+	uiMessages: UIMessage[],
+	clientMessageIds: Set< string >
+): UIMessage[] {
+	return uiMessages.filter(
+		( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
+	);
+}
+
+describe( 'useAgentChat', () => {
+	describe( 'UI-only message filtering', () => {
+		const createMessage = (
+			id: string,
+			role: 'user' | 'agent',
+			contentType: 'text' | 'component' = 'text'
+		): UIMessage => ( {
+			id,
+			role,
+			content: [
+				{
+					type: contentType,
+					...( contentType === 'text' ? { text: 'test' } : {} ),
+				},
+			],
+			timestamp: Date.now(),
+			archived: false,
+			showIcon: true,
+		} );
+
+		it( 'should preserve assistant text messages injected by tools', () => {
+			// Simulate messages in UI state
+			const uiMessages: UIMessage[] = [
+				createMessage( 'msg-1', 'agent', 'text' ), // Text message from tool
+				createMessage( 'msg-2', 'agent', 'component' ), // Component message from tool
+			];
+
+			// Client history has neither of these (they were injected by tools)
+			const clientMessageIds = new Set< string >();
+
+			const preserved = filterUiOnlyMessages(
+				uiMessages,
+				clientMessageIds
+			);
+
+			// Both should be preserved - text AND component messages from tools
+			expect( preserved ).toHaveLength( 2 );
+			expect( preserved.map( ( m ) => m.id ) ).toEqual( [
+				'msg-1',
+				'msg-2',
+			] );
+		} );
+
+		it( 'should not preserve user messages that are not in client history', () => {
+			// User messages get new IDs from server, so they won't match
+			// We should NOT preserve them as UI-only (they'll come back transformed)
+			const uiMessages: UIMessage[] = [
+				createMessage( 'local-user-msg', 'user', 'text' ),
+				createMessage( 'tool-injected-msg', 'agent', 'text' ),
+			];
+
+			const clientMessageIds = new Set< string >();
+
+			const preserved = filterUiOnlyMessages(
+				uiMessages,
+				clientMessageIds
+			);
+
+			// Only the agent message should be preserved
+			expect( preserved ).toHaveLength( 1 );
+			expect( preserved[ 0 ].id ).toBe( 'tool-injected-msg' );
+		} );
+
+		it( 'should not preserve messages that exist in client history', () => {
+			const uiMessages: UIMessage[] = [
+				createMessage( 'server-msg-1', 'agent', 'text' ),
+				createMessage( 'tool-msg', 'agent', 'component' ),
+			];
+
+			// server-msg-1 came from the server (in client history)
+			const clientMessageIds = new Set( [ 'server-msg-1' ] );
+
+			const preserved = filterUiOnlyMessages(
+				uiMessages,
+				clientMessageIds
+			);
+
+			// Only the tool-injected message should be preserved
+			expect( preserved ).toHaveLength( 1 );
+			expect( preserved[ 0 ].id ).toBe( 'tool-msg' );
+		} );
+
+		it( 'should preserve both text and component assistant messages from tools', () => {
+			// This is the key scenario: tools inject both a text message
+			// ("Are you sure you want to start over?") and a component message
+			// (ChatSuggestions with Yes/No buttons)
+			const uiMessages: UIMessage[] = [
+				createMessage( 'confirmation-text', 'agent', 'text' ),
+				createMessage( 'confirmation-buttons', 'agent', 'component' ),
+			];
+
+			const clientMessageIds = new Set< string >();
+
+			const preserved = filterUiOnlyMessages(
+				uiMessages,
+				clientMessageIds
+			);
+
+			// Both should be preserved for the UI
+			expect( preserved ).toHaveLength( 2 );
+			expect( preserved.map( ( m ) => m.content[ 0 ].type ) ).toEqual( [
+				'text',
+				'component',
+			] );
+		} );
+	} );
+} );
