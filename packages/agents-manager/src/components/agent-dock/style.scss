@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
-@import '../variables.scss';
+@import '../../hooks/variables.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -326,101 +326,6 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 	width: $sidebar-width;
 	box-sizing: border-box;
 	z-index: $agents-manager-z-index-docked;
-
-	.agents-manager-chat-header {
-		position: absolute;
-		top: 0;
-		width: 100%;
-		height: $chat-header-height;
-		margin: 0;
-		padding: 0;
-
-		&__title {
-			color: $gray-100;
-		}
-
-		&__back-btn,
-		&__more-options,
-		&__history-btn,
-		&__close-btn {
-			svg {
-				fill: $gray-100;
-			}
-
-			& .components-dropdown-menu__toggle.has-icon,
-			&.has-icon {
-				min-width: unset;
-				width: 32px;
-				height: 32px;
-				padding: 0;
-			}
-		}
-
-		&__back-btn svg {
-			margin-left: 0;
-		}
-	}
-
-	.agents-manager-conversation-history-view {
-		padding-top: 48px;
-
-		&__content {
-			padding-top: 0;
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		&__footer {
-			padding: 0;
-		}
-
-		&__loading,
-		&__error,
-		&__empty {
-			color: $white;
-		}
-	}
-
-	.agents-manager-conversation-list-item {
-		&:hover {
-			background-color: rgba( 255, 255, 255, 0.05 );
-		}
-
-		&:focus {
-			background-color: rgba( 255, 255, 255, 0.08 );
-		}
-
-		&__text,
-		&__title {
-			color: var( --color-foreground-inverted, #eff0f1 );
-		}
-	}
-
-	.agents-manager-conversation-list-skeleton {
-		&__item {
-			border-color: #464646;
-		}
-
-		&__avatar,
-		&__title,
-		&__subtitle {
-			background-color: rgba( 255, 255, 255, 0.1 );
-		}
-	}
-
-	.agents-manager-chat-message-skeleton {
-		&__bubble {
-			background-color: #484848;
-		}
-
-		&__bubble &__line {
-			background-color: rgba( 255, 255, 255, 0.3 ) !important;
-		}
-
-		&__line {
-			background-color: rgba( 255, 255, 255, 0.15 ) !important;
-		}
-	}
 
 	.agents-manager-sidebar-fab {
 		visibility: visible;
@@ -864,22 +769,6 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 	.ChatInput-module_button:disabled {
 		background-color: $gray-700;
 		color: $gray-400;
-	}
-
-	.agents-manager-selected-block {
-		color: $white;
-		border: 1px solid rgba( $white, 0.1 );
-		margin-top: 8px;
-
-		&__divider {
-			border-left: 1px solid rgba( $white, 0.1 );
-		}
-
-		&__remove {
-			&.components-button {
-				color: $white;
-			}
-		}
 	}
 }
 

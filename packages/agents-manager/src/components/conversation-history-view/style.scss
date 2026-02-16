@@ -76,3 +76,26 @@
 		}
 	}
 }
+
+// Docked chat overrides
+body:not( .modal-open ) .agents-manager-chat--docked {
+	.agents-manager-conversation-history-view {
+		padding-top: 48px;
+
+		&__content {
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		&__footer {
+			padding: 0;
+		}
+
+		&__loading,
+		&__error,
+		&__empty {
+			color: $white;
+		}
+	}
+}

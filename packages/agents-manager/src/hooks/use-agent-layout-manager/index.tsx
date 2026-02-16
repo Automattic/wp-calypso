@@ -11,7 +11,6 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
-import './style.scss';
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;

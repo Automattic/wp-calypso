@@ -30,6 +30,7 @@ import type {
 	SiteBuildUtils,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+import './style.scss';
 
 interface Props {
 	/** Agent configuration for the chat client. */

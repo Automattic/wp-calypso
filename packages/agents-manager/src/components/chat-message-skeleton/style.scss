@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/colors';
+@import '../../hooks/variables.scss';
+
 @keyframes skeleton-pulse {
 	0%,
 	100% {
@@ -74,6 +77,23 @@
 		&--short {
 			width: 50%;
 			animation-delay: 0.2s;
+		}
+	}
+}
+
+// Docked chat overrides
+body:not( .modal-open ) .agents-manager-chat--docked {
+	.agents-manager-chat-message-skeleton {
+		&__bubble {
+			background-color: #484848;
+		}
+
+		&__bubble &__line {
+			background-color: rgba( 255, 255, 255, 0.3 ) !important;
+		}
+
+		&__line {
+			background-color: rgba( 255, 255, 255, 0.15 ) !important;
 		}
 	}
 }
