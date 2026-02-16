@@ -3,6 +3,7 @@ import { createRouter, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
+import { createCheckoutRoutes } from './checkout';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -64,6 +65,9 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
 	}
+
+	// Checkout is always available
+	children.push( ...createCheckoutRoutes() );
 
 	return rootRoute.addChildren( children );
 };
