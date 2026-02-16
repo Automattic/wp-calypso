@@ -28,35 +28,6 @@ export default function AddSubstack(): JSX.Element {
 		dispatch( requestFollows() ); // In other places we show subscriptions table due to which list get refreshed automatically. Here we need to refresh the list manually.
 	}, [ dispatch ] );
 
-	/**
-	 * Transforms a Substack URL to its RSS feed equivalent (/feed at the end).
-	 * If the URL already contains /feed, it's returned unchanged.
-	 */
-	function transformSubstackUrl( url: string ): string {
-		if ( url.includes( '/feed' ) ) {
-			return url;
-		}
-
-		let parsedUrl: URL;
-		try {
-			parsedUrl = new URL( url );
-		} catch {
-			return url;
-		}
-
-		if ( ! parsedUrl.hostname.includes( 'substack.com' ) ) {
-			return url;
-		}
-
-		const pathname = parsedUrl.pathname;
-
-		// Handle root path or paths without /feed by appending /feed.
-		const cleanPath = pathname.endsWith( '/' ) ? pathname.slice( 0, -1 ) : pathname;
-		parsedUrl.pathname = cleanPath + '/feed';
-
-		return parsedUrl.toString();
-	}
-
 	return (
 		<div className="reader-add-substack">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
@@ -79,7 +50,6 @@ export default function AddSubstack(): JSX.Element {
 						source="reader-add-substack"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
-						transformUrl={ transformSubstackUrl }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
@@ -93,7 +63,7 @@ export default function AddSubstack(): JSX.Element {
 						<ul className="reader-add-substack__instructions-list">
 							<li>
 								<strong>{ translate( 'Publication feed:' ) }</strong>
-								{ ' https://{ PUBLICATION }.substack.com/feed' }
+								{ ' https://{ PUBLICATION }.substack.com' }
 							</li>
 							<li>
 								<strong>{ translate( 'Custom domain:' ) }</strong>
