@@ -2,6 +2,9 @@
 # PostToolUse hook: checks if an Edit replaced unicode chars with ASCII equivalents.
 # Reads Edit tool_input from stdin JSON.
 
+# jq is required to parse tool input; skip hook if unavailable
+command -v jq >/dev/null 2>&1 || exit 0
+
 INPUT=$(cat)
 
 OLD_STRING=$(echo "$INPUT" | jq -r '.tool_input.old_string // empty')
