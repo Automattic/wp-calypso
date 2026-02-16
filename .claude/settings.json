@@ -1,4 +1,18 @@
 {
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-unicode-preservation.sh",
+						"timeout": 10
+					}
+				]
+			}
+		]
+	},
 	"permissions": {
 		"deny": [
 			"Read(.env)",
