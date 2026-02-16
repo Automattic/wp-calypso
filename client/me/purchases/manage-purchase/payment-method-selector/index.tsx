@@ -298,7 +298,6 @@ function onPaymentSelectComplete( {
 function CurrentPaymentMethodNotAvailableNotice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	// @todo does this need to change to also include vault-token?
 	const { paymentMethods: storedPaymentAgreements } = useStoredPaymentMethods( {
 		type: 'agreement',
 	} );
