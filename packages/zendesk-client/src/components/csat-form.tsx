@@ -110,8 +110,8 @@ export const CSATForm = ( { ticketId, onSendFeedback, className }: CSATFormProps
 					<div className="zendesk-csat-form__rating-message">
 						<div>
 							{ score === 'good'
-								? __( 'Good', '__i18n_text_domain__' )
-								: __( 'Needs improvement', '__i18n_text_domain__' ) }
+								? __( 'Good 👍', '__i18n_text_domain__' )
+								: __( 'Needs improvement 👎', '__i18n_text_domain__' ) }
 						</div>
 					</div>
 
