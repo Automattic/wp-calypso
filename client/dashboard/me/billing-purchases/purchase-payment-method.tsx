@@ -34,7 +34,7 @@ export function PurchasePaymentMethod( {
 		isExpired( purchase ) ||
 		purchase.partner_name ||
 		isAkismetFreeProduct( purchase ) ||
-		isDisconnectedSite
+		( isDisconnectedSite && ! purchase.is_domain )
 	) {
 		return null;
 	}

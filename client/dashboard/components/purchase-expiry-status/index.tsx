@@ -100,7 +100,12 @@ export function PurchaseExpiryStatus( {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType ) {
+	if (
+		isDisconnectedSite &&
+		! isA4APurchase &&
+		! isKnownTemporarySiteProductType &&
+		! purchase.is_domain
+	) {
 		return (
 			<span>
 				{ createInterpolateElement(
