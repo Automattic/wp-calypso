@@ -33,6 +33,9 @@ interface McpAbility {
 	description: string;
 	enabled: boolean;
 	category?: string;
+	category_label?: string;
+	type?: string;
+	annotations?: Record< string, unknown >;
 }
 
 interface McpSite {
@@ -124,7 +127,7 @@ function McpComponent() {
 		const grouped: Record< string, Array< [ string, McpAbility ] > > = {};
 
 		tools.forEach( ( [ toolId, tool ] ) => {
-			const displayCategory = getDisplayCategory( toolId );
+			const displayCategory = getDisplayCategory( toolId, tool );
 			if ( ! grouped[ displayCategory ] ) {
 				grouped[ displayCategory ] = [];
 			}
