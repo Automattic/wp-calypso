@@ -209,16 +209,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		// CIAB early site creation flow: The site was already created earlier during the AI chat session.
+		// Flow A: The site was early-created during the AI chat session.
+		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
 		if ( flow === AI_SITE_BUILDER_FLOW && gardenName && earlyCreatedSite ) {
-			if ( earlyCreatedSite === 'failed' ) {
-				throw new Error(
-					'We were unable to create your store. Please try again or contact support.'
-				);
-			}
-
 			const blogId = parseInt( earlyCreatedSite, 10 );
+
+			if ( isNaN( blogId ) ) {
+				throw new Error( 'Invalid early_created_site parameter.' );
+			}
 
 			// Trigger the AI site builder job. This queues an async job that waits
 			// for provisioning to complete, then runs the Site Builder Workflow Agent.
@@ -227,6 +226,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					path: `/sites/${ blogId }/big-sky/trigger-backend-build`,
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
+					body: {
+						spec_id: urlQueryParams.get( 'spec_id' ),
+					},
 				} );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
