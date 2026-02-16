@@ -49,4 +49,3 @@ Error message should be helpful where possible, although it is not always possib
 In the final case the copy can be simplified by not including the nuance that a success would have actually resulted in a request being made.
 
 And remember, snackbar messages end with a period.
-
