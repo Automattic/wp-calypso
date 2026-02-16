@@ -539,6 +539,15 @@ export class CheckoutThankYou extends Component<
 		}
 	};
 
+	renderLoading = () => {
+		return (
+			<>
+				{ this.getMasterBar() }
+				<Loading />
+			</>
+		);
+	};
+
 	render() {
 		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -551,8 +560,7 @@ export class CheckoutThankYou extends Component<
 			return (
 				<>
 					<QueryPreferences />
-					{ this.getMasterBar() }
-					<Loading />
+					{ this.renderLoading() }
 				</>
 			);
 		}
@@ -642,7 +650,7 @@ export class CheckoutThankYou extends Component<
 
 						window.location.replace( domainsUrl );
 
-						return null;
+						return this.renderLoading();
 					}
 
 					return (
