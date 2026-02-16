@@ -3,7 +3,6 @@
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { AddSitesFormProps } from 'calypso/landing/subscriptions/components/add-sites-form/add-sites-form';
 import AddTumblr from '../index';
 
 const mockIsCurrentUserEmailVerified = jest.fn( () => true );
@@ -17,8 +16,7 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( () => {} ),
 } ) );
 jest.mock( 'calypso/landing/subscriptions/components/add-sites-form', () => ( {
-	AddSitesForm: ( props: AddSitesFormProps ) => {
-		transformedUrl = props.transformUrl;
+	AddSitesForm: () => {
 		return <div data-testid="add-sites-form">AddSitesForm</div>;
 	},
 } ) );
