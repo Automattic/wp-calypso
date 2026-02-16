@@ -19,8 +19,10 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 	const [ submitSuccess, setSubmitSuccess ] = useState( false );
 	const [ submitError, setSubmitError ] = useState< string | null >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const containerRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
+		containerRef.current?.querySelector( 'textarea' )?.focus();
 		return () => {
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
@@ -92,7 +94,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 
 	return (
 		<div className="agents-manager-feedback-input-container">
-			<div className="agents-manager-feedback-input">
+			<div className="agents-manager-feedback-input" ref={ containerRef }>
 				<TextareaControl
 					label={ __( 'What could be improved?', '__i18n_text_domain__' ) }
 					value={ feedbackText }

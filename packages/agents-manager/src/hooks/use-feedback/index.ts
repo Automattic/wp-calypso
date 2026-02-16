@@ -1,6 +1,5 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { createElement, useState } from 'react';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -47,11 +46,10 @@ async function rateMessage(
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
-	apiFetch( {
-		url,
+	fetch( url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		data: { message_id: messageId, rating },
+		body: JSON.stringify( { message_id: messageId, rating } ),
 	} ).catch( () => {} );
 }
 
@@ -83,12 +81,14 @@ async function submitFeedback(
 		// SSR or restricted context — skip
 	}
 
-	await apiFetch( {
-		url,
+	const response = await fetch( url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		data,
+		body: JSON.stringify( data ),
 	} );
+	if ( ! response.ok ) {
+		throw new Error( `Feedback submission failed: ${ response.status }` );
+	}
 }
 
 const MAX_CONTEXT_MESSAGES = 4;
