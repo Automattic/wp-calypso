@@ -117,7 +117,9 @@ function buildQueryClient(
 		isDeleting?: boolean;
 	} = {}
 ) {
-	const qc = new QueryClient();
+	const qc = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+	} );
 	const stagingSiteId = productionSite.options?.wpcom_staging_blog_ids?.[ 0 ];
 
 	qc.setQueryData(
@@ -132,10 +134,12 @@ function buildQueryClient(
 		);
 	}
 
-	// When creating, pre-populate atomic transfer to prevent refetch polling
+	// Pre-populate with a non-in-progress, non-completed status to prevent both
+	// refetch polling and enabling the staging site query (which would enter an
+	// infinite refetch loop with no nock interceptor for the staging site).
 	if ( extra.isCreating && stagingSiteId ) {
 		qc.setQueryData( [ 'site', stagingSiteId, 'atomic', 'transfers', 'latest' ], {
-			status: 'completed',
+			status: 'error',
 		} );
 	}
 
