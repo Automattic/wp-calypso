@@ -1,15 +1,6 @@
 @import '@wordpress/base-styles/colors';
-@import '../../hooks/variables.scss';
-
-@keyframes skeleton-pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.4;
-	}
-}
+@import '../../styles/variables.scss';
+@import '../../styles/animations.scss';
 
 .agents-manager-chat-message-skeleton {
 	display: flex;

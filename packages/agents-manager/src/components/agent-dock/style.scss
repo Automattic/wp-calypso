@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
-@import '../../hooks/variables.scss';
+@import '../../styles/variables.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
