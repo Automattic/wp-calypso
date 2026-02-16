@@ -46,7 +46,7 @@ const AddNew = () => {
 					</h2>
 					<AddSitesForm
 						pathname={ isDiscoverV3Enabled() ? '/reader/new' : '/discover/add-new' }
-						source="reader-add-new"
+						source={ isDiscoverV3Enabled() ? 'reader-add-new' : 'discover-add-new' }
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
