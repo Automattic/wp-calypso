@@ -64,6 +64,7 @@ function AgentsManagerHelpButton() {
 		label: 'Help',
 		size: 'compact',
 		target: '_blank',
+		rel: 'noopener noreferrer',
 		onClick: handleClick,
 	} );
 
