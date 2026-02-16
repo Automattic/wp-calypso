@@ -5,7 +5,6 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { OptionContent } from '../index';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
@@ -23,9 +22,11 @@ type SummaryButtonMockProps = ComponentPropsWithoutRef< 'button' > & {
 };
 
 jest.mock( '@automattic/components', () => {
+	const React = require( 'react' );
+
 	const SummaryButton = jest.fn(
-		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) =>
-			React.createElement(
+		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) => {
+			return React.createElement(
 				'button',
 				{ type: 'button', 'data-testid': 'summary-button', ...buttonProps },
 				React.createElement( 'div', { 'data-testid': 'summary-button-title' }, title ),
@@ -42,7 +43,8 @@ jest.mock( '@automattic/components', () => {
 						)
 					)
 				)
-			)
+			);
+		}
 	);
 	return {
 		__esModule: true,
