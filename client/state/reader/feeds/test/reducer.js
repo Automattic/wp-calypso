@@ -257,9 +257,9 @@ describe( 'reducer', () => {
 					image: 'http://example.com/image',
 					organization_id: undefined,
 					unseen_count: undefined,
+					blog_owner: undefined,
+					subscription_id: undefined,
 				},
-				blog_owner: undefined,
-				subscription_id: undefined,
 			} );
 		} );
 
