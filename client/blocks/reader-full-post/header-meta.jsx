@@ -41,7 +41,7 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 					) }
 					{ post.date && (
 						<span className="reader-full-post__header-meta-date">
-							<span className="reader-full-post__header-meta-date-link">
+							<span className="reader-full-post__header-meta-date-text">
 								<TimeSince date={ post.date } />
 							</span>
 						</span>
