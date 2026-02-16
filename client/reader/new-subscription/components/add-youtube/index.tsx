@@ -63,18 +63,13 @@ export default function AddYouTube(): JSX.Element {
 						<ul className="reader-add-youtube__instructions-list">
 							<li>
 								<strong>{ translate( 'Channel feed:' ) }</strong>
-								{ ' www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID' }
+								{ ' www.youtube.com/@YT_HANDLE' }
 							</li>
 							<li>
 								<strong>{ translate( 'Playlist feed:' ) }</strong>
 								{ ' www.youtube.com/feeds/videos.xml?playlist_id=PLAYLIST_ID' }
 							</li>
 						</ul>
-						<p className="reader-add-youtube__instructions-note">
-							{ translate(
-								'To find a channel ID, go to the channel page and look in the page source or URL.'
-							) }
-						</p>
 					</div>
 				) : null }
 			</SubscriptionManagerContextProvider>
