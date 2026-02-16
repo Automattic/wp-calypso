@@ -3,7 +3,7 @@
  */
 
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -67,25 +67,59 @@ const mockStagingSite: Site = {
 	plan: { features: { active: [ 'staging-sites' ] } },
 } as Site;
 
-/**
- * Build a QueryClient pre-populated with the data the EnvironmentSwitcher
- * component needs. All queries use real query key structures.
- */
-function buildQueryClient(
+/** Set up nock interceptors for network-backed queries. */
+function setupNock(
 	productionSite: Site,
 	extra: {
-		isCreating?: boolean;
-		isDeleting?: boolean;
 		stagingSite?: Site;
 		hasValidQuota?: boolean;
 		connectionHealth?: { is_healthy: boolean };
 	} = {}
 ) {
-	const qc = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	nock( 'https://public-api.wordpress.com:443' )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, {
+			calypso_preferences: {},
+		} );
+
+	nock( 'https://public-api.wordpress.com:443' )
+		.get( `/rest/v1.1/sites/${ productionSite.ID }` )
+		.query( true )
+		.reply( 200, productionSite );
+
+	if ( extra.stagingSite ) {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/rest/v1.1/sites/${ extra.stagingSite.ID }` )
+			.query( true )
+			.reply( 200, extra.stagingSite );
+	}
+
+	if ( extra.hasValidQuota !== undefined ) {
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( `/wpcom/v2/sites/${ productionSite.ID }/staging-site/validate-quota` )
+			.reply( 200, () => extra.hasValidQuota );
+	}
+
+	if ( extra.connectionHealth !== undefined ) {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ productionSite.ID }/jetpack-connection-health` )
+			.query( true )
+			.reply( 200, extra.connectionHealth );
+	}
+}
+
+/** Build a QueryClient with only client-managed state (no network endpoint). */
+function buildQueryClient(
+	productionSite: Site,
+	extra: {
+		isCreating?: boolean;
+		isDeleting?: boolean;
+	} = {}
+) {
+	const qc = new QueryClient();
 	const stagingSiteId = productionSite.options?.wpcom_staging_blog_ids?.[ 0 ];
 
-	qc.setQueryData( [ 'me', 'preferences' ], {} );
-	qc.setQueryData( [ 'site-by-id', productionSite.ID, SITE_FIELDS, SITE_OPTIONS ], productionSite );
 	qc.setQueryData(
 		[ 'staging-site', productionSite.ID, 'is-creating' ],
 		Boolean( extra.isCreating )
@@ -105,50 +139,35 @@ function buildQueryClient(
 		} );
 	}
 
-	if ( extra.stagingSite ) {
-		qc.setQueryData(
-			[ 'site-by-id', extra.stagingSite.ID, SITE_FIELDS, SITE_OPTIONS ],
-			extra.stagingSite
-		);
-	}
-	if ( extra.hasValidQuota !== undefined ) {
-		qc.setQueryData( [ 'site', productionSite.ID, 'has-valid-quota' ], extra.hasValidQuota );
-	}
-	if ( extra.connectionHealth !== undefined ) {
-		qc.setQueryData(
-			[ 'site', productionSite.ID, 'jetpack-connection-health' ],
-			extra.connectionHealth
-		);
-	}
-
 	return qc;
 }
 
 const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
-	const button = screen.getByRole( 'button' );
-	await user.click( button );
+	await waitFor( () => {
+		expect( screen.getByRole( 'button' ) ).toBeEnabled();
+	} );
+	await user.click( screen.getByRole( 'button' ) );
 };
 
 describe( 'EnvironmentSwitcher', () => {
+	afterEach( () => nock.cleanAll() );
+
 	describe( 'Environment Display', () => {
 		test( 'displays "Production" for production sites', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
-			expect( screen.getByText( 'Production' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Production' ) ).toBeVisible();
 		} );
 
 		test( 'displays "Staging" for staging sites', () => {
 			render( <EnvironmentSwitcher site={ mockStagingSite } /> );
-			expect( screen.getByText( 'Staging' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Staging' ) ).toBeVisible();
 		} );
 	} );
 
 	describe( 'Staging Site Actions', () => {
 		test( 'displays "Add staging site" button when no staging site exists', async () => {
-			// Test true "no staging site" scenario: empty wpcom_staging_blog_ids array
-			// means getStagingSiteId() returns undefined, so no staging site queries run
-			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
-				isCreating: false,
-			} );
+			setupNock( mockProductionSiteWithoutStaging );
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
@@ -156,21 +175,21 @@ describe( 'EnvironmentSwitcher', () => {
 			} );
 
 			await clickDropdown( user );
-			expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
+			expect( await screen.findByText( 'Add staging site' ) ).toBeVisible();
 		} );
 
 		test( 'shows error notice when user has insufficient quota', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
+			setupNock( mockProductionSiteWithoutStaging, {
 				hasValidQuota: false,
 				connectionHealth: { is_healthy: true },
-				isCreating: false,
 			} );
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			await user.click( screen.getByText( 'Add staging site' ) );
+			await user.click( await screen.findByText( 'Add staging site' ) );
 
 			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
 				'Your available storage space is below 50%, which is insufficient for creating a staging site.',
@@ -179,17 +198,17 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'shows error notice when jetpack connection is unhealthy', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
+			setupNock( mockProductionSiteWithoutStaging, {
 				hasValidQuota: true,
 				connectionHealth: { is_healthy: false },
-				isCreating: false,
 			} );
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			await user.click( screen.getByText( 'Add staging site' ) );
+			await user.click( await screen.findByText( 'Add staging site' ) );
 
 			expect( mockCreateNotice ).toHaveBeenCalledWith(
 				'error',
@@ -208,6 +227,7 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'displays "Adding staging site..." when staging site is being created', async () => {
+			setupNock( mockProductionSiteWithStaging );
 			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
 				isCreating: true,
 			} );
@@ -216,31 +236,32 @@ describe( 'EnvironmentSwitcher', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
+			expect( await screen.findByText( 'Adding staging site…' ) ).toBeVisible();
 		} );
 
 		test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+			setupNock( mockProductionSiteWithStaging, {
 				stagingSite: mockStagingSite,
+			} );
+			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
 				isDeleting: true,
-				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
+			expect( await screen.findByText( 'Deleting staging site…' ) ).toBeVisible();
 		} );
 
 		test( 'shows success notice and fires mutation when "Add staging site" is clicked', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
+			setupNock( mockProductionSiteWithoutStaging, {
 				hasValidQuota: true,
 				connectionHealth: { is_healthy: true },
-				isCreating: false,
 			} );
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
-			const scope = nock( 'https://public-api.wordpress.com:443' )
+			const mutationScope = nock( 'https://public-api.wordpress.com:443' )
 				.post( '/wpcom/v2/sites/1/staging-site' )
 				.reply( 200, { success: true } );
 
@@ -250,14 +271,14 @@ describe( 'EnvironmentSwitcher', () => {
 			} );
 
 			await clickDropdown( user );
-			await user.click( screen.getByText( 'Add staging site' ) );
+			await user.click( await screen.findByText( 'Add staging site' ) );
 
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
 				'Setting up your staging site — this may take a few minutes. We’ll email you when it’s ready.',
 				{ type: 'snackbar' }
 			);
 
-			expect( scope.isDone() ).toBe( true );
+			expect( mutationScope.isDone() ).toBe( true );
 		} );
 	} );
 } );
