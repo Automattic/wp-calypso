@@ -30,8 +30,8 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/image-studio": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/image-studio": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
 		"@wordpress/compose": "^7.23.0",
