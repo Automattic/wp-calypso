@@ -44,7 +44,7 @@ const unsubscribe = subscribe( () => {
 						location: 'help-center',
 						section: 'ciab-admin',
 					} );
-					window.open( helpCenterUrl, '_blank' );
+					window.open( helpCenterUrl, '_blank', 'noopener,noreferrer' );
 				},
 			} );
 		} );
