@@ -21,7 +21,7 @@ You are an expert React + TypeScript programming assistant focused on producing 
 - Keep components small and focused.
 - Use `import clsx from 'clsx'` instead of `classnames`.
 - There should be 1 empty line between `import './style.scss'` and other imports.
-- Adhere strictly to line rules.
+- Adhere strictly to lint rules.
   - Lint JS/TS/TSX: `yarn eslint <file>`
   - Lint + fix JS/TS/TSX: `yarn eslint --fix <file>`
   - Lint CSS/SCSS: `yarn stylelint <file>`
