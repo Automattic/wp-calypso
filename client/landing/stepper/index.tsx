@@ -196,16 +196,18 @@ async function main() {
 						/>
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
-						<AsyncHelpCenterApp
-							currentUser={ user as UserStore.CurrentUser }
-							sectionName="stepper"
-						/>
+						<>
+							<AsyncHelpCenterApp
+								currentUser={ user as UserStore.CurrentUser }
+								sectionName="stepper"
+							/>
+							<AsyncLoad
+								require="calypso/layout/agents-manager-loader"
+								placeholder={ null }
+								sectionName={ flowName }
+							/>
+						</>
 					) }
-					<AsyncLoad
-						require="calypso/layout/agents-manager-loader"
-						placeholder={ null }
-						sectionName={ flowName }
-					/>
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
