@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { createQueryClientBuilder, render } from '../../../test-utils';
+import { render } from '../../../test-utils';
 import EnvironmentSwitcher from '../environment-switcher';
 import type { Site } from '@automattic/api-core';
 
@@ -95,31 +97,35 @@ function buildQueryClient(
 		connectionHealth?: { is_healthy: boolean };
 	} = {}
 ) {
-	const builder = createQueryClientBuilder()
-		.addSiteById( productionSite.ID, productionSite )
-		.withQueryData(
-			[ 'staging-site', productionSite.ID, 'is-creating' ],
-			Boolean( extra.isCreating )
-		)
-		.withQueryData(
-			[ 'staging-site', productionSite.ID + 1, 'is-deleting' ],
-			Boolean( extra.isDeleting )
-		);
+	const qc = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	qc.setQueryData( [ 'me', 'preferences' ], {} );
+	qc.setQueryData( [ 'site-by-id', productionSite.ID, SITE_FIELDS, SITE_OPTIONS ], productionSite );
+	qc.setQueryData(
+		[ 'staging-site', productionSite.ID, 'is-creating' ],
+		Boolean( extra.isCreating )
+	);
+	qc.setQueryData(
+		[ 'staging-site', productionSite.ID + 1, 'is-deleting' ],
+		Boolean( extra.isDeleting )
+	);
 
 	if ( extra.stagingSite ) {
-		builder.addSiteById( extra.stagingSite.ID, extra.stagingSite );
+		qc.setQueryData(
+			[ 'site-by-id', extra.stagingSite.ID, SITE_FIELDS, SITE_OPTIONS ],
+			extra.stagingSite
+		);
 	}
 	if ( extra.hasValidQuota !== undefined ) {
-		builder.withQueryData( [ 'site', productionSite.ID, 'has-valid-quota' ], extra.hasValidQuota );
+		qc.setQueryData( [ 'site', productionSite.ID, 'has-valid-quota' ], extra.hasValidQuota );
 	}
 	if ( extra.connectionHealth !== undefined ) {
-		builder.withQueryData(
+		qc.setQueryData(
 			[ 'site', productionSite.ID, 'jetpack-connection-health' ],
 			extra.connectionHealth
 		);
 	}
 
-	return builder.build();
+	return qc;
 }
 
 const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {

@@ -25,39 +25,6 @@ Use `@testing-library/react` to test whole slices of the front-end dashboard and
 
 Use the `render()` function from `client/dashboard/test-utils.tsx`, which will render your component with context providers so that hooks work as expected. You can also avoid some manual mocking by using `nock` to mock and assert against network requests.
 
-### Mocking Query Cache Data
-
-Use `createQueryClientBuilder()` from `client/dashboard/test-utils.tsx` to pre-populate a `QueryClient` with test data.
-
-```tsx
-import { createQueryClientBuilder, render } from '../../test-utils';
-
-const queryClient = createQueryClientBuilder()
-  .addSiteById( 1, mockSite )
-  .addSiteBySlug( 'my-site', mockSite )
-  .setPreference( 'dismissed-banner', 'true' )
-  .build();
-
-render( <MyComponent />, { queryClient } );
-```
-
-**Available methods:**
-
-| Method                        | Description                                                                  |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| `addSiteById( id, site )`     | Seeds `siteByIdQuery` cache                                                  |
-| `addSiteBySlug( slug, site )` | Seeds `siteBySlugQuery` cache                                                |
-| `setPreference( prefs )`      | Merges into the `['me', 'preferences']` entry — only overwrites keys you set |
-| `withQueryData( key, data )`  | Escape hatch for any query key not covered above                             |
-| `empty()`                     | Clears all default entries (e.g. empty preferences)                          |
-| `build()`                     | Returns the configured `QueryClient`                                         |
-
-**Prefer the builder over manual `setQueryData`.** It keeps query key details in one place,
-so when keys change only `test-utils.tsx` needs updating.
-
-When a component fetches data that isn't in the cache (e.g. logs, mutations), use `nock` to
-intercept the network request instead.
-
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com:443`.
@@ -139,6 +106,22 @@ expect( requestBody ).toEqual(
 	pi: expect.closeTo( 3.14 ),
   } )
 );
+```
+
+### Mocking Query Cache Data
+
+Do not mock `@tanstack/react-query` or `@automattic/api-queries`. If the data which needs to be mocked can not be done at the network level (e.g. staging site delete progress), create a fresh `QueryClient` and pass it to `render()` in your test function.
+
+Wherever possible, prefer to mock network requests (see above).
+
+```tsx
+import { QueryClient } from '@tanstack/react-query';
+import { render } from '../../test-utils';
+
+const queryClient = new QueryClient();
+queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
+
+render( <MyComponent />, { queryClient } );
 ```
 
 ### Utility Function Tests
