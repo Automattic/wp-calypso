@@ -237,6 +237,9 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
 				'--spec-preview-chip-border':
 					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
+
+				// For the spec preview checkbox
+				'--spec-preview-checkbox-appearance': 'none',
 			},
 			promptSuggestions: {
 				variant: 'solid' as const,
