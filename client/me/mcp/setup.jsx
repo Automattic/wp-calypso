@@ -324,22 +324,92 @@ function McpSetupComponent( { path } ) {
 									<ol>
 										<li>
 											<Text as="p" size="medium">
-												{ translate(
-													'Run this command in your terminal: claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
+												{ createInterpolateElement(
+													translate( 'Run this command in your terminal: <code>%s</code>' ).replace(
+														'%s',
+														'claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
+													),
+													{
+														code: (
+															<code
+																key="claude-code-cmd"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																claude mcp add --transport http wpcom-mcp
+																https://public-api.wordpress.com/wpcom/v2/mcp/v1
+															</code>
+														),
+													}
 												) }
 											</Text>
 										</li>
 										<li>
 											<Text as="p" size="medium">
-												{ translate(
-													'Or copy the configuration below and add it to your .mcp.json or ~/.claude.json file.'
+												{ createInterpolateElement(
+													translate(
+														'Or copy the configuration below and add it to your <mcpJson/> or <claudeJson/> file.'
+													),
+													{
+														mcpJson: (
+															<code
+																key="mcp-json"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																.mcp.json
+															</code>
+														),
+														claudeJson: (
+															<code
+																key="claude-json"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																~/.claude.json
+															</code>
+														),
+													}
 												) }
 											</Text>
 										</li>
 										<li>
 											<Text as="p" size="medium">
-												{ translate(
-													'In Claude Code, run /mcp to authenticate with your WordPress.com account.'
+												{ createInterpolateElement(
+													translate(
+														'In Claude Code, run <code/> to authenticate with your WordPress.com account.'
+													),
+													{
+														code: (
+															<code
+																key="mcp-cmd"
+																style={ {
+																	backgroundColor: '#f0f0f1',
+																	padding: '2px 6px',
+																	borderRadius: '3px',
+																	fontFamily: 'monospace',
+																	fontSize: '13px',
+																} }
+															>
+																/mcp
+															</code>
+														),
+													}
 												) }
 											</Text>
 										</li>
