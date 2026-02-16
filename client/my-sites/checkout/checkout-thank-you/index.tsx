@@ -24,11 +24,13 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
@@ -36,6 +38,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isExternal } from 'calypso/lib/url';
 import {
 	domainManagementList,
+	domainManagementRoot,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { GoogleWorkspaceSetUpThankYou } from 'calypso/my-sites/email/google-workspace-set-up-thank-you';
@@ -48,12 +51,14 @@ import {
 	getCurrentUserDate,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import {
 	isRequesting as isRequestingSitePlugins,
 	getPlugins as getInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -86,6 +91,7 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
+	hasMultipleDomainPurchases,
 	isOnlyDomainTransfers,
 	isOnlyDomainPurchases,
 	isSearch,
@@ -137,6 +143,8 @@ export interface CheckoutThankYouConnectedProps {
 	site: SiteDetails | null | undefined;
 	siteDomains: ResponseDomain[] | null | undefined;
 	isGravatarDomain: boolean;
+	hasReceivedRemotePreferences: boolean;
+	hasDashboardOptIn: boolean;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
@@ -376,6 +384,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		return (
+			this.props.hasReceivedRemotePreferences &&
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
 			this.props.receipt.hasLoadedFromServer &&
 			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer ) &&
@@ -541,6 +550,7 @@ export class CheckoutThankYou extends Component<
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<>
+					<QueryPreferences />
 					{ this.getMasterBar() }
 					<Loading />
 				</>
@@ -625,6 +635,16 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				if ( shouldShowNewDomainThankYou() ) {
+					if ( hasMultipleDomainPurchases( purchases ) ) {
+						const domainsUrl = this.props.hasDashboardOptIn
+							? dashboardLink( '/domains' )
+							: domainManagementRoot();
+
+						window.location.replace( domainsUrl );
+
+						return null;
+					}
+
 					return (
 						<>
 							<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -803,6 +823,8 @@ export default connect(
 			site: siteId ? getSite( state, siteId ) : null,
 			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
+			hasReceivedRemotePreferences: hasReceivedRemotePreferences( state ),
+			hasDashboardOptIn: hasDashboardOptIn( state ),
 		};
 	},
 	{
