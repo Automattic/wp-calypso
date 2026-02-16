@@ -68,8 +68,6 @@ interface AgentChatProps {
 	imageUpload?: UseImageUploadResult;
 	/** Whether to show the feedback text input (after thumbs down). */
 	showFeedbackInput?: boolean;
-	/** The message ID the feedback is for. */
-	feedbackMessageId?: string | null;
 	/** Called when the user submits feedback text. */
 	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
 	/** Called when the user cancels the feedback input. */
@@ -100,9 +98,8 @@ export default function AgentChat( {
 	isCompactMode = false,
 	imageUpload,
 	showFeedbackInput = false,
-	feedbackMessageId,
-	onSubmitFeedbackText,
-	onCancelFeedback,
+	onSubmitFeedbackText = () => Promise.resolve(),
+	onCancelFeedback = () => {},
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -165,7 +162,7 @@ export default function AgentChat( {
 			<AgentUI.ConversationView>
 				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
-				{ showFeedbackInput && feedbackMessageId && onSubmitFeedbackText && onCancelFeedback && (
+				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }
 				<AgentUI.Footer>

@@ -178,7 +178,6 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( result.current.showFeedbackInput ).toBe( false );
-			expect( result.current.feedbackMessageId ).toBeNull();
 		} );
 	} );
 
@@ -232,7 +231,6 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( result.current.showFeedbackInput ).toBe( true );
-			expect( result.current.feedbackMessageId ).toBe( 'msg-1' );
 		} );
 	} );
 
@@ -394,7 +392,6 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( result.current.showFeedbackInput ).toBe( false );
-			expect( result.current.feedbackMessageId ).toBeNull();
 		} );
 	} );
 

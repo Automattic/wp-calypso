@@ -171,15 +171,13 @@ export default function AgentDock( {
 		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
 	);
 
-	const { showFeedbackInput, feedbackMessageId, submitFeedbackText, cancelFeedback } = useFeedback(
-		{
-			registerMessageActions,
-			messages,
-			agentId,
-			sessionId,
-			authProvider: agentConfig.authProvider,
-		}
-	);
+	const { showFeedbackInput, submitFeedbackText, cancelFeedback } = useFeedback( {
+		registerMessageActions,
+		messages,
+		agentId,
+		sessionId,
+		authProvider: agentConfig.authProvider,
+	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -412,7 +410,6 @@ export default function AgentDock( {
 			isCompactMode={ isCompactMode }
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }
-			feedbackMessageId={ feedbackMessageId }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ cancelFeedback }
 		/>

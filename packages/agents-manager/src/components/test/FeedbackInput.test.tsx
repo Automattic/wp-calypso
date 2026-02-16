@@ -3,7 +3,7 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import FeedbackInput from '../index';
+import FeedbackInput from '../feedback-input';
 
 describe( 'FeedbackInput', () => {
 	const mockOnSubmit = jest.fn();

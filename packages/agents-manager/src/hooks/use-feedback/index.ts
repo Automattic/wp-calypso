@@ -33,7 +33,6 @@ interface UseFeedbackConfig {
 
 interface UseFeedbackReturn {
 	showFeedbackInput: boolean;
-	feedbackMessageId: string | null;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	cancelFeedback: () => void;
 }
@@ -270,7 +269,6 @@ export default function useFeedback( {
 
 	return {
 		showFeedbackInput,
-		feedbackMessageId,
 		submitFeedbackText: handleSubmitFeedbackText,
 		cancelFeedback,
 	};
