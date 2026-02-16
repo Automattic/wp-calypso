@@ -4,7 +4,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { getSessionId as getStoredSessionId } from '../../../utils/agent-session';
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
@@ -55,19 +54,16 @@ jest.mock(
 );
 jest.mock( '@automattic/calypso-analytics' );
 jest.mock( '@wordpress/api-fetch' );
-jest.mock( 'wpcom-proxy-request' );
 jest.mock( '../../../utils/agent-session' );
 
 const mockRegisterMessageActions = jest.fn();
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockApiFetch = apiFetch as jest.MockedFunction< typeof apiFetch >;
-const mockWpcomRequest = wpcomRequest as jest.MockedFunction< typeof wpcomRequest >;
-const mockCanAccessWpcomApis = canAccessWpcomApis as jest.MockedFunction<
-	typeof canAccessWpcomApis
->;
 const mockGetStoredSessionId = getStoredSessionId as jest.MockedFunction<
 	typeof getStoredSessionId
 >;
+
+const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
 
 const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Message => ( {
 	id,
@@ -78,8 +74,6 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 describe( 'useFeedback', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockCanAccessWpcomApis.mockReturnValue( true );
-		mockWpcomRequest.mockResolvedValue( {} );
 		mockApiFetch.mockResolvedValue( {} );
 		mockGetStoredSessionId.mockReturnValue( 'stored-session-123' );
 	} );
@@ -88,8 +82,8 @@ describe( 'useFeedback', () => {
 		registerMessageActions: mockRegisterMessageActions,
 		messages: [],
 		agentId: 'test-agent',
-		siteId: 12345,
 		sessionId: 'session-abc',
+		authProvider: mockAuthProvider,
 	};
 
 	describe( 'initialization', () => {
@@ -129,22 +123,26 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs up feedback', () => {
-		it( 'sends rating to wpcom when thumbs up is clicked', async () => {
+		it( 'sends rating via apiFetch when thumbs up is clicked', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a ) => a.id.includes( 'up' ) );
+			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
 
 			await act( async () => {
 				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
-			expect( mockWpcomRequest ).toHaveBeenCalledWith(
+			expect( mockAuthProvider ).toHaveBeenCalled();
+			expect( mockApiFetch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					path: '/sites/12345/big-sky/v1/wp-orchestrator/session-abc/rate',
+					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 					method: 'POST',
-					body: { message_id: 'msg-1', rating: 'up' },
+					headers: expect.objectContaining( {
+						Authorization: 'Bearer test-token',
+					} ),
+					data: { message_id: 'msg-1', rating: 'up' },
 				} )
 			);
 		} );
@@ -154,7 +152,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a ) => a.id.includes( 'up' ) );
+			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
 
 			await act( async () => {
 				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -171,7 +169,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a ) => a.id.includes( 'up' ) );
+			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
 
 			await act( async () => {
 				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -182,22 +180,22 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs down feedback', () => {
-		it( 'sends rating to wpcom when thumbs down is clicked', async () => {
+		it( 'sends rating via apiFetch when thumbs down is clicked', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
-			expect( mockWpcomRequest ).toHaveBeenCalledWith(
+			expect( mockApiFetch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					path: '/sites/12345/big-sky/v1/wp-orchestrator/session-abc/rate',
+					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 					method: 'POST',
-					body: { message_id: 'msg-1', rating: 'down' },
+					data: { message_id: 'msg-1', rating: 'down' },
 				} )
 			);
 		} );
@@ -207,7 +205,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -224,7 +222,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -235,7 +233,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'feedback text submission', () => {
-		it( 'submits feedback with conversation context to wpcom', async () => {
+		it( 'submits feedback with conversation context via apiFetch', async () => {
 			const messages = [
 				createMessage( 'msg-1', 'user', 'How do I set up my site?' ),
 				createMessage( 'msg-2', 'agent', 'Here are the steps...' ),
@@ -248,7 +246,7 @@ describe( 'useFeedback', () => {
 			// Simulate thumbs down first
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-4', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-4', 'agent', 'Test' ) );
@@ -259,11 +257,11 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'The solution was unclear' );
 			} );
 
-			expect( mockWpcomRequest ).toHaveBeenCalledWith(
+			expect( mockApiFetch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					path: '/sites/12345/big-sky/v1/wp-orchestrator/session-abc/feedback',
+					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/text',
 					method: 'POST',
-					body: expect.objectContaining( {
+					data: expect.objectContaining( {
 						message_id: 'msg-4',
 						feedback: 'The solution was unclear',
 						previous_messages: [
@@ -291,7 +289,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-6', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-6', 'agent', 'Test' ) );
@@ -301,9 +299,15 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'Test feedback' );
 			} );
 
-			const callBody = mockWpcomRequest.mock.calls[ 1 ][ 0 ].body;
-			expect( callBody.previous_messages ).toHaveLength( 4 );
-			expect( callBody.previous_messages[ 0 ].text ).toBe( 'Message 3' );
+			// Find the feedback text submission call (the /text URL)
+			const feedbackCall = mockApiFetch.mock.calls.find(
+				( call ) => ( call[ 0 ] as { url: string } ).url?.includes( '/text' )
+			);
+			expect( feedbackCall ).toBeDefined();
+			const callData = ( feedbackCall![ 0 ] as { data: { previous_messages: { text: string }[] } } )
+				.data;
+			expect( callData.previous_messages ).toHaveLength( 4 );
+			expect( callData.previous_messages[ 0 ].text ).toBe( 'Message 3' );
 		} );
 
 		it( 'records tracks event when feedback text is submitted', async () => {
@@ -311,7 +315,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -334,7 +338,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -344,9 +348,9 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'Test' );
 			} );
 
-			expect( mockWpcomRequest ).toHaveBeenCalledWith(
+			expect( mockApiFetch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					path: '/sites/12345/big-sky/v1/wp-orchestrator/stored-session-123/feedback',
+					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/stored-session-123/text',
 				} )
 			);
 		} );
@@ -356,20 +360,20 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
 			// Clear mocks from rating call
-			mockWpcomRequest.mockClear();
+			mockApiFetch.mockClear();
 
 			await act( async () => {
 				await result.current.submitFeedbackText( '   ' );
 			} );
 
-			expect( mockWpcomRequest ).not.toHaveBeenCalled();
+			expect( mockApiFetch ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -379,7 +383,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -395,27 +399,19 @@ describe( 'useFeedback', () => {
 		} );
 	} );
 
-	describe( 'API routing', () => {
-		it( 'uses apiFetch when canAccessWpcomApis returns false', async () => {
-			mockCanAccessWpcomApis.mockReturnValue( false );
-
-			renderHook( () => useFeedback( defaultConfig ) );
+	describe( 'no authProvider', () => {
+		it( 'does not send rating when authProvider is not provided', async () => {
+			renderHook( () => useFeedback( { ...defaultConfig, authProvider: undefined } ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a ) => a.id.includes( 'up' ) );
+			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
 
 			await act( async () => {
 				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
-			expect( mockWpcomRequest ).not.toHaveBeenCalled();
-			expect( mockApiFetch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					path: '/wpcom/v2/big-sky/v1/wp-orchestrator/session-abc/rate',
-					method: 'POST',
-				} )
-			);
+			expect( mockApiFetch ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -435,7 +431,7 @@ describe( 'useFeedback', () => {
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-3', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a ) => a.id.includes( 'down' ) );
+			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-3', 'agent', 'Test' ) );
@@ -445,14 +441,20 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'Test' );
 			} );
 
-			const callBody = mockWpcomRequest.mock.calls[ 1 ][ 0 ].body;
-			expect( callBody.previous_messages ).toHaveLength( 3 );
-			expect( callBody.previous_messages[ 2 ].text ).toBe( 'Here are your analytics' );
+			// Find the feedback text submission call (the /text URL)
+			const feedbackCall = mockApiFetch.mock.calls.find(
+				( call ) => ( call[ 0 ] as { url: string } ).url?.includes( '/text' )
+			);
+			expect( feedbackCall ).toBeDefined();
+			const callData = ( feedbackCall![ 0 ] as { data: { previous_messages: { text: string }[] } } )
+				.data;
+			expect( callData.previous_messages ).toHaveLength( 3 );
+			expect( callData.previous_messages[ 2 ].text ).toBe( 'Here are your analytics' );
 			// Tool JSON is replaced with a human-readable placeholder
-			expect( callBody.previous_messages ).not.toContainEqual(
+			expect( callData.previous_messages ).not.toContainEqual(
 				expect.objectContaining( { text: expect.stringContaining( 'tool_id' ) } )
 			);
-			expect( callBody.previous_messages[ 1 ].text ).toBe(
+			expect( callData.previous_messages[ 1 ].text ).toBe(
 				'🔨 Tool: `big_sky__show_component` (site-analytics)'
 			);
 		} );

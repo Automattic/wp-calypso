@@ -1,5 +1,6 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { createElement, useState } from 'react';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -46,10 +47,11 @@ async function rateMessage(
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
-	fetch( url, {
+	apiFetch( {
+		url,
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify( { message_id: messageId, rating } ),
+		data: { message_id: messageId, rating },
 	} ).catch( () => {} );
 }
 
@@ -68,23 +70,24 @@ async function submitFeedback(
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
 
-	const body: Record< string, string | PreviousMessage[] > = {
+	const data: Record< string, string | PreviousMessage[] > = {
 		message_id: messageId,
 		feedback,
 	};
 	if ( previousMessages && previousMessages.length > 0 ) {
-		body.previous_messages = previousMessages;
+		data.previous_messages = previousMessages;
 	}
 	try {
-		body.page_url = window.location.href;
+		data.page_url = window.location.href;
 	} catch {
 		// SSR or restricted context — skip
 	}
 
-	await fetch( url, {
+	await apiFetch( {
+		url,
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify( body ),
+		data,
 	} );
 }
 
