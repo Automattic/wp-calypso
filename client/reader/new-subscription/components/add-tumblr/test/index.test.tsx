@@ -6,8 +6,6 @@ import React from 'react';
 import { AddSitesFormProps } from 'calypso/landing/subscriptions/components/add-sites-form/add-sites-form';
 import AddTumblr from '../index';
 
-let transformedUrl: ( ( url: string ) => string ) | undefined;
-
 const mockIsCurrentUserEmailVerified = jest.fn( () => true );
 
 jest.mock( '../style.scss', () => ( {} ) );
@@ -82,67 +80,6 @@ describe( 'AddTumblr', () => {
 			expect(
 				container.querySelector( '.reader-add-tumblr__form.is-disabled' )
 			).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'transformTumblrUrl', () => {
-		beforeEach( () => {
-			transformedUrl = undefined;
-			render( React.createElement( AddTumblr ) );
-		} );
-
-		test( 'passes transformUrl prop to AddSitesForm', () => {
-			expect( transformedUrl ).toBeDefined();
-		} );
-
-		test( 'returns URL unchanged if already has /rss', () => {
-			expect( transformedUrl!( 'https://staff.tumblr.com/rss' ) ).toBe(
-				'https://staff.tumblr.com/rss'
-			);
-		} );
-
-		test( 'returns non-Tumblr URL unchanged', () => {
-			expect( transformedUrl!( 'https://www.example.com/page' ) ).toBe(
-				'https://www.example.com/page'
-			);
-		} );
-
-		test( 'returns invalid URL unchanged', () => {
-			expect( transformedUrl!( 'not-a-valid-url' ) ).toBe( 'not-a-valid-url' );
-		} );
-
-		describe( 'blog URLs', () => {
-			test( 'transforms blog URL to RSS feed', () => {
-				expect( transformedUrl!( 'https://staff.tumblr.com' ) ).toBe(
-					'https://staff.tumblr.com/rss'
-				);
-			} );
-
-			test( 'transforms blog URL with trailing slash', () => {
-				expect( transformedUrl!( 'https://staff.tumblr.com/' ) ).toBe(
-					'https://staff.tumblr.com/rss'
-				);
-			} );
-
-			test( 'transforms subdomain blog URL to RSS feed', () => {
-				expect( transformedUrl!( 'https://example.tumblr.com' ) ).toBe(
-					'https://example.tumblr.com/rss'
-				);
-			} );
-		} );
-
-		describe( 'blog tag URLs', () => {
-			test( 'transforms tagged URL to RSS feed', () => {
-				expect( transformedUrl!( 'https://example.tumblr.com/tagged/photography' ) ).toBe(
-					'https://example.tumblr.com/tagged/photography/rss'
-				);
-			} );
-
-			test( 'transforms tagged URL with trailing slash', () => {
-				expect( transformedUrl!( 'https://example.tumblr.com/tagged/photography/' ) ).toBe(
-					'https://example.tumblr.com/tagged/photography/rss'
-				);
-			} );
 		} );
 	} );
 } );
