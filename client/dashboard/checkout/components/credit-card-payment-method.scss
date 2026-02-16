@@ -1,0 +1,25 @@
+.credit-card-fields {
+	padding: 20px;
+
+	// Add spacing between form fields
+	.components-base-control {
+		margin-bottom: 16px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	// Ensure Stripe elements have proper spacing
+	.credit-card-field__stripe-element {
+		margin-bottom: 16px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.credit-card-logos {
+	margin-top: 4px;
+}

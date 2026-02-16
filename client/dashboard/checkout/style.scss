@@ -1,0 +1,19 @@
+.dashboard-checkout {
+	display: grid;
+	grid-template-columns: 1fr 320px;
+	gap: 24px;
+	align-items: flex-start;
+
+	@media ( max-width: 960px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.dashboard-checkout__main {
+	min-width: 0;
+}
+
+.dashboard-checkout__sidebar {
+	position: sticky;
+	top: 32px;
+}

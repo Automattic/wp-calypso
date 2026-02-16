@@ -1,0 +1,54 @@
+.web-pay-button {
+	display: block;
+	inline-size: 100%;
+	border-radius: 4px;
+	cursor: pointer;
+
+	&--apple-pay {
+		// Native browser rendering of the Apple Pay button logo and styling.
+		// -apple-pay-button-style and -apple-pay-button-type are non-standard CSS
+		// properties defined by WebKit to control the button appearance.
+		-webkit-appearance: -apple-pay-button;
+		-apple-pay-button-style: black; /* stylelint-disable-line color-named -- required value for -apple-pay-button-style */
+		-apple-pay-button-type: plain;
+		block-size: 38px;
+		border: none;
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+
+	&--google-pay {
+		background-color: #000;
+		block-size: 44px;
+		border: none;
+		padding-block: 12px;
+		padding-inline: 24px;
+		text-align: center;
+
+		svg {
+			block-size: 18px;
+			vertical-align: middle;
+		}
+	}
+
+	&--disabled {
+		background-color: #ccc;
+		block-size: 38px;
+		border: none;
+		color: #555;
+		cursor: not-allowed;
+		font-size: 0.875rem;
+	}
+
+	&--loading {
+		background-color: #ccc;
+		block-size: 38px;
+		border: none;
+		color: #555;
+		font-size: 0.875rem;
+		cursor: wait;
+	}
+}
