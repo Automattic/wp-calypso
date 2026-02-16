@@ -8,6 +8,7 @@ export default function DomainOnlyNew() {
 
 	return (
 		<Step.CenteredColumnLayout
+			className="step-container-v2--domain-only-new"
 			columnWidth={ 6 }
 			heading={
 				<Step.Heading

@@ -145,9 +145,14 @@ body.is-focus-sites {
 		}
 	}
 
-	.is-section-checkout-thank-you:has( .step-container-v2 ) & {
-		--_layout__content-top-spacing: 0;
-		padding: 0;
+	.is-section-checkout-thank-you:has( .step-container-v2--domain-only-new ) & {
+		padding-inline-start: 8px;
+		padding-inline-end: 12px;
+
+		@include break-small {
+			--_layout__content-top-spacing: 0;
+			padding: 0;
+		}
 	}
 
 	.is-section-checkout & {
