@@ -36,9 +36,7 @@ function ChangePaymentMethod() {
 	}
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
 
-	const { isLoading: isLoadingStoredCards } = useQuery(
-		userPaymentMethodsQuery( { type: 'card' } )
-	);
+	const { isLoading: isLoadingStoredCards } = useQuery( userPaymentMethodsQuery( {} ) );
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
