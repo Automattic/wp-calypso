@@ -31,6 +31,8 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	onFirstMessage?: ( message: string, sessionId: string ) => void;
+	onSpecConfirm?: ( specData: any ) => void;
 	theme?: {
 		// Branding
 		brandIcon?: SVGRectElement | string | null; // ReactElement or image URL; null hides
