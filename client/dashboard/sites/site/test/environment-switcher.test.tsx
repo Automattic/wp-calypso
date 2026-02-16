@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -28,21 +27,6 @@ jest.mock( '@wordpress/data', () => ( {
 	createSelector: jest.fn(),
 } ) );
 
-jest.mock( '../../../utils/site-atomic-transfers', () => ( {
-	isAtomicTransferInProgress: jest.fn( () => false ),
-	isAtomicTransferredSite: jest.fn( () => true ),
-} ) );
-
-jest.mock( '../../../utils/site-staging-site', () => ( {
-	getProductionSiteId: jest.fn( ( site: Site ) => site.ID ),
-	getStagingSiteId: jest.fn( ( site: Site ) => site.ID + 1 ),
-} ) );
-
-jest.mock( '../../features', () => ( {
-	canManageSite: jest.fn( () => true ),
-	canCreateStagingSite: jest.fn( () => true ),
-} ) );
-
 // Test data
 const mockProductionSiteWithStaging: Site = {
 	ID: 1,
@@ -50,12 +34,11 @@ const mockProductionSiteWithStaging: Site = {
 	name: 'Test Site',
 	URL: 'https://test-site.wordpress.com',
 	is_wpcom_staging_site: false,
-	capabilities: {
-		manage_options: true,
-	},
-	options: {
-		wpcom_staging_blog_ids: [ 2 ],
-	},
+	is_wpcom_atomic: true,
+	capabilities: { manage_options: true },
+	options: { wpcom_staging_blog_ids: [ 2 ] },
+	site_migration: { in_progress: false },
+	plan: { features: { active: [ 'staging-sites' ] } },
 } as Site;
 
 const mockProductionSiteWithoutStaging: Site = {
@@ -64,12 +47,11 @@ const mockProductionSiteWithoutStaging: Site = {
 	name: 'Test Site',
 	URL: 'https://test-site.wordpress.com',
 	is_wpcom_staging_site: false,
-	capabilities: {
-		manage_options: true,
-	},
-	options: {
-		wpcom_staging_blog_ids: [] as number[],
-	},
+	is_wpcom_atomic: true,
+	capabilities: { manage_options: true },
+	options: { wpcom_staging_blog_ids: [] as number[] },
+	site_migration: { in_progress: false },
+	plan: { features: { active: [ 'staging-sites' ] } },
 } as Site;
 
 const mockStagingSite: Site = {
@@ -78,9 +60,11 @@ const mockStagingSite: Site = {
 	name: 'Test Site (Staging)',
 	URL: 'https://test-site-staging.wordpress.com',
 	is_wpcom_staging_site: true,
-	capabilities: {
-		manage_options: true,
-	},
+	is_wpcom_atomic: true,
+	capabilities: { manage_options: true },
+	options: { wpcom_production_blog_id: 1 },
+	site_migration: { in_progress: false },
+	plan: { features: { active: [ 'staging-sites' ] } },
 } as Site;
 
 /**
@@ -98,16 +82,28 @@ function buildQueryClient(
 	} = {}
 ) {
 	const qc = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const stagingSiteId = productionSite.options?.wpcom_staging_blog_ids?.[ 0 ];
+
 	qc.setQueryData( [ 'me', 'preferences' ], {} );
 	qc.setQueryData( [ 'site-by-id', productionSite.ID, SITE_FIELDS, SITE_OPTIONS ], productionSite );
 	qc.setQueryData(
 		[ 'staging-site', productionSite.ID, 'is-creating' ],
 		Boolean( extra.isCreating )
 	);
-	qc.setQueryData(
-		[ 'staging-site', productionSite.ID + 1, 'is-deleting' ],
-		Boolean( extra.isDeleting )
-	);
+
+	if ( stagingSiteId ) {
+		qc.setQueryData(
+			[ 'staging-site', stagingSiteId, 'is-deleting' ],
+			Boolean( extra.isDeleting )
+		);
+	}
+
+	// When creating, pre-populate atomic transfer to prevent refetch polling
+	if ( extra.isCreating && stagingSiteId ) {
+		qc.setQueryData( [ 'site', stagingSiteId, 'atomic', 'transfers', 'latest' ], {
+			status: 'completed',
+		} );
+	}
 
 	if ( extra.stagingSite ) {
 		qc.setQueryData(
@@ -164,14 +160,14 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'shows error notice when user has insufficient quota', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
 				hasValidQuota: false,
 				connectionHealth: { is_healthy: true },
 				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			await user.click( screen.getByText( 'Add staging site' ) );
@@ -183,14 +179,14 @@ describe( 'EnvironmentSwitcher', () => {
 		} );
 
 		test( 'shows error notice when jetpack connection is unhealthy', async () => {
-			const queryClient = buildQueryClient( mockProductionSiteWithStaging, {
+			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging, {
 				hasValidQuota: true,
 				connectionHealth: { is_healthy: false },
 				isCreating: false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
 
 			await clickDropdown( user );
 			await user.click( screen.getByText( 'Add staging site' ) );
