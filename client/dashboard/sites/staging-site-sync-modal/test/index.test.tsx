@@ -5,7 +5,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { createQueryClientBuilder, render } from '../../../test-utils';
+import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -116,66 +116,62 @@ const defaultProps = {
 	onSyncStart: jest.fn(),
 };
 
-const renderModal = (
-	props = {},
-	productionSite: Site = createMockSite(),
-	stagingSite: Site = createMockStagingSite()
-) => {
-	const queryClient = createQueryClientBuilder()
-		.withStaleTime( Infinity )
-		.addSiteById( productionSite.ID, productionSite )
-		.addSiteById( stagingSite.ID, stagingSite )
-		.build();
+function mockSite( site: Site ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.ID }` )
+		.query( true )
+		.reply( 200, site );
+}
 
-	return render( <StagingSiteSyncModal { ...defaultProps } { ...props } />, { queryClient } );
-};
-
-// Test helper to render the modal with defaults and return a fresh user instance
-const setup = ( props = {}, productionSite?: Site, stagingSite?: Site ) => {
-	const utils = renderModal( props, productionSite, stagingSite );
-	const user = userEvent.setup();
-	return { user, ...utils };
-};
-
-beforeEach( () => {
-	jest.clearAllMocks();
-
-	// Nock the backup contents endpoint that FileBrowser may request
+function mockBackupContents() {
 	nock( 'https://public-api.wordpress.com:443' )
 		.post( /\/wpcom\/v2\/sites\/\d+\/rewind\/backup\/ls/ )
 		.reply( 200, { ok: true, files: [] } )
 		.persist();
-} );
-
-afterEach( () => {
-	nock.cleanAll();
-} );
+}
 
 describe( 'StagingSiteSyncModal', () => {
 	describe( 'Component Rendering', () => {
 		test( 'renders modal with correct title for pull from staging', () => {
-			renderModal( { syncType: 'pull', environment: 'production' } );
+			mockSite( createMockSite() );
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render(
+				<StagingSiteSyncModal { ...defaultProps } syncType="pull" environment="production" />
+			);
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Pull from Staging' ) ).toBeInTheDocument();
 		} );
 
 		test( 'renders modal with correct title for push to production', () => {
-			renderModal( { syncType: 'push', environment: 'staging' } );
+			mockSite( createMockSite() );
+
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Push to Production' ) ).toBeInTheDocument();
 		} );
 
 		test( 'renders modal with correct title for pull from production', () => {
-			renderModal( { syncType: 'pull', environment: 'staging' } );
+			mockSite( createMockSite() );
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render( <StagingSiteSyncModal { ...defaultProps } syncType="pull" environment="staging" /> );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Pull from Production' ) ).toBeInTheDocument();
 		} );
 
 		test( 'renders modal with correct title for push to staging', () => {
-			renderModal( { syncType: 'push', environment: 'production' } );
+			mockSite( createMockSite() );
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render(
+				<StagingSiteSyncModal { ...defaultProps } syncType="push" environment="production" />
+			);
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Push to Staging' ) ).toBeInTheDocument();
@@ -184,13 +180,19 @@ describe( 'StagingSiteSyncModal', () => {
 
 	describe( 'File and Database Selection', () => {
 		test( 'renders files and folders checkbox', () => {
-			renderModal();
+			mockSite( createMockSite() );
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render( <StagingSiteSyncModal { ...defaultProps } /> );
 
 			expect( screen.getByLabelText( 'Files and folders' ) ).toBeInTheDocument();
 		} );
 
 		test( 'renders database checkbox', () => {
-			renderModal();
+			mockSite( createMockSite() );
+			mockSite( createMockStagingSite() );
+			mockBackupContents();
+			render( <StagingSiteSyncModal { ...defaultProps } /> );
 
 			expect( screen.getByLabelText( 'Database' ) ).toBeInTheDocument();
 		} );
@@ -199,7 +201,10 @@ describe( 'StagingSiteSyncModal', () => {
 
 describe( 'File Selection', () => {
 	test( 'renders file selection mode dropdown', () => {
-		renderModal();
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } /> );
 
 		expect( screen.getByLabelText( 'Select files and folders to sync' ) ).toBeInTheDocument();
 	} );
@@ -207,13 +212,19 @@ describe( 'File Selection', () => {
 
 describe( 'Domain Confirmation', () => {
 	test( 'shows domain confirmation field when syncing to production', () => {
-		renderModal( { syncType: 'push', environment: 'staging' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
 
 		expect( screen.getByLabelText( 'Type the site domain to confirm' ) ).toBeInTheDocument();
 	} );
 
 	test( 'does not show domain confirmation when not syncing to production', () => {
-		renderModal( { syncType: 'push', environment: 'production' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="production" /> );
 
 		expect( screen.queryByLabelText( 'Type the site domain to confirm' ) ).not.toBeInTheDocument();
 	} );
@@ -221,7 +232,11 @@ describe( 'Domain Confirmation', () => {
 
 describe( 'Warnings', () => {
 	test( 'database checkbox shows warning when checked', async () => {
-		const { user } = setup();
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } /> );
+		const user = userEvent.setup();
 
 		const databaseCheckbox = screen.getByLabelText( 'Database' );
 		expect( databaseCheckbox ).toBeInTheDocument();
@@ -245,11 +260,11 @@ describe( 'Warnings', () => {
 			options: { woocommerce_is_active: true },
 		} );
 
-		const { user } = setup(
-			{ syncType: 'push', environment: 'staging' },
-			siteWithWoo,
-			stagingSiteWithWoo
-		);
+		mockSite( siteWithWoo );
+		mockSite( stagingSiteWithWoo );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
+		const user = userEvent.setup();
 
 		const databaseCheckbox = screen.getByLabelText( 'Database' );
 
@@ -263,7 +278,10 @@ describe( 'Warnings', () => {
 
 describe( 'Form Submission', () => {
 	test( 'submit button is disabled when domain confirmation is required but not provided', () => {
-		renderModal( { syncType: 'push', environment: 'staging' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
 
 		const submitButton = screen.getByRole( 'button', { name: 'Push' } );
 		expect( submitButton ).toBeDisabled();
@@ -273,7 +291,10 @@ describe( 'Form Submission', () => {
 		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
 		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
 
-		renderModal( { syncType: 'push', environment: 'staging' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
 
 		const modal = screen.getByRole( 'dialog' );
 		const domainInput = within( modal ).getByLabelText( 'Type the site domain to confirm' );
@@ -288,13 +309,19 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'renders pull button for pull from staging', () => {
-		renderModal( { syncType: 'pull', environment: 'production' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="pull" environment="production" /> );
 
 		expect( screen.getByRole( 'button', { name: 'Pull' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders push button for push to production', () => {
-		renderModal( { syncType: 'push', environment: 'staging' } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
 
 		expect( screen.getByRole( 'button', { name: 'Push' } ) ).toBeInTheDocument();
 	} );
@@ -310,7 +337,11 @@ describe( 'Form Submission', () => {
 			.post( '/wpcom/v2/sites/1/staging-site/pull-from-staging/2' )
 			.reply( 200, {} );
 
-		const { user } = setup( { syncType: 'push', environment: 'staging' }, prod, stag );
+		mockSite( prod );
+		mockSite( stag );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } syncType="push" environment="staging" /> );
+		const user = userEvent.setup();
 
 		const modal = screen.getByRole( 'dialog' );
 		await user.type(
@@ -330,7 +361,10 @@ describe( 'Modal Actions', () => {
 	test( 'calls onClose when cancel button is clicked', async () => {
 		const onCloseMock = jest.fn();
 
-		renderModal( { onClose: onCloseMock } );
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } onClose={ onCloseMock } /> );
 
 		const cancelButton = screen.getByRole( 'button', { name: 'Cancel' } );
 		const user = userEvent.setup();
@@ -341,7 +375,10 @@ describe( 'Modal Actions', () => {
 	} );
 
 	test( 'renders close button in modal header', () => {
-		renderModal();
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } /> );
 
 		expect( screen.getByLabelText( 'Close' ) ).toBeInTheDocument();
 	} );
@@ -354,7 +391,11 @@ describe( 'Loading States', () => {
 			.post( '/wpcom/v2/sites/1/staging-site/pull-from-staging/2' )
 			.reply( 200, {} );
 
-		const { user } = setup();
+		mockSite( createMockSite() );
+		mockSite( createMockStagingSite() );
+		mockBackupContents();
+		render( <StagingSiteSyncModal { ...defaultProps } /> );
+		const user = userEvent.setup();
 
 		await user.click( screen.getByRole( 'button', { name: 'Pull' } ) );
 

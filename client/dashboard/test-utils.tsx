@@ -43,7 +43,13 @@ interface RenderOptions {
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
 	const { user = defaultUser, queryClient: providedClient } = options;
-	const queryClient = providedClient ?? createQueryClientBuilder().build();
+	const queryClient =
+		providedClient ??
+		new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	const router = createTestRouter( ui );
 
 	const recordTracksEvent = jest.fn();

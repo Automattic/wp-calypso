@@ -128,14 +128,6 @@ const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
 };
 
 describe( 'EnvironmentSwitcher', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	describe( 'Environment Display', () => {
 		test( 'displays "Production" for production sites', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );

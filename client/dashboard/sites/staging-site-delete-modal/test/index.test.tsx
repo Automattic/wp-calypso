@@ -5,7 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { createQueryClientBuilder, render } from '../../../test-utils';
+import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -50,41 +50,30 @@ const mockStagingSiteWithoutProductionId = createMockSite( {
 	wpcom_production_blog_id: undefined,
 } );
 
-const mockProductionSite = {
-	ID: 1,
-	slug: 'production-site',
-	name: 'Production Site',
-} as Site;
-
-// Helper functions
-const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
-
-function renderModal( site: Site, onClose = jest.fn() ) {
-	const builder = createQueryClientBuilder().withStaleTime( Infinity );
-
-	// Pre-populate production site in cache
-	const productionSiteId = site.options?.wpcom_production_blog_id;
-	if ( productionSiteId ) {
-		builder.addSiteById( productionSiteId, mockProductionSite );
-	}
-
-	return render( <StagingSiteDeleteModal site={ site } onClose={ onClose } />, {
-		queryClient: builder.build(),
-	} );
+function mockProductionSite() {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/sites/1' )
+		.query( true )
+		.reply( 200, {
+			ID: 1,
+			slug: 'production-site',
+			name: 'Production Site',
+		} );
 }
 
+function mockStagingSiteDelete( status = 200, body: object = {} ) {
+	return nock( 'https://public-api.wordpress.com:443' )
+		.delete( '/wpcom/v2/sites/1/staging-site/2' )
+		.reply( status, body );
+}
+
+const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
+
 describe( 'StagingSiteDeleteModal', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	describe( 'Modal Display', () => {
 		test( 'renders modal with correct title and content', () => {
-			renderModal( mockStagingSite );
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
 
 			expect( screen.getByRole( 'dialog', { name: 'Delete staging site' } ) ).toBeInTheDocument();
 			expect(
@@ -95,14 +84,18 @@ describe( 'StagingSiteDeleteModal', () => {
 		} );
 
 		test( 'displays cancel and delete buttons', () => {
-			renderModal( mockStagingSite );
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
 
 			expect( getButton( 'Cancel' ) ).toBeInTheDocument();
 			expect( getButton( 'Delete staging site' ) ).toBeInTheDocument();
 		} );
 
 		test( 'returns null when no production site ID is provided', () => {
-			const { container } = renderModal( mockStagingSiteWithoutProductionId );
+			mockProductionSite();
+			const { container } = render(
+				<StagingSiteDeleteModal site={ mockStagingSiteWithoutProductionId } onClose={ jest.fn() } />
+			);
 
 			expect( container.firstChild ).toBeNull();
 		} );
@@ -112,7 +105,9 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'calls onClose when cancel button is clicked', async () => {
 			const user = userEvent.setup();
 			const mockOnClose = jest.fn();
-			renderModal( mockStagingSite, mockOnClose );
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Cancel' ) );
 
@@ -121,11 +116,10 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'triggers mutation when delete button is clicked', async () => {
 			const user = userEvent.setup();
-			const scope = nock( 'https://public-api.wordpress.com:443' )
-				.delete( '/wpcom/v2/sites/1/staging-site/2' )
-				.reply( 200, {} );
-
-			renderModal( mockStagingSite );
+			const scope = mockStagingSiteDelete();
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -136,11 +130,10 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'Loading State', () => {
 		test( 'disables buttons when mutation is pending', async () => {
 			const user = userEvent.setup();
-			nock( 'https://public-api.wordpress.com:443' )
-				.delete( '/wpcom/v2/sites/1/staging-site/2' )
-				.reply( 200, {} );
-
-			renderModal( mockStagingSite );
+			mockStagingSiteDelete();
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -152,11 +145,13 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'Error Handling', () => {
 		test( 'shows error notice and tracks failure when deletion fails', async () => {
 			const user = userEvent.setup();
-			nock( 'https://public-api.wordpress.com:443' )
-				.delete( '/wpcom/v2/sites/1/staging-site/2' )
-				.reply( 500, { message: 'Network error' } );
+			mockStagingSiteDelete( 500, { message: 'Network error' } );
 
-			const { recordTracksEvent } = renderModal( mockStagingSite );
+			mockProductionSite();
+			const { recordTracksEvent } = render(
+				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } />
+			);
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -173,11 +168,11 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'shows default error message when no error message is provided', async () => {
 			const user = userEvent.setup();
-			nock( 'https://public-api.wordpress.com:443' )
-				.delete( '/wpcom/v2/sites/1/staging-site/2' )
-				.reply( 400, { message: '' } );
+			mockStagingSiteDelete( 400, { message: '' } );
 
-			renderModal( mockStagingSite );
+			mockProductionSite();
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -203,12 +198,13 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'shows success notice, closes modal, and navigates on successful deletion', async () => {
 			const user = userEvent.setup();
-			nock( 'https://public-api.wordpress.com:443' )
-				.delete( '/wpcom/v2/sites/1/staging-site/2' )
-				.reply( 200, {} );
-
+			mockStagingSiteDelete();
 			const mockOnClose = jest.fn();
-			const { recordTracksEvent } = renderModal( mockStagingSite, mockOnClose );
+			mockProductionSite();
+			const { recordTracksEvent } = render(
+				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } />
+			);
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
@@ -221,9 +217,11 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 
-			expect( mockNavigate ).toHaveBeenCalledWith( {
-				to: '/sites/$siteSlug',
-				params: { siteSlug: 'production-site' },
+			await waitFor( () => {
+				expect( mockNavigate ).toHaveBeenCalledWith( {
+					to: '/sites/$siteSlug',
+					params: { siteSlug: 'production-site' },
+				} );
 			} );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(

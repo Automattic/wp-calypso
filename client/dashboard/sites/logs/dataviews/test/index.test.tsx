@@ -41,6 +41,14 @@ const mockSite: DeepPartial< Site > = {
 	slug: 'test-site',
 };
 
+function mockPreferences() {
+	nock( API_BASE )
+		.persist()
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
+}
+
 function mockPhpLogsOnce() {
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
@@ -110,6 +118,7 @@ const fixedDateRange = {
 describe( 'SiteLogsDataViews', () => {
 	test( 'renders PHP logs and syncs URL params', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
+		mockPreferences();
 		mockPhpLogsOnce();
 
 		render(
@@ -134,6 +143,7 @@ describe( 'SiteLogsDataViews', () => {
 	} );
 
 	test( 'renders Server logs', async () => {
+		mockPreferences();
 		mockServerLogsOnce();
 
 		render(
@@ -157,6 +167,7 @@ describe( 'SiteLogsDataViews', () => {
 
 	// If the parent blocks auto-refresh via onAutoRefreshRequest, the toggle click should be ignored and no analytics event emitted.
 	test( 'auto-refresh toggle blocked by onAutoRefreshRequest', async () => {
+		mockPreferences();
 		mockPhpLogsOnce();
 		const user = userEvent.setup();
 		const autoRefresh = jest.fn();
@@ -183,6 +194,7 @@ describe( 'SiteLogsDataViews', () => {
 
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
 	test( 'auto-refresh toggle is disabled when reason provided', async () => {
+		mockPreferences();
 		mockPhpLogsOnce();
 
 		render(

@@ -4,6 +4,7 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { createQueryClientBuilder, render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
@@ -40,28 +41,18 @@ const createMockStagingSite = ( options = {} ): Site =>
 		...options,
 	} ) as Site;
 
-// Helper functions
-const getDropdownButton = () => screen.getByRole( 'button', { name: /sync/i } );
-const getMenuItem = ( name: string ) => screen.getByRole( 'menuitem', { name } );
+function mockSiteBySlug( site: Site ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/sites/test-site' )
+		.query( true )
+		.reply( 200, site );
+}
 
-function renderDropdownWithSite(
-	site: Site,
-	{ isStagingSiteDeletionInProgress = false, syncState = false } = {}
-) {
-	const stagingSiteId = site.is_wpcom_staging_site ? site.ID : 2;
-	const productionSiteId = site.is_wpcom_staging_site ? 1 : site.ID;
-
-	const queryClient = createQueryClientBuilder()
-		.withStaleTime( Infinity )
-		.addSiteBySlug( 'test-site', site )
-		.withQueryData(
-			[ 'staging-site', stagingSiteId, 'is-deleting' ],
-			isStagingSiteDeletionInProgress
-		)
-		.withQueryData( [ 'site', productionSiteId, 'staging-site-sync-state' ], syncState )
-		.build();
-
-	return render( <StagingSiteSyncDropdown siteSlug="test-site" />, { queryClient } );
+function mockSyncState() {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/sites/1/staging-site/sync-state' )
+		.query( true )
+		.reply( 200, {} );
 }
 
 describe( 'StagingSiteSyncDropdown', () => {
@@ -78,71 +69,84 @@ describe( 'StagingSiteSyncDropdown', () => {
 	} );
 
 	describe( 'Component Display', () => {
-		test( 'renders sync dropdown button', () => {
-			renderDropdownWithSite( createMockSite() );
+		test( 'renders sync dropdown button', async () => {
+			mockSiteBySlug( createMockSite() );
+			mockSyncState();
+			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
 
-			expect( getDropdownButton() ).toBeInTheDocument();
-			expect( getDropdownButton() ).toHaveTextContent( 'Sync' );
+			expect( await screen.findByRole( 'button', { name: 'Sync' } ) ).toBeVisible();
 		} );
 
-		test( 'shows "Syncing…" when sync is in progress', () => {
+		test( 'shows "Syncing…" when sync is in progress', async () => {
 			const { isStagingSiteSyncing } = require( '../../../utils/site-staging-site' );
-
 			isStagingSiteSyncing.mockReturnValue( true );
-			renderDropdownWithSite( createMockSite() );
 
-			expect( getDropdownButton() ).toHaveTextContent( 'Syncing…' );
-			expect( getDropdownButton() ).toBeDisabled();
+			mockSiteBySlug( createMockSite() );
+			mockSyncState();
+			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
+
+			const button = await screen.findByRole( 'button', { name: 'Syncing…' } );
+			expect( button ).toBeDisabled();
 		} );
 
-		test( 'returns null when no production site ID', () => {
+		test( 'returns null when no production site ID', async () => {
 			const { getProductionSiteId } = require( '../../../utils/site-staging-site' );
-
 			getProductionSiteId.mockReturnValue( null );
-			const { container } = renderDropdownWithSite( createMockSite() );
 
+			mockSiteBySlug( createMockSite() );
+			const { container } = render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
+
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 			expect( container.firstChild ).toBeNull();
 		} );
 
-		test( 'returns null when staging site is being deleted', () => {
-			const { container } = renderDropdownWithSite( createMockSite(), {
-				isStagingSiteDeletionInProgress: true,
+		test( 'returns null when staging site is being deleted', async () => {
+			mockSiteBySlug( createMockSite() );
+			mockSyncState();
+
+			const queryClient = createQueryClientBuilder()
+				.withQueryData( [ 'staging-site', 2, 'is-deleting' ], true )
+				.build();
+
+			const { container } = render( <StagingSiteSyncDropdown siteSlug="test-site" />, {
+				queryClient,
 			} );
 
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 			expect( container.firstChild ).toBeNull();
 		} );
 	} );
 
 	describe( 'Dropdown Menu Items', () => {
 		test( 'displays correct menu items for production site', async () => {
-			renderDropdownWithSite( createMockSite() );
-
-			await waitFor( () => {
-				expect( getDropdownButton() ).toBeInTheDocument();
-			} );
+			mockSiteBySlug( createMockSite() );
+			mockSyncState();
+			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
 
 			const user = userEvent.setup();
-			await user.click( getDropdownButton() );
+			await user.click( await screen.findByRole( 'button', { name: 'Sync' } ) );
 
 			await waitFor( () => {
-				expect( getMenuItem( 'Pull from Staging' ) ).toBeInTheDocument();
-				expect( getMenuItem( 'Push to Staging' ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'menuitem', { name: 'Pull from Staging' } ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'menuitem', { name: 'Push to Staging' } ) ).toBeInTheDocument();
 			} );
 		} );
 
 		test( 'displays correct menu items for staging site', async () => {
-			renderDropdownWithSite( createMockStagingSite() );
-
-			await waitFor( () => {
-				expect( getDropdownButton() ).toBeInTheDocument();
-			} );
+			mockSiteBySlug( createMockStagingSite() );
+			mockSyncState();
+			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
 
 			const user = userEvent.setup();
-			await user.click( getDropdownButton() );
+			await user.click( await screen.findByRole( 'button', { name: 'Sync' } ) );
 
 			await waitFor( () => {
-				expect( getMenuItem( 'Pull from Production' ) ).toBeInTheDocument();
-				expect( getMenuItem( 'Push to Production' ) ).toBeInTheDocument();
+				expect(
+					screen.getByRole( 'menuitem', { name: 'Pull from Production' } )
+				).toBeInTheDocument();
+				expect(
+					screen.getByRole( 'menuitem', { name: 'Push to Production' } )
+				).toBeInTheDocument();
 			} );
 		} );
 	} );
