@@ -1,12 +1,14 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import apiFetch from '@wordpress/api-fetch';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { createElement, useState } from 'react';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
+
+type AuthProvider = () => Promise< Record< string, string > >;
+
+const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
 interface UseFeedbackConfig {
 	registerMessageActions: ( registration: {
@@ -25,8 +27,8 @@ interface UseFeedbackConfig {
 	} ) => void;
 	messages: Message[];
 	agentId: string;
-	siteId?: number | string;
 	sessionId?: string;
+	authProvider?: AuthProvider;
 }
 
 interface UseFeedbackReturn {
@@ -36,28 +38,20 @@ interface UseFeedbackReturn {
 	cancelFeedback: () => void;
 }
 
-function rateMessage(
-	siteId: number | string,
+async function rateMessage(
+	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
 	rating: 'up' | 'down'
-): void {
-	const path = `big-sky/v1/wp-orchestrator/${ encodeURIComponent( sessionId ) }/rate`;
+): Promise< void > {
+	const headers = await authProvider();
+	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
-	if ( canAccessWpcomApis() ) {
-		wpcomRequest( {
-			path: `/sites/${ siteId }/${ path }`,
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: { message_id: messageId, rating },
-		} ).catch( () => {} );
-	} else {
-		apiFetch( {
-			path: `/wpcom/v2/${ path }`,
-			method: 'POST',
-			data: { message_id: messageId, rating },
-		} ).catch( () => {} );
-	}
+	fetch( url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json', ...headers },
+		body: JSON.stringify( { message_id: messageId, rating } ),
+	} ).catch( () => {} );
 }
 
 interface PreviousMessage {
@@ -66,13 +60,14 @@ interface PreviousMessage {
 }
 
 async function submitFeedback(
-	siteId: number | string,
+	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
 	feedback: string,
 	previousMessages?: PreviousMessage[]
 ): Promise< void > {
-	const path = `big-sky/v1/wp-orchestrator/${ encodeURIComponent( sessionId ) }/feedback`;
+	const headers = await authProvider();
+	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
 
 	const body: Record< string, string | PreviousMessage[] > = {
 		message_id: messageId,
@@ -87,20 +82,11 @@ async function submitFeedback(
 		// SSR or restricted context — skip
 	}
 
-	if ( canAccessWpcomApis() ) {
-		await wpcomRequest( {
-			path: `/sites/${ siteId }/${ path }`,
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body,
-		} );
-	} else {
-		await apiFetch( {
-			path: `/wpcom/v2/${ path }`,
-			method: 'POST',
-			data: body,
-		} );
-	}
+	await fetch( url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json', ...headers },
+		body: JSON.stringify( body ),
+	} );
 }
 
 const MAX_CONTEXT_MESSAGES = 4;
@@ -171,29 +157,29 @@ export default function useFeedback( {
 	registerMessageActions,
 	messages,
 	agentId,
-	siteId,
 	sessionId,
+	authProvider,
 }: UseFeedbackConfig ): UseFeedbackReturn {
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
 
 	// Keep refs to avoid recreating the feedback manager on every render
 	const agentIdRef = useRef( agentId );
-	const siteIdRef = useRef( siteId );
 	const sessionIdRef = useRef( sessionId );
 	const messagesRef = useRef( messages );
+	const authProviderRef = useRef( authProvider );
 	agentIdRef.current = agentId;
-	siteIdRef.current = siteId;
 	sessionIdRef.current = sessionId;
 	messagesRef.current = messages;
+	authProviderRef.current = authProvider;
 
 	const handleFeedback = useCallback( ( messageId: string, feedback: 'up' | 'down' ) => {
-		const currentSiteId = siteIdRef.current;
+		const currentAuthProvider = authProviderRef.current;
 		// agentConfig.sessionId can be empty for new chats — the server-assigned
 		// session ID is saved to localStorage by agenttic-client, so read it as fallback.
 		const currentSessionId = sessionIdRef.current || getStoredSessionId( agentIdRef.current );
 
-		if ( ! currentSiteId || ! currentSessionId ) {
+		if ( ! currentSessionId || ! currentAuthProvider ) {
 			return;
 		}
 
@@ -201,7 +187,7 @@ export default function useFeedback( {
 			message_id: messageId,
 		} );
 
-		rateMessage( currentSiteId, currentSessionId, messageId, feedback );
+		rateMessage( currentAuthProvider, currentSessionId, messageId, feedback );
 
 		if ( feedback === 'down' ) {
 			setShowFeedbackInput( true );
@@ -247,18 +233,23 @@ export default function useFeedback( {
 
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
-			const currentSiteId = siteIdRef.current;
+			const currentAuthProvider = authProviderRef.current;
 			const currentSessionId = sessionIdRef.current || getStoredSessionId( agentIdRef.current );
 			const currentMessageId = feedbackMessageId;
 
-			if ( ! feedbackText.trim() || ! currentSiteId || ! currentSessionId || ! currentMessageId ) {
+			if (
+				! feedbackText.trim() ||
+				! currentSessionId ||
+				! currentMessageId ||
+				! currentAuthProvider
+			) {
 				return;
 			}
 
 			const previousMessages = getPreviousMessages( messagesRef.current, currentMessageId );
 
 			await submitFeedback(
-				currentSiteId,
+				currentAuthProvider,
 				currentSessionId,
 				currentMessageId,
 				feedbackText.trim(),

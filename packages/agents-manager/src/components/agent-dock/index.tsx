@@ -176,8 +176,8 @@ export default function AgentDock( {
 			registerMessageActions,
 			messages,
 			agentId,
-			siteId: site?.ID,
 			sessionId,
+			authProvider: agentConfig.authProvider,
 		}
 	);
 
