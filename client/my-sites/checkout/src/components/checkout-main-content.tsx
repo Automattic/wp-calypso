@@ -512,6 +512,7 @@ export default function CheckoutMainContent( {
 
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isUsingTopBar = isStepContainerV2 || isWooHostedCheckout;
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
@@ -526,11 +527,11 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		if ( isStepContainerV2 ) {
+		if ( isUsingTopBar ) {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading />
+					<Step.Loading hideLogo={ isWooHostedCheckout } />
 				</>
 			);
 		}
@@ -605,7 +606,7 @@ export default function CheckoutMainContent( {
 						>
 							<CheckoutSummaryTitleContent className="checkout__summary-title">
 								<CheckoutSummaryTitle>
-									{ ! isStepContainerV2 && (
+									{ ! isUsingTopBar && (
 										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
 									) }
 									{ translate( 'Purchase Details' ) }
@@ -645,7 +646,7 @@ export default function CheckoutMainContent( {
 		<RestorableProductsProvider>
 			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
-				{ isStepContainerV2 ? (
+				{ isUsingTopBar ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
 						align="left"
@@ -855,7 +856,7 @@ export default function CheckoutMainContent( {
 		</RestorableProductsProvider>
 	);
 
-	if ( ! isStepContainerV2 ) {
+	if ( ! isUsingTopBar ) {
 		return (
 			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
 				{ checkoutSummary }
