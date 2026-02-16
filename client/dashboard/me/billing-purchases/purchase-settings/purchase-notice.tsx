@@ -10,11 +10,13 @@ import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { getCurrentDashboard } from '../../../app/routing';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
-import { getCurrentDashboard, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
@@ -161,6 +163,12 @@ function ExpiredRenewNotice( {
 			if ( isExpired( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
+				return __(
+					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+				);
+			}
+			// Auto-renew OFF or not in grace period
 			const purchaseName = currentPurchase.is_domain
 				? currentPurchase.meta ?? ''
 				: currentPurchase.product_name;

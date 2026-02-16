@@ -24,6 +24,7 @@ import {
 	siteCurrentPlanQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
 	purchaseQuery,
@@ -62,6 +63,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
+import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -77,6 +79,11 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-list', { fullPageLoad } );
+		}
+	},
 	loader: async ( { context } ) => {
 		const tasks: Promise< unknown >[] = [];
 
@@ -183,6 +190,11 @@ export const siteRoute = createRoute( {
 export const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
@@ -1011,6 +1023,83 @@ export const siteSettingsSftpSshRoute = createRoute( {
 	)
 );
 
+export const siteSettingsCrontabRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Cron' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'crontab',
+	beforeLoad: ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+	},
+} );
+
+export const siteSettingsCrontabIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SSH ) ) {
+			queryClient.prefetchQuery( siteCrontabsQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsCrontabAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add Scheduled Job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: 'add',
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-add' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsCrontabEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit scheduled job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '$cronId/edit',
+	parseParams: ( params ) => ( {
+		cronId: Number( params.cronId ),
+	} ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-edit' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteSettingsTransferSiteRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1409,6 +1498,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsSftpSshRoute,
+		siteSettingsCrontabRoute.addChildren( [
+			siteSettingsCrontabIndexRoute,
+			siteSettingsCrontabAddRoute,
+			siteSettingsCrontabEditRoute,
+		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,
 			siteSettingsRepositoriesConnectRoute,

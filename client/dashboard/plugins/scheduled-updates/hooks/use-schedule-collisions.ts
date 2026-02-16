@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from 'react';
 import { prepareTimestamp, validateTimeSlot, validatePlugins } from '../helpers';
 import { useSchedulesBySite } from './use-schedules-by-site';
 import type { Frequency, Weekday, ScheduleCollisions } from '../types';

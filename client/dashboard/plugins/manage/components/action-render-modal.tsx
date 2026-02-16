@@ -6,9 +6,9 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useSitesById } from '../hooks/use-sites-by-id';
 import type { PluginListRow } from '../types';

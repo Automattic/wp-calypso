@@ -15,6 +15,10 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { ConsentText } from 'calypso/components/connect-screen/consent-text';
+import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
+import { UserCard } from 'calypso/components/connect-screen/user-card';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -1026,60 +1030,41 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		const { from } = authQuery;
-		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
-
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
 			return (
 				<>
-					<div className="jetpack-connect__logged-in-user-card">
-						<Gravatar className="jetpack-connect__user-card-gravatar" user={ user } size={ 64 } />
-						<div className="jetpack-connect__user-card-text">{ this.getUserText() }</div>
-					</div>
-					<LoggedOutFormLinkItem
-						className="jetpack-connect__switch-account-link"
-						href={ loginURL }
-						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
-					>
-						{ translate( 'Use a different account' ) }
-					</LoggedOutFormLinkItem>
-					<div className="jetpack-connect__benefits">
-						<div className="jetpack-connect__benefits-title">
-							{ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
-								args: {
-									siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
-								},
-							} ) }
-						</div>
-						<ul>
-							<li>
-								<span>
-									<Icon icon={ chartBar } size={ 24 } />
-								</span>
-								<span>
-									{ translate(
-										'Process detailed visitor stats in the cloud, so your site stays fast.'
-									) }
-								</span>
-							</li>
-							<li>
-								<span>
-									<Icon icon={ next } size={ 24 } />
-								</span>
-								<span>
-									{ translate( 'Improve your site’s performance and SEO automatically.' ) }
-								</span>
-							</li>
-							<li>
-								<span>
-									<Icon icon={ share } size={ 24 } />
-								</span>
-								<span>
-									{ translate( 'Automatically share your site’s posts on social media.' ) }
-								</span>
-							</li>
-						</ul>
-					</div>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+
+					<PermissionsList
+						title={ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
+							args: {
+								siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
+							},
+						} ) }
+						permissions={ [
+							{
+								icon: <Icon icon={ chartBar } />,
+								label: translate(
+									'Process detailed visitor stats in the cloud, so your site stays fast.'
+								),
+							},
+							{
+								icon: <Icon icon={ next } />,
+								label: translate( 'Improve your site’s performance and SEO automatically.' ),
+							},
+							{
+								icon: <Icon icon={ share } />,
+								label: translate( 'Automatically share your site’s posts on social media.' ),
+							},
+						] }
+					/>
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
@@ -1218,11 +1203,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname, from } = this.props.authQuery;
 
 		const actionButton = (
-			<Button
-				primary
-				disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
-				onClick={ this.handleSubmit }
-			>
+			<Button primary onClick={ this.handleSubmit }>
 				{ this.getButtonText() }
 			</Button>
 		);
@@ -1241,11 +1222,23 @@ export class JetpackAuthorize extends Component {
 		);
 
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
+			const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 			return (
-				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
-					{ actionButton }
-					<div className="jetpack-connect__action--onboarding-disclaimer">{ disclaimer }</div>
-				</LoggedOutFormFooter>
+				<>
+					<ConsentText>{ disclaimer }</ConsentText>
+					<ActionButtons
+						primaryLabel={ this.getButtonText() }
+						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+						primaryOnClick={ this.handleSubmit }
+					/>
+					<LoggedOutFormLinkItem
+						style={ { textAlign: 'center' } }
+						href={ loginURL }
+						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+					>
+						{ this.props.translate( 'Use a different account' ) }
+					</LoggedOutFormLinkItem>
+				</>
 			);
 		}
 
@@ -1300,7 +1293,7 @@ export class JetpackAuthorize extends Component {
 						'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 					} ) }
 				>
-					<div className="jetpack-connect__logged-in-form">
+					<div>
 						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
 						<QueryUserConnection

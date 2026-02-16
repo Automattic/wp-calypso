@@ -13,7 +13,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import filesize from 'filesize';
 import { useState } from 'react';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getCurrentDashboard } from '../../app/routing';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { StorageCapacityStat } from './storage-capacity-stat';
 import {
 	getStorageAddOnProduct,

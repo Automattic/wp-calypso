@@ -96,7 +96,7 @@ const willShowDomainOptionsRadioButtons = (
 	return (
 		includedDomainPurchase.is_domain_registration &&
 		purchase.is_refundable &&
-		includedDomainPurchase.is_refundable
+		!! includedDomainPurchase.cost_to_unbundle_display
 	);
 };
 
@@ -577,7 +577,7 @@ export default function CancelPurchase() {
 	const downgradeClick = () => {
 		if ( ! state.isSubmitting ) {
 			if ( ! downgradePlan ) {
-				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
+				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
 				return;
 			}
 

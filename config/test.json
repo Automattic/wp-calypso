@@ -91,9 +91,8 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"reader": true,
+		"reader/discover-v3": true,
 		"reader/full-errors": true,
-		"reader/discover/freshly-pressed": true,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
@@ -115,6 +114,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
+		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true
 	}
 }

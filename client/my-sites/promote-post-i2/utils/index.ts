@@ -224,25 +224,6 @@ export const formatNumber = ( number: number, onlyPositives = false ): string =>
 	return number.toLocaleString();
 };
 
-export const formatLargeNumber = ( number: number ): string => {
-	if ( number >= 1000000 ) {
-		return (
-			( number / 1000000 )
-				.toFixed( 3 )
-				.replace( /\.?0+$/, '' )
-				.toLocaleString() + 'M'
-		);
-	} else if ( number >= 100000 ) {
-		return (
-			( number / 1000 )
-				.toFixed( 2 )
-				.replace( /\.?0+$/, '' )
-				.toLocaleString() + 'K'
-		);
-	}
-	return formatNumber( number );
-};
-
 export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
 		status
@@ -449,4 +430,34 @@ export const getPaymentStatus = ( status?: string ) => {
 		default:
 			return status;
 	}
+};
+
+export type CreditExpirationInfo = {
+	hasExpiringCredits: boolean;
+	sortedHistory: Array< { amount: number; expires: string } >;
+};
+
+/**
+ * Check if any credits expire within a month and return sorted history
+ */
+export const getCreditExpirationInfo = (
+	history: Array< { amount: number; expires: string } > = []
+): CreditExpirationInfo => {
+	const sortedHistory = [ ...history ].sort( ( a, b ) =>
+		moment( a.expires ).diff( moment( b.expires ) )
+	);
+
+	const hasExpiringCredits = sortedHistory.some( ( { expires } ) => {
+		const exp = moment( expires );
+		return (
+			exp.isValid() &&
+			exp.isAfter( moment(), 'day' ) &&
+			exp.isSameOrBefore( moment().add( 1, 'month' ), 'day' )
+		);
+	} );
+
+	return {
+		hasExpiringCredits,
+		sortedHistory,
+	};
 };

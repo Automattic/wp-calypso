@@ -68,6 +68,7 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
+	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -176,6 +177,10 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
+		/**
+		 * Flow encapsulating the Start Import onboarding process.
+		 */
+		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -433,6 +438,10 @@ export const test = base.extend<
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
 	},
+	flowStartImport: async ( { page }, use ) => {
+		const startImportFlow = new StartImportFlow( page );
+		await use( startImportFlow );
+	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
 		await use( startWritingFlow );
@@ -628,7 +637,6 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
-	DASHBOARD_RELEASE: '@dashboard-release',
 	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',

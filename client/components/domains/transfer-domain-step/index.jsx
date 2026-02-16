@@ -19,7 +19,7 @@ import TransferRestrictionMessage from 'calypso/components/domains/transfer-doma
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
-import { getDashboardFromString } from 'calypso/dashboard/utils/link';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
@@ -48,7 +48,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -736,9 +735,7 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
-		dashboard:
-			getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ??
-			undefined,
+		dashboard: getDashboardFromQuery(),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),

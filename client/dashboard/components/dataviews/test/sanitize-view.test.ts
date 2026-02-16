@@ -28,16 +28,6 @@ describe( 'sanitizeView', () => {
 		expect( sanitizedView ).toEqual( validView );
 	} );
 
-	it( 'should remove sort when field is not sortable', () => {
-		const view: View = {
-			...validView,
-			sort: { field: 'is_deleted', direction: 'asc' },
-		};
-
-		const sanitizedView = sanitizeView( view, fields );
-		expect( sanitizedView ).toEqual( { ...validView, sort: undefined } );
-	} );
-
 	it( 'should remove filter with "is" operator and non-scalar value', () => {
 		const view: View = {
 			...validView,

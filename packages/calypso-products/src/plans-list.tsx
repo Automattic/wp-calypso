@@ -3,6 +3,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import i18n, { translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
+	FEATURE_100GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
@@ -482,7 +483,6 @@ import {
 	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
-	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
 	FEATURE_GOOGLE_LISTING_ADS,
@@ -493,11 +493,37 @@ import {
 	WPCOM_FEATURES_BIG_SKY,
 	FEATURE_WOO_HOSTED_PACKAGE,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
 	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 	FEATURE_WOO_HOSTED_PRO_MAILPOET,
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_CSV_IMPORTER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_BASIC_STORAGE,
+	FEATURE_WOO_HOSTED_PRO_STORAGE,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
@@ -937,7 +963,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		if ( isGlobalStylesGridChangesVariation() ) {
@@ -960,7 +986,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 	],
 
 	// Stacked variant: only incremental features (matching screenshot order)
@@ -1263,7 +1289,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_STORE_THEMES,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_VIDEO_UPLOADS,
 		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
@@ -1388,8 +1414,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAYMENT_BUTTONS_JP,
 		FEATURE_PAYPAL_JP,
 	],
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
-		if ( showLegacyStorageFeature && isCurrentPlan ) {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
+		if ( showLegacyStorageFeature ) {
 			return FEATURE_200GB_STORAGE;
 		}
 		return isEnabled( 'plans/updated-storage-labels' )
@@ -1639,19 +1665,65 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		),
 } );
 
+const getWooHostedPlanCompareFeatures = (): string[] => [
+	// Create your own online store
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_CSV_IMPORTER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	// Accept payments with PayPal
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	// Sell products and bookable services
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	// Manage your store (common features)
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_PRIORITY_24_7_SUPPORT,
+	// Grow your business (common features)
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
+];
+
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_50GB_STORAGE,
 	],
-	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
-	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getPlanCompareFeatures: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	],
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
 	getPlanTagline: () =>
@@ -1665,17 +1737,30 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PRO_MAILPOET,
 		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_100GB_STORAGE,
 	],
-	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
-	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
-	getStorageFeature: () => FEATURE_200GB_STORAGE,
+	getPlanCompareFeatures: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	],
+	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
 	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
 	getTagline: () =>
@@ -1827,7 +1912,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
 		}
 
 		// When the global styles grid variation is active, surface the payments fee for Premium
@@ -1843,7 +1928,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_UPLOAD_VIDEO,
 	],
 
@@ -2152,7 +2237,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_VIDEO_UPLOADS,
 		FEATURE_AI_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
@@ -2365,14 +2450,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			: featureLabels;
 	},
 
-	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
+	getStorageFeature: ( showLegacyStorageFeature ) => {
 		if ( showLegacyStorageFeature ) {
-			/* If the user is currently has a legacy plan with 200GB storage space, the capacity will decrease to
-			 * 50GB if they change their billing terms.
-			 */
-			return isCurrentPlan ? FEATURE_200GB_STORAGE : FEATURE_50GB_STORAGE;
+			return FEATURE_200GB_STORAGE;
 		}
-
 		return isEnabled( 'plans/updated-storage-labels' )
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;

@@ -145,6 +145,7 @@ This component's props are:
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
+- `skipValidationOnSubmit?: boolean`. If true, this step will not be validated when the submit button is clicked. Defaults to false. This is useful for steps like the payment method step that have their own validation logic and should not block form submission. The [PaymentMethodStep](#PaymentMethodStep) has this set to true by default.
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 - `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.
@@ -296,6 +297,10 @@ A React Hook that will return a function to set a step to be the active step. On
 ### useSetStepComplete
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
+
+### useCompleteAllSteps
+
+A React Hook that will return a function to attempt to complete all steps in the current `CheckoutStepGroup`. Only works within a step. The returned function looks like `() => Promise< boolean >;`. Calling this function will attempt to complete each step in order by calling each step's `isCompleteCallback` prop, ignoring steps that are already complete. The process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all steps were completed successfully and false if any step failed.
 
 ### useTogglePaymentMethod
 

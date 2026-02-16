@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useState } from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 
 const useLoadingSteps = ( { steps, duration = 5000 }: { steps: string[]; duration?: number } ) => {

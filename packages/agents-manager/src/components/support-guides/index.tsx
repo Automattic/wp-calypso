@@ -1,6 +1,5 @@
 import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
-import { useHelpSearchQuery } from '@automattic/help-center/src/hooks/use-help-search-query';
 import {
 	SearchControl,
 	__experimentalVStack as VStack,
@@ -16,6 +15,19 @@ import { Link } from 'react-router-dom';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { Options } from '../chat-header';
 import './style.scss';
+
+/**
+ * Stub for useHelpSearchQuery.
+ * TODO: Implement actual search functionality when adding support for support guides.
+ * This was previously imported from @automattic/help-center but removed to decouple packages.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function useHelpSearchQuery( query: string, locale: string, sectionName: string ) {
+	return {
+		data: [] as Array< { post_id: number; link: string; title: string } >,
+		isFetching: false,
+	};
+}
 
 function SearchResults( { searchInput }: { searchInput: string } ) {
 	const { data: searchData, isFetching: isSearching } = useHelpSearchQuery(

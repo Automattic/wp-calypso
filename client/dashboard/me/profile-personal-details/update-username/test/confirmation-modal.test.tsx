@@ -18,10 +18,6 @@ const defaultProps = {
 };
 
 describe( 'UsernameUpdateConfirmationModal', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Modal content', () => {
 		it( 'displays warning message with current username', () => {
 			render(

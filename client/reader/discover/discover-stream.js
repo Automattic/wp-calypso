@@ -14,14 +14,14 @@ import {
 	buildDiscoverStreamKey,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
-	getDefaultTab,
+	FRESHLY_PRESSED_TAB,
 } from './helper';
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab || getDefaultTab();
+	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;

@@ -15,6 +15,7 @@ import { AuthProvider, useAuth } from './auth';
 import { AppProvider } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
+import { useSurvicate } from './survicate';
 import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
@@ -53,6 +54,8 @@ function AnalyticsProviderWithClient( {
 		} ),
 		[ router ]
 	);
+
+	useSurvicate();
 
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }

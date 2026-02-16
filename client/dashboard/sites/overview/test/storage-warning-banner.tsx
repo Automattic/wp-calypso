@@ -50,8 +50,6 @@ function renderTestBanner() {
 	return render( <StorageWarningBanner site={ testSite as any } /> ); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-afterEach( () => nock.cleanAll() );
-
 test( 'warning banner when storage is low, and no banner when storage is not low', async () => {
 	mockTestEndpoints( {
 		storage_used_bytes: 900,

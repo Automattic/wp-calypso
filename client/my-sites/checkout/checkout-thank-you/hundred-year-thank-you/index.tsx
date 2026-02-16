@@ -227,12 +227,12 @@ export default function HundredYearThankYou( {
 	const isMobile = useMobileBreakpoint();
 	const isPageLoading = isReceiptLoading;
 	const hundredYearPlanCta = (
-		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+		<StyledLightButton onClick={ () => page( `/home/${ siteSlug }` ) }>
 			{ translate( 'Manage your site' ) }
 		</StyledLightButton>
 	);
 	const hundredYearDomainCta = (
-		<StyledLightButton onClick={ () => page( ` /domains/manage/${ siteSlug }` ) }>
+		<StyledLightButton onClick={ () => page( `/domains/manage/${ siteSlug }` ) }>
 			{ translate( 'Manage your domain' ) }
 		</StyledLightButton>
 	);

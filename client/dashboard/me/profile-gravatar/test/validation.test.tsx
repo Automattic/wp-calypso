@@ -15,8 +15,6 @@ jest.mock( '@automattic/api-queries', () => ( {
 
 describe( 'GravatarProfileSection Form Validation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-
 		const { userSettingsQuery } = require( '@automattic/api-queries' );
 		userSettingsQuery.mockReturnValue( {
 			queryKey: [ 'me', 'settings' ],

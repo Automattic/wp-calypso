@@ -167,19 +167,6 @@ function renderActivityLogsDataViews() {
 	);
 }
 
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
-} );
-
 test( 'clicking backup action navigates to backup detail page', async () => {
 	const user = userEvent.setup();
 	renderActivityLogsDataViews();

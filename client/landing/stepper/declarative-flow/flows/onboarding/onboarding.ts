@@ -34,7 +34,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-function initialize() {
+async function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -44,6 +44,8 @@ function initialize() {
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
+
+	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
@@ -213,7 +215,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'blank-site':
-							window.location.replace( `/sites/${ siteSlug }` );
+							window.location.assign( `/sites/${ siteSlug }` );
 							return;
 						default:
 							return;
@@ -273,8 +275,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 					return;
 				}
-				case 'playground':
-					return navigate( 'domains' );
+				case 'playground': {
+					const backTo = window.location.pathname + window.location.search;
+					return navigate(
+						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
 				default:
 					return;
 			}

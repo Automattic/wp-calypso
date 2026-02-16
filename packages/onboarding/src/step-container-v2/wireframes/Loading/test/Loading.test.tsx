@@ -40,3 +40,11 @@ test( 'increasing delay prop resets timer', () => {
 	act( () => jest.advanceTimersByTime( 1000 ) );
 	expect( screen.getByText( 'Test 123' ) ).toBeInTheDocument();
 } );
+
+test( 'hides the default WordPress logo when hideLogo is set', () => {
+	const { container } = render( <Loading hideLogo /> );
+
+	expect(
+		container.querySelector( '.step-container-v2__top-bar-wordpress-logo-wrapper' )
+	).not.toBeInTheDocument();
+} );

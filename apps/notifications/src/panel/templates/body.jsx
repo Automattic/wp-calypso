@@ -1,8 +1,12 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
+import { connect } from 'react-redux';
+import PendingApprovalBadge from '../../shared/pending-approval-badge';
+import { getActions } from '../helpers/notes';
 import { html } from '../indices-to-html';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
+import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
@@ -68,6 +72,12 @@ export class NoteBody extends Component {
 		let replyMessage;
 		let firstNonTextIndex;
 		let i;
+
+		// Check if we should show the pending approval badge
+		const noteActions = getActions( this.props.note );
+		const hasAction = ( types ) =>
+			[].concat( types ).some( ( type ) => noteActions.hasOwnProperty( type ) );
+		const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! this.props.isApproved;
 
 		for ( i = 0; i < blocks.length; i++ ) {
 			if ( 'text' !== blocks[ i ].signature.type ) {
@@ -159,6 +169,11 @@ export class NoteBody extends Component {
 		return (
 			<div className="wpnc__body">
 				{ preface }
+				{ showPendingApprovalBadge && (
+					<div className="wpnc__pending-approval-section">
+						<PendingApprovalBadge note={ this.props.note } />
+					</div>
+				) }
 				<div className="wpnc__body-content">{ body }</div>
 				{ replyBlock }
 				{ actions }
@@ -169,4 +184,8 @@ export class NoteBody extends Component {
 
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default localize( NoteBody );
+const mapStateToProps = ( state, { note } ) => ( {
+	isApproved: getIsNoteApproved( state, note ),
+} );
+
+export default connect( mapStateToProps )( localize( NoteBody ) );

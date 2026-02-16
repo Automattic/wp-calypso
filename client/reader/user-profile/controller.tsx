@@ -19,7 +19,7 @@ export function userProfile( ctx: Context, next: () => void ): void {
 	const view = context.params.view || 'posts';
 	const userLogin = context.params.user_login;
 	const userId = context.params.user_id;
-	const basePath = context.pathname;
+	const basePath = '/reader/users/:user_login';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle +
 		' > User > ' +
@@ -28,7 +28,7 @@ export function userProfile( ctx: Context, next: () => void ): void {
 		` > ${ view[ 0 ].toUpperCase() + view.slice( 1 ) }`;
 	const mcKey = `user_${ view }`;
 
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey, { user_login: userLogin } );
 
 	context.primary = (
 		<AsyncLoad

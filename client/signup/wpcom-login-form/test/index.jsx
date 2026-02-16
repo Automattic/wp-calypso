@@ -111,4 +111,27 @@ describe( 'WpcomLoginForm', () => {
 			'https://wordpress.com/wp-login.php'
 		);
 	} );
+
+	test( 'its action should have no subdomain when `redirectTo` contains my.wordpress.com', () => {
+		const { container } = render(
+			<WpcomLoginForm { ...props } redirectTo="https://my.wordpress.com/ciab/sites" />
+		);
+
+		expect( container.firstChild ).toHaveAttribute(
+			'action',
+			'https://wordpress.com/wp-login.php'
+		);
+	} );
+
+	test( 'its action should have no subdomain when `hostname` is my.wordpress.com', () => {
+		config.mockReturnValueOnce( 'my.wordpress.com' );
+		const { container } = render(
+			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
+		);
+
+		expect( container.firstChild ).toHaveAttribute(
+			'action',
+			'https://wordpress.com/wp-login.php'
+		);
+	} );
 } );

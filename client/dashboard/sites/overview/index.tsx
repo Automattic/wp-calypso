@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
@@ -268,6 +269,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
+			<PerformanceTrackerStop id="dashboard-site-overview" siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

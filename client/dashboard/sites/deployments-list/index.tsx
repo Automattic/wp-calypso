@@ -223,6 +223,7 @@ function DeploymentsList() {
 				>
 					<TriggerDeploymentModalForm
 						deployments={ deployments }
+						isStagingSite={ site.is_wpcom_staging_site }
 						onClose={ closeModalTriggerDeployment }
 						onSuccess={ handleDeploymentTriggered }
 					/>

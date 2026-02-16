@@ -561,6 +561,8 @@ const wpcomAllowedOrigins = [
 	'https://agencies.localhost:3000',
 	'http://my.localhost:3000',
 	'https://my.localhost:3000',
+	'http://my.woo.localhost:3000',
+	'https://my.woo.localhost:3000',
 	'http://calypso.localhost:3001',
 	'https://calypso.localhost:3001',
 	'https://calypso.live',

@@ -21,5 +21,6 @@ export function getDefaultPaymentMethodStep( {
 			/>
 		),
 		completeStepContent: <CheckoutPaymentMethods summary isComplete />,
+		skipValidationOnSubmit: true,
 	};
 }

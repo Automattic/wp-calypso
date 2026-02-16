@@ -22,14 +22,23 @@ jest.mock( '@wordpress/data', () => ( {
 	register: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	userSettingsQuery: jest.fn(),
-} ) );
+jest.mock(
+	'@automattic/api-queries',
+	() => {
+		// Use the real updateUserSettings from api-core so nock can intercept HTTP calls
+		const { updateUserSettings } = jest.requireActual( '@automattic/api-core' );
+		return {
+			userSettingsQuery: jest.fn(),
+			userSettingsMutation: jest.fn( () => ( {
+				mutationFn: updateUserSettings,
+			} ) ),
+		};
+	},
+	{ virtual: true }
+);
 
 describe( 'GravatarProfileSection Notifications', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		( useDispatch as jest.Mock ).mockReturnValue( {
 			createSuccessNotice: mockCreateSuccessNotice,
 			createErrorNotice: mockCreateErrorNotice,

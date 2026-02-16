@@ -28,6 +28,26 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
+
+/**
+ * Returns per-request clientData with hostname overridden when the request
+ * arrives on an allowed alternate hostname (e.g. behind a reverse proxy).
+ * When the request hostname is not in the allowlist, the clientData is
+ * returned unchanged — the configured default hostname is used.
+ * When no hostname_allowlist is configured, returns clientData as-is.
+ */
+export function customizeClientDataForRequest( req, baseClientData ) {
+	const allowlist = config( 'hostname_allowlist' );
+	if ( ! Array.isArray( allowlist ) ) {
+		return baseClientData;
+	}
+	const reqHostname = req.hostname;
+	if ( allowlist.includes( reqHostname ) && reqHostname !== config( 'hostname' ) ) {
+		return { ...baseClientData, hostname: reqHostname };
+	}
+	return baseClientData;
+}
+
 const HOUR_IN_MS = 3600000;
 export const markupCache = new Lru( {
 	max: 3000,
@@ -281,7 +301,7 @@ export function serverRender( req, res ) {
 		}
 	}
 	performanceMark( req.context, 'final render', true );
-	context.clientData = config.clientData;
+	context.clientData = customizeClientDataForRequest( req, config.clientData );
 
 	attachBuildTimestamp( context );
 

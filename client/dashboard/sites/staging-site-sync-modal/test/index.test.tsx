@@ -27,7 +27,14 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn().mockImplementation( () => ( {} ) ),
+	QueryClient: jest.fn().mockImplementation( () => ( {
+		getQueryCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+		getMutationCache: jest.fn( () => ( {
+			subscribe: jest.fn( () => jest.fn() ),
+		} ) ),
+	} ) ),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 	useQuery: jest.fn( () => ( {
 		data: undefined,
@@ -64,7 +71,7 @@ jest.mock( '../../../components/inline-support-link', () => {
 jest.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => {
-		const { createContext, useContext, createElement, useState } = require( '@wordpress/element' );
+		const { createContext, useContext, createElement, useState } = require( 'react' );
 
 		const FileBrowserContext = createContext( null );
 
@@ -187,7 +194,6 @@ const setup = ( props = {} ) => {
 
 describe( 'StagingSiteSyncModal', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		mockUseMutation();
 	} );
 
