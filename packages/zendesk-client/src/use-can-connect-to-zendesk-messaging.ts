@@ -7,6 +7,10 @@ function fetchZendeskConfig() {
 	return fetch( 'https://wpcom.zendesk.com/embeddable/config' ).then( ( res ) => res.json() );
 }
 
+// Track which dataUpdatedAt timestamps we've already recorded events for
+// This persists across component mounts/unmounts
+const trackedExecutions = new Set< number >();
+
 /**
  * This hook verifies connectivity to Zendesk's messaging service by making a config request and manages automatic retries with error tracking.
  */
@@ -30,8 +34,18 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	} );
 
 	useEffect( () => {
+		// Only track when query has completed (success or error)
+		const isSettled = query.status === 'success' || query.status === 'error';
+		const hasTracked = trackedExecutions.has( query.dataUpdatedAt );
+
+		if ( ! isSettled || hasTracked || query.dataUpdatedAt === 0 ) {
+			return;
+		}
+
+		trackedExecutions.add( query.dataUpdatedAt );
+
 		// Leaving for backwards compatibility. This event is no longer needed. The one below is more general.
-		if ( ! query.data && query.status !== 'pending' ) {
+		if ( ! query.data && query.status === 'error' ) {
 			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
 				status: query.status,
 				status_text: query.error?.message,
@@ -43,7 +57,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			status_text: query.error?.message,
 			failure_count: query.failureCount,
 		} );
-	}, [ query.data, query.error?.message, query.status, query.failureCount ] );
+	}, [ query.status, query.dataUpdatedAt, query.data, query.error?.message, query.failureCount ] );
 
 	return query;
 }
