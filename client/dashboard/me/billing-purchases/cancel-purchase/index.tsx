@@ -78,6 +78,7 @@ import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
+import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import type { CancelPurchaseState } from './types';
 import type {
@@ -1220,7 +1221,14 @@ export default function CancelPurchase() {
 					prefix={ <Breadcrumbs length={ 4 } /> }
 				/>
 			}
-			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
+			notices={
+				! state.surveyShown && (
+					<>
+						<RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onCancellationStart } />
+						<TimeRemainingNotice purchase={ purchase } />
+					</>
+				)
+			}
 		>
 			<Card>
 				<CardBody>
