@@ -121,7 +121,7 @@ export interface ActivityLogParams {
 	by?: string;
 	date_range?: string;
 	number?: number;
-	not_group?: string;
+	not_group?: string[];
 	group?: string[];
 	name?: string[];
 	text_search?: string;

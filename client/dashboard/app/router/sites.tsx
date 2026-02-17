@@ -198,7 +198,10 @@ export const siteOverviewRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
-			queryClient.prefetchQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
+			const hasBackupsSelfServe = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+			// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
+			const notGroup = hasBackupsSelfServe ? undefined : [ 'rewind', 'scan' ];
+			queryClient.prefetchQuery( siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ) );
 			if ( hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE ) ) {
 				queryClient.prefetchQuery( siteScanQuery( site.ID ) );
 			}

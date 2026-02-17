@@ -1,7 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { siteByIdQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+} from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
@@ -647,7 +650,14 @@ function withActivityLog( Inner ) {
 	const WithActivityLog = ( props ) => {
 		const { siteId, filter, gmtOffset, timezone, rewindState } = props;
 		const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
-		const { data, isSuccess } = useActivityLogQuery( siteId, filter );
+		const hasBackupsSelfServe = useSelector(
+			( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+		);
+		// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
+		const filterWithNotGroup = hasBackupsSelfServe
+			? filter
+			: { ...filter, notGroup: [ 'rewind', 'scan' ] };
+		const { data, isSuccess } = useActivityLogQuery( siteId, filterWithNotGroup );
 		const allLogEntries = data ?? emptyList;
 		const visibleLogEntries = filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone );
 		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;
