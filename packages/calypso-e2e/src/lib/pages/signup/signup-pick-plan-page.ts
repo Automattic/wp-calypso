@@ -104,4 +104,27 @@ export class SignupPickPlanPage {
 
 		await Promise.all( actions );
 	}
+
+	/**
+	 * Selects the Free plan escape hatch on the modal upsell.
+	 *
+	 * @param {Plans} planName Name of the plan.
+	 * @param {RegExp} redirectUrl Optional redirect URL to wait for.
+	 * @returns {Promise<void>}
+	 */
+	async selectEscapeHatchWithoutSiteCreation(
+		planName: Plans,
+		redirectUrl?: RegExp
+	): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		redirectUrl ??= new RegExp( '.*checkout.*' );
+
+		const actions = [
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.plansPage.selectModalUpsellPlan( planName ),
+		];
+
+		await Promise.all( actions );
+	}
 }
