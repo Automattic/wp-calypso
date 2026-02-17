@@ -1,5 +1,6 @@
 import {
 	fetchDomainWhois,
+	fetchCachedDomainContactInfo,
 	validateDomainWhois,
 	updateDomainWhois,
 	type DomainContactDetails,
@@ -12,6 +13,17 @@ export const domainWhoisQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'whois' ],
 		queryFn: () => fetchDomainWhois( domainName ),
+	} );
+
+/**
+ * Query options for the user's cached domain contact information.
+ * The response is in snake_case and must be mapped to camelCase before use.
+ */
+export const cachedDomainContactInfoQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'domain-contact-information' ],
+		queryFn: () => fetchCachedDomainContactInfo(),
+		refetchOnWindowFocus: false,
 	} );
 
 export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
