@@ -92,21 +92,6 @@ export default function StatusCtaInfo( props: Props ) {
 					) }
 				</p>
 			);
-		case 'transfer-google-domain':
-		case 'transfer-google-domain-hosting':
-		case 'transfer-google-domain-hosting-wp':
-			return (
-				<p>
-					{ translate(
-						'If you own this domain, consider transferring it to {{strong}}WordPress.com{{/strong}} ' +
-							'to benefit from the best-performing, most reliable registrar in the business. ' +
-							'And—because it’s registered with Google Domains—{{strong}}you’ll get an extra year of registration on us!{{/strong}}',
-						{
-							components: { br: <br />, strong: <strong /> },
-						}
-					) }
-				</p>
-			);
 		case 'transfer-hosting':
 		case 'transfer-hosting-wp':
 			return (

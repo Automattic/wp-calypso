@@ -80,7 +80,6 @@ export interface DomainAnalyzerQueryResponse {
 	whois: WhoIs;
 	dns: DNS[];
 	is_domain_available: boolean;
-	eligible_google_transfer: boolean;
 }
 
 export interface DomainAnalyzerWhoisRawDataQueryResponse {
