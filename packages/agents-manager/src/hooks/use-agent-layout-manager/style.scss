@@ -313,6 +313,14 @@ body.post-php.agents-manager-sidebar-container {
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include sidebar-open-base( '.edit-post-layout' );
 		@include editor-save-panel-open();
+
+		.editor-post-publish-panel {
+			top: $layout-spacing;
+			bottom: $layout-spacing;
+			right: $sidebar-width + $layout-spacing;
+			animation: none;
+			transform: translateX( 0 );
+		}
 	}
 }
 
