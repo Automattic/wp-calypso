@@ -281,8 +281,7 @@
 	.domains__domain-key {
 		flex: 0 0 240px;
 
-		.info-popover,
-		.google-domains-transfer-instructions__button {
+		.info-popover {
 			color: var(--color-text-subtle);
 			margin-left: 5px;
 			padding: 2px;
@@ -371,8 +370,7 @@
 			}
 		}
 
-		.info-popover.is-first-row,
-		.google-domains-transfer-instructions__button.is-first-row {
+		.info-popover.is-first-row {
 			display: inline-block;
 
 			@media (max-width: $break-mobile) {
