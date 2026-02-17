@@ -8,13 +8,12 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
-import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
-import { isDiscoverV3Enabled } from 'calypso/reader/utils';
+import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 
-const AddReddit = () => {
+export default function AddYouTube(): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -30,7 +29,7 @@ const AddReddit = () => {
 	}, [ dispatch ] );
 
 	return (
-		<div className="reader-add-reddit">
+		<div className="reader-add-youtube">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ ! isEmailVerified && (
 					<Notice
@@ -43,48 +42,32 @@ const AddReddit = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `reader-add-reddit__form${ isEmailVerified ? '' : ' is-disabled' }` }>
+				<div className={ `reader-add-youtube__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<AddSitesForm
-						placeholder={ translate( 'Search by Reddit URL' ) }
+						placeholder={ translate( 'Search by YouTube URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
-						pathname={ isDiscoverV3Enabled() ? '/reader/new/reddit' : '/discover/reddit' }
-						source={ isDiscoverV3Enabled() ? 'reader-add-reddit' : 'discover-reddit' }
+						pathname="/reader/new/youtube"
+						source="reader-add-youtube"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
-					<div className="reader-add-reddit__instructions">
-						<div className="reader-add-reddit__instructions-icon">
-							<ReaderRedditIcon iconSize={ 75 } />
+					<div className="reader-add-youtube__instructions">
+						<div className="reader-add-youtube__instructions-icon">
+							<ReaderYouTubeIcon iconSize={ 75 } />
 						</div>
-						<h2 className="reader-add-reddit__instructions-title">
-							{ translate( 'Common Reddit URLs' ) }
+						<h2 className="reader-add-youtube__instructions-title">
+							{ translate( 'Common YouTube URLs' ) }
 						</h2>
-						<ul className="reader-add-reddit__instructions-list">
+						<ul className="reader-add-youtube__instructions-list">
 							<li>
-								<strong>{ translate( 'Front page:' ) }</strong>
-								{ ' www.reddit.com/.rss' }
+								<strong>{ translate( 'Channel feed:' ) }</strong>
+								{ ' www.youtube.com/@YT_HANDLE' }
 							</li>
 							<li>
-								<strong>{ translate( 'A subreddit:' ) }</strong>
-								{ ' www.reddit.com/r/{ SUBREDDIT }/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'A user:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'User comments:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/comments/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'User submissions:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/submitted/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'Search result:' ) }</strong>
-								{ ' www.reddit.com/search.rss?q={ QUERY }' }
+								<strong>{ translate( 'Playlist feed:' ) }</strong>
+								{ ' www.youtube.com/feeds/videos.xml?playlist_id=PLAYLIST_ID' }
 							</li>
 						</ul>
 					</div>
@@ -92,6 +75,4 @@ const AddReddit = () => {
 			</SubscriptionManagerContextProvider>
 		</div>
 	);
-};
-
-export default AddReddit;
+}

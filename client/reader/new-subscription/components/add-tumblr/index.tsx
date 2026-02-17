@@ -8,13 +8,12 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
-import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
-import { isDiscoverV3Enabled } from 'calypso/reader/utils';
+import ReaderTumblrIcon from 'calypso/reader/components/icons/tumblr-icon';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 
-const AddReddit = () => {
+export default function AddTumblr(): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -30,7 +29,7 @@ const AddReddit = () => {
 	}, [ dispatch ] );
 
 	return (
-		<div className="reader-add-reddit">
+		<div className="reader-add-tumblr">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ ! isEmailVerified && (
 					<Notice
@@ -43,48 +42,38 @@ const AddReddit = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `reader-add-reddit__form${ isEmailVerified ? '' : ' is-disabled' }` }>
+				<div className={ `reader-add-tumblr__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<AddSitesForm
-						placeholder={ translate( 'Search by Reddit URL' ) }
+						placeholder={ translate( 'Search by Tumblr URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
-						pathname={ isDiscoverV3Enabled() ? '/reader/new/reddit' : '/discover/reddit' }
-						source={ isDiscoverV3Enabled() ? 'reader-add-reddit' : 'discover-reddit' }
+						pathname="/reader/new/tumblr"
+						source="new-tumblr-subscription"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
 				{ ! hasFeedPreview ? (
-					<div className="reader-add-reddit__instructions">
-						<div className="reader-add-reddit__instructions-icon">
-							<ReaderRedditIcon iconSize={ 75 } />
+					<div className="reader-add-tumblr__instructions">
+						<div className="reader-add-tumblr__instructions-icon">
+							<ReaderTumblrIcon iconSize={ 75 } />
 						</div>
-						<h2 className="reader-add-reddit__instructions-title">
-							{ translate( 'Common Reddit URLs' ) }
+
+						<h2 className="reader-add-tumblr__instructions-title">
+							{ translate( 'Common Tumblr URLs' ) }
 						</h2>
-						<ul className="reader-add-reddit__instructions-list">
+
+						<ul className="reader-add-tumblr__instructions-list">
 							<li>
-								<strong>{ translate( 'Front page:' ) }</strong>
-								{ ' www.reddit.com/.rss' }
+								<strong>{ translate( 'Staff Picks:' ) }</strong>
+								{ ' staff.tumblr.com/rss' }
 							</li>
 							<li>
-								<strong>{ translate( 'A subreddit:' ) }</strong>
-								{ ' www.reddit.com/r/{ SUBREDDIT }/.rss' }
+								<strong>{ translate( 'A blog:' ) }</strong>
+								{ ' { BLOG_NAME }.tumblr.com/rss' }
 							</li>
 							<li>
-								<strong>{ translate( 'A user:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'User comments:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/comments/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'User submissions:' ) }</strong>
-								{ ' www.reddit.com/user/{ REDDITOR }/submitted/.rss' }
-							</li>
-							<li>
-								<strong>{ translate( 'Search result:' ) }</strong>
-								{ ' www.reddit.com/search.rss?q={ QUERY }' }
+								<strong>{ translate( 'Blog tag:' ) }</strong>
+								{ ' { BLOG_NAME }.tumblr.com/tagged/{ TAG_NAME }/rss' }
 							</li>
 						</ul>
 					</div>
@@ -92,6 +81,4 @@ const AddReddit = () => {
 			</SubscriptionManagerContextProvider>
 		</div>
 	);
-};
-
-export default AddReddit;
+}
