@@ -656,7 +656,12 @@ export class CheckoutThankYou extends Component<
 						return this.renderLoading();
 					}
 
-					pageContent = <DomainOnlyNew />;
+					pageContent = (
+						<DomainOnlyNew
+							domainPurchase={ domainPurchases[ 0 ] }
+							currency={ this.props.receipt.data.currency }
+						/>
+					);
 				} else {
 					pageContent = (
 						<DomainOnlyThankYou

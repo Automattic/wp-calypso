@@ -16,6 +16,7 @@ interface OptionContentProps {
 	disabled?: boolean;
 	illustration: ReactElement;
 	onSelect?: React.MouseEventHandler;
+	href?: string;
 	isPlaceholder?: boolean;
 	recommended?: boolean;
 	titleText: string;
@@ -28,6 +29,7 @@ export function OptionContent( {
 	disabled,
 	illustration,
 	onSelect,
+	href,
 	isPlaceholder,
 	recommended,
 	titleText,
@@ -35,6 +37,7 @@ export function OptionContent( {
 	etaText,
 }: OptionContentProps ) {
 	const isMobile = useBreakpoint( '<480px' );
+	const noAction = ! onSelect && ! href;
 
 	return (
 		<VStack
@@ -56,16 +59,17 @@ export function OptionContent( {
 				}
 				decoration={ illustration }
 				onClick={ onSelect }
-				disabled={ disabled || isPlaceholder || ! onSelect }
+				href={ href }
+				disabled={ disabled || isPlaceholder || noAction }
 				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
 			/>
 			{ benefits && (
 				<VStack
 					spacing={ 1 }
 					className={ clsx( 'option-content__benefits', {
-						'option-content__benefits--clickable': ! disabled && ! isPlaceholder && onSelect,
+						'option-content__benefits--clickable': ! disabled && ! isPlaceholder && ! noAction,
 					} ) }
-					onClick={ disabled || isPlaceholder || ! onSelect ? undefined : onSelect }
+					onClick={ disabled || isPlaceholder || noAction ? undefined : onSelect }
 				>
 					{ benefits.map( ( benefit, index ) => {
 						return (
