@@ -45,6 +45,7 @@
 		border-top: none;
 		border-radius: 0 0 $radius-large $radius-large;
 		font-size: $font-size-medium;
+		text-decoration: none;
 
 		@include break-mobile {
 			padding: 10px 64px;

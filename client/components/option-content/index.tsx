@@ -65,6 +65,9 @@ export function OptionContent( {
 			/>
 			{ benefits && (
 				<VStack
+					as={ href ? 'a' : 'button' }
+					tabIndex={ -1 }
+					href={ href }
 					spacing={ 1 }
 					className={ clsx( 'option-content__benefits', {
 						'option-content__benefits--clickable': ! disabled && ! isPlaceholder && ! noAction,
