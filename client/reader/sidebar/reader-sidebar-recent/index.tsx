@@ -132,7 +132,6 @@ const ReaderSidebarRecent = ( {
 					onClick={ () => trackMenuClick( null ) }
 				>
 					<AllIcon />
-
 					<span>{ translate( 'All' ) }</span>
 				</MenuItemLink>
 			</MenuItem>
