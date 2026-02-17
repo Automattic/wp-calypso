@@ -3,7 +3,6 @@ import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products'
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
-	addPlanToCart,
 	addProductsToCart,
 	clearStepPersistedState,
 	replaceProductsInCart,
@@ -387,20 +386,16 @@ const domain: FlowV2< typeof initialize > = {
 
 					const addItemsToCartAndGoToCheckout = () => {
 						setPendingAction( async () => {
+							const aggregatedCartItems = [
+								pickedPlan,
+								...( addOns.length > 0 ? addOns : [] ),
+								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+							];
+
 							if ( isCiab ) {
-								await replaceProductsInCart( siteSlug, [] );
-							}
-
-							if ( pickedPlan ) {
-								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
-							}
-
-							if ( addOns.length > 0 ) {
-								await addProductsToCart( siteSlug, this.name, addOns );
-							}
-
-							if ( domainCartItems ) {
-								await addProductsToCart( siteSlug, this.name, domainCartItems );
+								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+							} else {
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
 							}
 
 							return {
