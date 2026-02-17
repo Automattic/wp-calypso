@@ -1,11 +1,11 @@
-export default function ReaderAddIcon() {
+export default function ReaderAddIcon( { size = 20 } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-add"
 			fill="none"
-			height="20"
-			viewBox="0 0 20 20"
-			width="20"
+			height={ size }
+			viewBox={ `1 -2 ${ size } ${ size }` }
+			width={ size }
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<g>

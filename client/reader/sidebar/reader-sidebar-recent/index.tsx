@@ -8,7 +8,9 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
+import ReaderAddIcon from 'calypso/reader/components/icons/add-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -109,6 +111,19 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
+			{ isDiscoverV3Enabled() && (
+				<MenuItem key="add" selected={ path.startsWith( '/reader/new' ) }>
+					<MenuItemLink
+						href="/reader/new"
+						className="sidebar__menu-link add-feed-link"
+						onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_feed_clicked' ) }
+					>
+						<ReaderAddIcon size={ 24 } />
+						<span>{ translate( 'Add a feed' ) }</span>
+					</MenuItemLink>
+				</MenuItem>
+			) }
+
 			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
 				<MenuItemLink
 					href="/reader"
@@ -120,6 +135,7 @@ const ReaderSidebarRecent = ( {
 					<span>{ translate( 'All' ) }</span>
 				</MenuItemLink>
 			</MenuItem>
+
 			{ sitesToShow.map( ( site ) => (
 				<MenuItem
 					key={ site.ID }
