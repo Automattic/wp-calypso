@@ -393,7 +393,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<div>
-						<PurchaseExpiryStatus purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
 					</div>
 				);
 			},
@@ -427,7 +427,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</HStack>
 				);
