@@ -6,6 +6,7 @@ import {
 	addPlanToCart,
 	addProductsToCart,
 	clearStepPersistedState,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -94,6 +95,8 @@ const domain: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
+
+		const isCiab = useQuery().get( 'dashboard' ) === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -351,7 +354,15 @@ const domain: FlowV2< typeof initialize > = {
 								};
 							}
 
-							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+							} else {
+								await addProductsToCart(
+									providedDependencies.siteSlug,
+									this.name,
+									domainCartItems
+								);
+							}
 						}
 
 						return {
@@ -376,6 +387,10 @@ const domain: FlowV2< typeof initialize > = {
 
 					const addItemsToCartAndGoToCheckout = () => {
 						setPendingAction( async () => {
+							if ( isCiab ) {
+								await replaceProductsInCart( siteSlug, [] );
+							}
+
 							if ( pickedPlan ) {
 								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
 							}

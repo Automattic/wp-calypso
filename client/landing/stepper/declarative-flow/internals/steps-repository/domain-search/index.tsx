@@ -86,6 +86,8 @@ const DomainSearchStep: StepType< {
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
 
+	const isCiab = dashboard === 'ciab';
+
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
 	// eslint-disable-next-line no-nested-ternary
@@ -310,7 +312,7 @@ const DomainSearchStep: StepType< {
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
-				isDomainFlow( flow ) ||
+				( isDomainFlow( flow ) && ! isCiab ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
 				isDomainAndPlanFlow( flow )
 			}
