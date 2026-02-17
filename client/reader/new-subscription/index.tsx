@@ -11,6 +11,7 @@ import ReaderMain from '../components/reader-main';
 import AddNew from './components/add-new';
 import AddReddit from './components/add-reddit';
 import AddTumblr from './components/add-tumblr';
+import AddYouTube from './components/add-youtube';
 
 interface Tab {
 	slug: string;
@@ -21,6 +22,7 @@ interface Tab {
 enum Tabs {
 	ADD_NEW = 'add-new',
 	REDDIT = 'reddit',
+	YOUTUBE = 'youtube',
 	TUMBLR = 'tumblr',
 }
 
@@ -50,6 +52,11 @@ export default function ReaderNewSubscriptionPage(
 			path: `/${ pathPrefix }/reddit`,
 		},
 		{
+			slug: Tabs.YOUTUBE,
+			title: translate( 'YouTube' ),
+			path: `/${ pathPrefix }/youtube`,
+		},
+		{
 			slug: Tabs.TUMBLR,
 			title: translate( 'Tumblr' ),
 			path: `/${ pathPrefix }/tumblr`,
@@ -58,6 +65,7 @@ export default function ReaderNewSubscriptionPage(
 	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
 		[ Tabs.ADD_NEW ]: <AddNew />,
 		[ Tabs.REDDIT ]: <AddReddit />,
+		[ Tabs.YOUTUBE ]: <AddYouTube />,
 		[ Tabs.TUMBLR ]: <AddTumblr />,
 	};
 
