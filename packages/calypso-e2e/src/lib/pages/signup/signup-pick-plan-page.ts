@@ -33,23 +33,37 @@ export class SignupPickPlanPage {
 
 	/**
 	 * Captures the response from the site creation API endpoint.
+	 *
+	 * Reads the response body eagerly inside the waitForResponse callback
+	 * to avoid the "No resource with given identifier found" error
+	 * that occurs when a page navigation discards the response.
+	 *
 	 * @returns {Promise<NewSiteResponse>}
 	 */
 	private async captureNewSiteResponse(): Promise< NewSiteResponse > {
-		const response = await this.page.waitForResponse( /.*\/sites\/new\?.*/, {
-			timeout: 60 * 1000,
-		} );
+		let responseBody: NewSiteResponse | undefined;
 
-		const responseJSON = await response.json();
-		const body: NewSiteResponse = responseJSON.body;
+		await this.page.waitForResponse(
+			async ( response ) => {
+				if ( ! /.*\/sites\/new\?.*/.test( response.url() ) ) {
+					return false;
+				}
 
-		if ( ! body.blog_details.blogid ) {
-			console.error( body );
+				// Read the body immediately while the response is still available.
+				const responseJSON = await response.json();
+				responseBody = responseJSON.body;
+				return true;
+			},
+			{ timeout: 60 * 1000 }
+		);
+
+		if ( ! responseBody || ! responseBody.blog_details.blogid ) {
+			console.error( responseBody );
 			throw new Error( 'Failed to locate blog ID for the created site.' );
 		}
 
-		body.blog_details.blogid = Number( body.blog_details.blogid );
-		return body;
+		responseBody.blog_details.blogid = Number( responseBody.blog_details.blogid );
+		return responseBody;
 	}
 
 	/**
