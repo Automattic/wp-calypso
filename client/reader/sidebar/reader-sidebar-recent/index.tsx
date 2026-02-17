@@ -1,5 +1,7 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
+import { Icon } from '@wordpress/components';
+import { plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -8,7 +10,6 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
-import ReaderAddIcon from 'calypso/reader/components/icons/add-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -118,8 +119,8 @@ const ReaderSidebarRecent = ( {
 						className="sidebar__menu-link add-feed-link"
 						onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_feed_clicked' ) }
 					>
-						<ReaderAddIcon size={ 24 } />
-						<span>{ translate( 'Add a feed' ) }</span>
+						<Icon icon={ plus } viewBox="2 0 24 24" />
+						<span>{ translate( 'Add new' ) }</span>
 					</MenuItemLink>
 				</MenuItem>
 			) }
