@@ -1386,6 +1386,19 @@ $colophon-height: 50px;
 		}
 	}
 
+	.jetpack-connect__woo-connect-screen-content {
+		margin: 0 auto;
+		max-width: 405px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			max-width: 100%;
+		}
+	}
+
+	.jetpack-connect__woo-connect-screen-actions {
+		margin-top: 32px;
+	}
+
 	.jetpack-connect__action-disclaimer {
 		padding: 0;
 		margin: 32px 0 0 0;

@@ -1012,14 +1012,14 @@ export class JetpackAuthorize extends Component {
 
 			return (
 				<Fragment>
-					<div className="jetpack-connect__logged-in-content">
+					<div className="jetpack-connect__woo-connect-screen-content">
 						<UserCard
 							user={ {
 								displayName: user.display_name,
 								email: user.email,
 								avatarUrl: user.avatar_URL,
 							} }
-							className="jetpack-connect__logged-in-card"
+							size="small"
 						/>
 						<ConsentText>
 							<Disclaimer
@@ -1188,7 +1188,7 @@ export class JetpackAuthorize extends Component {
 		if ( this.isWooJPC() ) {
 			return (
 				<ActionButtons
-					className="jetpack-connect__action-disclaimer"
+					className="jetpack-connect__woo-connect-screen-actions"
 					primaryLabel={ this.getButtonText() }
 					primaryLoading={ isLoading }
 					primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
