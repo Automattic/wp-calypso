@@ -1,4 +1,8 @@
-import { rawUserPreferencesQuery, queryClient } from '@automattic/api-queries';
+import {
+	rawUserPreferencesQuery,
+	jetpackSiteUrlsQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
@@ -22,6 +26,8 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( cause === 'preload' ) {
 			return { fullPageLoad: false };
 		}
+
+		queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {

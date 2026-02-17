@@ -114,6 +114,7 @@ export * from './site-update-schedules';
 export * from './site-uptime';
 export * from './site-users';
 export * from './site-wordpress-version';
+export * from './jetpack-site-collisions';
 export * from './site';
 export * from './sites';
 export * from './upgrades';
