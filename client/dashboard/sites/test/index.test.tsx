@@ -46,7 +46,12 @@ describe( '<Sites>', () => {
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/sites' )
-			.query( true )
+			.query( ( params ) => params.filters === 'jetpack' )
+			.reply( 200, { sites: [] } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( ( params ) => params.filters !== 'jetpack' )
 			.reply( 200, { sites: mockSites } );
 	} );
 
@@ -72,6 +77,60 @@ describe( '<Sites>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'uses unmapped_url slug when a wpcom site URL collides with a Jetpack site', async () => {
+		nock.cleanAll();
+
+		const conflictingSite = {
+			ID: 3,
+			name: 'Conflicting Site',
+			slug: 'example.com',
+			URL: 'https://example.com',
+			jetpack: false,
+			is_coming_soon: false,
+			is_private: false,
+			site_migration: {},
+			capabilities: { manage_options: true },
+			options: { unmapped_url: 'https://conflicting-site.wordpress.com' },
+			plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
+		} as Site;
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.query( true )
+			.reply( 200, { teams: [] } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, { calypso_preferences: {} } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( ( params ) => params.filters === 'jetpack' )
+			.reply( 200, { sites: [ { URL: 'https://example.com', jetpack: true } ] } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( ( params ) => params.filters !== 'jetpack' )
+			.reply( 200, { sites: [ conflictingSite ] } );
+
+		render( <Sites />, {
+			user: { site_count: 13 } as User,
+		} );
+
+		const table = await screen.findByRole( 'table' );
+		await waitFor( () => expect( within( table ).getAllByRole( 'row' ) ).toHaveLength( 2 ) );
+
+		// Wait for the jetpack URL query to resolve and the slug override to take effect.
+		await waitFor( () => {
+			const row = within( table ).getAllByRole( 'row' )[ 1 ];
+			const links = within( row ).getAllByRole( 'link' );
+			const hrefs = links.map( ( l ) => l.getAttribute( 'href' ) );
+			expect( hrefs ).toContain( '/sites/conflicting-site.wordpress.com' );
+		} );
 	} );
 
 	test( 'renders DataViews when the user has sites', async () => {

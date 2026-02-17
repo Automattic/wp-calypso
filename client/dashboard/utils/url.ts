@@ -13,8 +13,12 @@ export function isOnboardingUrl( url: string ) {
 	return [ '/setup', '/start' ].some( ( path ) => url.startsWith( wpcomLink( path ) ) );
 }
 
+export function withoutHttp( url: string ) {
+	return url.replace( /^https?:\/\//, '' );
+}
+
 export function urlToSlug( url: string ) {
-	return url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+	return withoutHttp( url ).replace( /\//g, '::' );
 }
 
 export function queryParamToArray( param: unknown ): string[] {

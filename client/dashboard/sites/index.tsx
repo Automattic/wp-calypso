@@ -1,4 +1,9 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	isAutomatticianQuery,
+	jetpackSiteUrlsQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	useQuery,
@@ -23,6 +28,8 @@ import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
+import { getEffectiveSiteSlug } from '../utils/site-collisions';
+import { withoutHttp } from '../utils/url';
 import AddNewSite from './add-new-site';
 import {
 	SitesDataViews,
@@ -127,6 +134,12 @@ const getFetchPaginatedSitesOptions = (
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const { queries } = useAppContext();
 
+	// Fetch Jetpack site URLs to detect domain collisions with wpcom sites.
+	const { data: jetpackSiteUrls } = useQuery( {
+		...jetpackSiteUrlsQuery(),
+		select: ( data ) => new Set( data.map( withoutHttp ) ),
+	} );
+
 	const { data: siteFilters } = useQuery( {
 		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
@@ -139,12 +152,29 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
 		placeholderData: keepPreviousData,
 		enabled: ! isEnabled( 'dashboard/v2/paginated-site-list' ),
+		select: ( data ) =>
+			! jetpackSiteUrls
+				? data
+				: data.map( ( s ) => ( {
+						...s,
+						slug: getEffectiveSiteSlug( s, jetpackSiteUrls ),
+				  } ) ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
 		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		placeholderData: keepPreviousData,
 		enabled: isEnabled( 'dashboard/v2/paginated-site-list' ),
+		select: ( data ) =>
+			! jetpackSiteUrls
+				? data
+				: {
+						...data,
+						sites: data.sites.map( ( s ) => ( {
+							...s,
+							slug: getEffectiveSiteSlug( s, jetpackSiteUrls ),
+						} ) ),
+				  },
 		meta: {
 			fullPageLoader: true,
 		},
