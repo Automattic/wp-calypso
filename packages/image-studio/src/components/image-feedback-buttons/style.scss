@@ -1,0 +1,25 @@
+/**
+ * Image Feedback Buttons Styles
+ *
+ * Styles for the thumbs up/down feedback buttons below the image
+ * Now uses MessageActions component for consistent styling
+ */
+
+.image-feedback-buttons {
+	z-index: 100;
+	width: 100%;
+	margin-top: 4px;
+	color: #f0f0f0;
+	opacity: 0;
+	transform: translateY(10px);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
+	pointer-events: none;
+
+	&--visible {
+		opacity: 1;
+		transform: translateY(0);
+		pointer-events: auto;
+	}
+}

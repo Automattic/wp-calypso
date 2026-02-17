@@ -6,9 +6,8 @@
  * but the full Agents Manager dock UI isn't displayed.
  */
 
-import { useAgentChat, getAgentManager } from '@automattic/agenttic-client';
+import { useAgentChat } from '@automattic/agenttic-client';
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { getSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
@@ -80,16 +79,6 @@ export default function HeadlessAgentInitializer( {
 function AgentInitializerInner( { agentConfig }: { agentConfig: UseAgentChatConfig } ): null {
 	// Initialize the agent (this creates it in agentManager)
 	useAgentChat( agentConfig );
-
-	// Expose agentManager on window for cross-bundle access (e.g., Image Studio)
-	useEffect( () => {
-		const agentManager = getAgentManager();
-		window.__agentManager = agentManager;
-		// eslint-disable-next-line no-console
-		console.log( '[HeadlessAgentInitializer] Agent initialized (headless mode)', {
-			hasAgent: agentManager.hasAgent( ORCHESTRATOR_AGENT_ID ),
-		} );
-	}, [] );
 
 	return null;
 }

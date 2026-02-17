@@ -65,13 +65,22 @@ export const titleFieldTextOverflowStyles = {
 	whiteSpace: 'nowrap',
 } as const;
 
-export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+export function SiteLink( {
+	site,
+	expanded,
+	...props
+}: ComponentProps< typeof Link > & { site: Site; expanded?: boolean } ) {
 	return (
 		<Link
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+			style={ {
+				width: expanded ? '100%' : 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				...props.style,
+			} }
 		/>
 	);
 }
@@ -220,7 +229,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 
 export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const {
 		data: lastBackup,

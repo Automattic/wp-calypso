@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 
 // Raw config structure from the server
 interface SiteSpecRawConfig {
@@ -197,7 +197,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover',
-			url: dashboardLink( '/ciab/sites' ),
+			url: buildCiabDashboardLink( '/sites' ),
 		},
 		exitButton: {
 			enabled: false,
@@ -210,7 +210,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 			brandColor: '#000000',
 			onboardingTitle: __( 'Your success story starts here.', 'site-spec' ),
 			onboardingSubtitle: __(
-				"Tell us about what you sell or offer, and we'll start building your online store.",
+				'Describe what you want to sell or offer, and the kind of store you want to create. We’ll use this to design your store — whether you take bookings, sell products, or both.',
 				'site-spec'
 			),
 			colors: {
@@ -237,6 +237,9 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
 				'--spec-preview-chip-border':
 					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
+
+				// For the spec preview checkbox
+				'--spec-preview-checkbox-appearance': 'none',
 			},
 			promptSuggestions: {
 				variant: 'solid' as const,

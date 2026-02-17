@@ -202,7 +202,7 @@ export const siteOverviewRoute = createRoute( {
 			if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
 				queryClient.prefetchQuery( siteScanQuery( site.ID ) );
 			}
-			if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
 				queryClient.prefetchQuery( siteLastBackupQuery( site.ID ) );
 			}
 			if ( site.is_a4a_dev_site ) {
@@ -447,7 +447,7 @@ export const siteBackupsRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
-		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
 			queryClient.prefetchQuery( siteBackupActivityLogEntriesQuery( site.ID ) );
 			queryClient.prefetchQuery( siteBackupActivityLogGroupCountsQuery( site.ID ) );
 		}
@@ -1033,12 +1033,9 @@ export const siteSettingsCrontabRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'crontab',
-	beforeLoad: ( { cause, params: { siteSlug } } ) => {
+	beforeLoad: ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
-		}
-		if ( ! isEnabled( 'hosting/crontab' ) ) {
-			throw redirect( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 } );
@@ -1073,6 +1070,31 @@ export const siteSettingsCrontabAddRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-add' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsCrontabEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit scheduled job' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsCrontabRoute,
+	path: '$cronId/edit',
+	parseParams: ( params ) => ( {
+		cronId: Number( params.cronId ),
+	} ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-crontab-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -1479,6 +1501,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsCrontabRoute.addChildren( [
 			siteSettingsCrontabIndexRoute,
 			siteSettingsCrontabAddRoute,
+			siteSettingsCrontabEditRoute,
 		] ),
 		siteSettingsRepositoriesRoute.addChildren( [
 			siteSettingsRepositoriesIndexRoute,

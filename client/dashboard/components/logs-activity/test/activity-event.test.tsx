@@ -54,7 +54,6 @@ describe( 'ActivityEvent', () => {
 	beforeEach( () => {
 		mockedIsJetpackCloud.mockReturnValue( false );
 		mockedIsA8CForAgencies.mockReturnValue( false );
-		jest.clearAllMocks();
 	} );
 
 	it( 'renders the summary and plain content text', () => {

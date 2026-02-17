@@ -1,15 +1,17 @@
 import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { getName } from 'calypso/lib/purchases';
 import type { Purchases } from '@automattic/data-stores';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
 	cancellationFeatures,
+	useRefundableWpcomCopy = false,
 }: {
 	purchase: Purchases.Purchase;
 	cancellationFeatures: string[];
+	useRefundableWpcomCopy?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -20,7 +22,7 @@ const CancelPurchaseFeatureList = ( {
 	return (
 		<div className="cancel-purchase__features">
 			<p>
-				{ isRefundable( purchase )
+				{ ! useRefundableWpcomCopy
 					? translate(
 							'By canceling the %(productName)s plan, these features will no longer be available on your site:',
 							{

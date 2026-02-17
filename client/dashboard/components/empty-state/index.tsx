@@ -16,7 +16,13 @@ function EmptyState( { children }: { children?: ReactNode } ) {
 	);
 }
 
-function EmptyStateWrapper( { children }: { children: ReactNode } ) {
+function EmptyStateWrapper( {
+	isBorderless = false,
+	children,
+}: {
+	isBorderless?: boolean;
+	children: ReactNode;
+} ) {
 	const cardRef = useRef< HTMLElement >( null );
 
 	// Calculate the vertical offset once on mount to set a consistent min-height.
@@ -31,7 +37,7 @@ function EmptyStateWrapper( { children }: { children: ReactNode } ) {
 	}, [] );
 
 	return (
-		<Card ref={ cardRef } className="dashboard-empty-state__wrapper">
+		<Card ref={ cardRef } className="dashboard-empty-state__wrapper" isBorderless={ isBorderless }>
 			<CardBody>
 				<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state__wrapper-content">
 					{ children }

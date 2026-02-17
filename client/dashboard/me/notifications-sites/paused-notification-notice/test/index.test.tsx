@@ -8,11 +8,6 @@ import { render } from '../../../../test-utils';
 import { PausedNotificationNotice } from '../index';
 
 describe( 'PausedNotificationNotice', () => {
-	beforeEach( () => {
-		nock.disableNetConnect();
-		nock.cleanAll();
-	} );
-
 	it( 'renders the notice when the browser notifications are blocked', async () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 			subscription_delivery_email_blocked: true,

@@ -36,12 +36,13 @@ describe( 'leaveCheckout', () => {
 	} );
 
 	describe( 'cancel_to parameter handling', () => {
-		it( 'should navigate to cancel_to path when it is a relative URL', () => {
+		it( 'should redirect to cancel_to path when it is a relative URL', () => {
 			window.location.search = '?cancel_to=/home';
 
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
-			expect( navigate ).toHaveBeenCalledWith( '/home' );
+			expect( window.location.href ).toBe( '/home' );
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not navigate to cancel_to path when it is an absolute URL', () => {
@@ -66,6 +67,19 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
 			expect( navigate ).not.toHaveBeenCalledWith( '/\\example.com' );
+		} );
+
+		it( 'should fall through to closeUrl when cancel_to is an invalid external URL', () => {
+			window.location.search = '?cancel_to=https://evil.com/malicious';
+
+			leaveCheckout( {
+				siteSlug: 'test.wordpress.com',
+				tracksEvent: 'checkout_cancel',
+				userHasClearedCart: true,
+			} );
+
+			expect( window.location.href ).not.toBe( 'https://evil.com/malicious' );
+			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
 		} );
 	} );
 

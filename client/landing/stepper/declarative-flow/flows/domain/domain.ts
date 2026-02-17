@@ -3,9 +3,9 @@ import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products'
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
-	addPlanToCart,
 	addProductsToCart,
 	clearStepPersistedState,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -94,6 +94,8 @@ const domain: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
+
+		const isCiab = useQuery().get( 'dashboard' ) === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -349,7 +351,15 @@ const domain: FlowV2< typeof initialize > = {
 								};
 							}
 
-							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+							} else {
+								await addProductsToCart(
+									providedDependencies.siteSlug,
+									this.name,
+									domainCartItems
+								);
+							}
 						}
 
 						return {
@@ -388,16 +398,16 @@ const domain: FlowV2< typeof initialize > = {
 						}
 					} else if ( siteSlug ) {
 						setPendingAction( async () => {
-							if ( pickedPlan ) {
-								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
-							}
+							const aggregatedCartItems = [
+								...( pickedPlan ? [ pickedPlan ] : [] ),
+								...( addOns.length > 0 ? addOns : [] ),
+								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+							];
 
-							if ( addOns.length > 0 ) {
-								await addProductsToCart( siteSlug, this.name, addOns );
-							}
-
-							if ( domainCartItems ) {
-								await addProductsToCart( siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+							} else {
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
 							}
 
 							return {

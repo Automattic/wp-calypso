@@ -34,12 +34,19 @@ import {
 	ToggleControl,
 	Notice,
 	ExternalLink,
+	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
+import {
+	moreVertical,
+	calendar,
+	currencyDollar,
+	commentAuthorAvatar,
+	layout,
+} from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -48,6 +55,7 @@ import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
 import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -60,7 +68,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -989,8 +997,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
+function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?: Site } ) {
 	if ( purchase.is_domain ) {
+		if ( site?.options?.is_domain_only ) {
+			return null;
+		}
+
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return (
 				<Text variant="muted">
@@ -1152,7 +1164,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 
-					<PurchaseSecondSubtitle purchase={ purchase } />
+					<PurchaseSecondSubtitle purchase={ purchase } site={ site } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
@@ -1209,15 +1221,27 @@ export default function PurchaseSettings() {
 						} )() }
 					/>
 					<PurchasePriceCard purchase={ purchase } />
-					{ site && (
-						<OverviewCard
-							icon={ <SiteIcon site={ site } /> }
-							title={ __( 'Site' ) }
-							heading={ site.name }
-							description={ purchase.site_slug }
-							link={ `/sites/${ purchase.site_slug }` }
-						/>
-					) }
+					{ site &&
+						( site.options?.is_domain_only &&
+						purchase.is_domain &&
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ? (
+							<OverviewCard
+								icon={ <Icon icon={ layout } /> }
+								title={ __( 'Attach to a site' ) }
+								heading={ __( 'No site attached' ) }
+								description={ __( 'Attach this domain name to an existing site.' ) }
+								link={ `/domains/${ purchase.meta }/transfer/other-site` }
+								intent="upsell"
+							/>
+						) : (
+							<OverviewCard
+								icon={ <SiteIcon site={ site } /> }
+								title={ __( 'Site' ) }
+								heading={ site.name }
+								description={ purchase.site_slug }
+								link={ `/sites/${ purchase.site_slug }` }
+							/>
+						) ) }
 					<OverviewCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }

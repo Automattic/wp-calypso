@@ -1,8 +1,9 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { getCurrentDashboard } from '../../app/routing';
 import { DataViewsEmptyState } from '../../components/dataviews';
-import { getCurrentDashboard, wpcomLink } from '../../utils/link';
+import { wpcomLink } from '../../utils/link';
 import DomainEmptyIllustration from '../resources/domain-empty-illustration';
 
 const NoDomainsAvailableEmptyState = () => {

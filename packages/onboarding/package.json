@@ -47,6 +47,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/domain-search": "workspace:^",
 		"@wordpress/components": "^32.1.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/icons": "^10.23.0",

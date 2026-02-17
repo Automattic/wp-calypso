@@ -53,10 +53,6 @@ describe( 'TimeMismatchNotice', () => {
 		jest.spyOn( Date.prototype, 'getTimezoneOffset' ).mockReturnValue( mockTimezoneOffsetMinutes );
 	} );
 
-	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
 	test( 'does not render if siteTime matches local timezone offset', () => {
 		useSuspenseQuery.mockReturnValue( { data: null } );
 

@@ -118,16 +118,16 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
 
-		return `/checkout/thank-you/${ siteSlug }`;
+		// Redirection URL handled by the checkout controller
+		return '';
 	}
 
 	if ( dashboardType ) {
 		return dashboardLink( '/domains' );
 	}
 
-	// `getThankYouPageUrl` appends a receipt ID to this slug even if it doesn't contain the
-	// `:receipt_id` placeholder
-	return '/checkout/thank-you/no-site';
+	// Redirection URL handled by the checkout controller
+	return '';
 }
 
 function getEmailSignupFlowDestination( { siteId, siteSlug } ) {

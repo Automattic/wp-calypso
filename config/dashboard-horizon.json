@@ -3,7 +3,9 @@
 	"env_id": "dashboard-horizon",
 	"favicon_url": "/calypso/images/favicons/favicon-wpcalypso.ico",
 	"client_slug": "browser",
+	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
+	"hostname_allowlist": [ "my.wordpress.com", "my.woo.com" ],
 	"i18n_default_locale_slug": "en",
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
@@ -23,7 +25,6 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
-		"hosting/crontab": true,
 		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,

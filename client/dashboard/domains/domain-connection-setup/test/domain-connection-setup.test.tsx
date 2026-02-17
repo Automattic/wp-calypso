@@ -60,10 +60,6 @@ describe( 'DomainConnectionSetup', () => {
 		isUpdatingConnectionMode: false,
 	};
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Domain Connect Available', () => {
 		test( 'renders Domain Connect card by default when DC is available and mode is null', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );

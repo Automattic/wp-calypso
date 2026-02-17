@@ -54,9 +54,16 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-async function pollForGardenProvisioning( siteId: number, maxAttempts = 22, delayMs = 5000 ) {
-	// Sleep for 10 seconds to allow for site creation to settle
-	await new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+async function pollForGardenProvisioning(
+	siteId: number,
+	maxAttempts = 22,
+	delayMs = 5000,
+	initialDelayMs = 10000
+) {
+	// Initial delay to allow for site creation to settle.
+	if ( initialDelayMs > 0 ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
+	}
 
 	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 		try {
@@ -150,11 +157,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 
-	const isPaidDomainItem = Boolean(
-		domainCartItem?.product_slug ||
-			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
-	);
-
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 	const wooFlows = [ ENTREPRENEUR_FLOW ];
@@ -207,6 +209,47 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
+		// Flow A: The site was early-created during the AI chat session.
+		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
+		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
+		if ( flow === AI_SITE_BUILDER_FLOW && gardenName && earlyCreatedSite ) {
+			const blogId = parseInt( earlyCreatedSite, 10 );
+
+			if ( isNaN( blogId ) ) {
+				throw new Error( 'Invalid early_created_site parameter.' );
+			}
+
+			// Trigger the AI site builder job. This queues an async job that waits
+			// for provisioning to complete, then runs the Site Builder Workflow Agent.
+			try {
+				await wpcomRequest( {
+					path: `/sites/${ blogId }/big-sky/trigger-backend-build`,
+					apiNamespace: 'wpcom/v2',
+					method: 'POST',
+					body: {
+						spec_id: urlQueryParams.get( 'spec_id' ),
+					},
+				} );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to trigger backend build:', error );
+				throw new Error(
+					'We were unable to build your store. Please try again or contact support.'
+				);
+			}
+
+			// Poll until the provisioning is considered complete.
+			// Skip the initial delay since the site may have been provisioning for minutes already.
+			await pollForGardenProvisioning( blogId, 22, 5000, 0 );
+
+			return {
+				siteId: blogId,
+				siteSlug: String( blogId ),
+				goToCheckout: false,
+				siteCreated: true,
+			};
+		}
+
 		// eslint-disable-next-line no-nested-ternary
 		const siteIntent = isNewSiteMigrationFlow( flow )
 			? 'migration'
@@ -219,7 +262,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const site = await createSiteWithCart(
 			flow,
 			true,
-			isPaidDomainItem,
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,

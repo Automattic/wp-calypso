@@ -22,7 +22,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-primary-site/site-dropdown';
-import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from './utils';
+import { getAccountMcpAbilities, getDisabledSiteIds, getSiteAccountToolsEnabled } from './utils';
 
 function McpComponent( { path } ) {
 	const translate = useTranslate();
@@ -37,6 +37,18 @@ function McpComponent( { path } ) {
 
 	// Site selector state for disabling MCP access on specific sites
 	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
+	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+	const disabledSites = disabledSiteIds.map( ( siteId ) => {
+		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
+		const name = site?.name || translate( 'Site ID: %(siteId)s', { args: { siteId } } );
+		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
+
+		return {
+			id: siteId,
+			name,
+			domain,
+		};
+	} );
 
 	// Reauth state
 	const [ reauthRequired, setReauthRequired ] = useState( false );
@@ -319,6 +331,30 @@ function McpComponent( { path } ) {
 											</Text>
 										}
 									/>
+								) }
+								{ disabledSites.length > 0 && (
+									<VStack spacing={ 4 }>
+										<SectionHeader
+											level={ 3 }
+											title={ translate( 'Sites with disabled MCP access' ) }
+											description={ translate(
+												'Sites with disabled MCP access are not accessible to AI assistants.'
+											) }
+										/>
+										<VStack>
+											{ disabledSites.map( ( site ) => (
+												<ToggleControl
+													key={ site.id }
+													__nextHasNoMarginBottom
+													checked={ false }
+													disabled={ mutation.isPending }
+													onChange={ ( enabled ) => handleSiteToggle( site.id, enabled ) }
+													label={ site.name }
+													help={ site.domain }
+												/>
+											) ) }
+										</VStack>
+									</VStack>
 								) }
 							</VStack>
 						</CardBody>

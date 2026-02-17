@@ -42,7 +42,7 @@ const willShowDomainOptionsRadioButtons = (
 	return (
 		includedDomainPurchase.is_domain_registration &&
 		purchase.is_refundable &&
-		includedDomainPurchase.is_refundable
+		!! includedDomainPurchase.cost_to_unbundle_display
 	);
 };
 
