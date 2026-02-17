@@ -1,21 +1,24 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { Crontab, CreateCrontabParams } from './types';
+import type { CrontabFormData } from './types';
 
-export async function createCrontab(
-	siteId: number,
-	params: CreateCrontabParams
-): Promise< Crontab > {
-	const response = await wpcom.req.post( {
+export async function createCrontab( siteId: number, params: CrontabFormData ): Promise< void > {
+	await wpcom.req.post( {
 		path: `/sites/${ siteId }/hosting/crontab`,
 		apiNamespace: 'wpcom/v2',
 		body: params,
 	} );
+}
 
-	return {
-		cron_id: response.cron_id,
-		schedule: params.schedule,
-		command: params.command,
-	};
+export async function updateCrontab(
+	siteId: number,
+	cronId: number,
+	params: CrontabFormData
+): Promise< void > {
+	await wpcom.req.put( {
+		path: `/sites/${ siteId }/hosting/crontab/${ cronId }`,
+		apiNamespace: 'wpcom/v2',
+		body: params,
+	} );
 }
 
 export async function deleteCrontab( siteId: number, cronId: number ): Promise< void > {

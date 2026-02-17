@@ -9,6 +9,7 @@ import {
 	PRODUCT_CATEGORY_CUSTOMER_SERVICE,
 	PRODUCT_CATEGORY_GROWTH,
 	PRODUCT_CATEGORY_JETPACK,
+	PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	PRODUCT_CATEGORY_MERCHANDISING,
 	PRODUCT_CATEGORY_PAYMENTS,
 	PRODUCT_CATEGORY_PERFORMANCE,
@@ -35,8 +36,13 @@ import {
 	PRODUCT_TYPE_PRODUCT,
 	PRODUCT_TYPE_WOO_EXTENSION,
 	PRODUCT_TYPE_WPCOM_PLAN,
+	PRODUCT_TYPE_PRESSABLE_ADDON,
 } from '../constants';
-import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
+import {
+	isPressableAddonProduct,
+	isPressableHostingProduct,
+	isWPCOMHostingProduct,
+} from '../lib/hosting';
 import { getVendorInfo } from '../products-overview/lib/get-vendor-info';
 import {
 	SECURITY_PRODUCT_SLUGS,
@@ -302,11 +308,21 @@ export function filterProductsAndPlansByType(
 			);
 
 		case PRODUCT_TYPE_JETPACK_BACKUP_ADDON:
-		case PRODUCT_TYPE_ADDON: // Right now this is the same as jetpack backup addons but once we have more non-jetpack addons we can separate them.
+		case PRODUCT_TYPE_ADDON:
 			return (
 				allProductsAndPlans
-					?.filter( ( { family_slug } ) => family_slug === BACKUP_STORAGE_FAMILY_SLUG )
+					?.filter(
+						( { family_slug } ) =>
+							family_slug === BACKUP_STORAGE_FAMILY_SLUG || isPressableAddonProduct( family_slug )
+					)
 					.sort( ( a, b ) => a.product_id - b.product_id ) || []
+			);
+
+		case PRODUCT_TYPE_PRESSABLE_ADDON:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) =>
+					isPressableAddonProduct( family_slug )
+				) || []
 			);
 
 		case PRODUCT_TYPE_WOO_EXTENSION:
@@ -357,6 +373,12 @@ function filterProductsAndPlansByCategory(
 			return (
 				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
 				[]
+			);
+		case PRODUCT_CATEGORY_PRESSABLE_ADDON:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) =>
+					isPressableAddonProduct( family_slug )
+				) || []
 			);
 		case PRODUCT_CATEGORY_SECURITY:
 			return allProductsAndPlans.filter( ( { slug, family_slug } ) => {

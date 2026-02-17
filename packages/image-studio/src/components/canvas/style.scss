@@ -1,0 +1,53 @@
+/**
+ * Canvas Component Styles
+ */
+
+@import "../styles/variables";
+
+.image-studio-canvas {
+	position: relative;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	margin: auto;
+}
+
+.image-studio-canvas__content {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+/* Overlay positioning */
+.image-studio-canvas__overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+}
+
+.image-studio-canvas__loading {
+	position: absolute;
+	pointer-events: none;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 11;
+	width: 100%;
+	height: 100%;
+}
+
+.image-studio-canvas[data-fit="contain"] {
+	--canvas-fit: contain;
+}
+
+.image-studio-canvas[data-fit="cover"] {
+	--canvas-fit: cover;
+}
+
+.image-studio-canvas[data-fit="fill"] {
+	--canvas-fit: fill;
+}

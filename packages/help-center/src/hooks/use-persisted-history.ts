@@ -1,7 +1,7 @@
 import { HelpCenterDispatch, HelpCenterSelect } from '@automattic/data-stores';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
@@ -136,16 +136,26 @@ export const usePersistedHistory = () => {
 		[]
 	);
 
+	// Track if we've already restored history to prevent infinite loop.
+	// The loop happens because: navigation -> notifyListeners -> setHelpCenterRouterHistory
+	// -> persistedHistory changes -> useEffect runs -> creates new MemoryHistory -> loop
+	const hasRestoredHistory = useRef( false );
+
 	useLayoutEffect( () => {
 		return history.listen( setState );
 	}, [ history ] );
 
 	useEffect( () => {
+		if ( hasRestoredHistory.current ) {
+			return;
+		}
+
 		const urlParams = new URLSearchParams( window.location.search );
 		// Skip persisted history if help-center=happiness-engineer to allow escalation to live chat, otherwise the location is overwritten.
 		const helpCenterParam = urlParams.get( 'help-center' );
 
 		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
+			hasRestoredHistory.current = true;
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
 

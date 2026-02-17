@@ -389,6 +389,7 @@ const DomainSearchUI = (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
+			isSticky={ false }
 			hideSkip
 			customizedActionButtons={ getUseDomainIOwnLink() }
 			headerText={ headerText }

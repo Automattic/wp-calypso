@@ -13,9 +13,10 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useMemo, useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';

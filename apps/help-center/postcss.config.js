@@ -3,6 +3,12 @@ module.exports = {
 		require( 'postcss-prefix-selector' )( {
 			prefix: '.help-center',
 			transform: function ( prefix, selector, prefixedSelector, path ) {
+				// Agenttic UI (used by Odie/Agents Manager) ships very generic chart selectors
+				// like `.chart-container` which collide with WooCommerce Reports in wp-admin.
+				if ( selector.includes( '.chart-container' ) ) {
+					return selector.includes( prefix ) ? selector : prefixedSelector;
+				}
+
 				// The search component has very generic class that causes many bugs.
 				if ( path.includes( 'search/style.scss' ) ) {
 					return selector === '.search' ? prefixedSelector : selector;

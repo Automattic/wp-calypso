@@ -147,7 +147,7 @@
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.38",
+		"@automattic/agenttic-ui": "^0.1.41",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
@@ -213,7 +213,7 @@
 		"@wordpress/rich-text": "^7.23.0",
 		"@wordpress/url": "^4.23.0",
 		"@wordpress/viewport": "^6.23.0",
-		"@wp-playground/client": "^1.1.0",
+		"@zip.js/zip.js": "2.8.17",
 		"animate.css": "^4.1.1",
 		"browserslist": "^4.24.5",
 		"calypso": "workspace:^",

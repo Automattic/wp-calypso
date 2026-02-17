@@ -6,67 +6,32 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button } from '@wordpress/components';
+import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { scheduled, trash, copy } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { siteSettingsCrontabAddRoute } from '../../app/router/sites';
+import { useLocale } from '../../app/locale';
+import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { parseScheduleValue, PREDEFINED_SCHEDULES } from './schedule-field';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-function formatSchedule( schedule: string ): string {
-	// Handle predefined schedules
-	if ( schedule === 'hourly' ) {
-		return __( 'Every hour' );
-	}
-	if ( schedule === 'daily' ) {
-		return __( 'Daily' );
-	}
-	if ( schedule === 'weekly' ) {
-		return __( 'Weekly' );
-	}
-
-	// Handle shorthand notation
-	const shorthandMatch = schedule.match( /^(\d+)([hdw])$/ );
-	if ( shorthandMatch ) {
-		const num = parseInt( shorthandMatch[ 1 ], 10 );
-		const freq = shorthandMatch[ 2 ];
-		if ( freq === 'h' ) {
-			return sprintf(
-				/* translators: %d is the number of times per hour */
-				__( '%d times per hour' ),
-				num
-			);
-		}
-		if ( freq === 'd' ) {
-			return sprintf(
-				/* translators: %d is the number of times per day */
-				__( '%d times per day' ),
-				num
-			);
-		}
-		if ( freq === 'w' ) {
-			return sprintf(
-				/* translators: %d is the number of times per week */
-				__( '%d times per week' ),
-				num
-			);
-		}
-	}
-
-	// Return raw cron expression for standard cron format
-	return schedule;
+function getScheduleLabel( schedule: string ): string {
+	const scheduleType = parseScheduleValue( schedule );
+	return PREDEFINED_SCHEDULES.find( ( s ) => s.value === scheduleType )?.label ?? '';
 }
 
 const DEFAULT_VIEW: View = {
@@ -80,6 +45,7 @@ const DEFAULT_VIEW: View = {
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -128,10 +94,29 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 		{
 			id: 'schedule',
 			label: __( 'Schedule' ),
-			getValue: ( { item }: { item: Crontab } ) => formatSchedule( item.schedule ),
-			render: ( { item }: { item: Crontab } ) => (
-				<span title={ item.schedule }>{ formatSchedule( item.schedule ) }</span>
-			),
+			getValue: ( { item }: { item: Crontab } ) => {
+				const label = getScheduleLabel( item.schedule );
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
+				return `${ label } ${ cronDescription } ${ item.schedule }`;
+			},
+			render: ( { item }: { item: Crontab } ) => {
+				const cronDescription = cronstrue.toString( item.schedule, {
+					verbose: true,
+					locale,
+				} );
+
+				return (
+					<div>
+						<Text>{ getScheduleLabel( item.schedule ) }</Text>{ ' ' }
+						<Text variant="muted" size={ 12 }>
+							({ cronDescription })
+						</Text>
+					</div>
+				);
+			},
 			enableGlobalSearch: true,
 		},
 		{
@@ -168,6 +153,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			},
 		},
 		{
+			id: 'edit',
+			label: __( 'Edit' ),
+			callback: ( items: Crontab[] ) => {
+				router.navigate( {
+					to: siteSettingsCrontabEditRoute.fullPath,
+					params: { siteSlug, cronId: items[ 0 ].cron_id },
+				} );
+			},
+		},
+		{
 			id: 'delete',
 			isDestructive: true,
 			icon: <Icon icon={ trash } />,
@@ -188,8 +183,13 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Cron' ) }
-					description={ __(
-						'Schedule commands to run automatically at specified intervals on your site.'
+					description={ createInterpolateElement(
+						__(
+							'Schedule commands to run automatically at specified intervals. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
+						}
 					) }
 					actions={
 						hasSshFeature && (

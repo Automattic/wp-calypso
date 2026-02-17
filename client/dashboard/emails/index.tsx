@@ -4,18 +4,23 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
-import { DataViews, DataViewsCard } from '../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
+import InlineSupportLink from '../components/inline-support-link';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
 import EmptyDomainsState from './empty-domains-state';
-import EmptyMailboxesState from './empty-mailboxes-state';
+import {
+	EmptyMailboxesStateContent,
+	EmptyMailboxesSearchStateContent,
+} from './empty-mailboxes-state';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
 
@@ -97,7 +102,21 @@ function Emails() {
 		}
 
 		if ( hasNoEmails ) {
-			return <EmptyMailboxesState />;
+			return (
+				<DataViewsEmptyStateLayout
+					title={ __( 'Set up email for your domain' ) }
+					description={ createInterpolateElement(
+						__(
+							'Create a mailbox or set up a forwarder for an email address using your domain. <learnMoreLink/>'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="emails" />,
+						}
+					) }
+				>
+					<EmptyMailboxesStateContent />
+				</DataViewsEmptyStateLayout>
+			);
 		}
 
 		return (
@@ -115,6 +134,15 @@ function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
+					empty={
+						<DataViewsEmptyStateLayout
+							title={ __( 'No emails match your search' ) }
+							description={ __( 'Try again, or continue with the options below.' ) }
+							isBorderless
+						>
+							<EmptyMailboxesSearchStateContent />
+						</DataViewsEmptyStateLayout>
+					}
 				/>
 			</DataViewsCard>
 		);

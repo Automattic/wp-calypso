@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
+import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 
 // Raw config structure from the server
 interface SiteSpecRawConfig {
@@ -196,7 +197,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover',
-			url: '/ciab/sites',
+			url: buildCiabDashboardLink( '/sites' ),
 		},
 		exitButton: {
 			enabled: false,
@@ -236,6 +237,9 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
 				'--spec-preview-chip-border':
 					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
+
+				// For the spec preview checkbox
+				'--spec-preview-checkbox-appearance': 'none',
 			},
 			promptSuggestions: {
 				variant: 'solid' as const,

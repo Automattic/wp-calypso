@@ -5,7 +5,6 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import {
 	mockUserSettings,
@@ -86,10 +85,8 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 
 describe( 'PersonalDetailsSection', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		mockCreateSuccessNotice.mockClear();
 		mockCreateErrorNotice.mockClear();
-		nock.cleanAll();
 	} );
 
 	describe( 'Basic rendering', () => {

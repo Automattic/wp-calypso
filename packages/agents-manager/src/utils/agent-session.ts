@@ -9,6 +9,7 @@
  * 3. Client stores UUID in localStorage via setSessionId()
  * 4. Subsequent loads: retrieve UUID from localStorage
  */
+import { ORCHESTRATOR_AGENT_ID } from '../constants';
 
 export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -16,6 +17,13 @@ const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 /**
  * Session storage format.
  */
+export function getSessionStorageKey( agentId?: string ): string {
+	if ( agentId && agentId !== ORCHESTRATOR_AGENT_ID ) {
+		return `${ SESSION_STORAGE_KEY }-${ agentId }`;
+	}
+	return SESSION_STORAGE_KEY;
+}
+
 interface StoredSession {
 	sessionId: string;
 	timestamp: number;
@@ -26,9 +34,10 @@ interface StoredSession {
  * Returns empty string if no session exists or session expired.
  * @returns The current session ID, or an empty string if no valid session exists.
  */
-export function getSessionId(): string {
+export function getSessionId( agentId?: string ): string {
 	try {
-		const stored = localStorage.getItem( SESSION_STORAGE_KEY );
+		const key = getSessionStorageKey( agentId );
+		const stored = localStorage.getItem( key );
 		if ( stored ) {
 			const session: StoredSession = JSON.parse( stored );
 
@@ -38,7 +47,7 @@ export function getSessionId(): string {
 			}
 
 			// Session expired, clear it
-			localStorage.removeItem( SESSION_STORAGE_KEY );
+			localStorage.removeItem( key );
 		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
@@ -54,13 +63,13 @@ export function getSessionId(): string {
  * Save session ID to localStorage.
  * @param sessionId - The session ID to save.
  */
-export function setSessionId( sessionId: string ): void {
+export function setSessionId( sessionId: string, agentId?: string ): void {
 	try {
 		const session: StoredSession = {
 			sessionId,
 			timestamp: Date.now(),
 		};
-		localStorage.setItem( SESSION_STORAGE_KEY, JSON.stringify( session ) );
+		localStorage.setItem( getSessionStorageKey( agentId ), JSON.stringify( session ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error storing session ID:', error );
@@ -71,9 +80,9 @@ export function setSessionId( sessionId: string ): void {
  * Reset to a new chat (clear session).
  * Returns empty string - server will generate UUID on first message.
  */
-export function clearSessionId(): void {
+export function clearSessionId( agentId?: string ): void {
 	try {
-		localStorage.removeItem( SESSION_STORAGE_KEY );
+		localStorage.removeItem( getSessionStorageKey( agentId ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error clearing session ID:', error );

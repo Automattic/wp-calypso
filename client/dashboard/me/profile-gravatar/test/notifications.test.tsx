@@ -22,24 +22,17 @@ jest.mock( '@wordpress/data', () => ( {
 	register: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	userSettingsQuery: jest.fn(),
-} ) );
-
 describe( 'GravatarProfileSection Notifications', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		( useDispatch as jest.Mock ).mockReturnValue( {
 			createSuccessNotice: mockCreateSuccessNotice,
 			createErrorNotice: mockCreateErrorNotice,
 		} );
 
-		const { userSettingsQuery } = require( '@automattic/api-queries' );
-		userSettingsQuery.mockReturnValue( {
-			queryKey: [ 'me', 'settings' ],
-			queryFn: () => Promise.resolve( mockUserSettings ),
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, mockUserSettings );
 	} );
 
 	it( 'should show success notification when form is saved successfully', async () => {

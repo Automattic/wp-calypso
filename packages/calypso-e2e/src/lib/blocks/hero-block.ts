@@ -2,7 +2,7 @@ import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	block: '.wp-block-coblocks-hero',
-	heading: '[aria-label="Block: Heading"]',
+	heading: '[aria-label*="Block: Heading"]',
 };
 
 /**

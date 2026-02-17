@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { AppState } from 'calypso/types';
-import { getSafeImageUrlForReader, showSelectedPost } from '../utils';
+import { FRESHLY_PRESSED_TAB } from '../discover/helper';
+import { DISCOVER_PREFIX } from '../discover/routes';
+import { getSafeImageUrlForReader, showSelectedPost, getCurrentTabFromURL } from '../utils';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
@@ -50,6 +52,32 @@ describe( 'reader utils', () => {
 		test( 'returns the Photon url if it is not from a trusted host', () => {
 			const url = 'https://www.example.com/image.jpg';
 			expect( getSafeImageUrlForReader( url ) ).not.toEqual( url );
+		} );
+	} );
+
+	describe( 'getCurrentTabFromURL', () => {
+		it( 'returns the current tab', () => {
+			expect(
+				getCurrentTabFromURL( '/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'firstposts' );
+		} );
+
+		it( 'ignores the locale', () => {
+			expect(
+				getCurrentTabFromURL( '/en/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'firstposts' );
+		} );
+
+		it( 'ignores the query params', () => {
+			expect(
+				getCurrentTabFromURL( '/discover/firstposts?foo=bar', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'firstposts' );
+		} );
+
+		it( 'returns the default tab when there is no tab', () => {
+			expect( getCurrentTabFromURL( '/discover', DISCOVER_PREFIX, 'my-default-tab' ) ).toEqual(
+				'my-default-tab'
+			);
 		} );
 	} );
 } );

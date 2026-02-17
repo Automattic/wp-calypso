@@ -1,6 +1,6 @@
 import { Button, Notice, __experimentalVStack as VStack } from '@wordpress/components';
-import { useCallback, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useCallback, useMemo, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import {

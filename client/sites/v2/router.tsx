@@ -1,6 +1,7 @@
 import { siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Outlet, createRootRouteWithContext, createRoute } from '@tanstack/react-router';
+import { consumeFirstLoad } from 'calypso/dashboard/app/router/first-load-tracker';
 import { canManageSite } from 'calypso/dashboard/sites/features';
 import { getSiteDisplayName } from 'calypso/dashboard/utils/site-name';
 import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trial';
@@ -13,9 +14,9 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
  */
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
-	// Empty beforeLoad is required to maintain type compatibility with MSD
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	beforeLoad: async ( { cause } ) => {},
+	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => ( {
+		fullPageLoad: cause === 'enter' && consumeFirstLoad(),
+	} ),
 } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {

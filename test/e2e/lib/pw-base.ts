@@ -637,7 +637,6 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
-	DASHBOARD_RELEASE: '@dashboard-release',
 	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',

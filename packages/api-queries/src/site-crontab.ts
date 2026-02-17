@@ -1,7 +1,7 @@
-import { fetchCrontabs, createCrontab, deleteCrontab } from '@automattic/api-core';
+import { fetchCrontabs, createCrontab, updateCrontab, deleteCrontab } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { CreateCrontabParams } from '@automattic/api-core';
+import type { CrontabFormData } from '@automattic/api-core';
 
 export const siteCrontabsQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -11,14 +11,18 @@ export const siteCrontabsQuery = ( siteId: number ) =>
 
 export const siteCrontabCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( params: CreateCrontabParams ) => createCrontab( siteId, params ),
-		onSuccess: ( newCrontab ) => {
-			queryClient.setQueryData( siteCrontabsQuery( siteId ).queryKey, ( currentCrontabs ) => {
-				if ( ! currentCrontabs ) {
-					return [ newCrontab ];
-				}
-				return [ ...currentCrontabs, newCrontab ];
-			} );
+		mutationFn: ( params: CrontabFormData ) => createCrontab( siteId, params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( siteCrontabsQuery( siteId ) );
+		},
+	} );
+
+export const siteCrontabUpdateMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( { cronId, params }: { cronId: number; params: CrontabFormData } ) =>
+			updateCrontab( siteId, cronId, params ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( siteCrontabsQuery( siteId ) );
 		},
 	} );
 

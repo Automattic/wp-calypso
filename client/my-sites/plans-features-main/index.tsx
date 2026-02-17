@@ -392,7 +392,7 @@ const PlansFeaturesMain = ( {
 		isVar1dVariant,
 		isVar4Variant,
 		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
+	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -881,7 +881,6 @@ const PlansFeaturesMain = ( {
 						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
-						showLegacyStorageFeature={ showLegacyStorageFeature }
 						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {

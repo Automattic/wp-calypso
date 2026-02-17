@@ -1,10 +1,11 @@
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
 export interface LoadingScreenProps {
-	message?: string;
+	message?: ReactNode;
 	className?: string;
 }
 

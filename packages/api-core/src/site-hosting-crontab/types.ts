@@ -1,10 +1,8 @@
-export interface Crontab {
+export interface Crontab extends CrontabFormData {
 	cron_id: number;
-	schedule: string;
-	command: string;
 }
 
-export interface CreateCrontabParams {
+export interface CrontabFormData {
 	schedule: string;
 	command: string;
 }

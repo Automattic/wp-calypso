@@ -5,16 +5,25 @@ import page from '@automattic/calypso-router';
 import { screen, act } from '@testing-library/react';
 import { renderWithProvider } from '../../test-utils';
 import { ResponseDomain } from '../../utils/types';
-import { DomainsTableStateContext, useGenerateDomainsTableState } from '../domains-table';
+import { DomainsTableStateContext } from '../domains-table';
 import { DomainsTableRowActions } from '../domains-table-row-actions';
 
 jest.mock( '@automattic/calypso-router' );
 
-const render = ( el, props ) =>
+// Mock context value to avoid network requests from useGenerateDomainsTableState hooks
+const mockContextValue = {
+	onDomainAction: jest.fn(),
+	userCanSetPrimaryDomains: false,
+	updatingDomain: null,
+	domainStatusPurchaseActions: undefined,
+	hasConnectableSites: false,
+};
+
+const render = ( el ) =>
 	renderWithProvider( el, {
 		wrapper: function Wrapper( { children } ) {
 			return (
-				<DomainsTableStateContext.Provider value={ useGenerateDomainsTableState( props ) }>
+				<DomainsTableStateContext.Provider value={ mockContextValue as any }>
 					{ children }
 				</DomainsTableStateContext.Provider>
 			);
@@ -34,7 +43,7 @@ const defaultProps = {
 };
 
 test( 'when settings action is clicked it should show the settings page', async () => {
-	render( <DomainsTableRowActions { ...defaultProps } />, defaultProps );
+	render( <DomainsTableRowActions { ...defaultProps } /> );
 
 	const domainAction = screen.getByRole( 'button', {
 		name: 'Domain actions',
@@ -51,7 +60,7 @@ test( 'when settings action is clicked it should show the settings page', async 
 } );
 
 test( 'when dns action is clicked it should show the dns page', async () => {
-	render( <DomainsTableRowActions { ...defaultProps } />, defaultProps );
+	render( <DomainsTableRowActions { ...defaultProps } /> );
 
 	const domainAction = screen.getByRole( 'button', {
 		name: 'Domain actions',
@@ -68,7 +77,7 @@ test( 'when dns action is clicked it should show the dns page', async () => {
 } );
 
 test( 'when contact action is clicked it should show the contact page', async () => {
-	render( <DomainsTableRowActions { ...defaultProps } />, defaultProps );
+	render( <DomainsTableRowActions { ...defaultProps } /> );
 
 	const domainAction = screen.getByRole( 'button', {
 		name: 'Domain actions',
@@ -96,7 +105,7 @@ test( 'when transfer action is clicked it should show the transfer page', async 
 		domain: transferDomain,
 	};
 
-	render( <DomainsTableRowActions { ...props } />, props );
+	render( <DomainsTableRowActions { ...props } /> );
 
 	const domainAction = screen.getByRole( 'button', {
 		name: 'Domain actions',

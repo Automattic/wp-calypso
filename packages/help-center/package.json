@@ -66,6 +66,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/smooch": "^5.3.7",
+		"postcss": "^8.5.3",
 		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {

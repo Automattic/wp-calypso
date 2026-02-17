@@ -730,7 +730,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'calls onContinue after selecting a domain if flowAllowsMultipleDomainsInCart is false', async () => {
-		const addProductsToCart = jest.fn().mockReturnValue( {
+		const replaceProductsInCart = jest.fn().mockReturnValue( {
 			products: [
 				{
 					meta: 'my-domain.com',
@@ -742,7 +742,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {
-				addProductsToCart,
+				replaceProductsInCart,
 			} )
 		);
 
@@ -765,7 +765,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			supports_privacy: false,
 		} );
 
-		expect( addProductsToCart ).toHaveBeenCalledWith( [
+		expect( replaceProductsInCart ).toHaveBeenCalledWith( [
 			{
 				meta: 'my-domain.com',
 				product_slug: 'domain',
@@ -781,7 +781,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'does not call onContinue after selecting a domain if flowAllowsMultipleDomainsInCart is true', async () => {
-		const addProductsToCart = jest.fn().mockReturnValue( {
+		const replaceProductsInCart = jest.fn().mockReturnValue( {
 			products: [
 				{
 					meta: 'my-domain.com',
@@ -793,7 +793,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {
-				addProductsToCart,
+				replaceProductsInCart,
 			} )
 		);
 
@@ -816,7 +816,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			supports_privacy: false,
 		} );
 
-		expect( addProductsToCart ).toHaveBeenCalledWith( [
+		expect( replaceProductsInCart ).toHaveBeenCalledWith( [
 			{
 				meta: 'my-domain.com',
 				product_slug: 'domain',
@@ -827,6 +827,49 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		] );
 
 		expect( onContinue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'prepends products in the cart when adding a new domain', async () => {
+		const replaceProductsInCart = jest.fn();
+
+		mockUseShoppingCart.mockReturnValue(
+			buildShoppingCart( {
+				responseCart: {
+					products: [
+						buildProduct( {
+							meta: 'my-existing-domain.com',
+							product_slug: 'domain',
+							is_domain_registration: true,
+						} ),
+					],
+				},
+				replaceProductsInCart,
+			} )
+		);
+
+		const onContinue = jest.fn();
+
+		const { result } = renderHookWithProvider( () =>
+			useWPCOMDomainSearchProps( {
+				...defaultProps,
+				events: { ...defaultProps.events, onContinue },
+			} )
+		);
+
+		await result.current.cart.onAddItem( {
+			domain_name: 'my-domain.com',
+			product_slug: 'domain',
+			supports_privacy: false,
+		} );
+
+		expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+			expect.objectContaining( {
+				meta: 'my-domain.com',
+				product_slug: 'domain',
+				extra: { flow_name: 'flow-name' },
+			} ),
+			expect.objectContaining( { meta: 'my-existing-domain.com', product_slug: 'domain' } ),
+		] );
 	} );
 
 	it( 'calls both analytics and external events', () => {
