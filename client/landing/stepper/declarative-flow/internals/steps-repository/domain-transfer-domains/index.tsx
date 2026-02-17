@@ -1,9 +1,5 @@
 import { MaterialIcon } from '@automattic/components';
-import {
-	StepContainer,
-	GOOGLE_TRANSFER,
-	HUNDRED_YEAR_DOMAIN_TRANSFER,
-} from '@automattic/onboarding';
+import { StepContainer, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,7 +20,6 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 		submit?.();
 	};
 
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
 
 	const Container = isHundredYearDomainsTransferFlow ? HundredYearPlanStepWrapper : StepContainer;
@@ -33,9 +28,7 @@ const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
 		? __( 'Transfer your Domain' )
 		: __( 'Add your domains' );
 
-	const regularFlowsSubheaderText = isGoogleDomainsTransferFlow
-		? __( 'Enter your domain names and transfer codes below.' )
-		: __( 'Enter your domain names and authorization codes below.' );
+	const regularFlowsSubheaderText = __( 'Enter your domain names and authorization codes below.' );
 
 	const hundredYearFlowsSubheaderText = __(
 		'Start building your legacy. Secure your domain for the next 100 years.'

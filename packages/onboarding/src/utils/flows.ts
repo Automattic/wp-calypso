@@ -22,7 +22,6 @@ export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_AND_PLAN_FLOW = 'domain-and-plan';
 export const DOMAIN_TRANSFER = 'domain-transfer';
-export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_DOMAIN_TRANSFER = 'hundred-year-domain-transfer';
 export const HUNDRED_YEAR_DOMAIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';

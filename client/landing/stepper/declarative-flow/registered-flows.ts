@@ -6,7 +6,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	GOOGLE_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
@@ -116,9 +115,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './flows/domain-transfer/domain-transfer' ),
-
-	[ GOOGLE_TRANSFER ]: () =>
-		import( /* webpackChunkName: "google-transfer" */ './flows/google-transfer/google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import(
