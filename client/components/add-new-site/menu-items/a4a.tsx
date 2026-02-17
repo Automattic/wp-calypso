@@ -57,7 +57,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 		currentAgency?.approval_status === ApprovalStatus.PENDING ||
 		currentAgency?.approval_status === ApprovalStatus.REJECTED;
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' ) && ! isAgencyPendingOrRejected;
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	const handleOnClick = useCallback(
 		( modalType: string ) => {
@@ -146,10 +146,10 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 						description={ translate(
 							'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
 						) }
-						disabled={ ! hasAvailableDevSites }
+						disabled={ ! hasAvailableDevSites || isAgencyPendingOrRejected }
 						buttonProps={ {
 							onClick: () => {
-								if ( ! hasAvailableDevSites ) {
+								if ( ! hasAvailableDevSites || isAgencyPendingOrRejected ) {
 									return;
 								}
 								if ( paymentMethodRequired ) {
@@ -162,6 +162,13 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 								setMenuVisible( false );
 							},
 						} }
+						tooltip={
+							isAgencyPendingOrRejected
+								? translate(
+										'Your agency is not yet approved. Please wait for approval before creating a development site.'
+								  )
+								: undefined
+						}
 					>
 						<div>
 							<div className="add-new-site-popover__count">
