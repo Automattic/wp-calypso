@@ -191,6 +191,6 @@ export function useFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, locale, siteSlug ]
+		[ repositoryOptions, userNameOptions, locale, siteSlug, repositoryFilter ]
 	);
 }

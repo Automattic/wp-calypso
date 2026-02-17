@@ -21,7 +21,14 @@ const site = {
 		product_name_short: 'Business',
 		is_free: false,
 		features: {
-			active: [ 'atomic', 'backups', 'scan', 'performance', 'full-activity-log' ],
+			active: [
+				'atomic',
+				'backups',
+				'backups-self-serve',
+				'scan',
+				'performance',
+				'full-activity-log',
+			],
 		},
 	},
 	options: {
@@ -207,12 +214,19 @@ describe( '<SiteOverview>', () => {
 		expect( getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
-	test( 'renders the overview of a self-hosted Jetpack connected site', async () => {
+	test( 'renders the overview of a self-hosted free Jetpack connected site', async () => {
 		mockSite( {
 			...site,
 			jetpack: true,
 			jetpack_connection: true,
 			is_wpcom_atomic: false,
+			plan: {
+				...site.plan,
+				product_slug: 'jetpack_free',
+				product_name_short: 'Jetpack Free',
+				is_free: true,
+				features: { active: [] },
+			},
 		} as Site );
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
@@ -221,9 +235,9 @@ describe( '<SiteOverview>', () => {
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
 		expect( getCard( 'Visibility' ) ).toBeVisible();
-		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Back up your site' ) ).toHaveTextContent( 'Upgrade to unlock' );
 		expect( getCard( 'Subscribers' ) ).toBeVisible();
-		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Activate to unlock' );
+		expect( getCard( 'Scan for security threats' ) ).toHaveTextContent( 'Upgrade to unlock' );
 		expect( getCard( 'Subscriptions' ) ).toBeVisible();
 		expect( getCard( 'Latest activity' ) ).toBeVisible();
 	} );

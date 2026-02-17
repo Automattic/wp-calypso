@@ -13,20 +13,14 @@ export async function initializeWordPressPlayground(
 	onPlaygroundClientLoaded?: () => void
 ): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;
+	let needsUrlUpdate = false;
 
 	const url = new URL( window.location.href );
 	let playgroundId: string | null = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
 		// Create a new playground ID if none exists
 		playgroundId = crypto.randomUUID();
-		// update url in browser history
-		url.searchParams.set( 'playground', playgroundId );
-		window.history.replaceState( {}, '', url.toString() );
-		// update search params through react router
-		setSearchParams( ( prev ) => {
-			prev.set( 'playground', playgroundId as string );
-			return prev;
-		} );
+		needsUrlUpdate = true;
 	} else {
 		// Assume we have WP installed, we will attempt to boot and capture the error when boot fails
 		isWordPressInstalled = true;
@@ -60,8 +54,17 @@ export async function initializeWordPressPlayground(
 		}
 
 		await client.isReady();
+
+		if ( needsUrlUpdate ) {
+			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
+		}
+
 		return { blueprint, client };
 	} catch ( error ) {
+		if ( needsUrlUpdate ) {
+			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
+		}
+
 		logToLogstash( {
 			feature: 'calypso_client',
 			tags: [ 'playground-setup' ],
@@ -73,4 +76,19 @@ export async function initializeWordPressPlayground(
 		} );
 		throw error;
 	}
+}
+
+function updateUrlWithPlaygroundId(
+	playgroundId: string,
+	url: URL,
+	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void
+) {
+	// update url in browser history
+	url.searchParams.set( 'playground', playgroundId );
+	window.history.replaceState( {}, '', url.toString() );
+	// update search params through react router
+	setSearchParams( ( prev ) => {
+		prev.set( 'playground', playgroundId );
+		return prev;
+	} );
 }

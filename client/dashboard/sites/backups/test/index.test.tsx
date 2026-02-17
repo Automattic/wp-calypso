@@ -82,7 +82,7 @@ const mockSite: Site = {
 	plan: {
 		expired: false,
 		features: {
-			active: [ HostingFeatures.BACKUPS ],
+			active: [ HostingFeatures.BACKUPS_SELF_SERVE ],
 		},
 	},
 	is_wpcom_atomic: true,

@@ -1,16 +1,16 @@
-import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_BACKUPS_SELF_SERVE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
-	hasBlockingHold as hasBlockingHoldFunc,
+	default as HoldList,
 	getBlockingMessages,
 	HardBlockingNotice,
-	default as HoldList,
+	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -31,10 +31,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
-	getAutomatedTransferStatus,
-	isEligibleForAutomatedTransfer,
-	getEligibility,
 	EligibilityData,
+	getAutomatedTransferStatus,
+	getEligibility,
+	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -212,9 +212,9 @@ export default function WPCOMBusinessAT( {
 			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
 	);
 
-	// Check if the site has the backup feature
+	// Check if the site has the backup restore feature
 	const hasBackupFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
 	);
 
 	useEffect( () => {
