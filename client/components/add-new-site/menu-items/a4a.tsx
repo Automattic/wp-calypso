@@ -22,6 +22,9 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
@@ -32,6 +35,8 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const { setVisibleModalType } = useContext( AddNewSiteContext );
 
 	const pressableOwnership = usePressableOwnershipType();
+
+	const currentAgency = useSelector( getActiveAgency );
 
 	const { data: pendingSites } = useFetchPendingSites();
 	const { data: devLicenses } = useFetchDevLicenses();
@@ -48,7 +53,11 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const isAgencyPendingOrRejected =
+		currentAgency?.approval_status === ApprovalStatus.PENDING ||
+		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' ) && ! isAgencyPendingOrRejected;
 
 	const handleOnClick = useCallback(
 		( modalType: string ) => {

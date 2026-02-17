@@ -1,4 +1,4 @@
-import { Button, Card } from '@wordpress/components';
+import { Button, Card, Tooltip } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
@@ -9,7 +9,9 @@ import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fet
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import PressableBanner from 'calypso/assets/images/a8c-for-agencies/pressable-card-banner.svg';
 import WPCOMBanner from 'calypso/assets/images/a8c-for-agencies/wpcom-card-banner.svg';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -47,6 +49,11 @@ function HostingOptionCard( {
 export default function MigrationsHostingOptions() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const currentAgency = useSelector( getActiveAgency );
+	const isAgencyPendingOrRejected =
+		currentAgency?.approval_status === ApprovalStatus.PENDING ||
+		currentAgency?.approval_status === ApprovalStatus.REJECTED;
 
 	const { data: devLicenses } = useFetchDevLicenses();
 
@@ -107,14 +114,26 @@ export default function MigrationsHostingOptions() {
 						comment: '%(pendingSites)s is the number of free licenses available.',
 					} ) }
 					buttons={ [
-						<Button
-							variant="secondary"
+						<Tooltip
 							key="create-dev-site-cta-button"
-							disabled={ ! availableDevSites }
-							onClick={ onClickCreateWPCOMDevSite }
+							text={
+								isAgencyPendingOrRejected
+									? translate(
+											'Your agency is not yet approved. Please wait for approval before creating a development site.'
+									  )
+									: undefined
+							}
 						>
-							{ translate( 'Create a development site →' ) }
-						</Button>,
+							<span>
+								<Button
+									variant="secondary"
+									disabled={ ! availableDevSites || isAgencyPendingOrRejected }
+									onClick={ onClickCreateWPCOMDevSite }
+								>
+									{ translate( 'Create a development site →' ) }
+								</Button>
+							</span>
+						</Tooltip>,
 					] }
 				/>
 
