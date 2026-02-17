@@ -9,6 +9,7 @@ import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPalExpress,
+	useCreateExistingPayPalPPCP,
 } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
@@ -39,6 +40,9 @@ export default function useCreateAssignablePaymentMethods(
 	} = useFetchAvailablePaymentMethods();
 
 	const { paymentMethods: storedCards } = useStoredPaymentMethods( { type: 'card' } );
+	const { paymentMethods: storedPaypalTokens } = useStoredPaymentMethods( {
+		type: 'vault-token',
+	} );
 
 	const existingCardMethods = useCreateExistingCards( {
 		isStripeLoading,
@@ -51,6 +55,14 @@ export default function useCreateAssignablePaymentMethods(
 		isTaxInfoRequired: true,
 	} );
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+
+	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
+		storedPaymentMethods: storedPaypalTokens,
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ translate( 'Use this PayPal account' ) } />
+		),
+	} );
+
 	const stripeMethod = useCreateCreditCard( {
 		currency,
 		isStripeLoading,
@@ -64,17 +76,19 @@ export default function useCreateAssignablePaymentMethods(
 		hasExistingCardMethods,
 	} );
 
+	const hasExistingPayPalPPCPMethods =
+		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
 	const payPalExpressMethod = useCreatePayPalExpress( {
 		shouldShowTaxFields: true,
 		labelText:
-			currentPaymentMethodId === 'paypal-existing'
+			currentPaymentMethodId === 'paypal-existing' || hasExistingPayPalPPCPMethods
 				? String( translate( 'New PayPal account' ) )
 				: String( translate( 'PayPal' ) ),
 	} );
 
 	const paymentMethods = useMemo(
 		() =>
-			[ ...existingCardMethods, stripeMethod, payPalExpressMethod ]
+			[ ...existingCardMethods, ...existingPayPalPPCPMethods, stripeMethod, payPalExpressMethod ]
 				.filter( isValueTruthy )
 				.filter( ( method ) => {
 					// If there's an error fetching allowed payment methods, just allow all of them.
@@ -87,6 +101,7 @@ export default function useCreateAssignablePaymentMethods(
 		[
 			stripeMethod,
 			existingCardMethods,
+			existingPayPalPPCPMethods,
 			payPalExpressMethod,
 			allowedPaymentMethods,
 			allowedPaymentMethodsError,

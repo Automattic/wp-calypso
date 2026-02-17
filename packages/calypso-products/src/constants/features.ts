@@ -273,6 +273,7 @@ export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_BACKUPS = 'backups';
+export const WPCOM_FEATURES_BACKUPS_SELF_SERVE = 'backups-self-serve';
 export const WPCOM_FEATURES_BIG_SKY = 'big-sky';
 export const WPCOM_FEATURES_BACKUPS_RESTORE = 'restore';
 export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';

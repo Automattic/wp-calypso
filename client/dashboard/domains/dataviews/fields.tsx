@@ -201,7 +201,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
 	);
 
 	return fields;
