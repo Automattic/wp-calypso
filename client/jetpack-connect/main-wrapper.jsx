@@ -1,3 +1,4 @@
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { chevronLeftSmall } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -5,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import WooIconSmall from 'calypso/assets/images/woocommerce/woo_icon_small.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import Main from 'calypso/components/main';
@@ -54,6 +56,13 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		} );
 
 		const darkColorScheme = false;
+		const wooTopBarLogo = (
+			<img
+				src={ WooIconSmall }
+				alt={ translate( 'WooCommerce' ) }
+				className="jetpack-connect__woo-topbar-icon"
+			/>
+		);
 
 		return (
 			<Main className={ clsx( className, wrapperClassName ) }>
@@ -100,21 +109,8 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					</div>
 				) }
 				{ ! useCompactLogo && isWooJPC && (
-					<div className="jetpack-connect__main-logo">
-						<svg
-							className="jetpack-connect__woo-topbar-icon"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<circle cx="12" cy="12" r="12" fill="#873EFF" />
-							<path
-								d="M8.10061 8.54492C9.11488 8.54492 9.53385 8.97488 9.53386 9.98914V13.1422L11.3309 9.62534C11.7388 8.83157 12.268 8.54493 12.9294 8.54492C13.7673 8.54492 14.2193 9.00796 14.2193 9.95609V13.1422L16.1266 9.5592C16.5456 8.77645 17.0086 8.54492 17.7252 8.54492C19.0592 8.54492 19.4892 9.31667 18.8828 10.342L16.1156 15.0164C15.4872 16.0858 14.8367 16.4717 13.9548 16.4717C12.8303 16.4717 12.1026 15.7992 12.1026 14.6747V12.7674L10.9009 15.0164C10.3607 16.0307 9.64409 16.4717 8.75109 16.4717C7.63759 16.4717 6.87689 15.7992 6.87689 14.6637V10.6396H6.02798C5.26728 10.6396 4.84833 10.2537 4.84833 9.58123C4.84833 8.90873 5.24523 8.54492 6.02798 8.54492H8.10061Z"
-								fill="white"
-							/>
-						</svg>
+					<div className="jetpack-connect__woo-topbar">
+						<Step.TopBar compactLogo="always" logo={ wooTopBarLogo } />
 					</div>
 				) }
 				{ children }

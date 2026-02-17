@@ -996,42 +996,27 @@ $colophon-height: 50px;
 	&.is-woocommerce-core-profiler-flow {
 		background-color: var( --color-woocommerce-onboarding-background );
 
-		.jetpack-connect__main-logo {
-			text-align: center;
-			border-bottom: 1px solid var( --color-neutral-50 );
+		.jetpack-connect__woo-topbar {
 			position: absolute;
-			width: 100%;
-			left: 0;
 			top: 0;
-			height: 56px;
+			left: 0;
+			width: 100%;
+			min-height: 56px;
+			border-bottom: 1px solid var( --color-woocommerce-header-border );
+			background: var( --color-surface );
+			--step-container-v2-top-bar-padding: 0;
+			--step-container-v2-top-bar-content-height: 24px;
 
-			svg > g {
-				transform: translateX( 25% );
-			}
-
-			@include breakpoint-deprecated( '<660px' ) {
-				margin-top: 0;
-			}
-
-			.jetpack-connect__woo-topbar-icon {
-				margin-top: 16px;
+			.step-container-v2__top-bar {
+				min-height: 56px;
+				justify-content: center;
 			}
 		}
 
-		.jetpack-header {
-			margin: 0;
-			text-align: center;
-			margin-right: auto;
-			margin-left: auto;
-			padding-left: 0;
+		.jetpack-connect__woo-topbar-icon {
 			display: block;
-			height: 56px;
-			border-bottom: 1px solid var( --color-woocommerce-header-border );
-			background: var( --color-surface );
-
-			svg {
-				margin-top: 15px;
-			}
+			width: 24px;
+			height: 24px;
 		}
 
 		.formatted-header__subtitle {
