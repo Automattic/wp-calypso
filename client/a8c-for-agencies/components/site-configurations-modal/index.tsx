@@ -309,12 +309,12 @@ export default function SiteConfigurationsModal( {
 								/>
 								<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
 									{ translate(
-										'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+										'Allow clients to use the {{HcLink}}WordPress.com Help Center ↗{{/HcLink}} and {{HfLink}}hosting features ↗{{/HfLink}}.',
 										{
 											components: {
 												HcLink: (
-													<a
-														target="_blank"
+													<Button
+														variant="link"
 														href={ localizeUrl(
 															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
 														) }
@@ -322,8 +322,8 @@ export default function SiteConfigurationsModal( {
 													/>
 												),
 												HfLink: (
-													<a
-														target="_blank"
+													<Button
+														variant="link"
 														href={ localizeUrl(
 															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 														) }
