@@ -324,6 +324,8 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_PICKER.slug: {
 					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
+						setSiteUrl( providedDependencies.siteSlug );
+
 						return navigate(
 							`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=${ providedDependencies.siteSlug }`
 						);
@@ -372,21 +374,7 @@ const domain: FlowV2< typeof initialize > = {
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
 					setProductCartItems( addOns );
 
-					if ( ! pickedPlan ) {
-						// Since we're removing the paid domain, it means that the user chose to continue
-						// with a free domain. Because signupDomainOrigin should reflect the last domain
-						// selection status before they land on the checkout page, this value can be
-						// 'free' or 'choose-later'
-						if ( signupDomainOrigin === 'choose-later' ) {
-							setSignupDomainOrigin( signupDomainOrigin );
-						} else {
-							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
-						}
-
-						if ( siteSlug ) {
-							return goToCheckout( siteSlug );
-						}
-					} else if ( siteSlug ) {
+					const addItemsToCartAndGoToCheckout = () => {
 						setPendingAction( async () => {
 							if ( pickedPlan ) {
 								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
@@ -408,6 +396,24 @@ const domain: FlowV2< typeof initialize > = {
 						} );
 
 						return navigate( STEPS.PROCESSING.slug );
+					};
+
+					if ( ! pickedPlan ) {
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
+
+						if ( siteSlug ) {
+							return addItemsToCartAndGoToCheckout();
+						}
+					} else if ( siteSlug ) {
+						return addItemsToCartAndGoToCheckout();
 					}
 
 					setSignupCompleteFlowName( this.name );
