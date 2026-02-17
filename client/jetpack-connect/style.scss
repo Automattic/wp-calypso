@@ -1002,14 +1002,13 @@ $colophon-height: 50px;
 			left: 0;
 			width: 100%;
 			min-height: 56px;
-			border-bottom: 1px solid var( --color-woocommerce-header-border );
-			background: var( --color-surface );
+			background: var( --color-main-background );
 			--step-container-v2-top-bar-padding: 0;
 			--step-container-v2-top-bar-content-height: 24px;
 
 			.step-container-v2__top-bar {
 				min-height: 56px;
-				justify-content: center;
+				justify-content: flex-start;
 			}
 		}
 
