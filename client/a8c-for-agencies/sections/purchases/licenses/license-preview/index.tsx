@@ -232,12 +232,12 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{/a}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{LearnMoreLink}}Learn about billing for transferred sites{{/LearnMoreLink}}",
 								{
 									components: {
 										bold: <strong />,
 										br: <br />,
-										a: (
+										LearnMoreLink: (
 											<Button
 												borderless
 												compact
@@ -246,13 +246,6 @@ export default function LicensePreview( {
 														'https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/'
 													);
 												} }
-											/>
-										),
-										icon: (
-											<Gridicon
-												icon="external"
-												size={ 16 }
-												className="license-preview__migration-external-icon"
 											/>
 										),
 									},
