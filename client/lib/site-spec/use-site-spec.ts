@@ -13,7 +13,6 @@ declare global {
 				buildSiteUrl?: string;
 				locale?: string;
 				onMessage?: ( message: unknown ) => void;
-				onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
 				onError?: ( error: unknown ) => void;
 			} ) => void;
 		};
@@ -35,7 +34,6 @@ function resolveContainer( target: string | HTMLElement ): HTMLElement | null {
 type UseSiteSpecOptions = {
 	container?: string | HTMLElement;
 	onMessage?: ( message: unknown ) => void;
-	onSpecConfirm?: ( specData: unknown ) => void;
 	onError?: ( error: unknown ) => void;
 	siteSpecConfig?: SiteSpecConfig;
 };
@@ -45,13 +43,7 @@ type UseSiteSpecOptions = {
  * Cleans up global loader state on unmount.
  */
 export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
-	const {
-		container = '#site-spec-container',
-		onMessage,
-		onSpecConfirm,
-		onError,
-		siteSpecConfig,
-	} = options;
+	const { container = '#site-spec-container', onMessage, onError, siteSpecConfig } = options;
 
 	const locale = useLocale();
 
@@ -91,7 +83,6 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 					...config,
 					locale,
 					onMessage,
-					onSpecConfirm,
 					onError,
 				} );
 
@@ -111,5 +102,5 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 			resetSiteSpecScriptState();
 		};
 		// Re-run only if the container target, handlers, locale, or config change.
-	}, [ container, onMessage, onSpecConfirm, onError, locale, siteSpecConfig ] );
+	}, [ container, onMessage, onError, locale, siteSpecConfig ] );
 }
