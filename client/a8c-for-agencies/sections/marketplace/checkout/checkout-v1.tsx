@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -19,6 +20,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -55,6 +57,9 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
 	const canIssueLicenses = agency?.can_issue_licenses ?? true;
+	const isAgencyPendingOrRejected =
+		agency?.approval_status === ApprovalStatus.PENDING ||
+		agency?.approval_status === ApprovalStatus.REJECTED;
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
@@ -171,28 +176,43 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 			<NoticeSummary type="agency-purchase" />
 
 			<div className="checkout__aside-actions">
-				<span
-					role="button"
-					tabIndex={ 0 }
-					className="checkout__aside-actions-wrapper"
-					onMouseEnter={ handleShowPopover }
-					onClick={ handleShowPopover }
-					onKeyUp={ ( event ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							handleShowPopover;
-						}
-					} }
+				<Tooltip
+					text={
+						isAgencyPendingOrRejected
+							? translate(
+									'Your agency is not yet approved. Please wait for approval before making a purchase.'
+							  )
+							: undefined
+					}
 				>
-					<Button
-						primary
-						onClick={ onCheckout }
-						disabled={ ! checkoutItems.length || ! isReady || ! canIssueLicenses }
-						busy={ ! isReady }
-						ref={ wrapperRef }
+					<span
+						role="button"
+						tabIndex={ 0 }
+						className="checkout__aside-actions-wrapper"
+						onMouseEnter={ handleShowPopover }
+						onClick={ handleShowPopover }
+						onKeyUp={ ( event ) => {
+							if ( event.key === 'Enter' || event.key === ' ' ) {
+								handleShowPopover;
+							}
+						} }
 					>
-						{ translate( 'Purchase' ) }
-					</Button>
-				</span>
+						<Button
+							primary
+							onClick={ onCheckout }
+							disabled={
+								! checkoutItems.length ||
+								! isReady ||
+								! canIssueLicenses ||
+								isAgencyPendingOrRejected
+							}
+							busy={ ! isReady }
+							ref={ wrapperRef }
+						>
+							{ translate( 'Purchase' ) }
+						</Button>
+					</span>
+				</Tooltip>
 
 				{ siteId ? (
 					<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
