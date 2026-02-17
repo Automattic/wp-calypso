@@ -7,6 +7,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -1264,6 +1265,13 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+		const siteUrlFromQuery = getQueryArg( currentUrl, 'site_url' );
+		const siteName = decodeEntities(
+			( siteUrlFromQuery || this.props.authQuery.siteUrl || '' )
+				.replace( /^https?:\/\//, '' )
+				.replace( /\/$/, '' )
+		);
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isFromJetpackOnboarding = this.isFromJetpackOnboarding();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
@@ -1324,7 +1332,21 @@ export class JetpackAuthorize extends Component {
 							<BrandHeader
 								title={ translate( 'Connect your account' ) }
 								description={ translate(
-									'To continue setup, connect this site to your WordPress.com account.'
+									'To access all of the features and functionality in WooPayments, you’ll first need to connect %(siteName)s to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+									{
+										args: {
+											siteName,
+										},
+										components: {
+											doc: (
+												<a
+													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
 								) }
 							/>
 						) }
