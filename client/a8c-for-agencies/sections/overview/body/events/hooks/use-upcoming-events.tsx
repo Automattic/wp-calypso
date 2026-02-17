@@ -7,6 +7,8 @@ import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import WordCampAsia2026Image from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-compliment-image.svg';
+import WordCampAsia2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-image.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -59,6 +61,51 @@ export const useUpcomingEvents = () => {
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'a4a-wordcamp-2026-event-2026-02-17',
+				date: {
+					from: moment( '2026-04-09' ),
+					to: moment( '2026-04-11' ),
+				},
+				title: translate( 'Join Automattic for Agencies at WordCamp Asia' ),
+				subtitle: translate( 'Official sponsor' ),
+				descriptions: [
+					translate(
+						'WordCamp Asia 2026 is happening April 9–11 in Mumbai, India, and our Automattic for Agencies team would love to see you there. If you haven’t already, {{PassLink}}grab your pass for the event{{/PassLink}} and book your stay in one of the {{HotelLink}}official hotel blocks{{/HotelLink}} for the best rates!',
+						{
+							components: {
+								PassLink: (
+									<Button
+										variant="link"
+										href="https://asia.wordcamp.org/2026/event-pass"
+										target="_blank"
+									/>
+								),
+								HotelLink: (
+									<Button
+										variant="link"
+										href="https://asia.wordcamp.org/2026/official-hotels/"
+										target="_blank"
+									/>
+								),
+							},
+						}
+					),
+				],
+				ctas: [
+					{
+						variant: 'secondary',
+						label: translate( 'Register now' ),
+						url: 'https://asia.wordcamp.org/2026/',
+						trackEventName: 'calypso_a4a_overview_events_a4a_wordcamp_asia_2026_register_click',
+						isExternal: true,
+					},
+				],
+				logoUrl: WordCampAsia2026Logo,
+				imageUrl: WordCampAsia2026Image,
+				imageClassName: 'a4a-event__image--wordcamp-2026',
+				dateClassName: 'a4a-event__date--critical',
+			},
 			...( shouldShowPressablePromoOffer
 				? [
 						{

@@ -172,6 +172,7 @@ function SiteActivityLogsDataViews( {
 	// Reset pagination when the date range changes
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
 	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];

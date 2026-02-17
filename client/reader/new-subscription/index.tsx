@@ -8,6 +8,11 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
+import AddNew from './components/add-new';
+import AddReddit from './components/add-reddit';
+import AddSubstack from './components/add-substack';
+import AddTumblr from './components/add-tumblr';
+import AddYouTube from './components/add-youtube';
 
 interface Tab {
 	slug: string;
@@ -18,6 +23,9 @@ interface Tab {
 enum Tabs {
 	ADD_NEW = 'add-new',
 	REDDIT = 'reddit',
+	YOUTUBE = 'youtube',
+	TUMBLR = 'tumblr',
+	SUBSTACK = 'substack',
 }
 
 export const NEW_SUBSCRIPTION_TABS: typeof Tabs = Tabs;
@@ -45,10 +53,28 @@ export default function ReaderNewSubscriptionPage(
 			title: translate( 'Reddit' ),
 			path: `/${ pathPrefix }/reddit`,
 		},
+		{
+			slug: Tabs.YOUTUBE,
+			title: translate( 'YouTube' ),
+			path: `/${ pathPrefix }/youtube`,
+		},
+		{
+			slug: Tabs.TUMBLR,
+			title: translate( 'Tumblr' ),
+			path: `/${ pathPrefix }/tumblr`,
+		},
+		{
+			slug: Tabs.SUBSTACK,
+			title: translate( 'Substack' ),
+			path: `/${ pathPrefix }/substack`,
+		},
 	];
 	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
-		[ Tabs.ADD_NEW ]: <p>Add new subscription</p>,
-		[ Tabs.REDDIT ]: <p>Add Reddit subscription</p>,
+		[ Tabs.ADD_NEW ]: <AddNew />,
+		[ Tabs.REDDIT ]: <AddReddit />,
+		[ Tabs.YOUTUBE ]: <AddYouTube />,
+		[ Tabs.TUMBLR ]: <AddTumblr />,
+		[ Tabs.SUBSTACK ]: <AddSubstack />,
 	};
 
 	function recordTabClick( tabSlug: string ): void {
