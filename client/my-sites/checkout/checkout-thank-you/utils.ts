@@ -102,7 +102,7 @@ export function isOnlyDomainPurchases( purchases: ReceiptPurchase[] ): boolean {
 	);
 }
 
-export function hasMultipleDomainPurchases( purchases: ReceiptPurchase[] ): boolean {
+export function hasMultiplePurchases( purchases: ReceiptPurchase[] ): boolean {
 	return purchases.length > 1;
 }
 

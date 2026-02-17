@@ -91,7 +91,7 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	hasMultipleDomainPurchases,
+	hasMultiplePurchases,
 	isOnlyDomainTransfers,
 	isOnlyDomainPurchases,
 	isSearch,
@@ -643,7 +643,7 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				if ( shouldShowNewDomainThankYou() ) {
-					if ( hasMultipleDomainPurchases( purchases ) ) {
+					if ( hasMultiplePurchases( purchases ) ) {
 						const domainsUrl = this.props.hasDashboardOptIn
 							? dashboardLink( '/domains' )
 							: domainManagementRoot();
