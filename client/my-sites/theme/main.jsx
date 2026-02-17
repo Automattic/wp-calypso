@@ -406,6 +406,7 @@ class ThemeSheet extends Component {
 			this.props.defaultOption,
 			this.props.secondaryOption,
 			{
+				dispatchLivePreview: this.dispatchLivePreview.bind( this ),
 				styleVariation: this.getSelectedStyleVariation(),
 				previewSource: previewSource,
 			}
