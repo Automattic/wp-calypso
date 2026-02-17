@@ -16,6 +16,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
@@ -1319,7 +1320,15 @@ export class JetpackAuthorize extends Component {
 								</p>
 							</div>
 						) }
-						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && (
+						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && this.isWooJPC() && (
+							<BrandHeader
+								title={ translate( 'Connect your account' ) }
+								description={ translate(
+									'To continue setup, connect this site to your WordPress.com account.'
+								) }
+							/>
+						) }
+						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && ! this.isWooJPC() && (
 							<AuthFormHeader
 								authQuery={ this.props.authQuery }
 								isWooJPC={ this.isWooJPC() }
