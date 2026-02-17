@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useCallback } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
@@ -10,6 +11,7 @@ import DateAssigned from './components/date';
 import ProductDetails from './components/product-details';
 import TotalAmount from './components/total-amount';
 import type { ReferralPurchase } from '../types';
+
 import './style.scss';
 
 export default function ReferralPurchases( { purchases }: { purchases: ReferralPurchase[] } ) {
@@ -39,10 +41,18 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				enableSorting: false,
 			},
 			{
-				id: 'assigned-to',
-				label: translate( 'Assigned to' ).toUpperCase(),
+				id: 'site-details',
+				label: translate( 'Site details' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
+					if ( item.license.license_key.startsWith( 'pressable-' ) ) {
+						return (
+							<ExternalLink href="https://my.pressable.com/agency/auth">
+								{ translate( 'Manage in Pressable' ) }
+							</ExternalLink>
+						);
+					}
+
 					return (
 						<AssignedTo
 							purchase={ item }
