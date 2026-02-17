@@ -128,19 +128,19 @@ export default function AgentDock( {
 		registerSuggestions,
 	} = useAgentChat( agentConfig );
 
-	// Save the chat route for restoring the last conversation on page load
+	// Persist the chat route for cross-domain conversation restoration.
 	useEffect( () => {
 		// A new chat is one without a restored session and not mid-initialization via `shouldInitNewChat`
 		const isNewChat = isOrcChatView && ! state?.sessionId && ! state?.shouldInitNewChat;
 		// The server generates the session ID after the first agent reply
 		const isFirstServerMsg = messages.length === 2;
-		const sessionId = getStoredSessionId();
+		const sessionId = getStoredSessionId( agentId );
 
 		// Only save the route once for a new chat
 		if ( isNewChat && isFirstServerMsg && sessionId ) {
 			saveCurrentChatRoute( sessionId );
 		}
-	}, [ isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
+	}, [ agentId, isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
