@@ -21,6 +21,7 @@ import {
 } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isRedirectAllowed } from '../../utils/url';
 import { PaymentMethodSelector } from './payment-method-selector';
 import { useCreateAssignablePaymentMethods } from './payment-method-selector/use-create-assignable-payment-methods';
 
@@ -28,6 +29,7 @@ import './style.scss';
 
 function ChangePaymentMethod() {
 	const { purchaseId } = changePaymentMethodRoute.useParams();
+	const { redirect_to } = changePaymentMethodRoute.useSearch();
 	const navigate = useNavigate();
 
 	const numericId = parseInt( purchaseId );
@@ -63,6 +65,10 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
+		if ( redirect_to && isRedirectAllowed( redirect_to, purchase.domain ) ) {
+			window.location.href = redirect_to;
+			return;
+		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
 

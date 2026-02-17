@@ -1,5 +1,5 @@
 import { getProtocol } from '@wordpress/url';
-import { wpcomLink } from './link';
+import { dashboardOrigins, wpcomLink } from './link';
 
 export function isRelativeUrl( url: string ) {
 	if ( ! url ) {
@@ -21,4 +21,26 @@ export function queryParamToArray( param: unknown ): string[] {
 	return typeof param === 'string'
 		? param.split( ',' ).map( ( domain: string ) => domain.trim() )
 		: [];
+}
+
+/**
+ * Validates a redirect URL against a list of trusted origins.
+ * Prevents open redirect attacks by only allowing relative URLs,
+ * URLs pointing to trusted Automattic domains, or URLs matching
+ * a specific trusted domain (e.g., a purchase's site domain).
+ */
+export function isRedirectAllowed( url: string, trustedDomain?: string ): boolean {
+	const trimmed = url.trim();
+	if ( isRelativeUrl( trimmed ) ) {
+		return true;
+	}
+	try {
+		const parsed = new URL( trimmed );
+		if ( trustedDomain && parsed.hostname === trustedDomain ) {
+			return true;
+		}
+		return dashboardOrigins().some( ( origin ) => parsed.origin === origin );
+	} catch {
+		return false;
+	}
 }
