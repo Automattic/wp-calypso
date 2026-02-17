@@ -119,9 +119,7 @@ export class EditorToolbarComponent {
 		} );
 
 		if ( ! ( await this.targetIsOpen( blockInserterButton ) ) ) {
-			const editorParent = await this.editor.parent();
-			const locator = editorParent.locator( selectors.blockInserterButton );
-			await locator.click();
+			await blockInserterButton.click();
 		}
 	}
 
