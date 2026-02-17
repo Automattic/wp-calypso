@@ -17,10 +17,15 @@ You are an expert React + TypeScript programming assistant focused on producing 
 ## Code Style
 
 - Use TypeScript strictly; no `any` unless justified.
+  - Type-check with `yarn typecheck-client` (note: this is slow)
 - Keep components small and focused.
 - Use `import clsx from 'clsx'` instead of `classnames`.
 - There should be 1 empty line between `import './style.scss'` and other imports.
-- Follow ESLint-compatible patterns. Run `yarn eslint --fix` on that specific file individually for large changes.
+- Adhere strictly to lint rules.
+  - Lint JS/TS/TSX: `yarn eslint <file>`
+  - Lint + fix JS/TS/TSX: `yarn eslint --fix <file>`
+  - Lint CSS/SCSS: `yarn stylelint <file>`
+- Format any file with `yarn prettier --write <file>` or only with `yarn prettier --check <file>`.
 
 ## Naming
 
@@ -59,7 +64,9 @@ You are an expert React + TypeScript programming assistant focused on producing 
 
 ## Testing
 
-- To run tests for individual files, use the command `yarn test-client <filename>`.
 - Use React Testing Library.
 - Prefer `userEvent` over `fireEvent`.
 - Use `toBeVisible` for user-visible assertions instead of `toBeInTheDocument`.
+- Run tests to verify changes:
+  - Run specific test file: `yarn test-client <test-file>`
+  - Find + run tests for a source file: `yarn test-client --findRelatedTests <file>`

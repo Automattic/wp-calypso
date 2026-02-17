@@ -2,7 +2,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Dashboard: Basic & Routing',
-	{ tag: [ tags.DASHBOARD_PR, tags.DASHBOARD_RELEASE ] },
+	{ tag: [ tags.DASHBOARD_PR, tags.CALYPSO_RELEASE ] },
 	() => {
 		test( 'As a WordPress.com user, I can see the new Multi-site Dashboard page as a list of my sites', async ( {
 			accountGivenByEnvironment,
@@ -10,7 +10,8 @@ test.describe(
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page );
+				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {
@@ -29,7 +30,8 @@ test.describe(
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page );
+				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {

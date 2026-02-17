@@ -32,7 +32,6 @@
 		"test:pw:a8c-for-agencies": "yarn playwright test --project=chrome --grep @a8c-for-agencies",
 		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n",
 		"test:pw:dashboard-pr": "yarn playwright test --project=chrome --grep @dashboard-pr",
-		"test:pw:dashboard-release": "yarn playwright test --project=chrome --grep @dashboard-release",
 		"test:pw:p2": "yarn playwright test --project=chrome --grep @p2"
 	},
 	"devDependencies": {

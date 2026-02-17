@@ -27,7 +27,6 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
@@ -1089,53 +1088,6 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	}
 })
 
-object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Dashboard_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "80904868-c163-4fec-817b-907611985c33"
-	name = "Dashboard Pre-Release E2E Tests"
-	description = "Runs Dashboard pre-release e2e tests using Playwright Test runner with build matrix"
-
-	params {
-		param("TEST_GROUP", "@dashboard-release")
-		param("CALYPSO_BASE_URL", "https://wordpress.com")
-		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	}
-
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile"),
-			))
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:<default>
-			""".trimIndent()
-			triggerRules = """
-				-:**.md
-			""".trimIndent()
-		}
-	}
-})
 
 object JestPreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Jest_Pre_Release")

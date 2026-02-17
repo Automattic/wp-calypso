@@ -150,6 +150,7 @@ function SiteLogsDataViews( {
 
 	useEffect( () => {
 		updateView( { ...view, page: 1 } );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
 	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {

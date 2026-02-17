@@ -1,19 +1,21 @@
+import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
-import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
-import './style.scss';
-
-const DiscoverAddNew = () => {
+export default function AddYouTube(): JSX.Element {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 
@@ -23,10 +25,11 @@ const DiscoverAddNew = () => {
 
 	const onSubscribeToggle = useCallback( (): void => {
 		setHasFeedPreview( false ); // Close the feed preview when the subscription is toggled.
-	}, [] );
+		dispatch( requestFollows() ); // In other places we show subscriptions table due to which list get refreshed automatically. Here we need to refresh the list manually.
+	}, [ dispatch ] );
 
 	return (
-		<div className="discover-add-new">
+		<div className="reader-add-youtube">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ ! isEmailVerified && (
 					<Notice
@@ -39,32 +42,37 @@ const DiscoverAddNew = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `discover-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
-					<h2 className="discover-add-new__form-title">
-						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
-					</h2>
+				<div className={ `reader-add-youtube__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<AddSitesForm
-						pathname="/discover/add-new"
-						source="discover-add-new"
+						placeholder={ translate( 'Search by YouTube URL' ) }
+						buttonText={ translate( 'Add Feed' ) }
+						pathname="/reader/new/youtube"
+						source="reader-add-youtube"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
-				{ ! hasFeedPreview && (
-					<div
-						className={ `discover-add-new__subscriptions${
-							isEmailVerified ? '' : ' is-disabled'
-						}` }
-					>
-						<h2 className="discover-add-new__subscriptions-title">
-							{ translate( 'Your subscriptions' ) }
+				{ ! hasFeedPreview ? (
+					<div className="reader-add-youtube__instructions">
+						<div className="reader-add-youtube__instructions-icon">
+							<ReaderYouTubeIcon iconSize={ 75 } />
+						</div>
+						<h2 className="reader-add-youtube__instructions-title">
+							{ translate( 'Common YouTube URLs' ) }
 						</h2>
-						<SiteSubscriptionsList layout="compact" />
+						<ul className="reader-add-youtube__instructions-list">
+							<li>
+								<strong>{ translate( 'Channel feed:' ) }</strong>
+								{ ' www.youtube.com/@YT_HANDLE' }
+							</li>
+							<li>
+								<strong>{ translate( 'Playlist feed:' ) }</strong>
+								{ ' www.youtube.com/feeds/videos.xml?playlist_id=PLAYLIST_ID' }
+							</li>
+						</ul>
 					</div>
-				) }
+				) : null }
 			</SubscriptionManagerContextProvider>
 		</div>
 	);
-};
-
-export default DiscoverAddNew;
+}

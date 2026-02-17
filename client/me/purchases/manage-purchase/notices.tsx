@@ -7,6 +7,7 @@ import {
 	isDomainRegistration,
 	isAkismetFreeProduct,
 	PLAN_BUSINESS,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -316,6 +317,7 @@ class PurchaseNotice extends Component<
 
 	renderPurchaseExpiringNotice() {
 		const EXCLUDED_PRODUCTS = [
+			PLAN_PERSONAL_TRIAL_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
@@ -1275,6 +1277,7 @@ class PurchaseNotice extends Component<
 		}
 
 		if (
+			purchase.productSlug === PLAN_PERSONAL_TRIAL_MONTHLY ||
 			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
 			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
 			purchase.productSlug === PLAN_HOSTING_TRIAL_MONTHLY

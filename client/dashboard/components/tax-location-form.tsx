@@ -1,15 +1,21 @@
-import { countryListQuery } from '@automattic/api-queries';
+import { countryListQuery, statesListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import type { CountryListItem, StoredPaymentMethodTaxLocation } from '@automattic/api-core';
+import type {
+	CountryListItem,
+	StatesListItem,
+	StoredPaymentMethodTaxLocation,
+} from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 function getFields( {
 	countryList,
+	statesList,
 }: {
 	countryList: CountryListItem[];
+	statesList: StatesListItem[] | undefined;
 } ): Field< StoredPaymentMethodTaxLocation >[] {
 	return [
 		{
@@ -31,7 +37,14 @@ function getFields( {
 		{
 			id: 'subdivision_code',
 			label: __( 'State/Province' ),
-			Edit: 'text',
+			Edit: statesList && statesList.length > 0 ? 'select' : 'text',
+			elements:
+				statesList && statesList.length > 0
+					? statesList.map( ( state ) => ( {
+							label: state.name,
+							value: state.code,
+					  } ) )
+					: undefined,
 		},
 		{
 			id: 'city',
@@ -110,6 +123,12 @@ export function TaxLocationForm( {
 		);
 	}, [ countryList, selectedCountryCode ] );
 
+	// Query states list for the selected country
+	const { data: statesList } = useQuery( {
+		...statesListQuery( selectedCountryCode?.toLowerCase() || '' ),
+		enabled: !! selectedCountryCode,
+	} );
+
 	const form = useMemo(
 		() => ( {
 			type: 'regular' as const,
@@ -119,6 +138,11 @@ export function TaxLocationForm( {
 		[ selectedCountryItem ]
 	);
 
+	const fields = useMemo(
+		() => getFields( { countryList: countryList || [], statesList } ),
+		[ countryList, statesList ]
+	);
+
 	if ( ! countryList ) {
 		return null;
 	}
@@ -126,7 +150,7 @@ export function TaxLocationForm( {
 	return (
 		<DataForm< StoredPaymentMethodTaxLocation >
 			data={ data }
-			fields={ getFields( { countryList } ) }
+			fields={ fields }
 			form={ form }
 			onChange={ onChange }
 		/>

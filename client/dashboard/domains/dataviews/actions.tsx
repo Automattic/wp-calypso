@@ -38,7 +38,7 @@ const noop = () => {};
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const setPrimaryDomainMutation = useMutation( {
@@ -333,7 +333,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
-			createErrorNotice,
 			sitesByBlogId,
 			recordTracksEvent,
 		]
