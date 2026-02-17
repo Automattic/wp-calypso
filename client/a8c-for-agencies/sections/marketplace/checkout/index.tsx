@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useContext } from 'react';
+import page from '@automattic/calypso-router';
+import { useContext, useEffect } from 'react';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
@@ -16,6 +21,21 @@ interface CheckoutProps {
 function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutProps ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
+
+	const currentAgency = useSelector( getActiveAgency );
+	const isAgencyPendingOrRejected =
+		currentAgency?.approval_status === ApprovalStatus.PENDING ||
+		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+
+	useEffect( () => {
+		if ( isAgencyPendingOrRejected && ! isClient ) {
+			page.redirect( A4A_MARKETPLACE_LINK );
+		}
+	}, [ isAgencyPendingOrRejected, isClient ] );
+
+	if ( isAgencyPendingOrRejected && ! isClient ) {
+		return null;
+	}
 
 	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context
 	if (

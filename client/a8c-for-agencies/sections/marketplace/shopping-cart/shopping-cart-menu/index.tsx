@@ -1,9 +1,11 @@
 import { Button } from '@automattic/components';
-import { Popover } from '@wordpress/components';
+import { Popover, Tooltip } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext, TermPricingContext } from '../../context';
@@ -22,6 +24,11 @@ type Props = {
 
 export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
 	const translate = useTranslate();
+
+	const currentAgency = useSelector( getActiveAgency );
+	const isAgencyPendingOrRejected =
+		currentAgency?.approval_status === ApprovalStatus.PENDING ||
+		currentAgency?.approval_status === ApprovalStatus.REJECTED;
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const { termPricing } = useContext( TermPricingContext );
@@ -81,14 +88,25 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 						<CommissionsInfo items={ items } termPricing={ termPricing } />
 					) }
 
-					<Button
-						className="shopping-cart__menu-checkout-button"
-						onClick={ onCheckout }
-						disabled={ ! items.length }
-						primary
+					<Tooltip
+						text={
+							isAgencyPendingOrRejected
+								? translate(
+										'Your agency is not yet approved. Please wait for approval before making a purchase.'
+								  )
+								: undefined
+						}
 					>
-						{ translate( 'Checkout' ) }
-					</Button>
+						<span className="shopping-cart__menu-checkout-button">
+							<Button
+								onClick={ onCheckout }
+								disabled={ ! items.length || isAgencyPendingOrRejected }
+								primary
+							>
+								{ translate( 'Checkout' ) }
+							</Button>
+						</span>
+					</Tooltip>
 				</div>
 			</div>
 		</Popover>
