@@ -232,12 +232,12 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{LearnMoreLink}}Learn about billing for transferred sites{{/LearnMoreLink}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{LearnMoreButton}}Learn about billing for transferred sites{{/LearnMoreButton}}",
 								{
 									components: {
 										bold: <strong />,
 										br: <br />,
-										LearnMoreLink: (
+										LearnMoreButton: (
 											<Button
 												borderless
 												compact
