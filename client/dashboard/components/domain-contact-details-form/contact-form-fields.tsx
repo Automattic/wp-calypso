@@ -96,6 +96,7 @@ export const getContactFormFields = (
 						// Sync validator - set the result directly
 						setValidationMessage( result ?? null );
 					}
+					// eslint-disable-next-line react-hooks/exhaustive-deps -- re-validate only when phoneValue changes
 				}, [ phoneValue ] );
 
 				return (

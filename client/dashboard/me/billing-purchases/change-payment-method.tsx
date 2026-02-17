@@ -37,12 +37,19 @@ function ChangePaymentMethod() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
 
 	const { isLoading: isLoadingStoredCards } = useQuery(
-		userPaymentMethodsQuery( { type: 'card' } )
+		userPaymentMethodsQuery( {
+			type: 'card',
+		} )
+	);
+	const { isLoading: isLoadingPayPal } = useQuery(
+		userPaymentMethodsQuery( {
+			type: 'vault-token',
+		} )
 	);
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
-	const isDataLoading = isLoadingStoredCards || isStripeLoading;
+	const isDataLoading = isLoadingStoredCards || isLoadingPayPal || isStripeLoading;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {

@@ -129,6 +129,7 @@ export const TrialPlans = [
 export const DotcomFeatures = {
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
+	BACKUPS_SELF_SERVE: 'backups-self-serve',
 	BIG_SKY: 'big-sky',
 	DOMAIN_MAPPING: 'domain-mapping',
 	INSTALL_PLUGINS: 'install-plugins',
@@ -182,6 +183,7 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
 	BACKUPS: DotcomFeatures.BACKUPS,
+	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
 	BIG_SKY: DotcomFeatures.BIG_SKY,
 	CACHING: DotcomFeatures.ATOMIC,
 	DATABASE: DotcomFeatures.SFTP,

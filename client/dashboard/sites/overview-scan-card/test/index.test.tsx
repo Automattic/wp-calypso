@@ -44,10 +44,6 @@ jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 } ) );
 
-afterEach( () => {
-	jest.clearAllMocks();
-} );
-
 describe( 'ScanCard', () => {
 	test( 'shows "No risks found" when there are no threats', async () => {
 		mockFetchSiteScan.mockResolvedValue( {

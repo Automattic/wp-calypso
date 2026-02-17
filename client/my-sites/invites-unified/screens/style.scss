@@ -1,0 +1,10 @@
+// Remove layout padding for the unified invite accept screen
+body.is-section-accept-invite-unified {
+	.layout__content {
+		padding: 0 !important;
+	}
+}
+
+.accept-invite-consent-wrapper {
+	margin-bottom: 1.5rem;
+}

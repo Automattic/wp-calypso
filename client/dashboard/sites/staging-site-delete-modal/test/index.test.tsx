@@ -84,10 +84,6 @@ const renderModal = ( site: Site, onClose = jest.fn() ) =>
 	render( <StagingSiteDeleteModal site={ site } onClose={ onClose } /> );
 
 describe( 'StagingSiteDeleteModal', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Modal Display', () => {
 		test( 'renders modal with correct title and content', () => {
 			renderModal( mockStagingSite );

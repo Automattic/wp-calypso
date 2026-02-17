@@ -46,7 +46,6 @@ const defaultProps = {
 
 describe( 'UsernameUpdateForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		mockIsUsernameValid.mockReturnValue( false );
 		mockGetUsernameValidationMessage.mockReturnValue( null );
 		mockGetAllowedActions.mockReturnValue( {} );
