@@ -387,7 +387,7 @@ const domain: FlowV2< typeof initialize > = {
 					const addItemsToCartAndGoToCheckout = () => {
 						setPendingAction( async () => {
 							const aggregatedCartItems = [
-								pickedPlan,
+								...( pickedPlan ? [ pickedPlan ] : [] ),
 								...( addOns.length > 0 ? addOns : [] ),
 								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
 							];
