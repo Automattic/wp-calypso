@@ -41,15 +41,21 @@ async function rateMessage(
 	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
-	rating: 'up' | 'down'
+	rating: 'up' | 'down',
+	messageText?: string
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
+	const body: Record< string, string > = { message_id: messageId, rating };
+	if ( messageText ) {
+		body.message_text = messageText;
+	}
+
 	fetch( url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify( { message_id: messageId, rating } ),
+		body: JSON.stringify( body ),
 	} ).catch( () => {} );
 }
 
@@ -189,7 +195,16 @@ export default function useFeedback( {
 			message_id: messageId,
 		} );
 
-		rateMessage( currentAuthProvider, currentSessionId, messageId, feedback );
+		const message = messagesRef.current.find( ( m ) => m.id === messageId );
+		const messageText = message ? getMessageText( message ) : undefined;
+
+		rateMessage(
+			currentAuthProvider,
+			currentSessionId,
+			messageId,
+			feedback,
+			messageText ?? undefined
+		);
 
 		if ( feedback === 'down' ) {
 			setShowFeedbackInput( true );

@@ -123,15 +123,16 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs up feedback', () => {
-		it( 'sends rating via fetch when thumbs up is clicked', async () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+		it( 'sends rating with message_text via fetch when thumbs up is clicked', async () => {
+			const messages = [ createMessage( 'msg-1', 'agent', 'Here is the answer' ) ];
+			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
+			const actions = registrationCall.actions( messages[ 0 ] );
 			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
 
 			await act( async () => {
-				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
+				await thumbsUpAction?.onClick( messages[ 0 ] );
 			} );
 
 			expect( mockAuthProvider ).toHaveBeenCalled();
@@ -142,7 +143,11 @@ describe( 'useFeedback', () => {
 					headers: expect.objectContaining( {
 						Authorization: 'Bearer test-token',
 					} ),
-					body: JSON.stringify( { message_id: 'msg-1', rating: 'up' } ),
+					body: JSON.stringify( {
+						message_id: 'msg-1',
+						rating: 'up',
+						message_text: 'Here is the answer',
+					} ),
 				} )
 			);
 		} );
@@ -180,22 +185,27 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs down feedback', () => {
-		it( 'sends rating via fetch when thumbs down is clicked', async () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+		it( 'sends rating with message_text via fetch when thumbs down is clicked', async () => {
+			const messages = [ createMessage( 'msg-1', 'agent', 'Bad answer' ) ];
+			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
+			const actions = registrationCall.actions( messages[ 0 ] );
 			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
 
 			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
+				await thumbsDownAction?.onClick( messages[ 0 ] );
 			} );
 
 			expect( mockFetch ).toHaveBeenCalledWith(
 				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 				expect.objectContaining( {
 					method: 'POST',
-					body: JSON.stringify( { message_id: 'msg-1', rating: 'down' } ),
+					body: JSON.stringify( {
+						message_id: 'msg-1',
+						rating: 'down',
+						message_text: 'Bad answer',
+					} ),
 				} )
 			);
 		} );
