@@ -34,14 +34,7 @@ export default function RefundEligibilityNotice( {
 	}
 
 	return (
-		<Notice
-			variant="info"
-			actions={
-				<Button variant="link" isDestructive onClick={ onClaimRefund }>
-					{ __( 'Remove plan and claim refund' ) }
-				</Button>
-			}
-		>
+		<Notice variant="info">
 			{ sprintf(
 				/* translators: %(refundAmount)s is a monetary amount in the form "[currency-symbol][amount]" */
 				__(
@@ -50,7 +43,10 @@ export default function RefundEligibilityNotice( {
 				{
 					refundAmount,
 				}
-			) }
+			) }{ ' ' }
+			<Button variant="link" isDestructive onClick={ onClaimRefund }>
+				{ __( 'Remove plan and claim refund' ) }
+			</Button>
 		</Notice>
 	);
 }

@@ -1222,12 +1222,13 @@ export default function CancelPurchase() {
 				/>
 			}
 			notices={
-				! state.surveyShown && (
-					<>
-						<RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onCancellationStart } />
-						<TimeRemainingNotice purchase={ purchase } />
-					</>
-				)
+				! state.surveyShown &&
+				( hasAmountAvailableToRefund( purchase ) &&
+				getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ? (
+					<RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onCancellationStart } />
+				) : (
+					<TimeRemainingNotice purchase={ purchase } />
+				) )
 			}
 		>
 			<Card>
