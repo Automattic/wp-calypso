@@ -3,7 +3,6 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
-import apiFetch from '@wordpress/api-fetch';
 import { getSessionId as getStoredSessionId } from '../../../utils/agent-session';
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
@@ -53,12 +52,13 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@automattic/calypso-analytics' );
-jest.mock( '@wordpress/api-fetch' );
 jest.mock( '../../../utils/agent-session' );
+
+const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
+global.fetch = mockFetch;
 
 const mockRegisterMessageActions = jest.fn();
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
-const mockApiFetch = apiFetch as jest.MockedFunction< typeof apiFetch >;
 const mockGetStoredSessionId = getStoredSessionId as jest.MockedFunction<
 	typeof getStoredSessionId
 >;
@@ -74,7 +74,7 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 describe( 'useFeedback', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockApiFetch.mockResolvedValue( {} );
+		mockFetch.mockResolvedValue( { ok: true } );
 		mockGetStoredSessionId.mockReturnValue( 'stored-session-123' );
 	} );
 
@@ -123,7 +123,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs up feedback', () => {
-		it( 'sends rating via apiFetch when thumbs up is clicked', async () => {
+		it( 'sends rating via fetch when thumbs up is clicked', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
@@ -135,14 +135,14 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( mockAuthProvider ).toHaveBeenCalled();
-			expect( mockApiFetch ).toHaveBeenCalledWith(
+			expect( mockFetch ).toHaveBeenCalledWith(
+				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 				expect.objectContaining( {
-					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 					method: 'POST',
 					headers: expect.objectContaining( {
 						Authorization: 'Bearer test-token',
 					} ),
-					data: { message_id: 'msg-1', rating: 'up' },
+					body: JSON.stringify( { message_id: 'msg-1', rating: 'up' } ),
 				} )
 			);
 		} );
@@ -180,7 +180,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs down feedback', () => {
-		it( 'sends rating via apiFetch when thumbs down is clicked', async () => {
+		it( 'sends rating via fetch when thumbs down is clicked', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
@@ -191,11 +191,11 @@ describe( 'useFeedback', () => {
 				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
-			expect( mockApiFetch ).toHaveBeenCalledWith(
+			expect( mockFetch ).toHaveBeenCalledWith(
+				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 				expect.objectContaining( {
-					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 					method: 'POST',
-					data: { message_id: 'msg-1', rating: 'down' },
+					body: JSON.stringify( { message_id: 'msg-1', rating: 'down' } ),
 				} )
 			);
 		} );
@@ -233,7 +233,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'feedback text submission', () => {
-		it( 'submits feedback with conversation context via apiFetch', async () => {
+		it( 'submits feedback with conversation context via fetch', async () => {
 			const messages = [
 				createMessage( 'msg-1', 'user', 'How do I set up my site?' ),
 				createMessage( 'msg-2', 'agent', 'Here are the steps...' ),
@@ -257,20 +257,24 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'The solution was unclear' );
 			} );
 
-			expect( mockApiFetch ).toHaveBeenCalledWith(
+			const textCall = mockFetch.mock.calls.find(
+				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
+			);
+			expect( textCall ).toBeDefined();
+			expect( textCall[ 0 ] ).toBe(
+				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/text'
+			);
+			const body = JSON.parse( textCall[ 1 ].body );
+			expect( body ).toEqual(
 				expect.objectContaining( {
-					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/text',
-					method: 'POST',
-					data: expect.objectContaining( {
-						message_id: 'msg-4',
-						feedback: 'The solution was unclear',
-						previous_messages: [
-							{ role: 'user', text: 'How do I set up my site?' },
-							{ role: 'agent', text: 'Here are the steps...' },
-							{ role: 'user', text: 'That did not work' },
-							{ role: 'agent', text: 'Let me try a different approach...' },
-						],
-					} ),
+					message_id: 'msg-4',
+					feedback: 'The solution was unclear',
+					previous_messages: [
+						{ role: 'user', text: 'How do I set up my site?' },
+						{ role: 'agent', text: 'Here are the steps...' },
+						{ role: 'user', text: 'That did not work' },
+						{ role: 'agent', text: 'Let me try a different approach...' },
+					],
 				} )
 			);
 		} );
@@ -300,12 +304,11 @@ describe( 'useFeedback', () => {
 			} );
 
 			// Find the feedback text submission call (the /text URL)
-			const feedbackCall = mockApiFetch.mock.calls.find(
-				( call ) => ( call[ 0 ] as { url: string } ).url?.includes( '/text' )
+			const feedbackCall = mockFetch.mock.calls.find(
+				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
 			);
 			expect( feedbackCall ).toBeDefined();
-			const callData = ( feedbackCall![ 0 ] as { data: { previous_messages: { text: string }[] } } )
-				.data;
+			const callData = JSON.parse( feedbackCall[ 1 ].body );
 			expect( callData.previous_messages ).toHaveLength( 4 );
 			expect( callData.previous_messages[ 0 ].text ).toBe( 'Message 3' );
 		} );
@@ -348,10 +351,12 @@ describe( 'useFeedback', () => {
 				await result.current.submitFeedbackText( 'Test' );
 			} );
 
-			expect( mockApiFetch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					url: 'https://public-api.wordpress.com/wpcom/v2/ai/feedback/stored-session-123/text',
-				} )
+			const textCall = mockFetch.mock.calls.find(
+				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
+			);
+			expect( textCall ).toBeDefined();
+			expect( textCall[ 0 ] ).toBe(
+				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/stored-session-123/text'
 			);
 		} );
 
@@ -367,13 +372,13 @@ describe( 'useFeedback', () => {
 			} );
 
 			// Clear mocks from rating call
-			mockApiFetch.mockClear();
+			mockFetch.mockClear();
 
 			await act( async () => {
 				await result.current.submitFeedbackText( '   ' );
 			} );
 
-			expect( mockApiFetch ).not.toHaveBeenCalled();
+			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -411,7 +416,7 @@ describe( 'useFeedback', () => {
 				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
 			} );
 
-			expect( mockApiFetch ).not.toHaveBeenCalled();
+			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -442,12 +447,11 @@ describe( 'useFeedback', () => {
 			} );
 
 			// Find the feedback text submission call (the /text URL)
-			const feedbackCall = mockApiFetch.mock.calls.find(
-				( call ) => ( call[ 0 ] as { url: string } ).url?.includes( '/text' )
+			const feedbackCall = mockFetch.mock.calls.find(
+				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
 			);
 			expect( feedbackCall ).toBeDefined();
-			const callData = ( feedbackCall![ 0 ] as { data: { previous_messages: { text: string }[] } } )
-				.data;
+			const callData = JSON.parse( feedbackCall[ 1 ].body );
 			expect( callData.previous_messages ).toHaveLength( 3 );
 			expect( callData.previous_messages[ 2 ].text ).toBe( 'Here are your analytics' );
 			// Tool JSON is replaced with a human-readable placeholder
