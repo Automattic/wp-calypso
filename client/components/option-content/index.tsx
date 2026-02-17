@@ -72,7 +72,7 @@ export function OptionContent( {
 							<HStack
 								className="option-content__benefits-item"
 								alignment="left"
-								spacing={ isMobile ? 3 : 4 }
+								spacing={ isMobile ? 1 : 2 }
 								key={ 'benefit-' + index }
 							>
 								{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }

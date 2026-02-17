@@ -1,0 +1,16 @@
+.domain-only-new {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	button.domain-only-new__migrate-link {
+		margin: 0 auto;
+		width: fit-content;
+		color: inherit;
+		font-weight: 500;
+
+		&:hover {
+			color: inherit;
+		}
+	}
+}
