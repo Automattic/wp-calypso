@@ -48,6 +48,7 @@ import {
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
 	isAkismetTemporarySitePurchase,
+	isDotcomPlan,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
@@ -650,13 +651,25 @@ export default function CancelPurchase() {
 		) {
 			setState( ( state ) => ( {
 				...state,
+				cancelIntent: null,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
 			// For direct cancellations (no domain options step), show survey directly
-			setState( ( state ) => ( { ...state, siteId: purchase.blog_id, surveyShown: true } ) );
+			setState( ( state ) => ( {
+				...state,
+				cancelIntent: null,
+				siteId: purchase.blog_id,
+				surveyShown: true,
+			} ) );
 		}
+	};
+
+	const onCancellationStartForRefund = () => {
+		// Set intent to refund before starting cancellation
+		setState( ( state ) => ( { ...state, cancelIntent: 'refund' } ) );
+		onCancellationStart();
 	};
 
 	const clickNext = () => {
@@ -973,14 +986,80 @@ export default function CancelPurchase() {
 		} );
 	};
 
+	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
+		setPurchaseAutoRenewMutation.mutate(
+			{ purchaseId: purchase.ID, autoRenew: false },
+			{
+				onSuccess: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const subscriptionEndDate = intlFormat(
+						purchase.expiry_date,
+						{ dateStyle: 'medium' },
+						{ locale: 'en-US' }
+					);
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+							__(
+								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+							),
+							{
+								purchaseName,
+								subscriptionEndDate,
+							}
+						),
+						{ type: 'snackbar' }
+					);
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
+				},
+				onError: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					createErrorNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased. */
+							__(
+								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+							),
+							{ purchaseName }
+						),
+						{ type: 'snackbar' }
+					);
+					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+				},
+			}
+		);
+	};
+
 	const onSurveyComplete = () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
-		switch ( flowType ) {
+
+		// Determine effective flow type based on cancel intent
+		let effectiveFlowType = flowType;
+
+		// If user clicked refund button, use refund flow
+		if ( state.cancelIntent === 'refund' ) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		}
+		// If default Cancel button on refundable wpcom plan, use auto-renew flow
+		else if (
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
+			isDotcomPlan( purchase ) &&
+			hasAmountAvailableToRefund( purchase )
+		) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		switch ( effectiveFlowType ) {
 			case CANCEL_FLOW_TYPE.REMOVE:
 				submitRemovePurchase( purchase );
 				break;
 			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				submitTurnOffAutoRenew( purchase );
+				break;
 			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
 				submitCancelAndRefundPurchase( purchase );
 				break;
@@ -1225,7 +1304,10 @@ export default function CancelPurchase() {
 				! state.surveyShown &&
 				( hasAmountAvailableToRefund( purchase ) &&
 				getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ? (
-					<RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onCancellationStart } />
+					<RefundEligibilityNotice
+						purchase={ purchase }
+						onClaimRefund={ onCancellationStartForRefund }
+					/>
 				) : (
 					<TimeRemainingNotice purchase={ purchase } />
 				) )
