@@ -809,7 +809,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isWooJPC() ) {
-			return translate( 'Connect to WordPress.com' );
+			return translate( 'Connect' );
 		}
 
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
