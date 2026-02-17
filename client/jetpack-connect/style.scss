@@ -1012,6 +1012,10 @@ $colophon-height: 50px;
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-top: 0;
 			}
+
+			.jetpack-connect__woo-topbar-icon {
+				margin-top: 16px;
+			}
 		}
 
 		.jetpack-header {
