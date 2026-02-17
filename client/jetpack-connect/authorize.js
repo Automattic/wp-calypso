@@ -1021,7 +1021,7 @@ export class JetpackAuthorize extends Component {
 								email: user.email,
 								avatarUrl: user.avatar_URL,
 							} }
-							size="small"
+							size="large"
 						/>
 						<ConsentText>
 							<Disclaimer
