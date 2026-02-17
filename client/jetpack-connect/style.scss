@@ -994,7 +994,7 @@ $colophon-height: 50px;
 .layout.is-section-purchase-product {
 	/** WooCommerce Onboarding Styles **/
 	&.is-woocommerce-core-profiler-flow {
-		background-color: var( --color-woocommerce-onboarding-background );
+		background-color: var( --color-main-background );
 
 		.jetpack-connect__woo-topbar {
 			position: absolute;
