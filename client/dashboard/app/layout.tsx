@@ -5,6 +5,7 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
+import { initCiabPostHog } from '@automattic/ciab-posthog';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
@@ -12,7 +13,7 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider } from './context';
+import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import { useSurvicate } from './survicate';
@@ -26,12 +27,19 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
+	const { name } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
+
+	useEffect( () => {
+		if ( name === 'CIAB' ) {
+			initCiabPostHog( user );
+		}
+	}, [ user, name ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
