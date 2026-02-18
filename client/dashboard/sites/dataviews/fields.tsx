@@ -9,7 +9,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { getSiteBlockingStatus } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { isCommerceGarden, isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
@@ -74,6 +74,7 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
 						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
 						isJetpack={ item.jetpack }
+						isCommerceGarden={ isCommerceGarden( item ) }
 						isOwner={ item.site_owner === user.ID }
 						value={ getSitePlanDisplayName( item ) ?? '' }
 					/>

@@ -22,7 +22,13 @@ function render( ui: React.ReactElement ) {
 describe( '<Plan>', () => {
 	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {
 		const { container } = render(
-			<Plan isJetpack isSelfHostedJetpackConnected value="Free" nag={ { isExpired: false } } />
+			<Plan
+				isJetpack
+				isSelfHostedJetpackConnected
+				isCommerceGarden={ false }
+				value="Free"
+				nag={ { isExpired: false } }
+			/>
 		);
 		expect( container.querySelector( 'svg' ) ).toBeInTheDocument();
 		expect( container.textContent ).toBe( 'Free' );
@@ -33,6 +39,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected
+				isCommerceGarden={ false }
 				value="Free"
 				nag={ { isExpired: false } }
 			/>
@@ -45,6 +52,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isCommerceGarden={ false }
 				value="Premium"
 				nag={ { isExpired: false } }
 			/>
@@ -57,11 +65,26 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack
 				isSelfHostedJetpackConnected={ false }
+				isCommerceGarden={ false }
 				value="Business"
 				nag={ { isExpired: false } }
 			/>
 		);
 		expect( container.textContent ).toBe( 'Business' );
+	} );
+
+	test( 'for commerce garden sites, it does not show the Jetpack logo even when Jetpack-connected', () => {
+		const { container } = render(
+			<Plan
+				isJetpack
+				isSelfHostedJetpackConnected
+				isCommerceGarden
+				value="Trial"
+				nag={ { isExpired: false } }
+			/>
+		);
+		expect( container.querySelector( 'svg' ) ).not.toBeInTheDocument();
+		expect( container.textContent ).toBe( 'Trial' );
 	} );
 
 	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix', () => {
@@ -75,6 +98,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isCommerceGarden={ false }
 				value="Business"
 				nag={ { isExpired: true, site } }
 			/>
@@ -96,6 +120,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isCommerceGarden={ false }
 				isOwner
 				value="Business"
 				nag={ { isExpired: true, site } }
@@ -122,6 +147,7 @@ describe( '<Plan>', () => {
 			<Plan
 				isJetpack={ false }
 				isSelfHostedJetpackConnected={ false }
+				isCommerceGarden={ false }
 				isOwner
 				value="Trial"
 				nag={ { isExpired: true, site } }

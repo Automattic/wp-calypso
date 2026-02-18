@@ -406,15 +406,37 @@ export function Plan( {
 	nag,
 	isSelfHostedJetpackConnected,
 	isJetpack,
+	isCommerceGarden,
 	isOwner,
 	value,
 }: {
 	nag: { isExpired: false } | { isExpired: true; site: Pick< Site, 'slug' | 'plan' > };
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
+	isCommerceGarden: boolean;
 	isOwner?: boolean;
 	value: string;
 } ) {
+	// Commerce garden sites (e.g. CIAB) should never show the Jetpack logo, including when deleted
+	// (deleted sites may have reduced API data where is_garden is missing).
+	if ( isCommerceGarden ) {
+		if ( nag.isExpired ) {
+			return (
+				<VStack spacing={ 1 }>
+					<Text intent="error">
+						{ sprintf(
+							/* translators: %s: plan name */
+							__( '%s-expired' ),
+							value
+						) }
+					</Text>
+					{ isOwner && <PlanRenewNag site={ nag.site } source="plan" /> }
+				</VStack>
+			);
+		}
+		return <>{ value }</>;
+	}
+
 	if ( isSelfHostedJetpackConnected ) {
 		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;

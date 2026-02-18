@@ -15,7 +15,13 @@ export function isSimple( site: Site ) {
 }
 
 export function isCommerceGarden( site: Site ) {
-	return site.is_garden && site.garden_name === 'commerce';
+	// Include garden_name check alone so deleted sites (which may omit is_garden) are still identified.
+	if ( ( site.is_garden && site.garden_name === 'commerce' ) || site.garden_name === 'commerce' ) {
+		return true;
+	}
+	// Deleted sites may omit is_garden and garden_name; use URL/slug as fallback (e.g. *.commerce-garden.com).
+	const urlOrSlug = site.URL || site.slug || '';
+	return urlOrSlug.includes( 'commerce-garden.com' );
 }
 
 export function isStagingSite( site: Site ) {
