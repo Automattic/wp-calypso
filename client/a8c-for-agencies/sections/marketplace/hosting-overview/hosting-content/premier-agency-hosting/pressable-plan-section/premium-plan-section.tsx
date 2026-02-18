@@ -52,8 +52,7 @@ export default function PremiumPlanSection( {
 	};
 
 	// Show refer button if premium plans are not enabled or if they are enabled and we are not in referral mode
-	const shouldShowReferButton =
-		! isPremiumPlansEnabled || ( isPremiumPlansEnabled && marketplaceType !== 'referral' );
+	const shouldShowReferButton = ! isPremiumPlansEnabled || marketplaceType !== 'referral';
 
 	return (
 		<HostingPlanSection className="pressable-plan-section" heading={ heading }>
