@@ -164,8 +164,8 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'wpcom_agents_manager_response_action_thumbs_up',
-				{ message_id: 'msg-1' }
+				'calypso_agents_manager_response_feedback_action',
+				{ type: 'thumb_up', message_id: 'msg-1' }
 			);
 		} );
 
@@ -222,8 +222,8 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'wpcom_agents_manager_response_action_thumbs_down',
-				{ message_id: 'msg-1' }
+				'calypso_agents_manager_response_feedback_action',
+				{ type: 'thumb_down', message_id: 'msg-1' }
 			);
 		} );
 
@@ -339,7 +339,7 @@ describe( 'useFeedback', () => {
 			} );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'wpcom_agents_manager_response_feedback_submitted',
+				'calypso_agents_manager_response_feedback_submitted',
 				{ message_id: 'msg-1' }
 			);
 		} );
