@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { getCurrencyObject } from '@automattic/number-formatters';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS, ICON_MEDIA_SIGNUP_PIXEL_URL } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
@@ -36,6 +37,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		is_signup: true,
 		currency: 'USD',
 		total_cost: 0,
+		total_cost_usd_integer: 0,
 		products: [
 			{
 				is_signup: true,
@@ -53,7 +55,9 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	const currentUser = getCurrentUser();
 	const syntheticOrderId = 's_' + crypto.randomUUID().replace( /-/g, '' ); // 35-byte signup tracking ID.
-	const usdCost = costToUSD( syntheticCart.total_cost, syntheticCart.currency );
+	const usdCost = getCurrencyObject( syntheticCart.total_cost_usd_integer, 'USD', {
+		isSmallestUnit: true,
+	} ).floatValue;
 
 	// Google Ads Gtag
 
@@ -75,16 +79,12 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 	// Bing
 
 	if ( mayWeTrackByTracker( 'bing' ) ) {
-		if ( null !== usdCost ) {
-			const params = {
-				ec: 'signup',
-				gv: usdCost,
-			};
-			debug( 'recordSignup: [Bing]', params );
-			window.uetq.push( params );
-		} else {
-			debug( 'recordSignup: [Bing] currency not supported, dropping WPCom pixel' );
-		}
+		const params = {
+			ec: 'signup',
+			gv: usdCost,
+		};
+		debug( 'recordSignup: [Bing]', params );
+		window.uetq.push( params );
 	}
 
 	// Facebook

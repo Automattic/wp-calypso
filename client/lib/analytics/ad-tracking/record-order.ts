@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { isPlan } from '@automattic/calypso-products';
-import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { getCurrencyObject } from '@automattic/number-formatters';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitCartProducts } from '../utils/split-wpcom-jetpack-cart-info';
@@ -61,7 +62,9 @@ export async function recordOrder(
 		return;
 	}
 
-	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
+	const usdTotalCost = getCurrencyObject( cart.total_cost_usd_integer, 'USD', {
+		isSmallestUnit: true,
+	} ).floatValue;
 
 	// Purchase tracking happens in one of three ways:
 
@@ -96,8 +99,7 @@ export async function recordOrder(
 
 	// Yahoo Gemini
 	if ( mayWeTrackByTracker( 'gemini' ) ) {
-		const params =
-			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
+		const params = YAHOO_GEMINI_CONVERSION_PIXEL_URL + '&gv=' + usdTotalCost;
 		debug( 'recordOrder: [Yahoo Gemini]', params );
 		new window.Image().src = params;
 	}
@@ -341,7 +343,9 @@ function recordOrderInFacebook(
 					is_bundled: product.is_bundled ?? false,
 					is_domain_registration: product.is_domain_registration ?? false,
 					is_plan: isPlan( product ) ?? false,
-					value: costToUSD( product.cost, product.currency ) ?? 0,
+					value: getCurrencyObject( product.item_total_usd_integer, 'USD', {
+						isSmallestUnit: true,
+					} ).floatValue,
 					quantity: product.volume ?? 1,
 				};
 			} );
@@ -603,11 +607,12 @@ function recordOrderInAkismetGTM(
 				transaction_id: orderId,
 				currency: 'USD',
 				items: wpcomJetpackCartInfo.akismetProducts.map(
-					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+					( { product_id, product_name, item_total_usd_integer, volume, bill_period } ) => ( {
 						id: product_id.toString(),
 						name: product_name.toString(),
 						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
+						price: getCurrencyObject( item_total_usd_integer, 'USD', { isSmallestUnit: true } )
+							.floatValue,
 						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
 					} )
 				),
@@ -642,11 +647,12 @@ function recordOrderInJetpackGTM(
 				transaction_id: orderId,
 				currency: 'USD',
 				items: wpcomJetpackCartInfo.jetpackProducts.map(
-					( { product_id, product_name, cost, volume, bill_period } ) => ( {
+					( { product_id, product_name, item_total_usd_integer, volume, bill_period } ) => ( {
 						id: product_id.toString(),
 						name: product_name.toString(),
 						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
+						price: getCurrencyObject( item_total_usd_integer, 'USD', { isSmallestUnit: true } )
+							.floatValue,
 						billing_term: bill_period === '365' ? 'yearly' : 'monthly',
 					} )
 				),
@@ -773,13 +779,17 @@ function recordOrderInWooGTM(
 					coupon: cart.coupon?.toString() ?? '',
 					transaction_id: orderId,
 					currency: 'USD',
-					items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: costToUSD( cost, cart.currency ) ?? 0,
-					} ) ),
-					value: costToUSD( cart.total_cost_integer / 100, cart.currency ),
+					items: cart.products.map(
+						( { product_id, product_name, item_total_usd_integer, volume } ) => ( {
+							id: product_id.toString(),
+							name: product_name.toString(),
+							quantity: parseInt( String( volume ) ),
+							price: getCurrencyObject( item_total_usd_integer, 'USD', { isSmallestUnit: true } )
+								.floatValue,
+						} )
+					),
+					value: getCurrencyObject( cart.total_cost_usd_integer, 'USD', { isSmallestUnit: true } )
+						.floatValue,
 				},
 			};
 

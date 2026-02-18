@@ -1,13 +1,14 @@
+import { getCurrencyObject } from '@automattic/number-formatters';
 import { recordAddToCart as trackAddToCart } from 'calypso/lib/analytics/ad-tracking';
-import { costToUSD } from 'calypso/lib/analytics/utils';
 import { gaRecordEvent } from './ga';
 
-// TODO: cartItem (RequestCartProduct) does not have `cost` or `currency` properties
 export function recordAddToCart( { cartItem } ) {
 	// TODO: move Tracks event here?
 	// Google Analytics
-	const usdValue = costToUSD( cartItem.cost, cartItem.currency );
-	gaRecordEvent( 'Checkout', 'calypso_cart_product_add', '', usdValue ? usdValue : undefined );
+	const usdValue = getCurrencyObject( cartItem.item_total_usd_integer, 'USD', {
+		isSmallestUnit: true,
+	} ).floatValue;
+	gaRecordEvent( 'Checkout', 'calypso_cart_product_add', '', usdValue );
 	// Marketing
 	trackAddToCart( cartItem );
 }

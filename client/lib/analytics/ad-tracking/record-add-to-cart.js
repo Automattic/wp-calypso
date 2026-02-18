@@ -1,3 +1,4 @@
+import { getCurrencyObject } from '@automattic/number-formatters';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -124,7 +125,9 @@ export async function recordAddToCart( cartItem ) {
 			'track',
 			'addtocart',
 			{
-				value: cartItem.cost,
+				value: getCurrencyObject( cartItem.item_total_integer, cartItem.currency, {
+					isSmallestUnit: true,
+				} ).floatValue,
 				currency: cartItem.currency,
 				line_items: [
 					{
@@ -148,7 +151,9 @@ export async function recordAddToCart( cartItem ) {
 					content_type: 'product',
 				},
 			],
-			value: cartItem.cost,
+			value: getCurrencyObject( cartItem.item_total_integer, cartItem.currency, {
+				isSmallestUnit: true,
+			} ).floatValue,
 			currency: cartItem.currency,
 		};
 		debug( 'recordAddToCart: [TikTok]', params );

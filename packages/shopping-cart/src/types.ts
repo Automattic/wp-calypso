@@ -427,6 +427,11 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_cost_integer: number;
 
 	/**
+	 * The cart's total cost after converting to USD, in pennies (i.e. the smallest unit of the USD currency).
+	 */
+	total_cost_usd_integer: number;
+
+	/**
 	 * The difference between the cost before any coupon and the actual price
 	 * for all products in the currency's smallest unit.
 	 *
@@ -591,6 +596,19 @@ export interface ResponseCartProduct {
 	 * but without taxes.
 	 */
 	item_subtotal_integer: number;
+
+	/**
+	 * The cart item's total in the currency's smallest unit.
+	 *
+	 * This is the cost of the item with all discounts (including coupons),
+	 * and also including taxes.
+	 */
+	item_total_integer: number;
+
+	/**
+	 * The cart item's total cost after converting to USD, in pennies (i.e. the smallest unit of the USD currency).
+	 */
+	item_total_usd_integer: number;
 
 	/**
 	 * The cart item's subtotal without volume.

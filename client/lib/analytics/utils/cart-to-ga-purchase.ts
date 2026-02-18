@@ -61,7 +61,7 @@ export function cartToGaPurchase(
 		coupon: cart.coupon,
 		currency: 'USD', // we track all prices in USD
 		value,
-		items: items.map( ( product ) => productToGaItem( product, cart.currency ) ),
+		items: items.map( ( product ) => productToGaItem( product ) ),
 		...( 'wpcom' === cartInfoType
 			? { contains_yearly_or_higher_wpcom_plan: containsYearlyOrHigherWPcomPlan }
 			: {} ),

@@ -2,7 +2,6 @@
  * Re-exports
  */
 export { default as MARKETING_COUPONS_KEY } from './marketing-coupons-key';
-export { default as costToUSD } from './cost-to-usd';
 export { default as hashPii } from './hash-pii';
 export { default as isPiiUrl } from './is-pii-url';
 export { default as isUrlExcludedForPerformance } from './is-url-excluded-for-performance';

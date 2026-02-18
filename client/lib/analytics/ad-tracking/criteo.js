@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import { clone, cloneDeep } from 'lodash';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
@@ -94,7 +95,9 @@ export function cartToCriteoItems( cart ) {
 	return cart.products.map( ( product ) => {
 		return {
 			id: product.product_id,
-			price: product.cost,
+			price: getCurrencyObject( product.item_total_integer, product.currency, {
+				isSmallestUnit: true,
+			} ).floatValue,
 			quantity: product.volume,
 		};
 	} );
