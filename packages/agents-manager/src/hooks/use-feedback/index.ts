@@ -67,10 +67,8 @@ async function submitFeedback(
 	if ( previousMessages && previousMessages.length > 0 ) {
 		data.previous_messages = previousMessages;
 	}
-	try {
+	if ( typeof window !== 'undefined' ) {
 		data.page_url = window.location.href;
-	} catch {
-		// SSR or restricted context — skip
 	}
 
 	const response = await fetch( url, {
