@@ -71,13 +71,19 @@ async function submitFeedback(
 		data.page_url = window.location.href;
 	}
 
-	const response = await fetch( url, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify( data ),
-	} );
-	if ( ! response.ok ) {
-		throw new Error( `Feedback submission failed: ${ response.status }` );
+	try {
+		const response = await fetch( url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', ...headers },
+			body: JSON.stringify( data ),
+		} );
+
+		if ( ! response.ok ) {
+			throw new Error( `[useFeedback] Feedback submission failed: ${ response.status }` );
+		}
+	} catch ( error ) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		throw new Error( `[useFeedback] Feedback submission failed: ${ message }` );
 	}
 }
 
