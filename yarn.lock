@@ -10494,16 +10494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
-  version: 22.15.3
-  resolution: "@types/node@npm:22.15.3"
-  dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:>=13.7.0":
+"@types/node@npm:*, @types/node@npm:>=13.7.0":
   version: 25.2.3
   resolution: "@types/node@npm:25.2.3"
   dependencies:
@@ -10541,6 +10532,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: dce80d63a3b91892b321af823d624995c61e39c6a223cc0ac481a44d337640cc46931d33efb3beeed75f5c85c3bda1d97cef4c5cd4ec333caf5dee59cff6eca0
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
+  version: 22.15.3
+  resolution: "@types/node@npm:22.15.3"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
   languageName: node
   linkType: hard
 
@@ -16707,14 +16707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
-  version: 3.46.0
-  resolution: "core-js@npm:3.46.0"
-  checksum: 12d559d39a58227881bc6c86c36d24dcfbe2d56e52dac42e35e8643278172596ab67f57ede98baf40b153ca1b830f37420ea32c3f7417c0c5a1fed46438ae187
-  languageName: node
-  linkType: hard
-
-"core-js@npm:^3.38.1":
+"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.38.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
   version: 3.48.0
   resolution: "core-js@npm:3.48.0"
   checksum: 6c3115900dd7cce9fab74c07cb262b3517fc250d02e8fd2ff34f80bda5f43a28482a909dbc4491dc6e1ddd9807f57a7df4c3eeecd1f202b7d9c8bfe25f9d680c
@@ -16918,18 +16911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
-  dependencies:
-    path-key: "npm:^3.1.0"
-    shebang-command: "npm:^2.0.0"
-    which: "npm:^2.0.1"
-  checksum: 5738c312387081c98d69c98e105b6327b069197f864a60593245d64c8089c8a0a744e16349281210d56835bb9274130d825a78b2ad6853ca13cfbeffc0c31750
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^7.0.6":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
   dependencies:
@@ -18447,19 +18429,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.2.6":
-  version: 3.2.6
-  resolution: "dompurify@npm:3.2.6"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: c8f8e5b0879a0d93c84a2e5e78649a47d0c057ed0f7850ca3d573d2cca64b84fb1ff85bd4b20980ade69c4e5b80ae73011340f1c2ff375c7ef98bb8268e1d13a
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.3.1":
+"dompurify@npm:^3.2.6, dompurify@npm:^3.3.1":
   version: 3.3.1
   resolution: "dompurify@npm:3.3.1"
   dependencies:
@@ -30482,14 +30452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:^10.24.2":
-  version: 10.25.4
-  resolution: "preact@npm:10.25.4"
-  checksum: 33a009d614d2b47df1c867935fe057c1dfd2bae1aaab41d6e981434b761f75b88e82eac7847ae486b4dbcffc74af814b8dc59ccef17b10625e3effefa2e1ef67
-  languageName: node
-  linkType: hard
-
-"preact@npm:^10.28.2":
+"preact@npm:^10.24.2, preact@npm:^10.28.2":
   version: 10.28.3
   resolution: "preact@npm:10.28.3"
   checksum: e8854fae8d8d40c918538f7a90888dd4f8acd388b8ba8e0c612ed0eb1a7d2cc6c15a7dc0a7b7c7bb5c361d2df63aa283e501cf1d47f8eb1413979cee611a38ef
