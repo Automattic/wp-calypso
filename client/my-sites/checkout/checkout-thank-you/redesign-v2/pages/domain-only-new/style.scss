@@ -1,3 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.checkout-thank-you__domain-only-new-container {
+	@include break-small {
+		z-index: z-index( '.is-section-checkout-thank-you', '.domain-only-new-container' );
+	}
+}
+
 .domain-only-new {
 	display: flex;
 	flex-direction: column;

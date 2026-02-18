@@ -35,80 +35,82 @@ export default function DomainOnlyNew( {
 	const planUpgradeCreditsApplicable = useDomainToPlanCreditsApplicable( domainPurchase.blogId );
 
 	return (
-		<Step.CenteredColumnLayout
-			className="step-container-v2--domain-only-new domain-only-new"
-			columnWidth={ 6 }
-			heading={
-				<Step.Heading
-					text={ translate( 'Thank you for your purchase' ) }
-					subText={ translate( 'Your new domain name is ready! How would you like to use it?' ) }
-				/>
-			}
-			verticalAlign="center"
-		>
-			<OptionContent
-				illustration={ <img src={ startSite } alt="" aria-hidden /> }
-				titleText={ translate( 'Start a new site' ) }
-				topText={ translate( 'Create and launch a site on WordPress.com.' ) }
-				benefits={
-					planUpgradeCreditsApplicable
-						? [
-								translate(
-									'%(upgradeCredits)s in upgrade credits will be applied to new paid plan purchases.',
-									{
-										args: {
-											upgradeCredits: formatCurrency( planUpgradeCreditsApplicable, currency, {
-												stripZeros: true,
-												isSmallestUnit: true,
-											} ),
-										},
-									}
-								),
-						  ]
-						: undefined
+		<div className="checkout-thank-you__domain-only-new-container">
+			<Step.CenteredColumnLayout
+				className="step-container-v2--domain-only-new domain-only-new"
+				columnWidth={ 6 }
+				heading={
+					<Step.Heading
+						text={ translate( 'Thank you for your purchase' ) }
+						subText={ translate( 'Your new domain name is ready! How would you like to use it?' ) }
+					/>
 				}
-				href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
-			/>
-			<OptionContent
-				illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
-				titleText={ translate( 'Add a mailbox' ) }
-				topText={ translate( 'Stand out with a professional email address.' ) }
-				href={
-					dashboardOptIn
-						? dashboardLink( `/emails/choose-email-solution/${ domainPurchase.meta }` )
-						: domainAddEmailUpsell( domainPurchase.meta, domainPurchase.meta )
-				}
-			/>
-			{ hasConnectableSites && (
+				verticalAlign="center"
+			>
 				<OptionContent
-					illustration={ <img src={ attachToSite } alt="" aria-hidden /> }
-					titleText={ translate( 'Attach to an existing site' ) }
-					topText={ translate( 'Attach your domain name to an existing WordPress.com site.' ) }
+					illustration={ <img src={ startSite } alt="" aria-hidden /> }
+					titleText={ translate( 'Start a new site' ) }
+					topText={ translate( 'Create and launch a site on WordPress.com.' ) }
+					benefits={
+						planUpgradeCreditsApplicable
+							? [
+									translate(
+										'%(upgradeCredits)s in upgrade credits will be applied to new paid plan purchases.',
+										{
+											args: {
+												upgradeCredits: formatCurrency( planUpgradeCreditsApplicable, currency, {
+													stripZeros: true,
+													isSmallestUnit: true,
+												} ),
+											},
+										}
+									),
+							  ]
+							: undefined
+					}
+					href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
+				/>
+				<OptionContent
+					illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
+					titleText={ translate( 'Add a mailbox' ) }
+					topText={ translate( 'Stand out with a professional email address.' ) }
 					href={
 						dashboardOptIn
-							? dashboardLink( `/domains/${ domainPurchase.meta }/transfer/other-site` )
-							: domainManagementTransferToOtherSite( domainPurchase.meta, domainPurchase.meta )
+							? dashboardLink( `/emails/choose-email-solution/${ domainPurchase.meta }` )
+							: domainAddEmailUpsell( domainPurchase.meta, domainPurchase.meta )
 					}
 				/>
-			) }
-			<OptionContent
-				illustration={ <img src={ useDomainOnly } alt="" aria-hidden /> }
-				titleText={ translate( 'Use the domain name only' ) }
-				topText={ translate(
-					"Just use the domain name as-is and add a site whenever you're ready."
+				{ hasConnectableSites && (
+					<OptionContent
+						illustration={ <img src={ attachToSite } alt="" aria-hidden /> }
+						titleText={ translate( 'Attach to an existing site' ) }
+						topText={ translate( 'Attach your domain name to an existing WordPress.com site.' ) }
+						href={
+							dashboardOptIn
+								? dashboardLink( `/domains/${ domainPurchase.meta }/transfer/other-site` )
+								: domainManagementTransferToOtherSite( domainPurchase.meta, domainPurchase.meta )
+						}
+					/>
 				) }
-				href={
-					dashboardOptIn
-						? dashboardLink( `/domains/${ domainPurchase.meta }` )
-						: domainManagementList( domainPurchase.meta, domainPurchase.meta )
-				}
-			/>
-			<Step.LinkButton
-				className="domain-only-new__migrate-link"
-				href={ `/setup/site-migration?siteSlug=${ domainPurchase.meta }` }
-			>
-				{ translate( 'Migrate an existing site' ) }
-			</Step.LinkButton>
-		</Step.CenteredColumnLayout>
+				<OptionContent
+					illustration={ <img src={ useDomainOnly } alt="" aria-hidden /> }
+					titleText={ translate( 'Use the domain name only' ) }
+					topText={ translate(
+						"Just use the domain name as-is and add a site whenever you're ready."
+					) }
+					href={
+						dashboardOptIn
+							? dashboardLink( `/domains/${ domainPurchase.meta }` )
+							: domainManagementList( domainPurchase.meta, domainPurchase.meta )
+					}
+				/>
+				<Step.LinkButton
+					className="domain-only-new__migrate-link"
+					href={ `/setup/site-migration?siteSlug=${ domainPurchase.meta }` }
+				>
+					{ translate( 'Migrate an existing site' ) }
+				</Step.LinkButton>
+			</Step.CenteredColumnLayout>
+		</div>
 	);
 }
