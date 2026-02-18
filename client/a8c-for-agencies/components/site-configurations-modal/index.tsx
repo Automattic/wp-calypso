@@ -319,6 +319,7 @@ export default function SiteConfigurationsModal( {
 															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
 														) }
 														rel="noreferrer"
+														target="_blank"
 													/>
 												),
 												HfLink: (
@@ -328,6 +329,7 @@ export default function SiteConfigurationsModal( {
 															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 														) }
 														rel="noreferrer"
+														target="_blank"
 													/>
 												),
 											},
