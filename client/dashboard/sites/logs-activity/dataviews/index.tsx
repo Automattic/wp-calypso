@@ -1,4 +1,4 @@
-import { ActivityLogParams, HostingFeatures, LogType } from '@automattic/api-core';
+import { ActivityLogParams, LogType } from '@automattic/api-core';
 import { siteActivityLogQuery, siteActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -10,7 +10,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { siteLogsActivityRoute } from '../../../app/router/sites';
 import { DataViews } from '../../../components/dataviews';
-import { hasHostingFeature } from '../../../utils/site-features';
+import { getActivityLogHiddenGroups } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
@@ -62,9 +62,7 @@ function SiteActivityLogsDataViews( {
 
 	const searchTerm = view.search?.trim() ?? '';
 
-	// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
-	const hasBackupsSelfServe = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
-	const notGroup = hasBackupsSelfServe ? undefined : [ 'rewind', 'scan' ];
+	const notGroup = getActivityLogHiddenGroups( site );
 
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,

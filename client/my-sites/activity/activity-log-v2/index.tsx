@@ -1,7 +1,4 @@
-import {
-	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
-	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
@@ -26,6 +23,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getActivityLogHiddenGroups from 'calypso/state/selectors/get-activity-log-hidden-groups';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -43,13 +41,8 @@ const ActivityLogV2: FunctionComponent = () => {
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const hasBackupsSelfServe = useSelector(
-		( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
-	);
-	// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
-	const filterWithNotGroup = hasBackupsSelfServe
-		? filter
-		: { ...filter, notGroup: [ 'rewind', 'scan' ] };
+	const notGroup = useSelector( ( state ) => getActivityLogHiddenGroups( state, siteId ) );
+	const filterWithNotGroup = notGroup ? { ...filter, notGroup } : filter;
 	const { data: logs } = useActivityLogQuery( siteId, filterWithNotGroup );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );

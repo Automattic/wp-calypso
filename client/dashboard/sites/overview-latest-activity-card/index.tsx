@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { siteLastFiveActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
@@ -12,7 +11,7 @@ import { TextSkeleton } from '../../components/text-skeleton';
 import TimeSince from '../../components/time-since';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { hasHostingFeature } from '../../utils/site-features';
+import { getActivityLogHiddenGroups } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -65,9 +64,7 @@ export default function LatestActivityCard( {
 	site: Site;
 	isCompact?: boolean;
 } ) {
-	const hasBackupsSelfServe = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
-	// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
-	const notGroup = hasBackupsSelfServe ? undefined : [ 'rewind', 'scan' ];
+	const notGroup = getActivityLogHiddenGroups( site );
 	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ) );
 	const { recordTracksEvent } = useAnalytics();
 

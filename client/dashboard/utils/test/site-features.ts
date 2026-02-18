@@ -1,5 +1,5 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
-import { hasHostingFeature, hasPlanFeature } from '../site-features';
+import { getActivityLogHiddenGroups, hasHostingFeature, hasPlanFeature } from '../site-features';
 import type { Site } from '@automattic/api-core';
 
 describe( 'hasPlanFeature', () => {
@@ -82,5 +82,34 @@ describe( 'hasHostingFeature', () => {
 			},
 		} as Site;
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS ) ).toBe( true );
+	} );
+} );
+
+describe( 'getActivityLogHiddenGroups', () => {
+	it( 'should return hidden groups when site does not have backups self-serve feature', () => {
+		const site = {
+			plan: {
+				features: {
+					active: [],
+				},
+			},
+		} as unknown as Site;
+		expect( getActivityLogHiddenGroups( site ) ).toEqual( [ 'rewind', 'scan' ] );
+	} );
+
+	it( 'should return undefined when site has backups self-serve feature', () => {
+		const site = {
+			plan: {
+				features: {
+					active: [ HostingFeatures.BACKUPS_SELF_SERVE ],
+				},
+			},
+		} as unknown as Site;
+		expect( getActivityLogHiddenGroups( site ) ).toBeUndefined();
+	} );
+
+	it( 'should return hidden groups when site has no plan', () => {
+		const site = {} as unknown as Site;
+		expect( getActivityLogHiddenGroups( site ) ).toEqual( [ 'rewind', 'scan' ] );
 	} );
 } );
