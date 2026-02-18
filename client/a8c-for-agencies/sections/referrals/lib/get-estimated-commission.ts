@@ -79,7 +79,10 @@ export const getEstimatedCommission = (
 					const dailyPrice = getDailyPrice( product, purchase.quantity );
 
 					// Get commission percentage for the product (common for both subscription and license)
-					const commissionPercentage = getProductCommissionPercentage( product.family_slug );
+					const commissionPercentage = getProductCommissionPercentage(
+						product.slug,
+						product.family_slug
+					);
 
 					// Add commission to the total commission (in cents)
 					acc.legacyCommissionsInCents += dailyPrice * totalDays * commissionPercentage;

@@ -94,6 +94,8 @@ export const RecommendedFeed = ( {
 			{ feedUrl && (
 				<ReaderFollowButton
 					className={ `${ classPrefix }__recommended-blog-subscribe-button` }
+					feedId={ feedId ? Number( feedId ) : undefined }
+					siteId={ siteId ? Number( siteId ) : undefined }
 					siteUrl={ feedUrl }
 					followSource={ `${ classPrefix }__recommended-blog-item` }
 					isButtonOnly={ compact }

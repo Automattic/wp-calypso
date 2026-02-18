@@ -18,7 +18,7 @@ import useAgentLayoutManager from '@hooks/use-agent-layout-manager';
 import { ChatHeader } from './components/chat-header';
 
 function App() {
-	const { isDocked, isDesktop, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			sidebarContainer: '.sidebar-container',
 			defaultOpen: true,
@@ -38,7 +38,7 @@ function App() {
 					onClose={ isDocked ? closeSidebar : handleClose }
 					onDock={ dock }
 					onUndock={ undock }
-					showDockOption={ isDesktop }
+					showDockOption={ canDock }
 				/>
 				<AgentUI.Messages />
 				<AgentUI.Footer>
@@ -136,9 +136,9 @@ The hook accepts a single options object. All properties are optional.
 
 The hook returns an object with the following properties:
 
-- **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. This requires both: the viewport is desktop-sized (matches `desktopMediaQuery`) AND docked mode is enabled. On mobile/tablet, this is always `false`.
+- **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. This requires both: the viewport is desktop-sized (matches `desktopMediaQuery`) AND docked mode is enabled AND there is enough vertical space. On mobile/tablet, this is always `false`.
 
-- **`isDesktop`** (`boolean`) - `true` when the viewport matches the desktop media query.
+- **`canDock`** (`boolean`) - `true` when docking is possible. This means the viewport is desktop-sized (matches `desktopMediaQuery`) AND there is enough vertical space to accommodate the docked sidebar. Use this to determine whether to show dock/undock UI controls.
 
 - **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 

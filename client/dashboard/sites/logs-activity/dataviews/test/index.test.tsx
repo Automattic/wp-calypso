@@ -15,12 +15,6 @@ const mockNavigate = jest.fn();
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -61,6 +55,9 @@ jest.mock( '@tanstack/react-router', () => ( {
 jest.mock( '../../../../app/router/sites', () => ( {
 	siteBackupDetailRoute: {
 		fullPath: '/sites/$siteSlug/backups/$rewindId',
+	},
+	siteLogsActivityRoute: {
+		useSearch: () => ( {} ),
 	},
 } ) );
 
@@ -142,6 +139,10 @@ const mockActivityLogsData = {
 
 function renderActivityLogsDataViews() {
 	nock( API_BASE )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
+	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
 		.query( true )
 		.reply( 200, {
@@ -165,19 +166,6 @@ function renderActivityLogsDataViews() {
 		/>
 	);
 }
-
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
-} );
 
 test( 'clicking backup action navigates to backup detail page', async () => {
 	const user = userEvent.setup();

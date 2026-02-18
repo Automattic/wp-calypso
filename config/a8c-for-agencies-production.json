@@ -35,15 +35,17 @@
 		"a4a-partner-directory": false,
 		"a4a-dev-sites": true,
 		"a4a-pressable-referrals": true,
+		"a4a-pressable-premium-plans": false,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-bd-checkout": false,
+		"a4a-pressable-addons": false,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
-		"a4a-bd-term-pricing": false
+		"a4a-bd-term-pricing": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -67,7 +69,7 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": false,
-		"a8c-for-agencies-learn": false,
+		"a8c-for-agencies-learn": true,
 		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],

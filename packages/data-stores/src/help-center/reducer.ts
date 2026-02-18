@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
+import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
 import type { Reducer } from 'redux';
@@ -47,9 +48,9 @@ const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = 
 };
 
 const helpCenterRouterHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
+	{ entries: Location[]; index: number } | null,
 	HelpCenterAction
-> = ( state, action ) => {
+> = ( state = null, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY':
 			return action.history;
@@ -159,9 +160,12 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+const navigateToRoute: Reducer<
+	{ route: string | undefined; coalesceParams: boolean } | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
-		return action.route;
+		return { route: action.route, coalesceParams: action.coalesceParams };
 	}
 	return state;
 };
@@ -208,6 +212,13 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	return state;
 };
 
+const currentUser: Reducer< CurrentUser | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_USER' ) {
+		return action.user;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -231,6 +242,7 @@ const reducer = combineReducers( {
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
+	currentUser,
 } );
 
 export type State = ReturnType< typeof reducer >;

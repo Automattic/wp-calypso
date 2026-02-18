@@ -41,8 +41,7 @@ export function canItemBeRemovedFromCart(
 		return false;
 	}
 
-	// If the item is an A4A siteless checkout, it cannot be removed from the cart
-	if ( item.extra?.isA4ASitelessCheckout ) {
+	if ( item.extra?.isA4ASitelessCheckout || item.extra?.isA4ADevSiteCheckout ) {
 		return false;
 	}
 

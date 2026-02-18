@@ -14,10 +14,6 @@ import type { SiteLogsDataViewsProps } from '../dataviews';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => ( { user: { id: 'test-user' } } ),
-} ) );
-
 jest.mock( '../../../components/time-mismatch-notice', () => ( {
 	__esModule: true,
 	default: () => null,
@@ -177,18 +173,6 @@ function nockSiteAndSettings( {
 beforeEach( () => {
 	featureMocks.hasHostingFeatureMock.mockReturnValue( true );
 	nockSiteAndSettings();
-} );
-
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-afterAll( () => {
-	nock.enableNetConnect();
 } );
 
 describe( 'SiteLogs page', () => {

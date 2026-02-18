@@ -35,6 +35,5 @@ export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
 export type { Conversations, OdieConversation, OdieMessage, SupportInteraction } from './types';
 export type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
-export { useManagedOdieChat } from './data/use-managed-odie-chat';
 export { convertOdieChatToOdieConversation } from './utils/chat-utils';
 export * from './types';

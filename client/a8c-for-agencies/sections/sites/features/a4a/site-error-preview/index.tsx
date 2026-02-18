@@ -1,9 +1,11 @@
-import { Button, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { Icon, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -28,6 +30,7 @@ export default function SiteErrorPreview( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
 	const [ isPendingRefetch, setIsPendingRefetch ] = useState( false );
@@ -106,6 +109,7 @@ export default function SiteErrorPreview( {
 						}
 					>
 						<Button
+							variant="secondary"
 							href={ site.url_with_scheme }
 							target="_blank"
 							rel="noopener noreferrer"
@@ -134,14 +138,29 @@ export default function SiteErrorPreview( {
 								  )
 						}
 					>
-						<Button
-							href={ troubleshootingHref }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_troubleshoot' ) }
-						>
-							{ translate( 'View guide ↗' ) }
-						</Button>
+						{ isA4APluginInstalled ? (
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									trackEvent( 'calypso_a4a_site_indicator_disconnect_troubleshoot' );
+									showSupportGuide(
+										'https://agencieshelp.automattic.com/knowledge-base/fix-automattic-for-agencies-plugin-issues/'
+									);
+								} }
+							>
+								{ translate( 'View guide' ) }
+							</Button>
+						) : (
+							<Button
+								variant="secondary"
+								href={ troubleshootingHref }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_troubleshoot' ) }
+							>
+								{ translate( 'View guide ↗' ) }
+							</Button>
+						) }
 					</FormattedHeader>
 				</CompactCard>
 				<CompactCard>
@@ -164,6 +183,7 @@ export default function SiteErrorPreview( {
 						}
 					>
 						<Button
+							variant="secondary"
 							href={ disconnectHref }
 							target="_blank"
 							rel="noopener noreferrer"
@@ -180,7 +200,7 @@ export default function SiteErrorPreview( {
 						headerText={ translate( 'Remove site' ) }
 						subHeaderText={ translate( 'Remove this site from the dashboard.' ) }
 					>
-						<Button onClick={ handleRemoveSite }>
+						<Button variant="secondary" onClick={ handleRemoveSite }>
 							{ translate( 'Remove' ) }
 							<Icon icon={ trash } />
 						</Button>

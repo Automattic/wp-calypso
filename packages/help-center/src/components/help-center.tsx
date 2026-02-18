@@ -2,9 +2,10 @@
 /**
  * External Dependencies
  */
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
@@ -14,7 +15,6 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useShouldUseUnifiedAgent } from '../hooks';
 import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
@@ -36,6 +36,7 @@ const HelpCenter: React.FC< Container > = ( {
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
 	const { currentUser } = useHelpCenterContext();
+	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
@@ -47,8 +48,9 @@ const HelpCenter: React.FC< Container > = ( {
 	useEffect( () => {
 		if ( currentUser ) {
 			initializeAnalytics( currentUser, null );
+			setCurrentUser( currentUser );
 		}
-	}, [ currentUser ] );
+	}, [ currentUser, setCurrentUser ] );
 
 	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {

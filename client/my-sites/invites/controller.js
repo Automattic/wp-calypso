@@ -9,7 +9,7 @@ import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 
 /**
@@ -26,6 +26,11 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context, next ) {
+	// Skip if unified invite flow is handling this request
+	if ( context.useUnifiedInvite ) {
+		return next();
+	}
+
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
@@ -69,6 +74,7 @@ export function acceptInvite( context, next ) {
 				authKey={ context.params.auth_key }
 				locale={ context.params.locale }
 				path={ context.path }
+				prefetchedInvite={ context.inviteData }
 			/>
 		</>
 	);

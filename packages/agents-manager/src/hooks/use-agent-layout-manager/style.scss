@@ -1,13 +1,6 @@
 @import '@wordpress/base-styles/colors';
-
-$admin-bar-height: 32px;
-$layout-spacing: 16px;
-$sidebar-width: 350px;
-$chat-header-height: 38px;
-$main-border-radius: 8px;
-$transition-duration: 0.2s;
-$transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
-$agents-manager-z-index-docked: 999999;
+@import '@wordpress/base-styles/variables';
+@import '../variables.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -55,13 +48,12 @@ $agents-manager-z-index-docked: 999999;
 @mixin notice-panel-open( $notice-panel-selector ) {
 	#{$notice-panel-selector} {
 		right: $sidebar-width !important;
-		top: $layout-spacing + $admin-bar-height !important;
+		top: $layout-spacing + $admin-bar-height + 1px !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
 		border: 1px solid $border-color;
 		border-top: none;
 		border-left: none;
-		overflow: hidden;
 	}
 }
 
@@ -81,14 +73,6 @@ $agents-manager-z-index-docked: 999999;
 	}
 }
 
-/* WP Admin */
-$admin-menu-width-unified: 272px;
-$admin-menu-width-classic: 160px;
-$admin-menu-width-folded: 37px;
-$admin-content-top: calc( $admin-bar-height + $layout-spacing );
-$admin-background-color: #f1f1f1;
-$border-color: #545454;
-
 // Mixin for wp-admin sidebar open styles
 @mixin wp-admin-sidebar-open-specific( $admin-menu-width ) {
 	#wpcontent {
@@ -101,7 +85,7 @@ $border-color: #545454;
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -116,8 +100,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 		border-radius: $main-border-radius $main-border-radius 0 0;
 		border: 1px solid $border-color;
 		border-bottom: none;
-		overflow: hidden;
 		box-sizing: border-box;
+		height: calc( var( --masterbar-height ) + 1px );
 	}
 
 	#adminmenuback,
@@ -180,9 +164,10 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 
 // Import fixes for specific pages. This is done after the base styles are applied to ensure the fixes are applied after the base styles.
 @import './fixes-woocommerce.scss';
+@import './fixes-jetpack.scss';
 
 /* Calypso */
-body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container {
+body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(.wp-admin) {
 	@include sidebar-base( '#wpcom #content' );
 
 	#content {
@@ -203,7 +188,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			border: 1px solid $border-color;
 			border-bottom: none;
 			box-sizing: border-box;
-			height: calc( var(--masterbar-height) + 1px );
+			height: calc( var( --masterbar-height ) + 1px );
 
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
@@ -339,6 +324,23 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
+// Fix for the search categories fixed top position on the plugins marketplace page
+.agents-manager-sidebar-container--sidebar-open
+	.layout__secondary
+	~ .layout__primary
+	.plugins-browser--site-view
+	.search-categories.fixed-top {
+	top: calc( $admin-bar-height + $layout-spacing + 1px );
+	left: -174px;
+	padding-top: 11px;
+	max-width: 1028px;
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	&::after {
+		display: none;
+	}
+}
+
 /* Page editor */
 body.post-php.agents-manager-sidebar-container {
 	@include sidebar-base( '.edit-post-layout' );
@@ -353,7 +355,7 @@ body.post-php.agents-manager-sidebar-container {
 	}
 }
 
-.agents-manager-chat--docked {
+body:not( .modal-open ) .agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -482,6 +484,10 @@ body.post-php.agents-manager-sidebar-container {
 
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
+	.Message-module_message ul {
+		margin-left: var( --spacing-2 );
+	}
+
 	.Messages-module_container {
 		padding-bottom: 24px;
 
@@ -492,6 +498,24 @@ body.post-php.agents-manager-sidebar-container {
 		.EmptyView-module_container {
 			height: auto;
 			padding-block: 8px;
+		}
+
+		.big-sky__completed-plan:first-child {
+			margin-top: 0;
+		}
+
+		.big-sky-next-step-button {
+			margin-top: 20px;
+		}
+
+		// Add spacing after picker messages when followed by a message without completed-plan
+		.Message-module_message:has(
+				.big-sky__dock__menu__variation-picker,
+				.big-sky__dock__menu__pattern-picker
+			):has( + .Message-module_message ):not(
+				:has( + .Message-module_message .big-sky__completed-plan )
+			) {
+			margin-bottom: 24px;
 		}
 	}
 
@@ -510,6 +534,164 @@ body.post-php.agents-manager-sidebar-container {
 				margin: 0;
 			}
 		}
+	}
+
+	.EmptyView-module_container .Suggestions-module_container {
+		padding: 0;
+	}
+
+	.Textarea-module_textarea {
+		line-height: 1.8;
+	}
+
+	.big-sky__chat-actions {
+		width: 100%;
+		margin-top: auto;
+		overflow: visible;
+		display: flex;
+		flex-direction: column;
+		padding: 0 0 8px 16px;
+		flex-shrink: 0;
+
+		.big-sky__chat-components & {
+			padding: 0;
+		}
+
+		&__carousel {
+			display: flex;
+			white-space: nowrap;
+			user-select: none;
+			overflow-x: auto;
+			transition: transform 0.2s;
+			scroll-behavior: smooth;
+			scrollbar-width: none;
+			gap: $grid-unit-10;
+			padding-right: $grid-unit-20;
+			width: 100%;
+			min-width: 0;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			.big-sky-onboarding__chat-view & {
+				padding-right: 0;
+				justify-content: start !important;
+			}
+
+			.big-sky__chat-components & {
+				padding-right: 0;
+			}
+
+			&.draggable {
+				cursor: grab;
+			}
+
+			&.active {
+				cursor: grabbing;
+			}
+
+			&__item {
+				display: inline-block;
+				box-sizing: border-box;
+				text-align: left;
+			}
+		}
+
+		button {
+			flex: 0 0 auto;
+			max-width: 200px;
+			border-radius: $main-border-radius;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			text-align: left;
+			padding: 12px 14px;
+			background-color: $gray-100;
+			color: $gray-900;
+			height: fit-content;
+			border: none;
+			cursor: pointer;
+			transition: background-color 100ms ease-in-out;
+
+			&:hover {
+				color: $gray-900;
+				background-color: $gray-200;
+			}
+
+			&.confirmation-action,
+			&.confirmation-action-destructive {
+				flex: 1;
+			}
+			&.confirmation-action-destructive {
+				background-color: #cc1818;
+				p,
+				span {
+					color: $white;
+				}
+				&:hover {
+					color: $white;
+					background-color: #cc1818;
+					filter: brightness( 90% );
+				}
+			}
+
+			&:last-child {
+				margin-right: 0;
+			}
+
+			&:focus {
+				box-shadow: none !important;
+			}
+
+			span,
+			p {
+				white-space: normal;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2; // Limit to 2 lines
+				line-clamp: 2;
+				text-align: left;
+				width: 100%;
+				max-width: 100%;
+			}
+
+			span {
+				font-size: 14px;
+			}
+
+			p {
+				font-size: 13px;
+				color: $gray-700;
+				margin: 0;
+			}
+		}
+	}
+
+	.big-sky-onboarding__chat-view .big-sky__chat-actions__carousel__item {
+		max-width: 190px;
+	}
+
+	.big-sky__chat-actions::before:not( .has-confirmation-actions ),
+	.big-sky__chat-actions::after:not( .has-confirmation-actions ) {
+		backdrop-filter: blur( 8px );
+		content: '';
+		height: 100%;
+		left: 0;
+		mask: linear-gradient( to left, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
+		position: fixed;
+		top: 0;
+		width: 20px;
+		will-change: backdrop-filter;
+		z-index: 1;
+	}
+
+	.big-sky__chat-actions::after {
+		mask: linear-gradient( to right, rgba( 255, 255, 255, 0.1 ), rgba( 255, 255, 255, 1 ) );
+		left: auto;
+		right: 0;
 	}
 }
 
@@ -744,6 +926,22 @@ body.post-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
+
+	p {
+		font-size: inherit;
+		line-height: inherit;
+		margin: inherit;
+	}
+
+	ul {
+		list-style: disc;
+		margin-top: var( --spacing-3 );
+	}
+
+	.Messages-module_container.Messages-module_emptyState {
+		padding-bottom: 0;
+		padding-top: 0;
+	}
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&.is-active,

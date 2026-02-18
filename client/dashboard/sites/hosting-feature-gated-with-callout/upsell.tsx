@@ -4,6 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
@@ -43,6 +44,7 @@ export default function UpsellCallout( {
 			siteSlug: site.slug,
 			cancel_to: backUrl,
 			redirect_to: backUrl,
+			dashboard: getCurrentDashboard(),
 			...( feature && { feature } ),
 		} );
 	};

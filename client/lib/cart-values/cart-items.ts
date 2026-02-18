@@ -4,7 +4,6 @@ import {
 	getTermDuration,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_EXTRA_LICENSE_SLUG,
-	isBiennially,
 	isBlogger,
 	isBloggerPlan,
 	isBusiness,
@@ -22,7 +21,6 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
-	isMonthlyProduct,
 	isNoAds,
 	isP2Plus,
 	isPersonal,
@@ -33,7 +31,6 @@ import {
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isStarter,
-	isTriennially,
 	isTitanMail,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
@@ -157,18 +154,6 @@ export function has100YearDomain( cart: ObjectWithProducts ): boolean {
 
 export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
-}
-
-export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isMonthlyProduct );
-}
-
-export function hasBiennialCartItem( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isBiennially );
-}
-
-export function hasTriennialCartItem( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isTriennially );
 }
 
 /**
@@ -562,15 +547,6 @@ export function renewableProductItem( slug: string ): MinimalRequestCartProduct 
  */
 export function getDomainRegistrations( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.is_domain_registration === true );
-}
-
-/**
- * Retrieves all the domain registration items in the specified shopping cart.
- */
-export function getDomainsInCart( cart: ObjectWithProducts ): ResponseCartProduct[] {
-	return getAllCartItems( cart ).filter(
-		( product ) => isDomainRegistration( product ) || isDomainMoveInternal( product )
-	);
 }
 
 /**

@@ -1,10 +1,12 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { WooDashboardLogo } from '@automattic/components';
+import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
@@ -15,6 +17,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloudEnvironment from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -27,6 +30,7 @@ import {
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
@@ -41,11 +45,13 @@ import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsPassport from 'calypso/state/selectors/get-is-passport';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { masterbarIsVisible } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -54,6 +60,7 @@ import './style.scss';
 
 const LayoutLoggedOut = ( {
 	isAkismet,
+	isPassport,
 	isJetpackLogin,
 	isPopup,
 	isGravatar,
@@ -81,10 +88,28 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isCIABSite,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const { ciabConfig } = usePartnerBranding();
+
+	const stepContainerV2Context = useMemo( () => {
+		// Detect CIAB dashboard for Woo branding.
+		const isWooDashboard =
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
+
+		return {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent,
+			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
+			// Login screens use compactLogo='always' which applies to the default logo.
+			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+		};
+	}, [] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -132,6 +157,7 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-akismet': isAkismet,
+		'is-passport': isPassport,
 		'is-jetpack-login': isJetpackLogin,
 		'is-jetpack-site': isJetpackCheckout,
 		'is-popup': isPopup,
@@ -144,6 +170,7 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
+		'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
@@ -235,6 +262,7 @@ const LayoutLoggedOut = ( {
 				isCheckoutPending={ isCheckoutPending }
 				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
+				isCIABSite={ isCIABSite }
 			/>
 		);
 	}
@@ -242,76 +270,86 @@ const LayoutLoggedOut = ( {
 	const bodyClass = [ 'font-smoothing-antialiased' ];
 
 	return (
-		<div className={ clsx( 'layout', classes ) }>
-			{ loadHelpCenter && (
-				<HelpCenterLoader
-					sectionName={ sectionName }
-					loadHelpCenter={ loadHelpCenter }
-					currentRoute={ currentRoute }
-				/>
-			) }
-			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
-			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
-			<div className="layout__header-section">
-				{ masterbar }
-				{ renderHeaderSection && (
-					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
-				) }
-			</div>
-			{ isJetpackCloudEnvironment() && (
-				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
-			) }
-			{ isA8CForAgencies() && (
-				<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
-			) }
-			<div id="content" className="layout__content">
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				<div id="primary" className="layout__primary">
-					{ primary }
-				</div>
-				<div id="secondary" className="layout__secondary">
-					{ secondary }
-				</div>
-			</div>
-			{ config.isEnabled( 'cookie-banner' ) && (
-				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
-			) }
-
-			{ [ 'plugins' ].includes( sectionName ) && (
-				<>
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-
-					{ config.isEnabled( 'layout/support-article-dialog' ) && (
-						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
-					) }
-				</>
-			) }
-
-			{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
-				! isReaderTagEmbed && (
-					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-				) }
-
-			{ ! isLoggedIn &&
-				// Limit this to reader pages. If we need to expand its scope, make sure we do not
-				// render it in the 'signup' sections, otherwise this may appear a second time in
-				// the external signup window it opens.
-				[ 'reader' ].includes( sectionName ) &&
-				! isReaderTagEmbed && (
-					<ReaderJoinConversationDialog
-						onClose={ () => clearLastActionRequiresLogin() }
-						isVisible={ !! loggedInAction }
-						loggedInAction={ loggedInAction }
-						onLoginSuccess={ () => {
-							if ( loggedInAction?.redirectTo ) {
-								window.location = loggedInAction.redirectTo;
-							} else {
-								window.location.reload();
-							}
-						} }
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+			<div className={ clsx( 'layout', classes ) }>
+				{ loadHelpCenter && (
+					<HelpCenterLoader
+						sectionName={ sectionName }
+						loadHelpCenter={ loadHelpCenter }
+						currentRoute={ currentRoute }
 					/>
 				) }
-		</div>
+				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
+				<BodySectionCssClass
+					group={ sectionGroup }
+					section={ sectionName }
+					bodyClass={ bodyClass }
+				/>
+				<div className="layout__header-section">
+					{ masterbar }
+					{ renderHeaderSection && (
+						<div className="layout__header-section-content">{ renderHeaderSection() }</div>
+					) }
+				</div>
+				{ isJetpackCloudEnvironment() && (
+					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
+				{ isA8CForAgencies() && (
+					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+				) }
+				<div id="content" className="layout__content">
+					<AsyncLoad
+						require="calypso/components/global-notices"
+						placeholder={ null }
+						id="notices"
+					/>
+					<div id="primary" className="layout__primary">
+						{ primary }
+					</div>
+					<div id="secondary" className="layout__secondary">
+						{ secondary }
+					</div>
+				</div>
+				{ config.isEnabled( 'cookie-banner' ) && (
+					<CookieBannerContainerSSR serverShow={ showGdprBanner } />
+				) }
+
+				{ [ 'plugins' ].includes( sectionName ) && (
+					<>
+						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+
+						{ config.isEnabled( 'layout/support-article-dialog' ) && (
+							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+						) }
+					</>
+				) }
+
+				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
+					! isReaderTagEmbed && (
+						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+					) }
+
+				{ ! isLoggedIn &&
+					// Limit this to reader pages. If we need to expand its scope, make sure we do not
+					// render it in the 'signup' sections, otherwise this may appear a second time in
+					// the external signup window it opens.
+					[ 'reader' ].includes( sectionName ) &&
+					! isReaderTagEmbed && (
+						<ReaderJoinConversationDialog
+							onClose={ () => clearLastActionRequiresLogin() }
+							isVisible={ !! loggedInAction }
+							loggedInAction={ loggedInAction }
+							onLoginSuccess={ () => {
+								if ( loggedInAction?.redirectTo ) {
+									window.location = loggedInAction.redirectTo;
+								} else {
+									window.location.reload();
+								}
+							} }
+						/>
+					) }
+			</div>
+		</Step.StepContainerV2Provider>
 	);
 };
 
@@ -334,6 +372,7 @@ export default withCurrentRoute(
 			const sectionName = currentSection?.name ?? null;
 			const sectionTitle = currentSection?.title ?? '';
 			const isAkismet = getIsAkismet( state );
+			const isPassport = getIsPassport( state );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
@@ -366,8 +405,13 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
+			const isCIABSite = site?.is_garden && site.garden_name === 'commerce';
+
 			return {
 				isAkismet,
+				isPassport,
 				isJetpackLogin,
 				isPopup,
 				isGravatar,
@@ -388,6 +432,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isCIABSite,
 			};
 		},
 		{ clearLastActionRequiresLogin }

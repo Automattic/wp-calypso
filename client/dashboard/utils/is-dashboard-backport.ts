@@ -6,11 +6,15 @@ export function isDashboardBackport() {
 		return false;
 	}
 
-	// Calypso development environment can also load the dashboard via the following hostname,
+	// Calypso development environment can also load the dashboard via the following hostnames,
 	// in which case it's also not the backport.
-	if ( window?.location?.hostname?.startsWith( 'my.localhost' ) ) {
+	if (
+		window?.location?.hostname?.startsWith( 'my.localhost' ) ||
+		window?.location?.hostname?.startsWith( 'my.woo.localhost' )
+	) {
 		return false;
 	}
 
-	return ! [ '/v2', '/ciab' ].some( ( path ) => window?.location?.pathname?.startsWith( path ) );
+	// We're on a dashboard screen in non-dashboard Calypso environment.
+	return true;
 }

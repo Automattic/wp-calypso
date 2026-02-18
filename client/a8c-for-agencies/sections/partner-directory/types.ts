@@ -1,6 +1,11 @@
 export type AgencyDirectoryApplicationStatus = 'pending' | 'in-progress' | 'completed';
 
-export type DirectoryApplicationType = 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
+export type DirectoryApplicationType =
+	| 'wordpress'
+	| 'jetpack'
+	| 'woocommerce'
+	| 'pressable'
+	| 'vip';
 
 export interface AgencyDirectoryApplication {
 	products: string[];

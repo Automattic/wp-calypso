@@ -1,4 +1,4 @@
-import { DotcomPlans, JetpackFeatures } from '@automattic/api-core';
+import { JetpackPlans, JetpackFeatures } from '@automattic/api-core';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -13,16 +13,12 @@ import {
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
+import { getCurrentDashboard } from '../app/routing';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
-import type {
-	JetpackFeatureSlug,
-	Purchase,
-	Site,
-	DashboardSiteListSite,
-} from '@automattic/api-core';
+import type { JetpackFeatureSlug, Purchase, Site } from '@automattic/api-core';
 
 export const JETPACK_PRODUCTS = [
 	{
@@ -95,7 +91,7 @@ export function getSitePlanDisplayName( site: Site ) {
 		return '';
 	}
 
-	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
+	if ( plan.product_slug === JetpackPlans.PLAN_JETPACK_FREE ) {
 		const products = getJetpackProductsForSite( site );
 		if ( products.length === 1 ) {
 			return products[ 0 ].label;
@@ -112,25 +108,6 @@ export function getSitePlanDisplayName( site: Site ) {
 	}
 
 	return plan.product_name || plan.product_name_short;
-}
-
-export function getSitePlanDisplayName__ES( site: DashboardSiteListSite ) {
-	const plan = site.plan;
-	if ( ! plan ) {
-		return '';
-	}
-
-	if ( plan.product_slug === DotcomPlans.JETPACK_FREE ) {
-		const products = getJetpackProductsForSite( site );
-		if ( products.length === 1 ) {
-			return products[ 0 ].label;
-		}
-		if ( products.length > 1 ) {
-			return __( 'Jetpack' );
-		}
-	}
-
-	return plan.product_name_short;
 }
 
 export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
@@ -154,10 +131,14 @@ export function useSitePlanManageURL( site: Site, purchase?: Purchase ) {
 		const backUrl = redirectToDashboardLink();
 
 		return isCommerceGarden( site )
-			? wpcomLink( `/setup/woo-hosted-plans?siteSlug=${ site.slug }` )
+			? addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+					siteSlug: site.slug,
+					dashboard: getCurrentDashboard(),
+			  } )
 			: addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 					siteSlug: site.slug,
 					cancel_to: backUrl,
+					dashboard: getCurrentDashboard(),
 			  } );
 	}
 

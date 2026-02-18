@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
@@ -14,12 +15,13 @@ import {
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
 	domainTransferRoute,
-	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { getCurrentDashboard } from '../../app/routing';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -36,7 +38,7 @@ const noop = () => {};
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const setPrimaryDomainMutation = useMutation( {
@@ -96,7 +98,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-					item.domain_status.id === 'connection_error',
+					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
 			},
 			{
 				id: 'manage-domain',
@@ -212,13 +214,22 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+					const siteSlug = sitesByBlogId[ domain.blog_id ]?.slug ?? domain.site_slug;
+					const queryArgs: Record< string, string > = {
+						initialQuery: domain.domain,
+						initialMode: 'transfer-domain',
+						dashboard: getCurrentDashboard(),
+						back_to: redirectToDashboardLink(),
+					};
 
-					router.navigate( {
-						to: domainTransferToAnyUserRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
+					if ( siteSlug ) {
+						queryArgs.siteSlug = siteSlug;
+					}
+
+					window.location.href = addQueryArgs(
+						wpcomLink( '/setup/domain/use-my-domain' ),
+						queryArgs
+					);
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return isTransferrableToWpcom( item );
@@ -248,7 +259,10 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
 					return (
-						!! site && ! site?.is_wpcom_atomic && item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
+						!! site &&
+						! site?.is_wpcom_atomic &&
+						! site?.is_garden &&
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
 					);
 				},
 				RenderModal: ( { items, closeModal = noop } ) => {
@@ -319,7 +333,6 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
-			createErrorNotice,
 			sitesByBlogId,
 			recordTracksEvent,
 		]

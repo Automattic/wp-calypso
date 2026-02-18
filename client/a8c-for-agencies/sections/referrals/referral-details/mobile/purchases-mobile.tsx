@@ -1,16 +1,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ReferralPurchase } from '../../types';
-import './style.scss';
 import AssignedTo from '../components/assigned-to';
 import DateAssigned from '../components/date';
 import ProductDetails from '../components/product-details';
 import TotalAmount from '../components/total-amount';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
+
+import './style.scss';
 
 type PurchaseItemProps = {
 	purchase: ReferralPurchase;
@@ -30,6 +33,8 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 		[ dispatch ]
 	);
 
+	const isPressablePlan = purchase.license?.license_key?.startsWith( 'pressable-' );
+
 	return (
 		<div className="referral-purchases-mobile">
 			<div className="referral-purchases-mobile__content">
@@ -47,13 +52,21 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 				</p>
 			</div>
 			<div className="referral-purchases-mobile__content">
-				<h3>{ translate( 'Assigned to' ).toUpperCase() }</h3>
-				<AssignedTo
-					purchase={ purchase }
-					data={ data }
-					handleAssignToSite={ handleAssignToSite }
-					isFetching={ isFetching }
-				/>
+				<h3>{ translate( 'Site Details' ).toUpperCase() }</h3>
+				{ isPressablePlan && (
+					<ExternalLink href={ EXTERNAL_PRESSABLE_AUTH_URL }>
+						{ translate( 'Manage in Pressable' ) }
+					</ExternalLink>
+				) }
+
+				{ ! isPressablePlan && (
+					<AssignedTo
+						purchase={ purchase }
+						data={ data }
+						handleAssignToSite={ handleAssignToSite }
+						isFetching={ isFetching }
+					/>
+				) }
 			</div>
 			<div className="referral-purchases-mobile__content">
 				<h3>{ translate( 'Total' ).toUpperCase() }</h3>

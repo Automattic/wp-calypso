@@ -64,6 +64,7 @@ export const HelpCenterArticle = ( {
 				post_id: post.ID,
 				blog_id: post.site_ID,
 				search_query: query,
+				article_source: post.source,
 			};
 
 			recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );

@@ -60,7 +60,7 @@ import {
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -492,7 +492,14 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
-	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
+	const is100YearCheckoutFlow = context.pathname.includes( '/checkout/100-year' );
+
+	// /checkout/marketplace/ is for standard siteless checkout, while
+	// /checkout/passport/ allows to use customized URL for Passport as well as custom branding.
+	const isMarketplaceSitelessCheckoutFlow = [ '/checkout/marketplace', '/checkout/passport' ].some(
+		( path ) => context.pathname.includes( path )
+	);
+
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
@@ -506,6 +513,7 @@ export function noSite( context, next ) {
 		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
+		! is100YearCheckoutFlow &&
 		// We allow renewals without a site through because we want to show these
 		// users an error message on the checkout page.
 		! isRenewal &&
@@ -886,16 +894,6 @@ export function selectSiteIfNotDeleted( context, next ) {
 	}
 
 	return next();
-}
-
-export function selectSiteIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	if ( ! isUserLoggedIn( state ) ) {
-		next();
-		return;
-	}
-
-	selectSite( context );
 }
 
 /**

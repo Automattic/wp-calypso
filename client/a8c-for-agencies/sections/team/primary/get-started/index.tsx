@@ -7,6 +7,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
@@ -20,6 +21,7 @@ import './style.scss';
 export default function GetStarted() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -31,6 +33,9 @@ export default function GetStarted() {
 
 	const onLearnMoreClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_learn_more_managing_members_click' ) );
+		showSupportGuide(
+			'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members'
+		);
 	};
 
 	return (
@@ -89,11 +94,9 @@ export default function GetStarted() {
 					<Button
 						className="team-list-get-started__learn-more-button"
 						variant="link"
-						target="_blank"
-						href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members"
 						onClick={ onLearnMoreClick }
 					>
-						{ translate( 'Team members Knowledge Base article ↗' ) }
+						{ translate( 'Team members Knowledge Base article' ) }
 					</Button>
 					<br />
 				</StepSection>

@@ -1,16 +1,18 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useAppContext } from '../../app/context';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
+import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
+import CrontabSettingsSummary from '../settings-crontab/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
@@ -33,12 +35,7 @@ import type { SiteSettings } from '@automattic/api-core';
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
-	const { supports } = useAppContext();
-	const supportsSettings = supports.sites && supports.sites.settings;
-
-	if ( ! supportsSettings ) {
-		return null;
-	}
+	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 
 	return (
 		<PageLayout
@@ -50,12 +47,15 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ supportsSettings.general && (
+			{ siteTypeSupports.settingsGeneral && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
 						<SiteVisibilitySettingsSummary site={ site } />
-						{ supportsSettings.general.redirect ? (
+						{ isEnabled( 'wordpress-ai-tools' ) && siteTypeSupports.settingsGeneralAITools ? (
+							<AISiteToolsSettingsSummary site={ site } />
+						) : null }
+						{ siteTypeSupports.settingsGeneralRedirect ? (
 							<SiteRedirectSettingsSummary site={ site } />
 						) : null }
 						<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
@@ -65,13 +65,14 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ supportsSettings.server && (
+			{ siteTypeSupports.settingsServer && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Server' ) } level={ 3 } />
 					<SummaryButtonList>
 						<WordPressSettingsSummary site={ site } />
 						<PHPSettingsSummary site={ site } />
 						<SftpSshSettingsSummary site={ site } />
+						<CrontabSettingsSummary site={ site } />
 						<RepositoriesSettingsSummary site={ site } />
 						<DatabaseSettingsSummary site={ site } />
 						<PrimaryDataCenterSettingsSummary site={ site } />
@@ -80,7 +81,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ supportsSettings.security && (
+			{ siteTypeSupports.settingsSecurity && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Security' ) } level={ 3 } />
 					<SummaryButtonList>
@@ -90,7 +91,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ supportsSettings.experimental && config.isEnabled( 'wordpress-ai-assistant' ) && (
+			{ siteTypeSupports.settingsExperimental && isEnabled( 'wordpress-ai-assistant' ) && (
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
 					<SummaryButtonList>

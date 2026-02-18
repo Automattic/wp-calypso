@@ -247,11 +247,9 @@ $with-sidebar-min-page-width: 1114px;
 		.components-base-control {
 			padding: 6px 8px;
 		}
-	
+
 		.components-toggle-group-control {
 			border: 1px solid var(--wp-components-color-gray-600, #949494);
-			padding: 3px;
-
 			> div {
 				flex-basis: auto;
 			}

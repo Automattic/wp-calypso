@@ -35,6 +35,7 @@ export interface SupportedEnvVariables {
 	readonly TEST_LOCALES: TestLocales;
 	readonly TEST_ON_ATOMIC: boolean;
 	readonly TIMEOUT: number;
+	readonly MAILOSAUR_LIMIT_REACHED: boolean;
 	readonly VIEWPORT_NAME: ViewportName;
 	readonly WOO_BASE_URL: string;
 	readonly WPCOM_BASE_URL: string;

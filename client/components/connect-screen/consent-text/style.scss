@@ -1,0 +1,18 @@
+.connect-screen-consent-text {
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+	text-align: center;
+	margin: 1.5rem 0 0;
+	width: 100%;
+
+	a {
+		color: var( --color-link );
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var( --color-link-dark );
+		}
+	}
+}

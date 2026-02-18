@@ -4,6 +4,8 @@ import {
 	hasAmountAvailableToRefund,
 	isNonDomainSubscription,
 	isOneTimePurchase,
+	getPurchaseCancellationFlowType,
+	CANCEL_FLOW_TYPE,
 } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
 import type { CancelPurchaseState } from './types';
@@ -46,6 +48,17 @@ export default function CancelButton( {
 	const cancelButtonText = ( () => {
 		if ( includedDomainPurchase ) {
 			return __( 'Continue with cancellation' );
+		}
+
+		if (
+			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE &&
+			isNonDomainSubscription( purchase )
+		) {
+			if ( purchase.is_plan ) {
+				return __( 'Remove plan' );
+			}
+
+			return __( 'Remove product' );
 		}
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {

@@ -1,17 +1,3 @@
-export class DashboardDataError extends Error {
-	constructor(
-		public code: string,
-		cause?: unknown
-	) {
-		const message = cause instanceof Error ? cause.message : `Error: ${ cause }`;
-		super( message, { cause } );
-		this.name = 'DashboardDataError';
-
-		// Fix prototype chain (important for instanceof to work reliably)
-		Object.setPrototypeOf( this, new.target.prototype );
-	}
-}
-
 export interface WPError extends Error {
 	status: number;
 	statusCode: number;
@@ -28,4 +14,19 @@ export function isWpError( error: unknown ): error is WPError {
 		typeof error.statusCode === 'number' &&
 		( 'error' in error ? typeof error.error === 'string' : true )
 	);
+}
+
+export function isInaccessibleJetpackError( error: unknown ): boolean {
+	if ( error instanceof Error ) {
+		if ( error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
+			return true;
+		}
+		if (
+			error.name === 'UnauthorizedError' &&
+			error.message.startsWith( 'API calls to this blog have been disabled' )
+		) {
+			return true;
+		}
+	}
+	return false;
 }

@@ -2,27 +2,20 @@
 
 ## Primary Objective
 
-Review the dashboard code for quality, correctness, and best practices.
+Verify that the PR follows the rules in @.claude/rules/dashboard.md.
 
-## Project Guidelines
-
-Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
-
-## Scope
-
-- **React/TypeScript**: Component props/types, hook dependencies, state management, error handling.
-- **Performance**: Unnecessary re-renders, missing memoization, large bundle imports.
-- **Accessibility**: Missing ARIA labels, keyboard navigation, focus management.
-- **API usage**: Correct endpoint usage, error states, loading states.
+Read @.claude/rules/dashboard.md before reviewing.
 
 ## Method
 
-- Use `mcp__github_inline_comment__create_inline_comment` for line-specific issues.
-- Cite `file:line` for each issue.
-- Provide fix suggestions.
-- Focus on files changed in this PR.
+- Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
+- Provide fix suggestions in each comment.
 - Don't nitpick minor style issues unless they violate project guidelines.
+- Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
-## If No Issues Found
+## Output Format
 
-State: "No significant issues detected" with a brief explanation.
+- Be concise.
+- Do NOT use checkboxes, todo lists, or progress indicators.
+- Only comment if there are issues worth addressing.
+- DO NOT comment on lines that are not related to the rules in @.claude/rules/dashboard.md.

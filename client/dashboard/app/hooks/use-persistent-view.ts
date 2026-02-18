@@ -156,6 +156,7 @@ export function usePersistentView( {
 				} else if ( ! fastDeepEqual( newTransientProperties, transientProperties ) ) {
 					navigate( {
 						search: mergeQueryParamsWithTransientProperties( queryParams, newTransientProperties ),
+						resetScroll: false,
 					} );
 				}
 			}
@@ -198,7 +199,7 @@ export function usePersistentView( {
 	return { view, updateView, resetView: isViewModified ? resetView : undefined };
 }
 
-function removeTransientPropertiesFromView( view: View ): Omit< View, 'page' | 'search' > {
+function removeTransientPropertiesFromView( view: View ): View {
 	const viewToPersist = { ...view };
 
 	delete viewToPersist.page;

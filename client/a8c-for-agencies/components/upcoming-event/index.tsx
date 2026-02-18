@@ -12,11 +12,10 @@ const UpcomingEvent = ( {
 	title,
 	subtitle,
 	descriptions,
-	cta,
+	ctas,
 	logoUrl,
 	logoElement,
 	imageUrl,
-	trackEventName,
 	dateClassName,
 	imageClassName,
 	extraContent,
@@ -59,17 +58,11 @@ const UpcomingEvent = ( {
 		return `${ date.from.format( 'YYYY-MM-DD' ) }/${ date.to.format( 'YYYY-MM-DD' ) }`;
 	}, [ date ] );
 
-	const handleRegisterClick = (): void => {
-		dispatch( recordTracksEvent( trackEventName ) );
-	};
-
 	return (
 		<div className="a4a-event">
 			<div className="a4a-event__content">
 				<div className="a4a-event__header">
-					<div className="a4a-event__logo">
-						{ logoElement ?? <img src={ logoUrl } alt={ title } /> }
-					</div>
+					<div className="a4a-event__logo">{ logoElement ?? <img src={ logoUrl } alt="" /> }</div>
 					<div className="a4a-event__date-and-title">
 						<div className={ clsx( 'a4a-event__date', dateClassName ) }>
 							<time dateTime={ dateTimeString }>{ displayDate }</time>
@@ -86,16 +79,23 @@ const UpcomingEvent = ( {
 				</div>
 
 				<div className="a4a-event__footer">
-					<Button
-						className="a4a-event__button"
-						variant="secondary"
-						target="_blank"
-						href={ cta.url }
-						onClick={ handleRegisterClick }
-					>
-						{ cta.label }
-					</Button>
-					{ extraContent }
+					{ ctas.map( ( cta ) => {
+						return (
+							<Button
+								key={ `cta-${ cta.url }` }
+								className="a4a-event__button"
+								variant={ cta.variant as 'link' | 'primary' | 'secondary' | 'tertiary' }
+								target={ cta.isExternal ? '_blank' : undefined }
+								href={ cta.url }
+								onClick={ () => dispatch( recordTracksEvent( cta.trackEventName ) ) }
+							>
+								{ cta.label }
+								{ cta.isExternal && ' ↗' }
+							</Button>
+						);
+					} ) }
+
+					<div className="a4a-event__extra-content">{ extraContent }</div>
 				</div>
 			</div>
 			<div

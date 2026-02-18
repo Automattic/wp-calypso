@@ -1,7 +1,5 @@
 import { type Site, DotcomFeatures } from '@automattic/api-core';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
-import { CalloutOverlay } from 'calypso/dashboard/components/callout-overlay';
-import PageLayout from 'calypso/dashboard/components/page-layout';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -33,20 +31,14 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 		}
 
 		content = (
-			<>
+			<div className="hosting-features-callout">
 				<PageViewTracker title="Sites > Hosting Features" path={ path } />
-				<PageLayout>
-					<CalloutOverlay
-						callout={
-							shouldShowActivationCallout ? (
-								<HostingActivationCallout path={ path } site={ site } redirectUrl={ redirectUrl } />
-							) : (
-								<HostingUpsellCallout siteSlug={ site.slug } />
-							)
-						}
-					/>
-				</PageLayout>
-			</>
+				{ shouldShowActivationCallout ? (
+					<HostingActivationCallout path={ path } site={ site } redirectUrl={ redirectUrl } />
+				) : (
+					<HostingUpsellCallout siteSlug={ site.slug } />
+				) }
+			</div>
 		);
 	} else {
 		content = <HostingFeatures path={ path } />;

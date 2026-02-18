@@ -8,8 +8,10 @@ type Ticket = {
 	product: string;
 	agency_id: number | undefined;
 	site?: string;
+	no_of_sites?: number;
 	contact_type?: string;
 	pressable_id?: number;
+	tags?: string[];
 };
 
 export function useSubmitA4ATicketMutation() {

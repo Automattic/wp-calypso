@@ -5,10 +5,12 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
+	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -44,10 +46,20 @@ interface AgentChatProps {
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
 	onExpand: () => void;
+	/** Called to clear the suggestions. */
+	clearSuggestions?: () => void;
+	/** Called when the typing status changes. */
+	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Controlled input value for tracking text in the input field. */
+	inputValue?: string;
+	/** Called when the input value changes. */
+	onInputChange?: ( value: string ) => void;
+	/** Whether to render the floating chat in compact mode. */
+	isCompactMode?: boolean;
 }
 
 export default function AgentChat( {
@@ -64,8 +76,14 @@ export default function AgentChat( {
 	onAbort,
 	onClose,
 	onExpand,
+	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
+	onTypingStatusChange,
+	inputValue,
+	onInputChange,
+	isCompactMode = false,
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -81,29 +99,43 @@ export default function AgentChat( {
 		[ markdownComponents, markdownExtensions ]
 	);
 
+	let floatingChatState: ChatState = 'collapsed';
+	if ( isOpen ) {
+		floatingChatState = 'expanded';
+	} else if ( isCompactMode ) {
+		floatingChatState = 'compact';
+	}
+
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			suggestions={ suggestions }
-			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
+			clearSuggestions={ clearSuggestions }
+			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
 			messageRenderer={ messageRenderer }
+			inputValue={ inputValue }
+			onInputChange={ onInputChange }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
 					<EmptyView
 						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-						help={ __( 'Got a different request? Ask away.', '__i18n_text_domain__' ) }
+						help={
+							emptyViewSuggestions.length > 0
+								? __( 'Got a different request? Ask away.', '__i18n_text_domain__' )
+								: undefined
+						}
 						suggestions={ emptyViewSuggestions }
 						icon={ isDocked ? <AI /> : <AI size={ 41 } color="#3858e8" /> }
 					/>

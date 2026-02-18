@@ -5,9 +5,10 @@ import {
 	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
+	skipIfMailosaurLimitReached();
 	const role = 'Editor';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'invited',
@@ -64,7 +65,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I can see the invite is pending', async function () {
-			await pagePeople.expectInvitation( testUser.email );
+			await pagePeople.waitForInvitation( testUser.email );
 		} );
 
 		await test.step( 'When the invited user checks their email', async function () {

@@ -6,7 +6,7 @@ The dashboard uses the [@tanstack/react-router](https://tanstack.router.dev/) li
 
 ## Architecture
 
-The router is follows these key principles:
+The router follows these key principles:
 
 1. **Configuration-based**: Routes are created based on the `AppConfig` that's passed to the router
 2. **Lazy-loaded**: Each route is lazy-loaded using dynamic imports to optimize performance

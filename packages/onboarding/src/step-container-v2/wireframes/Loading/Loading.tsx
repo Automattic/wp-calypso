@@ -11,9 +11,10 @@ interface LoadingProps {
 	progress?: number;
 	delay?: number;
 	compactLogo?: TopBarProps[ 'compactLogo' ];
+	hideLogo?: TopBarProps[ 'hideLogo' ];
 }
 
-export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingProps ) => {
+export const Loading = ( { title, progress, delay = 0, compactLogo, hideLogo }: LoadingProps ) => {
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
 	const [ prevDelay, setPrevDelay ] = useState( delay );
@@ -36,7 +37,7 @@ export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingPro
 
 	return (
 		<StepContainerV2>
-			<TopBar compactLogo={ compactLogo } />
+			<TopBar compactLogo={ compactLogo } hideLogo={ hideLogo } />
 			<div className="step-container-v2--loading">
 				{ title && shouldDisplayTitle && (
 					<div className="step-container-v2--loading__heading-wrapper">

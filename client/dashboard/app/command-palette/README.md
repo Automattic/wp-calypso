@@ -33,23 +33,6 @@ function Root() {
 
 > **Important**: The command palette must be a child of a component within the TanStack Router context (like Root). Placing it as a sibling to RouterProvider will break navigation functionality.
 
-## Opening the Command Palette
-
-The command palette opens automatically with Cmd+K / Ctrl+K, or programmatically:
-
-```jsx
-import { useOpenCommandPalette } from '../command-palette/utils';
-
-function YourComponent() {
-	const openCommandPalette = useOpenCommandPalette();
-  return (
-    <button onClick={openCommandPalette}>
-      Open Command Palette
-    </button>
-  );
-}
-```
-
 ## Implementation Details
 
 This command palette:
@@ -77,7 +60,7 @@ export const navigationCommands: Command[] = [
 ];
 ```
 
-The command palette will only register commands for features that are enabled in the current dashboard configuration. This allows different dashboards (e.g., `my.wordpress.com` vs `/ciab`) to show different commands without code duplication.
+The command palette will only register commands for features that are enabled in the current dashboard configuration. This allows different dashboards (e.g., `my.wordpress.com` vs `my.woo.ai`) to show different commands without code duplication.
 
 ## Adding Custom Commands
 

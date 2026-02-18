@@ -3,6 +3,7 @@ import { useState, useCallback } from '@wordpress/element';
 import { useContentFilter } from '../../hooks/use-content-filter';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 import Placeholders from '../placeholder-lines';
+import { ArticleLessonNavigation } from './article-lesson-navigation';
 import { SupportArticleHeader } from './help-center-support-article-header';
 import type { ArticleContentProps } from '../../types';
 
@@ -32,6 +33,9 @@ const ArticleContent = ( {
 							dangerouslySetInnerHTML={ { __html: post.content } }
 							ref={ articleContentRef }
 						/>
+						{ post.lesson_navigation && (
+							<ArticleLessonNavigation lessonNavigation={ post.lesson_navigation } />
+						) }
 						<HelpCenterFeedbackForm
 							postId={ post.ID }
 							isEligibleForChat={ isEligibleForChat }

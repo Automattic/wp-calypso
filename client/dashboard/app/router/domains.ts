@@ -38,6 +38,7 @@ import {
 	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
 import { queryParamToArray } from '../../utils/url';
+import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 
 const domainsRoute = createRoute( {
@@ -56,10 +57,17 @@ const domainsRoute = createRoute( {
 export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-list', { fullPageLoad } );
+		}
+	},
 	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( domainsQuery() );
-		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>

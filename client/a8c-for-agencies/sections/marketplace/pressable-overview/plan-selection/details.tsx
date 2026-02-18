@@ -3,14 +3,15 @@ import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/n
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from '../../hooks/use-marketplace';
 import getPressablePlan from '../lib/get-pressable-plan';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
@@ -179,7 +180,7 @@ export default function PlanSelectionDetails( {
 										<Button
 											target="_blank"
 											rel="norefferer nooppener"
-											href="https://my.pressable.com/agency/auth"
+											href={ EXTERNAL_PRESSABLE_AUTH_URL }
 											disabled={ ! isOwner }
 										>
 											{ isOwner

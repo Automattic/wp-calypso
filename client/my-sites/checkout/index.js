@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
+	checkoutA4ASiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -44,6 +45,15 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutJetpackSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/agency/referral`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutA4ASiteless,
 		makeLayout,
 		clientRender
 	);
@@ -113,6 +123,16 @@ export default function () {
 	);
 
 	page(
+		'/checkout/100-year/thank-you/no-site/:receiptId',
+		refreshUserSession, // Load user session into state in userless checkout
+		redirectLoggedOut,
+		noSite,
+		checkoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/100-year/thank-you/:site/:receiptId',
 		loggedInSiteSelection,
 		hundredYearCheckoutThankYou,
@@ -131,6 +151,26 @@ export default function () {
 
 	page(
 		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// Passport Marketplace checkout custom URLs
+	page(
+		`/checkout/passport/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/passport/:productSlug/renew/:purchaseId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,

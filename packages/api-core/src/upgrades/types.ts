@@ -213,7 +213,7 @@ export interface Purchase {
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_plan: boolean;
-	is_rechargable: boolean;
+	is_rechargeable: boolean;
 	is_woo_hosted_product: boolean;
 
 	/**
@@ -353,7 +353,18 @@ export interface Purchase {
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
+
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `payment_expiry_date` if possible as it will be more accurate.
+	 */
 	payment_expiry: string | undefined;
+
+	/**
+	 * The expiry date in ISO 8601 (YYYY-MM-DD) if the payment method has one.
+	 */
+	payment_expiry_date: string | undefined;
 
 	/**
 	 * True if this subscription can be upgraded to a different one.
@@ -372,6 +383,14 @@ export interface Purchase {
 	 * leave the site with no other products that provide the ATOMIC feature.
 	 */
 	will_atomic_revert_after_removal: boolean;
+
+	/**
+	 * True if this purchase should prevent the site from being deleted.
+	 *
+	 * When a site has any purchase with this flag set to true, the site
+	 * deletion flow should require the user to cancel these purchases first.
+	 */
+	blocks_site_deletion: boolean;
 }
 
 export type RawPurchase = Purchase & {

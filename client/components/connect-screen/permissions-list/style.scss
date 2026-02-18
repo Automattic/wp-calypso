@@ -1,0 +1,87 @@
+.connect-screen-permissions-list {
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.connect-screen-permissions-list__title {
+	font-size: 1rem;
+	font-weight: 500;
+	color: var( --color-text );
+	margin: 0 0 0.75rem;
+}
+
+.connect-screen-permissions-list__items {
+	list-style: none;
+	margin: 0;
+	padding-bottom: 0.5rem;
+}
+
+.connect-screen-permissions-list__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	padding-bottom: 0.5rem;
+	font-size: 0.875rem;
+	color: var( --color-text );
+	line-height: 1.5;
+}
+
+.connect-screen-permissions-list__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	color: var( --color-text, #1e1e1e );
+
+	svg {
+		width: 24px;
+		height: 24px;
+	}
+}
+
+.connect-screen-permissions-list__icon-placeholder {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.connect-screen-permissions-list__label {
+	line-height: 1.5;
+	padding-top: 2px;
+}
+
+.connect-screen-permissions-list__expand,
+.connect-screen-permissions-list__collapse {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-top: 0.5rem;
+	padding: 0;
+	font-size: 0.875rem;
+	color: var( --color-text, #1e1e1e );
+	text-decoration: none;
+
+	&.components-button {
+		color: var( --color-text, #1e1e1e );
+	}
+
+	svg {
+		width: 20px;
+		height: 20px;
+		transition: transform 0.2s ease;
+		fill: currentColor;
+	}
+}
+
+.connect-screen-permissions-list__collapse svg {
+	transform: rotate( 180deg );
+}
+
+.connect-screen-permissions-list__learn-more.components-button.is-link {
+	display: block;
+	margin: 1.5rem auto 0;
+	color: var( --color-text );
+	text-align: center;
+}

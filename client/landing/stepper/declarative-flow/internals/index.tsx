@@ -1,4 +1,5 @@
-import { Step } from '@automattic/onboarding';
+import { WooDashboardLogo } from '@automattic/components';
+import { Step, WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect, useMemo } from 'react';
@@ -119,22 +120,30 @@ export const FlowRenderer: React.FC< {
 		flow.useAssertConditions?.( navigate ) ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
+	const shouldHideLogo = flow.name === WOO_HOSTED_PLANS_FLOW;
 
-	const stepContainerV2Context = useMemo(
-		() => ( {
+	const stepContainerV2Context = useMemo( () => {
+		// Detect CIAB dashboard for Woo branding.
+		// Query params persist between step changes so this is stable.
+		const isWooDashboard =
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
+
+		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-		} ),
-		[ flow.name, currentStepRoute ]
-	);
+			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
+			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+		};
+	}, [ flow.name, currentStepRoute ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {
 			switch ( assertCondition.state ) {
 				case AssertConditionState.CHECKING:
 					return shouldUseStepContainerV2( flow.name ) ? (
-						<Step.Loading />
+						<Step.Loading hideLogo={ shouldHideLogo } />
 					) : (
 						<Loading className="wpcom-loading__boot" />
 					);
@@ -227,7 +236,7 @@ export const FlowRenderer: React.FC< {
 	useSignUpStartTracking( { flow } );
 
 	const fallback = shouldUseStepContainerV2( flow.name ) ? (
-		<Step.Loading />
+		<Step.Loading hideLogo={ shouldHideLogo } />
 	) : (
 		<Loading className="wpcom-loading__boot" />
 	);

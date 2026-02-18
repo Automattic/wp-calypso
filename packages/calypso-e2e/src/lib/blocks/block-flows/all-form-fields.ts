@@ -166,7 +166,7 @@ export class AllFormFieldsFlow implements BlockFlow {
 				await context.editorPage.selectParentBlock( 'Form' );
 			}
 
-			await editorCanvas.getByRole( 'button', { name: 'Add block' } ).click();
+			await editorCanvas.getByRole( 'button', { name: 'Add block' } ).first().click();
 		};
 		await context.editorPage.addBlockInline(
 			blockName,

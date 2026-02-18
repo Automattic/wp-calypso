@@ -13,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import filesize from 'filesize';
 import { useState } from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { StorageCapacityStat } from './storage-capacity-stat';
 import {
@@ -128,6 +129,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 			{
 				cancel_to: backUrl,
 				return_to: backUrl,
+				dashboard: getCurrentDashboard(),
 			}
 		);
 

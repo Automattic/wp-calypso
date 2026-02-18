@@ -19,6 +19,7 @@ import TransferRestrictionMessage from 'calypso/components/domains/transfer-doma
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
@@ -635,10 +636,18 @@ class TransferDomainStep extends Component {
 							}
 
 							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
-							const { message, severity } = getAvailabilityNotice( domain, status, {
-								site,
-								maintenanceEndTime,
-							} );
+							const { message, severity } = getAvailabilityNotice(
+								domain,
+								status,
+								{
+									site,
+									maintenanceEndTime,
+								},
+								false,
+								'_self',
+								'',
+								this.props.dashboard
+							);
 							this.setState( { notice: message, noticeSeverity: severity } );
 						}
 					}
@@ -726,6 +735,7 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		dashboard: getDashboardFromQuery(),
 		selectedSite: getSelectedSite( state ),
 		productsList: getProductsList( state ),
 	} ),

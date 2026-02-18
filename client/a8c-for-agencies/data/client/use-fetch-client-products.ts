@@ -1,13 +1,16 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { selectAlphabeticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import wpcom from 'calypso/lib/wp';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type {
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/a8c-for-agencies/types/products';
 
 function queryClientProducts(): Promise< APIProductFamily[] > {
 	return wpcom.req
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: '/agency-client/public/pricing',
+			path: '/agency-client/public/products',
 		} )
 		.then( ( data: APIProductFamily[] ) => {
 			const exclude = [
@@ -33,6 +36,10 @@ function queryClientProducts(): Promise< APIProductFamily[] > {
 							.map( ( product ) => ( {
 								...product,
 								family_slug: family.slug,
+								alternative_product_id:
+									product.alternative_product_id ||
+									product.monthly_alternative_product_id ||
+									product.yearly_alternative_product_id,
 							} ) ),
 					};
 				} )

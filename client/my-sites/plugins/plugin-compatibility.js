@@ -13,10 +13,10 @@ const incompatiblePlugins = new Set( [
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
-	'backup',
 	'better-wp-security',
 	'database-browser',
 	'extended-wp-reset',
+	'factory-reset',
 	'file-manager-advanced',
 	'file-manager',
 	'hide-my-wp',
@@ -45,7 +45,6 @@ const incompatiblePlugins = new Set( [
 	'wp-downgrade',
 
 	// backup
-	'backup-wd',
 	'backwpup',
 	'backwpup-pro',
 	'duplicator',
@@ -131,6 +130,7 @@ const incompatiblePlugins = new Set( [
 	'pexlechris-adminer',
 	'plugin-detective',
 	'porn-embed',
+	'porn-videos-embed',
 	'propellerads-official',
 	'trafficzion',
 	'tubeace',

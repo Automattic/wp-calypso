@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
+import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import {
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
+	AI_SITE_BUILDER_FLOW,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -21,7 +23,6 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 
 interface GetNewSiteParams {
 	flowToCheck: string;
-	isPurchasingDomainItem: boolean;
 	themeSlugWithRepo: string;
 	siteUrl?: string;
 	siteTitle: string;
@@ -64,12 +65,14 @@ const getBlogNameGenerationParams = ( {
 	siteTitle,
 	flowToCheck,
 	username,
-	isPurchasingDomainItem,
 }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
+		const blogName = siteUrl.replace( '.wordpress.com', '' );
+
 		return {
-			blog_name: siteUrl.replace( '.wordpress.com', '' ),
-			find_available_url: !! isPurchasingDomainItem,
+			blog_name: blogName,
+			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
+			find_available_url: !! getTld( blogName ),
 		};
 	}
 
@@ -140,7 +143,6 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 export const createSiteWithCart = async (
 	flowName: string,
 	userIsLoggedIn: boolean,
-	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
@@ -164,7 +166,6 @@ export const createSiteWithCart = async (
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
-		isPurchasingDomainItem,
 		themeSlugWithRepo,
 		siteUrl,
 		siteTitle,
@@ -218,6 +219,12 @@ export const createSiteWithCart = async (
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
 				...( refParam && { ref: refParam } ),
+				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
+				...( flowName === AI_SITE_BUILDER_FLOW &&
+					gardenName === 'commerce' &&
+					specId && {
+						trigger_backend_build: true,
+					} ),
 			},
 		},
 	} );

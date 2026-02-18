@@ -257,10 +257,17 @@ main.is-logged-out .full-width-section .full-width-section__content .search-box-
 	.components-search-control .components-input-base {
 		border-radius: 4px;
 	}
+	.components-input-base:focus-within .components-input-control__backdrop {
+		border-color: var(--studio-blue-50);
+	}
+	input[type="search"]:focus {
+		outline: none;
+	}
 	.search-box-header__header {
 		font-size: rem(70px);
 		line-height: 1;
 		margin-bottom: 6px;
+		color: var(--studio-gray-100);
 
 		@media (max-width: 660px) {
 			font-size: rem(60px);
@@ -268,6 +275,7 @@ main.is-logged-out .full-width-section .full-width-section__content .search-box-
 	}
 	.search-box-header__subtitle {
 		font-size: rem(18px);
+		color: var(--studio-gray-80);
 	}
 
 	&.fixed-top .search-box-header__search {

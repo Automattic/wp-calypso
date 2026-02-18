@@ -9,15 +9,6 @@ export function validateArg< V >(
 	}
 }
 
-export function validateArgIfUndefined< V >(
-	value: V,
-	errorMessage: string
-): asserts value is Exclude< V, undefined > {
-	if ( value === undefined ) {
-		throw new Error( errorMessage );
-	}
-}
-
 export function validatePaymentMethods(
 	paymentMethods: ExternalPaymentMethod[]
 ): asserts paymentMethods is PaymentMethod[] {

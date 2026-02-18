@@ -233,9 +233,11 @@ class StatModuleChartTabs extends Component {
 				/>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				{ chartType === 'bar' || lineChartData.length === 0 ? (
-					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
-						{ emptyState }
-					</Chart>
+					! isActiveTabLoading && (
+						<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
+							{ emptyState }
+						</Chart>
+					)
 				) : (
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"

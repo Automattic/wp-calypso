@@ -56,7 +56,8 @@ body {
 	&.theme-default.is-global,
 	&.theme-default.is-section-stepper,
 	&.theme-default.is-section-login,
-	&.theme-default.is-section-signup {
+	&.theme-default.is-section-signup,
+	&.theme-default.is-section-checkout {
 		background: var( --color-main-background );
 	}
 

@@ -1,11 +1,17 @@
 import config from '@automattic/calypso-config';
+import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
-	return [ 'http://my.localhost:3000', 'https://my.wordpress.com' ];
+	return [
+		'http://my.localhost:3000',
+		'https://my.wordpress.com',
+		'http://my.woo.localhost:3000',
+		'https://my.woo.ai',
+	];
 }
 
 /**
@@ -22,14 +28,22 @@ export function wpcomLink( path: string ) {
 }
 
 /**
+ * This function returns a link to the A4A (Automattic for Agencies) domain.
+ */
+export function a4aLink( path: string ) {
+	if ( config( 'env' ) === 'development' ) {
+		return new URL( path, 'http://agencies.localhost:3000' ).href;
+	}
+
+	return new URL( path, 'https://agencies.automattic.com' ).href;
+}
+
+/**
  * This function returns the link to the dashboard.
  */
 export function dashboardLink( path: string = '' ) {
-	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.localhost:3000' ).href;
-	}
-
-	return new URL( path, 'https://my.wordpress.com' ).href;
+	const dashboard = getDashboardFromQuery() ?? getCurrentDashboard();
+	return buildDashboardLink( dashboard, path );
 }
 
 /**

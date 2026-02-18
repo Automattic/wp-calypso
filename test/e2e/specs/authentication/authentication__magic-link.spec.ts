@@ -1,8 +1,9 @@
 import { DataHelper } from '@automattic/calypso-e2e';
 import { Message } from 'mailosaur/lib/models';
-import { tags, test, expect } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Magic Link', { tag: [ tags.AUTHENTICATION ] }, () => {
+	skipIfMailosaurLimitReached();
 	test.skip(
 		DataHelper.isCalypsoProduction() === false,
 		'Skipping unless running on WordPress.com'

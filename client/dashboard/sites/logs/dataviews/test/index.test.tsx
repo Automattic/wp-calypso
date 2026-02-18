@@ -14,10 +14,6 @@ import type { DeepPartial } from 'utility-types';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../../app/auth', () => ( {
-	useAuth: () => ( { user: { id: 'test-user' } } ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -118,19 +114,6 @@ const fixedDateRange = {
 	start: new Date( Date.UTC( 2025, 0, 1, 0, 0, 0 ) ),
 	end: new Date( Date.UTC( 2025, 0, 2, 0, 0, 0 ) ),
 };
-
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
-} );
 
 describe( 'SiteLogsDataViews', () => {
 	test( 'renders PHP logs and syncs URL params', async () => {

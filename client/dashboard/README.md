@@ -1,6 +1,6 @@
 # Hosting Dashboard
 
-Build a new Hosting Dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Clound and a4a).
+Build a new Hosting Dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Cloud and a4a).
 
 ## Some principles
 
@@ -21,6 +21,7 @@ Build a new Hosting Dashboard for WordPress.com based on the new design. The sam
 
 This `docs` directory contains comprehensive design documentation for the `/client/dashboard`, a new Hosting Dashboard for WordPress.com based on modern design principles.
 
+- [Running dev server](./docs/dev-server.md) - Documentation for running the development server
 - [Router and Routes](./docs/router.md) - Documentation for the routing system based on @tanstack/react-router
 - [Data Library and Layer](./docs/data-library.md) - Documentation for the data fetching and state management approach
 - [UI Components](./docs/ui-components.md) - Documentation for the component architecture and design principles
@@ -28,6 +29,7 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 - [Entry Points](./docs/entry-points.md) - Documentation for the entry points and how to define new ones (a4a, WordPress.com, etc.)
 - [Internationalization](./docs/i18n.md) - Documentation for internationalization and translation practices
 - [Typography and Copy](./docs/typography-and-copy.md) - Documentation for typography guidelines and copy standards
+- [Package Imports](./docs/package-imports.md) - Documentation for package import restrictions and policy
 
 ## Bugs
 
@@ -38,6 +40,7 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 
 - We want to use the core `Badge` component but there are limitations in its functionality right now. Specifically we want a way to apply the colors (by `intent` prop), but sometimes override the used `icon`. For now we are using `TrendComparisonBadge` with some hacky css to hide the icon.
 - Grouping by a field in the core `DataViews` component uses `getValue` to display the grouping header. To group by a value but display something else in the header, we're generating an ID containing a unique number of zero-width space characters in `scheduled-updates`. This should be removed once we're able to edit the header value.
+
 ## E2E testing
 
 ### Currently

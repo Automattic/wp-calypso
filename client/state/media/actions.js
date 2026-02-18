@@ -17,7 +17,6 @@ import {
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_SET_QUERY,
-	MEDIA_CLEAR_SITE,
 	MEDIA_PHOTOS_PICKER_FEATURE_FLAG_SET,
 } from 'calypso/state/action-types';
 
@@ -285,17 +284,6 @@ export function setQuery( siteId, query ) {
 		type: MEDIA_SET_QUERY,
 		siteId,
 		query,
-	};
-}
-
-/**
- * Returns an action object used in signallying that a media data from a given site
- * @param {number} siteId Site ID
- */
-export function clearSite( siteId ) {
-	return {
-		type: MEDIA_CLEAR_SITE,
-		siteId,
 	};
 }
 

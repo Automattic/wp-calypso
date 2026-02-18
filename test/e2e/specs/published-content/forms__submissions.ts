@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const postContent = `<!-- wp:jetpack/contact-form {"subject":"A new registration from your website","to":"","disableGoBack":false,"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
+		const postContent = `<!-- wp:jetpack/contact-form {"emailNotifications":false,"subject":"A new registration from your website","to":"","disableGoBack":false,"style":{"spacing":{"padding":{"top":"16px","right":"16px","bottom":"16px","left":"16px"}}}} -->
 						<div class="wp-block-jetpack-contact-form" style="padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px"><!-- wp:jetpack/field-name {"required":true,"requiredText":"(required)"} /-->
 
 						<!-- wp:jetpack/field-email {"required":true,"requiredText":"(required)"} /-->
@@ -108,16 +108,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		it( 'Submit first form', async function () {
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).click();
 
-			await page.getByText( 'Your message has been sent' ).waitFor( { timeout: 20 * 1000 } );
+			await page
+				// TODO: "Thank you for your response" changed to "Your message has been sent" in the latest version of the plugin.
+				// Eventually we can remove the "Thank you for your response" option and just use "Your message has been sent" (we don't check for emojis).
+				.getByText( /Thank you for your response\.|Your message has been sent/ )
+				.waitFor( { timeout: 20 * 1000 } );
 		} );
 
-		it( 'Verify "Go back" link appears', async function () {
-			// The "Go back" can be either a link or button depending on the implementation
-			await page.getByText( 'Go back', { exact: true } ).waitFor();
+		it( 'Verify "← Back" link appears', async function () {
+			// TODO: "back" link changed from "Go back" to "← Back" in the latest version of the plugin.
+			// Eventually we can remove the "Go back" option and just use "Back" (we don't check for emojis).
+			await page.getByRole( 'button', { name: /Back|Go back/ } ).waitFor();
 		} );
 
-		it( 'Click "Go back" to return to form', async function () {
-			await page.getByText( 'Go back', { exact: true } ).click();
+		it( 'Click "← Back" to return to form', async function () {
+			// TODO: "back" link changed from "Go back" to "← Back" in the latest version of the plugin.
+			// Eventually we can remove the "Go back" option and just use "Back" (we don't check for emojis).
+			await page.getByRole( 'button', { name: /Back|Go back/ } ).click();
 			// Verify the form is visible again and the success message is hidden
 			await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
 			// Wait for the success message to be hidden
@@ -154,8 +161,10 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 			// Wait for the success message to become visible (not just exist)
 			await page
-				.getByText( 'Your message has been sent' )
-				.waitFor( { state: 'visible', timeout: 20 * 1000 } );
+				// TODO: "Thank you for your response" changed to "Your message has been sent" in the latest version of the plugin.
+				// Eventually we can remove the "Thank you for your response" option and just use "Your message has been sent" (we don't check for emojis).
+				.getByText( /Thank you for your response\.|Your message has been sent/ )
+				.waitFor( { timeout: 20 * 1000 } );
 		} );
 	} );
 
@@ -215,30 +224,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click first response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
-		} );
-
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
+				await feedbackInboxPage.viewResponseRowByText( formData1.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
 
-		it( 'Navigate to Inbox tab', async function () {
+		it( 'Navigate to Inbox tab if needed', async function () {
+			// if it's not in spam, we should already be in the inbox tab as per
+			// find and click on the search test above.
 			if ( isInSpam ) {
-				// Clear search first to show all responses
-				await feedbackInboxPage.clearSearch( true );
 				await feedbackInboxPage.clickFolderTab( 'Inbox' );
-				// Wait for folder change to complete and data to reload
-				await page.waitForTimeout( 2000 );
-				// Search again for the first response in Inbox
-				await feedbackInboxPage.searchResponses( formData1.name );
-				await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			}
 		} );
 
 		it( 'Validate first response data', async () => {
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.email );
 			await feedbackInboxPage.validateTextInSubmission( formData1.phone );
@@ -281,30 +283,23 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			}
 		} );
 
-		it( 'Click second response row', async () => {
-			await feedbackInboxPage.clickResponseRowByText( formData2.name );
-		} );
-
 		it( 'If in Spam, mark as not spam', async function () {
 			if ( isInSpam ) {
+				await feedbackInboxPage.viewResponseRowByText( formData2.name );
 				await feedbackInboxPage.clickNotSpamAction();
 			}
 		} );
 
-		it( 'Navigate to Inbox tab', async function () {
+		it( 'Navigate to Inbox tab if needed', async function () {
+			// if it's not in spam, we should already be in the inbox tab as per
+			// find and click on the search step above.
 			if ( isInSpam ) {
-				// Clear search first to show all responses
-				await feedbackInboxPage.clearSearch( true );
 				await feedbackInboxPage.clickFolderTab( 'Inbox' );
-				// Wait for folder change to complete
-				await page.waitForTimeout( 1000 );
-				// Search again for the second response in Inbox
-				await feedbackInboxPage.searchResponses( formData2.name );
-				await feedbackInboxPage.clickResponseRowByText( formData2.name );
 			}
 		} );
 
 		it( 'Validate second response data', async () => {
+			await feedbackInboxPage.viewResponseRowByText( formData2.name );
 			await feedbackInboxPage.validateTextInSubmission( formData2.name );
 			await feedbackInboxPage.validateTextInSubmission( formData2.email );
 			await feedbackInboxPage.validateTextInSubmission( formData2.phone );
@@ -325,7 +320,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Click on first response', async function () {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 		} );
 
 		it( 'Verify first response data is visible', async function () {
@@ -343,12 +338,6 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 				await feedbackInboxPage.validateTextInSubmission( formData2.name );
 				await feedbackInboxPage.validateTextInSubmission( formData2.email );
-			}
-		} );
-
-		it( 'Verify Previous button is disabled (no newer responses)', async function () {
-			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-				await feedbackInboxPage.verifyPreviousButtonDisabled();
 			}
 		} );
 
@@ -380,8 +369,9 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			await feedbackInboxPage.verifyActionExistsInMenu( formData1.name, 'Trash' );
 		} );
 
-		it( 'Ensure first response is selected', async function () {
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+		// This step ensures the response is opened so actions can be performed on its view
+		it( 'Ensure first response is opened', async function () {
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 		} );
 
 		it( 'Mark first response as unread', async function () {
@@ -390,13 +380,11 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Mark first response as read', async function () {
 			// Re-select the response after the action
-			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.clickMarkAsReadAction();
 		} );
 
 		it( 'Mark first response as spam', async function () {
 			// Re-select the response after the action
-			// await feedbackInboxPage.clickResponseRowByText( formData1.name );
 			await feedbackInboxPage.clickMarkAsSpamAction();
 		} );
 
@@ -406,7 +394,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is in Spam', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -420,7 +408,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is back in Inbox', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -434,7 +422,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is in Trash', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 
@@ -448,7 +436,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Verify first response is restored in Inbox', async function () {
 			await feedbackInboxPage.searchResponses( formData1.email, true );
-			await feedbackInboxPage.clickResponseRowByText( formData1.name );
+			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );
 	} );

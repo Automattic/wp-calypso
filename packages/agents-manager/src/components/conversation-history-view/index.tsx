@@ -7,6 +7,7 @@ import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useConversationList from '../../hooks/use-conversation-list';
+import { LocalConversationListItem } from '../../types';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
@@ -14,7 +15,7 @@ import './style.scss';
 interface Props {
 	agentId: string;
 	authProvider?: () => Promise< Record< string, string > >;
-	onSelectConversation: ( sessionId: string ) => void;
+	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
 	onNewChat: () => void;
 }
 
@@ -61,9 +62,9 @@ export default function ConversationHistoryView( {
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
-								key={ conversation.session_id }
+								key={ conversation.session_id ?? conversation.conversation_id }
 								conversation={ conversation }
-								onClick={ ( sessionId ) => onSelectConversationRef.current( sessionId ) }
+								onClick={ ( conversation ) => onSelectConversationRef.current( conversation ) }
 							/>
 						) ) }
 					</div>

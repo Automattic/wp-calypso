@@ -1,0 +1,42 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.dashboard-empty-state {
+	width: 100%;
+}
+
+.dashboard-empty-state__wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	width: 100%;
+
+	@include break-small {
+		justify-content: center;
+		min-height: calc(100dvh - var(--dashboard-empty-state-offset, 30dvh) - var(--page-layout-block-padding, #{$grid-unit-40}));
+	}
+}
+
+.dashboard-empty-state__wrapper-content {
+	@include break-medium {
+		padding-block: $grid-unit-40;
+	}
+}
+
+// Extra specificity to override <Text> component styles
+.dashboard-empty-state__title.dashboard-empty-state__title {
+	font-size: $font-size-x-large;
+	font-weight: 500;
+}
+
+// Balanced wrapping works better for centered text
+// Extra specificity to override <Text> component styles
+.dashboard-empty-state__description.dashboard-empty-state__description  {
+	width: min(100%, 432px);
+	text-wrap: balance;
+}
+
+.dashboard-empty-state__content {
+	width: min(100%, 660px);   
+}

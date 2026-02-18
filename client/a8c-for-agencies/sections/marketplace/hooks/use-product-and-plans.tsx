@@ -1,14 +1,14 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { isProductMatch } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/filter';
 import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
-	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 	PRODUCT_TYPE_JETPACK_PLAN,
 	PRODUCT_TYPE_JETPACK_PRODUCT,
+	PRODUCT_TYPE_PRESSABLE_ADDON,
 	PRODUCT_TYPE_PRESSABLE_PLAN,
 	PRODUCT_TYPE_WOO_EXTENSION,
 	PRODUCT_TYPE_WPCOM_PLAN,
@@ -18,7 +18,9 @@ import {
 	filterProductsAndPlans,
 	filterProductsAndPlansByType,
 } from '../lib/product-filter';
+import { BACKUP_STORAGE_FAMILY_SLUG } from '../lib/product-slugs';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 // Plans and Products that we can merged into 1 card.
 const MERGABLE_PLANS = [ 'jetpack-security' ];
@@ -111,9 +113,9 @@ export default function useProductAndPlans( {
 	selectedSite,
 	selectedProductFilters,
 	productSearchQuery,
-	usePublicQuery = false,
 }: Props ) {
-	const { data, isLoading: isLoadingProducts } = useProductsQuery( usePublicQuery );
+	const { data, isLoading: isLoadingProducts } = useProductsQuery();
+	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
 
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
@@ -138,6 +140,20 @@ export default function useProductAndPlans( {
 			);
 		}
 
+		// Hide Pressable add-ons behind feature flag across marketplace products UI.
+		if ( ! isPressableAddonsEnabled ) {
+			const pressableAddonProductIds = new Set(
+				filterProductsAndPlansByType(
+					PRODUCT_TYPE_PRESSABLE_ADDON,
+					filteredProductsAndBundles
+				).map( ( product ) => product.product_id )
+			);
+
+			filteredProductsAndBundles = filteredProductsAndBundles.filter(
+				( product ) => ! pressableAddonProductIds.has( product.product_id )
+			);
+		}
+
 		// Filter products & plan that are already assigned to a site
 		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
 			filteredProductsAndBundles = filteredProductsAndBundles.filter(
@@ -157,14 +173,18 @@ export default function useProductAndPlans( {
 			filteredProductsAndBundles,
 			jetpackPlans: getDisplayableJetpackPlans( filteredProductsAndBundles ),
 			jetpackProducts: getDisplayableJetpackProducts( filteredProductsAndBundles ),
-			jetpackBackupAddons: filterProductsAndPlansByType(
-				PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
+			jetpackBackupAddons:
 				filteredProductsAndBundles
-			),
+					?.filter( ( { family_slug } ) => family_slug === BACKUP_STORAGE_FAMILY_SLUG )
+					.sort( ( a, b ) => a.product_id - b.product_id ) || [],
 			featuredProducts: getDisplayableFeaturedProducts( filteredProductsAndBundles ),
 			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
 			pressablePlans: filterProductsAndPlansByType(
 				PRODUCT_TYPE_PRESSABLE_PLAN,
+				filteredProductsAndBundles
+			),
+			pressableAddons: filterProductsAndPlansByType(
+				PRODUCT_TYPE_PRESSABLE_ADDON,
 				filteredProductsAndBundles
 			),
 			wpcomPlans: filterProductsAndPlansByType(
@@ -181,5 +201,6 @@ export default function useProductAndPlans( {
 		selectedSite,
 		addedPlanAndProducts,
 		isLoadingProducts,
+		isPressableAddonsEnabled,
 	] );
 }

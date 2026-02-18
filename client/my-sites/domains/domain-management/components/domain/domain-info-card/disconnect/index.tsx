@@ -122,7 +122,9 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 							} ) }
 						</FormSectionHeading>
 						<p>
-							{ translate( 'Are you sure? This will detach the domain from its current site.' ) }
+							{ translate( 'Are you sure you want to detach this domain from %(siteName)s?', {
+								args: { siteName: selectedSite.slug },
+							} ) }
 						</p>
 					</div>
 				</div>
@@ -135,7 +137,9 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 			<DomainInfoCard
 				type="click"
 				title={ translate( 'Detach' ) }
-				description={ translate( 'Detach this domain from the site' ) }
+				description={ translate( 'Detach this domain from %(siteName)s.', {
+					args: { siteName: selectedSite.slug },
+				} ) }
 				onClick={ () => setDialogVisible( true ) }
 				ctaText={ translate( 'Detach' ) }
 			/>

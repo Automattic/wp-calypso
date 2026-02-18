@@ -19,12 +19,11 @@ Placeholders for asynchronous data fetching should be used judiciously. Some das
 
 See this post on loaders: p58i-kIo-p2
 
-
 ## DataViews and DataForm
 
 The dashboard relies heavily on two core components for data display and interaction:
 
-- **DataViews**: A component for displaying lists a tabular, grid or list format, allowing for sorting, filtering, and pagination.
+- **DataViews**: A component for displaying lists in a tabular, grid or list format, allowing for sorting, filtering, and pagination.
 - **DataForm**: A component for creating and editing data, providing a form-based interface for user input.
 
 These components are part of the design system, if changes are required to implement specific pages, consider checking with the design team first. The solution could be either to adapt the design or implement a generic solution at the component level.
@@ -33,7 +32,7 @@ Relying on CSS overrides and hacks should be avoided as much as possible.
 
 ## Card, CardBody, CardHeader, CardFooter, CardDivider, CardMedia
 
-Use the provided `Card` component (`client/dashboard/components/card`) instead of importing directly from `@wordpress/components`. 
+Use the provided `Card` component (`client/dashboard/components/card`) instead of importing directly from `@wordpress/components`.
 
 Our custom `Card` component serves as a wrapper around the WordPress Card to reduce padding on small screen and ensure consistent spacing.
 

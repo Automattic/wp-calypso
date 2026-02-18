@@ -74,6 +74,10 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	};
 
 	const handleTabChange = ( tab: 'active' | 'history' ) => {
+		if ( scanTab === tab ) {
+			return;
+		}
+
 		if ( tab === 'active' ) {
 			router.navigate( { to: `/sites/${ siteSlug }/scan/active` } );
 		} else {
@@ -98,8 +102,9 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		<HostingFeatureGatedWithCallout
 			site={ site }
 			feature={ HostingFeatures.SCAN }
+			fullPage
+			title={ __( 'Scan' ) }
 			upsellId="site-scan"
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Scan' ) } /> } /> }
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
 			upsellImage={ illustrationUrl }

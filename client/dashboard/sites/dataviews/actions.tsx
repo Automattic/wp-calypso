@@ -6,6 +6,8 @@ import { lazy, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getSiteBlockingStatus } from '../../utils/site-status';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
 import type { Site } from '@automattic/api-core';
@@ -19,6 +21,9 @@ const noop = () => undefined;
 export function useActions(): Action< Site >[] {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
+
+	// Some actions are not available if the site has migration, deleted, or DIFM status
+	const hasBlockingStatus = ( site: Site ) => !! getSiteBlockingStatus( site );
 
 	return [
 		{
@@ -57,7 +62,10 @@ export function useActions(): Action< Site >[] {
 
 				router.navigate( { to: siteDomainsRoute.fullPath, params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'domains' ) &&
+				canManageSite( item ) &&
+				! hasBlockingStatus( item ),
 		},
 		{
 			id: 'jetpack-cloud',
@@ -82,6 +90,7 @@ export function useActions(): Action< Site >[] {
 			},
 			isEligible: ( item: Site ) =>
 				canManageSite( item ) &&
+				! hasBlockingStatus( item ) &&
 				! item.is_wpcom_staging_site &&
 				item.launch_status === 'unlaunched',
 		},
@@ -92,7 +101,10 @@ export function useActions(): Action< Site >[] {
 				const site = sites[ 0 ];
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
-			isEligible: ( item: Site ) => ! isSelfHostedJetpackConnected( item ) && canManageSite( item ),
+			isEligible: ( item: Site ) =>
+				siteTypeSupportsFeature( item, 'settings' ) &&
+				canManageSite( item ) &&
+				! hasBlockingStatus( item ),
 		},
 		{
 			id: 'restore',

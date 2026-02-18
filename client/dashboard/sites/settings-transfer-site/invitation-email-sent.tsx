@@ -7,6 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import Notice from '../../components/notice';
 import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
 
@@ -18,7 +19,7 @@ export function InvitationEmailSent( {
 	confirmationHash: string;
 } ) {
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
-	const [ hasError, setHasError ] = useState( false );
+	const [ error, setError ] = useState( '' );
 	const mutation = useMutation( siteOwnerTransferConfirmMutation( site.ID ) );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const router = useRouter();
@@ -49,16 +50,26 @@ export function InvitationEmailSent( {
 
 					setNewOwnerEmail( new_owner_email );
 				},
-				onError: () => {
-					setHasError( true );
+				onError: ( error: Error ) => {
+					setError( error.message );
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: error.message,
+						tags: [ 'dashboard', 'site-owner-transfer' ],
+						properties: {
+							blog_id: site.ID,
+						},
+					} );
 				},
 			}
 		);
+		// We only want to call the API whenever the confirmationHash changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ confirmationHash ] );
 
-	if ( hasError ) {
+	if ( error ) {
 		return (
-			<Notice variant="error">
+			<Notice variant="error" title={ error }>
 				{ createInterpolateElement(
 					__(
 						'There was an error confirming the site transfer. Please <link>contact our support team</link> for help.'

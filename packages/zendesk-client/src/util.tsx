@@ -3,31 +3,30 @@ import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { AgentticMessage, ZendeskMessage } from './types';
 
-const IS_TEST_MODE_ENVIRONMENT = true;
-const IS_PRODUCTION_ENVIRONMENT = false;
-const PRODUCTION_ENVIRONMENTS = [
-	'desktop',
-	'production',
-	'wpcalypso',
-	'jetpack-cloud-production',
-	'a8c-for-agencies-production',
-];
-
 export const isTestModeEnvironment = () => {
-	const currentEnvironment = config( 'env_id' ) as string;
+	const envId = config( 'env_id' ) as string;
 
 	// During SU sessions, we want to always target prod. See HAL-154.
 	if ( isInSupportSession() ) {
-		return IS_PRODUCTION_ENVIRONMENT;
+		return false;
 	}
 
-	// If the environment is set to production, we return the production environment.
-	if ( PRODUCTION_ENVIRONMENTS.includes( currentEnvironment ) ) {
-		return IS_PRODUCTION_ENVIRONMENT;
+	// Test environments are identified by env_id ending with development, horizon, or stage
+	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage' ];
+	const isTestEnvironment = testEnvironmentSuffixes.some(
+		( suffix ) => envId === suffix || envId.endsWith( `-${ suffix }` )
+	);
+
+	if ( isTestEnvironment ) {
+		return true;
 	}
 
-	// If the environment is not set to production, we return the test mode environment.
-	return IS_TEST_MODE_ENVIRONMENT;
+	// If env is production and it's not a test environment, treat it as production
+	if ( config( 'env' ) === 'production' ) {
+		return false;
+	}
+
+	return true;
 };
 
 export const getBadRatingReasons = () => {
@@ -60,7 +59,7 @@ export const convertZendeskMessageToAgentticFormat = (
 	message: ZendeskMessage
 ): AgentticMessage => {
 	// Convert role: 'business' maps to 'agent', everything else to 'user'
-	const role = message.role === 'business' ? 'agent' : 'user';
+	const role = message.role === 'business' && ! ( 'sendStatus' in message ) ? 'agent' : 'user';
 
 	// Build content array based on message type
 	const content: AgentticMessage[ 'content' ] = [];
@@ -125,7 +124,7 @@ export const convertZendeskMessageToAgentticFormat = (
 	}
 
 	return {
-		id: message.id,
+		id: message.id || crypto.randomUUID(),
 		role,
 		content,
 		timestamp: message.received,

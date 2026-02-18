@@ -1,10 +1,11 @@
 import { DataHelper, SecretsManager } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Invite: Revoke',
 	{ tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
 	() => {
+		skipIfMailosaurLimitReached();
 		const testUser = DataHelper.getNewTestUser( {
 			usernamePrefix: 'e2eflowtestinginvite',
 		} );
@@ -62,7 +63,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {
-				await pagePeople.expectInvitation( testEmailAddress );
+				await pagePeople.waitForInvitation( testEmailAddress );
 			} );
 
 			await test.step( 'When I select the invited user', async function () {

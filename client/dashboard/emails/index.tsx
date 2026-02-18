@@ -1,44 +1,46 @@
 import { DomainSubtype, EmailBox } from '@automattic/api-core';
 import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
-import { emailsRoute } from '../app/router/emails';
-import { DataViews, DataViewsCard } from '../components/dataviews';
-import NoDomainsAvailableEmptyState from './components/no-domains-available-empty-state';
-import NoEmailsAvailableEmptyState from './components/no-emails-available-empty-state';
+import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
+import InlineSupportLink from '../components/inline-support-link';
+import { OptInWelcome } from '../components/opt-in-welcome';
+import { PageHeader } from '../components/page-header';
+import PageLayout from '../components/page-layout';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
-import { Layout } from './layout';
+import EmptyDomainsState from './empty-domains-state';
+import {
+	EmptyMailboxesStateContent,
+	EmptyMailboxesSearchStateContent,
+} from './empty-mailboxes-state';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
 import type { Email } from './types';
 
 import './style.scss';
 
 function Emails() {
-	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
-		userMailboxesQuery()
-	);
+	const navigate = useNavigate();
+	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
-	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( domainsQuery() );
+	const { data: allDomains } = useSuspenseQuery( domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	// Aggregate all domains into a single array
-	const { domainsWithEmails, domainsWithoutEmails } = useMemo( () => {
-		if ( isLoadingDomains || isLoadingEmailAccounts ) {
-			return { domainsWithEmails: [], domainsWithoutEmails: [] };
-		}
-
-		const domainsWithEmails =
+	const domainsWithEmails = useMemo( () => {
+		const domainsWithEmailsList =
 			allEmailAccounts?.map( ( mailbox ) => mailbox.domains[ 0 ].domain ) ?? [];
-		return {
-			domainsWithEmails: domains.filter( ( d ) => domainsWithEmails.includes( d.domain ) ),
-			domainsWithoutEmails: domains.filter( ( d ) => ! domainsWithEmails.includes( d.domain ) ),
-		};
-	}, [ allEmailAccounts, domains, isLoadingDomains, isLoadingEmailAccounts ] );
+		return domains.filter( ( d ) => domainsWithEmailsList.includes( d.domain ) );
+	}, [ allEmailAccounts, domains ] );
 
 	const emails: Email[] = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
@@ -91,24 +93,36 @@ function Emails() {
 		return filterSortAndPaginate( emails, view, emailFields );
 	}, [ emails, view, emailFields ] );
 
-	let emptyState = null;
-	if ( emails.length === 0 ) {
-		emptyState = domainsWithoutEmails ? (
-			<NoEmailsAvailableEmptyState />
-		) : (
-			<NoDomainsAvailableEmptyState />
-		);
-	}
+	const hasNoDomains = domains.length === 0;
+	const hasNoEmails = emails.length === 0;
 
-	return (
-		<Layout>
-			{ ! isLoadingDomains && ! isLoadingEmailAccounts && (
-				<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
-			) }
+	const renderContent = () => {
+		if ( hasNoDomains ) {
+			return <EmptyDomainsState />;
+		}
+
+		if ( hasNoEmails ) {
+			return (
+				<DataViewsEmptyStateLayout
+					title={ __( 'Set up email for your domain' ) }
+					description={ createInterpolateElement(
+						__(
+							'Create a mailbox or set up a forwarder for an email address using your domain. <learnMoreLink/>'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="emails" />,
+						}
+					) }
+				>
+					<EmptyMailboxesStateContent />
+				</DataViewsEmptyStateLayout>
+			);
+		}
+
+		return (
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
-					isLoading={ isLoadingEmailAccounts }
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
@@ -120,10 +134,54 @@ function Emails() {
 					actions={ actions }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					empty={ emptyState }
+					empty={
+						<DataViewsEmptyStateLayout
+							title={ __( 'No emails match your search' ) }
+							description={ __( 'Try again, or continue with the options below.' ) }
+							isBorderless
+						>
+							<EmptyMailboxesSearchStateContent />
+						</DataViewsEmptyStateLayout>
+					}
 				/>
 			</DataViewsCard>
-		</Layout>
+		);
+	};
+
+	const showActions = ! hasNoDomains && ! hasNoEmails;
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					actions={
+						showActions ? (
+							<>
+								<Button
+									className="emails__add-email-forwarder"
+									variant="secondary"
+									__next40pxDefaultSize
+									onClick={ () => navigate( { to: addEmailForwarderRoute.to } ) }
+								>
+									{ __( 'Add email forwarder' ) }
+								</Button>
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									onClick={ () => navigate( { to: chooseDomainRoute.to } ) }
+								>
+									{ __( 'Add mailbox' ) }
+								</Button>
+							</>
+						) : null
+					}
+				/>
+			}
+			notices={ <OptInWelcome tracksContext="emails" /> }
+		>
+			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
+			{ renderContent() }
+		</PageLayout>
 	);
 }
 

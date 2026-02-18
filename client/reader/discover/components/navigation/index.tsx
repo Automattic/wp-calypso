@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
@@ -12,6 +11,7 @@ import {
 	RECOMMENDED_TAB,
 } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -43,25 +43,16 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		return addLocaleToPathLocaleInFront( path, currentLocale );
 	};
 
-	const FRESHLY_PRESSED_OPTION = isEnabled( 'reader/discover/freshly-pressed' )
-		? {
-				slug: FRESHLY_PRESSED_TAB,
-				title: translate( 'Freshly Pressed' ),
-				path: '/discover',
-		  }
-		: null;
-
 	const baseTabs: Tab[] = [
-		...( FRESHLY_PRESSED_OPTION ? [ FRESHLY_PRESSED_OPTION ] : [] ),
+		{
+			slug: FRESHLY_PRESSED_TAB,
+			title: translate( 'Freshly Pressed' ),
+			path: '/discover',
+		},
 		{
 			slug: RECOMMENDED_TAB,
 			title: translate( 'Recommended' ),
-			path: isEnabled( 'reader/discover/freshly-pressed' ) ? '/discover/recommended' : '/discover',
-		},
-		{
-			slug: ADD_NEW_TAB,
-			title: translate( 'Add new' ),
-			path: '/discover/add-new',
+			path: '/discover/recommended',
 		},
 		{
 			slug: FIRST_POSTS_TAB,
@@ -74,11 +65,6 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 			path: '/discover/tags?selectedTag=dailyprompt',
 		},
 		{
-			slug: REDDIT_TAB,
-			title: translate( 'Reddit' ),
-			path: '/discover/reddit',
-		},
-		{
 			slug: LATEST_TAB,
 			title: translate( 'Latest', {
 				context: 'latest blog posts',
@@ -86,6 +72,21 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 			path: '/discover/latest',
 		},
 	];
+
+	if ( ! isDiscoverV3Enabled() ) {
+		baseTabs.push(
+			{
+				slug: ADD_NEW_TAB,
+				title: translate( 'Add new' ),
+				path: '/discover/add-new',
+			},
+			{
+				slug: REDDIT_TAB,
+				title: translate( 'Reddit' ),
+				path: '/discover/reddit',
+			}
+		);
+	}
 
 	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
 	const filteredTabs = baseTabs.filter(
@@ -104,6 +105,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		<SectionNav
 			className="discover-navigation"
 			selectedText={ selectedTabData?.title }
+			variation="minimal"
 			enforceTabsView
 		>
 			<NavTabs hasHorizontalScroll>

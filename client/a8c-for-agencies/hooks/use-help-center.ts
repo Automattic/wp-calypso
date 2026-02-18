@@ -35,19 +35,29 @@ export default function useHelpCenter() {
 		}
 	};
 
-	const hasSupportFormHash =
-		window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
-		window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
-		window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+	const showSupportGuide = ( link: string ) => {
+		setShowHelpCenter( true );
+		setNavigateToRoute( '/post?link=' + encodeURIComponent( link ) );
+	};
 
 	useEffect( () => {
 		// We support URL hash fragments for the contact support form.
 		// When the hash changes, we need to check if it contains a support form hash fragment.
 		// If it does, we need to set the show help center to true and set the navigate to route to the contact form.
 		const handleHashChange = () => {
+			const hasSupportFormHash =
+				window.location.hash === CONTACT_URL_HASH_FRAGMENT ||
+				window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
+				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+
 			if ( hasSupportFormHash && isEnabled( 'a4a-help-center' ) ) {
+				const isMigrationRequest =
+					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
+
 				setShowHelpCenter( true );
-				setNavigateToRoute( '/contact-form' );
+				setNavigateToRoute(
+					isMigrationRequest ? '/contact-form?migration-request=1' : '/contact-form'
+				);
 				history.pushState( null, '', window.location.pathname + window.location.search );
 			}
 		};
@@ -56,10 +66,11 @@ export default function useHelpCenter() {
 		handleHashChange();
 
 		return () => window.removeEventListener( 'hashchange', handleHashChange );
-	}, [ hasSupportFormHash, setNavigateToRoute, setShowHelpCenter ] );
+	}, [ setNavigateToRoute, setShowHelpCenter ] );
 
 	return {
 		toggleHelpCenter: handleToggleHelpCenter,
+		showSupportGuide,
 		show,
 	};
 }

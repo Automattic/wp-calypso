@@ -2,7 +2,7 @@ import { VIPLogo } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 /**
  * Get the WPCOM Creator plan from a list of plans
@@ -49,6 +49,16 @@ export function isPressableHostingProduct( keyOrSlug: string ) {
 		keyOrSlug.startsWith( 'pressable-hosting' ) ||
 		keyOrSlug.startsWith( 'jetpack-pressable' )
 	);
+}
+
+/**
+ * Check if a product slug corresponds to a Pressable addon product.
+ *
+ * @param product_slug string - The product slug to check.
+ * @returns boolean - True if it's a Pressable addon product, false otherwise.
+ */
+export function isPressableAddonProduct( product_slug: string ) {
+	return product_slug.startsWith( 'pressable-addon' );
 }
 
 /**

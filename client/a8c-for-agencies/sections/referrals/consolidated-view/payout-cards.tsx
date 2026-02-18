@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ConsolidatedStatsCard } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
 import { AGENCY_EARNINGS_LEARN_MORE_LINK } from 'calypso/a8c-for-agencies/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import useGetPayoutData from '../hooks/use-get-payout-data';
 
 import './style.scss';
@@ -13,6 +14,7 @@ function PayoutAmount( {
 	payoutDate,
 	isFetching,
 	footerText,
+	footerAction,
 	popoverTitle,
 	handleHalfQuarter,
 }: {
@@ -21,15 +23,18 @@ function PayoutAmount( {
 	payoutDate: string;
 	isFetching: boolean;
 	footerText: string;
+	footerAction?: React.ReactNode;
 	popoverTitle: string;
 	handleHalfQuarter?: boolean;
 } ) {
 	const translate = useTranslate();
+	const { showSupportGuide } = useHelpCenter();
 
 	return (
 		<ConsolidatedStatsCard
 			value={ formatCurrency( expectedCommission, 'USD' ) }
 			footerText={ footerText }
+			footerAction={ footerAction }
 			popoverTitle={ popoverTitle }
 			popoverContent={
 				<div className="payout-cards__description">
@@ -69,12 +74,10 @@ function PayoutAmount( {
 
 					<div>
 						<Button
-							href={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-							target="_blank"
-							rel="noreferrer noopener"
+							onClick={ () => showSupportGuide( AGENCY_EARNINGS_LEARN_MORE_LINK ) }
 							variant="link"
 						>
-							{ translate( 'Learn more' ) } ↗
+							{ translate( 'Learn more' ) }
 						</Button>
 					</div>
 				</div>
@@ -89,11 +92,13 @@ export default function PayoutCards( {
 	previousQuarterExpectedCommission,
 	currentQuarterExpectedCommission,
 	isWooPayments,
+	footerAction,
 }: {
 	isFetching: boolean;
 	previousQuarterExpectedCommission: number;
 	currentQuarterExpectedCommission: number;
 	isWooPayments?: boolean;
+	footerAction?: React.ReactNode;
 } ) {
 	const translate = useTranslate();
 
@@ -123,6 +128,7 @@ export default function PayoutCards( {
 					payoutDate={ nextPayoutDate }
 					isFetching={ isFetching }
 					footerText={ previousQuarterTitle }
+					footerAction={ footerAction }
 					popoverTitle={ previousQuarterTitle }
 				/>
 			) }

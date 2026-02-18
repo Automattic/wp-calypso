@@ -17,14 +17,11 @@
 	.dashboard-page-layout__content,
 	.dashboard-page-layout__content > .components-card {
 		flex: 1;
+		border-radius: 0;
 	}
 
 	.dashboard-page-header {
 		display: none;
-	}
-
-	.components-card {
-		box-shadow: none;
 	}
 
 	.components-card-body {
@@ -39,5 +36,15 @@
 
 	a.dataviews-title-field:not(:hover) {
 		color: $gray-800;
+	}
+
+	.dashboard-empty-state__wrapper {
+		box-shadow: none;
+	}
+
+	@include break-medium {
+		.dashboard-empty-state {
+			margin-top: 5vh;
+		}
 	}
 }

@@ -4,25 +4,25 @@ import {
 	BlockTools,
 	BlockList,
 	BlockCanvas,
-	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
-import React, { useState, useEffect, useCallback } from '@wordpress/element';
+import React, { useState, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { safeParse } from '../utils';
+import InitialBlockSelector from './components/InitialBlockSelector';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
-import type { MouseEvent, KeyboardEvent, FC } from 'react';
+import type { FC, MouseEvent } from 'react';
 import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mode.scss';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
+const EDITOR_MAIN_CLASS: string = 'editor__main';
 const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
 	return css + '\n' + item;
 }, '' );
@@ -32,6 +32,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
  */
 export const Editor: FC< EditorProps > = ( {
 	initialContent = '',
+	focusOnMount = true,
 	onChange,
 	isRTL,
 	isDarkMode,
@@ -67,9 +68,7 @@ export const Editor: FC< EditorProps > = ( {
 	// Listen for the content height changing and update the iframe height.
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 
-	const { selectBlock } = useDispatch( blockEditorStore );
-
-	const selectLastBlock = ( event?: MouseEvent | KeyboardEvent ) => {
+	const handleNewParagraphAfterNonTextBlock = ( event?: MouseEvent< HTMLDivElement > ): void => {
 		const lastBlock = editorContent[ editorContent.length - 1 ];
 		if ( lastBlock ) {
 			// If this is a click event only shift focus if the click is in the root.
@@ -81,25 +80,11 @@ export const Editor: FC< EditorProps > = ( {
 					if ( lastBlock.name !== 'core/paragraph' ) {
 						const newParagraph = createBlock( 'core/paragraph' );
 						handleContentUpdate( [ ...editorContent, newParagraph ] );
-						selectBlock( newParagraph.clientId );
 					}
-
-					selectBlock( lastBlock.clientId );
-				} else {
-					return;
 				}
 			}
-
-			selectBlock( lastBlock.clientId );
 		}
 	};
-
-	useEffect( () => {
-		// Select the first item in the editor when it loads.
-		selectLastBlock();
-		setIsEditing( true );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- we want to run this once
-	}, [] );
 
 	return (
 		<SlotFillProvider>
@@ -123,6 +108,11 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
+					<InitialBlockSelector
+						editorClass={ EDITOR_MAIN_CLASS }
+						focusOnMount={ focusOnMount }
+						onBlockSelect={ () => setIsEditing( true ) }
+					/>
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
@@ -131,7 +121,7 @@ export const Editor: FC< EditorProps > = ( {
 							<Popover.Slot />
 						</div>
 					</div>
-					<div className="editor__main">
+					<div className={ EDITOR_MAIN_CLASS }>
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas
@@ -147,7 +137,7 @@ export const Editor: FC< EditorProps > = ( {
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 								<div
 									className="editor__block-canvas-container wp-embed-responsive"
-									onClick={ selectLastBlock }
+									onClick={ handleNewParagraphAfterNonTextBlock }
 								>
 									{ contentResizeListener }
 									<BlockList renderAppender={ false } />

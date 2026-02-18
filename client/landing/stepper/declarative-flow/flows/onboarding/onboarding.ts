@@ -1,11 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import {
-	clearStepPersistedState,
-	ONBOARDING_FLOW,
-	SITE_MIGRATION_FLOW,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
@@ -40,7 +34,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-function initialize() {
+async function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -50,6 +44,8 @@ function initialize() {
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
+
+	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
 }
@@ -199,18 +195,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
-				case 'post-checkout-onboarding':
+				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
-
-					/*
-					 * If the post-checkout ai step feature flag is enabled,
-					 * redirect the user to the relevant step.
-					 */
-					if ( isEnabled( 'onboarding/post-checkout-ai-step' ) ) {
-						return navigate( 'setup-your-site-ai' );
-					}
-
 					return navigate( 'processing' );
+				}
 				case 'setup-your-site-ai': {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
@@ -227,18 +215,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'blank-site':
-							window.location.replace( `/sites/${ siteSlug }` );
-							return;
-						case 'migrate':
-							window.location.assign(
-								addQueryArgs(
-									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
-									{
-										siteSlug,
-										siteId,
-									}
-								)
-							);
+							window.location.assign( `/sites/${ siteSlug }` );
 							return;
 						default:
 							return;
@@ -286,6 +263,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
+						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
+							return navigate( 'setup-your-site-ai' );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
@@ -296,8 +275,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 					return;
 				}
-				case 'playground':
-					return navigate( 'domains' );
+				case 'playground': {
+					const backTo = window.location.pathname + window.location.search;
+					return navigate(
+						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
 				default:
 					return;
 			}

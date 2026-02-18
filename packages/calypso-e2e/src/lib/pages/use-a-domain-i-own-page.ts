@@ -82,6 +82,14 @@ export class UseADomainIOwnPage {
 	}
 
 	/**
+	 * Gets the value of the "Use a domain I own" input
+	 * @returns the value of the input
+	 */
+	async getDomainInputValue(): Promise< string > {
+		return this.getContainer().locator( '.use-my-domain__domain-input input' ).inputValue();
+	}
+
+	/**
 	 * Fills the "Use a domain I own" input and waits for the `is-available` response
 	 *
 	 * @param domainName Domain name to fill in the input

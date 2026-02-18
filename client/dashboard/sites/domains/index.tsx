@@ -5,14 +5,13 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
-import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { AddDomainButton } from '../../domains/add-domain-button';
+import AddDomainButton from '../../domains/add-domain-button';
 import {
 	useActions,
 	useFields,
@@ -20,7 +19,6 @@ import {
 	SITE_CONTEXT_VIEW,
 	BulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -62,24 +60,14 @@ function SiteDomains() {
 		fields
 	);
 
-	const { basePath } = useAppContext();
-	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
-	const redirectTo = `${ basePath }/sites/${ site.slug }/domains`;
+	// Hide actions column when no domain has eligible actions.
+	const hasEligibleActions = siteDomains?.some( ( item ) =>
+		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
+	);
 
 	return (
 		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Domains' ) }
-					actions={
-						<AddDomainButton
-							siteSlug={ site.slug }
-							domainConnectionSetupUrl={ domainConnectionSetupUrl }
-							redirectTo={ redirectTo }
-						/>
-					}
-				/>
-			}
+			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
 			notices={ <BulkActionsProgressNotice /> }
 		>
 			{ ! isLoading && ! isRedirectLoading && siteDomains && ! hasRedirect && (
@@ -111,7 +99,7 @@ function SiteDomains() {
 					onChangeView={ updateView }
 					onResetView={ resetView }
 					view={ view }
-					actions={ actions }
+					actions={ hasEligibleActions ? actions : [] }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
