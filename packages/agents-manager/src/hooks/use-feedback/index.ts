@@ -4,26 +4,13 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { createElement, useState } from 'react';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
-import type { AuthProvider } from '@automattic/agenttic-client';
+import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
 interface UseFeedbackConfig {
-	registerMessageActions: ( registration: {
-		id: string;
-		actions: ( message: Message ) => Array< {
-			id: string;
-			label: string;
-			icon?: React.ReactNode;
-			onClick: ( message: Message ) => void | Promise< void >;
-			condition?: ( message: Message ) => boolean;
-			tooltip?: string;
-			disabled?: boolean;
-			pressed?: boolean;
-			showLabel?: boolean;
-		} >;
-	} ) => void;
+	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
 	agentId: string;
 	sessionId?: string;
