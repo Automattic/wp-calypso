@@ -124,39 +124,6 @@ export default function LicenseDetails( {
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
 						</div>
-
-						{ shouldShowSubscription && (
-							<>
-								<div className="license-details__subscription-row">
-									{ subscriptionBadgeLabel && (
-										<Badge
-											type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
-											className="license-details__subscription-badge"
-										>
-											{ subscriptionBadgeLabel }
-										</Badge>
-									) }
-									<span className="license-details__subscription-label">
-										{ subscriptionDateLabel }
-									</span>
-									<span className="license-details__subscription-date">
-										{ subscription?.expiry ? (
-											<FormattedDate
-												date={ subscription.expiry }
-												format={ DETAILS_DATE_FORMAT_SHORT }
-											/>
-										) : (
-											'-'
-										) }
-										{ subscriptionIntervalLabel && (
-											<span className="license-details__subscription-interval">
-												{ ` ${ subscriptionIntervalLabel }` }
-											</span>
-										) }
-									</span>
-								</div>
-							</>
-						) }
 					</li>
 				) }
 				{ isPressableLicense && licenseState !== LicenseState.Revoked && (
@@ -217,6 +184,32 @@ export default function LicenseDetails( {
 				productId={ productId }
 				subscription={ subscription }
 			/>
+
+			{ shouldShowSubscription ? (
+				<div className="license-details__subscription-row">
+					{ subscriptionBadgeLabel && (
+						<Badge
+							type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
+							className="license-details__subscription-badge"
+						>
+							{ subscriptionBadgeLabel }
+						</Badge>
+					) }
+					<span className="license-details__subscription-label">{ subscriptionDateLabel }</span>
+					<span className="license-details__subscription-date">
+						{ subscription?.expiry ? (
+							<FormattedDate date={ subscription.expiry } format={ DETAILS_DATE_FORMAT_SHORT } />
+						) : (
+							'-'
+						) }
+						{ subscriptionIntervalLabel && (
+							<span className="license-details__subscription-interval">
+								{ ` ${ subscriptionIntervalLabel }` }
+							</span>
+						) }
+					</span>
+				</div>
+			) : null }
 		</Card>
 	);
 }

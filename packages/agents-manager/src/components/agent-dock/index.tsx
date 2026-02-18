@@ -9,7 +9,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo, useEffect } from '@wordpress/element';
+import { useState, useMemo, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -37,6 +37,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	ImageUploadHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -58,6 +59,8 @@ interface AgentDockProps {
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
+	/** Hook for handling image uploads within the agent chat. */
+	useImageUpload?: ImageUploadHook;
 }
 
 export default function AgentDock( {
@@ -70,6 +73,7 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	useImageUpload,
 }: AgentDockProps ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -121,6 +125,49 @@ export default function AgentDock( {
 		clearSuggestions,
 		registerSuggestions,
 	} = useAgentChat( agentConfig );
+
+	const imageUpload = useImageUpload?.();
+	const pendingImages = imageUpload?.pendingImages || [];
+	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
+
+	const onSubmitWithImages = useCallback(
+		async ( message: string ) => {
+			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+				try {
+					// Upload files to WordPress media library
+					const mediaObjects = await uploadImagesToWordPress();
+
+					// Create image data objects with full metadata including attachment ID
+					const imageData = mediaObjects.map( ( media ) => ( {
+						url: media.url,
+						metadata: {
+							id: media.id, // WordPress attachment ID
+							title: media.title,
+							fileName: media.fileName,
+							fileType: media.fileType,
+							fileSize: media.fileSize,
+							dimensions: media.dimensions,
+							uploadDate: media.uploadDate,
+							alt: media.alt,
+							caption: media.caption,
+						},
+					} ) );
+
+					// Send message with images using agenttic's imageUrls option
+					// FileParts will be automatically persisted in conversation history with metadata
+					await onSubmit( message, { imageUrls: imageData } );
+				} catch ( uploadError ) {
+					throw new Error(
+						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
+					);
+				}
+			} else {
+				// No images, just send normally
+				onSubmit( message );
+			}
+		},
+		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
+	);
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -337,7 +384,7 @@ export default function AgentDock( {
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			error={ error }
-			onSubmit={ onSubmit }
+			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
@@ -351,6 +398,7 @@ export default function AgentDock( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
+			imageUpload={ imageUpload }
 		/>
 	);
 
