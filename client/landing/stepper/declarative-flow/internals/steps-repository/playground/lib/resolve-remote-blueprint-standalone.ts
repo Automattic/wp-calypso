@@ -449,24 +449,17 @@ export class BlueprintFetchError extends Error {
  * @returns A promise that resolves to the resolved blueprint bundle (a readable filesystem).
  */
 export async function resolveRemoteBlueprint( url: string ): Promise< BlueprintBundle > {
-	let blueprintBytes: ArrayBuffer;
-	try {
-		const response = await fetch( url, {
-			credentials: 'omit',
-		} );
-		if ( ! response.ok ) {
-			throw new Error( `Failed to fetch blueprint from ${ url }` );
-		}
-		blueprintBytes = await response.arrayBuffer();
-	} catch ( error ) {
+	// Network errors propagate as-is so callers can distinguish them from HTTP errors.
+	const response = await fetch( url, {
+		credentials: 'omit',
+	} );
+	if ( ! response.ok ) {
 		throw new BlueprintFetchError(
-			`Blueprint file could not be resolved from ${ url }: ${
-				error instanceof Error ? error.message : String( error )
-			}`,
-			url,
-			{ cause: error }
+			`Blueprint file could not be resolved from ${ url }: HTTP ${ response.status } ${ response.statusText }`,
+			url
 		);
 	}
+	const blueprintBytes = await response.arrayBuffer();
 
 	try {
 		const blueprintText = new TextDecoder().decode( blueprintBytes );

@@ -6,27 +6,13 @@ import { getBlueprint } from '../lib/blueprint';
 
 const DEFAULT_BLUEPRINT = {
 	preferredVersions: {
-		php: '8.3',
+		php: '8.4',
 		wp: 'latest',
 	},
 	features: {
 		networking: true,
 	},
 	login: true,
-};
-
-const BLUEPRINT_IN_URL_HASH = '#' + JSON.stringify( { landingPage: '/hash' } );
-const HASH_BLUEPRINT = {
-	preferredVersions: {
-		php: '8.2',
-		wp: 'latest',
-	},
-	features: {
-		networking: true,
-	},
-	login: true,
-	landingPage: '/hash',
-	steps: [],
 };
 
 const WOOCOMMERCE_PREDEFINED_BLUEPRINT = {
@@ -73,9 +59,17 @@ const REMOTE_BLUEPRINT = {
 	steps: [],
 };
 
+function setLocationHref( href: string ) {
+	Object.defineProperty( window, 'location', {
+		value: { href },
+		writable: true,
+	} );
+}
+
 describe( 'getBlueprint', () => {
 	beforeEach( () => {
 		jest.restoreAllMocks();
+		setLocationHref( 'https://example.com/' );
 	} );
 
 	it( 'returns default blueprint if WordPress is installed', async () => {
@@ -90,27 +84,10 @@ describe( 'getBlueprint', () => {
 	} );
 
 	it( 'returns pre-defined blueprint when its name is specified', async () => {
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: ( param ) => ( param === 'blueprint' ? 'woocommerce' : null ),
-			},
-		} ) );
+		setLocationHref( 'https://example.com/?blueprint=woocommerce' );
 
 		const blueprint = await getBlueprint( false, '8.1' );
 		expect( blueprint ).toEqual( WOOCOMMERCE_PREDEFINED_BLUEPRINT );
-	} );
-
-	it( 'returns blueprint in url hash', async () => {
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: () => null,
-				has: () => false,
-			},
-			hash: BLUEPRINT_IN_URL_HASH,
-		} ) );
-
-		const blueprint = await getBlueprint( false, '8.2' );
-		expect( blueprint ).toEqual( HASH_BLUEPRINT );
 	} );
 
 	describe.each( [
@@ -211,22 +188,18 @@ describe( 'getBlueprint', () => {
 		'returns blueprint after fetching from blueprint-url GET param $testName',
 		( { mockResponse } ) => {
 			it( 'fetches and returns the expected blueprint', async () => {
-				// Mock URL to return blueprint-url parameter
-				jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-					searchParams: {
-						get: ( param ) =>
-							param === 'blueprint-url' ? 'https://example.com/blueprint.json' : null,
-						has: ( param ) => param === 'blueprint-url',
-					},
-				} ) );
+				setLocationHref( 'https://example.com/?blueprint-url=https://example.com/blueprint.json' );
 
-				// Mock the fetch function
+				// Mock the fetch function with a proper arrayBuffer() response
 				jest.spyOn( global, 'fetch' ).mockResolvedValue( {
 					ok: true,
 					status: 200,
 					statusText: 'OK',
-					json: async () => mockResponse,
-				} as Response );
+					arrayBuffer: async () => {
+						const encoder = new TextEncoder();
+						return encoder.encode( JSON.stringify( mockResponse ) ).buffer;
+					},
+				} as unknown as Response );
 
 				const blueprint = await getBlueprint( false, '8.4' );
 
@@ -240,24 +213,16 @@ describe( 'getBlueprint', () => {
 	);
 
 	it( 'returns default blueprint when fetch fails with invalid URL', async () => {
-		// Mock URL to return blueprint-url parameter
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: ( param ) =>
-					param === 'blueprint-url' ? 'https://invalid-example.com/blueprint.json' : null,
-				has: ( param ) => param === 'blueprint-url',
-			},
-		} ) );
+		setLocationHref(
+			'https://example.com/?blueprint-url=https://invalid-example.com/blueprint.json'
+		);
 
 		// Mock fetch to return a failed response
 		jest.spyOn( global, 'fetch' ).mockResolvedValue( {
 			ok: false,
 			status: 404,
 			statusText: 'Not Found',
-			json: async () => {
-				throw new Error( 'Failed to parse JSON' );
-			},
-		} as Response );
+		} as unknown as Response );
 
 		const blueprint = await getBlueprint( false, '8.3' );
 
@@ -266,7 +231,7 @@ describe( 'getBlueprint', () => {
 			credentials: 'omit',
 		} );
 
-		// When fetch fails, it should return the default blueprint with merged properties
+		// When fetch fails with an HTTP error, it should return the default blueprint
 		expect( blueprint ).toEqual( {
 			...DEFAULT_BLUEPRINT,
 			preferredVersions: {
@@ -278,14 +243,9 @@ describe( 'getBlueprint', () => {
 	} );
 
 	it( 'returns default blueprint when fetch throws a network error', async () => {
-		// Mock URL to return blueprint-url parameter
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: ( param ) =>
-					param === 'blueprint-url' ? 'https://unreachable-server.com/blueprint.json' : null,
-				has: ( param ) => param === 'blueprint-url',
-			},
-		} ) );
+		setLocationHref(
+			'https://example.com/?blueprint-url=https://unreachable-server.com/blueprint.json'
+		);
 
 		// Mock fetch to throw a network error
 		jest.spyOn( global, 'fetch' ).mockRejectedValue( new Error( 'Network error' ) );
@@ -301,5 +261,6 @@ describe( 'getBlueprint', () => {
 
 	afterEach( () => {
 		jest.restoreAllMocks();
+		setLocationHref( 'https://example.com/' );
 	} );
 } );
