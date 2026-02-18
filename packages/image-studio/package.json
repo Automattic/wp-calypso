@@ -46,8 +46,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.34",
-		"@automattic/agenttic-ui": "^0.1.34",
+		"@automattic/agenttic-client": "^0.1.44",
+		"@automattic/agenttic-ui": "^0.1.44",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.4.0",
