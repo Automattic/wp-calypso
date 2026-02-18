@@ -70,6 +70,8 @@ function fixSitesArray( sites: Site[], jetpackUrls: Set< string > ): Site[] | nu
  * module dependencies with query-client.ts.
  */
 export function startSiteCollisionListener( qc: QueryClient ): () => void {
+	let processing = false;
+
 	function getJetpackUrls(): Set< string > | undefined {
 		const dataInCache = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
 		if ( dataInCache ) {
@@ -173,7 +175,33 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 			return;
 		}
 
-		const queryKey = event.query.queryKey;
+		const prefix = event.query.queryKey[ 0 ];
+
+		// Skip unrelated queries before doing any work.
+		if (
+			prefix !== 'jetpack-site-urls' &&
+			prefix !== 'site-by-slug' &&
+			prefix !== 'site-by-id' &&
+			prefix !== sitesQueryKey[ 0 ]
+		) {
+			return;
+		}
+
+		// Guard against re-entrant calls from our own setQueryData writes.
+		if ( processing ) {
+			return;
+		}
+		processing = true;
+
+		try {
+			handleEvent( event.query );
+		} finally {
+			processing = false;
+		}
+	} );
+
+	function handleEvent( query: { queryKey: readonly unknown[]; state: { data: unknown } } ) {
+		const queryKey = query.queryKey;
 		const prefix = queryKey[ 0 ];
 
 		const jetpackUrls = getJetpackUrls();
@@ -189,7 +217,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 
 		// Single site queries.
 		if ( prefix === 'site-by-slug' || prefix === 'site-by-id' ) {
-			const site = event.query.state.data as Site | undefined;
+			const site = query.state.data as Site | undefined;
 			if ( site ) {
 				growJetpackUrls( [ site ], jetpackUrls );
 				fixAndSetSite( site, jetpackUrls );
@@ -199,7 +227,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 
 		// Sites list queries (both array and paginated).
 		if ( prefix === sitesQueryKey[ 0 ] ) {
-			const data = event.query.state.data as Site[] | FetchPaginatedSitesResponse | undefined;
+			const data = query.state.data as Site[] | FetchPaginatedSitesResponse | undefined;
 			if ( ! data ) {
 				return;
 			}
@@ -225,5 +253,5 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 				}
 			}
 		}
-	} );
+	}
 }

@@ -188,4 +188,41 @@ describe( 'startSiteCollisionListener', () => {
 			'example.wordpress.com'
 		);
 	} );
+
+	it( 'uses fallback scan to detect collisions before jetpack-site-urls query resolves', () => {
+		// A jetpack site is already cached by ID (e.g. restored from persistence).
+		const jpSite = makeSite( {
+			ID: 99,
+			jetpack: true,
+			URL: 'https://example.com',
+			slug: 'example.com',
+		} );
+		qc.setQueryData( [ 'site-by-id', 99 ], jpSite );
+
+		// A non-jetpack site with same URL arrives at a different key.
+		// No jetpack-site-urls query yet — fallback scan should find the JP site by ID.
+		const wpcomSite = makeSite( { ID: 2 } );
+		qc.setQueryData( [ 'site-by-slug', 'example.com' ], wpcomSite );
+
+		const fixed = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
+	} );
+
+	it( 'does not infinite-loop from cascading setQueryData calls', () => {
+		seedJetpackUrls( [ 'example.com' ] );
+
+		let callCount = 0;
+		const innerUnsubscribe = qc.getQueryCache().subscribe( () => {
+			callCount++;
+		} );
+
+		const site = makeSite( {} );
+		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+
+		innerUnsubscribe();
+
+		// The listener fires for the initial set + its own writes, but should
+		// be bounded (not hundreds/thousands from infinite recursion).
+		expect( callCount ).toBeLessThan( 20 );
+	} );
 } );
