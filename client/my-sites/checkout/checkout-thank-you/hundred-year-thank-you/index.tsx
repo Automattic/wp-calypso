@@ -48,7 +48,8 @@ const hundredYearProducts = [
 ] as const;
 
 interface Props {
-	siteSlug: string;
+	siteId?: number;
+	siteSlug?: string;
 	receiptId: number;
 	productSlug: ( typeof hundredYearProducts )[ number ];
 }
@@ -146,6 +147,7 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 `;
 
 export default function HundredYearThankYou( {
+	siteId: siteIdFromProps,
 	siteSlug,
 	receiptId,
 	productSlug = PLAN_100_YEARS,
@@ -153,7 +155,8 @@ export default function HundredYearThankYou( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+	const siteIdFromSiteSlug = useSelector( ( state ) => getSiteId( state, siteSlug ?? null ) );
+	const siteId = siteIdFromProps ?? siteIdFromSiteSlug;
 	const siteCreatedTimeStamp = useSelector(
 		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
 	);
@@ -227,12 +230,12 @@ export default function HundredYearThankYou( {
 	const isMobile = useMobileBreakpoint();
 	const isPageLoading = isReceiptLoading;
 	const hundredYearPlanCta = (
-		<StyledLightButton onClick={ () => page( `/home/${ siteSlug }` ) }>
+		<StyledLightButton onClick={ () => page( `/home/${ siteSlug ?? siteId }` ) }>
 			{ translate( 'Manage your site' ) }
 		</StyledLightButton>
 	);
 	const hundredYearDomainCta = (
-		<StyledLightButton onClick={ () => page( `/domains/manage/${ siteSlug }` ) }>
+		<StyledLightButton onClick={ () => page( `/domains/manage/${ siteSlug ?? siteId }` ) }>
 			{ translate( 'Manage your domain' ) }
 		</StyledLightButton>
 	);

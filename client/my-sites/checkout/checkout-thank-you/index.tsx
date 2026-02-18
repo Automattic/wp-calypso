@@ -527,18 +527,6 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	getSingleHundredYearDomainPurchase = () => {
-		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-		const domainPurchase = purchases[ 0 ];
-		const domain = this.props.siteDomains?.find(
-			( siteDomain ) => siteDomain.name === domainPurchase.meta
-		);
-
-		if ( domain?.isHundredYearDomain ) {
-			return domain;
-		}
-	};
-
 	renderLoading = () => {
 		return (
 			<>
@@ -565,6 +553,9 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
+		const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+		const domainPurchases = purchases.filter( predicate );
+
 		if ( ! this.isGenericReceipt() ) {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
@@ -586,7 +577,9 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
-		const hundredYearDomainPurchase = this.getSingleHundredYearDomainPurchase();
+		const hundredYearDomainPurchase = domainPurchases.find(
+			( purchase ) => purchase.isHundredYearDomain
+		);
 
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
@@ -635,7 +628,7 @@ export class CheckoutThankYou extends Component<
 							` }
 						/>
 						<HundredYearThankYou
-							siteSlug={ hundredYearDomainPurchase.siteSlug }
+							siteId={ hundredYearDomainPurchase.blogId }
 							receiptId={ this.props.receiptId }
 							productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
 						/>
@@ -643,9 +636,6 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				if ( shouldShowNewDomainThankYou() ) {
-					const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-					const domainPurchases = purchases.filter( predicate );
-
 					if ( domainPurchases.length > 1 ) {
 						const domainsUrl = this.props.hasDashboardOptIn
 							? dashboardLink( '/domains' )
