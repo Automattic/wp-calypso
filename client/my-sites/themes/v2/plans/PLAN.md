@@ -18,7 +18,78 @@
 
 Goal: Launch the new layout by wrapping existing v1 components. Fully functional page from day one. Feature flag can be removed after this milestone.
 
+### Task 0: Test Infrastructure Verification
+
+**Depends on:** nothing (first task)
+
+**Files:**
+- Create: `client/my-sites/themes/v2/hooks/test/test-infra-smoke.test.ts`
+
+**Purpose:** Verify that the Redux store creation pattern, `renderHook` + `ReduxProvider` wrapper, and mock approaches all work correctly before writing real tests. This prevents cascading test failures in Tasks 1.2+.
+
+**Step 1: Create a minimal smoke test**
+
+Create `client/my-sites/themes/v2/hooks/test/test-infra-smoke.test.ts`:
+
+```typescript
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+
+function renderWithStore( initialState: Record< string, unknown > = {} ) {
+	const store = createReduxStore( initialState, ( state: unknown ) => state );
+	setStore( store );
+
+	return renderHook( () => useSelector( isUserLoggedIn ), {
+		wrapper: ( { children } ) => (
+			<ReduxProvider store={ store }>{ children }</ReduxProvider>
+		),
+	} );
+}
+
+describe( 'Test infrastructure smoke test', () => {
+	test( 'createReduxStore + renderHook + ReduxProvider works', () => {
+		const { result } = renderWithStore( { currentUser: { id: null } } );
+		expect( result.current ).toBe( false );
+	} );
+
+	test( 'logged-in state reads correctly', () => {
+		const { result } = renderWithStore( {
+			currentUser: { id: 123, user: { ID: 123 } },
+		} );
+		expect( result.current ).toBe( true );
+	} );
+} );
+```
+
+⚠️ **VERIFY:** If tests fail, check the exact state shape `isUserLoggedIn` expects by reading `client/state/current-user/selectors.ts`. Adjust `currentUser` shape to match. This is the foundation — get this right before proceeding.
+
+**Step 2: Run tests**
+
+```bash
+yarn test-client client/my-sites/themes/v2/hooks/test/test-infra-smoke.test.ts
+```
+
+Expected: 2 tests PASS. If they fail, debug the Redux store shape before continuing.
+
+**Step 3: Commit**
+
+```bash
+git add client/my-sites/themes/v2/hooks/test/test-infra-smoke.test.ts
+git commit -m "test(themes): add test infrastructure smoke test for v2 showcase"
+```
+
+---
+
 ### Task 1.1: Feature Flag
+
+**Depends on:** Task 0 (test infra must pass first)
 
 **Files:**
 - Modify: `config/development.json`
@@ -68,6 +139,8 @@ git commit -m "feat(themes): add themes/showcase-v2 feature flag"
 ---
 
 ### Task 1.2: useIsThemeShowcaseV2Enabled Hook
+
+**Depends on:** Task 0, Task 1.1
 
 **Files:**
 - Create: `client/my-sites/themes/v2/hooks/use-is-theme-showcase-v2-enabled.ts`
@@ -150,7 +223,7 @@ describe( 'useIsThemeShowcaseV2Enabled', () => {
 } );
 ```
 
-Note: The exact Redux state shape for `currentUser` may need adjusting based on how `isUserLoggedIn` reads the state. The selector checks `state.currentUser.id` — when it's falsy, the user is logged out. Run the tests and adjust if the selector reads differently.
+⚠️ **VERIFY:** The exact Redux state shape for `currentUser` should have been validated in Task 0. If tests fail here, refer back to Task 0's working state shape and adjust accordingly.
 
 **Step 2: Run tests to verify they fail**
 
@@ -213,6 +286,8 @@ git commit -m "feat(themes): add useIsThemeShowcaseV2Enabled hook"
 ---
 
 ### Task 1.3: v2 Page Shell with v1 Internals + Controller Integration
+
+**Depends on:** Task 1.2
 
 **Files:**
 - Create: `client/my-sites/themes/v2/index.tsx`
@@ -342,6 +417,8 @@ Verify these URLs still work:
 - `http://calypso.localhost:3000/themes/free`
 - `http://calypso.localhost:3000/themes?s=developer`
 
+Also verify the **logged-out global navigation**: The `UniversalNavbarHeader` (WordPress.com logo, top-level links, "Get Started" CTA) and `UniversalNavbarFooter` should already be rendered by the logged-out layout wrapper (`client/layout/logged-out.jsx`). The Plugins LP (`client/my-sites/plugins/plugins-discovery-page/index.jsx`) relies on the same layout — it does NOT create its own navigation. If header/footer are NOT rendering, check that the controller pipeline still uses the logged-out layout for the themes section.
+
 **Step 5: Lint**
 
 ```bash
@@ -359,35 +436,9 @@ git commit -m "feat(themes): add ThemeShowcaseV2 shell wrapping v1 internals"
 
 ---
 
-### Task 1.4: Update Logged-out Global Navigation
-
-The logged-out layout already renders a `UniversalNavbarHeader` and `UniversalNavbarFooter` for themes pages (see `client/layout/logged-out.jsx:327-330`). The `sectionName` for themes is `'themes'`, and the layout already includes both header and footer for this section.
-
-**Step 1: Verify the existing navigation works**
-
-Visit `http://calypso.localhost:3000/themes` logged out. The `UniversalNavbarHeader` (WordPress.com logo, top-level links, "Get Started" CTA) and `UniversalNavbarFooter` should already be rendered by the logged-out layout wrapper.
-
-If the header/footer are already rendering correctly with the v2 shell from Task 1.3, **this task is done — no new files needed.**
-
-The Plugins LP (`client/my-sites/plugins/plugins-discovery-page/index.jsx`) doesn't create its own navigation component either — it relies on the same logged-out layout. The `FullWidthSection` in the Plugins LP only wraps content sections, not the nav.
-
-**Step 2: If navigation is NOT rendering correctly**
-
-This would mean the v2 shell is somehow bypassing the logged-out layout. In that case:
-
-1. Check that the controller pipeline (`client/my-sites/themes/index.node.js` or `index.web.js`) still uses the logged-out layout for the themes section.
-2. The fix would be in the controller/routing layer, not in creating a new navigation component.
-
-**Step 3: Commit (if any changes were needed)**
-
-```bash
-git add client/my-sites/themes/
-git commit -m "feat(themes): verify logged-out global navigation works with v2 showcase"
-```
-
----
-
 ### Task 1.5: Hero Section
+
+**Depends on:** Task 1.3
 
 **Files:**
 - Create: `client/my-sites/themes/v2/hero/index.tsx`
@@ -583,6 +634,8 @@ git commit -m "feat(themes): add hero section to v2 showcase"
 
 ### Task 1.6: SSR/SEO Verification
 
+**Depends on:** Task 1.5
+
 **Files:**
 - No new files — verification task.
 
@@ -598,20 +651,7 @@ Check that `<title>`, `og:description`, canonical URLs, and hrefLang links are s
 
 ---
 
-### Task 1.7: Remove Feature Flag (Ship v2 Shell)
-
-**Files:**
-- Modify: all config files — set `"themes/showcase-v2": true` everywhere (or remove the flag entirely and the `isEnabled` check).
-
-**Step 1: Enable the flag in all environments**
-
-Once the v2 shell is verified and reviewed, enable the flag in production. The page is fully functional — it's the same v1 internals with a new outer layout.
-
-**Step 2: Commit**
-
-```bash
-git commit -m "feat(themes): enable v2 showcase for all logged-out users"
-```
+> **Note — Feature Flag Removal:** Once Milestone 1 is verified and reviewed, enable the flag in production by setting `"themes/showcase-v2": true` in all config files (or remove the flag and `isEnabled` check entirely). This is a **deployment decision**, not an implementation task — it happens after QA, stakeholder review, and gradual rollout.
 
 ---
 
@@ -620,6 +660,8 @@ git commit -m "feat(themes): enable v2 showcase for all logged-out users"
 Goal: Replace the v1 filter bar with the new design. The v1 theme grid/cards/pagination remain.
 
 ### Task 2.1: useThemeFilters Data Hook
+
+**Depends on:** Milestone 1 complete. Independent of Task 2.2.
 
 **Files:**
 - Create: `client/my-sites/themes/v2/hooks/use-theme-filters.ts`
@@ -766,6 +808,8 @@ git commit -m "feat(themes): add useThemeFilters data hook"
 ---
 
 ### Task 2.2: useThemeShowcaseUrl Hook
+
+**Depends on:** Milestone 1 complete. Independent of Task 2.1.
 
 **Files:**
 - Create: `client/my-sites/themes/v2/hooks/use-theme-showcase-url.ts`
@@ -1050,6 +1094,8 @@ git commit -m "feat(themes): add useThemeShowcaseUrl hook for URL-driven filter 
 
 ### Task 2.3: v2 Filter Bar — Category Pills
 
+**Depends on:** Task 2.1, Task 2.2
+
 **Files:**
 - Create: `client/my-sites/themes/v2/filter-bar/index.tsx`
 - Create: `client/my-sites/themes/v2/filter-bar/style.scss`
@@ -1140,7 +1186,7 @@ describe( 'FilterBar — Category Pills', () => {
 } );
 ```
 
-Note: The mock for `@automattic/calypso-router` may need adjustment — the module exports a default function (`page()`). Check how it's imported in the hook. The test verifies that clicking a pill triggers navigation to the expected URL.
+⚠️ **VERIFY:** The mock for `@automattic/calypso-router` may need adjustment. The module's default export is `page()` function. Check if the mock shape `jest.mock( '@automattic/calypso-router', () => mockPageNavigate )` matches the actual export. If the module uses `export default`, you may need `jest.mock( '@automattic/calypso-router', () => ({ __esModule: true, default: mockPageNavigate }) )` instead.
 
 **Step 2: Run tests to verify they fail**
 
@@ -1250,6 +1296,8 @@ git commit -m "feat(themes): add category pills to v2 filter bar"
 ---
 
 ### Task 2.4: v2 Filter Bar — Plan Dropdown + Search
+
+**Depends on:** Task 2.3
 
 **Files:**
 - Modify: `client/my-sites/themes/v2/filter-bar/index.tsx`
@@ -1485,6 +1533,8 @@ git commit -m "feat(themes): add plan dropdown and search to v2 filter bar"
 
 ### Task 2.5: Sticky Filter Bar + Integration
 
+**Depends on:** Task 2.4
+
 **Files:**
 - Modify: `client/my-sites/themes/v2/filter-bar/style.scss`
 - Modify: `client/my-sites/themes/v2/index.tsx`
@@ -1587,11 +1637,13 @@ git commit -m "feat(themes): integrate v2 filter bar, replace v1 filter bar"
 
 ---
 
-## Milestone 3: v2 Theme Cards + Grid
+## Milestone 3: v2 Theme Cards + Grid + SEO + Analytics
 
-Goal: Replace the v1 theme cards and grid with the new design. The v2 filter bar (from Milestone 2) drives the data.
+Goal: Replace the v1 theme cards and grid with the new design. Restore SEO and analytics immediately after v1 removal. The v2 filter bar (from Milestone 2) drives the data.
 
 ### Task 3.1: useThemes Data Hook
+
+**Depends on:** Milestone 2 complete. Independent of Task 3.2.
 
 **Files:**
 - Create: `client/my-sites/themes/v2/hooks/use-themes.ts`
@@ -1684,7 +1736,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestThemes } from 'calypso/state/themes/actions';
 import {
-	getThemesForQuery,
+	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
 } from 'calypso/state/themes/selectors';
@@ -1704,6 +1756,11 @@ export interface ThemeQuery {
  * Dispatches `requestThemes` to the wpcom API on mount and when the query changes.
  * Returns the current data from the Redux store.
  *
+ * Uses `getThemesForQueryIgnoringPage` instead of `getThemesForQuery` — this
+ * returns ALL themes across previously fetched pages for the same base query,
+ * which is essential for infinite scroll (page 1→2→3 accumulates themes).
+ * `ThemeQueryManager` internally merges pages for the same base query key.
+ *
  * The `stableQuery` memo prevents re-dispatching when the query object reference
  * changes but the actual values haven't.
  */
@@ -1715,7 +1772,10 @@ export function useThemes( query: ThemeQuery ) {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const stableQuery = useMemo( () => query, [ JSON.stringify( query ) ] );
 
-	const data = useSelector( ( state ) => getThemesForQuery( state, siteId, stableQuery ) );
+	// getThemesForQueryIgnoringPage returns all themes across fetched pages.
+	const data = useSelector( ( state ) =>
+		getThemesForQueryIgnoringPage( state, siteId, stableQuery )
+	);
 	const isLoading = useSelector( ( state ) =>
 		isRequestingThemesForQuery( state, siteId, stableQuery )
 	);
@@ -1730,6 +1790,8 @@ export function useThemes( query: ThemeQuery ) {
 	return { data: data ?? [], isLoading, totalCount: totalCount ?? 0 };
 }
 ```
+
+⚠️ **VERIFY — SSR query cache parity:** The controller's `fetchThemeData` builds queries as `{ search, tier, filter: [filter, vertical].join(','), page: 1, number: 20 }`. The v2 hook's `stableQuery` may include extra keys like `collection: 'recommended'` that the controller never sets. `ThemeQueryManager` serializes queries via `getSerializedThemesQuery` (see `client/state/themes/utils.js:143`). If the serialized keys differ, the SSR-prefetched data won't be found in the Redux store on first client render, causing a flash of empty content + redundant API call. Ensure the initial v2 query shape matches the controller's format for the default `/themes` page load.
 
 **Step 4: Run tests to verify they pass**
 
@@ -1751,6 +1813,8 @@ git commit -m "feat(themes): add useThemes data hook"
 ---
 
 ### Task 3.2: ThemeCardV2 Shared Component
+
+**Depends on:** Milestone 2 complete. Independent of Task 3.1.
 
 **Files:**
 - Create: `packages/components/src/theme-card-v2/index.tsx`
@@ -1835,6 +1899,7 @@ Create `packages/components/src/theme-card-v2/index.tsx`:
 
 ```tsx
 import { Card, Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import clsx from 'clsx';
 
 import './style.scss';
@@ -1858,6 +1923,8 @@ export default function ThemeCardV2( {
 	onPreview,
 	className,
 }: ThemeCardV2Props ) {
+	const translate = useTranslate();
+
 	return (
 		<Card className={ clsx( 'theme-card-v2', className ) } size="small">
 			<div className="theme-card-v2__thumbnail">
@@ -1869,7 +1936,7 @@ export default function ThemeCardV2( {
 				/>
 				<div className="theme-card-v2__hover-actions">
 					<Button variant="primary" onClick={ onPreview }>
-						Preview
+						{ translate( 'Preview' ) }
 					</Button>
 					{ demoUrl && (
 						<Button
@@ -1878,7 +1945,7 @@ export default function ThemeCardV2( {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							Live Demo
+							{ translate( 'Live Demo' ) }
 						</Button>
 					) }
 				</div>
@@ -1993,6 +2060,8 @@ git commit -m "feat(components): add ThemeCardV2 shared component"
 
 ### Task 3.3: v2 Theme Grid with Pagination
 
+**Depends on:** Task 3.1, Task 3.2
+
 **Files:**
 - Create: `client/my-sites/themes/v2/theme-grid/index.tsx`
 - Create: `client/my-sites/themes/v2/theme-grid/style.scss`
@@ -2098,6 +2167,7 @@ Expected: FAIL — module doesn't exist.
 Create `client/my-sites/themes/v2/theme-grid/index.tsx`:
 
 ```tsx
+import page from '@automattic/calypso-router';
 import { Spinner } from '@wordpress/components';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ThemeCardV2 } from '@automattic/components';
@@ -2158,8 +2228,8 @@ export default function ThemeGrid( { query }: ThemeGridProps ) {
 					demoUrl={ theme.demo_uri }
 					tierLabel={ theme.price || undefined }
 					onPreview={ () => {
-						// Navigate to theme detail page.
-						window.location.href = `/theme/${ theme.id }`;
+						// Client-side navigation to theme detail page.
+						page( `/theme/${ theme.id }` );
 					} }
 				/>
 			) ) }
@@ -2230,6 +2300,8 @@ git commit -m "feat(themes): add v2 theme grid with infinite scroll pagination"
 ---
 
 ### Task 3.4: Replace v1 Grid with v2 Grid
+
+**Depends on:** Task 3.3
 
 **Files:**
 - Modify: `client/my-sites/themes/v2/index.tsx`
@@ -2349,11 +2421,178 @@ git commit -m "feat(themes): replace v1 theme grid with v2 in showcase"
 
 ---
 
-## Milestone 4: Banners + Empty States + FAQs + Polish
+### Task 3.5: SEO Content (Moved from Milestone 4)
 
-Goal: Add the marketing/conversion layer and polish for production readiness.
+**Depends on:** Task 3.4
+
+When Task 3.4 removes v1 `ThemeShowcase`, the `ThemeShowcaseHeader` that handled SEO (`<title>`, `<meta>`, canonical URLs) is also removed. SEO must be restored immediately — there should be no deployed state where the v2 page lacks SEO metadata.
+
+**Files:**
+- Create: `client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts`
+- Modify: `client/my-sites/themes/v2/index.tsx`
+
+**Reference:** The v1 SEO hook is at `client/my-sites/themes/use-theme-showcase-logged-out-seo-content.js`. It returns `{ title, header, description }` based on a matrix of `filter × tier`. The v2 version uses the same structure but with refreshed copy and reads from our `useThemeShowcaseUrl` state instead of props.
+
+**Step 1: Implement the SEO hook**
+
+Create `client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts`:
+
+```typescript
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
+import { useThemeShowcaseUrl } from './use-theme-showcase-url';
+
+interface SeoContent {
+	title: string;
+	description: string;
+}
+
+/**
+ * Returns SEO metadata (title, description) based on the current URL state.
+ *
+ * This is the v2 equivalent of `use-theme-showcase-logged-out-seo-content.js`.
+ * The copy has been refreshed but the structure is the same: category × tier matrix.
+ */
+export function useThemeShowcaseSeo(): SeoContent {
+	const translate = useTranslate();
+	const { currentState } = useThemeShowcaseUrl();
+
+	return useMemo( () => {
+		const { category, tier, search } = currentState;
+
+		// Search active — generic title.
+		if ( search ) {
+			return {
+				title: translate( 'Search WordPress Themes: "%(search)s"', { args: { search } } ),
+				description: translate(
+					'Search results for "%(search)s" across free and premium WordPress themes on WordPress.com.',
+					{ args: { search } }
+				),
+			};
+		}
+
+		// Tier-specific suffix.
+		const tierLabel: Record< string, string > = {
+			free: translate( 'Free' ),
+			premium: translate( 'Premium' ),
+			partner: translate( 'Partner' ),
+		};
+		const tierSuffix = tier && tierLabel[ tier ] ? ` — ${ tierLabel[ tier ] }` : '';
+
+		// Category-specific titles.
+		const categoryTitles: Record< string, string > = {
+			recommended: translate( 'WordPress Themes' ),
+			all: translate( 'All WordPress Themes' ),
+			blog: translate( 'Blog WordPress Themes' ),
+			business: translate( 'Business WordPress Themes' ),
+			portfolio: translate( 'Portfolio WordPress Themes' ),
+			store: translate( 'Store WordPress Themes' ),
+		};
+
+		const title = ( categoryTitles[ category ] ?? translate( 'WordPress Themes' ) ) + tierSuffix;
+
+		const description = translate(
+			'Starter themes to build a beautiful website. Choose from hundreds of free and premium designs, then customize every detail.'
+		);
+
+		return { title, description };
+	}, [ translate, currentState ] );
+}
+```
+
+**Step 2: Wire into ThemeShowcaseV2**
+
+Add to `client/my-sites/themes/v2/index.tsx`:
+
+```tsx
+import DocumentHead from 'calypso/components/data/document-head';
+import { useThemeShowcaseSeo } from './hooks/use-theme-showcase-seo';
+
+// Inside ThemeShowcaseV2, before the return:
+const seo = useThemeShowcaseSeo();
+
+// As the first child of <Main>:
+<DocumentHead title={ seo.title } meta={ [ { name: 'description', content: seo.description } ] } />
+```
+
+Reference: `DocumentHead` is the standard Calypso component for setting `<title>` and `<meta>` tags. It's used throughout the codebase. Search for `import DocumentHead` for examples.
+
+**Step 3: Lint and commit**
+
+```bash
+yarn eslint client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts
+yarn eslint client/my-sites/themes/v2/index.tsx
+git add client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts client/my-sites/themes/v2/index.tsx
+git commit -m "feat(themes): restore SEO content after v1 component removal"
+```
+
+---
+
+### Task 3.6: Analytics Tracking
+
+**Depends on:** Task 3.4
+
+The v1 `ThemeShowcase` fires Tracks events for category changes, tier changes, search, theme clicks, and page views (see `client/my-sites/themes/theme-showcase.jsx` lines 344, 368, 469, 699). The v2 must fire equivalent events.
+
+**Files:**
+- Modify: `client/my-sites/themes/v2/filter-bar/index.tsx`
+- Modify: `client/my-sites/themes/v2/theme-grid/index.tsx`
+
+**Step 1: Add analytics to FilterBar**
+
+In `client/my-sites/themes/v2/filter-bar/index.tsx`, add Tracks events:
+
+```tsx
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+
+// In the category pill onClick handler, add:
+recordTracksEvent( 'calypso_themeshowcase_filter_category_click', {
+	category: cat.slug,
+} );
+
+// In the handleTierChange callback, add:
+recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', {
+	tier,
+} );
+
+// In the handleSearchSubmit callback, add:
+recordTracksEvent( 'calypso_themeshowcase_search', {
+	search_term: value,
+} );
+```
+
+**Step 2: Add analytics to ThemeGrid**
+
+In `client/my-sites/themes/v2/theme-grid/index.tsx`, add a Tracks event when a theme card's Preview button is clicked:
+
+```tsx
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+
+// In the onPreview handler:
+recordTracksEvent( 'calypso_themeshowcase_theme_click', {
+	theme: theme.id,
+	source: 'showcase',
+} );
+```
+
+**Step 3: Lint and commit**
+
+```bash
+yarn eslint client/my-sites/themes/v2/filter-bar/index.tsx
+yarn eslint client/my-sites/themes/v2/theme-grid/index.tsx
+git add client/my-sites/themes/v2/filter-bar/index.tsx client/my-sites/themes/v2/theme-grid/index.tsx
+git commit -m "feat(themes): add Tracks analytics events to v2 showcase"
+```
+
+---
+
+## Milestone 4: Banners + Empty States + FAQs
+
+Goal: Add the marketing/conversion layer. Content-focused milestone.
 
 ### Task 4.1: AI Builder Banner
+
+**Depends on:** Milestone 3 complete. Independent of other Milestone 4 tasks.
 
 **Files:**
 - Create: `client/my-sites/themes/v2/banners/ai-builder-banner.tsx`
@@ -2479,6 +2718,8 @@ git commit -m "feat(themes): add AI builder banner to v2 showcase"
 
 ### Task 4.2: DIFM Banner
 
+**Depends on:** Milestone 3 complete. Independent of other Milestone 4 tasks.
+
 **Files:**
 - Create: `client/my-sites/themes/v2/banners/difm-banner.tsx`
 
@@ -2533,6 +2774,8 @@ git commit -m "feat(themes): add DIFM banner to v2 showcase"
 ---
 
 ### Task 4.3: Contextual Plan Banners + Partner Themes Section
+
+**Depends on:** Milestone 3 complete. Independent of Tasks 4.1, 4.2.
 
 **Files:**
 - Create: `client/my-sites/themes/v2/banners/plan-banner.tsx`
@@ -2609,6 +2852,7 @@ export default function PlanBanner( { tier }: PlanBannerProps ) {
 Create `client/my-sites/themes/v2/partner-themes/index.tsx`:
 
 ```tsx
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { ThemeCardV2 } from '@automattic/components';
 import { useThemes } from '../hooks/use-themes';
@@ -2696,6 +2940,8 @@ git commit -m "feat(themes): add plan banners and partner themes section"
 
 ### Task 4.4: Banner Interleaving
 
+**Depends on:** Tasks 4.1, 4.2, 4.3
+
 **Files:**
 - Modify: `client/my-sites/themes/v2/index.tsx`
 
@@ -2771,6 +3017,8 @@ git commit -m "feat(themes): interleave banners into v2 showcase layout"
 ---
 
 ### Task 4.5: Search Results View + Empty State
+
+**Depends on:** Task 4.4
 
 **Files:**
 - Modify: `client/my-sites/themes/v2/theme-grid/index.tsx`
@@ -2971,6 +3219,8 @@ git commit -m "feat(themes): add empty state with CTA cards"
 
 ### Task 4.6: FAQ Accordion
 
+**Depends on:** Task 4.4 (needs to be wired into the page layout)
+
 **Files:**
 - Create: `client/my-sites/themes/v2/faqs/index.tsx`
 - Create: `client/my-sites/themes/v2/faqs/style.scss`
@@ -3130,110 +3380,15 @@ git commit -m "feat(themes): add FAQ accordion section to v2 showcase"
 
 ---
 
-### Task 4.7: SEO Content Refresh
-
-**Files:**
-- Create: `client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts`
-- Modify: `client/my-sites/themes/v2/index.tsx`
-
-**Reference:** The v1 SEO hook is at `client/my-sites/themes/use-theme-showcase-logged-out-seo-content.js`. It returns `{ title, header, description }` based on a matrix of `filter × tier`. The v2 version uses the same structure but with refreshed copy and reads from our `useThemeShowcaseUrl` state instead of props.
-
-**Step 1: Implement the SEO hook**
-
-Create `client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts`:
-
-```typescript
-import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { useThemeShowcaseUrl } from './use-theme-showcase-url';
-
-interface SeoContent {
-	title: string;
-	description: string;
-}
-
-/**
- * Returns SEO metadata (title, description) based on the current URL state.
- *
- * This is the v2 equivalent of `use-theme-showcase-logged-out-seo-content.js`.
- * The copy has been refreshed but the structure is the same: category × tier matrix.
- */
-export function useThemeShowcaseSeo(): SeoContent {
-	const translate = useTranslate();
-	const { currentState } = useThemeShowcaseUrl();
-
-	return useMemo( () => {
-		const { category, tier, search } = currentState;
-
-		// Search active — generic title.
-		if ( search ) {
-			return {
-				title: translate( 'Search WordPress Themes: "%(search)s"', { args: { search } } ),
-				description: translate(
-					'Search results for "%(search)s" across free and premium WordPress themes on WordPress.com.',
-					{ args: { search } }
-				),
-			};
-		}
-
-		// Tier-specific suffix.
-		const tierLabel: Record< string, string > = {
-			free: translate( 'Free' ),
-			premium: translate( 'Premium' ),
-			partner: translate( 'Partner' ),
-		};
-		const tierSuffix = tier && tierLabel[ tier ] ? ` — ${ tierLabel[ tier ] }` : '';
-
-		// Category-specific titles.
-		const categoryTitles: Record< string, string > = {
-			recommended: translate( 'WordPress Themes' ),
-			all: translate( 'All WordPress Themes' ),
-			blog: translate( 'Blog WordPress Themes' ),
-			business: translate( 'Business WordPress Themes' ),
-			portfolio: translate( 'Portfolio WordPress Themes' ),
-			store: translate( 'Store WordPress Themes' ),
-		};
-
-		const title = ( categoryTitles[ category ] ?? translate( 'WordPress Themes' ) ) + tierSuffix;
-
-		const description = translate(
-			'Starter themes to build a beautiful website. Choose from hundreds of free and premium designs, then customize every detail.'
-		);
-
-		return { title, description };
-	}, [ translate, currentState ] );
-}
-```
-
-**Step 2: Wire into ThemeShowcaseV2**
-
-Add to `client/my-sites/themes/v2/index.tsx`:
-
-```tsx
-import DocumentHead from 'calypso/components/data/document-head';
-import { useThemeShowcaseSeo } from './hooks/use-theme-showcase-seo';
-
-// Inside ThemeShowcaseV2, before the return:
-const seo = useThemeShowcaseSeo();
-
-// As the first child of <Main>:
-<DocumentHead title={ seo.title } meta={ [ { name: 'description', content: seo.description } ] } />
-```
-
-Reference: `DocumentHead` is the standard Calypso component for setting `<title>` and `<meta>` tags. It's used throughout the codebase. Search for `import DocumentHead` for examples.
-
-**Step 3: Lint and commit**
-
-```bash
-yarn eslint client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts
-yarn eslint client/my-sites/themes/v2/index.tsx
-git add client/my-sites/themes/v2/hooks/use-theme-showcase-seo.ts client/my-sites/themes/v2/index.tsx
-git commit -m "feat(themes): refresh SEO content for v2 showcase"
-```
-
 ---
 
-### Task 4.8: Responsive Polish + Accessibility Audit
+## Milestone 5: Polish + Quality
+
+Goal: Responsive polish, accessibility audit, and E2E tests. Quality-focused milestone.
+
+### Task 5.1: Responsive Polish + Accessibility Audit
+
+**Depends on:** Milestone 4 complete
 
 **Files:**
 - Modify: various `style.scss` and `.tsx` files across `client/my-sites/themes/v2/`
@@ -3304,7 +3459,9 @@ git commit -m "fix(themes): polish responsive layout and accessibility in v2 sho
 
 ---
 
-### Task 4.9: E2E Tests
+### Task 5.2: E2E Tests
+
+**Depends on:** Task 5.1
 
 **Files:**
 - Create: `test/e2e/specs/appearance/theme-showcase-v2.spec.ts`

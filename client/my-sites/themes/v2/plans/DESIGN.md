@@ -277,20 +277,22 @@ Replace the v1 filter bar with the new design.
 - Remove v1 filter bar from v2 showcase.
 - Unit tests for hooks and filter interactions.
 
-### Milestone 3: v2 Theme Cards + Grid
+### Milestone 3: v2 Theme Cards + Grid + SEO + Analytics
 
-Replace the v1 theme cards and grid with the new design.
+Replace the v1 theme cards and grid with the new design. Restore SEO and analytics immediately after the v1 component is removed.
 
-- Build data hook: `useThemes`.
-- New `ThemeCardV2` in `packages/components/`: landscape thumbnail, 8px radius, hover CTAs, plan label.
+- Build data hook: `useThemes` (uses `getThemesForQueryIgnoringPage` for page accumulation).
+- New `ThemeCardV2` in `packages/components/`: landscape thumbnail, 8px radius, hover CTAs, plan label, i18n for all strings.
 - 3-column responsive grid, infinite scroll pagination.
 - Wire grid to `useThemes` hook with current filter/search state.
 - Remove v1 `ThemesSelection` from v2 showcase.
+- SEO content refresh (moved here from Milestone 4 — cannot ship without SEO metadata).
+- Analytics tracking: `recordTracksEvent` for category, tier, search, and theme click events.
 - Unit tests for card rendering and grid behavior.
 
-### Milestone 4: Banners + Empty States + FAQs + Polish
+### Milestone 4: Banners + Empty States + FAQs
 
-Add the marketing/conversion layer and polish.
+Add the marketing/conversion layer. Content-focused milestone.
 
 - AI builder banner, DIFM banner, contextual plan banners.
 - Partner themes section with pricing context.
@@ -298,7 +300,11 @@ Add the marketing/conversion layer and polish.
 - Search results view adjustments (hero collapse).
 - Empty state with three CTA cards: Build with AI, Hire an expert, Upload a theme.
 - FAQ accordion section.
-- SEO content refresh.
+
+### Milestone 5: Polish + Quality
+
+Quality-focused milestone.
+
 - Responsive polish across breakpoints.
 - Accessibility audit and fixes.
 - E2E tests (Playwright) for critical logged-out flows.
