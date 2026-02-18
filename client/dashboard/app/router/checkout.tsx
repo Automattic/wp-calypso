@@ -11,5 +11,11 @@ export const createCheckoutRoutes = () => {
 		component: lazyRouteComponent( () => import( '../../checkout/index-wrapper' ), 'default' ),
 	} );
 
-	return [ checkoutRoute ];
+	const checkoutPendingRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/checkout/$siteSlug/pending/$orderId',
+		component: lazyRouteComponent( () => import( '../../checkout/pending' ), 'default' ),
+	} );
+
+	return [ checkoutRoute, checkoutPendingRoute ];
 };
