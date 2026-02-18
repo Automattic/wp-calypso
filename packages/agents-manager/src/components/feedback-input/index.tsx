@@ -47,7 +47,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 			}, 2000 );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( 'Error submitting feedback:', error );
+			console.error( '[FeedbackInput] Error submitting feedback:', error );
 			setSubmitError(
 				__( 'Failed to submit feedback. Please try again.', '__i18n_text_domain__' )
 			);
