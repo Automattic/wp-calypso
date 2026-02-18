@@ -12,6 +12,7 @@ import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
 	A4A_LICENSES_LINK,
+	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
@@ -66,7 +67,7 @@ export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null }
 			className="license-preview__product-pressable-link"
 			target="_blank"
 			rel="norefferer noopener noreferrer"
-			href="https://my.pressable.com/agency/auth"
+			href={ EXTERNAL_PRESSABLE_AUTH_URL }
 			onClick={ () => {
 				if ( ! isFeedbackShown ) {
 					page.redirect(

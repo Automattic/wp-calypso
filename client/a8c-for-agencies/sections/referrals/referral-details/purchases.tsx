@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useCallback } from 'react';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,7 +48,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
 					if ( item.license.license_key.startsWith( 'pressable-' ) ) {
 						return (
-							<ExternalLink href="https://my.pressable.com/agency/auth">
+							<ExternalLink href={ EXTERNAL_PRESSABLE_AUTH_URL }>
 								{ translate( 'Manage in Pressable' ) }
 							</ExternalLink>
 						);
