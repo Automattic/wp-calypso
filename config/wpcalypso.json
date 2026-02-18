@@ -50,7 +50,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-transfer-redesign": true,
-		"domains/new-thank-you-page": false,
+		"domains/new-thank-you-page": true,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
 		"google-my-business": true,
