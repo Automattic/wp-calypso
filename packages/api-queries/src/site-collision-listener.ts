@@ -90,7 +90,9 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 			} )
 			.flatMap( ( [ , data ] ) => {
 				const items = Array.isArray( data ) ? data : [ data ];
-				return items.flatMap( ( item ) => ( isSite( item ) && item.jetpack ? [ item.URL ] : [] ) );
+				return items.flatMap( ( item ) =>
+					isSite( item ) && item.jetpack ? [ withoutHttp( item.URL ) ] : []
+				);
 			} );
 
 		return urls.length > 0 ? new Set( urls ) : undefined;
