@@ -12,7 +12,7 @@ export function getCiabDashboardBasePath( hostname: string ): string {
 
 export function buildCiabDashboardLink( path: string = '' ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( `/ciab${ path }`, 'http://my.localhost:3000' ).href;
+		return new URL( path, 'http://my.woo.localhost:3000' ).href;
 	}
 	return new URL( path, 'https://my.woo.ai' ).href;
 }
