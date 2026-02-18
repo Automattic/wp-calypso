@@ -176,7 +176,7 @@ export default function AgentDock( {
 		messages,
 		agentId,
 		sessionId,
-		authProvider: agentConfig.authProvider,
+		authProvider: agentConfig.authProvider!,
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
