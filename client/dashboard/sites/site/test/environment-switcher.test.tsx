@@ -179,7 +179,7 @@ describe( 'EnvironmentSwitcher', () => {
 			} );
 
 			await clickDropdown( user );
-			expect( await screen.findByText( 'Add staging site' ) ).toBeVisible();
+			await waitFor( () => expect( screen.getByText( 'Add staging site' ) ).toBeVisible() );
 		} );
 
 		test( 'shows error notice when user has insufficient quota', async () => {
@@ -240,7 +240,7 @@ describe( 'EnvironmentSwitcher', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			expect( await screen.findByText( 'Adding staging site…' ) ).toBeVisible();
+			await waitFor( () => expect( screen.getByText( 'Adding staging site…' ) ).toBeVisible() );
 		} );
 
 		test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
@@ -255,7 +255,7 @@ describe( 'EnvironmentSwitcher', () => {
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
 
 			await clickDropdown( user );
-			expect( await screen.findByText( 'Deleting staging site…' ) ).toBeVisible();
+			await waitFor( () => expect( screen.getByText( 'Deleting staging site…' ) ).toBeVisible() );
 		} );
 
 		test( 'shows success notice and fires mutation when "Add staging site" is clicked', async () => {
