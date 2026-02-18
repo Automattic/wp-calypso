@@ -346,12 +346,11 @@ const ImageStudioContent = withInstanceId(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ activeToolbarOption ] );
 
-		// Wrapped save handler that shows success message
-		const handleSaveWithNotification = useCallback( async () => {
+		// Wrapped save handler that shows a success notification
+		const handleSave = useCallback( async () => {
 			setIsSaving( true );
 			try {
 				await onSave();
-				// Show success message via notice system
 				addNotice( __( 'Image saved to Media Library', __i18n_text_domain__ ), 'success' );
 			} finally {
 				setIsSaving( false );
@@ -376,8 +375,8 @@ const ImageStudioContent = withInstanceId(
 		const isSaveEnabled = ! isAiProcessing && hasUnsavedChanges;
 
 		const handleSaveShortcut = useCallback( () => {
-			onSave();
-		}, [ onSave ] );
+			handleSave();
+		}, [ handleSave ] );
 
 		useSaveShortcut( handleSaveShortcut, isSaveEnabled );
 		useBeforeUnload();
@@ -462,7 +461,7 @@ const ImageStudioContent = withInstanceId(
 				mode={ mode }
 				showFeedbackButtons={ showFeedbackButtons }
 				showImageActionsMenu={ showImageActionsMenu }
-				onSave={ handleSaveWithNotification }
+				onSave={ handleSave }
 				onRevertToOriginal={ handleRevertToOriginal }
 				onFeedback={ handleFeedback }
 				onSubmitFeedbackText={ handleSubmitFeedbackText }
@@ -485,7 +484,7 @@ const ImageStudioContent = withInstanceId(
 							mode={ mode }
 							isSaveable={ ! isAiProcessing && hasUnsavedChanges }
 							isSaving={ isSaving }
-							onSave={ handleSaveWithNotification }
+							onSave={ handleSave }
 							setActiveToolbarOption={ setActiveToolbarOption }
 							activeToolbarOption={ activeToolbarOption }
 							onAnnotationUndo={ handleAnnotationUndo }

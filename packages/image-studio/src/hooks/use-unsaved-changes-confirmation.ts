@@ -94,8 +94,8 @@ export function useUnsavedChangesConfirmation( {
 	] );
 
 	/**
-	 * User clicked "Save as new image" in the confirmation dialog
-	 * Save, then exit
+	 * User clicked "Save" in the confirmation dialog.
+	 * Always saves then exits - the confirmation dialog context always wants to close after saving.
 	 */
 	const handleConfirmSave = useCallback( async () => {
 		closeConfirmDialog();
@@ -103,8 +103,6 @@ export function useUnsavedChangesConfirmation( {
 		setIsExitConfirmed( true );
 		try {
 			await onSave();
-
-			// Pass true because we did make changes that were saved
 			await onExit( true );
 		} finally {
 			setIsExiting( false );

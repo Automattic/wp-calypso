@@ -6,7 +6,11 @@ import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, close, external, redo, undo } from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
-import { type ImageStudioActions, store as imageStudioStore } from '../../store';
+import {
+	type ImageStudioActions,
+	ImageStudioEntryPoint,
+	store as imageStudioStore,
+} from '../../store';
 import { type ImageStudioConfig, ImageStudioMode, ToolbarOption } from '../../types';
 import { trackImageStudioToolClick } from '../../utils/tracking';
 import { AltIcon } from '../icons/AltIcon';
@@ -102,6 +106,53 @@ export const Header = ( {
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
 	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
+
+	// Get entry point from store with fallback for navigation
+	const entryPoint = useSelect(
+		( select ) =>
+			select(
+				imageStudioStore
+			).getEntryPoint() as ImageStudioEntryPoint | null,
+		[]
+	);
+
+	// Helper function to get save button text based on entry point
+	const getSaveButtonText = (
+		currentEntryPoint: ImageStudioEntryPoint | null
+	): string => {
+		const effectiveEntryPoint =
+			currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+
+		switch ( effectiveEntryPoint ) {
+			case ImageStudioEntryPoint.EditorBlock:
+			case ImageStudioEntryPoint.EditorSidebar:
+			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
+			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+				return __( 'Save & Apply', 'big-sky' );
+			case ImageStudioEntryPoint.MediaLibrary:
+			default:
+				return __( 'Save', 'big-sky' );
+		}
+	};
+
+	// Helper function to get save button label based on entry point
+	const getSaveButtonLabel = (
+		currentEntryPoint: ImageStudioEntryPoint | null
+	): string => {
+		const effectiveEntryPoint =
+			currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+
+		switch ( effectiveEntryPoint ) {
+			case ImageStudioEntryPoint.EditorBlock:
+			case ImageStudioEntryPoint.EditorSidebar:
+			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
+			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+				return __( 'Save and apply image', 'big-sky' );
+			case ImageStudioEntryPoint.MediaLibrary:
+			default:
+				return __( 'Save displayed image to Media Library', 'big-sky' );
+		}
+	};
 
 	let navButtonDisabledTooltip: string | undefined;
 	if ( hasDrafts || hasUpdatedMetadata ) {
@@ -316,11 +367,11 @@ export const Header = ( {
 								disabled={ ! isSaveable || isSaving }
 								isBusy={ isSaving }
 								onClick={ onSave }
-								label={ __( 'Save displayed image to Media Library', __i18n_text_domain__ ) }
+								label={ getSaveButtonLabel( entryPoint ) }
 								text={
 									isSaving
-										? __( 'Saving…', __i18n_text_domain__ )
-										: __( 'Save', __i18n_text_domain__ )
+										? __( 'Saving…', 'big-sky' )
+										: getSaveButtonText( entryPoint )
 								}
 							/>
 						</Fragment>
