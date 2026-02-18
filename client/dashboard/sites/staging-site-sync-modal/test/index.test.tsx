@@ -247,11 +247,8 @@ describe( 'Warnings', () => {
 
 		await user.click( databaseCheckbox );
 
-		await waitFor( () => {
-			expect( screen.getByText( /Warning! Database will be overwritten/i ) ).toBeInTheDocument();
-		} );
-
-		expect( screen.getByText( /overwrite the site database/i ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Warning! Database will be overwritten/i ) ).toBeVisible();
+		expect( await screen.findByText( /overwrite the site database/i ) ).toBeVisible();
 	} );
 
 	test( 'shows WooCommerce warning when syncing WooCommerce site to production', async () => {
@@ -270,9 +267,7 @@ describe( 'Warnings', () => {
 
 		await user.click( databaseCheckbox );
 
-		await waitFor( () => {
-			expect( screen.getByText( /WooCommerce installed/i ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( /WooCommerce installed/i ) ).toBeVisible();
 	} );
 } );
 

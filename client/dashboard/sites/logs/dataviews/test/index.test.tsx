@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { LogType, type Site } from '@automattic/api-core';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -133,8 +133,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible(); // remove timeout
+		expect( await screen.findByText( 'Auto-refresh' ) ).toBeVisible();
 		// Also verify PHP logs content renders
 		expect( await screen.findByText( 'Hello', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( 'User', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -158,8 +157,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible();
+		expect( await screen.findByText( 'Auto-refresh' ) ).toBeVisible();
 		// Also verify Server logs content renders
 		expect( await screen.findByText( 'GET', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -185,8 +183,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
+		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		expect( autoRefresh ).not.toHaveBeenCalled();
@@ -210,8 +207,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
+		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		expect( toggle ).toBeDisabled();
 	} );
 } );
