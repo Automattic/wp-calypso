@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 
 const VideoContainer = styled.div< { isMobile: boolean } >`
@@ -157,9 +157,6 @@ export default function HundredYearThankYou( {
 
 	const siteIdFromSiteSlug = useSelector( ( state ) => getSiteId( state, siteSlug ?? null ) );
 	const siteId = siteIdFromProps ?? siteIdFromSiteSlug;
-	const siteCreatedTimeStamp = useSelector(
-		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
-	);
 
 	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
 	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
@@ -227,24 +224,26 @@ export default function HundredYearThankYou( {
 		page( '/' );
 	}
 
-	const isMobile = useMobileBreakpoint();
-	const isPageLoading = isReceiptLoading;
-	const hundredYearPlanCta = (
-		<StyledLightButton onClick={ () => page( `/home/${ siteSlug ?? siteId }` ) }>
-			{ translate( 'Manage your site' ) }
-		</StyledLightButton>
-	);
-	const hundredYearDomainCta = (
-		<StyledLightButton onClick={ () => page( `/domains/manage/${ siteSlug ?? siteId }` ) }>
-			{ translate( 'Manage your domain' ) }
-		</StyledLightButton>
-	);
-	const cta = resolvedProductSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
 	const primaryDomainFromState = siteDomains.find( ( domain ) => domain.isPrimary )?.domain;
 	const displayDomain =
 		resolvedProductSlug === PLAN_100_YEARS
 			? primaryDomainFromState || siteSlug
 			: purchasedDomainName || siteSlug;
+
+	const isMobile = useMobileBreakpoint();
+	const isPageLoading = isReceiptLoading;
+	const hundredYearPlanCta = (
+		<StyledLightButton onClick={ () => page( `/home/${ displayDomain }` ) }>
+			{ translate( 'Manage your site' ) }
+		</StyledLightButton>
+	);
+	const hundredYearDomainCta = (
+		<StyledLightButton onClick={ () => page( `/domains/manage/${ displayDomain }` ) }>
+			{ translate( 'Manage your domain' ) }
+		</StyledLightButton>
+	);
+	const cta = resolvedProductSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
+
 	const domainSpecificDescription =
 		resolvedProductSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
 			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
@@ -319,7 +318,7 @@ export default function HundredYearThankYou( {
 								{ translate( 'Your century-long legacy begins now' ) }
 							</Header>
 							<Highlight isMobile={ isMobile }>{ description }</Highlight>
-							{ siteCreatedTimeStamp && <ButtonBar isMobile={ isMobile }>{ cta }</ButtonBar> }
+							<ButtonBar isMobile={ isMobile }>{ cta }</ButtonBar>
 						</div>
 						<VideoContainer isMobile={ isMobile }>
 							<video
