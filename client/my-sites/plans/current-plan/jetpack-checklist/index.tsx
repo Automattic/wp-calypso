@@ -5,7 +5,7 @@ import {
 	planHasFeature,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_VAULTPRESS_BACKUPS,
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
@@ -398,7 +398,7 @@ function mapStateToProps( state: AppState ) {
 		widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
 		hasAntiSpam: siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ),
 		hasBackups: siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ),
-		hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ),
+		hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE ),
 		hasVaultPress: siteHasFeature( state, siteId, WPCOM_FEATURES_VAULTPRESS_BACKUPS ),
 		rewindState,
 		productInstallStatus,

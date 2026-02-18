@@ -60,7 +60,7 @@ export const navigationCommands: Command[] = [
 ];
 ```
 
-The command palette will only register commands for features that are enabled in the current dashboard configuration. This allows different dashboards (e.g., `my.wordpress.com` vs `/ciab`) to show different commands without code duplication.
+The command palette will only register commands for features that are enabled in the current dashboard configuration. This allows different dashboards (e.g., `my.wordpress.com` vs `my.woo.ai`) to show different commands without code duplication.
 
 ## Adding Custom Commands
 

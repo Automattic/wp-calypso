@@ -199,7 +199,7 @@ export const siteOverviewRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			queryClient.prefetchQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
-			if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			if ( hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE ) ) {
 				queryClient.prefetchQuery( siteScanQuery( site.ID ) );
 			}
 			if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
@@ -383,7 +383,7 @@ export const siteScanRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			hasHostingFeature( site, HostingFeatures.SCAN ) &&
+			hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE ) &&
 				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 		] );
 	},

@@ -28,6 +28,7 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	ImageUploadHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -51,6 +52,8 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Hook for handling image uploads within the agent chat. */
+	useImageUpload?: ImageUploadHook;
 }
 
 export default function AgentDock( {
@@ -63,6 +66,7 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	useImageUpload,
 }: Props ) {
 	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const [ isCompactMode, setIsCompactMode ] = useState( false );
@@ -200,6 +204,7 @@ export default function AgentDock( {
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
 			navigate={ navigate }
+			useImageUpload={ useImageUpload }
 		/>
 	);
 

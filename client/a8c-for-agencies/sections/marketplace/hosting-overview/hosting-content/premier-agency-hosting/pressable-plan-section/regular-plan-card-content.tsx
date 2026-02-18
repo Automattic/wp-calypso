@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useSelector } from 'calypso/state';
@@ -122,7 +123,7 @@ export default function RegularPlanCardContent( {
 					variant="secondary"
 					target="_blank"
 					rel="norefferer nooppener"
-					href="https://my.pressable.com/agency/auth"
+					href={ EXTERNAL_PRESSABLE_AUTH_URL }
 					__next40pxDefaultSize
 				>
 					{ translate( 'Manage in Pressable ↗' ) }

@@ -644,6 +644,11 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
+	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
