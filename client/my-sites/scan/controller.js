@@ -1,4 +1,4 @@
-import { isJetpackScanSlug, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { isJetpackScanSlug, WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
@@ -114,7 +114,9 @@ function scanUpsellSwitcher( placeholder, primary ) {
 				'pending' === getSiteScanRequestStatus( state, siteId )
 			}
 			display={ primary }
-			productSlugTest={ ( slug ) => isJetpackScanSlug( slug ) || slug === WPCOM_FEATURES_SCAN }
+			productSlugTest={ ( slug ) =>
+				isJetpackScanSlug( slug ) || slug === WPCOM_FEATURES_SCAN_SELF_SERVE
+			}
 		>
 			{ placeholder }
 		</UpsellSwitch>

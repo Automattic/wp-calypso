@@ -306,6 +306,7 @@ export const WPCOM_FEATURES_SENSEI_THEMES = 'sensei-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
+export const WPCOM_FEATURES_SCAN_SELF_SERVE = 'scan-self-serve';
 export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';

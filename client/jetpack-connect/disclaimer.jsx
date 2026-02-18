@@ -1,4 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -95,9 +96,14 @@ export function useDisclaimerText( props ) {
 }
 
 function JetpackConnectDisclaimer( props ) {
+	const { as: Component = 'p', className } = props;
 	const text = useDisclaimerText( props );
 
-	return <p className="jetpack-connect__tos-link">{ text }</p>;
+	return (
+		<Component className={ clsx( Component === 'p' && 'jetpack-connect__tos-link', className ) }>
+			{ text }
+		</Component>
+	);
 }
 
 JetpackConnectDisclaimer.propTypes = {
@@ -106,6 +112,8 @@ JetpackConnectDisclaimer.propTypes = {
 	from: PropTypes.string,
 	isWooJPC: PropTypes.bool,
 	buttonText: PropTypes.string,
+	as: PropTypes.elementType,
+	className: PropTypes.string,
 };
 
 export default connect( null, {

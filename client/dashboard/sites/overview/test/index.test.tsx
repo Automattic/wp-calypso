@@ -26,6 +26,7 @@ const site = {
 				'backups',
 				'backups-self-serve',
 				'scan',
+				'scan-self-serve',
 				'performance',
 				'full-activity-log',
 			],
