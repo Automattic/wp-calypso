@@ -339,7 +339,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 	} );
 } );
 
-describe( 'ProductPurchaseFeaturesList summer special tests', () => {
+describe( 'ProductPurchaseFeaturesList include plugins on Personal and Premium', () => {
 	const props = {
 		plan: PLAN_PERSONAL,
 		isPlaceholder: false,
