@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -60,7 +60,7 @@ const ScanAtomicTransferWrapper = () => {
 
 	// Check if site has scan feature - must be called unconditionally
 	const hasScanFeature = useSelector( ( state: AppState ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
 	);
 
 	// Get scan state to determine if activation is needed
