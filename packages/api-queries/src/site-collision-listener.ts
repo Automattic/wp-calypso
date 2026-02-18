@@ -176,9 +176,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 
 		// When jetpack URLs arrive, retroactively fix everything already cached.
 		if ( prefix === 'jetpack-site-urls' ) {
-			if ( jetpackUrls ) {
-				scanAndFixAllCachedSites( jetpackUrls );
-			}
+			scanAndFixAllCachedSites( jetpackUrls );
 			return;
 		}
 
