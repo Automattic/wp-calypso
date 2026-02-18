@@ -117,7 +117,7 @@ const ReaderSidebarRecent = ( {
 					<MenuItemLink
 						href="/reader/new"
 						className="sidebar__menu-link"
-						onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_feed_clicked' ) }
+						onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
 					>
 						<Icon icon={ plus } viewBox="2 0 24 24" />
 						<span>{ translate( 'Add new' ) }</span>
