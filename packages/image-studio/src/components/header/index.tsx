@@ -109,19 +109,13 @@ export const Header = ( {
 
 	// Get entry point from store with fallback for navigation
 	const entryPoint = useSelect(
-		( select ) =>
-			select(
-				imageStudioStore
-			).getEntryPoint() as ImageStudioEntryPoint | null,
+		( select ) => select( imageStudioStore ).getEntryPoint() as ImageStudioEntryPoint | null,
 		[]
 	);
 
 	// Helper function to get save button text based on entry point
-	const getSaveButtonText = (
-		currentEntryPoint: ImageStudioEntryPoint | null
-	): string => {
-		const effectiveEntryPoint =
-			currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+	const getSaveButtonText = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
+		const effectiveEntryPoint = currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
 
 		switch ( effectiveEntryPoint ) {
 			case ImageStudioEntryPoint.EditorBlock:
@@ -136,11 +130,8 @@ export const Header = ( {
 	};
 
 	// Helper function to get save button label based on entry point
-	const getSaveButtonLabel = (
-		currentEntryPoint: ImageStudioEntryPoint | null
-	): string => {
-		const effectiveEntryPoint =
-			currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+	const getSaveButtonLabel = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
+		const effectiveEntryPoint = currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
 
 		switch ( effectiveEntryPoint ) {
 			case ImageStudioEntryPoint.EditorBlock:
@@ -368,11 +359,7 @@ export const Header = ( {
 								isBusy={ isSaving }
 								onClick={ onSave }
 								label={ getSaveButtonLabel( entryPoint ) }
-								text={
-									isSaving
-										? __( 'Saving…', 'big-sky' )
-										: getSaveButtonText( entryPoint )
-								}
+								text={ isSaving ? __( 'Saving…', 'big-sky' ) : getSaveButtonText( entryPoint ) }
 							/>
 						</Fragment>
 					) }
