@@ -171,7 +171,7 @@ export default function AgentDock( {
 		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
 	);
 
-	const { showFeedbackInput, submitFeedbackText, cancelFeedback } = useFeedback( {
+	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
 		registerMessageActions,
 		messages,
 		agentId,
@@ -411,7 +411,7 @@ export default function AgentDock( {
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
-			onCancelFeedback={ cancelFeedback }
+			onCancelFeedback={ resetFeedback }
 		/>
 	);
 

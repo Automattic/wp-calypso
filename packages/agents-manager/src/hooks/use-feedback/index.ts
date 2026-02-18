@@ -19,7 +19,7 @@ interface UseFeedbackConfig {
 interface UseFeedbackReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
-	cancelFeedback: () => void;
+	resetFeedback: () => void;
 }
 
 async function rateMessage(
@@ -232,11 +232,15 @@ export default function useFeedback( {
 		};
 	}, [ registerMessageActions, handleFeedback, sessionId ] );
 
-	// Reset feedback input when session changes
-	useEffect( () => {
+	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );
 		setFeedbackMessageId( null );
-	}, [ sessionId ] );
+	}, [] );
+
+	// Reset feedback input when session changes
+	useEffect( () => {
+		resetFeedback();
+	}, [ sessionId, resetFeedback ] );
 
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
@@ -270,14 +274,9 @@ export default function useFeedback( {
 		[ feedbackMessageId ]
 	);
 
-	const cancelFeedback = useCallback( () => {
-		setShowFeedbackInput( false );
-		setFeedbackMessageId( null );
-	}, [] );
-
 	return {
 		showFeedbackInput,
 		submitFeedbackText: handleSubmitFeedbackText,
-		cancelFeedback,
+		resetFeedback,
 	};
 }

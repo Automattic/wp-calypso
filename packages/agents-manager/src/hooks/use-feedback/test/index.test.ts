@@ -407,7 +407,7 @@ describe( 'useFeedback', () => {
 			expect( result.current.showFeedbackInput ).toBe( true );
 
 			act( () => {
-				result.current.cancelFeedback();
+				result.current.resetFeedback();
 			} );
 
 			expect( result.current.showFeedbackInput ).toBe( false );
