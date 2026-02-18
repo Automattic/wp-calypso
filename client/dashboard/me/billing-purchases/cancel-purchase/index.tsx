@@ -643,7 +643,7 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
-	const onCancellationStart = () => {
+	const onCancellationStart = ( cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null ) => {
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
 			includedDomainPurchase &&
@@ -651,7 +651,7 @@ export default function CancelPurchase() {
 		) {
 			setState( ( state ) => ( {
 				...state,
-				cancelIntent: null,
+				cancelIntent,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
@@ -659,7 +659,7 @@ export default function CancelPurchase() {
 			// For direct cancellations (no domain options step), show survey directly
 			setState( ( state ) => ( {
 				...state,
-				cancelIntent: null,
+				cancelIntent,
 				siteId: purchase.blog_id,
 				surveyShown: true,
 			} ) );
@@ -667,9 +667,7 @@ export default function CancelPurchase() {
 	};
 
 	const onCancellationStartForRefund = () => {
-		// Set intent to refund before starting cancellation
-		setState( ( state ) => ( { ...state, cancelIntent: 'refund' } ) );
-		onCancellationStart();
+		onCancellationStart( 'refund' );
 	};
 
 	const clickNext = () => {
