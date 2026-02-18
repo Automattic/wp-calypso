@@ -16,7 +16,7 @@ interface Props {
 export default function ReferralDetailsTable( { items, fields }: Props ) {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'product-details', 'assigned-to', 'date', 'total' ],
+		fields: [ 'product-details', 'site-details', 'date', 'total' ],
 	} );
 
 	const { data, paginationInfo } = useMemo( () => {

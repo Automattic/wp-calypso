@@ -8,6 +8,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
+	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
@@ -61,7 +62,6 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
-	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
 
@@ -135,7 +135,7 @@ export default function LicenseDetailsActions( {
 				<Button
 					primary
 					compact
-					href={ pressableManageUrl }
+					href={ EXTERNAL_PRESSABLE_AUTH_URL }
 					target="_blank"
 					rel="noopener noreferrer"
 				>

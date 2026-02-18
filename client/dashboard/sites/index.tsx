@@ -189,7 +189,7 @@ export default function Sites() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const defaultView = getDefaultView( {
-		user,
+		siteCount: user.site_count,
 		isAutomattician,
 		isRestoringAccount,
 	} );

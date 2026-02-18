@@ -5,12 +5,13 @@ import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	EXTERNAL_PRESSABLE_AUTH_URL,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-
-const pressableUrl = 'https://my.pressable.com/agency/auth';
 
 const PressableOffering = () => {
 	const translate = useTranslate();
@@ -93,7 +94,7 @@ const PressableOffering = () => {
 						primary
 						target="_blank"
 						rel="norefferer nooppener"
-						href={ pressableUrl }
+						href={ EXTERNAL_PRESSABLE_AUTH_URL }
 					>
 						{ translate( 'View your dashboard ↗' ) }
 					</Button>
