@@ -4,9 +4,8 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { createElement, useState } from 'react';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
+import type { AuthProvider } from '@automattic/agenttic-client';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
-
-type AuthProvider = () => Promise< Record< string, string > >;
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
@@ -28,7 +27,7 @@ interface UseFeedbackConfig {
 	messages: Message[];
 	agentId: string;
 	sessionId?: string;
-	authProvider?: AuthProvider;
+	authProvider: AuthProvider;
 }
 
 interface UseFeedbackReturn {
