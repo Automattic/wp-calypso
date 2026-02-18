@@ -181,7 +181,8 @@ export default function useFeedback( {
 			return;
 		}
 
-		recordTracksEvent( `wpcom_agents_manager_response_action_thumbs_${ feedback }`, {
+		recordTracksEvent( 'calypso_agents_manager_response_feedback_action', {
+			type: feedback === 'up' ? 'thumb_up' : 'thumb_down',
 			message_id: messageId,
 		} );
 
@@ -263,7 +264,7 @@ export default function useFeedback( {
 				previousMessages
 			);
 
-			recordTracksEvent( 'wpcom_agents_manager_response_feedback_submitted', {
+			recordTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
 				message_id: currentMessageId,
 			} );
 		},
