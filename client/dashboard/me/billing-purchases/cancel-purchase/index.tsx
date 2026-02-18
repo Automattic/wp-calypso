@@ -1300,8 +1300,8 @@ export default function CancelPurchase() {
 			}
 			notices={
 				! state.surveyShown &&
-				( hasAmountAvailableToRefund( purchase ) &&
-				getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ? (
+				! state.showDomainOptionsStep &&
+				( hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase ) ? (
 					<RefundEligibilityNotice
 						purchase={ purchase }
 						onClaimRefund={ onCancellationStartForRefund }
