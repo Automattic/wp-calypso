@@ -1,8 +1,11 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 
 export default function useMarketplaceWalkthroughTour() {
 	const translate = useTranslate();
+	const { showSupportGuide } = useHelpCenter();
 
 	return [
 		{
@@ -17,14 +20,17 @@ export default function useMarketplaceWalkthroughTour() {
 			title: translate( 'Earn money when you refer our hosting and products to clients' ),
 			description: preventWidows(
 				translate(
-					'Assemble a cart, send a request for payment to your clients, and earn commissions. {{a}}Learn more ↗{{/a}}',
+					'Assemble a cart, send a request for payment to your clients, and earn commissions. {{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: (
-								<a
-									href="https://agencieshelp.automattic.com/knowledge-base/referring-products-to-clients"
-									target="_blank"
-									rel="noopener noreferrer"
+								<Button
+									variant="link"
+									onClick={ () =>
+										showSupportGuide(
+											'https://agencieshelp.automattic.com/knowledge-base/referring-products-to-clients'
+										)
+									}
 								/>
 							),
 						},

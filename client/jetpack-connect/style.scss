@@ -994,40 +994,28 @@ $colophon-height: 50px;
 .layout.is-section-purchase-product {
 	/** WooCommerce Onboarding Styles **/
 	&.is-woocommerce-core-profiler-flow {
-		background-color: var( --color-woocommerce-onboarding-background );
+		background-color: var( --color-main-background );
 
-		.jetpack-connect__main-logo {
-			text-align: center;
-			border-bottom: 1px solid var( --color-neutral-50 );
+		.jetpack-connect__woo-topbar {
 			position: absolute;
-			width: 100%;
-			left: 0;
 			top: 0;
-			height: 56px;
+			left: 0;
+			width: 100%;
+			min-height: 56px;
+			background: var( --color-main-background );
+			--step-container-v2-top-bar-padding: 0;
+			--step-container-v2-top-bar-content-height: 24px;
 
-			svg > g {
-				transform: translateX( 25% );
-			}
-
-			@include breakpoint-deprecated( '<660px' ) {
-				margin-top: 0;
+			.step-container-v2__top-bar {
+				min-height: 56px;
+				justify-content: flex-start;
 			}
 		}
 
-		.jetpack-header {
-			margin: 0;
-			text-align: center;
-			margin-right: auto;
-			margin-left: auto;
-			padding-left: 0;
+		.jetpack-connect__woo-topbar-icon {
 			display: block;
-			height: 56px;
-			border-bottom: 1px solid var( --color-woocommerce-header-border );
-			background: var( --color-surface );
-
-			svg {
-				margin-top: 15px;
-			}
+			width: 24px;
+			height: 24px;
 		}
 
 		.formatted-header__subtitle {
@@ -1384,6 +1372,24 @@ $colophon-height: 50px;
 		@include breakpoint-deprecated( '<660px' ) {
 			max-width: 100%;
 		}
+	}
+
+	.jetpack-connect__woo-connect-screen-content {
+		margin: 0 auto;
+		max-width: 405px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			max-width: 100%;
+		}
+	}
+
+	.jetpack-connect__woo-connect-screen-actions {
+		margin-top: 32px;
+	}
+
+	.jetpack-connect__woo-brand-header-site-name {
+		color: var( --studio-gray-70 );
+		font-weight: 600;
 	}
 
 	.jetpack-connect__action-disclaimer {

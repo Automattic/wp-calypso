@@ -12,7 +12,9 @@ import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
 	A4A_LICENSES_LINK,
+	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
@@ -66,7 +68,7 @@ export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null }
 			className="license-preview__product-pressable-link"
 			target="_blank"
 			rel="norefferer noopener noreferrer"
-			href="https://my.pressable.com/agency/auth"
+			href={ EXTERNAL_PRESSABLE_AUTH_URL }
 			onClick={ () => {
 				if ( ! isFeedbackShown ) {
 					page.redirect(
@@ -108,6 +110,7 @@ export default function LicensePreview( {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -229,23 +232,20 @@ export default function LicensePreview( {
 					>
 						<div className="license-preview__migration-content">
 							{ translate(
-								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{a}}Learn about billing for transferred sites{{icon/}}{{/a}}",
+								"Your plan is now with Automattic for Agencies. You won't be billed until {{bold}}%(date)s{{/bold}}.{{br/}}{{LearnMoreButton}}Learn about billing for transferred sites{{/LearnMoreButton}}",
 								{
 									components: {
 										bold: <strong />,
 										br: <br />,
-										a: (
-											<a
-												href="https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/"
-												target="_blank"
-												rel="noreferrer noopener"
-											/>
-										),
-										icon: (
-											<Gridicon
-												icon="external"
-												size={ 16 }
-												className="license-preview__migration-external-icon"
+										LearnMoreButton: (
+											<Button
+												borderless
+												compact
+												onClick={ () => {
+													showSupportGuide(
+														'https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/'
+													);
+												} }
 											/>
 										),
 									},

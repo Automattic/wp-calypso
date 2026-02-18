@@ -5,10 +5,10 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import OptionContentV2 from '../option-content-v2';
+import { OptionContent } from '../index';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
-type OptionContentV2Props = Parameters< typeof OptionContentV2 >[ 0 ];
+type OptionContentProps = Parameters< typeof OptionContent >[ 0 ];
 type SummaryButtonMockBadge = {
 	text?: ReactNode;
 	intent?: string;
@@ -22,44 +22,38 @@ type SummaryButtonMockProps = ComponentPropsWithoutRef< 'button' > & {
 };
 
 jest.mock( '@automattic/components', () => {
-	const ReactNamespace = require( 'react' );
+	const React = require( 'react' );
+
 	const SummaryButton = jest.fn(
-		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) =>
-			ReactNamespace.createElement(
+		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) => {
+			return React.createElement(
 				'button',
 				{ type: 'button', 'data-testid': 'summary-button', ...buttonProps },
-				ReactNamespace.createElement( 'div', { 'data-testid': 'summary-button-title' }, title ),
-				ReactNamespace.createElement(
-					'div',
-					{ 'data-testid': 'summary-button-description' },
-					description
-				),
-				ReactNamespace.createElement(
-					'div',
-					{ 'data-testid': 'summary-button-decoration' },
-					decoration
-				),
-				ReactNamespace.createElement(
+				React.createElement( 'div', { 'data-testid': 'summary-button-title' }, title ),
+				React.createElement( 'div', { 'data-testid': 'summary-button-description' }, description ),
+				React.createElement( 'div', { 'data-testid': 'summary-button-decoration' }, decoration ),
+				React.createElement(
 					'div',
 					{ 'data-testid': 'summary-button-badges' },
 					badges?.map( ( badge, index ) =>
-						ReactNamespace.createElement(
+						React.createElement(
 							'span',
 							{ 'data-testid': 'summary-button-badge', key: `badge-${ index }` },
 							badge.text
 						)
 					)
 				)
-			)
+			);
+		}
 	);
 	return {
 		__esModule: true,
 		SummaryButton,
 		default: SummaryButton,
 		Badge: ( { children, ...props }: { children?: ReactNode } & Record< string, unknown > ) =>
-			ReactNamespace.createElement( 'span', { 'data-testid': 'badge', ...props }, children ),
+			React.createElement( 'span', { 'data-testid': 'badge', ...props }, children ),
 		Gridicon: ( props: Record< string, unknown > ) =>
-			ReactNamespace.createElement( 'span', { 'data-testid': 'gridicon', ...props } ),
+			React.createElement( 'span', { 'data-testid': 'gridicon', ...props } ),
 	};
 } );
 
@@ -83,17 +77,17 @@ const localizeUrlMock = jest.fn( ( url: string ) => url );
 const baseTitleText = 'Transfer or connect your domain';
 const baseTopText = 'Bring your domain to WordPress.com';
 
-const baseProps: OptionContentV2Props = {
+const baseProps: OptionContentProps = {
 	illustration: <div data-testid="illustration">Illustration</div>,
 	titleText: baseTitleText,
 	topText: baseTopText,
 };
 
-const renderOptionContent = ( props: Partial< OptionContentV2Props > = {} ) => {
-	return render( <OptionContentV2 { ...baseProps } { ...props } /> );
+const renderOptionContent = ( props: Partial< OptionContentProps > = {} ) => {
+	return render( <OptionContent { ...baseProps } { ...props } /> );
 };
 
-describe( 'OptionContentV2', () => {
+describe( 'OptionContent', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		localizeUrlMock.mockImplementation( ( url: string ) => `localized-${ url }` );
@@ -112,7 +106,7 @@ describe( 'OptionContentV2', () => {
 		const [ summaryButtonProps ] = summaryButtonMock.mock.calls[ 0 ];
 
 		expect( summaryButtonProps ).toEqual(
-			expect.objectContaining( { className: 'option-content-v2__button' } )
+			expect.objectContaining( { className: 'option-content__button' } )
 		);
 		expect( getByText( baseTitleText ) ).toBeVisible();
 		expect( getByText( baseTopText ) ).toBeVisible();
@@ -141,9 +135,9 @@ describe( 'OptionContentV2', () => {
 
 	it( 'disables the summary button and applies placeholder styling when isPlaceholder is true', () => {
 		const { container, getByTestId } = renderOptionContent( { isPlaceholder: true } );
-		const wrapper = container.querySelector( '.option-content-v2' );
+		const wrapper = container.querySelector( '.option-content' );
 
-		expect( wrapper ).toHaveClass( 'option-content-v2--is-placeholder' );
+		expect( wrapper ).toHaveClass( 'option-content--is-placeholder' );
 		expect( getByTestId( 'summary-button' ) ).toBeDisabled();
 	} );
 } );
