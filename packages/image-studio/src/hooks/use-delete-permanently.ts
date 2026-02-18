@@ -17,7 +17,7 @@ import { useDraftCleanup } from './use-draft-cleanup';
  * Hook parameters for useDeletePermanently
  */
 export interface UseDeletePermanentlyProps {
-	onExit: ( hasChanges?: boolean ) => void;
+	onExit: ( hasChanges: boolean ) => Promise< void > | void;
 	setIsExiting: ( value: boolean ) => void;
 }
 
