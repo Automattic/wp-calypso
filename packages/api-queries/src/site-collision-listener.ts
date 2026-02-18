@@ -105,9 +105,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 			.filter( ( url ) => ! jetpackUrls.has( url ) );
 
 		if ( newUrls.length > 0 ) {
-			const updated = new Set( jetpackUrls );
-			newUrls.forEach( ( url ) => updated.add( url ) );
-			qc.setQueryData( [ 'jetpack-site-urls' ], [ ...updated ] );
+			qc.setQueryData( [ 'jetpack-site-urls' ], [ ...jetpackUrls, ...newUrls ] );
 		}
 	}
 
