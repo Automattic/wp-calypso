@@ -112,7 +112,14 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 		if ( fixed === site ) {
 			return;
 		}
+
+		// Intentional: writes the corrected site back to the ORIGINAL cache key.
+		// This means e.g. ['site-by-slug', 'example.com'] will hold a site whose
+		// slug is 'example.wordpress.com'. This should prevent existing components
+		// from breaking, but hopefully any subsequent navigations will use the new
+		// slug and therefore the correct cache key.
 		qc.setQueryData( siteBySlugQuery( site.slug ).queryKey, fixed );
+
 		qc.setQueryData( siteByIdQuery( site.ID ).queryKey, fixed );
 		if ( fixed.slug !== site.slug ) {
 			qc.setQueryData( siteBySlugQuery( fixed.slug ).queryKey, fixed );
