@@ -7,7 +7,6 @@ export const jetpackSiteUrlsQuery = () =>
 		queryKey: [ 'jetpack-site-urls' ],
 		queryFn: async () => {
 			const urls = await fetchJetpackSiteUrls();
-			return new Set( urls.map( withoutHttp ) );
+			return urls.map( withoutHttp );
 		},
-		meta: { persist: false }, // Sets don't survive JSON serialization.
 	} );

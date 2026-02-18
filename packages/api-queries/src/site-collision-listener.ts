@@ -71,9 +71,9 @@ function fixSitesArray( sites: Site[], jetpackUrls: Set< string > ): Site[] | nu
  */
 export function startSiteCollisionListener( qc: QueryClient ): () => void {
 	function getJetpackUrls(): Set< string > | undefined {
-		const dataInCache = qc.getQueryData( [ 'jetpack-site-urls' ] );
-		if ( dataInCache instanceof Set ) {
-			return dataInCache;
+		const dataInCache = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		if ( dataInCache ) {
+			return new Set( dataInCache );
 		}
 
 		// Scan cached Site objects for Jetpack URLs to use as placeholder data
@@ -103,7 +103,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 		if ( newUrls.length > 0 ) {
 			const updated = new Set( jetpackUrls );
 			newUrls.forEach( ( url ) => updated.add( url ) );
-			qc.setQueryData( [ 'jetpack-site-urls' ], updated );
+			qc.setQueryData( [ 'jetpack-site-urls' ], [ ...updated ] );
 		}
 	}
 

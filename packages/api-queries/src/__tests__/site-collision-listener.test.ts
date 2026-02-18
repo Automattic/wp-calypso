@@ -43,7 +43,7 @@ describe( 'startSiteCollisionListener', () => {
 	} );
 
 	function seedJetpackUrls( urls: string[] ) {
-		qc.setQueryData( [ 'jetpack-site-urls' ], new Set( urls ) );
+		qc.setQueryData( [ 'jetpack-site-urls' ], urls );
 	}
 
 	it( 'rewrites slug on site-by-slug when jetpack URLs are cached', () => {
@@ -92,8 +92,8 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( { jetpack: true, URL: 'https://jp-site.com' } );
 		qc.setQueryData( [ 'site-by-slug', 'jp-site.com' ], site );
 
-		const urls = qc.getQueryData< Set< string > >( [ 'jetpack-site-urls' ] );
-		expect( urls?.has( 'jp-site.com' ) ).toBe( true );
+		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		expect( urls ).toContain( 'jp-site.com' );
 	} );
 
 	it( 'does not duplicate when jetpack URL already in set', () => {
@@ -102,8 +102,8 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( { jetpack: true, URL: 'https://jp-site.com' } );
 		qc.setQueryData( [ 'site-by-slug', 'jp-site.com' ], site );
 
-		const urls = qc.getQueryData< Set< string > >( [ 'jetpack-site-urls' ] );
-		expect( urls?.size ).toBe( 1 );
+		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		expect( urls ).toHaveLength( 1 );
 	} );
 
 	it( 'does not rewrite when no collision', () => {
@@ -146,10 +146,10 @@ describe( 'startSiteCollisionListener', () => {
 		];
 		qc.setQueryData( [ 'sites', 'all' ], sites );
 
-		const urls = qc.getQueryData< Set< string > >( [ 'jetpack-site-urls' ] );
-		expect( urls?.has( 'jp1.com' ) ).toBe( true );
-		expect( urls?.has( 'jp2.com' ) ).toBe( true );
-		expect( urls?.size ).toBe( 2 );
+		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		expect( urls ).toContain( 'jp1.com' );
+		expect( urls ).toContain( 'jp2.com' );
+		expect( urls ).toHaveLength( 2 );
 	} );
 
 	it( 'rewrites sites in a sites list array', () => {
