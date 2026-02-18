@@ -65,7 +65,7 @@ export default function DomainOnlyNew( {
 									}
 								),
 						  ]
-						: []
+						: undefined
 				}
 				href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
 			/>
