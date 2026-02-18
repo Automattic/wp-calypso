@@ -1,7 +1,6 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { createElement, useState } from 'react';
+import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
