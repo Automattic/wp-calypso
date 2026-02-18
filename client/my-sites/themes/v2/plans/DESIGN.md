@@ -11,6 +11,7 @@ Design post: https://wpbranddesign.wordpress.com/2025/09/25/themes-lp/
 ### Key Decisions
 
 - Single component with logged-in/logged-out modes (only logged-out shipped initially).
+- **Progressive replacement**: v2 starts as a new layout shell wrapping existing v1 components. v1 components are then progressively swapped for v2 equivalents in subsequent milestones. This allows the feature flag to be removed early.
 - Redux-backed custom hooks for data (portable API surface — could be swapped for TanStack Query later).
 - Reuse `FullWidthSection` from Plugins LP; `@wordpress/components` for UI primitives; `@wordpress/base-styles` for design tokens.
 - URL-driven filter state, same path structure as current for backwards compatibility.
@@ -19,9 +20,11 @@ Design post: https://wpbranddesign.wordpress.com/2025/09/25/themes-lp/
 - Landscape thumbnails (vertical thumbnails deferred — requires screenshot pipeline changes and no control over .org themes).
 - "All" category preserved (revisit in future iteration).
 
-### Rollout Priority
+### Rollout Strategy
 
-1. **Logged-out** — the deliverable. Feature flag gates only this.
+**Progressive replacement in ~2-week independently shippable milestones.** The v2 page launches early by reusing v1 internals, then iterates toward the full design.
+
+1. **Logged-out** — the deliverable.
 2. **MSD** (logged-in, no site selected) — nice-to-have within this project.
 3. **Logged-in with site selected** — out of scope, future project.
 
@@ -245,53 +248,58 @@ Collapsible FAQ section at the bottom of the page. Content is still being finali
 
 ---
 
-## Milestones
+## Milestones (~2 weeks each, independently shippable)
 
-### Milestone 1: Foundation
+The v2 showcase is delivered as a series of independently shippable milestones. Each milestone delivers visible, reviewable progress. The feature flag can be removed after Milestone 1, since the page is fully functional from the start.
 
-- Create `client/my-sites/themes/v2/` directory structure.
-- Implement `useIsThemeShowcaseV2Enabled()` hook (logged-out only).
+### Milestone 1: v2 Shell with v1 Internals
+
+Launch the new layout by wrapping existing v1 components. Fully functional page from day one.
+
 - Add feature flag (`themes/showcase-v2`) to config.
-- Hook into existing controller (`controller-logged-in.jsx`) to render `ThemeShowcaseV2` when flag is on.
-- Build data hooks: `useThemes`, `useThemeFilters`, `useThemeShowcaseUrl`.
-- Empty shell rendering at `/themes` behind flag.
-- Unit tests for hooks.
+- Implement `useIsThemeShowcaseV2Enabled()` hook (logged-out only).
+- Create v2 page shell + controller integration.
+- Wrap existing v1 `connectOptions(ThemeShowcase)` inside the new layout — reuses all v1 functionality (cards, grid, pagination, search, filters).
+- Update logged-out global navigation (consistent with Plugins LP).
+- Hero section: illustration, updated copy, Blueberry accent.
+- Wrap sections in `FullWidthSection` for full-width backgrounds.
+- SSR/SEO: ensure existing meta tags, hrefLang, canonical URLs still work.
+- **Goal: remove feature flag after this milestone. The v2 page is live.**
 
-### Milestone 2: Hero + Navigation + Filter Bar
+### Milestone 2: v2 Filter Bar + URL Hooks
 
-- Update logged-out landing page global navigation to match the new design (consistent with Plugins LP).
-- Hero section: illustration, updated copy, Blueberry accent, responsive layout.
-- Filter bar: category pills ("Recommended", "All", + subject filters), plan dropdown, search input.
-- Sticky behavior via CSS `position: sticky`.
-- URL-driven state: clicking a pill or changing the dropdown updates the URL, which drives the query.
-- Unit tests for filter interactions.
+Replace the v1 filter bar with the new design.
 
-### Milestone 3: Theme Cards + Grid
+- Build data hooks: `useThemeFilters`, `useThemeShowcaseUrl`.
+- Build v2 filter bar: category pills ("Recommended", "All", + subject filters), plan dropdown, search input.
+- Sticky filter bar via CSS `position: sticky`.
+- URL-driven state: clicking a pill or changing the dropdown updates the URL.
+- Remove v1 filter bar from v2 showcase.
+- Unit tests for hooks and filter interactions.
 
+### Milestone 3: v2 Theme Cards + Grid
+
+Replace the v1 theme cards and grid with the new design.
+
+- Build data hook: `useThemes`.
 - New `ThemeCardV2` in `packages/components/`: landscape thumbnail, 8px radius, hover CTAs, plan label.
-- 3-column responsive grid in `theme-grid/`.
-- Pagination (infinite scroll or load-more — match current behavior).
+- 3-column responsive grid, infinite scroll pagination.
 - Wire grid to `useThemes` hook with current filter/search state.
+- Remove v1 `ThemesSelection` from v2 showcase.
 - Unit tests for card rendering and grid behavior.
 
-### Milestone 4: Banners + Partner Themes
+### Milestone 4: Banners + Empty States + FAQs + Polish
 
-- AI builder banner component.
-- DIFM banner component.
-- Contextual plan banners (shown when filtering by tier).
-- Banner interleaving logic in the showcase.
-- Partner themes section with pricing context banners.
+Add the marketing/conversion layer and polish.
 
-### Milestone 5: Search & Empty States
-
-- Search results view (grid with active search term).
+- AI builder banner, DIFM banner, contextual plan banners.
+- Partner themes section with pricing context.
+- Banner interleaving logic.
+- Search results view adjustments (hero collapse).
 - Empty state with three CTA cards: Build with AI, Hire an expert, Upload a theme.
-
-### Milestone 6: FAQs + SEO + Polish
-
 - FAQ accordion section.
-- SSR/SEO: meta tags, hrefLang, canonical URLs, updated SEO content.
-- Responsive behavior across breakpoints.
+- SEO content refresh.
+- Responsive polish across breakpoints.
 - Accessibility audit and fixes.
 - E2E tests (Playwright) for critical logged-out flows.
 
