@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
-import { seen, edit, cog, check, chartBar } from '@wordpress/icons';
+import { IconType } from '@wordpress/components';
+import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
@@ -30,6 +31,14 @@ const mockUser = {
 	avatarUrl: 'https://gravatar.com/avatar/00000000000000000000000000000000?d=mp',
 };
 
+const mockUserWithSiteCount = {
+	displayName: 'John Doe',
+	email: 'john.doe@example.com',
+	avatarUrl: 'https://gravatar.com/avatar/00000000000000000000000000000000?d=mp',
+	username: 'johndoe',
+	siteCount: 3,
+};
+
 const mockPermissions = [
 	{ icon: seen, label: 'View your profile information' },
 	{ icon: edit, label: 'Edit your posts and pages' },
@@ -37,6 +46,24 @@ const mockPermissions = [
 	{ icon: check, label: 'Access your media library' },
 	{ icon: chartBar, label: 'View your site statistics' },
 ];
+
+// Permissions with name-based icon resolution (simulating OAuth2 API response)
+const mockPermissionsWithNames = [
+	{ name: 'users', label: 'View your profile information' },
+	{ name: 'posts', label: 'Read and write your posts' },
+	{ name: 'stats', label: 'View your site statistics' },
+	{ name: 'unknown', label: 'Some other permission (no icon)' },
+];
+
+// Icon resolver function (similar to OAuth2's getPermissionIcon)
+const getIconForPermission = ( name: string ): IconType | undefined => {
+	const iconMap: Record< string, IconType > = {
+		users: commentAuthorAvatar,
+		posts: postList,
+		stats: chartBar,
+	};
+	return iconMap[ name ];
+};
 
 // BrandHeader - All variants
 export const BrandHeaderVariants: StoryObj< typeof BrandHeader > = {
@@ -72,8 +99,14 @@ export const UserCardVariants: StoryObj< typeof UserCard > = {
 			<VariantSection title="Small">
 				<UserCard user={ mockUser } size="small" />
 			</VariantSection>
+			<VariantSection title="Small with username and site count">
+				<UserCard user={ mockUserWithSiteCount } size="small" />
+			</VariantSection>
 			<VariantSection title="Large">
 				<UserCard user={ mockUser } size="large" />
+			</VariantSection>
+			<VariantSection title="Large with username and site count (shows email only)">
+				<UserCard user={ mockUserWithSiteCount } size="large" />
 			</VariantSection>
 		</div>
 	),
@@ -149,10 +182,17 @@ export const ConsentTextVariants: StoryObj< typeof ConsentText > = {
 export const PermissionsListVariants: StoryObj< typeof PermissionsList > = {
 	render: () => (
 		<div>
-			<VariantSection title="Default">
+			<VariantSection title="Default (with direct icons)">
 				<PermissionsList
 					title="This app will be able to:"
 					permissions={ mockPermissions.slice( 0, 3 ) }
+				/>
+			</VariantSection>
+			<VariantSection title="With icon resolver function (name-based)">
+				<PermissionsList
+					title="This app will be able to:"
+					permissions={ mockPermissionsWithNames }
+					getIconForPermission={ getIconForPermission }
 				/>
 			</VariantSection>
 			<VariantSection title="Expandable (click to expand)">

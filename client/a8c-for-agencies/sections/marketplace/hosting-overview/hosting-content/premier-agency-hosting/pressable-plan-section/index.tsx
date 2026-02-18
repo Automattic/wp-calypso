@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -15,7 +16,8 @@ import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
@@ -98,28 +100,44 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
+	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
+
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
 			return [];
 		}
 
 		if ( areSignaturePlans ) {
-			return pressablePlans.filter( ( plan ) => plan.slug.startsWith( 'pressable-signature-' ) );
+			return pressablePlans.filter(
+				( plan ) =>
+					plan.slug.startsWith( 'pressable-signature-' ) ||
+					( isEnabled( 'a4a-pressable-premium-plans' ) &&
+						plan.slug.startsWith( 'pressable-premium-' ) )
+			);
 		}
 
-		return pressablePlans.filter( ( plan ) => ! plan.slug.startsWith( 'pressable-signature-' ) );
+		return pressablePlans.filter(
+			( plan ) =>
+				! plan.slug.startsWith( 'pressable-signature-' ) &&
+				! plan.slug.startsWith( 'pressable-premium-' ) // We do not want to offer the new premium plans for agency with Legacy plans to reduce complexity in the UI
+		);
 	}, [ pressablePlans, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
-			const defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+			let defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+
+			if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+				defaultSlug = 'pressable-premium-1';
+			}
+
 			setSelectedPlan(
 				isReferralMode
 					? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
 					: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ]
 			);
 		}
-	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans ] );
+	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans, selectedTab ] );
 
 	useEffect( () => {
 		if ( ! isReferralMode && existingPlan ) {
@@ -155,6 +173,7 @@ export default function PressablePlanSection( {
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ existingPressablePlan }
 					isLoading={ ! isFetching }
+					isReferralMode={ !! isReferralMode }
 					areSignaturePlans={ areSignaturePlans }
 					selectedTab={ selectedTab }
 					setSelectedTab={ setSelectedTab }
@@ -167,6 +186,7 @@ export default function PressablePlanSection( {
 		filteredPressablePlans,
 		existingPressablePlan,
 		isFetching,
+		isReferralMode,
 		areSignaturePlans,
 		selectedTab,
 	] );
@@ -196,8 +216,13 @@ export default function PressablePlanSection( {
 
 	const isCustomPlan = ! selectedPlan;
 
-	// Show premium plan section if the selected tab is premium
-	if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+	const hasNewPremiumPlans =
+		isBDBillingSystem &&
+		isReferralMode &&
+		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
+
+	// Show premium plan section if the selected tab is premium and there are no new premium plans
+	if ( selectedTab === PLAN_CATEGORY_PREMIUM && ( ! hasNewPremiumPlans || isCustomPlan ) ) {
 		return <PremiumPlanSection heading={ heading } banner={ banner } />;
 	}
 
@@ -311,6 +336,14 @@ export default function PressablePlanSection( {
 									b: <b />,
 								},
 								comment: '%(storageSize)d is the size of storage in GB.',
+							} ),
+							translate( '{{b}}%(worker)d{{/b}} base PHP Workers', {
+								args: {
+									worker: selectedPlanInfo?.worker ?? 5,
+								},
+								components: {
+									b: <b />,
+								},
 							} ),
 							translate( '{{b}}Unmetered bandwidth{{/b}}', {
 								components: {

@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
+import Loading from 'calypso/components/loading';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
-import { PlaceholderThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/pages/placeholder';
 import { useSelector } from 'calypso/state';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -34,7 +34,7 @@ export default function DomainOnlyThankYou( {
 			<>
 				<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
 				<QuerySiteDomains siteId={ domainPurchases[ 0 ]?.blogId } />
-				<PlaceholderThankYou />
+				<Loading />
 			</>
 		);
 	}

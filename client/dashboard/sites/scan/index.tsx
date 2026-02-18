@@ -101,7 +101,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.SCAN }
+			feature={ HostingFeatures.SCAN_SELF_SERVE }
 			fullPage
 			title={ __( 'Scan' ) }
 			upsellId="site-scan"

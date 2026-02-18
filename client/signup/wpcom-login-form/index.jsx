@@ -6,6 +6,7 @@ const CALYPSO_ONLY_HOSTNAMES = [
 	'wpcalypso.wordpress.com',
 	'horizon.wordpress.com',
 	'my.wordpress.com',
+	'my.woo.ai',
 ];
 
 // Subdomains of wordpress.com that do not serve wp-login.php.

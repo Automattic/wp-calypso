@@ -36,4 +36,3 @@ When adding test coverage for utility functions:
 3. **If yes:** Write isolated unit tests covering edge cases.
 
 **Example:** A simple utility like `isP2()` should get coverage from an integration test like `"button is disabled for P2s"`, not its own test file.
-

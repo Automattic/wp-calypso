@@ -10,6 +10,7 @@ import './style.scss';
 export interface Permission {
 	icon?: IconType;
 	label: ReactNode;
+	name?: string;
 }
 
 export interface PermissionsListProps {
@@ -19,6 +20,11 @@ export interface PermissionsListProps {
 	learnMoreText?: ReactNode;
 	learnMoreUrl?: string;
 	className?: string;
+	/**
+	 * Optional function to resolve an icon based on permission name.
+	 * Called when `permission.icon` is not provided but `permission.name` is available.
+	 */
+	getIconForPermission?: ( name: string ) => IconType | undefined;
 }
 
 /**
@@ -27,10 +33,11 @@ export interface PermissionsListProps {
  * <PermissionsList
  *   title="This app will be able to:"
  *   permissions={[
- *     { icon: 'view', label: 'View your profile' },
- *     { icon: 'edit', label: 'Edit your posts' },
- *     { icon: 'manage', label: 'Manage settings' },
+ *     { icon: viewIcon, label: 'View your profile' },
+ *     { name: 'posts', label: 'Edit your posts' },
+ *     { label: 'Manage settings' },
  *   ]}
+ *   getIconForPermission={(name) => iconMap[name]}
  *   maxVisible={2}
  * />
  */
@@ -41,6 +48,7 @@ export function PermissionsList( {
 	learnMoreText,
 	learnMoreUrl,
 	className,
+	getIconForPermission,
 }: PermissionsListProps ): JSX.Element {
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -49,14 +57,34 @@ export function PermissionsList( {
 	const visiblePermissions = isExpanded ? permissions : permissions.slice( 0, maxVisible );
 	const hiddenCount = permissions.length - maxVisible;
 
+	/**
+	 * Resolves the icon for a permission using the following priority:
+	 * 1. Direct icon prop on the permission
+	 * 2. Icon resolved via getIconForPermission callback using permission.name
+	 * 3. No icon (render placeholder)
+	 */
+	const resolveIcon = ( permission: Permission ): IconType | undefined => {
+		if ( permission.icon ) {
+			return permission.icon;
+		}
+
+		if ( permission.name && getIconForPermission ) {
+			return getIconForPermission( permission.name );
+		}
+
+		return undefined;
+	};
+
 	const renderIcon = ( permission: Permission ) => {
-		if ( ! permission.icon ) {
+		const icon = resolveIcon( permission );
+
+		if ( ! icon ) {
 			return <span className="connect-screen-permissions-list__icon-placeholder" />;
 		}
 
 		return (
 			<span className="connect-screen-permissions-list__icon">
-				<Icon icon={ permission.icon } size={ 20 } />
+				<Icon icon={ icon } size={ 20 } />
 			</span>
 		);
 	};

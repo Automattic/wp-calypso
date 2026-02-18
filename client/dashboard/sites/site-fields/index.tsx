@@ -229,7 +229,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 
 export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const {
 		data: lastBackup,

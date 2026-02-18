@@ -115,19 +115,6 @@ const fixedDateRange = {
 	end: new Date( Date.UTC( 2025, 0, 2, 0, 0, 0 ) ),
 };
 
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-
-afterAll( () => {
-	nock.enableNetConnect();
-} );
-
 describe( 'SiteLogsDataViews', () => {
 	test( 'renders PHP logs and syncs URL params', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );

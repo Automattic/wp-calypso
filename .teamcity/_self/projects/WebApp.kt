@@ -27,7 +27,6 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	buildType(PlaywrightTestDashboardPreReleaseMatrix)
 	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
@@ -41,6 +40,7 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
+        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
@@ -54,17 +54,23 @@ object BuildDockerImage : BuildType({
             qrEnv = "flags=oauth",
         ),
         EnvConfig(
-            label = "Jetpack Cloud live",
+            label = "Jetpack Cloud Live",
             envQuery = "&env=jetpack",
             qrEnv = "env=jetpack&flags=oauth",
         ),
         EnvConfig(
-            label = "Automattic for Agencies live",
+            label = "Automattic for Agencies Live",
             envQuery = "&env=a8c-for-agencies",
             qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
 		EnvConfig(
-			label = "Dashboard live",
+			label = "Dashboard Live (dotcom)",
+			envQuery = "&env=dashboard",
+			qrEnv = "env=dashboard&flags=oauth",
+		),
+		EnvConfig(
+			label = "Dashboard Live (CIAB)",
+			baseUrl = "https://calypso.live/ciab",
 			envQuery = "&env=dashboard",
 			qrEnv = "env=dashboard&flags=oauth",
 		)
@@ -75,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}">https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
@@ -1089,53 +1095,6 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	}
 })
 
-object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Dashboard_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "80904868-c163-4fec-817b-907611985c33"
-	name = "Dashboard Pre-Release E2E Tests"
-	description = "Runs Dashboard pre-release e2e tests using Playwright Test runner with build matrix"
-
-	params {
-		param("TEST_GROUP", "@dashboard-release")
-		param("CALYPSO_BASE_URL", "https://wordpress.com")
-		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	}
-
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile"),
-			))
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:<default>
-			""".trimIndent()
-			triggerRules = """
-				-:**.md
-			""".trimIndent()
-		}
-	}
-})
 
 object JestPreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Jest_Pre_Release")

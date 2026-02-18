@@ -175,18 +175,6 @@ beforeEach( () => {
 	nockSiteAndSettings();
 } );
 
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-afterAll( () => {
-	nock.enableNetConnect();
-} );
-
 describe( 'SiteLogs page', () => {
 	test.each( Object.entries( LogType ) )(
 		'on selecting tab %s, navigates to /%s',

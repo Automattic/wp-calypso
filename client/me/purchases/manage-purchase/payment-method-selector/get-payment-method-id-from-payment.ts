@@ -14,6 +14,11 @@ export default function getPaymentMethodIdFromPayment(
 		// created; if we return 'paypal', then the PayPal option will be selected
 		// in the payment method list when PayPal is enabled and in that case we
 		// want the PayPal option to mean "add a new PayPal billing agreement".
+		// If there's a storedDetailsId, return a specific ID for this PayPal method
+		// so it can be pre-selected in the list (similar to credit cards).
+		if ( payment.storedDetailsId ) {
+			return 'existingPayPalPPCP-' + payment.storedDetailsId;
+		}
 		return 'paypal-existing';
 	}
 	if ( payment?.type === 'credit_card' && payment.creditCard ) {
