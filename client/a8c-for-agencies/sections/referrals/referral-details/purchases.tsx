@@ -46,7 +46,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				label: translate( 'Site details' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					if ( item.license.license_key.startsWith( 'pressable-' ) ) {
+					if ( item.license?.license_key?.startsWith( 'pressable-' ) ) {
 						return (
 							<ExternalLink href={ EXTERNAL_PRESSABLE_AUTH_URL }>
 								{ translate( 'Manage in Pressable' ) }
