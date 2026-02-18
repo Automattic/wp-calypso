@@ -175,6 +175,7 @@ body.is-section-earn.theme-default.color-scheme {
 		display: flex;
 		align-items: center;
 		flex-direction: row;
+		gap: 16px;
 		padding-top: 20px;
 		padding-bottom: 20px;
 
@@ -219,8 +220,7 @@ body.is-section-earn.theme-default.color-scheme {
 		}
 
 		.paid-subscriptions-list__menu-column {
-			flex-basis: 48px;
-			flex-grow: initial;
+			flex: 0 0 80px;
 
 			.gridicon {
 				fill: $studio-gray-50;
