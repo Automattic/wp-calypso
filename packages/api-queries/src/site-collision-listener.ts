@@ -1,5 +1,4 @@
 import { siteBySlugQuery, siteByIdQuery } from './site';
-import { sitesQueryKey } from './sites';
 import type { Site, FetchPaginatedSitesResponse } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
@@ -150,7 +149,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 
 		// Fix sites list entries.
 		const sitesListQueries = qc.getQueriesData< Site[] | FetchPaginatedSitesResponse >( {
-			predicate: ( query ) => query.queryKey[ 0 ] === sitesQueryKey[ 0 ],
+			predicate: ( query ) => query.queryKey[ 0 ] === 'sites',
 		} );
 		for ( const [ key, data ] of sitesListQueries ) {
 			if ( ! data ) {
@@ -182,7 +181,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 			prefix !== 'jetpack-site-urls' &&
 			prefix !== 'site-by-slug' &&
 			prefix !== 'site-by-id' &&
-			prefix !== sitesQueryKey[ 0 ]
+			prefix !== 'sites'
 		) {
 			return;
 		}
@@ -226,7 +225,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 		}
 
 		// Sites list queries (both array and paginated).
-		if ( prefix === sitesQueryKey[ 0 ] ) {
+		if ( prefix === 'sites' ) {
 			const data = query.state.data as Site[] | FetchPaginatedSitesResponse | undefined;
 			if ( ! data ) {
 				return;
