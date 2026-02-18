@@ -13,7 +13,7 @@ interface UseFeedbackConfig {
 	messages: Message[];
 	agentId: string;
 	sessionId?: string;
-	authProvider: AuthProvider;
+	authProvider?: AuthProvider;
 }
 
 interface UseFeedbackReturn {
