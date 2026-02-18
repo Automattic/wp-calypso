@@ -91,11 +91,11 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	hasMultiplePurchases,
 	isOnlyDomainTransfers,
 	isOnlyDomainPurchases,
 	isSearch,
 	isTitanWithoutMailboxes,
+	getDomainPurchaseTypeAndPredicate,
 } from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
@@ -643,7 +643,10 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				if ( shouldShowNewDomainThankYou() ) {
-					if ( hasMultiplePurchases( purchases ) ) {
+					const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+					const domainPurchases = purchases.filter( predicate );
+
+					if ( domainPurchases.length > 1 ) {
 						const domainsUrl = this.props.hasDashboardOptIn
 							? dashboardLink( '/domains' )
 							: domainManagementRoot();
@@ -653,7 +656,12 @@ export class CheckoutThankYou extends Component<
 						return this.renderLoading();
 					}
 
-					pageContent = <DomainOnlyNew />;
+					pageContent = (
+						<DomainOnlyNew
+							domainPurchase={ domainPurchases[ 0 ] }
+							currency={ this.props.receipt.data.currency }
+						/>
+					);
 				} else {
 					pageContent = (
 						<DomainOnlyThankYou

@@ -16,6 +16,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
+	isPressableAddonProduct,
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
@@ -114,6 +115,8 @@ export default function LicensePreview( {
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isPressableAddonLicense =
+		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( license.product );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 
 	const isOwner = useSelector( isAgencyOwner );
@@ -316,10 +319,10 @@ export default function LicensePreview( {
 							{ isPressableLicense && ! revokedAt && (
 								<ManageInPressable attachedAt={ attachedAt } />
 							) }
-							{ ! domain && licenseState === LicenseState.Detached && (
+							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
 								<span className="license-preview__unassigned">
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
-									{ licenseType === LicenseType.Partner && (
+									{ licenseType === LicenseType.Partner && ! isPressableAddonLicense && (
 										<Button
 											className="license-preview__assign-button"
 											borderless

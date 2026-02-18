@@ -11,6 +11,7 @@ import {
 	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
+	isPressableAddonProduct,
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
@@ -61,6 +62,8 @@ export default function LicenseDetailsActions( {
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isPressableAddonLicense =
+		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( product );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
@@ -131,22 +134,25 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ isPressableLicense && licenseState === LicenseState.Attached && (
-				<Button
-					primary
-					compact
-					href={ EXTERNAL_PRESSABLE_AUTH_URL }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{ translate( 'Manage in Pressable ↗' ) }
-				</Button>
-			) }
+			{ isPressableLicense &&
+				( licenseState === LicenseState.Attached ||
+					( isPressableAddonLicense && licenseState !== LicenseState.Revoked ) ) && (
+					<Button
+						primary
+						compact
+						href={ EXTERNAL_PRESSABLE_AUTH_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Manage in Pressable ↗' ) }
+					</Button>
+				) }
 
 			{ ( isPressableLicense || isWPCOMHostingLicense ) &&
 				licenseState !== LicenseState.Revoked &&
 				! isDevSite &&
 				! isClientLicense &&
+				! isPressableAddonLicense &&
 				! isAutoRenewDisabled && (
 					<Button
 						compact
@@ -172,11 +178,13 @@ export default function LicenseDetailsActions( {
 					</Button>
 				) }
 
-			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
-				<Button compact primary className="license-details__assign-button" href={ redirectUrl }>
-					{ isWPCOMHostingLicense ? translate( 'Create site' ) : translate( 'Assign license' ) }
-				</Button>
-			) }
+			{ ! isPressableAddonLicense &&
+				licenseState === LicenseState.Detached &&
+				licenseType === LicenseType.Partner && (
+					<Button compact primary className="license-details__assign-button" href={ redirectUrl }>
+						{ isWPCOMHostingLicense ? translate( 'Create site' ) : translate( 'Assign license' ) }
+					</Button>
+				) }
 
 			{ revokeDialog && (
 				<CancelLicenseFeedbackModal

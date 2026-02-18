@@ -32,18 +32,23 @@
 		&:has( + .option-content__benefits ) {
 			border-radius: $radius-large $radius-large 0 0;
 		}
+
+		.summary-button-title {
+			font-weight: 500;
+		}
 	}
 
 	&__benefits {
-		padding: 20px 28px;
+		padding: 10px 28px;
 		background-color: #fafafa;
 		border: 1px solid $gray-200;
 		border-top: none;
 		border-radius: 0 0 $radius-large $radius-large;
 		font-size: $font-size-medium;
+		text-decoration: none;
 
 		@include break-mobile {
-			padding: 20px 64px;
+			padding: 10px 64px;
 		}
 
 		&-item {
