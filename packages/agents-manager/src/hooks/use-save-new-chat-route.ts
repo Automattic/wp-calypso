@@ -21,7 +21,7 @@ function saveNewChatRoute( sessionId: string ): void {
 		state: { sessionId },
 	};
 
-	// Update the history with the new chat entry.
+	// Replace the current history entry with the new chat route.
 	const entries = current?.entries?.length ? [ ...current.entries ] : [];
 	const index = current?.index ?? 0;
 	entries[ index ] = entry;
@@ -34,7 +34,8 @@ function saveNewChatRoute( sessionId: string ): void {
  * then saves the chat route so it can be restored later.
  */
 export default function useSaveNewChatRoute( agentId: string, messages: UIMessage[] ) {
-	const prevSessionIdRef = useRef< string >( '' );
+	const sessionId = getSessionId( agentId );
+	const prevSessionIdRef = useRef< string >( getSessionId( agentId ) );
 	const { pathname, state } = useLocation();
 
 	useEffect( () => {
@@ -49,12 +50,10 @@ export default function useSaveNewChatRoute( agentId: string, messages: UIMessag
 			return;
 		}
 
-		const sessionId = getSessionId( agentId );
-
 		// Save the route only when the session ID changes.
-		if ( sessionId !== prevSessionIdRef.current ) {
+		if ( sessionId && sessionId !== prevSessionIdRef.current ) {
 			saveNewChatRoute( sessionId );
 			prevSessionIdRef.current = sessionId;
 		}
-	}, [ agentId, messages, pathname, state?.sessionId ] );
+	}, [ messages, pathname, sessionId, state?.sessionId ] );
 }

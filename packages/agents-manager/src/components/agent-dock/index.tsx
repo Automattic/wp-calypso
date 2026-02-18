@@ -90,13 +90,8 @@ export default function AgentDock( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-
-	const navigate = useNavigate();
 	const { pathname } = useLocation();
-
-	const isOrcChatView = pathname === '/chat';
-	const isZenChatView = pathname === '/zendesk';
-	const isChatHistoryView = pathname === '/history';
+	const navigate = useNavigate();
 
 	const sessionId = agentConfig.sessionId;
 	const agentId = agentConfig.agentId;
@@ -108,7 +103,7 @@ export default function AgentDock( {
 			defaultOpen: isPersistedOpen,
 			onOpenSidebar: () => {
 				setIsOpen( true );
-				if ( isChatHistoryView ) {
+				if ( pathname === '/history' ) {
 					navigate( '/' );
 				}
 			},
@@ -128,9 +123,6 @@ export default function AgentDock( {
 		registerSuggestions,
 	} = useAgentChat( agentConfig );
 
-	// Persist the chat route for cross-domain conversation restoration.
-	useSaveNewChatRoute( agentId, messages );
-
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
 
@@ -145,6 +137,9 @@ export default function AgentDock( {
 			clearSuggestions?.();
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
+
+	// Save new chat route for cross-domain conversation restore.
+	useSaveNewChatRoute( agentId, messages );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		agentId,
@@ -231,7 +226,7 @@ export default function AgentDock( {
 
 	const handleExpand = () => {
 		setIsOpen( true );
-		if ( isChatHistoryView ) {
+		if ( pathname === '/history' ) {
 			navigate( '/' );
 		}
 	};
@@ -252,13 +247,13 @@ export default function AgentDock( {
 		const newChatMenuItem = {
 			icon: comment,
 			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: isOrcChatView && ! messages.length,
+			isDisabled: pathname === '/chat' && ! messages.length,
 			onClick: handleNewChat,
 		};
 		const newZDChatMenuItem = {
 			icon: lifesaver,
 			title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-			isDisabled: isZenChatView && ! messages.length,
+			isDisabled: pathname === '/zendesk' && ! messages.length,
 			onClick: () => navigate( '/zendesk' ),
 		};
 		const undockMenuItem = {
@@ -424,11 +419,7 @@ export default function AgentDock( {
 				<Route path="/zendesk" element={ ZendeskChatRoute } />
 				<Route path="/support-guides" element={ SupportGuidesRoute } />
 				<Route path="/history" element={ History } />
-				<Route
-					path="*"
-					// The `shouldInitNewChat` flag is used to trigger new chat initialization logic in `UnifiedAIAgent`
-					element={ <Navigate to="/chat" state={ { shouldInitNewChat: true } } replace /> }
-				/>
+				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)
 	);
