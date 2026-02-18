@@ -96,6 +96,7 @@ const DomainSearchStep: StepType< {
 	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
+		currentSiteTitle: site?.name,
 	} );
 
 	const config = useMemo( () => {

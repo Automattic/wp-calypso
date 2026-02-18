@@ -86,6 +86,7 @@ const DomainSearchUI = (
 	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		currentSiteTitle: site?.name,
 	} );
 
 	const events = useMemo( () => {

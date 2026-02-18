@@ -25,6 +25,16 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBe( 'test-domain' );
 	} );
 
+	it( 'should initialize with currentSiteTitle when provided', () => {
+		const { result } = renderHook( () =>
+			useQueryHandler( {
+				currentSiteUrl: 'https://test-site.wordpress.com',
+				currentSiteTitle: 'My Amazing Site',
+			} )
+		);
+		expect( result.current.query ).toBe( 'my amazing site' );
+	} );
+
 	it( 'should initialize with domain from currentSiteUrl when provided', () => {
 		const { result } = renderHook( () =>
 			useQueryHandler( { currentSiteUrl: 'https://test-site.wordpress.com' } )

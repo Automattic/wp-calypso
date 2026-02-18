@@ -70,6 +70,7 @@ export default function DomainSearch() {
 	const { query, setQuery, clearQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
+		currentSiteTitle: selectedSite?.name,
 	} );
 
 	const events = useMemo( () => {

@@ -21,9 +21,11 @@ const clearSessionStorageQuery = () => {
 export const useQueryHandler = ( {
 	initialQuery: externalInitialQuery,
 	currentSiteUrl,
+	currentSiteTitle,
 }: {
 	initialQuery?: string;
 	currentSiteUrl?: string;
+	currentSiteTitle?: string;
 } ) => {
 	const [ localQuery, setLocalQuery ] = useState< string | undefined >( () => {
 		if ( externalInitialQuery ) {
@@ -33,6 +35,11 @@ export const useQueryHandler = ( {
 		const storedQuery = getSessionStorageQuery();
 		if ( storedQuery ) {
 			return storedQuery;
+		}
+
+		// Prefer the site title over the site URL slug, as it's more meaningful for domain suggestions.
+		if ( currentSiteTitle ) {
+			return currentSiteTitle;
 		}
 
 		if ( currentSiteUrl ) {
