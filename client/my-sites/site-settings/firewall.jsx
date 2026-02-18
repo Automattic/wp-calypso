@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_SCAN, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { PRODUCT_JETPACK_SCAN, WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -176,7 +176,7 @@ class Firewall extends Component {
 								: translate( 'Upgrade to enable automatic firewall protection.' )
 						}
 						event="calypso_scan_settings_upgrade_nudge"
-						feature={ WPCOM_FEATURES_SCAN }
+						feature={ WPCOM_FEATURES_SCAN_SELF_SERVE }
 						showIcon
 						href={ `/checkout/${ selectedSiteSlug }/${ PRODUCT_JETPACK_SCAN }?redirect_to=/settings/security/${ selectedSiteSlug }` }
 						forceDisplay
@@ -251,7 +251,11 @@ export default connect(
 			selectedSiteId,
 			'waf'
 		);
-		const hasRequiredFeature = siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_SCAN );
+		const hasRequiredFeature = siteHasFeature(
+			state,
+			selectedSiteId,
+			WPCOM_FEATURES_SCAN_SELF_SERVE
+		);
 
 		return {
 			selectedSiteId,

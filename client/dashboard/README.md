@@ -21,6 +21,7 @@ Build a new Hosting Dashboard for WordPress.com based on the new design. The sam
 
 This `docs` directory contains comprehensive design documentation for the `/client/dashboard`, a new Hosting Dashboard for WordPress.com based on modern design principles.
 
+- [Running dev server](./docs/dev-server.md) - Documentation for running the development server
 - [Router and Routes](./docs/router.md) - Documentation for the routing system based on @tanstack/react-router
 - [Data Library and Layer](./docs/data-library.md) - Documentation for the data fetching and state management approach
 - [UI Components](./docs/ui-components.md) - Documentation for the component architecture and design principles

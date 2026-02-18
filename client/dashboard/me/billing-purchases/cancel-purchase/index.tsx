@@ -17,7 +17,7 @@ import {
 	purchaseQuery,
 	siteByIdQuery,
 	sitePurchasesQuery,
-	userPreferencesMutation,
+	userPreferenceMutation,
 	hasPurchaseBeenExtendedQuery,
 	siteLatestAtomicTransferQuery,
 	siteFeaturesQuery,
@@ -329,7 +329,9 @@ export default function CancelPurchase() {
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
 	const removePurchaseMutator = useMutation( removePurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
-	const userPreferencesMutator = useMutation( userPreferencesMutation() );
+	const surveyCompletedMutator = useMutation(
+		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
+	);
 	const {
 		mutate: applyCancellationOffer,
 		isPending: isApplyingOffer,
@@ -365,13 +367,8 @@ export default function CancelPurchase() {
 			} );
 		}
 	}, [ productSlug, recordTracksEvent ] );
-	const savePreference = ( key: string | number, value: unknown ) => () => {
-		const payload = {
-			[ 'calypso_preferences' ]: {
-				[ key ]: value,
-			},
-		};
-		userPreferencesMutator.mutate( payload );
+	const cancelPurchaseSurveyCompleted = () => {
+		surveyCompletedMutator.mutate( 'true' );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
@@ -470,9 +467,6 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( { ...state, isShowingMarketplaceSubscriptionsDialog: true } ) );
 	};
 
-	const cancelPurchaseSurveyCompleted = ( purchaseId: number ) => () => {
-		savePreference( getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId ), true )();
-	};
 	const atomicRevertOnClickCheckOne = ( isChecked: boolean ) =>
 		setState( ( state ) => ( { ...state, atomicRevertCheckOne: isChecked } ) );
 
@@ -1023,7 +1017,7 @@ export default function CancelPurchase() {
 		} );
 
 		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
-			cancelPurchaseSurveyCompleted( purchase.ID );
+			cancelPurchaseSurveyCompleted();
 		}
 
 		if ( onSurveyComplete ) {

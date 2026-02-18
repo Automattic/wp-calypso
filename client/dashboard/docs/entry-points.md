@@ -10,7 +10,7 @@ The dashboard architecture is designed to support multiple entry points, where e
 Currently, the dashboard supports two main entry points:
 
 - WordPress.com (dotcom) at `my.wordpress.com`
-- CIAB at `/ciab`
+- CIAB at `my.woo.ai`
 
 This multi-entry point approach allows us to reuse the same codebase while tailoring the user experience to specific products and user types.
 

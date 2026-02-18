@@ -525,6 +525,8 @@ import {
 	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
 	FEATURE_WOO_HOSTED_SEO_TOOLS,
 	FEATURE_WOO_HOSTED_COUPONS,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
@@ -1147,11 +1149,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
-		FEATURE_AUDIO_UPLOADS,
-		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
-	],
+	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, WPCOM_FEATURES_FULL_ACTIVITY_LOG ],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1482,9 +1480,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
-		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_SCAN_SELF_SERVE,
 		WPCOM_FEATURES_ANTISPAM,
-		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		FEATURE_SFTP,
 		FEATURE_SSH,
@@ -2076,11 +2074,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
+	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -2500,9 +2497,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
-		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_SCAN_SELF_SERVE,
 		WPCOM_FEATURES_ANTISPAM,
-		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		FEATURE_SFTP,
 		FEATURE_SSH,

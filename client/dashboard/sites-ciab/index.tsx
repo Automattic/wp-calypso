@@ -41,7 +41,7 @@ export default function CIABSites() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const defaultView = getDefaultView( {
-		user,
+		siteCount: user.garden_site_count,
 		isAutomattician,
 		isRestoringAccount,
 	} );
