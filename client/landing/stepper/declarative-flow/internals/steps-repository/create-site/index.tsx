@@ -253,7 +253,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line no-nested-ternary
 		const siteIntent = isNewSiteMigrationFlow( flow )
 			? 'migration'
-			: isSimplifiedOnboarding
+			: isSimplifiedOnboarding && ! isNewHostedSiteCreationFlow( flow )
 			? // For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
 			  Onboard.SiteIntent.Build
 			: '';
