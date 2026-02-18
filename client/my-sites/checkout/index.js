@@ -17,6 +17,7 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
+	checkoutWpcomSiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -215,6 +216,26 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutUnifiedSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// wpcom siteless checkout — works logged-out, so no redirectLoggedOut.
+	page(
+		'/checkout/siteless/:productSlug',
+		setLocaleMiddleware(),
+		noSite,
+		checkoutWpcomSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/siteless/:productSlug/renew/:purchaseId',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutWpcomSiteless,
 		makeLayout,
 		clientRender
 	);

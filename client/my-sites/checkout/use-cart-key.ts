@@ -22,6 +22,8 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		currentUrlPath.includes( '/checkout/marketplace' ) && isLoggedOutCart;
 	const isUnifiedSitelessCheckout =
 		currentUrlPath.includes( '/checkout/unified' ) && isLoggedOutCart;
+	const isWpcomSitelessCheckout =
+		currentUrlPath.includes( '/checkout/siteless' ) && isLoggedOutCart;
 	const isA4ASitelessCheckout =
 		isA8CForAgencies() &&
 		! selectedSite &&
@@ -32,6 +34,7 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		isAkismetSitelessCheckout ||
 		isMarketplaceSitelessCheckout ||
 		isUnifiedSitelessCheckout ||
+		isWpcomSitelessCheckout ||
 		( ! isLoggedOutCart &&
 			currentUrlPath.includes( '/checkout/no-site' ) &&
 			'no-user' === searchParams.get( 'cart' ) );

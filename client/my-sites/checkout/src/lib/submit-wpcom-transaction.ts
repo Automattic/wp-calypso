@@ -30,7 +30,8 @@ export default async function submitWpcomTransaction(
 			return (
 				product.extra.isJetpackCheckout ||
 				product.extra.isAkismetSitelessCheckout ||
-				product.extra.isA4ASitelessCheckout
+				product.extra.isA4ASitelessCheckout ||
+				product.extra.isWpcomSitelessCheckout
 			);
 		} ) && payload.cart.cart_key === 'no-user';
 

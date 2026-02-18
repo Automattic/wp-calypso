@@ -10,6 +10,7 @@ export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;
 	includeGSuiteDetails: boolean;
 	isAkismetSitelessCheckout: boolean;
+	isWpcomSitelessCheckout: boolean;
 	isJetpackNotAtomic: boolean;
 	createUserAndSiteBeforeTransaction: boolean;
 	stripe: Stripe | null;

@@ -666,6 +666,7 @@ export type SitelessCheckoutType =
 	| 'marketplace'
 	| 'a4a'
 	| 'unified'
+	| 'wpcom'
 	| undefined;
 
 /**

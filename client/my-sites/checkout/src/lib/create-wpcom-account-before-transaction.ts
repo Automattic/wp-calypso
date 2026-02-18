@@ -16,6 +16,9 @@ export async function createWpcomAccountBeforeTransaction(
 	const isA4AUserLessCheckout = transactionCart.products.some(
 		( product ) => product.extra.isA4ASitelessCheckout
 	);
+	const isWpcomUserLessCheckout = transactionCart.products.some(
+		( product ) => product.extra.isWpcomSitelessCheckout
+	);
 	const isGiftingCheckout = transactionCart.products.some(
 		( product ) => product.extra.isGiftPurchase
 	);
@@ -29,6 +32,9 @@ export async function createWpcomAccountBeforeTransaction(
 		}
 		if ( isA4AUserLessCheckout ) {
 			return 'a4a-userless-checkout';
+		}
+		if ( isWpcomUserLessCheckout ) {
+			return 'wpcom-userless-checkout';
 		}
 		if ( isGiftingCheckout ) {
 			return 'gifting-userless-checkout';

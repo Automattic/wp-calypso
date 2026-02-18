@@ -472,6 +472,9 @@ export default function CheckoutMain( {
 	const isAkismetSitelessCheckout = responseCart.products.some(
 		( product ) => product.extra.isAkismetSitelessCheckout
 	);
+	const isWpcomSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isWpcomSitelessCheckout
+	);
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -492,6 +495,7 @@ export default function CheckoutMain( {
 			fromSiteSlug,
 			isJetpackNotAtomic,
 			isAkismetSitelessCheckout,
+			isWpcomSitelessCheckout,
 		} ),
 		[
 			contactDetails,
@@ -510,6 +514,7 @@ export default function CheckoutMain( {
 			fromSiteSlug,
 			isJetpackNotAtomic,
 			isAkismetSitelessCheckout,
+			isWpcomSitelessCheckout,
 		]
 	);
 

@@ -80,6 +80,10 @@ export function checkoutAkismetSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
 }
 
+export function checkoutWpcomSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'wpcom' } );
+}
+
 export function checkoutMarketplaceSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
 }

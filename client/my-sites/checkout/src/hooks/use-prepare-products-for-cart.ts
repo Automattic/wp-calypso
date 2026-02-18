@@ -144,6 +144,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'a4a' ||
 			sitelessCheckoutType === 'unified' ||
+			sitelessCheckoutType === 'wpcom' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -623,6 +624,7 @@ function createRenewalItemToAddToCart( {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
+		isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
@@ -678,6 +680,7 @@ function createItemToAddToCart( {
 		extra: {
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
+			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
 			context: 'calypstore',
