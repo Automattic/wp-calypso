@@ -27,7 +27,9 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			return { fullPageLoad: false };
 		}
 
-		queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+		if ( cause === 'enter' ) {
+			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		if ( user && user.ID <= OLDEST_ELIGIBLE_USER ) {
