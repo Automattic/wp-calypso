@@ -18,13 +18,13 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useConversation from '../../hooks/use-conversation';
+import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
-import { saveCurrentChatRoute } from '../../utils/save-current-chat-route';
 import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -92,7 +92,7 @@ export default function AgentDock( {
 	}, [] );
 
 	const navigate = useNavigate();
-	const { pathname, state } = useLocation();
+	const { pathname } = useLocation();
 
 	const isOrcChatView = pathname === '/chat';
 	const isZenChatView = pathname === '/zendesk';
@@ -129,18 +129,7 @@ export default function AgentDock( {
 	} = useAgentChat( agentConfig );
 
 	// Persist the chat route for cross-domain conversation restoration.
-	useEffect( () => {
-		// A new chat is one without a restored session and not mid-initialization via `shouldInitNewChat`
-		const isNewChat = isOrcChatView && ! state?.sessionId && ! state?.shouldInitNewChat;
-		// The server generates the session ID after the first agent reply
-		const isFirstServerMsg = messages.length === 2;
-		const sessionId = getStoredSessionId( agentId );
-
-		// Only save the route once for a new chat
-		if ( isNewChat && isFirstServerMsg && sessionId ) {
-			saveCurrentChatRoute( sessionId );
-		}
-	}, [ agentId, isOrcChatView, messages.length, state?.sessionId, state?.shouldInitNewChat ] );
+	useSaveNewChatRoute( agentId, messages );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
