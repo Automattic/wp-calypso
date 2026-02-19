@@ -9,7 +9,7 @@ interface APIError {
 	message: string;
 }
 
-export interface ArchiveReferralParams {
+interface ArchiveReferralParams {
 	id: number;
 }
 

@@ -9,7 +9,7 @@ interface APIError {
 	message: string;
 }
 
-export interface ResendReferralEmailParams {
+interface ResendReferralEmailParams {
 	id: number;
 }
 

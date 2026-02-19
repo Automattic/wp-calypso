@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import wpcom from 'calypso/lib/wp';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 
-export interface APIError {
+interface APIError {
 	status: number;
 	code: string | null;
 	message: string;

@@ -9,7 +9,7 @@ interface APIError {
 	message: string;
 }
 
-export interface Params {
+interface Params {
 	id: number;
 }
 

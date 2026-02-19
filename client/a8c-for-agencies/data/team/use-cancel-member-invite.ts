@@ -9,7 +9,7 @@ interface APIError {
 	message: string;
 }
 
-export interface cancelMemberInviteParams {
+interface cancelMemberInviteParams {
 	id: number;
 }
 

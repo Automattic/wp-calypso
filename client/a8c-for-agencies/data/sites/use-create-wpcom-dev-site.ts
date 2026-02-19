@@ -9,12 +9,12 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getFetchDevLicensesQueryKey } from '../purchases/use-fetch-dev-licenses';
 
-export interface APIError {
+interface APIError {
 	status: number;
 	code: string;
 }
 
-export interface CreateDevSiteParams {
+interface CreateDevSiteParams {
 	site_name?: string;
 	php_version?: string;
 	primary_data_center?: string;

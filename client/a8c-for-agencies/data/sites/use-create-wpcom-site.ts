@@ -3,12 +3,12 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
-export interface APIError {
+interface APIError {
 	status: number;
 	code: string;
 }
 
-export interface CreateSiteParams {
+interface CreateSiteParams {
 	id: number;
 	site_name?: string;
 	php_version?: string;
