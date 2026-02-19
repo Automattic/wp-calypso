@@ -37,7 +37,7 @@ export default function UnifiedAIAgent( {
 	sectionName,
 	currentUser,
 	site,
-	...props
+	currentRoute,
 }: UnifiedAIAgentProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -51,24 +51,19 @@ export default function UnifiedAIAgent( {
 	}
 
 	return (
-		<AgentsManagerContextProvider value={ { sectionName, currentUser, site } }>
+		<AgentsManagerContextProvider value={ { sectionName, currentUser, site, currentRoute } }>
 			<QueryClientProvider client={ queryClient }>
 				<PersistentRouter>
-					<AgentSetup { ...props } />
+					<AgentSetup />
 				</PersistentRouter>
 			</QueryClientProvider>
 		</AgentsManagerContextProvider>
 	);
 }
 
-interface AgentSetupProps {
-	/** The current route path. */
-	currentRoute?: string;
-}
-
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { currentRoute }: AgentSetupProps ): JSX.Element | null {
-	const { site } = useAgentsManagerContext();
+function AgentSetup(): JSX.Element | null {
+	const { site, currentRoute } = useAgentsManagerContext();
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();

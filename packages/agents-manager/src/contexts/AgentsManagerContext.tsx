@@ -14,6 +14,8 @@ export interface AgentsManagerContextType {
 	site?: AgentsManagerSite | null;
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
 	sectionName: string;
+	/** The current route path. */
+	currentRoute?: string;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
@@ -26,6 +28,7 @@ const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	site: null,
 	sectionName: 'wp-admin',
+	currentRoute: undefined,
 	isEligibleForChat: false,
 };
 
