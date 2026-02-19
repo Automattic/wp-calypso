@@ -133,7 +133,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs up feedback', () => {
-		it( 'sends rating with message_text via fetch', async () => {
+		it( 'sends rating with `message_text` via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Here is the answer' ) ];
 			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
@@ -173,7 +173,7 @@ describe( 'useFeedback', () => {
 	} );
 
 	describe( 'thumbs down feedback', () => {
-		it( 'sends rating with message_text via fetch', async () => {
+		it( 'sends rating with `message_text` via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Bad answer' ) ];
 			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
@@ -282,7 +282,7 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'uses stored session ID when sessionId is empty', async () => {
+		it( 'uses stored session ID when `sessionId` is empty', async () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: '' },
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
@@ -327,8 +327,8 @@ describe( 'useFeedback', () => {
 		} );
 	} );
 
-	describe( 'no authProvider', () => {
-		it( 'does not send rating when authProvider is not provided', async () => {
+	describe( 'no `authProvider`', () => {
+		it( 'does not send rating when `authProvider` is not provided', async () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, authProvider: undefined },
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
