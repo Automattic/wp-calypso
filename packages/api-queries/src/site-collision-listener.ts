@@ -88,7 +88,16 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 						query.queryKey[ 0 ] === 'site-by-slug' ),
 			} )
 			.flatMap( ( [ , data ] ) => {
-				const items = Array.isArray( data ) ? data : [ data ];
+				if ( ! data ) {
+					return [];
+				}
+
+				let items: unknown[] = [];
+				if ( typeof data === 'object' && 'sites' in data && Array.isArray( data.sites ) ) {
+					items = data.sites;
+				} else {
+					items = Array.isArray( data ) ? data : [ data ];
+				}
 				return items.flatMap( ( item ) =>
 					isSite( item ) && item.jetpack ? [ withoutHttp( item.URL ) ] : []
 				);

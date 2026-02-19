@@ -2,6 +2,7 @@ import nock from 'nock';
 import { queryClient } from '../query-client';
 import { siteBySlugQuery, siteByIdQuery } from '../site';
 import { startSiteCollisionListener } from '../site-collision-listener';
+import { sitesQuery, paginatedSitesQuery } from '../sites';
 import type { Site } from '@automattic/api-core';
 
 // Mock with Jest so that the same client is used in siteBySlugQuery/siteByIdQuery
@@ -196,23 +197,57 @@ describe( 'startSiteCollisionListener', () => {
 		);
 	} );
 
-	test( 'uses fallback scan to detect collisions before jetpack-site-urls query resolves', () => {
-		// A jetpack site is already cached by ID (e.g. restored from persistence).
-		const jpSite = makeSite( {
-			ID: 99,
-			jetpack: true,
-			URL: 'https://example.com',
-			slug: 'example.com',
-		} );
-		queryClient.setQueryData( siteByIdQuery( 99 ).queryKey, jpSite );
+	describe( 'fallback scan detects collisions before jetpack-site-urls resolves', () => {
+		const cases = [
+			{
+				name: 'site-by-id',
+				seedJp: ( jp: Site ) => queryClient.setQueryData( siteByIdQuery( jp.ID ).queryKey, jp ),
+				jpSite: { ID: 99, slug: 'byid.com', URL: 'https://byid.com' },
+				wpcomSlug: 'byid.com',
+			},
+			{
+				name: 'site-by-slug',
+				seedJp: ( jp: Site ) => queryClient.setQueryData( siteBySlugQuery( jp.slug ).queryKey, jp ),
+				jpSite: { ID: 50, slug: 'jp-origin.com', URL: 'https://byslug.com' },
+				wpcomSlug: 'byslug.com',
+			},
+			{
+				name: 'sites list',
+				seedJp: ( jp: Site ) => queryClient.setQueryData( sitesQuery( 'all' ).queryKey, [ jp ] ),
+				jpSite: { ID: 60, slug: 'listed.com', URL: 'https://listed.com' },
+				wpcomSlug: 'listed.com',
+			},
+			{
+				name: 'sites paginated',
+				seedJp: ( jp: Site ) =>
+					queryClient.setQueryData( paginatedSitesQuery( 'all' ).queryKey, {
+						sites: [ jp ],
+						total: 1,
+					} ),
+				jpSite: { ID: 70, slug: 'paged.com', URL: 'https://paged.com' },
+				wpcomSlug: 'paged.com',
+			},
+		];
 
-		// A non-jetpack site with same URL arrives at a different key.
-		// No jetpack-site-urls query yet — fallback scan should find the JP site by ID.
-		const wpcomSite = makeSite( { ID: 2 } );
-		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, wpcomSite );
+		for ( const { name, seedJp, jpSite, wpcomSlug } of cases ) {
+			test( `via ${ name }`, () => {
+				seedJp( makeSite( { ...jpSite, jetpack: true } ) );
 
-		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
-		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
+				const wpcom = makeSite( {
+					ID: jpSite.ID + 1000,
+					slug: wpcomSlug,
+					URL: `https://${ wpcomSlug }`,
+					options: {
+						unmapped_url: `https://${ wpcomSlug.replace( '.com', '' ) }.wordpress.com`,
+					} as Site[ 'options' ],
+				} );
+				queryClient.setQueryData( siteBySlugQuery( wpcomSlug ).queryKey, wpcom );
+
+				expect( queryClient.getQueryData( siteBySlugQuery( wpcomSlug ).queryKey )?.slug ).toBe(
+					`${ wpcomSlug.replace( '.com', '' ) }.wordpress.com`
+				);
+			} );
+		}
 	} );
 
 	test( 'does not infinite-loop from cascading setQueryData calls', () => {
