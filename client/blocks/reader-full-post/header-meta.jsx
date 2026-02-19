@@ -5,13 +5,7 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getStreamUrl } from 'calypso/reader/route';
-import { recordPermalinkClick } from 'calypso/reader/stats';
-
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
-	const recordDateClick = () => {
-		recordPermalinkClick( 'timestamp_full_post', post );
-	};
-
 	const streamUrl = getStreamUrl( feedId, siteId );
 
 	const hasAuthorName = author?.name;
@@ -57,19 +51,9 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 				</div>
 				<div className="reader-full-post__header-meta-line-2">
 					{ post.date && (
-						<>
-							<span className="reader-full-post__header-meta-date">
-								<a
-									className="reader-full-post__header-meta-date-link"
-									onClick={ recordDateClick }
-									href={ post.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<TimeSince date={ post.date } />
-								</a>
-							</span>
-						</>
+						<span className="reader-full-post__header-meta-date">
+							<TimeSince date={ post.date } />
+						</span>
 					) }
 				</div>
 			</div>
