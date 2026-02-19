@@ -75,6 +75,22 @@ export function getPurchasesFieldDefinitions( {
 	fieldIds?: string[];
 	transferredOwnershipPurchases?: Purchases.Purchase[];
 } ): Fields< Purchases.Purchase > {
+	const getListTitle = ( item: Purchases.Purchase ) => {
+		if ( item.isDomainRegistration && item.meta ) {
+			if ( item.isHundredYearDomain ) {
+				// translators: %(domain)s is the domain name, e.g. "100-Year Domain Registration: example.com"
+				return translate( '100-Year Domain Registration: %(domain)s', {
+					args: { domain: item.meta },
+				} );
+			}
+			// translators: %(domain)s is the domain name, e.g. "Domain Registration: example.com"
+			return translate( 'Domain Registration: %(domain)s', {
+				args: { domain: item.meta },
+			} );
+		}
+		return getDisplayName( item );
+	};
+
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
@@ -141,7 +157,7 @@ export function getPurchasesFieldDefinitions( {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
-					getDisplayName( item ) +
+					getListTitle( item ) +
 					' ' +
 					( purchaseType( item ) || '' ) +
 					' ' +
@@ -162,7 +178,7 @@ export function getPurchasesFieldDefinitions( {
 						<div className="purchase-item__title">
 							{ hasTransferredOwnership ? (
 								<div>
-									{ getDisplayName( item ) }
+									{ getListTitle( item ) }
 									&nbsp;
 									<OwnerInfo purchase={ item } isTransferredOwnership={ hasTransferredOwnership } />
 								</div>
@@ -173,7 +189,7 @@ export function getPurchasesFieldDefinitions( {
 										title={ translate( 'Manage purchase', { textOnly: true } ) }
 										href={ getPurchaseUrl( item ) }
 									>
-										{ getDisplayName( item ) }
+										{ getListTitle( item ) }
 									</a>
 									<OwnerInfo purchase={ item } />
 								</>

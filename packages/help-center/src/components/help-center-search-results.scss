@@ -1,6 +1,5 @@
-@import "@automattic/typography/styles/variables";
-@import "mixins";
 @import "variables";
+@import "mixins";
 
 // Search results section
 .help-center-search-results {
@@ -13,7 +12,7 @@
 		padding-left: 19px;
 		text-transform: uppercase;
 		font-weight: 500;
-		font-size: 0.75rem;
+		font-size: $font-body-extra-small;
 	}
 
 	.help-center-search-results__title {

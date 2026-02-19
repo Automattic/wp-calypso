@@ -91,11 +91,11 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	hasMultiplePurchases,
 	isOnlyDomainTransfers,
 	isOnlyDomainPurchases,
 	isSearch,
 	isTitanWithoutMailboxes,
+	getDomainPurchaseTypeAndPredicate,
 } from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
@@ -527,18 +527,6 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	getSingleHundredYearDomainPurchase = () => {
-		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-		const domainPurchase = purchases[ 0 ];
-		const domain = this.props.siteDomains?.find(
-			( siteDomain ) => siteDomain.name === domainPurchase.meta
-		);
-
-		if ( domain?.isHundredYearDomain ) {
-			return domain;
-		}
-	};
-
 	renderLoading = () => {
 		return (
 			<>
@@ -565,6 +553,9 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
+		const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+		const domainPurchases = purchases.filter( predicate );
+
 		if ( ! this.isGenericReceipt() ) {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
@@ -586,7 +577,9 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
-		const hundredYearDomainPurchase = this.getSingleHundredYearDomainPurchase();
+		const hundredYearDomainPurchase = domainPurchases.find(
+			( purchase ) => purchase.isHundredYearDomain
+		);
 
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
@@ -635,7 +628,7 @@ export class CheckoutThankYou extends Component<
 							` }
 						/>
 						<HundredYearThankYou
-							siteSlug={ hundredYearDomainPurchase.siteSlug }
+							siteId={ hundredYearDomainPurchase.blogId }
 							receiptId={ this.props.receiptId }
 							productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
 						/>
@@ -643,7 +636,7 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
 				if ( shouldShowNewDomainThankYou() ) {
-					if ( hasMultiplePurchases( purchases ) ) {
+					if ( domainPurchases.length > 1 ) {
 						const domainsUrl = this.props.hasDashboardOptIn
 							? dashboardLink( '/domains' )
 							: domainManagementRoot();
@@ -653,7 +646,12 @@ export class CheckoutThankYou extends Component<
 						return this.renderLoading();
 					}
 
-					pageContent = <DomainOnlyNew />;
+					pageContent = (
+						<DomainOnlyNew
+							domainPurchase={ domainPurchases[ 0 ] }
+							currency={ this.props.receipt.data.currency }
+						/>
+					);
 				} else {
 					pageContent = (
 						<DomainOnlyThankYou

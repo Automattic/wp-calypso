@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom';
 import { LogType, type Site } from '@automattic/api-core';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -41,11 +41,15 @@ const mockSite: DeepPartial< Site > = {
 	slug: 'test-site',
 };
 
-function mockPhpLogsOnce() {
-	nock( 'https://public-api.wordpress.com' )
+function mockPreferences() {
+	nock( API_BASE )
+		.persist()
 		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
 		.reply( 200, { calypso_preferences: {} } );
+}
 
+function mockPhpLogsOnce() {
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
 		.query( true )
@@ -71,10 +75,6 @@ function mockPhpLogsOnce() {
 }
 
 function mockServerLogsOnce() {
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/me/preferences' )
-		.reply( 200, { calypso_preferences: {} } );
-
 	nock( API_BASE )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/logs` )
 		.query( true )
@@ -118,6 +118,7 @@ const fixedDateRange = {
 describe( 'SiteLogsDataViews', () => {
 	test( 'renders PHP logs and syncs URL params', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
+		mockPreferences();
 		mockPhpLogsOnce();
 
 		render(
@@ -132,8 +133,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible(); // remove timeout
+		expect( await screen.findByText( 'Auto-refresh' ) ).toBeVisible();
 		// Also verify PHP logs content renders
 		expect( await screen.findByText( 'Hello', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( 'User', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -142,6 +142,7 @@ describe( 'SiteLogsDataViews', () => {
 	} );
 
 	test( 'renders Server logs', async () => {
+		mockPreferences();
 		mockServerLogsOnce();
 
 		render(
@@ -156,8 +157,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( await screen.findByText( 'Auto-refresh', {} ) ).toBeVisible();
+		expect( await screen.findByText( 'Auto-refresh' ) ).toBeVisible();
 		// Also verify Server logs content renders
 		expect( await screen.findByText( 'GET', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
@@ -165,6 +165,7 @@ describe( 'SiteLogsDataViews', () => {
 
 	// If the parent blocks auto-refresh via onAutoRefreshRequest, the toggle click should be ignored and no analytics event emitted.
 	test( 'auto-refresh toggle blocked by onAutoRefreshRequest', async () => {
+		mockPreferences();
 		mockPhpLogsOnce();
 		const user = userEvent.setup();
 		const autoRefresh = jest.fn();
@@ -182,8 +183,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
+		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		await user.click( toggle );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		expect( autoRefresh ).not.toHaveBeenCalled();
@@ -191,6 +191,7 @@ describe( 'SiteLogsDataViews', () => {
 
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
 	test( 'auto-refresh toggle is disabled when reason provided', async () => {
+		mockPreferences();
 		mockPhpLogsOnce();
 
 		render(
@@ -206,8 +207,7 @@ describe( 'SiteLogsDataViews', () => {
 			/>
 		);
 
-		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		const toggle = screen.getByRole( 'checkbox', { name: 'Auto-refresh' } );
+		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		expect( toggle ).toBeDisabled();
 	} );
 } );

@@ -169,18 +169,18 @@ body.is-section-earn.theme-default.color-scheme {
 
 .paid-subscriptions-list {
 	margin: 20px 0 0;
+	display: grid;
+	grid-template-columns: 2fr 2fr 1fr 1fr auto;
+	gap: 0 16px;
 
 	.row {
-		border-block-end: 1px solid $studio-gray-5;
-		display: flex;
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-column: 1 / -1;
 		align-items: center;
-		flex-direction: row;
+		border-block-end: 1px solid $studio-gray-5;
 		padding-top: 20px;
 		padding-bottom: 20px;
-
-		> * {
-			flex: 1;
-		}
 
 		.paid-subscriptions-list__checkbox-column,
 		.paid-subscriptions-list__profile-column,
@@ -198,12 +198,10 @@ body.is-section-earn.theme-default.color-scheme {
 		.paid-subscriptions-list__profile-column {
 			display: flex;
 			align-items: center;
-			flex: 2;
 			min-width: 0;
 		}
 
 		.paid-subscriptions-list__offer-type-column {
-			flex: 2;
 			.paid-subscriptions-list__offer-type-title {
 				font-weight: 600;
 				/* stylelint-disable-next-line unit-allowed-list */
@@ -219,8 +217,7 @@ body.is-section-earn.theme-default.color-scheme {
 		}
 
 		.paid-subscriptions-list__menu-column {
-			flex-basis: 48px;
-			flex-grow: initial;
+			text-align: end;
 
 			.gridicon {
 				fill: $studio-gray-50;
@@ -294,6 +291,7 @@ body.is-section-earn.theme-default.color-scheme {
 
 @media (max-width: $break-large) {
 	.paid-subscriptions-list {
+		grid-template-columns: 2fr 2fr 1fr auto;
 		padding-left: 16px;
 		padding-right: 16px;
 
@@ -305,6 +303,7 @@ body.is-section-earn.theme-default.color-scheme {
 
 @media (max-width: $break-medium) {
 	.paid-subscriptions-list {
+		grid-template-columns: 2fr 1fr auto;
 		padding-left: 16px;
 		padding-right: 16px;
 

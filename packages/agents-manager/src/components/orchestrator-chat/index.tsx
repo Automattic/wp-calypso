@@ -16,8 +16,10 @@ import {
 	useImperativeHandle,
 	forwardRef,
 } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import useConversation from '../../hooks/use-conversation';
+import useFeedback from '../../hooks/use-feedback';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
 import AgentChat from '../agent-chat';
@@ -119,6 +121,7 @@ function OrchestratorChatInner(
 		abortCurrentRequest,
 		clearSuggestions,
 		registerSuggestions,
+		registerMessageActions,
 	} = useAgentChat( agentConfig );
 
 	// Expose imperative methods to parent component
@@ -162,6 +165,14 @@ function OrchestratorChatInner(
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
+	} );
+
+	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
+		registerMessageActions,
+		messages,
+		agentId,
+		sessionId,
+		authProvider: agentConfig.authProvider,
 	} );
 
 	const imageUpload = useImageUpload?.();
@@ -319,6 +330,9 @@ function OrchestratorChatInner(
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
 			imageUpload={ imageUpload }
+			showFeedbackInput={ showFeedbackInput }
+			onSubmitFeedbackText={ submitFeedbackText }
+			onCancelFeedback={ resetFeedback }
 		/>
 	);
 }
