@@ -31,6 +31,13 @@ const mockSites = [
 	} as Site,
 ];
 
+function mockSitesEndpoint( sites: Site[] ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/me/sites' )
+		.query( true )
+		.reply( 200, { sites } );
+}
+
 describe( '<Sites>', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
@@ -43,14 +50,10 @@ describe( '<Sites>', () => {
 			.get( '/rest/v1.1/me/preferences' )
 			.query( true )
 			.reply( 200, { calypso_preferences: {} } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/me/sites' )
-			.query( true )
-			.reply( 200, { sites: mockSites } );
 	} );
 
 	test( 'renders Add new site button', async () => {
+		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
 				site_count: mockSites.length,
@@ -61,6 +64,7 @@ describe( '<Sites>', () => {
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {
+		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
 				site_count: 0,
@@ -74,7 +78,71 @@ describe( '<Sites>', () => {
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
+		mockSitesEndpoint( [
+			{
+				ID: 10,
+				name: 'Jetpack Site',
+				slug: 'shared-domain.com',
+				URL: 'https://shared-domain.com',
+				jetpack: true,
+				is_coming_soon: false,
+				is_private: false,
+				site_migration: {},
+				capabilities: { manage_options: true },
+				plan: {
+					product_slug: 'jetpack_free',
+					product_name_short: 'Jetpack Free',
+					features: { active: [] },
+				},
+			} as unknown as Site,
+			{
+				ID: 20,
+				name: 'WPcom Site',
+				slug: 'shared-domain.com',
+				URL: 'https://shared-domain.com',
+				jetpack: false,
+				is_coming_soon: false,
+				is_private: false,
+				site_migration: {},
+				capabilities: { manage_options: true },
+				options: { unmapped_url: 'https://wpcomsite.wordpress.com' },
+				plan: {
+					product_slug: 'business-bundle',
+					product_name_short: 'Business',
+					features: { active: [] },
+				},
+			} as unknown as Site,
+		] );
+
+		render( <Sites />, {
+			user: {
+				site_count: 13, // more than 12 sites to force the table layout
+			} as User,
+		} );
+
+		// The collision listener (started by test-utils) should auto-detect the
+		// Jetpack site and fix the wpcom site's slug without manual intervention.
+		const links = await screen.findAllByRole( 'link', { name: /WPcom Site/ } );
+		for ( const link of links ) {
+			expect( link ).toHaveAttribute(
+				'href',
+				expect.stringMatching( /\/sites\/wpcomsite.wordpress\.com$/ )
+			);
+		}
+
+		// The Jetpack site's links should remain unchanged.
+		const jpLinks = await screen.findAllByRole( 'link', { name: /Jetpack Site/ } );
+		for ( const jpLink of jpLinks ) {
+			expect( jpLink ).toHaveAttribute(
+				'href',
+				expect.stringMatching( /\/sites\/shared-domain\.com$/ )
+			);
+		}
+	} );
+
 	test( 'renders DataViews when the user has sites', async () => {
+		mockSitesEndpoint( mockSites );
 		render( <Sites />, {
 			user: {
 				site_count: 13, // more than 12 sites to force the table layout
