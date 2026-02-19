@@ -78,7 +78,10 @@ export default function ReaderAddSubscription( {
 				{ ! hasFeedPreview &&
 					( configInstructions ? (
 						<div className="reader-add-subscription__instructions">
-							<div className="reader-add-subscription__instructions-icon">
+							<div
+								className="reader-add-subscription__instructions-icon"
+								data-testid="instructions-icon"
+							>
 								{ configInstructions.icon }
 							</div>
 
