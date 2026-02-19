@@ -3,6 +3,7 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NoFeatureSwitch from 'calypso/components/jetpack/no-feature-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index.tsx';
@@ -15,7 +16,6 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import ScanHistoryPage from './history';
 import ScanPage from './main';
-import NoScanSelfServeFeatureSwitch from './no-scan-self-serve-feature-switch';
 import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import WpcomScanUpsellPlaceholder from './wpcom-scan-upsell-placeholder';
@@ -96,7 +96,8 @@ export function showUpsellIfNoScanSelfServeFeature( context, next ) {
 		isJetpackCloud() || isA8CForAgencies() ? ScanUpsellPage : WPCOMScanUpsellPage;
 
 	context.primary = (
-		<NoScanSelfServeFeatureSwitch
+		<NoFeatureSwitch
+			feature={ WPCOM_FEATURES_SCAN_SELF_SERVE }
 			trueComponent={ <UpsellComponent /> }
 			falseComponent={ context.primary }
 		/>
