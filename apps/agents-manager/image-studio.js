@@ -7,19 +7,20 @@
  */
 
 /**
- * External dependencies
- */
-import { initImageStudioIntegration, registerBlockEditorFilters } from '@automattic/image-studio';
-/**
  * Internal dependencies
  */
 import setLocale from './set-locale';
 
 async function init() {
-	// Load translations before first render — __() won't trigger re-renders.
+	// Load translations before importing image-studio. Using dynamic import()
+	// so that module-level __() calls in image-studio evaluate after
+	// translations are loaded.
 	const localeSlug = document.documentElement.lang?.toLowerCase();
 	await setLocale( localeSlug );
 
+	const { initImageStudioIntegration, registerBlockEditorFilters } = await import(
+		'@automattic/image-studio'
+	);
 	initImageStudioIntegration();
 	registerBlockEditorFilters();
 }
