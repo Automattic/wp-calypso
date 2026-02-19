@@ -1,9 +1,3 @@
----
-paths:
-  - client/a8c-for-agencies/**
----
-Use this rules on top of @.claude/rules/calypso-client.md.
-
 ## Code Style and Structure
 
 ### Code Standards

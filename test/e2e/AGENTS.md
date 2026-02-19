@@ -1,43 +1,44 @@
----
-description: Rules that applies for e2e testing
----
 # E2E Test Framework Instructions
 
 ## Documentation
 
 Full documentation is available in:
-- `test/e2e/docs/` - Legacy framework documentation
-- `test/e2e/docs-new/` - New Playwright Test framework documentation
+
+- docs/ - Legacy framework documentation
+- docs-new/ - New Playwright Test framework documentation
 
 Key docs to reference:
-- [Overview](test/e2e/docs-new/overview.md)
-- [Setup](test/e2e/docs-new/setup.md)
-- [Running and Debugging Tests](test/e2e/docs-new/running_debugging_tests.md)
-- [Creating Reliable Tests](test/e2e/docs-new/creating_reliable_tests.md)
-- [New Style Guide](test/e2e/docs-new/new_style_guide.md)
-- [Custom Fixtures](test/e2e/docs-new/custom_fixtures.md)
+
+- docs-new/overview.md
+- docs-new/setup.md
+- docs-new/running_debugging_tests.md
+- docs-new/creating_reliable_tests.md
+- docs-new/new_style_guide.md
+- docs-new/custom_fixtures.md
 
 ## Framework Migration Status
 
 We are migrating from the legacy framework to Playwright Test:
 
-**Legacy Framework (Playwright + Jest runner)**
+### Legacy Framework (Playwright + Jest runner)
+
 - Test files: `test/e2e/specs/**/*.ts` (without `.spec.` in filename)
 - Examples: `specs/blocks/blocks__core.ts`, `specs/published-content/likes__post.ts`
-- Documentation: `test/e2e/docs/`
+- Documentation: docs/
 - Status: Being phased out, do not write new tests in this format
 
-**New Framework (Playwright Test)**
+### New Framework (Playwright Test)
+
 - Test files: `test/e2e/specs/**/*.spec.ts` (with `.spec.` in filename)
 - Examples: `specs/tools/import__sites-squarespace.spec.ts`, `specs/tools/marketing__seo.spec.ts`
-- Documentation: `test/e2e/docs-new/`
+- Documentation: docs-new/
 - Status: Target framework for all new and migrated tests
 
 ## Guidelines
 
 - Always write new tests using Playwright Test (`.spec.ts` files)
 - When modifying existing tests, consider migrating them to the new framework
-- Follow the patterns and style guide in `test/e2e/docs-new/`
+- Follow the patterns and style guide in docs-new/
 - Reference legacy docs only for understanding existing code
 
 ## Running Tests
@@ -55,6 +56,7 @@ yarn playwright test specs/path/to/test.spec.ts
 ```
 
 For legacy tests (`*.ts` without `.spec.`), use the Jest runner:
+
 ```bash
 yarn test specs/path/to/test.ts
 ```
@@ -142,6 +144,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 **Accounts**: `accountDefaultUser`, `accountGivenByEnvironment`, `accountAtomic`, `accountGutenbergSimple`, `accounti18n`, `accountPreRelease`, `accountSimpleSiteFreePlan`, `accountSMS`
 
 **Pages/Components**: Follow naming conventions:
+
 - `page*` - Pages (e.g., `pageLogin`, `pageEditor`, `pagePeople`)
 - `component*` - Components (e.g., `componentSidebar`, `componentGutenberg`)
 - `flow*` - Flows (e.g., `flowStartWriting`)
@@ -153,6 +156,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 ### Given/When/Then Pattern
 
 Use `test.step()` with descriptive names:
+
 - **Given**: Preconditions
 - **When**: Actions
 - **Then**: Assertions

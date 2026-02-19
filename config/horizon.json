@@ -35,7 +35,7 @@
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-transfer-redesign": true,
-		"domains/new-thank-you-page": false,
+		"domains/new-thank-you-page": true,
 		"global-styles/on-personal-plan": true,
 		"google-my-business": false,
 		"help": true,
