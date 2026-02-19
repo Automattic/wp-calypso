@@ -70,7 +70,9 @@ export default function PressableAddonsCustomDescription( { productName, product
 		}
 
 		if ( addOnType === 'storage' ) {
-			return translate( "Storage add-ons raise your plan's limits while your plan is active." );
+			return translate(
+				"Storage add-ons raise your plan's limits while you plan is active, and are distributed across all your active site installations."
+			);
 		}
 
 		if ( addOnType === 'visits' ) {
