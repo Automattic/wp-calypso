@@ -15,6 +15,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import ScanHistoryPage from './history';
 import ScanPage from './main';
+import NoScanSelfServeFeatureSwitch from './no-scan-self-serve-feature-switch';
 import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import WpcomScanUpsellPlaceholder from './wpcom-scan-upsell-placeholder';
@@ -86,6 +87,20 @@ export function showUnavailableForMultisites( context, next ) {
 				<WPCOMScanUpsellPage reason="multisite_not_supported" />
 			);
 	}
+
+	next();
+}
+
+export function showUpsellIfNoScanSelfServeFeature( context, next ) {
+	const UpsellComponent =
+		isJetpackCloud() || isA8CForAgencies() ? ScanUpsellPage : WPCOMScanUpsellPage;
+
+	context.primary = (
+		<NoScanSelfServeFeatureSwitch
+			trueComponent={ <UpsellComponent /> }
+			falseComponent={ context.primary }
+		/>
+	);
 
 	next();
 }
