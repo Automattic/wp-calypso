@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { category, code, starEmpty, tool, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -23,8 +22,6 @@ const useSitesMenuItems = ( path: string ) => {
 				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
 		).length || 0;
 	const shouldAddNeedsSetup = totalAvailableSites > 0;
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
-
 	return useMemo( () => {
 		const items = [
 			{
@@ -65,18 +62,16 @@ const useSitesMenuItems = ( path: string ) => {
 				} );
 			}
 
-			if ( devSitesEnabled ) {
-				items.push( {
-					id: 'sites-development-menu-item',
-					icon: code,
-					path: A4A_SITES_LINK,
-					link: A4A_SITES_LINK_DEVELOPMENT,
-					title: translate( 'Development' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Sites / Development',
-					},
-				} );
-			}
+			items.push( {
+				id: 'sites-development-menu-item',
+				icon: code,
+				path: A4A_SITES_LINK,
+				link: A4A_SITES_LINK_DEVELOPMENT,
+				title: translate( 'Development' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Sites / Development',
+				},
+			} );
 
 			items.push( {
 				id: 'sites-favorites-menu-item',
@@ -91,6 +86,6 @@ const useSitesMenuItems = ( path: string ) => {
 		}
 
 		return items.map( ( item ) => createItem( item, path ) );
-	}, [ noActiveSite, path, translate, shouldAddNeedsSetup, devSitesEnabled ] );
+	}, [ noActiveSite, path, translate, shouldAddNeedsSetup ] );
 };
 export default useSitesMenuItems;
