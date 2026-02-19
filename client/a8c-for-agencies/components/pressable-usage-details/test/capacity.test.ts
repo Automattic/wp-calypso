@@ -32,7 +32,12 @@ describe( 'Pressable usage capacity calculations', () => {
 	} );
 
 	it( 'adds sites add-on capacity', () => {
-		const licenses = [ buildLicense( { licenseKey: 'pressable-addon-sites-5', quantity: 1 } ) ];
+		const licenses = [
+			buildLicense( {
+				licenseKey: 'pressable-addon-sites-5_J64c5S2kkNg0laJlaimU5PKpr',
+				quantity: 1,
+			} ),
+		];
 
 		expect( calculateAddonCapacityFromLicenses( licenses ) ).toEqual( {
 			install: 5,
@@ -42,7 +47,12 @@ describe( 'Pressable usage capacity calculations', () => {
 	} );
 
 	it( 'adds storage add-on capacity', () => {
-		const licenses = [ buildLicense( { licenseKey: 'pressable-addon-storage-1gb', quantity: 1 } ) ];
+		const licenses = [
+			buildLicense( {
+				licenseKey: 'pressable-addon-storage-1gb_67tEGzNf2l8Nl001fGg8w9alr',
+				quantity: 1,
+			} ),
+		];
 
 		expect( calculateAddonCapacityFromLicenses( licenses ) ).toEqual( {
 			install: 0,
@@ -52,7 +62,9 @@ describe( 'Pressable usage capacity calculations', () => {
 	} );
 
 	it( 'adds visits add-on capacity', () => {
-		const licenses = [ buildLicense( { licenseKey: 'pressable-addon-visits-10k', quantity: 1 } ) ];
+		const licenses = [
+			buildLicense( { licenseKey: 'pressable-addon-visits-10k_MOCKSUFFIX', quantity: 1 } ),
+		];
 
 		expect( calculateAddonCapacityFromLicenses( licenses ) ).toEqual( {
 			install: 0,
@@ -63,9 +75,9 @@ describe( 'Pressable usage capacity calculations', () => {
 
 	it( 'sums mixed add-ons', () => {
 		const licenses = [
-			buildLicense( { licenseKey: 'pressable-addon-sites-1', quantity: 1 } ),
-			buildLicense( { licenseKey: 'pressable-addon-storage-1gb', quantity: 2 } ),
-			buildLicense( { licenseKey: 'pressable-addon-visits-10k', quantity: 3 } ),
+			buildLicense( { licenseKey: 'pressable-addon-sites-1_SFX1', quantity: 1 } ),
+			buildLicense( { licenseKey: 'pressable-addon-storage-1gb_SFX2', quantity: 2 } ),
+			buildLicense( { licenseKey: 'pressable-addon-visits-10k_SFX3', quantity: 3 } ),
 		];
 
 		expect( calculateAddonCapacityFromLicenses( licenses ) ).toEqual( {
