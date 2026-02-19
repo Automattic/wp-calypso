@@ -8,48 +8,25 @@ import { getSessionId as getStoredSessionId } from '../../../utils/agent-session
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
+// Capture the onFeedback callback passed to createFeedbackActions
+let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
+let capturedCondition: ( ( message: Message ) => boolean ) | undefined;
+
 jest.mock(
 	'@automattic/agenttic-ui',
-	() => {
-		let onFeedbackCb: ( messageId: string, feedback: 'up' | 'down' ) => void;
-
-		return {
-			createFeedbackActions: jest.fn(
-				( {
-					onFeedback,
-					condition,
-				}: {
-					onFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
-					condition?: ( message: Message ) => boolean;
-				} ) => {
-					onFeedbackCb = onFeedback;
-					return {
-						getActionsForMessage: ( message: Message ) => {
-							if ( condition && ! condition( message ) ) {
-								return [];
-							}
-							return [
-								{
-									id: 'feedback-up',
-									label: 'Thumbs Up',
-									onClick: ( msg: Message ) => onFeedbackCb( msg.id, 'up' ),
-								},
-								{
-									id: 'feedback-down',
-									label: 'Thumbs Down',
-									onClick: ( msg: Message ) => onFeedbackCb( msg.id, 'down' ),
-								},
-							];
-						},
-						onChange: jest.fn(),
-						offChange: jest.fn(),
-					};
-				}
-			),
-			ThumbsUpIcon: () => null,
-			ThumbsDownIcon: () => null,
-		};
-	},
+	() => ( {
+		createFeedbackActions: jest.fn( ( { onFeedback, condition } ) => {
+			capturedOnFeedback = onFeedback;
+			capturedCondition = condition;
+			return {
+				getActionsForMessage: jest.fn(),
+				onChange: jest.fn(),
+				offChange: jest.fn(),
+			};
+		} ),
+		ThumbsUpIcon: () => null,
+		ThumbsDownIcon: () => null,
+	} ),
 	{ virtual: true }
 );
 jest.mock( '@automattic/calypso-analytics' );
@@ -79,6 +56,20 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 	content: [ { type: 'text', text } ],
 } );
 
+/** Triggers the captured onFeedback callback with the given direction. */
+async function triggerFeedback( messageId: string, direction: 'up' | 'down' ) {
+	await act( async () => {
+		capturedOnFeedback( messageId, direction );
+	} );
+}
+
+/** Finds the fetch call whose URL contains the given substring. */
+function findFetchCall( urlSubstring: string ) {
+	return mockFetch.mock.calls.find(
+		( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( urlSubstring )
+	);
+}
+
 describe( 'useFeedback', () => {
 	const defaultAgentConfig = {
 		agentId: 'test-agent',
@@ -97,7 +88,7 @@ describe( 'useFeedback', () => {
 
 	const defaultConfig = {
 		registerMessageActions: mockRegisterMessageActions,
-		messages: [],
+		messages: [] as Message[],
 	};
 
 	describe( 'initialization', () => {
@@ -112,11 +103,8 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'only registers once', () => {
+		it( 'only registers once across rerenders', () => {
 			const { rerender } = renderHook( () => useFeedback( defaultConfig ) );
-
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
-
 			rerender();
 
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
@@ -127,40 +115,36 @@ describe( 'useFeedback', () => {
 				initialProps: defaultConfig,
 			} );
 
-			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
-
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			rerender( defaultConfig );
 
-			// Should trigger re-registration on next effect cycle
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'passes condition that filters to agent messages only', () => {
+			renderHook( () => useFeedback( defaultConfig ) );
+
+			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
+			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'thumbs up feedback', () => {
-		it( 'sends rating with message_text via fetch when thumbs up is clicked', async () => {
+		it( 'sends rating with message_text via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Here is the answer' ) ];
 			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( messages[ 0 ] );
-			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
-
-			await act( async () => {
-				await thumbsUpAction?.onClick( messages[ 0 ] );
-			} );
+			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( mockAuthProvider ).toHaveBeenCalled();
 			expect( mockFetch ).toHaveBeenCalledWith(
 				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
 				expect.objectContaining( {
 					method: 'POST',
-					headers: expect.objectContaining( {
-						Authorization: 'Bearer test-token',
-					} ),
+					headers: expect.objectContaining( { Authorization: 'Bearer test-token' } ),
 					body: JSON.stringify( {
 						message_id: 'msg-1',
 						rating: 'up',
@@ -170,16 +154,9 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'records tracks event for thumbs up', async () => {
+		it( 'records tracks event', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
-
-			await act( async () => {
-				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_agents_manager_response_feedback_action',
@@ -187,33 +164,20 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'does not show feedback input after thumbs up', async () => {
+		it( 'does not show feedback input', async () => {
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
-
-			await act( async () => {
-				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( result.current.showFeedbackInput ).toBe( false );
 		} );
 	} );
 
 	describe( 'thumbs down feedback', () => {
-		it( 'sends rating with message_text via fetch when thumbs down is clicked', async () => {
+		it( 'sends rating with message_text via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Bad answer' ) ];
 			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
 
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( messages[ 0 ] );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( messages[ 0 ] );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( mockFetch ).toHaveBeenCalledWith(
 				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
@@ -228,16 +192,9 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'records tracks event for thumbs down', async () => {
+		it( 'records tracks event', async () => {
 			renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_agents_manager_response_feedback_action',
@@ -245,16 +202,9 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'shows feedback input after thumbs down', async () => {
+		it( 'shows feedback input', async () => {
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( result.current.showFeedbackInput ).toBe( true );
 		} );
@@ -270,24 +220,13 @@ describe( 'useFeedback', () => {
 			];
 
 			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			await triggerFeedback( 'msg-4', 'down' );
 
-			// Simulate thumbs down first
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-4', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-4', 'agent', 'Test' ) );
-			} );
-
-			// Submit feedback text
 			await act( async () => {
 				await result.current.submitFeedbackText( 'The solution was unclear' );
 			} );
 
-			const textCall = mockFetch.mock.calls.find(
-				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
-			);
+			const textCall = findFetchCall( '/text' );
 			expect( textCall ).toBeDefined();
 			expect( textCall[ 0 ] ).toBe(
 				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/text'
@@ -318,39 +257,20 @@ describe( 'useFeedback', () => {
 			];
 
 			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-6', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-6', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-6', 'down' );
 
 			await act( async () => {
 				await result.current.submitFeedbackText( 'Test feedback' );
 			} );
 
-			// Find the feedback text submission call (the /text URL)
-			const feedbackCall = mockFetch.mock.calls.find(
-				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
-			);
-			expect( feedbackCall ).toBeDefined();
-			const callData = JSON.parse( feedbackCall[ 1 ].body );
+			const callData = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
 			expect( callData.previous_messages ).toHaveLength( 4 );
 			expect( callData.previous_messages[ 0 ].text ).toBe( 'Message 3' );
 		} );
 
 		it( 'records tracks event when feedback text is submitted', async () => {
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			await act( async () => {
 				await result.current.submitFeedbackText( 'Helpful feedback' );
@@ -368,40 +288,20 @@ describe( 'useFeedback', () => {
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			await act( async () => {
 				await result.current.submitFeedbackText( 'Test' );
 			} );
 
-			const textCall = mockFetch.mock.calls.find(
-				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
-			);
-			expect( textCall ).toBeDefined();
-			expect( textCall[ 0 ] ).toBe(
+			expect( findFetchCall( '/text' )[ 0 ] ).toBe(
 				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/stored-session-123/text'
 			);
 		} );
 
 		it( 'does not submit if feedback text is empty', async () => {
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
-
-			// Clear mocks from rating call
+			await triggerFeedback( 'msg-1', 'down' );
 			mockFetch.mockClear();
 
 			await act( async () => {
@@ -415,14 +315,7 @@ describe( 'useFeedback', () => {
 	describe( 'feedback cancellation', () => {
 		it( 'hides feedback input when cancelled', async () => {
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( result.current.showFeedbackInput ).toBe( true );
 
@@ -441,14 +334,7 @@ describe( 'useFeedback', () => {
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedback( defaultConfig ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
-			const thumbsUpAction = actions.find( ( a: { id: string } ) => a.id.includes( 'up' ) );
-
-			await act( async () => {
-				await thumbsUpAction?.onClick( createMessage( 'msg-1', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
@@ -467,28 +353,15 @@ describe( 'useFeedback', () => {
 			];
 
 			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
-
-			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
-			const actions = registrationCall.actions( createMessage( 'msg-3', 'agent', 'Test' ) );
-			const thumbsDownAction = actions.find( ( a: { id: string } ) => a.id.includes( 'down' ) );
-
-			await act( async () => {
-				await thumbsDownAction?.onClick( createMessage( 'msg-3', 'agent', 'Test' ) );
-			} );
+			await triggerFeedback( 'msg-3', 'down' );
 
 			await act( async () => {
 				await result.current.submitFeedbackText( 'Test' );
 			} );
 
-			// Find the feedback text submission call (the /text URL)
-			const feedbackCall = mockFetch.mock.calls.find(
-				( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( '/text' )
-			);
-			expect( feedbackCall ).toBeDefined();
-			const callData = JSON.parse( feedbackCall[ 1 ].body );
+			const callData = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
 			expect( callData.previous_messages ).toHaveLength( 3 );
 			expect( callData.previous_messages[ 2 ].text ).toBe( 'Here are your analytics' );
-			// Tool JSON is replaced with a human-readable placeholder
 			expect( callData.previous_messages ).not.toContainEqual(
 				expect.objectContaining( { text: expect.stringContaining( 'tool_id' ) } )
 			);
