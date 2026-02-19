@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -18,7 +17,7 @@ export function usePartnerDirectoryOnboardingCard() {
 	}, [ dispatch ] );
 
 	return {
-		isActive: ! hasPreference && config.isEnabled( 'a4a-partner-directory' ),
+		isActive: ! hasPreference,
 		hideCard,
 	};
 }

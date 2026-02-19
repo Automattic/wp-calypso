@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -96,31 +95,22 @@ export default function useOnboardingTours() {
 				title: translate( 'Start earning commission on referrals' ),
 				useCalypsoPath: true,
 			},
-			...( config.isEnabled( 'a4a-partner-directory' )
-				? [
-						{
-							calypso_path: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-							completed: checkTourCompletion( preferences, 'boostAgencyVisibility' ),
-							disabled: false,
-							actionDispatch: () => {
-								dispatch(
-									recordTracksEvent(
-										'calypso_a4a_overview_next_steps_boost_agency_visibility_click'
-									)
-								);
-								dispatch(
-									savePreference(
-										A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'boostAgencyVisibility' ],
-										true
-									)
-								);
-							},
-							id: 'boost_agency_visibility',
-							title: translate( "Boost your agency's visibilty across our partner directories" ),
-							useCalypsoPath: true,
-						},
-				  ]
-				: [] ),
+			{
+				calypso_path: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+				completed: checkTourCompletion( preferences, 'boostAgencyVisibility' ),
+				disabled: false,
+				actionDispatch: () => {
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_overview_next_steps_boost_agency_visibility_click' )
+					);
+					dispatch(
+						savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'boostAgencyVisibility' ], true )
+					);
+				},
+				id: 'boost_agency_visibility',
+				title: translate( "Boost your agency's visibilty across our partner directories" ),
+				useCalypsoPath: true,
+			},
 			{
 				calypso_path: A4A_TEAM_LINK,
 				completed: checkTourCompletion( preferences, 'inviteTeam' ),

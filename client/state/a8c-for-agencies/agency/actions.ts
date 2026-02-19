@@ -79,11 +79,6 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 			) {
 				config.enable( 'a4a-bd-checkout' );
 			}
-
-			// Enable the Partner Directory section
-			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
-				config.enable( 'a4a-partner-directory' );
-			}
 		}
 	};
 }
