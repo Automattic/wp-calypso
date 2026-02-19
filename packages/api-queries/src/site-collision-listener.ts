@@ -1,4 +1,5 @@
 import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
+import { withoutHttp } from './utils';
 import type { Site, FetchPaginatedSitesResponse } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
@@ -8,10 +9,6 @@ function siteBySlugKey( slug: string ) {
 
 function siteByIdKey( id: number ) {
 	return [ 'site-by-id', id, SITE_FIELDS, SITE_OPTIONS ] as const;
-}
-
-export function withoutHttp( url: string ): string {
-	return url.replace( /^https?:\/\//, '' );
 }
 
 function urlToSiteSlug( url: string ): string {

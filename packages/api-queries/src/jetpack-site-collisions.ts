@@ -1,6 +1,6 @@
 import { fetchJetpackSiteUrls } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { withoutHttp } from './site-collision-listener';
+import { withoutHttp } from './utils';
 
 export const jetpackSiteUrlsQuery = () =>
 	queryOptions( {
