@@ -40,27 +40,27 @@ export default function PressableAddonsCustomDescription( { productName, product
 	const addOnType = getAddonType( productSlug );
 	const count = getAddonValue( productSlug );
 
-	const getCalloutCopy = () => {
+	const getCalloutCopy = ( countValue: string ) => {
 		if ( addOnType === 'sites' ) {
 			return translate( 'Site limit will be increased by %(count)s on your Signature plan', {
-				args: { count },
+				args: { count: countValue },
 			} );
 		}
 
 		if ( addOnType === 'storage' ) {
 			return translate( 'Storage limit will be increased by %(count)s on your Signature plan', {
-				args: { count },
+				args: { count: countValue },
 			} );
 		}
 
 		if ( addOnType === 'visits' ) {
 			return translate( 'Visits limit will be increased by %(count)s on your Signature plan', {
-				args: { count },
+				args: { count: countValue },
 			} );
 		}
 
 		return translate( 'Plan limit will be increased by %(count)s on your Signature plan', {
-			args: { count },
+			args: { count: countValue },
 		} );
 	};
 
@@ -94,7 +94,7 @@ export default function PressableAddonsCustomDescription( { productName, product
 			{ count !== null && (
 				<div className="pressable-addons-custom-description__callout">
 					<Icon icon={ info } size={ 16 } />
-					<span>{ getCalloutCopy() }</span>
+					<span>{ getCalloutCopy( count ) }</span>
 				</div>
 			) }
 			<div className="pressable-addons-custom-description__section">
