@@ -3,6 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	createSiteFromDomainOnly,
@@ -31,6 +32,11 @@ jest.mock(
 		useDomainToPlanCreditsApplicable: jest.fn(),
 	} )
 );
+
+jest.mock( 'calypso/dashboard/app/routing', () => ( {
+	...jest.requireActual( 'calypso/dashboard/app/routing' ),
+	getDashboardFromQuery: jest.fn(),
+} ) );
 
 const mockDomainPurchase: ReceiptPurchase = {
 	meta: 'example.com',
@@ -198,6 +204,16 @@ describe( 'DomainOnlyNew', () => {
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
 				'href',
 				`/setup/site-migration?siteSlug=${ mockDomainPurchase.meta }`
+			);
+		} );
+
+		it( 'links to the site migration setup flow with dashboard query param if present', () => {
+			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+			renderComponent();
+
+			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
+				'href',
+				`/setup/site-migration?dashboard=ciab&siteSlug=${ mockDomainPurchase.meta }`
 			);
 		} );
 	} );
