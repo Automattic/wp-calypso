@@ -2,10 +2,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
+import { LoginPageWrapper } from '../login-page-wrapper';
 import { PermissionsList } from '../permissions-list';
 import { ScreenLayout } from '../screen-layout';
 import { UserCard } from '../user-card';
@@ -225,6 +227,78 @@ export const LoadingScreenVariants: StoryObj< typeof LoadingScreen > = {
 				<LoadingScreen message="Connecting your account..." />
 			</VariantSection>
 		</div>
+	),
+};
+
+// LoginPageWrapper - All variants
+export const LoginPageWrapperVariants: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	),
+};
+
+export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to Woo"
+			description="Continue with your WordPress.com account."
+			descriptionSecondary="By continuing, you agree to our Terms of Service."
+			branding={ {
+				logo: CIAB_PARTNERS.woo.logo.src,
+				logoAlt: CIAB_PARTNERS.woo.logo.alt,
+				logoWidth: CIAB_PARTNERS.woo.logo.width,
+				logoHeight: CIAB_PARTNERS.woo.logo.height,
+				topBarLogo: CIAB_PARTNERS.woo.compactLogo?.src,
+				topBarLogoAlt: CIAB_PARTNERS.woo.compactLogo?.alt,
+				topBarLogoWidth: CIAB_PARTNERS.woo.compactLogo?.width,
+				topBarLogoHeight: CIAB_PARTNERS.woo.compactLogo?.height,
+				colors: CIAB_PARTNERS.woo.colors,
+			} }
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+			<ConsentText>
+				By continuing, you agree to our{ ' ' }
+				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
+					Terms of Service
+				</a>
+				.
+			</ConsentText>
+		</LoginPageWrapper>
+	),
+};
+
+export const LoginPageWrapperWithRedirectTo: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="All top links include redirect_to when provided."
+			redirectTo="https://wordpress.com/home/example.wordpress.com"
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks?source=login' } }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	),
+};
+
+export const LoginPageWrapperLoading: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			isLoading
+			loadingMessage="Loading account details..."
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
 	),
 };
 

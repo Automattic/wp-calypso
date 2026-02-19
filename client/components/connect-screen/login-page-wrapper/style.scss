@@ -1,0 +1,85 @@
+.connect-screen-login-page-wrapper {
+	--connect-screen-login-page-wrapper-text-color: var( --color-text, #1d2327 );
+	--connect-screen-login-page-wrapper-link-color: var( --color-link, #3858e9 );
+	--connect-screen-login-page-wrapper-accent-color: var( --studio-wordpress-blue, #3858e9 );
+
+	color: var( --connect-screen-login-page-wrapper-text-color );
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.connect-screen-login-page-wrapper__top-bar {
+	min-height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.connect-screen-login-page-wrapper__top-bar-start,
+.connect-screen-login-page-wrapper__top-bar-end {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.connect-screen-login-page-wrapper__top-bar-end {
+	margin-left: auto;
+}
+
+.connect-screen-login-page-wrapper__top-bar-logo {
+	display: inline-flex;
+	align-items: center;
+}
+
+.connect-screen-login-page-wrapper__top-bar-link {
+	color: var( --connect-screen-login-page-wrapper-link-color );
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 0.2rem;
+
+	&:hover,
+	&:focus {
+		color: var( --connect-screen-login-page-wrapper-accent-color );
+	}
+}
+
+.connect-screen-login-page-wrapper__header {
+	margin-top: 0.5rem;
+	text-align: center;
+}
+
+.connect-screen-login-page-wrapper__description-secondary {
+	margin: -0.5rem 0 0;
+	text-align: center;
+	font-size: 0.875rem;
+	color: color-mix(
+		in srgb,
+		var( --connect-screen-login-page-wrapper-text-color ) 72%,
+		transparent
+	);
+}
+
+.connect-screen-login-page-wrapper__before-content {
+	width: 100%;
+}
+
+.connect-screen-login-page-wrapper__content {
+	width: 100%;
+}
+
+.connect-screen-login-page-wrapper__footer {
+	font-size: 0.875rem;
+	text-align: center;
+
+	a {
+		color: var( --connect-screen-login-page-wrapper-link-color );
+	}
+}
+
+.connect-screen-login-page-wrapper__loading {
+	margin: 1rem 0;
+}

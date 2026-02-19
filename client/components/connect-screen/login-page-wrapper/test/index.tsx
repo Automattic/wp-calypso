@@ -1,0 +1,117 @@
+/** @jest-environment jsdom */
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import { LoginPageWrapper } from '../index';
+
+describe( 'LoginPageWrapper', () => {
+	it( 'renders title, descriptions, and content', () => {
+		render(
+			<LoginPageWrapper
+				title="Log in to your account"
+				description="Use your WordPress.com account to continue."
+				descriptionSecondary="Need help? Contact support."
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Log in to your account' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Use your WordPress.com account to continue.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Need help? Contact support.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Form content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'applies wrapper className and contentClassName', () => {
+		const { container } = render(
+			<LoginPageWrapper title="Log in" className="custom-wrapper" contentClassName="custom-content">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( container.querySelector( '.connect-screen-login-page-wrapper' ) ).toHaveClass(
+			'custom-wrapper'
+		);
+		expect( container.querySelector( '.connect-screen-login-page-wrapper__content' ) ).toHaveClass(
+			'custom-content'
+		);
+	} );
+
+	it( 'renders top bar links and appends redirectTo to their href', () => {
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				redirectTo="https://example.com/return"
+				primaryNavLink={ {
+					label: 'Create an account',
+					href: '/start/account',
+				} }
+				secondaryNavLink={ {
+					label: 'No thanks',
+					href: '/no-thanks?source=login',
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Create an account' } ) ).toHaveAttribute(
+			'href',
+			'/start/account?redirect_to=https%3A%2F%2Fexample.com%2Freturn'
+		);
+		expect( screen.getByRole( 'link', { name: 'No thanks' } ) ).toHaveAttribute(
+			'href',
+			'/no-thanks?source=login&redirect_to=https%3A%2F%2Fexample.com%2Freturn'
+		);
+	} );
+
+	it( 'does not override existing redirect_to query parameter', () => {
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				redirectTo="https://example.com/return"
+				primaryNavLink={ {
+					label: 'Create an account',
+					href: '/start/account?redirect_to=https%3A%2F%2Falready.set%2Ftarget',
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Create an account' } ) ).toHaveAttribute(
+			'href',
+			'/start/account?redirect_to=https%3A%2F%2Falready.set%2Ftarget'
+		);
+	} );
+
+	it( 'renders loading state instead of content when isLoading is true', () => {
+		render(
+			<LoginPageWrapper title="Log in" isLoading loadingMessage="Loading account data...">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByText( 'Loading account data...' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Form content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'calls nav link onClick handlers', () => {
+		const onPrimaryClick = jest.fn();
+
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				primaryNavLink={ {
+					label: 'Create an account',
+					href: '/start/account',
+					onClick: onPrimaryClick,
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		fireEvent.click( screen.getByRole( 'link', { name: 'Create an account' } ) );
+		expect( onPrimaryClick ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
