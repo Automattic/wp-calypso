@@ -2,30 +2,17 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- AgentsManager must be imported after jest.mock */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import type { AgentsManagerContextType } from '../../contexts';
 
-// Store context values captured by the mock
-let mockCapturedContext: AgentsManagerContextType | null = null;
+// Capture props passed to the mocked UnifiedAIAgent
+let capturedProps: Record< string, unknown > | null = null;
 
-// Mock UnifiedAIAgent to avoid complex dependencies and capture context
 jest.mock( '../unified-ai-agent', () => ( {
 	__esModule: true,
-	default: function MockUnifiedAIAgent() {
-		// Import context hook inside mock (allowed with require)
-		const { useAgentsManagerContext } = require( '../../contexts' );
-		mockCapturedContext = useAgentsManagerContext();
-		return (
-			<div data-testid="mock-unified-agent">
-				<span data-testid="context-sectionName">{ mockCapturedContext.sectionName }</span>
-				<span data-testid="context-userId">{ mockCapturedContext.currentUser?.ID ?? 'none' }</span>
-				<span data-testid="context-siteId">{ mockCapturedContext.site?.ID ?? 'none' }</span>
-				<span data-testid="context-siteDomain">{ mockCapturedContext.site?.domain ?? 'none' }</span>
-				<span data-testid="context-isEligibleForChat">
-					{ String( mockCapturedContext.isEligibleForChat ) }
-				</span>
-			</div>
-		);
+	default: function MockUnifiedAIAgent( props: Record< string, unknown > ) {
+		capturedProps = props;
+		return <div data-testid="mock-unified-agent" />;
 	},
 } ) );
 
@@ -34,16 +21,16 @@ import AgentsManager from '../agents-manager';
 
 describe( 'AgentsManager', () => {
 	beforeEach( () => {
-		mockCapturedContext = null;
+		capturedProps = null;
 	} );
 
-	it( 'provides sectionName to child components via context', () => {
+	it( 'forwards sectionName to UnifiedAIAgent', () => {
 		render( <AgentsManager sectionName="gutenberg" /> );
 
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'gutenberg' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { sectionName: 'gutenberg' } ) );
 	} );
 
-	it( 'provides currentUser to child components via context', () => {
+	it( 'forwards currentUser to UnifiedAIAgent', () => {
 		const mockUser = {
 			ID: 123,
 			username: 'testuser',
@@ -53,10 +40,10 @@ describe( 'AgentsManager', () => {
 
 		render( <AgentsManager sectionName="wp-admin" currentUser={ mockUser } /> );
 
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( '123' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { currentUser: mockUser } ) );
 	} );
 
-	it( 'provides site to child components via context', () => {
+	it( 'forwards site to UnifiedAIAgent', () => {
 		const mockSite = {
 			ID: 456,
 			domain: 'example.com',
@@ -64,20 +51,10 @@ describe( 'AgentsManager', () => {
 
 		render( <AgentsManager sectionName="wp-admin" site={ mockSite } /> );
 
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( '456' );
-		expect( screen.getByTestId( 'context-siteDomain' ).textContent ).toBe( 'example.com' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { site: mockSite } ) );
 	} );
 
-	it( 'uses default values for unspecified context fields', () => {
-		render( <AgentsManager sectionName="wp-admin" /> );
-
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'wp-admin' );
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( 'none' );
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( 'none' );
-		expect( screen.getByTestId( 'context-isEligibleForChat' ).textContent ).toBe( 'false' );
-	} );
-
-	it( 'provides all props together to child components', () => {
+	it( 'forwards all props together to UnifiedAIAgent', () => {
 		const mockUser = {
 			ID: 789,
 			username: 'fulltest',
@@ -94,9 +71,12 @@ describe( 'AgentsManager', () => {
 			<AgentsManager sectionName="site-editor" currentUser={ mockUser } site={ mockSite } />
 		);
 
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'site-editor' );
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( '789' );
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( '999' );
-		expect( screen.getByTestId( 'context-siteDomain' ).textContent ).toBe( 'fulltest.com' );
+		expect( capturedProps ).toEqual(
+			expect.objectContaining( {
+				sectionName: 'site-editor',
+				currentUser: mockUser,
+				site: mockSite,
+			} )
+		);
 	} );
 } );

@@ -1,10 +1,14 @@
 import { getAgentManager } from '@automattic/agenttic-client';
-import { AgentsManagerSelect } from '@automattic/data-stores';
+import {
+	AgentsManagerSelect,
+	type AgentsManagerSite,
+	type CurrentUser,
+} from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAgentsManagerContext } from '../../contexts';
+import { AgentsManagerContextProvider, useAgentsManagerContext } from '../../contexts';
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { createAgentConfig, getAgentConfig } from '../../utils/agent-config';
@@ -15,6 +19,12 @@ import { PersistentRouter } from '../persistent-router';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
+	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
+	sectionName: string;
+	/** The current user object. */
+	currentUser?: CurrentUser;
+	/** The selected site object. */
+	site?: AgentsManagerSite | null;
 	/** The current route path. */
 	currentRoute?: string;
 	/** Called when the agent is closed. */
@@ -23,7 +33,12 @@ export interface UnifiedAIAgentProps {
 
 const queryClient = new QueryClient();
 
-export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Element | null {
+export default function UnifiedAIAgent( {
+	sectionName,
+	currentUser,
+	site,
+	...props
+}: UnifiedAIAgentProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {
@@ -36,16 +51,23 @@ export default function UnifiedAIAgent( props: UnifiedAIAgentProps ): JSX.Elemen
 	}
 
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<PersistentRouter>
-				<AgentSetup { ...props } />
-			</PersistentRouter>
-		</QueryClientProvider>
+		<AgentsManagerContextProvider value={ { sectionName, currentUser, site } }>
+			<QueryClientProvider client={ queryClient }>
+				<PersistentRouter>
+					<AgentSetup { ...props } />
+				</PersistentRouter>
+			</QueryClientProvider>
+		</AgentsManagerContextProvider>
 	);
 }
 
+interface AgentSetupProps {
+	/** The current route path. */
+	currentRoute?: string;
+}
+
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null {
+function AgentSetup( { currentRoute }: AgentSetupProps ): JSX.Element | null {
 	const { site } = useAgentsManagerContext();
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
