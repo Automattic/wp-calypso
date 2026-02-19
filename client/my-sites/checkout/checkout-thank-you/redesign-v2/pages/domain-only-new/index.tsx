@@ -1,7 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { OptionContent } from 'calypso/components/option-content';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	createSiteFromDomainOnly,
@@ -106,7 +108,10 @@ export default function DomainOnlyNew( {
 				/>
 				<Step.LinkButton
 					className="domain-only-new__migrate-link"
-					href={ `/setup/site-migration?siteSlug=${ domainPurchase.meta }` }
+					href={ addQueryArgs( '/setup/site-migration', {
+						dashboard: getDashboardFromQuery(),
+						siteSlug: domainPurchase.meta,
+					} ) }
 				>
 					{ translate( 'Migrate an existing site' ) }
 				</Step.LinkButton>
