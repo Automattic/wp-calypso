@@ -52,6 +52,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getActivityLogHiddenGroups from 'calypso/state/selectors/get-activity-log-hidden-groups';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
@@ -647,7 +648,9 @@ function withActivityLog( Inner ) {
 	const WithActivityLog = ( props ) => {
 		const { siteId, filter, gmtOffset, timezone, rewindState } = props;
 		const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
-		const { data, isSuccess } = useActivityLogQuery( siteId, filter );
+		const notGroup = useSelector( ( state ) => getActivityLogHiddenGroups( state, siteId ) );
+		const filterWithNotGroup = notGroup ? { ...filter, notGroup } : filter;
+		const { data, isSuccess } = useActivityLogQuery( siteId, filterWithNotGroup );
 		const allLogEntries = data ?? emptyList;
 		const visibleLogEntries = filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone );
 		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;

@@ -3,7 +3,7 @@
 .help-center-support-chat__conversation-sub-information {
 	color: var( --studio-gray-50, #646970 );
 	display: flex;
-	font-size: 0.75rem;
+	font-size: $font-body-extra-small;
 	align-items: center;
 	gap: 4px;
 
@@ -86,7 +86,7 @@
 			box-sizing: border-box;
 			min-width: 26px;
 			height: 20px;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			background-color: $help-center-blue;
 			color: #fff;
 		}
@@ -102,7 +102,7 @@
 			display: -webkit-box;
 			color: #000;
 			font-weight: 500;
-			font-size: 0.875rem;
+			font-size: $font-body-small;
 			line-height: 20px;
 			letter-spacing: -0.15px;
 			text-overflow: ellipsis;

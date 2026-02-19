@@ -333,6 +333,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	return purchase.product_name;
 }
 
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
+	}
+	return getTitleForDisplay( purchase );
+}
+
 /**
  * Return a short description of a purchase, usually used as a subtitle for that
  * purchase's product name (as defined by `getTitleForDisplay`).

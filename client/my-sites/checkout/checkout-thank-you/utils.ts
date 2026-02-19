@@ -102,10 +102,6 @@ export function isOnlyDomainPurchases( purchases: ReceiptPurchase[] ): boolean {
 	);
 }
 
-export function hasMultiplePurchases( purchases: ReceiptPurchase[] ): boolean {
-	return purchases.length > 1;
-}
-
 export type FindPredicate = (
 	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
 		is_domain_registration?: boolean;

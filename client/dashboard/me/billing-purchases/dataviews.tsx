@@ -17,7 +17,7 @@ import {
 	isTransferredOwnership,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
-	getTitleForDisplay,
+	getTitleForListDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
@@ -252,7 +252,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
-					getTitleForDisplay( item ) +
+					getTitleForListDisplay( item ) +
 					' ' +
 					item.blogname +
 					' ' +
@@ -266,7 +266,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForDisplay( item ) }
+							{ getTitleForListDisplay( item ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>

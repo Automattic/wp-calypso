@@ -1,8 +1,3 @@
----
-paths:
-  - "client/**"
----
-
 You are an expert React + TypeScript programming assistant focused on producing clear, readable, and production-quality code.
 
 ## Core Principles

@@ -46,7 +46,6 @@ export const SITE_OPTIONS = [
 	'unmapped_url',
 	'is_difm_lite_in_progress',
 	'is_gating_business_q1',
-	'is_summer_special_2025',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
