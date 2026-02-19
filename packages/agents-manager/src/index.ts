@@ -6,9 +6,6 @@ export type { HeadlessAgentInitializerProps } from './components/headless-agent-
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
-// Context exports
-export { useAgentsManagerContext, type AgentsManagerContextType } from './contexts';
-
 // Utility for checking unified experience from inline script data
 export { getUseUnifiedExperienceFromInlineData } from './utils/load-external-providers';
 

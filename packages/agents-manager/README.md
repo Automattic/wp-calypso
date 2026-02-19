@@ -12,7 +12,7 @@ yarn add @automattic/agents-manager
 
 ### Basic Integration
 
-The main component is `AgentsManager`. It handles the initialization of the agent, session management, and UI rendering.
+The main component is `AgentsManager`. It handles agent initialization, session management, and UI rendering.
 
 ```tsx
 import AgentsManager from '@automattic/agents-manager';
@@ -30,11 +30,23 @@ function MyApp() {
 }
 ```
 
+### Headless Agent Initialization
+
+Use `HeadlessAgentInitializer` when you need to create the agent without rendering the chat UI (e.g., for Image Studio in the Media Library):
+
+```tsx
+import { HeadlessAgentInitializer } from '@automattic/agents-manager';
+
+function MyApp() {
+	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
+}
+```
+
 ### External Provider Extensions
 
 Custom tools, context providers, suggestions, and markdown extensions are loaded automatically from external plugins via the `loadExternalProviders()` utility. Plugins can register their providers by implementing the extension API.
 
-See the `extension-types.ts` file for the full API documentation on creating custom:
+See `src/extension-types.ts` for the full API documentation on creating custom:
 
 - **Tool Providers**: Register custom abilities the agent can execute
 - **Context Providers**: Provide environment-specific context to the agent
@@ -59,11 +71,11 @@ function MyComponent() {
 }
 ```
 
-### Custom Event Bridge (non-React integrations)
+### Window API (cross-app integration)
 
-If you need to control the Agents Manager UI from outside the React tree (for example from a host app, legacy code, or a separate bundle), you can dispatch the `agents-manager:action` custom event.
+The Agents Manager exposes a `window.__agentsManagerActions` API for controlling the UI from outside the React tree (e.g., from a host app, legacy code, or a separate bundle).
 
-See: `src/hooks/use-custom-event-handler/README.md`.
+See `src/hooks/use-setup-custom-actions/README.md` for details.
 
 ## API Reference
 
@@ -77,11 +89,24 @@ See: `src/hooks/use-custom-event-handler/README.md`.
 | `currentRoute` | `string` (optional)            | The current route path.                                            |
 | `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                   |
 
+### Exported Hooks and Utilities
+
+```tsx
+import { useShouldUseUnifiedAgent, getUseUnifiedExperienceFromInlineData } from '@automattic/agents-manager';
+
+// Check if the unified agent experience is active
+const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+
+// Read the unified experience flag from inline script data (non-hook)
+const useUnifiedExperience = getUseUnifiedExperienceFromInlineData();
+```
+
 ### Exported Types
 
 ```tsx
 import type {
 	AgentsManagerProps,
+	HeadlessAgentInitializerProps,
 	Ability,
 	ToolProvider,
 	ContextProvider,
