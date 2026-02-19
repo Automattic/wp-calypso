@@ -95,6 +95,47 @@ describe( 'LoginPageWrapper', () => {
 		expect( screen.queryByText( 'Form content' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders social-first two-column layout when socialButtons are provided', () => {
+		const { container } = render(
+			<LoginPageWrapper
+				title="Log in"
+				socialButtons={ <div data-testid="social-buttons-content">Social buttons</div> }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( container.querySelector( '.connect-screen-login-page-wrapper' ) ).toHaveClass(
+			'connect-screen-login-page-wrapper--social-first'
+		);
+		expect(
+			container.querySelector( '.connect-screen-login-page-wrapper__columns' )
+		).toBeInTheDocument();
+		expect(
+			container.querySelector( '.connect-screen-login-page-wrapper__column--form' )
+		).toBeInTheDocument();
+		expect(
+			container.querySelector( '.connect-screen-login-page-wrapper__column--social' )
+		).toBeInTheDocument();
+		expect( screen.getByTestId( 'social-buttons-content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides social divider when showSocialDivider is false', () => {
+		const { container } = render(
+			<LoginPageWrapper
+				title="Log in"
+				showSocialDivider={ false }
+				socialButtons={ <div>Social buttons</div> }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect(
+			container.querySelector( '.connect-screen-login-page-wrapper__divider' )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'calls nav link onClick handlers', () => {
 		const onPrimaryClick = jest.fn();
 

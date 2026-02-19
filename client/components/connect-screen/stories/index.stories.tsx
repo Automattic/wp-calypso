@@ -2,7 +2,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
+import { MagicLoginButton, UsernameOrEmailButton } from '../../social-buttons';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
@@ -24,6 +27,30 @@ const VariantSection = ( { title, children }: { title: string; children: React.R
 		<h4 style={ { marginBottom: '0.5rem', color: '#666', fontSize: '12px' } }>{ title }</h4>
 		{ children }
 	</div>
+);
+
+const socialButtonsStore = createStore( () => ( {
+	login: {
+		isFormDisabled: false,
+	},
+	oauth2Clients: {
+		ui: {
+			currentClientId: null,
+		},
+	},
+} ) );
+
+const SocialButtonsPanel = () => (
+	<Provider store={ socialButtonsStore }>
+		<div className="auth-form__social is-login is-social-first">
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					<UsernameOrEmailButton onClick={ () => {} } />
+					<MagicLoginButton loginUrl="https://wordpress.com/log-in/link" />
+				</div>
+			</div>
+		</div>
+	</Provider>
 );
 
 // Mock data
@@ -300,6 +327,37 @@ export const LoginPageWrapperLoading: StoryObj< typeof LoginPageWrapper > = {
 			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
 		</LoginPageWrapper>
 	),
+};
+
+export const LoginPageWrapperSocialTwoColumn: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			socialButtons={ <SocialButtonsPanel /> }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	),
+};
+
+export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			socialButtons={ <SocialButtonsPanel /> }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+	},
 };
 
 // Full Example - Combined Components

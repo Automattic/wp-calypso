@@ -46,9 +46,16 @@ export interface LoginPageWrapperProps {
 	loadingMessage?: ReactNode;
 	beforeContent?: ReactNode;
 	children: ReactNode;
+	/**
+	 * Optional right-side social buttons column.
+	 * Pass a composition using components from `calypso/components/social-buttons`.
+	 */
+	socialButtons?: ReactNode;
+	showSocialDivider?: boolean;
 	footer?: ReactNode;
 	className?: string;
 	contentClassName?: string;
+	socialColumnClassName?: string;
 	backgroundColor?: string;
 }
 
@@ -113,11 +120,16 @@ export function LoginPageWrapper( {
 	loadingMessage,
 	beforeContent,
 	children,
+	socialButtons,
+	showSocialDivider = true,
 	footer,
 	className,
 	contentClassName,
+	socialColumnClassName,
 	backgroundColor,
 }: LoginPageWrapperProps ): JSX.Element {
+	const isSocialFirst = Boolean( socialButtons );
+
 	const customStyles: CSSProperties = {
 		'--connect-screen-login-page-wrapper-text-color': branding?.colors?.textColor,
 		'--connect-screen-login-page-wrapper-link-color': branding?.colors?.linkColor,
@@ -134,7 +146,9 @@ export function LoginPageWrapper( {
 	return (
 		<ScreenLayout backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }>
 			<div
-				className={ clsx( 'connect-screen-login-page-wrapper', className ) }
+				className={ clsx( 'connect-screen-login-page-wrapper', className, {
+					'connect-screen-login-page-wrapper--social-first': isSocialFirst,
+				} ) }
 				style={ customStyles }
 			>
 				<div className="connect-screen-login-page-wrapper__top-bar">
@@ -198,9 +212,48 @@ export function LoginPageWrapper( {
 							</div>
 						) }
 						<div
-							className={ clsx( 'connect-screen-login-page-wrapper__content', contentClassName ) }
+							className={ clsx(
+								'connect-screen-login-page-wrapper__content',
+								! isSocialFirst && contentClassName
+							) }
 						>
-							{ children }
+							{ isSocialFirst ? (
+								<div className="connect-screen-login-page-wrapper__columns">
+									<div
+										className={ clsx(
+											'connect-screen-login-page-wrapper__column',
+											'connect-screen-login-page-wrapper__column--form',
+											contentClassName
+										) }
+									>
+										{ children }
+									</div>
+									{ showSocialDivider && (
+										<div
+											className="connect-screen-login-page-wrapper__divider"
+											aria-hidden="true"
+										/>
+									) }
+									<div
+										className={ clsx(
+											'connect-screen-login-page-wrapper__column',
+											'connect-screen-login-page-wrapper__column--social',
+											socialColumnClassName
+										) }
+									>
+										{ socialButtons }
+									</div>
+								</div>
+							) : (
+								<div
+									className={ clsx(
+										'connect-screen-login-page-wrapper__column',
+										contentClassName
+									) }
+								>
+									{ children }
+								</div>
+							) }
 						</div>
 						{ footer && (
 							<div className="connect-screen-login-page-wrapper__footer">{ footer }</div>

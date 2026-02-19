@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .connect-screen-login-page-wrapper {
 	--connect-screen-login-page-wrapper-text-color: var( --color-text, #1d2327 );
 	--connect-screen-login-page-wrapper-link-color: var( --color-link, #3858e9 );
@@ -69,6 +72,71 @@
 
 .connect-screen-login-page-wrapper__content {
 	width: 100%;
+}
+
+.connect-screen-login-page-wrapper__columns {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 1rem;
+		max-width: 758px;
+		margin: 0 auto;
+	}
+}
+
+.connect-screen-login-page-wrapper__column {
+	width: 100%;
+}
+
+.connect-screen-login-page-wrapper__column--form,
+.connect-screen-login-page-wrapper__column--social {
+	@include break-mobile {
+		max-width: var( --login-form-column-max-width, 327px );
+	}
+}
+
+.connect-screen-login-page-wrapper__column--form {
+	@include break-mobile {
+		padding: 0 16px;
+	}
+}
+
+.connect-screen-login-page-wrapper__column--social {
+	.auth-form__social {
+		margin: 0;
+	}
+
+	.auth-form__social-buttons,
+	.auth-form__social-buttons-container {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.auth-form__social.is-social-first .auth-form__social-buttons-container {
+		gap: 16px;
+	}
+}
+
+.connect-screen-login-page-wrapper__divider {
+	display: none;
+
+	@include break-mobile {
+		display: block;
+		width: 1px;
+		align-self: stretch;
+		background: color-mix(
+			in srgb,
+			var( --connect-screen-login-page-wrapper-text-color ) 12%,
+			transparent
+		);
+	}
 }
 
 .connect-screen-login-page-wrapper__footer {
