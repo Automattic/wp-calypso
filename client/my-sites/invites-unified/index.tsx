@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
+import { isAlreadyMemberError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
 /**
@@ -46,7 +47,7 @@ export function UnifiedInviteAccept( {
 	}
 
 	// Already a member → show already-member screen
-	if ( inviteError?.error === 'already_member' || inviteError?.error === 'already_subscribed' ) {
+	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
 		const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
 	}

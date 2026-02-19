@@ -1,6 +1,7 @@
 import { type Context } from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
+import { isAlreadyMemberError } from './utils';
 import UnifiedInviteAccept from './index';
 import type { InviteBlogDetails } from './types';
 
@@ -36,17 +37,6 @@ function shouldUseUnifiedFlow( blogDetails?: InviteBlogDetails ): boolean {
 			blogDetails?.garden?.partner === 'woo' &&
 			blogDetails?.garden?.name === 'commerce'
 	);
-}
-
-/**
- * Check if the API error indicates the user is already a member
- */
-function isAlreadyMemberError( error: unknown ): error is ApiError {
-	if ( typeof error !== 'object' || error === null || ! ( 'error' in error ) ) {
-		return false;
-	}
-	const apiError = error as ApiError;
-	return apiError.error === 'already_member' || apiError.error === 'already_subscribed';
 }
 
 /**
@@ -91,13 +81,14 @@ export async function maybeUseUnifiedInvite( context: Context, next: () => void 
 	} catch ( error: unknown ) {
 		// Handle "already a member" errors in unified flow.
 		// The error response may include garden data we use to determine if the site is CIAB.
-		if ( isAlreadyMemberError( error ) ) {
-			const blogDetails = getBlogDetailsFromError( error );
+		const apiError = error as ApiError;
+		if ( apiError.error && isAlreadyMemberError( apiError.error ) ) {
+			const blogDetails = getBlogDetailsFromError( apiError );
 
 			if ( shouldUseUnifiedFlow( blogDetails ) ) {
 				context.inviteError = {
-					error: error.error,
-					message: error.message,
+					error: apiError.error,
+					message: apiError.message,
 				};
 				context.inviteData = { blog_details: blogDetails };
 

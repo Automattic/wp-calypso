@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { UserCard, type UserCardUser } from 'calypso/components/connect-screen/user-card';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,11 +29,14 @@ export function AlreadyMemberScreen( { blogDetails }: AlreadyMemberScreenProps )
 	const gardenName = blogDetails?.garden?.name || null;
 	const gardenPartner = blogDetails?.garden?.partner || null;
 
-	const trackingProps = {
-		garden_name: gardenName,
-		garden_partner: gardenPartner,
-		unified: true,
-	};
+	const trackingProps = useMemo(
+		() => ( {
+			garden_name: gardenName,
+			garden_partner: gardenPartner,
+			unified: true,
+		} ),
+		[ gardenName, gardenPartner ]
+	);
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
