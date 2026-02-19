@@ -28,7 +28,7 @@ const importBlueprintRequest = async ( {
 	return new Promise< ImportBlueprintResponse >( ( resolve, reject ) => {
 		wpcom.req.post(
 			{
-				path: '/sites/all/imports/library/new',
+				path: `/sites/${ siteId }/imports/library/new`,
 				formData,
 			},
 			{ apiVersion: '1.1' },
