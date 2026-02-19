@@ -84,7 +84,7 @@ export default function AgentDock( {
 	const navigate = useNavigate();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-	// agentConfig is guaranteed non-null here because AgentSetup guards rendering
+	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =

@@ -89,7 +89,7 @@ export default function OrchestratorChat( {
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 
-	// agentConfig is guaranteed non-null here because AgentSetup guards rendering
+	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const sessionId = agentConfig!.sessionId;
 	const agentId = agentConfig!.agentId;
 
