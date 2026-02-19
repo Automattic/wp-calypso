@@ -163,7 +163,7 @@ function McpSetupComponent() {
 									) }
 								</Text>
 								<RouterLinkButton
-									to="/me/mcp"
+									to="/me/preferences/ai-and-mcp"
 									variant="primary"
 									style={ { alignSelf: 'flex-start' } }
 								>

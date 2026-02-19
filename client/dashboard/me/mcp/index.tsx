@@ -16,6 +16,7 @@ import {
 	getDisabledSiteIds,
 	getSiteAccountToolsEnabled,
 } from '../../../me/mcp/utils';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -330,7 +331,7 @@ function McpComponent() {
 								/>
 								<VStack style={ { flexShrink: 0 } }>
 									<RouterLinkButton
-										to="/me/mcp/setup"
+										to="/me/preferences/ai-and-mcp/setup"
 										variant="secondary"
 										disabled={ ! anyToolsEnabled }
 									>
@@ -439,7 +440,8 @@ function McpComponent() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'MCP' ) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'AI and MCP' ) }
 					description={ createInterpolateElement(
 						__(
 							'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. <learnMoreLink/>'

@@ -927,12 +927,12 @@ export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Account Settings' ),
+				title: __( 'AI and MCP' ),
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
-	path: 'mcp',
+	getParentRoute: () => preferencesRoute,
+	path: 'ai-and-mcp',
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -980,6 +980,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			preferencesNewHostingDashboardRoute,
 			preferencesLanguageRoute,
 			preferencesDefaultLandingRoute,
+			...( isEnabled( 'mcp-settings' )
+				? [ mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) ]
+				: [] ),
 		] ),
 	];
 
@@ -1043,10 +1046,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.reader ) {
 		meRoutes.push( blockedSitesRoute );
-	}
-
-	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
 	}
 
 	if ( config.supports.me.apps ) {
