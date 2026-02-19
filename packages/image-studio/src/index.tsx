@@ -592,22 +592,4 @@ function ImageStudioIntegration(): JSX.Element | null {
 	);
 }
 
-// Initialize when DOM is ready
-let initialized = false;
-function initialize(): void {
-	if ( initialized ) {
-		return;
-	}
-	initialized = true;
-
-	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', initImageStudioIntegration );
-	} else {
-		initImageStudioIntegration();
-	}
-}
-
-initialize();
-registerBlockEditorFilters();
-
 export { initImageStudioIntegration, registerBlockEditorFilters };
