@@ -1,14 +1,10 @@
-import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
-import { withoutHttp } from './utils';
+import { queryClient, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import { useEffect } from 'react';
 import type { Site, FetchPaginatedSitesResponse } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
-function siteBySlugKey( slug: string ) {
-	return [ 'site-by-slug', slug, SITE_FIELDS, SITE_OPTIONS ] as const;
-}
-
-function siteByIdKey( id: number ) {
-	return [ 'site-by-id', id, SITE_FIELDS, SITE_OPTIONS ] as const;
+function withoutHttp( url: string ): string {
+	return url.replace( /^https?:\/\//, '' );
 }
 
 function urlToSiteSlug( url: string ): string {
@@ -133,11 +129,11 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 		// slug is 'example.wordpress.com'. This should prevent existing components
 		// from breaking, but hopefully any subsequent navigations will use the new
 		// slug and therefore the correct cache key.
-		qc.setQueryData( siteBySlugKey( site.slug ), fixed );
+		qc.setQueryData( siteBySlugQuery( site.slug ).queryKey, fixed );
 
-		qc.setQueryData( siteByIdKey( site.ID ), fixed );
+		qc.setQueryData( siteByIdQuery( site.ID ).queryKey, fixed );
 		if ( fixed.slug !== site.slug ) {
-			qc.setQueryData( siteBySlugKey( fixed.slug ), fixed );
+			qc.setQueryData( siteBySlugQuery( fixed.slug ).queryKey, fixed );
 		}
 	}
 
@@ -155,7 +151,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 				if ( fixed !== site ) {
 					qc.setQueryData( key, fixed );
 					if ( fixed.slug !== site.slug ) {
-						qc.setQueryData( siteBySlugKey( fixed.slug ), fixed );
+						qc.setQueryData( siteBySlugQuery( fixed.slug ).queryKey, fixed );
 					}
 				}
 			}
@@ -267,4 +263,10 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 			}
 		}
 	}
+}
+
+export function useSiteCollisionListener() {
+	useEffect( () => {
+		return startSiteCollisionListener( queryClient );
+	}, [] );
 }

@@ -13,6 +13,7 @@ import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider } from './context';
+import { useSiteCollisionListener } from './hooks/use-site-collision-listener';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import { useSurvicate } from './survicate';
@@ -62,6 +63,7 @@ function AnalyticsProviderWithClient( {
 
 function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
+	useSiteCollisionListener();
 
 	return (
 		<AppProvider config={ config }>

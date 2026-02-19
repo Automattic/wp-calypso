@@ -1,4 +1,3 @@
-import { startSiteCollisionListener } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
@@ -6,6 +5,7 @@ import { Suspense } from 'react';
 import { type AnalyticsClient, AnalyticsProvider } from './app/analytics';
 import { AuthContext } from './app/auth';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from './app/context';
+import { startSiteCollisionListener } from './app/hooks/use-site-collision-listener';
 import type { User } from '@automattic/api-core';
 
 const defaultUser = {

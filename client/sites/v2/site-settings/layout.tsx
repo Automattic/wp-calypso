@@ -10,6 +10,7 @@ import {
 	APP_CONTEXT_DEFAULT_CONFIG,
 	type AppConfig,
 } from 'calypso/dashboard/app/context';
+import { useSiteCollisionListener } from 'calypso/dashboard/app/hooks/use-site-collision-listener';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
@@ -56,6 +57,8 @@ function Layout( {
 	siteSlug?: string;
 	feature?: string;
 } ) {
+	useSiteCollisionListener();
+
 	const APP_CONFIG = {
 		...APP_CONTEXT_DEFAULT_CONFIG,
 		supports: {

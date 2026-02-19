@@ -115,7 +115,6 @@ export * from './site-update-schedules';
 export * from './site-uptime';
 export * from './site-users';
 export * from './site-wordpress-version';
-export * from './site-collision-listener';
 export * from './site';
 export * from './sites';
 export * from './upgrades';

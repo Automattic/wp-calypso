@@ -4,6 +4,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider } from 'calypso/dashboard/app/auth';
+import { useSiteCollisionListener } from 'calypso/dashboard/app/hooks/use-site-collision-listener';
 import router, {
 	routerConfig,
 	syncBrowserHistoryToRouter,
@@ -39,6 +40,8 @@ function Layout( {
 	analyticsClient: AnalyticsClient;
 	siteSlug?: string;
 } ) {
+	useSiteCollisionListener();
+
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>

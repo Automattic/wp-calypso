@@ -1,6 +1,9 @@
 import { fetchJetpackSiteUrls } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { withoutHttp } from './utils';
+
+function withoutHttp( url: string ): string {
+	return url.replace( /^https?:\/\//, '' );
+}
 
 export const jetpackSiteUrlsQuery = () =>
 	queryOptions( {

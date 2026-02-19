@@ -1,15 +1,20 @@
+import {
+	queryClient,
+	siteBySlugQuery,
+	siteByIdQuery,
+	sitesQuery, // eslint-disable-line no-restricted-imports
+	paginatedSitesQuery,
+} from '@automattic/api-queries';
 import nock from 'nock';
-import { queryClient } from '../query-client';
-import { siteBySlugQuery, siteByIdQuery } from '../site';
-import { startSiteCollisionListener } from '../site-collision-listener';
-import { sitesQuery, paginatedSitesQuery } from '../sites';
+import { startSiteCollisionListener } from '../use-site-collision-listener';
 import type { Site } from '@automattic/api-core';
 
 // Mock with Jest so that the same client is used in siteBySlugQuery/siteByIdQuery
-jest.mock( '../query-client', () => {
+jest.mock( '@automattic/api-queries', () => {
 	const { QueryClient: QC } = require( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
-	return { queryClient: qc };
+	const actual = jest.requireActual( '@automattic/api-queries' );
+	return { ...actual, queryClient: qc };
 } );
 
 // notFound used in queryFn error handling — won't fire in success-path tests.
@@ -58,7 +63,7 @@ describe( 'startSiteCollisionListener', () => {
 		mockFetchSite( 'example.com', makeSite( {} ) );
 		await queryClient.fetchQuery( siteBySlugQuery( 'example.com' ) );
 
-		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
+		const fixed = queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
@@ -68,7 +73,7 @@ describe( 'startSiteCollisionListener', () => {
 		mockFetchSite( 'example.com', makeSite( {} ) );
 		await queryClient.fetchQuery( siteBySlugQuery( 'example.com' ) );
 
-		const atNewKey = queryClient.getQueryData(
+		const atNewKey = queryClient.getQueryData< Site >(
 			siteBySlugQuery( 'example.wordpress.com' ).queryKey
 		);
 		expect( atNewKey?.slug ).toBe( 'example.wordpress.com' );
@@ -80,7 +85,7 @@ describe( 'startSiteCollisionListener', () => {
 		mockFetchSite( 42, makeSite( { ID: 42 } ) );
 		await queryClient.fetchQuery( siteByIdQuery( 42 ) );
 
-		const fixed = queryClient.getQueryData( siteByIdQuery( 42 ).queryKey );
+		const fixed = queryClient.getQueryData< Site >( siteByIdQuery( 42 ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
@@ -90,7 +95,7 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( { jetpack: true } );
 		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
+		const result = queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
@@ -120,7 +125,7 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( {} );
 		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
+		const result = queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
@@ -128,7 +133,7 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( {} );
 		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
+		const result = queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
@@ -140,7 +145,7 @@ describe( 'startSiteCollisionListener', () => {
 		} );
 		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
+		const fixed = queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com::path' );
 	} );
 
@@ -185,16 +190,16 @@ describe( 'startSiteCollisionListener', () => {
 		const site = makeSite( {} );
 		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		expect( queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey )?.slug ).toBe(
-			'example.com'
-		);
+		expect(
+			queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey )?.slug
+		).toBe( 'example.com' );
 
 		// Jetpack URLs arrive — should retroactively fix.
 		seedJetpackUrls( [ 'example.com' ] );
 
-		expect( queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey )?.slug ).toBe(
-			'example.wordpress.com'
-		);
+		expect(
+			queryClient.getQueryData< Site >( siteBySlugQuery( 'example.com' ).queryKey )?.slug
+		).toBe( 'example.wordpress.com' );
 	} );
 
 	describe( 'fallback scan detects collisions before jetpack-site-urls resolves', () => {
@@ -243,9 +248,9 @@ describe( 'startSiteCollisionListener', () => {
 				} );
 				queryClient.setQueryData( siteBySlugQuery( wpcomSlug ).queryKey, wpcom );
 
-				expect( queryClient.getQueryData( siteBySlugQuery( wpcomSlug ).queryKey )?.slug ).toBe(
-					`${ wpcomSlug.replace( '.com', '' ) }.wordpress.com`
-				);
+				expect(
+					queryClient.getQueryData< Site >( siteBySlugQuery( wpcomSlug ).queryKey )?.slug
+				).toBe( `${ wpcomSlug.replace( '.com', '' ) }.wordpress.com` );
 			} );
 		}
 	} );
