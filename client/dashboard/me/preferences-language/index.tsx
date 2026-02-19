@@ -17,10 +17,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
-import { SectionHeader } from '../../components/section-header';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import {
 	languagesAsOptions,
 	shouldDisplayCommunityTranslator,
@@ -236,44 +238,50 @@ export default function PreferencesLanguageForm() {
 	];
 
 	return (
-		<form onSubmit={ handleSubmit }>
-			<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Language' ) }
-							description={ __( 'Use this to set the display language for WordPress.com.' ) }
-						/>
-						<NavigationBlocker shouldBlock={ isDirty } />
-						<DataForm< UserSettings >
-							data={ data }
-							fields={ languageFields }
-							form={ languageForm }
-							onChange={ ( edits: Partial< UserSettings > ) => {
-								setFormData( ( current ) => ( { ...current, ...edits } ) );
-							} }
-						/>
-						{ mutation.error && (
-							<Notice status="error" isDismissible={ false }>
-								{ mutation.error.message }
-							</Notice>
-						) }
-						<div>
-							<Button
-								variant="primary"
-								type="submit"
-								accessibleWhenDisabled
-								isBusy={ isSaving }
-								disabled={ ! canSubmit }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</div>
-					</VStack>
-				</CardBody>
-			</Card>
-		</form>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Language' ) }
+					description={ __( 'Set the display language for WordPress.com.' ) }
+				/>
+			}
+		>
+			<form onSubmit={ handleSubmit }>
+				<FlashMessage id="language" message={ __( 'Language setting saved.' ) } />
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
+							<DataForm< UserSettings >
+								data={ data }
+								fields={ languageFields }
+								form={ languageForm }
+								onChange={ ( edits: Partial< UserSettings > ) => {
+									setFormData( ( current ) => ( { ...current, ...edits } ) );
+								} }
+							/>
+							{ mutation.error && (
+								<Notice status="error" isDismissible={ false }>
+									{ mutation.error.message }
+								</Notice>
+							) }
+							<div>
+								<Button
+									variant="primary"
+									type="submit"
+									accessibleWhenDisabled
+									isBusy={ isSaving }
+									disabled={ ! canSubmit }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</div>
+						</VStack>
+					</CardBody>
+				</Card>
+			</form>
+		</PageLayout>
 	);
 }

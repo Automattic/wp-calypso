@@ -1,13 +1,13 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PreferencesDefaultLanding from '../preferences-default-landing';
-import PreferencesLanguageForm from '../preferences-language';
-import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
-import PreferencesPrimarySite from '../preferences-primary-site';
+import PreferencesDefaultLandingSummary from '../preferences-default-landing/summary';
+import PreferencesLanguageSummary from '../preferences-language/summary';
+import PreferencesNewHostingDashboardSummary from '../preferences-new-hosting-dashboard/summary';
 
-export default function Preferences() {
+export default function PreferencesIndex() {
 	const { optIn } = useAppContext();
 
 	return (
@@ -20,10 +20,11 @@ export default function Preferences() {
 				/>
 			}
 		>
-			{ optIn && <PreferencesNewHostingDashboard /> }
-			<PreferencesLanguageForm />
-			<PreferencesPrimarySite />
-			<PreferencesDefaultLanding />
+			<VStack spacing={ 6 }>
+				{ optIn && <PreferencesNewHostingDashboardSummary /> }
+				<PreferencesLanguageSummary />
+				<PreferencesDefaultLandingSummary />
+			</VStack>
 		</PageLayout>
 	);
 }

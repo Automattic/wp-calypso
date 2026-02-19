@@ -117,6 +117,11 @@ export const preferencesRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
+} );
+
+export const preferencesIndexRoute = createRoute( {
+	getParentRoute: () => preferencesRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -126,6 +131,72 @@ export const preferencesRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/preferences' ).then( ( d ) =>
 		createLazyRoute( 'preferences' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const preferencesNewHostingDashboardRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New hosting dashboard' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'new-hosting-dashboard',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/preferences-new-hosting-dashboard' ).then( ( d ) =>
+		createLazyRoute( 'preferences-new-hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const preferencesLanguageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/preferences-language' ).then( ( d ) =>
+		createLazyRoute( 'preferences-language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const preferencesDefaultLandingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Default landing page' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'default-landing-page',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/preferences-default-landing' ).then( ( d ) =>
+		createLazyRoute( 'preferences-default-landing' )( {
 			component: d.default,
 		} )
 	)
@@ -901,7 +972,16 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
+	const meRoutes: AnyRoute[] = [
+		meIndexRoute,
+		profileRoute,
+		preferencesRoute.addChildren( [
+			preferencesIndexRoute,
+			preferencesNewHostingDashboardRoute,
+			preferencesLanguageRoute,
+			preferencesDefaultLandingRoute,
+		] ),
+	];
 
 	meRoutes.push(
 		billingRoute.addChildren( [

@@ -15,10 +15,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
-import { SectionHeader } from '../../components/section-header';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import { wpcomLink } from '../../utils/link';
 import type { Field } from '@wordpress/dataviews';
 
@@ -110,67 +112,73 @@ export default function PreferencesOptInForm() {
 	}
 
 	return (
-		<Card>
-			<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
-			<CardBody>
-				<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
-					<SectionHeader
-						title={ __( 'Try the new Hosting Dashboard' ) }
-						description={ __(
-							'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
-						) }
-						level={ 3 }
-					/>
-					<DataForm< OptInFormData >
-						data={ formData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits ) => {
-							if ( edits.hasOwnProperty( 'enabled' ) ) {
-								recordTracksEvent(
-									'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click',
-									{
-										enabled: edits.enabled,
-									}
-								);
-							}
-							setFormData( ( current ) => ( { ...current, ...edits } ) );
-						} }
-					/>
-					{ ! formData.enabled && ( optIn.value === 'opt-in' || isRedirecting ) && (
-						<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
-							{ createInterpolateElement(
-								__(
-									'<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn’t work and how we can improve.'
-								),
-								{
-									surveyLink: (
-										<ExternalLink
-											href="https://automattic.survey.fm/msd-survey-for-opt-out"
-											onClick={ () =>
-												recordTracksEvent(
-													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
-												)
-											}
-											children={ null }
-										/>
-									),
-								}
-							) }
-						</Notice>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'New hosting dashboard' ) }
+					description={ __(
+						"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
 					) }
-					<Button
-						variant="primary"
-						type="submit"
-						__next40pxDefaultSize
-						accessibleWhenDisabled
-						isBusy={ isPending || isRedirecting }
-						disabled={ isPending || isRedirecting || ! isDirty }
-					>
-						{ __( 'Save' ) }
-					</Button>
-				</VStack>
-			</CardBody>
-		</Card>
+				/>
+			}
+		>
+			<Card>
+				<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
+				<CardBody>
+					<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
+						<DataForm< OptInFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits ) => {
+								if ( edits.hasOwnProperty( 'enabled' ) ) {
+									recordTracksEvent(
+										'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click',
+										{
+											enabled: edits.enabled,
+										}
+									);
+								}
+								setFormData( ( current ) => ( { ...current, ...edits } ) );
+							} }
+						/>
+						{ ! formData.enabled && ( optIn.value === 'opt-in' || isRedirecting ) && (
+							<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
+								{ createInterpolateElement(
+									__(
+										"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
+									),
+									{
+										surveyLink: (
+											<ExternalLink
+												href="https://automattic.survey.fm/msd-survey-for-opt-out"
+												onClick={ () =>
+													recordTracksEvent(
+														'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
+													)
+												}
+												children={ null }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						) }
+						<Button
+							variant="primary"
+							type="submit"
+							__next40pxDefaultSize
+							accessibleWhenDisabled
+							isBusy={ isPending || isRedirecting }
+							disabled={ isPending || isRedirecting || ! isDirty }
+						>
+							{ __( 'Save' ) }
+						</Button>
+					</VStack>
+				</CardBody>
+			</Card>
+		</PageLayout>
 	);
 }

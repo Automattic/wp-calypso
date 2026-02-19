@@ -6,10 +6,14 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import PreferencesPrimarySite from '../preferences-primary-site';
 
 type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
@@ -49,7 +53,7 @@ export default function PreferencesDefaultLanding() {
 			label: __( 'Page' ),
 			Edit: 'radio',
 			elements: [
-				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
+				{ label: __( "Open your primary site's dashboard." ), value: 'primary-site-dashboard' },
 				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
 				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],
@@ -91,40 +95,48 @@ export default function PreferencesDefaultLanding() {
 	};
 
 	return (
-		<Card>
-			<CardBody>
-				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Default landing page' ) }
-							description={ __( 'Choose what you see after logging into WordPress.com' ) }
-						/>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Default landing page' ) }
+					description={ __( 'Choose what you see after logging into WordPress.com' ) }
+				/>
+			}
+		>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							<SectionHeader level={ 3 } title={ __( 'Landing page' ) } />
 
-						<NavigationBlocker shouldBlock={ isDirty } />
-						<DataForm< DefaultLandingPreferencesFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< DefaultLandingPreferencesFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+							<NavigationBlocker shouldBlock={ isDirty } />
+							<DataForm< DefaultLandingPreferencesFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< DefaultLandingPreferencesFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
 
-						<ButtonStack>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								type="submit"
-								isBusy={ isSavingUserPreferences }
-								disabled={ isSavingUserPreferences || ! isDirty }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</ButtonStack>
-					</VStack>
-				</form>
-			</CardBody>
-		</Card>
+							<ButtonStack>
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									type="submit"
+									isBusy={ isSavingUserPreferences }
+									disabled={ isSavingUserPreferences || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</ButtonStack>
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
+			<PreferencesPrimarySite />
+		</PageLayout>
 	);
 }
