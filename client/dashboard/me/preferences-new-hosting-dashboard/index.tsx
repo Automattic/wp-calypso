@@ -1,14 +1,8 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Button,
-	CheckboxControl,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -21,38 +15,8 @@ import FlashMessage from '../../components/flash-message';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import { wpcomLink } from '../../utils/link';
-import type { Field } from '@wordpress/dataviews';
-
-interface OptInFormData {
-	enabled: boolean;
-}
-
-const form = {
-	layout: {
-		type: 'regular' as const,
-	},
-	fields: [ 'enabled' ],
-};
-
-const fields: Field< OptInFormData >[] = [
-	{
-		id: 'enabled',
-		label: __( 'I want to try the beta version.' ),
-		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-			return (
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ field.getValue( { item: data } ) }
-					label={ hideLabelFromVision ? '' : field.label }
-					onChange={ ( value ) => {
-						onChange( { [ field.id ]: value } );
-					} }
-				/>
-			);
-		},
-	},
-];
 
 const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
 
@@ -64,23 +28,18 @@ export default function PreferencesOptInForm() {
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
 	);
-	const [ formData, setFormData ] = useState< OptInFormData >( {
-		enabled: optIn.value === 'opt-in',
-	} );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
-	const isDirty = formData.enabled !== ( optIn.value === 'opt-in' );
+	const isEnabled = optIn.value === 'opt-in';
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-
-		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_submit', {
-			enabled: formData.enabled,
+	const handleToggle = ( enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click', {
+			enabled,
 		} );
 
 		saveOptInPreference(
 			{
-				value: formData.enabled ? 'opt-in' : 'opt-out',
+				value: enabled ? 'opt-in' : 'opt-out',
 				updated_at: new Date().toISOString(),
 			},
 			{
@@ -118,67 +77,56 @@ export default function PreferencesOptInForm() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'New hosting dashboard' ) }
-					description={ __(
-						"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
-					) }
 				/>
 			}
 		>
 			<Card>
 				<FlashMessage id="dashboard" message={ __( 'New Hosting Dashboard enabled.' ) } />
 				<CardBody>
-					<VStack as="form" onSubmit={ handleSubmit } spacing={ 4 } alignment="flex-start">
-						<DataForm< OptInFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits ) => {
-								if ( edits.hasOwnProperty( 'enabled' ) ) {
-									recordTracksEvent(
-										'calypso_dashboard_me_preferences_new_hosting_dashboard_toggle_click',
-										{
-											enabled: edits.enabled,
-										}
-									);
-								}
-								setFormData( ( current ) => ( { ...current, ...edits } ) );
-							} }
+					<VStack spacing={ 8 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'New hosting dashboard' ) }
+							description={ __(
+								"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
+							) }
 						/>
-						{ ! formData.enabled && ( optIn.value === 'opt-in' || isRedirecting ) && (
-							<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
-								{ createInterpolateElement(
-									__(
-										"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
-									),
-									{
-										surveyLink: (
-											<ExternalLink
-												href="https://automattic.survey.fm/msd-survey-for-opt-out"
-												onClick={ () =>
-													recordTracksEvent(
-														'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
-													)
-												}
-												children={ null }
-											/>
-										),
-									}
-								) }
-							</Notice>
-						) }
-						<Button
-							variant="primary"
-							type="submit"
-							__next40pxDefaultSize
-							accessibleWhenDisabled
-							isBusy={ isPending || isRedirecting }
-							disabled={ isPending || isRedirecting || ! isDirty }
-						>
-							{ __( 'Save' ) }
-						</Button>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ isEnabled }
+							label={ __( 'Enable new hosting dashboard' ) }
+							disabled={ isPending || isRedirecting }
+							onChange={ handleToggle }
+						/>
 					</VStack>
 				</CardBody>
 			</Card>
+			{ ! isEnabled && isRedirecting && (
+				<Card>
+					<CardBody>
+						<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
+							{ createInterpolateElement(
+								__(
+									"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
+								),
+								{
+									surveyLink: (
+										<ExternalLink
+											href="https://automattic.survey.fm/msd-survey-for-opt-out"
+											onClick={ () =>
+												recordTracksEvent(
+													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
+												)
+											}
+											children={ null }
+										/>
+									),
+								}
+							) }
+						</Notice>
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }

@@ -1,4 +1,9 @@
-import { userPreferencesMutation, rawUserPreferencesQuery } from '@automattic/api-queries';
+import {
+	userPreferencesMutation,
+	userSettingsMutation,
+	userSettingsQuery,
+	rawUserPreferencesQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -8,7 +13,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
-import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -37,16 +41,31 @@ export default function PreferencesDefaultLanding() {
 		},
 	} );
 
-	const { mutateAsync: saveUserPreferences, isPending: isSavingUserPreferences } = useMutation(
+	const { data: savedPrimarySiteId } = useSuspenseQuery( {
+		...userSettingsQuery(),
+		select: ( data ) => data.primary_site_ID,
+	} );
+
+	const { mutateAsync: saveUserPreferences, isPending: isSavingPreferences } = useMutation(
 		userPreferencesMutation()
 	);
 
-	// Initialize form data with default values
+	const { mutateAsync: saveUserSettings, isPending: isSavingSettings } = useMutation(
+		userSettingsMutation()
+	);
+
 	const [ formData, setFormData ] = useState< DefaultLandingPreferencesFormData >( {
 		defaultLandingPage,
 	} );
+	const [ primarySiteId, setPrimarySiteId ] = useState< number | undefined >( savedPrimarySiteId );
 
-	// Define form fields
+	const isLandingPageDirty = defaultLandingPage !== formData.defaultLandingPage;
+	const isPrimarySiteDirty =
+		formData.defaultLandingPage === 'primary-site-dashboard' &&
+		primarySiteId !== savedPrimarySiteId;
+	const isDirty = isLandingPageDirty || isPrimarySiteDirty;
+	const isSaving = isSavingPreferences || isSavingSettings;
+
 	const fields: Field< DefaultLandingPreferencesFormData >[] = [
 		{
 			id: 'defaultLandingPage',
@@ -60,38 +79,40 @@ export default function PreferencesDefaultLanding() {
 		},
 	];
 
-	// Check if form has been modified
-	const isDirty = Boolean( defaultLandingPage !== formData.defaultLandingPage );
-
-	// Define form layout
 	const form = {
 		layout: { type: 'regular' as const },
 		fields: [ 'defaultLandingPage' ],
 	};
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		const updatedAt = Date.now();
-		saveUserPreferences( {
-			'sites-landing-page': {
-				useSitesAsLandingPage: formData.defaultLandingPage === 'sites',
-				updatedAt,
-			},
-			'reader-landing-page': {
-				useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
-				updatedAt,
-			},
-		} )
-			.then( () => {
-				createSuccessNotice( __( 'Default landing page saved.' ), {
-					type: 'snackbar',
-				} );
-			} )
-			.catch( () => {
-				createErrorNotice( __( 'Failed to save default landing page.' ), {
-					type: 'snackbar',
-				} );
-			} );
+	const handleSave = async () => {
+		try {
+			const updatedAt = Date.now();
+			const promises: Promise< unknown >[] = [
+				saveUserPreferences( {
+					'sites-landing-page': {
+						useSitesAsLandingPage: formData.defaultLandingPage === 'sites',
+						updatedAt,
+					},
+					'reader-landing-page': {
+						useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
+						updatedAt,
+					},
+				} ),
+			];
+
+			if ( isPrimarySiteDirty ) {
+				promises.push(
+					saveUserSettings( {
+						primary_site_ID: primarySiteId,
+					} )
+				);
+			}
+
+			await Promise.all( promises );
+			createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+		} catch {
+			createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+		}
 	};
 
 	return (
@@ -102,41 +123,39 @@ export default function PreferencesDefaultLanding() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Default landing page' ) }
 					description={ __( 'Choose what you see after logging into WordPress.com' ) }
+					actions={
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isSaving }
+							disabled={ isSaving || ! isDirty }
+							onClick={ handleSave }
+						>
+							{ __( 'Save' ) }
+						</Button>
+					}
 				/>
 			}
 		>
+			<NavigationBlocker shouldBlock={ isDirty } />
 			<Card>
 				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ __( 'Landing page' ) } />
-
-							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< DefaultLandingPreferencesFormData >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< DefaultLandingPreferencesFormData > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-
-							<ButtonStack>
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									type="submit"
-									isBusy={ isSavingUserPreferences }
-									disabled={ isSavingUserPreferences || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
+					<VStack spacing={ 4 }>
+						<SectionHeader level={ 3 } title={ __( 'Landing page' ) } />
+						<DataForm< DefaultLandingPreferencesFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< DefaultLandingPreferencesFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+					</VStack>
 				</CardBody>
 			</Card>
-			<PreferencesPrimarySite />
+			{ formData.defaultLandingPage === 'primary-site-dashboard' && (
+				<PreferencesPrimarySite primarySiteId={ primarySiteId } onChange={ setPrimarySiteId } />
+			) }
 		</PageLayout>
 	);
 }
