@@ -643,7 +643,10 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
-	const onCancellationStart = ( cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null ) => {
+	const onCancellationStart = (
+		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
+		customerConfirmedUnderstanding = false
+	) => {
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
 			includedDomainPurchase &&
@@ -652,6 +655,7 @@ export default function CancelPurchase() {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
+				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
@@ -660,6 +664,7 @@ export default function CancelPurchase() {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
+				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				surveyShown: true,
 			} ) );
@@ -667,7 +672,9 @@ export default function CancelPurchase() {
 	};
 
 	const onCancellationStartForRefund = () => {
-		onCancellationStart( 'refund' );
+		// Explicitly clicking the refund notice button is the user's confirmation — skip the
+		// confirmation checkbox that would otherwise be required on the pre-survey screen.
+		onCancellationStart( 'refund', true );
 	};
 
 	const clickNext = () => {
