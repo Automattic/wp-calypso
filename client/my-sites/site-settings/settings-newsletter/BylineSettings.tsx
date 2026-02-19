@@ -9,6 +9,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BylinePreview } from './BylinePreview';
 
@@ -36,10 +37,14 @@ export const BylineSettings = ( {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const user = useSelector( getCurrentUser );
-	const siteSlug = site?.slug || '';
 	const timezone = useSelector( ( state ) =>
 		site?.ID ? getSiteTimezoneValue( state, Number( site.ID ) ) : null
 	);
+	const siteSlug = site?.slug || '';
+	const generalSettingsUrl =
+		useSelector( ( state ) =>
+			getSiteAdminUrl( state, site?.ID ? Number( site.ID ) : null, 'options-general.php' )
+		) ?? `/settings/general/${ siteSlug }`;
 
 	const localizedDate = getLocalizedDate( timezone || 'UTC' );
 	const formattedDate = phpToMomentDatetimeFormat( localizedDate, dateFormat );
@@ -98,7 +103,7 @@ export const BylineSettings = ( {
 						'You can customize the date format in your site’s {{link}}general settings{{/link}}',
 						{
 							components: {
-								link: <a href={ `/settings/writing/${ siteSlug }` } />,
+								link: <a href={ generalSettingsUrl } />,
 							},
 						}
 					) }
