@@ -42,7 +42,7 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 
 		useEffect( () => {
 			if ( source?.startsWith( 'ciab-' ) ) {
-				initPostHog( currentUser ?? undefined );
+				initPostHog( config( 'ciab_posthog_api_key' ), currentUser ?? undefined );
 			}
 		}, [ source, currentUser ] );
 	},

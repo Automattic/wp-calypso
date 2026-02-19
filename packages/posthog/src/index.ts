@@ -1,7 +1,5 @@
 import posthog from 'posthog-js';
 
-const POSTHOG_API_KEY = 'phc_tHmeIeJcb4zGfiX4akJwyGq7lioUpCoHd65LKbVPcoR';
-
 let initialized = false;
 
 export interface PostHogUser {
@@ -19,14 +17,14 @@ export function reset() {
 	initialized = false;
 }
 
-export function init( user?: PostHogUser ) {
-	if ( initialized ) {
+export function init( apiKey: string, user?: PostHogUser ) {
+	if ( initialized || ! apiKey ) {
 		return;
 	}
 
 	initialized = true;
 
-	posthog.init( POSTHOG_API_KEY, {
+	posthog.init( apiKey, {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
 		defaults: '2026-01-30',
