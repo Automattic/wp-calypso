@@ -19,6 +19,43 @@ describe( 'LoginPageWrapper', () => {
 		expect( screen.getByText( 'Use your WordPress.com account to continue.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Need help? Contact support.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Form content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'WordPress.com email address or username' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email address or username' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'name', 'usernameOrEmail' );
+	} );
+
+	it( 'renders username-only label when isUsernameOnly is enabled', () => {
+		render(
+			<LoginPageWrapper title="Log in" isUsernameOnly>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Email address or username' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'calls onUsernameOrEmailChange with updated value', () => {
+		const onUsernameOrEmailChange = jest.fn();
+
+		render(
+			<LoginPageWrapper title="Log in" onUsernameOrEmailChange={ onUsernameOrEmailChange }>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		fireEvent.change( screen.getByRole( 'textbox' ), { target: { value: 'demo-user' } } );
+		expect( onUsernameOrEmailChange ).toHaveBeenCalledWith( 'demo-user' );
+	} );
+
+	it( 'supports controlled usernameOrEmail input', () => {
+		render(
+			<LoginPageWrapper title="Log in" usernameOrEmail="controlled-user">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'controlled-user' );
 	} );
 
 	it( 'applies wrapper className and contentClassName', () => {

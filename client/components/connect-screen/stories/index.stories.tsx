@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
@@ -52,6 +53,21 @@ const SocialButtonsPanel = () => (
 		</div>
 	</Provider>
 );
+
+const LoginPageWrapperControlledInputStory = () => {
+	const [ usernameOrEmail, setUsernameOrEmail ] = useState( 'demo-user' );
+
+	return (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			usernameOrEmail={ usernameOrEmail }
+			onUsernameOrEmailChange={ setUsernameOrEmail }
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	);
+};
 
 // Mock data
 const mockUser = {
@@ -358,6 +374,22 @@ export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWr
 			defaultViewport: 'mobile1',
 		},
 	},
+};
+
+export const LoginPageWrapperUsernameOnlyLabel: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			description="Use your WordPress.com account to continue."
+			isUsernameOnly
+		>
+			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
+		</LoginPageWrapper>
+	),
+};
+
+export const LoginPageWrapperControlledInput: StoryObj< typeof LoginPageWrapper > = {
+	render: () => <LoginPageWrapperControlledInputStory />,
 };
 
 // Full Example - Combined Components

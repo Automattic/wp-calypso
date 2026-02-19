@@ -1,9 +1,13 @@
+import { FormLabel } from '@automattic/components';
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
+import { useState } from 'react';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useTranslate } from 'calypso/i18n';
 import { BrandHeader } from '../brand-header';
 import { LoadingScreen } from '../loading-screen';
 import { ScreenLayout } from '../screen-layout';
-import type { CSSProperties, MouseEvent, ReactNode } from 'react';
+import type { ChangeEvent, CSSProperties, MouseEvent, ReactNode } from 'react';
 
 import './style.scss';
 
@@ -45,6 +49,14 @@ export interface LoginPageWrapperProps {
 	isLoading?: boolean;
 	loadingMessage?: ReactNode;
 	beforeContent?: ReactNode;
+	usernameOrEmail?: string;
+	defaultUsernameOrEmail?: string;
+	/** @deprecated use usernameOrEmail */
+	usernameOrEmailValue?: string;
+	onUsernameOrEmailChange?: ( value: string ) => void;
+	isUsernameOnly?: boolean;
+	usernameOrEmailInputId?: string;
+	usernameOrEmailInputName?: string;
 	children: ReactNode;
 	/**
 	 * Optional right-side social buttons column.
@@ -119,6 +131,13 @@ export function LoginPageWrapper( {
 	isLoading = false,
 	loadingMessage,
 	beforeContent,
+	usernameOrEmail,
+	defaultUsernameOrEmail,
+	usernameOrEmailValue,
+	onUsernameOrEmailChange,
+	isUsernameOnly = false,
+	usernameOrEmailInputId = 'usernameOrEmail',
+	usernameOrEmailInputName = 'usernameOrEmail',
 	children,
 	socialButtons,
 	showSocialDivider = true,
@@ -128,7 +147,39 @@ export function LoginPageWrapper( {
 	socialColumnClassName,
 	backgroundColor,
 }: LoginPageWrapperProps ): JSX.Element {
+	const translate = useTranslate();
+	const [ localUsernameOrEmailValue, setLocalUsernameOrEmailValue ] = useState(
+		defaultUsernameOrEmail ?? ''
+	);
 	const isSocialFirst = Boolean( socialButtons );
+	let loginIdentifierValue = localUsernameOrEmailValue;
+
+	if ( typeof usernameOrEmail !== 'undefined' ) {
+		loginIdentifierValue = usernameOrEmail;
+	} else if ( typeof usernameOrEmailValue !== 'undefined' ) {
+		loginIdentifierValue = usernameOrEmailValue;
+	}
+
+	const handleUsernameOrEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		const nextValue = event.target.value;
+
+		onUsernameOrEmailChange?.( nextValue );
+
+		if ( typeof usernameOrEmail === 'undefined' && typeof usernameOrEmailValue === 'undefined' ) {
+			setLocalUsernameOrEmailValue( nextValue );
+		}
+	};
+
+	const usernameOrEmailLabel = isUsernameOnly ? (
+		translate( 'Your username' )
+	) : (
+		<>
+			<span className="screen-reader-text">
+				{ translate( 'WordPress.com email address or username' ) }
+			</span>
+			<span aria-hidden="true">{ translate( 'Email address or username' ) }</span>
+		</>
+	);
 
 	const customStyles: CSSProperties = {
 		'--connect-screen-login-page-wrapper-text-color': branding?.colors?.textColor,
@@ -141,6 +192,30 @@ export function LoginPageWrapper( {
 		branding?.topBarLogoAlt,
 		branding?.topBarLogoWidth,
 		branding?.topBarLogoHeight
+	);
+
+	const renderLoginIdentifierField = () => (
+		<div className="connect-screen-login-page-wrapper__login-field">
+			<FormLabel
+				hasCoreStylesNoCaps
+				htmlFor={ usernameOrEmailInputId }
+				className="connect-screen-login-page-wrapper__login-label"
+			>
+				{ usernameOrEmailLabel }
+			</FormLabel>
+			<FormTextInput
+				autoCapitalize="off"
+				autoCorrect="off"
+				spellCheck="false"
+				autoComplete="username"
+				hasCoreStyles
+				id={ usernameOrEmailInputId }
+				name={ usernameOrEmailInputName }
+				value={ loginIdentifierValue }
+				onChange={ handleUsernameOrEmailChange }
+				className="connect-screen-login-page-wrapper__login-input"
+			/>
+		</div>
 	);
 
 	return (
@@ -226,6 +301,7 @@ export function LoginPageWrapper( {
 											contentClassName
 										) }
 									>
+										{ renderLoginIdentifierField() }
 										{ children }
 									</div>
 									{ showSocialDivider && (
@@ -251,6 +327,7 @@ export function LoginPageWrapper( {
 										contentClassName
 									) }
 								>
+									{ renderLoginIdentifierField() }
 									{ children }
 								</div>
 							) }
