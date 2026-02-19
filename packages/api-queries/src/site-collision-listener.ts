@@ -1,6 +1,14 @@
-import { siteBySlugQuery, siteByIdQuery } from './site';
+import { SITE_FIELDS, SITE_OPTIONS } from '@automattic/api-core';
 import type { Site, FetchPaginatedSitesResponse } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
+
+function siteBySlugKey( slug: string ) {
+	return [ 'site-by-slug', slug, SITE_FIELDS, SITE_OPTIONS ] as const;
+}
+
+function siteByIdKey( id: number ) {
+	return [ 'site-by-id', id, SITE_FIELDS, SITE_OPTIONS ] as const;
+}
 
 export function withoutHttp( url: string ): string {
 	return url.replace( /^https?:\/\//, '' );
@@ -128,11 +136,11 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 		// slug is 'example.wordpress.com'. This should prevent existing components
 		// from breaking, but hopefully any subsequent navigations will use the new
 		// slug and therefore the correct cache key.
-		qc.setQueryData( siteBySlugQuery( site.slug ).queryKey, fixed );
+		qc.setQueryData( siteBySlugKey( site.slug ), fixed );
 
-		qc.setQueryData( siteByIdQuery( site.ID ).queryKey, fixed );
+		qc.setQueryData( siteByIdKey( site.ID ), fixed );
 		if ( fixed.slug !== site.slug ) {
-			qc.setQueryData( siteBySlugQuery( fixed.slug ).queryKey, fixed );
+			qc.setQueryData( siteBySlugKey( fixed.slug ), fixed );
 		}
 	}
 
@@ -150,7 +158,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 				if ( fixed !== site ) {
 					qc.setQueryData( key, fixed );
 					if ( fixed.slug !== site.slug ) {
-						qc.setQueryData( siteBySlugQuery( fixed.slug ).queryKey, fixed );
+						qc.setQueryData( siteBySlugKey( fixed.slug ), fixed );
 					}
 				}
 			}
