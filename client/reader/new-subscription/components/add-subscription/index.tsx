@@ -22,10 +22,11 @@ export default function ReaderAddSubscription( {
 	config,
 }: ReaderAddSubscriptionProps ): JSX.Element {
 	const translate = useTranslate();
-	const isAddNewTab = config.slug === 'add-new';
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
+	const { slug, instructions: configInstructions } = config;
+	const isAddNewTab = slug === 'add-new';
 
 	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
 		setHasFeedPreview( hasPreview );
@@ -74,9 +75,28 @@ export default function ReaderAddSubscription( {
 					/>
 				</div>
 
-				{ /* If there is no feed preview, show instructions or subscriptions list based on the tab. */ }
 				{ ! hasFeedPreview &&
-					( isAddNewTab ? (
+					( configInstructions ? (
+						<div className="reader-add-subscription__instructions">
+							<div className="reader-add-subscription__instructions-icon">
+								{ configInstructions.icon }
+							</div>
+
+							<h2 className="reader-add-subscription__instructions-title">
+								{ configInstructions.title }
+							</h2>
+
+							<ul className="reader-add-subscription__instructions-list">
+								{ configInstructions.infoList.map(
+									( item, index ): JSX.Element => (
+										<li key={ `${ slug }-${ index }` }>
+											<strong>{ item.label }</strong> { item.info }
+										</li>
+									)
+								) }
+							</ul>
+						</div>
+					) : (
 						<>
 							<h2 className="reader-add-subscription__subscriptions-title">
 								{ translate( 'Your subscriptions' ) }
@@ -84,24 +104,6 @@ export default function ReaderAddSubscription( {
 
 							<SiteSubscriptionsList layout="compact" />
 						</>
-					) : (
-						<div className="reader-add-subscription__instructions">
-							<div className="reader-add-subscription__instructions-icon">{ config.icon }</div>
-
-							<h2 className="reader-add-subscription__instructions-title">
-								{ config.instructionsTitle }
-							</h2>
-
-							<ul className="reader-add-subscription__instructions-list">
-								{ config.instructions.map(
-									( item, index ): JSX.Element => (
-										<li key={ `${ config.instructionsTitle.toLowerCase() }-${ index }` }>
-											<strong>{ item.label }</strong> { item.instruction }
-										</li>
-									)
-								) }
-							</ul>
-						</div>
 					) ) }
 			</SubscriptionManagerContextProvider>
 		</div>
