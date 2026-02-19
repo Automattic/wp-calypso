@@ -74,9 +74,7 @@ export default function PreferencesPrimarySite( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Primary site' ) }
-						description={ __(
-							'Choose your default site. This determines where you land after logging in and which account appears in the Reader.'
-						) }
+						description={ __( 'Your go-to site, always within reach.' ) }
 					/>
 
 					<DataForm< PrimarySiteFormData >

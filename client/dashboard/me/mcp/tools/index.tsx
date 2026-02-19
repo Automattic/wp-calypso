@@ -1,10 +1,12 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Navigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, pencil, cog } from '@wordpress/icons';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { EXPLORATIONS_STORAGE_KEY } from '../../../app/explorations-helper';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkSummaryButton from '../../../components/router-link-summary-button';
@@ -29,6 +31,12 @@ const LEVEL_ICONS = {
 
 export default function McpTools() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+
+	// Option 3 (Flat) skips this intermediate page — redirect back to AI and MCP.
+	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
+	if ( variation === 'C' ) {
+		return <Navigate to="/me/preferences/ai-and-mcp" replace />;
+	}
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );

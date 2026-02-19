@@ -12,13 +12,19 @@ interface BreadcrumbsProps {
 	 */
 	length: number;
 	/**
+	 * Optional list of breadcrumb hrefs to exclude from the trail.
+	 * Useful when a route segment should be skipped (e.g. an intermediate index
+	 * page that doesn't exist in a particular design variation).
+	 */
+	excludeHrefs?: string[];
+	/**
 	 * Optional callback function that is called when a breadcrumb item is clicked.
 	 * Receives the href and label of the clicked item.
 	 */
 	onItemClick?: ( href: string, label: string ) => void;
 }
 
-export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps ) {
+export default function Breadcrumbs( { length, excludeHrefs, onItemClick }: BreadcrumbsProps ) {
 	const matches = useMatches();
 
 	const items: BreadcrumbItemProps[] = matches
@@ -30,6 +36,7 @@ export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps )
 			};
 		} )
 		.filter( ( { label } ) => Boolean( label ) )
+		.filter( ( { href } ) => ! excludeHrefs?.includes( href ) )
 		.slice( -length );
 
 	return (

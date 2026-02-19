@@ -182,7 +182,7 @@ export const preferencesDefaultLandingRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Default landing page' ),
+				title: __( 'WordPress.com defaults' ),
 			},
 		],
 	} ),

@@ -7,7 +7,7 @@
  *
  * Option 1 — Baseline: Current screen (everything on one page, all toggles visible)
  * Option 2 — Hub: Master toggle + summary cards linking to sub-pages (matches Security pattern)
- * Option 3 — Hub (copy of Option 2)
+ * Option 3 — Flat: Medium-density permission-level links (Read/Write/Manage) inline, skipping the tools sub-page
  */
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -22,8 +22,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { connection, lock, unseen } from '@wordpress/icons';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { connection, lock, unseen, seen, pencil, cog } from '@wordpress/icons';
+import { useState, useSyncExternalStore } from 'react';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -31,6 +31,7 @@ import {
 } from '../../../me/mcp/utils';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
+import { EXPLORATIONS_STORAGE_KEY } from '../../app/explorations-helper';
 import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -39,8 +40,14 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { CATEGORY_ORDER, getDisplayCategory } from './categories';
+import {
+	CATEGORY_ORDER,
+	getDisplayCategory,
+	PERMISSION_LEVEL_ORDER,
+	getPermissionLevel,
+} from './categories';
 import type { Site } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
@@ -49,178 +56,27 @@ import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary
 const VARIATIONS = [
 	{ key: 'A', label: 'Option 1 — Baseline' },
 	{ key: 'B', label: 'Option 2 — Hub' },
-	{ key: 'C', label: 'Option 3 — Hub (copy)' },
+	{ key: 'C', label: 'Option 3 — Flat' },
 ] as const;
 
 type VariationKey = ( typeof VARIATIONS )[ number ][ 'key' ];
 
-// ─── Explorations Menu (injected into DEV badge) ────────────────────────────
-
-function ExplorationsMenuContent( {
-	current,
-	onChange,
-}: {
-	current: VariationKey;
-	onChange: ( v: VariationKey ) => void;
-} ) {
-	return (
-		<>
-			<div>Explorations</div>
-			<div className="explorations-helper__menu">
-				{ VARIATIONS.map( ( v ) => {
-					const isActive = v.key === current;
-					return (
-						<div
-							key={ v.key }
-							className={ `explorations-helper__item${ isActive ? ' is-active' : '' }` }
-							onClick={ () => onChange( v.key ) }
-							onKeyDown={ ( e ) => {
-								if ( e.key === 'Enter' ) {
-									onChange( v.key );
-								}
-							} }
-							role="button"
-							tabIndex={ 0 }
-						>
-							{ v.label }
-							{ isActive ? ' •' : '' }
-						</div>
-					);
-				} ) }
-			</div>
-		</>
-	);
+// Subscribe to localStorage changes from the global ExplorationsHelper.
+// The global helper (rendered in Root) writes to localStorage; this page reads it.
+let listeners: Array< () => void > = [];
+function subscribeToVariation( callback: () => void ) {
+	listeners.push( callback );
+	// Poll localStorage so we pick up same-window writes from the global helper's
+	// separate React root (storage events only fire across tabs).
+	const interval = setInterval( callback, 200 );
+	return () => {
+		listeners = listeners.filter( ( l ) => l !== callback );
+		clearInterval( interval );
+	};
 }
-
-function useExplorationsHelper( current: VariationKey, onChange: ( v: VariationKey ) => void ) {
-	const rootRef = useRef< ReturnType< typeof import('react-dom/client').createRoot > | null >(
-		null
-	);
-
-	useEffect( () => {
-		let disposed = false;
-		let retryTimer: ReturnType< typeof setTimeout >;
-
-		const injectStyles = () => {
-			if ( document.querySelector( '#explorations-helper-styles' ) ) {
-				return;
-			}
-			const style = document.createElement( 'style' );
-			style.id = 'explorations-helper-styles';
-			style.textContent = `
-				.explorations-helper__menu {
-					display: none;
-					background: #fff;
-					box-shadow: 0 0 0 1px #dcdcde;
-					padding: 8px 0;
-					max-height: 80vh;
-					overflow-y: auto;
-					position: absolute;
-					bottom: 100%;
-					right: 0;
-					margin: 0;
-					font-size: 12px;
-					min-width: 180px;
-					z-index: 1001;
-				}
-				.environment.is-explorations:hover .explorations-helper__menu {
-					display: block;
-				}
-				.explorations-helper__item {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					padding: 6px 12px;
-					cursor: pointer;
-					white-space: nowrap;
-					text-transform: none;
-					font-weight: 400;
-					color: #3c434a;
-					line-height: 18px;
-				}
-				.explorations-helper__item:hover {
-					background: #f0f0f0;
-				}
-				.explorations-helper__item.is-active {
-					font-weight: 700;
-				}
-			`;
-			document.head.appendChild( style );
-		};
-
-		const mount = () => {
-			if ( disposed ) {
-				return;
-			}
-			const badge = document.querySelector( '.environment-badge' );
-			if ( ! badge ) {
-				retryTimer = setTimeout( mount, 300 );
-				return;
-			}
-
-			injectStyles();
-
-			let el = badge.querySelector( '.environment.is-explorations' ) as HTMLElement | null;
-			if ( ! el ) {
-				el = document.createElement( 'div' );
-				el.className = 'environment is-explorations';
-				el.textContent = 'Explorations';
-				const devLabel = badge.querySelector( '.is-env' );
-				if ( devLabel ) {
-					badge.insertBefore( el, devLabel );
-				} else {
-					badge.appendChild( el );
-				}
-			}
-
-			import( 'react-dom/client' ).then( ( { createRoot } ) => {
-				if ( disposed ) {
-					return;
-				}
-				if ( ! rootRef.current && el ) {
-					rootRef.current = createRoot( el );
-				}
-				rootRef.current?.render(
-					<ExplorationsMenuContent current={ current } onChange={ onChange } />
-				);
-			} );
-		};
-
-		mount();
-
-		return () => {
-			disposed = true;
-			clearTimeout( retryTimer );
-			if ( rootRef.current ) {
-				rootRef.current.unmount();
-				rootRef.current = null;
-			}
-			const badge = document.querySelector( '.environment-badge' );
-			const el = badge?.querySelector( '.environment.is-explorations' );
-			if ( el ) {
-				el.remove();
-			}
-			const styleEl = document.querySelector( '#explorations-helper-styles' );
-			if ( styleEl ) {
-				styleEl.remove();
-			}
-		};
-	}, [ current, onChange ] );
-
-	useEffect( () => {
-		const handler = ( e: KeyboardEvent ) => {
-			const tag = ( e.target as HTMLElement )?.tagName;
-			if ( tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ) {
-				return;
-			}
-			const num = parseInt( e.key, 10 );
-			if ( num >= 1 && num <= VARIATIONS.length ) {
-				onChange( VARIATIONS[ num - 1 ].key );
-			}
-		};
-		document.addEventListener( 'keydown', handler );
-		return () => document.removeEventListener( 'keydown', handler );
-	}, [ onChange ] );
+function getVariationSnapshot(): VariationKey {
+	const stored = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
+	return stored && VARIATIONS.some( ( v ) => v.key === stored ) ? ( stored as VariationKey ) : 'A';
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -237,20 +93,8 @@ interface McpAbility {
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'mcp-explore-variation';
-
 function McpComponentExplore() {
-	const [ variation, setVariation ] = useState< VariationKey >( () => {
-		const stored = localStorage.getItem( STORAGE_KEY );
-		return stored && VARIATIONS.some( ( v ) => v.key === stored )
-			? ( stored as VariationKey )
-			: 'A';
-	} );
-	const onChangeVariation = useCallback( ( v: VariationKey ) => {
-		setVariation( v );
-		localStorage.setItem( STORAGE_KEY, v );
-	}, [] );
-	useExplorationsHelper( variation, onChangeVariation );
+	const variation = useSyncExternalStore( subscribeToVariation, getVariationSnapshot );
 
 	const { queries } = useAppContext();
 	const sitesQueryResult = useQuery(
@@ -629,23 +473,20 @@ function McpComponentExplore() {
 		);
 	};
 
-	// ─── Variation C: Hub (copy of Option 2) ────────────────────────
+	// ─── Variation C: Flat — permission-level links inline (no tools sub-page) ──
 
 	const renderVariationC = () => {
-		const toolsBadgesC: SummaryButtonBadgeProps[] = [
-			{
-				text:
-					enabledToolsCount === availableTools.length
-						? __( 'All enabled' )
-						: sprintf(
-								/* translators: %1$d is number of enabled tools, %2$d is total tools */
-								__( '%1$d of %2$d enabled' ),
-								enabledToolsCount,
-								availableTools.length
-						  ),
-				intent: enabledToolsCount === availableTools.length ? 'success' : 'default',
-			},
-		];
+		const LEVEL_ICONS = { read: seen, write: pencil, manage: cog } as const;
+
+		// Group tools by permission level for per-row badges
+		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
 
 		const sitesBadgesC: SummaryButtonBadgeProps[] = [
 			{
@@ -684,18 +525,47 @@ function McpComponentExplore() {
 					</CardBody>
 				</Card>
 
-				{ /* Summary cards — only shown when AI access is on */ }
+				{ /* Permission-level links — directly to Read / Write / Manage pages */ }
 				{ hasTools && anyToolsEnabled && (
 					<>
-						<RouterLinkSummaryButton
-							to="/me/preferences/ai-and-mcp/tools"
+						<SummaryButtonList
 							title={ __( 'MCP access' ) }
 							description={ __(
 								'Control what your AI assistant can do on your account and sites.'
 							) }
-							decoration={ <Icon icon={ lock } /> }
-							badges={ toolsBadgesC }
-						/>
+							density="medium"
+						>
+							{ PERMISSION_LEVEL_ORDER.map( ( level ) => {
+								const tools = permissionGroups[ level.key ] || [];
+								if ( tools.length === 0 ) {
+									return null;
+								}
+								const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+								const badges: SummaryButtonBadgeProps[] = [
+									{
+										text:
+											enabledCount === tools.length
+												? __( 'All enabled' )
+												: sprintf(
+														/* translators: %1$d is enabled count, %2$d is total */
+														__( '%1$d of %2$d enabled' ),
+														enabledCount,
+														tools.length
+												  ),
+										intent: enabledCount === tools.length ? 'success' : 'default',
+									},
+								];
+								return (
+									<RouterLinkSummaryButton
+										key={ level.key }
+										to={ `/me/preferences/ai-and-mcp/tools/${ level.key }` }
+										title={ level.label }
+										decoration={ <Icon icon={ LEVEL_ICONS[ level.key ] } /> }
+										badges={ badges }
+									/>
+								);
+							} ) }
+						</SummaryButtonList>
 
 						<RouterLinkSummaryButton
 							to="/me/preferences/ai-and-mcp/setup"

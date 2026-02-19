@@ -121,19 +121,8 @@ export default function PreferencesDefaultLanding() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'Default landing page' ) }
-					description={ __( 'Choose what you see after logging into WordPress.com' ) }
-					actions={
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							isBusy={ isSaving }
-							disabled={ isSaving || ! isDirty }
-							onClick={ handleSave }
-						>
-							{ __( 'Save' ) }
-						</Button>
-					}
+					title={ __( 'WordPress.com defaults' ) }
+					description={ __( 'Set your starting point after you log in and primary site.' ) }
 				/>
 			}
 		>
@@ -141,7 +130,11 @@ export default function PreferencesDefaultLanding() {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader level={ 3 } title={ __( 'Landing page' ) } />
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Landing page' ) }
+							description={ __( 'Choose your destination after you log in.' ) }
+						/>
 						<DataForm< DefaultLandingPreferencesFormData >
 							data={ formData }
 							fields={ fields }
@@ -153,9 +146,18 @@ export default function PreferencesDefaultLanding() {
 					</VStack>
 				</CardBody>
 			</Card>
-			{ formData.defaultLandingPage === 'primary-site-dashboard' && (
-				<PreferencesPrimarySite primarySiteId={ primarySiteId } onChange={ setPrimarySiteId } />
-			) }
+			<PreferencesPrimarySite primarySiteId={ primarySiteId } onChange={ setPrimarySiteId } />
+			<div>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					isBusy={ isSaving }
+					disabled={ isSaving || ! isDirty }
+					onClick={ handleSave }
+				>
+					{ __( 'Save' ) }
+				</Button>
+			</div>
 		</PageLayout>
 	);
 }

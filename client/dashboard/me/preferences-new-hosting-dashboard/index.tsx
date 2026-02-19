@@ -1,12 +1,16 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	ExternalLink,
+	ToggleControl,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -28,8 +32,6 @@ export default function PreferencesOptInForm() {
 	const { mutate: saveOptInPreference, isPending } = useMutation(
 		userPreferenceMutation( 'hosting-dashboard-opt-in' )
 	);
-	const [ isRedirecting, setIsRedirecting ] = useState( false );
-
 	const isEnabled = optIn.value === 'opt-in';
 
 	const handleToggle = ( enabled: boolean ) => {
@@ -47,8 +49,9 @@ export default function PreferencesOptInForm() {
 					if ( data?.value === 'opt-in' ) {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
-						setIsRedirecting( true );
-						window.location.href = wpcomLink( '/me/account?flash=dashboard' );
+						createSuccessNotice( __( 'New Hosting Dashboard disabled.' ), {
+							type: 'snackbar',
+						} );
 					}
 				},
 				onError( _, data ) {
@@ -95,37 +98,41 @@ export default function PreferencesOptInForm() {
 							__nextHasNoMarginBottom
 							checked={ isEnabled }
 							label={ __( 'Enable new hosting dashboard' ) }
-							disabled={ isPending || isRedirecting }
+							disabled={ isPending }
 							onChange={ handleToggle }
 						/>
 					</VStack>
 				</CardBody>
 			</Card>
-			{ ! isEnabled && isRedirecting && (
-				<Card>
-					<CardBody>
-						<Notice title={ __( 'Prefer the previous version?' ) } variant="info">
-							{ createInterpolateElement(
-								__(
-									"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
-								),
-								{
-									surveyLink: (
-										<ExternalLink
-											href="https://automattic.survey.fm/msd-survey-for-opt-out"
-											onClick={ () =>
-												recordTracksEvent(
-													'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
-												)
-											}
-											children={ null }
-										/>
-									),
-								}
-							) }
-						</Notice>
-					</CardBody>
-				</Card>
+			{ ! isEnabled && (
+				<Notice
+					title={ __( 'Prefer the previous version?' ) }
+					variant="info"
+					actions={
+						<Button variant="primary" href={ wpcomLink( '/me/account' ) }>
+							{ __( 'Return to previous version' ) }
+						</Button>
+					}
+				>
+					{ createInterpolateElement(
+						__(
+							"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
+						),
+						{
+							surveyLink: (
+								<ExternalLink
+									href="https://automattic.survey.fm/msd-survey-for-opt-out"
+									onClick={ () =>
+										recordTracksEvent(
+											'calypso_dashboard_me_preferences_new_hosting_dashboard_survey_click'
+										)
+									}
+									children={ null }
+								/>
+							),
+						}
+					) }
+				</Notice>
 			) }
 		</PageLayout>
 	);

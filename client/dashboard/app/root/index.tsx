@@ -8,6 +8,7 @@ import NotFound from '../404';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
+import ExplorationsHelper from '../explorations-helper';
 import Header from '../header';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Snackbars from '../snackbars';
@@ -126,6 +127,7 @@ function Root() {
 					<WebpackBuildMonitor />
 				</Suspense>
 			) }
+			{ 'development' === process.env.NODE_ENV && <ExplorationsHelper /> }
 		</div>
 	);
 }
