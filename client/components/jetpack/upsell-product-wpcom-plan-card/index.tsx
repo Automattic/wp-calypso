@@ -116,7 +116,13 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const renderProductCardBody = () => {
 		return (
 			<>
-				<div className="upsell-product-card__price-plan">Creator plan</div>
+				<div className="upsell-product-card__price-plan">
+					{ translate( '%(planName)s plan', {
+						args: {
+							planName: plan.getTitle(),
+						},
+					} ) }
+				</div>
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
 						isFree={ ! isFetchingPrices && originalPrice === 0 }

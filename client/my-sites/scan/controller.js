@@ -3,6 +3,7 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NoFeatureSwitch from 'calypso/components/jetpack/no-feature-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index.tsx';
@@ -86,6 +87,21 @@ export function showUnavailableForMultisites( context, next ) {
 				<WPCOMScanUpsellPage reason="multisite_not_supported" />
 			);
 	}
+
+	next();
+}
+
+export function showUpsellIfNoScanSelfServeFeature( context, next ) {
+	const UpsellComponent =
+		isJetpackCloud() || isA8CForAgencies() ? ScanUpsellPage : WPCOMScanUpsellPage;
+
+	context.primary = (
+		<NoFeatureSwitch
+			feature={ WPCOM_FEATURES_SCAN_SELF_SERVE }
+			trueComponent={ <UpsellComponent /> }
+			falseComponent={ context.primary }
+		/>
+	);
 
 	next();
 }
