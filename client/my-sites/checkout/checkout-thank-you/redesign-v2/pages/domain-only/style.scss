@@ -1,18 +1,18 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.checkout-thank-you__domain-only-new-container {
+.checkout-thank-you__domain-only-container {
 	@include break-small {
-		z-index: z-index( '.is-section-checkout-thank-you', '.domain-only-new-container' );
+		z-index: z-index( '.is-section-checkout-thank-you', '.domain-only-container' );
 	}
 }
 
-.domain-only-new {
+.step-container-v2--domain-only {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 
-	a.domain-only-new__migrate-link {
+	a.domain-only__migrate-link {
 		margin: 0 auto;
 		width: fit-content;
 		color: inherit;
