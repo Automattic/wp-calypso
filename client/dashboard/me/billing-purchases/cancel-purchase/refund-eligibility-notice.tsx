@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
-import { hasAmountAvailableToRefund, isDotcomPlan } from '../../../utils/purchase';
+import { shouldShowRefundEligibilityNotice } from '../../../utils/purchase';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
@@ -14,12 +14,7 @@ export default function RefundEligibilityNotice( {
 	purchase,
 	onClaimRefund,
 }: RefundEligibilityNoticeProps ) {
-	// Only show for refundable WordPress.com plans
-	if (
-		! hasAmountAvailableToRefund( purchase ) ||
-		! isDotcomPlan( purchase ) ||
-		! purchase.is_plan
-	) {
+	if ( ! shouldShowRefundEligibilityNotice( purchase ) ) {
 		return null;
 	}
 

@@ -5,7 +5,7 @@ import { Text } from '../../../components/text';
 import {
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
-	isDotcomPlan,
+	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import type { Purchase, Domain } from '@automattic/api-core';
 
@@ -25,7 +25,7 @@ const CancelPurchaseRefundInformation = ( {
 	let text;
 
 	// Treat refundable dotcom plans as non-refundable since refund is offered via the notice
-	const treatAsNonRefundable = isDotcomPlan( purchase ) && hasAmountAvailableToRefund( purchase );
+	const treatAsNonRefundable = shouldShowRefundEligibilityNotice( purchase );
 
 	if ( purchase.is_refundable && ! treatAsNonRefundable ) {
 		if ( purchase.is_domain_registration ) {

@@ -48,13 +48,13 @@ import {
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
 	isAkismetTemporarySitePurchase,
-	isDotcomPlan,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
+	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -1045,8 +1045,7 @@ export default function CancelPurchase() {
 		// If default Cancel button on refundable wpcom plan, use auto-renew flow
 		else if (
 			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
-			isDotcomPlan( purchase ) &&
-			hasAmountAvailableToRefund( purchase )
+			shouldShowRefundEligibilityNotice( purchase )
 		) {
 			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}
@@ -1301,7 +1300,7 @@ export default function CancelPurchase() {
 			notices={
 				! state.surveyShown &&
 				! state.showDomainOptionsStep &&
-				( hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase ) ? (
+				( shouldShowRefundEligibilityNotice( purchase ) ? (
 					<RefundEligibilityNotice
 						purchase={ purchase }
 						onClaimRefund={ onCancellationStartForRefund }
