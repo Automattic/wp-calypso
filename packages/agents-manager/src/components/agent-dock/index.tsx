@@ -1,4 +1,3 @@
-import { type UseAgentChatConfig } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
@@ -34,8 +33,6 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
 	/** Custom components for rendering markdown. */
@@ -57,7 +54,6 @@ interface Props {
 }
 
 export default function AgentDock( {
-	agentConfig,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -68,7 +64,8 @@ export default function AgentDock( {
 	siteBuildUtils,
 	useImageUpload,
 }: Props ) {
-	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
+	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
+
 	const [ isCompactMode, setIsCompactMode ] = useState( false );
 	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
 	const orchestratorChatRef = useRef< OrchestratorChatHandle >( null );
@@ -85,7 +82,8 @@ export default function AgentDock( {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 
-	const agentId = agentConfig.agentId;
+	// agentConfig is guaranteed non-null here because AgentSetup guards rendering
+	const agentId = agentConfig!.agentId;
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
@@ -188,7 +186,6 @@ export default function AgentDock( {
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
 			ref={ orchestratorChatRef }
-			agentConfig={ agentConfig }
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
@@ -223,7 +220,6 @@ export default function AgentDock( {
 
 	const HistoryRoute = (
 		<AgentHistory
-			agentConfig={ agentConfig }
 			chatHeaderOptions={ chatHeaderOptions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }

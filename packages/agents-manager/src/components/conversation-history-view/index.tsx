@@ -1,4 +1,3 @@
-import { type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -9,24 +8,18 @@ import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
 	/** Called when a conversation is selected. */
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
 	/** Called when the user starts a new chat. */
 	onNewChat: () => void;
 }
 
-export default function ConversationHistoryView( {
-	agentConfig,
-	onSelectConversation,
-	onNewChat,
-}: Props ) {
+export default function ConversationHistoryView( { onSelectConversation, onNewChat }: Props ) {
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useConversationList( { agentConfig } );
+	const { conversations, isLoading, isError } = useConversationList();
 
 	return (
 		<div className="agents-manager-conversation-history-view">

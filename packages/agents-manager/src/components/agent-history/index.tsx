@@ -6,11 +6,8 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface Props {
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -30,7 +27,6 @@ interface Props {
 }
 
 export default function AgentHistory( {
-	agentConfig,
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
@@ -69,7 +65,6 @@ export default function AgentHistory( {
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
 				<ConversationHistoryView
-					agentConfig={ agentConfig }
 					onSelectConversation={ onSelectConversation }
 					onNewChat={ onNewChat }
 				/>

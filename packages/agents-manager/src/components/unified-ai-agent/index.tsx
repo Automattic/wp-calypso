@@ -6,7 +6,7 @@ import {
 } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState, useRef } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../../contexts';
 import { useEmptyViewSuggestions } from '../../hooks/use-empty-view-suggestions';
@@ -16,7 +16,6 @@ import { getSessionId, clearSessionId } from '../../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../../utils/load-external-providers';
 import AgentDock from '../agent-dock';
 import { PersistentRouter } from '../persistent-router';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 export interface UnifiedAIAgentProps {
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
@@ -63,8 +62,7 @@ export default function UnifiedAIAgent( {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup(): JSX.Element | null {
-	const { site, currentRoute } = useAgentsManagerContext();
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -120,7 +118,7 @@ function AgentSetup(): JSX.Element | null {
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, site?.ID ] );
+	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
 
 	const loadedProviders = loadedProvidersRef.current;
 
@@ -134,7 +132,6 @@ function AgentSetup(): JSX.Element | null {
 
 	return (
 		<AgentDock
-			agentConfig={ agentConfig }
 			emptyViewSuggestions={ emptyViewSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }

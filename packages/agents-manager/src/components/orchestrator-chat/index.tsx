@@ -1,8 +1,4 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type UseAgentChatConfig,
-} from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -18,6 +14,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
+import { useAgentsManagerContext } from '../../contexts';
 import useConversation from '../../hooks/use-conversation';
 import useFeedback from '../../hooks/use-feedback';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
@@ -36,8 +33,6 @@ import type {
 import type { NavigateFunction } from 'react-router-dom';
 
 interface Props {
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions: Suggestion[];
 	/** Indicates if the chat is docked in the sidebar. */
@@ -81,7 +76,6 @@ export interface OrchestratorChatHandle {
 
 function OrchestratorChatInner(
 	{
-		agentConfig,
 		emptyViewSuggestions,
 		isDocked,
 		isOpen,
@@ -101,14 +95,17 @@ function OrchestratorChatInner(
 	}: Props,
 	ref: React.ForwardedRef< OrchestratorChatHandle >
 ) {
+	const { agentConfig } = useAgentsManagerContext();
+
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 
-	const sessionId = agentConfig.sessionId;
-	const agentId = agentConfig.agentId;
+	// agentConfig is guaranteed non-null here because AgentSetup guards rendering
+	const sessionId = agentConfig!.sessionId;
+	const agentId = agentConfig!.agentId;
 
 	const {
 		addMessage,
@@ -122,7 +119,7 @@ function OrchestratorChatInner(
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
-	} = useAgentChat( agentConfig );
+	} = useAgentChat( agentConfig! );
 
 	// Expose imperative methods to parent component
 	useImperativeHandle(
@@ -150,7 +147,6 @@ function OrchestratorChatInner(
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
-		agentConfig,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
@@ -168,7 +164,6 @@ function OrchestratorChatInner(
 	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
 		registerMessageActions,
 		messages,
-		agentConfig,
 	} );
 
 	const imageUpload = useImageUpload?.();

@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
+import { useAgentsManagerContext } from '../../../contexts';
 import { getSessionId as getStoredSessionId } from '../../../utils/agent-session';
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
@@ -53,6 +54,13 @@ jest.mock(
 );
 jest.mock( '@automattic/calypso-analytics' );
 jest.mock( '../../../utils/agent-session' );
+jest.mock( '../../../contexts', () => ( {
+	useAgentsManagerContext: jest.fn(),
+} ) );
+
+const mockUseAgentsManagerContext = useAgentsManagerContext as jest.MockedFunction<
+	typeof useAgentsManagerContext
+>;
 
 const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 global.fetch = mockFetch;
@@ -72,20 +80,24 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 } );
 
 describe( 'useFeedback', () => {
+	const defaultAgentConfig = {
+		agentId: 'test-agent',
+		sessionId: 'session-abc',
+		authProvider: mockAuthProvider,
+	};
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockFetch.mockResolvedValue( { ok: true } );
 		mockGetStoredSessionId.mockReturnValue( 'stored-session-123' );
+		mockUseAgentsManagerContext.mockReturnValue( {
+			agentConfig: defaultAgentConfig,
+		} as unknown as ReturnType< typeof useAgentsManagerContext > );
 	} );
 
 	const defaultConfig = {
 		registerMessageActions: mockRegisterMessageActions,
 		messages: [],
-		agentConfig: {
-			agentId: 'test-agent',
-			sessionId: 'session-abc',
-			authProvider: mockAuthProvider,
-		},
 	};
 
 	describe( 'initialization', () => {
@@ -117,10 +129,11 @@ describe( 'useFeedback', () => {
 
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
 
-			rerender( {
-				...defaultConfig,
-				agentConfig: { ...defaultConfig.agentConfig, sessionId: 'new-session' },
-			} );
+			mockUseAgentsManagerContext.mockReturnValue( {
+				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
+			} as unknown as ReturnType< typeof useAgentsManagerContext > );
+
+			rerender( defaultConfig );
 
 			// Should trigger re-registration on next effect cycle
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 2 );
@@ -349,13 +362,12 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
-		it( 'uses stored session ID when sessionId prop is empty', async () => {
-			const { result } = renderHook( () =>
-				useFeedback( {
-					...defaultConfig,
-					agentConfig: { ...defaultConfig.agentConfig, sessionId: '' },
-				} )
-			);
+		it( 'uses stored session ID when sessionId is empty', async () => {
+			mockUseAgentsManagerContext.mockReturnValue( {
+				agentConfig: { ...defaultAgentConfig, sessionId: '' },
+			} as unknown as ReturnType< typeof useAgentsManagerContext > );
+
+			const { result } = renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
@@ -424,12 +436,11 @@ describe( 'useFeedback', () => {
 
 	describe( 'no authProvider', () => {
 		it( 'does not send rating when authProvider is not provided', async () => {
-			renderHook( () =>
-				useFeedback( {
-					...defaultConfig,
-					agentConfig: { ...defaultConfig.agentConfig, authProvider: undefined },
-				} )
-			);
+			mockUseAgentsManagerContext.mockReturnValue( {
+				agentConfig: { ...defaultAgentConfig, authProvider: undefined },
+			} as unknown as ReturnType< typeof useAgentsManagerContext > );
+
+			renderHook( () => useFeedback( defaultConfig ) );
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );
