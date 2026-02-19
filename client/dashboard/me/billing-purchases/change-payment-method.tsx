@@ -21,7 +21,6 @@ import {
 } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { isRedirectAllowed } from '../../utils/url';
 import { PaymentMethodSelector } from './payment-method-selector';
 import { useCreateAssignablePaymentMethods } from './payment-method-selector/use-create-assignable-payment-methods';
 
@@ -65,9 +64,16 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
-		if ( redirect_to && isRedirectAllowed( redirect_to, purchase.domain ) ) {
-			window.location.href = redirect_to;
-			return;
+		if ( redirect_to ) {
+			try {
+				const parsed = new URL( redirect_to );
+				if ( purchase.domain && parsed.hostname === purchase.domain ) {
+					window.location.href = redirect_to;
+					return;
+				}
+			} catch {
+				// Invalid URL — fall through to default navigation.
+			}
 		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
