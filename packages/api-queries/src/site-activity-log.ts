@@ -5,10 +5,14 @@ import {
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const siteLastFiveActivityLogEntriesQuery = ( siteId: number ) =>
+export const siteLastFiveActivityLogEntriesQuery = ( siteId: number, notGroup?: string[] ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'activity-log', 'last-five' ],
-		queryFn: () => fetchSiteActivityLog( siteId, { number: 5 } ),
+		queryKey: [ 'site', siteId, 'activity-log', 'last-five', notGroup ],
+		queryFn: () =>
+			fetchSiteActivityLog( siteId, {
+				number: 5,
+				...( notGroup?.length && { not_group: notGroup } ),
+			} ),
 		select: ( data ) => data.activityLogs?.slice( 0, 5 ) ?? [],
 	} );
 

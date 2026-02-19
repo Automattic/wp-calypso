@@ -45,7 +45,6 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,
-		"domains/new-thank-you-page": true,
 		"global-styles/on-personal-plan": true,
 		"google-my-business": true,
 		"help": true,

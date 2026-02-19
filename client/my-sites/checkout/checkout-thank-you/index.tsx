@@ -80,13 +80,11 @@ import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
-import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
-import DomainOnlyNew from './redesign-v2/pages/domain-only-new';
+import DomainOnly from './redesign-v2/pages/domain-only';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
-import { shouldShowNewDomainThankYou } from './redesign-v2/utils/domain-thank-you-feature-flag';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -635,31 +633,22 @@ export class CheckoutThankYou extends Component<
 					</>
 				);
 			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
-				if ( shouldShowNewDomainThankYou() ) {
-					if ( domainPurchases.length > 1 ) {
-						const domainsUrl = this.props.hasDashboardOptIn
-							? dashboardLink( '/domains' )
-							: domainManagementRoot();
+				if ( domainPurchases.length > 1 ) {
+					const domainsUrl = this.props.hasDashboardOptIn
+						? dashboardLink( '/domains' )
+						: domainManagementRoot();
 
-						window.location.replace( domainsUrl );
+					window.location.replace( domainsUrl );
 
-						return this.renderLoading();
-					}
-
-					pageContent = (
-						<DomainOnlyNew
-							domainPurchase={ domainPurchases[ 0 ] }
-							currency={ this.props.receipt.data.currency }
-						/>
-					);
-				} else {
-					pageContent = (
-						<DomainOnlyThankYou
-							purchases={ purchases }
-							isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
-						/>
-					);
+					return this.renderLoading();
 				}
+
+				pageContent = (
+					<DomainOnly
+						domainPurchase={ domainPurchases[ 0 ] }
+						currency={ this.props.receipt.data.currency }
+					/>
+				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = (
 					<PlanOnlyThankYou

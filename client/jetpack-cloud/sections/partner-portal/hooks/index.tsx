@@ -120,6 +120,16 @@ export function useProductDescription( productSlug: string ): {
 		let description = '';
 		const features = [];
 
+		if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
+			description = translate( 'Add additional storage capacity to your Pressable plan limit.' );
+		}
+
+		if ( productSlug.startsWith( 'pressable-addon-visits-' ) ) {
+			description = translate(
+				'Add additional monthly visits capacity to your Pressable plan limit.'
+			);
+		}
+
 		switch ( productSlug ) {
 			case 'jetpack-complete':
 				description = translate(
