@@ -80,7 +80,7 @@ import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
-import DomainOnlyNew from './redesign-v2/pages/domain-only-new';
+import DomainOnly from './redesign-v2/pages/domain-only';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
@@ -644,7 +644,7 @@ export class CheckoutThankYou extends Component<
 				}
 
 				pageContent = (
-					<DomainOnlyNew
+					<DomainOnly
 						domainPurchase={ domainPurchases[ 0 ] }
 						currency={ this.props.receipt.data.currency }
 					/>

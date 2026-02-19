@@ -15,7 +15,7 @@ import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-feature
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import DomainOnlyNew from '../index';
+import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
@@ -62,11 +62,11 @@ const mockDomainPurchase: ReceiptPurchase = {
 
 function renderComponent( { currency = 'USD' }: { currency?: string } = {} ) {
 	return renderWithProvider(
-		<DomainOnlyNew domainPurchase={ mockDomainPurchase } currency={ currency } />
+		<DomainOnly domainPurchase={ mockDomainPurchase } currency={ currency } />
 	);
 }
 
-describe( 'DomainOnlyNew', () => {
+describe( 'DomainOnly', () => {
 	beforeEach( () => {
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
