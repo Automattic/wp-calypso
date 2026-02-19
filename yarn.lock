@@ -1022,17 +1022,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/ciab-posthog@workspace:^, @automattic/ciab-posthog@workspace:packages/ciab-posthog":
-  version: 0.0.0-use.local
-  resolution: "@automattic/ciab-posthog@workspace:packages/ciab-posthog"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    posthog-js: "npm:^1.348.0"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/color-studio@npm:^4.1.0":
   version: 4.1.0
   resolution: "@automattic/color-studio@npm:4.1.0"
@@ -2121,6 +2110,17 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     events: "npm:^3.3.0"
     lodash: "npm:^4.17.21"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/posthog@workspace:^, @automattic/posthog@workspace:packages/posthog":
+  version: 0.0.0-use.local
+  resolution: "@automattic/posthog@workspace:packages/posthog"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    posthog-js: "npm:^1.348.0"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -15133,7 +15133,6 @@ __metadata:
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/charts": "npm:^0.46.1"
-    "@automattic/ciab-posthog": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -15162,6 +15161,7 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
+    "@automattic/posthog": "workspace:^"
     "@automattic/react-virtualized": "npm:^9.22.4"
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"

@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/ciab-posthog",
+	"name": "@automattic/posthog",
 	"version": "0.1.0",
-	"description": "PostHog integration for CIAB.",
+	"description": "PostHog integration.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -21,7 +21,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/ciab-posthog"
+		"directory": "packages/posthog"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [

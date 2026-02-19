@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import { initCiabPostHog } from '@automattic/ciab-posthog';
 import { AI_SITE_BUILDER_SPEC_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { init as initPostHog } from '@automattic/posthog';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSelector } from 'calypso/state';
@@ -42,7 +42,7 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 
 		useEffect( () => {
 			if ( source?.startsWith( 'ciab-' ) ) {
-				initCiabPostHog( currentUser ?? undefined );
+				initPostHog( currentUser ?? undefined );
 			}
 		}, [ source, currentUser ] );
 	},

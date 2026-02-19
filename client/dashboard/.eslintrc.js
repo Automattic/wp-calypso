@@ -76,7 +76,7 @@ module.exports = {
 							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
-							'!@automattic/ciab-posthog',
+							'!@automattic/posthog',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],

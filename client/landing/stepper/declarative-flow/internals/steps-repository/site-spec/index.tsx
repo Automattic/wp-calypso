@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { getPostHogSessionId } from '@automattic/ciab-posthog';
+import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';

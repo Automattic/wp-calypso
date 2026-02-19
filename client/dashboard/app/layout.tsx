@@ -5,7 +5,7 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
-import { initCiabPostHog } from '@automattic/ciab-posthog';
+import { init as initPostHog } from '@automattic/posthog';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
@@ -37,7 +37,7 @@ function AnalyticsProviderWithClient( {
 
 	useEffect( () => {
 		if ( name === 'CIAB' ) {
-			initCiabPostHog( user );
+			initPostHog( user );
 		}
 	}, [ user, name ] );
 

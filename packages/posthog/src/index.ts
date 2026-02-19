@@ -4,17 +4,22 @@ const POSTHOG_API_KEY = 'phc_tHmeIeJcb4zGfiX4akJwyGq7lioUpCoHd65LKbVPcoR';
 
 let initialized = false;
 
-export interface CiabPostHogUser {
+export interface PostHogUser {
 	ID: number;
 	email?: string;
 	username?: string;
 }
 
-export function getPostHogSessionId(): string | undefined {
+export function getSessionId(): string | undefined {
 	return posthog.get_session_id?.();
 }
 
-export function initCiabPostHog( user?: CiabPostHogUser ) {
+export function reset() {
+	posthog.reset();
+	initialized = false;
+}
+
+export function init( user?: PostHogUser ) {
 	if ( initialized ) {
 		return;
 	}
