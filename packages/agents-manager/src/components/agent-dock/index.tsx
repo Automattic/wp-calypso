@@ -13,6 +13,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
+import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
@@ -81,6 +82,7 @@ export default function AgentDock( {
 	);
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// agentConfig is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
@@ -148,7 +150,7 @@ export default function AgentDock( {
 				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
 				onClick: handleNewChat,
 			},
-			{
+			shouldUseUnifiedAgent && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
