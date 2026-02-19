@@ -14,7 +14,7 @@ import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
 interface Options {
-	agentConfig: UseAgentChatConfig;
+	agentConfig: Pick< UseAgentChatConfig, 'agentId' | 'authProvider' >;
 }
 
 export default function useConversationList( { agentConfig }: Options ) {

@@ -3,7 +3,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
-import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type {
+	AuthProvider,
+	UseAgentChatConfig,
+	UseAgentChatReturn,
+} from '@automattic/agenttic-client';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
@@ -11,9 +15,7 @@ const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback
 interface UseFeedbackConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
-	agentId: string;
-	sessionId?: string;
-	authProvider?: AuthProvider;
+	agentConfig: Pick< UseAgentChatConfig, 'agentId' | 'sessionId' | 'authProvider' >;
 }
 
 interface UseFeedbackReturn {
@@ -153,10 +155,9 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 export default function useFeedback( {
 	registerMessageActions,
 	messages,
-	agentId,
-	sessionId,
-	authProvider,
+	agentConfig,
 }: UseFeedbackConfig ): UseFeedbackReturn {
+	const { agentId, sessionId, authProvider } = agentConfig;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
 

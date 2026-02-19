@@ -81,9 +81,11 @@ describe( 'useFeedback', () => {
 	const defaultConfig = {
 		registerMessageActions: mockRegisterMessageActions,
 		messages: [],
-		agentId: 'test-agent',
-		sessionId: 'session-abc',
-		authProvider: mockAuthProvider,
+		agentConfig: {
+			agentId: 'test-agent',
+			sessionId: 'session-abc',
+			authProvider: mockAuthProvider,
+		},
 	};
 
 	describe( 'initialization', () => {
@@ -115,7 +117,10 @@ describe( 'useFeedback', () => {
 
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
 
-			rerender( { ...defaultConfig, sessionId: 'new-session' } );
+			rerender( {
+				...defaultConfig,
+				agentConfig: { ...defaultConfig.agentConfig, sessionId: 'new-session' },
+			} );
 
 			// Should trigger re-registration on next effect cycle
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 2 );
@@ -346,7 +351,10 @@ describe( 'useFeedback', () => {
 
 		it( 'uses stored session ID when sessionId prop is empty', async () => {
 			const { result } = renderHook( () =>
-				useFeedback( { ...defaultConfig, sessionId: undefined } )
+				useFeedback( {
+					...defaultConfig,
+					agentConfig: { ...defaultConfig.agentConfig, sessionId: '' },
+				} )
 			);
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
@@ -416,7 +424,12 @@ describe( 'useFeedback', () => {
 
 	describe( 'no authProvider', () => {
 		it( 'does not send rating when authProvider is not provided', async () => {
-			renderHook( () => useFeedback( { ...defaultConfig, authProvider: undefined } ) );
+			renderHook( () =>
+				useFeedback( {
+					...defaultConfig,
+					agentConfig: { ...defaultConfig.agentConfig, authProvider: undefined },
+				} )
+			);
 
 			const registrationCall = mockRegisterMessageActions.mock.calls[ 0 ][ 0 ];
 			const actions = registrationCall.actions( createMessage( 'msg-1', 'agent', 'Test' ) );

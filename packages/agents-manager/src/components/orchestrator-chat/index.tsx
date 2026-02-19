@@ -150,9 +150,7 @@ function OrchestratorChatInner(
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
-		agentId,
-		sessionId,
-		authProvider: agentConfig.authProvider,
+		agentConfig,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
@@ -170,9 +168,7 @@ function OrchestratorChatInner(
 	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
 		registerMessageActions,
 		messages,
-		agentId,
-		sessionId,
-		authProvider: agentConfig.authProvider,
+		agentConfig,
 	} );
 
 	const imageUpload = useImageUpload?.();

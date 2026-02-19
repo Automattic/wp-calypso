@@ -2,15 +2,14 @@ import {
 	loadAllMessagesFromServer,
 	createOdieBotId,
 	type Message,
+	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 
 interface Config {
-	agentId: string;
-	sessionId: string;
-	authProvider?: () => Promise< Record< string, string > >;
+	agentConfig: Pick< UseAgentChatConfig, 'agentId' | 'sessionId' | 'authProvider' >;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -22,12 +21,11 @@ interface Result {
 }
 
 export default function useConversation( {
-	agentId,
-	sessionId,
-	authProvider,
+	agentConfig,
 	maxPages = 10,
 	onSuccess = () => {},
 }: Config ): Result {
+	const { agentId, sessionId, authProvider } = agentConfig;
 	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
