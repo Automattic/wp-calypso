@@ -942,7 +942,8 @@ export const mcpIndexRoute = createRoute( {
 	getParentRoute: () => mcpRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../me/mcp' ).then( ( d ) =>
+	// EXPLORE: temporarily pointing to explore file (original: '../../me/mcp')
+	import( '../../me/mcp/index-explore' ).then( ( d ) =>
 		createLazyRoute( 'mcp' )( {
 			component: d.default,
 		} )
@@ -953,7 +954,7 @@ export const mcpSetupRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Client Setup' ),
+				title: __( 'Connect AI assistant' ),
 			},
 		],
 	} ),
@@ -962,6 +963,75 @@ export const mcpSetupRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/mcp/setup' ).then( ( d ) =>
 		createLazyRoute( 'mcp-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpToolsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'MCP access' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'tools',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} );
+
+export const mcpToolsIndexRoute = createRoute( {
+	getParentRoute: () => mcpToolsRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../me/mcp/tools' ).then( ( d ) =>
+		createLazyRoute( 'mcp-tools' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpToolsCategoryRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				// Title will be set dynamically by the component
+				title: __( 'MCP access' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpToolsRoute,
+	path: '$categorySlug',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/tools/category' ).then( ( d ) =>
+		createLazyRoute( 'mcp-tools-category' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site restrictions' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'sites',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/sites' ).then( ( d ) =>
+		createLazyRoute( 'mcp-sites' )( {
 			component: d.default,
 		} )
 	)
@@ -981,7 +1051,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			preferencesLanguageRoute,
 			preferencesDefaultLandingRoute,
 			...( isEnabled( 'mcp-settings' )
-				? [ mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) ]
+				? [
+						mcpRoute.addChildren( [
+							mcpIndexRoute,
+							mcpSetupRoute,
+							mcpToolsRoute.addChildren( [ mcpToolsIndexRoute, mcpToolsCategoryRoute ] ),
+							mcpSitesRoute,
+						] ),
+				  ]
 				: [] ),
 		] ),
 	];
