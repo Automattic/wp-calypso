@@ -1,22 +1,50 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- AgentsManager must be imported after jest.mock */
+/* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
 import { render } from '@testing-library/react';
 import type { AgentsManagerContextType } from '../../contexts';
 
-// Capture props passed to the mocked UnifiedAIAgent
+// Capture context value passed by `AgentsManager`
 let capturedProps: Record< string, unknown > | null = null;
 
-jest.mock( '../unified-ai-agent', () => ( {
-	__esModule: true,
-	default: function MockUnifiedAIAgent( props: Record< string, unknown > ) {
-		capturedProps = props;
-		return <div data-testid="mock-unified-agent" />;
+// Packages that Jest can't resolve in this environment
+jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
+jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
+
+// Simulate `store` ready so the component renders
+jest.mock( '@wordpress/data', () => ( { useSelect: () => ( { hasLoaded: true } ) } ) );
+jest.mock( '@tanstack/react-query', () => ( {
+	QueryClient: jest.fn(),
+	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
+} ) );
+
+// Intercept context provider to capture forwarded props
+jest.mock( '../../contexts', () => ( {
+	AgentsManagerContextProvider: ( {
+		value,
+		children,
+	}: {
+		value: Record< string, unknown >;
+		children: React.ReactNode;
+	} ) => {
+		capturedProps = value;
+		return children;
 	},
 } ) );
 
-// Import AgentsManager after mocking UnifiedAIAgent
+// Prevent transitive dependency chains from loading
+jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../utils/agent-config', () => ( {} ) );
+jest.mock( '../../utils/agent-session', () => ( {} ) );
+jest.mock( '../../utils/load-external-providers', () => ( {} ) );
+jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );
+jest.mock( '../agent-dock', () => ( { __esModule: true, default: () => null } ) );
+jest.mock( 'react-router-dom', () => ( {} ) );
+
+// Render nothing so `AgentSetup` never mounts
+jest.mock( '../persistent-router', () => ( { PersistentRouter: () => null } ) );
+
 import AgentsManager from '../agents-manager';
 
 describe( 'AgentsManager', () => {
@@ -24,13 +52,13 @@ describe( 'AgentsManager', () => {
 		capturedProps = null;
 	} );
 
-	it( 'forwards sectionName to UnifiedAIAgent', () => {
+	it( 'forwards `sectionName`', () => {
 		render( <AgentsManager sectionName="gutenberg" /> );
 
 		expect( capturedProps ).toEqual( expect.objectContaining( { sectionName: 'gutenberg' } ) );
 	} );
 
-	it( 'forwards currentUser to UnifiedAIAgent', () => {
+	it( 'forwards `currentUser`', () => {
 		const mockUser = {
 			ID: 123,
 			username: 'testuser',
@@ -43,18 +71,15 @@ describe( 'AgentsManager', () => {
 		expect( capturedProps ).toEqual( expect.objectContaining( { currentUser: mockUser } ) );
 	} );
 
-	it( 'forwards site to UnifiedAIAgent', () => {
-		const mockSite = {
-			ID: 456,
-			domain: 'example.com',
-		};
+	it( 'forwards `site`', () => {
+		const mockSite = { ID: 456, domain: 'example.com' };
 
 		render( <AgentsManager sectionName="wp-admin" site={ mockSite } /> );
 
 		expect( capturedProps ).toEqual( expect.objectContaining( { site: mockSite } ) );
 	} );
 
-	it( 'forwards all props together to UnifiedAIAgent', () => {
+	it( 'forwards all props together', () => {
 		const mockUser = {
 			ID: 789,
 			username: 'fulltest',
@@ -62,10 +87,7 @@ describe( 'AgentsManager', () => {
 			email: 'full@example.com',
 		} as AgentsManagerContextType[ 'currentUser' ];
 
-		const mockSite = {
-			ID: 999,
-			domain: 'fulltest.com',
-		};
+		const mockSite = { ID: 999, domain: 'fulltest.com' };
 
 		render(
 			<AgentsManager sectionName="site-editor" currentUser={ mockUser } site={ mockSite } />

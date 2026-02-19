@@ -12,20 +12,19 @@ yarn add @automattic/agents-manager
 
 ### Basic Integration
 
-The main component is `UnifiedAIAgent`. It handles the initialization of the agent, session management, and UI rendering.
+The main component is `AgentsManager`. It handles the initialization of the agent, session management, and UI rendering.
 
 ```tsx
-import UnifiedAIAgent from '@automattic/agents-manager';
+import AgentsManager from '@automattic/agents-manager';
 
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
 	return (
-		<UnifiedAIAgent
+		<AgentsManager
 			currentRoute="/dashboard"
 			sectionName="dashboard"
 			site={ site }
-			isEligibleForChat
 		/>
 	);
 }
@@ -68,22 +67,21 @@ See: `src/hooks/use-custom-event-handler/README.md`.
 
 ## API Reference
 
-### UnifiedAIAgent Props
+### AgentsManager Props
 
-| Prop                | Type                           | Description                                                |
-| ------------------- | ------------------------------ | ---------------------------------------------------------- |
-| `currentRoute`      | `string` (optional)            | The current route path.                                    |
-| `isEligibleForChat` | `boolean`                      | Indicates if the user is eligible for chat.                |
-| `sectionName`       | `string`                       | The name of the current section (e.g., 'posts', 'pages').  |
-| `site`              | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`). |
-| `currentUser`       | `CurrentUser` (optional)       | The current user object (from `@automattic/data-stores`).  |
-| `handleClose`       | `() => void` (optional)        | Called when the agent is closed.                           |
+| Prop           | Type                           | Description                                                        |
+| -------------- | ------------------------------ | ------------------------------------------------------------------ |
+| `sectionName`  | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').   |
+| `currentUser`  | `CurrentUser` (optional)       | The current user object (from `@automattic/data-stores`).          |
+| `site`         | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).         |
+| `currentRoute` | `string` (optional)            | The current route path.                                            |
+| `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                   |
 
 ### Exported Types
 
 ```tsx
 import type {
-	UnifiedAIAgentProps,
+	AgentsManagerProps,
 	Ability,
 	ToolProvider,
 	ContextProvider,
