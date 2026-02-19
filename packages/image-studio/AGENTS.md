@@ -115,12 +115,42 @@ src/
 
 **i18n**: All user-facing strings must use `__()` or `_n()` from `@wordpress/i18n`.
 
-## Testing Requirements
+## Testing
+
+### What agents can run autonomously
+
+| Test       | Command                                                                         | Needs sandbox? |
+| ---------- | ------------------------------------------------------------------------------- | -------------- |
+| Unit tests | `yarn jest packages/image-studio --config packages/image-studio/jest.config.js` | No             |
+| Type check | `yarn workspace @automattic/image-studio tsc --build --dry`                     | No             |
+
+Always run both before creating a PR.
+
+### Unit tests
 
 - Write unit tests for new hooks and utility functions
-- Test files go alongside source: `use-foo.ts` -> `use-foo.test.ts`
+- Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`
 - Use `@testing-library/react` for hook tests via `renderHook`
 - Mock `@wordpress/data` store interactions in tests
+
+### UI testing (requires dev assistance)
+
+Image Studio is bundled in `agents-manager` and served from `widgets.wp.com`. There is no local dev server — **visual testing requires a sandbox**.
+
+**Prerequisites (dev must set up):**
+
+1. Sandbox `widgets.wp.com` — dev confirms sandbox is active
+2. Run `cd apps/agents-manager && yarn dev --sync` — syncs build to sandbox
+3. Log in to test site manually — agent cannot authenticate
+
+**Once prerequisites are met**, agents can use MCP Playwright tools for smoke testing:
+
+- Navigate to the test site
+- Open Image Studio (click image → "Edit with AI" or use Generate mode)
+- Verify modal opens, UI renders correctly, changes apply
+- See `.agents/skills/ui-testing/SKILL.md` for full MCP tool reference and flows
+
+**Without a sandbox**, agents cannot do UI testing. Focus on unit tests, type checks, and build verification instead.
 
 ## Build & Verify
 
@@ -134,10 +164,7 @@ yarn workspace @automattic/image-studio tsc --build --dry
 # Run tests (from repo root)
 yarn jest packages/image-studio --config packages/image-studio/jest.config.js
 
-# Build (ESM + CJS)
-yarn workspace @automattic/image-studio build
-
-# Deploy in sandbox
+# Deploy to sandbox (builds image-studio as part of agents-manager bundle)
 cd apps/agents-manager
 yarn dev --sync
 ```
