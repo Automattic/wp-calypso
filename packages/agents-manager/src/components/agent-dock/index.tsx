@@ -223,8 +223,7 @@ export default function AgentDock( {
 
 	const HistoryRoute = (
 		<AgentHistory
-			agentId={ agentId }
-			authProvider={ agentConfig.authProvider }
+			agentConfig={ agentConfig }
 			chatHeaderOptions={ chatHeaderOptions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }

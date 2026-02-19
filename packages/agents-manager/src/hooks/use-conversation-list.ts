@@ -2,6 +2,7 @@ import {
 	listConversationsFromServer,
 	createOdieBotId,
 	type ServerConversationListItem,
+	type UseAgentChatConfig,
 } from '@automattic/agenttic-client';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
@@ -13,11 +14,11 @@ import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
 interface Options {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
+	agentConfig: UseAgentChatConfig;
 }
 
-export default function useConversationList( { agentId, authProvider }: Options ) {
+export default function useConversationList( { agentConfig }: Options ) {
+	const { agentId, authProvider } = agentConfig;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
 	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );

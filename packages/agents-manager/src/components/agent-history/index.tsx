@@ -9,10 +9,8 @@ import ConversationHistoryView from '../conversation-history-view';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
 interface Props {
-	/** Agent ID for fetching conversation history. */
-	agentId: string;
-	/** Authentication provider for API requests. */
-	authProvider: UseAgentChatConfig[ 'authProvider' ];
+	/** Agent configuration for the chat client. */
+	agentConfig: UseAgentChatConfig;
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -32,8 +30,7 @@ interface Props {
 }
 
 export default function AgentHistory( {
-	agentId,
-	authProvider,
+	agentConfig,
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
@@ -72,8 +69,7 @@ export default function AgentHistory( {
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
 				<ConversationHistoryView
-					agentId={ agentId }
-					authProvider={ authProvider }
+					agentConfig={ agentConfig }
 					onSelectConversation={ onSelectConversation }
 					onNewChat={ onNewChat }
 				/>
