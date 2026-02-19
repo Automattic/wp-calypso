@@ -39,7 +39,7 @@ export default function DomainOnly( {
 	return (
 		<div className="checkout-thank-you__domain-only-container">
 			<Step.CenteredColumnLayout
-				className="step-container-v2--domain-only domain-only"
+				className="step-container-v2--domain-only"
 				columnWidth={ 6 }
 				heading={
 					<Step.Heading
