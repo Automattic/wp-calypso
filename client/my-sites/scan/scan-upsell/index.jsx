@@ -1,4 +1,8 @@
-import { FEATURE_TYPE_JETPACK_SCAN, PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
+import {
+	FEATURE_TYPE_JETPACK_SCAN,
+	PLAN_BUSINESS,
+	PRODUCT_JETPACK_SCAN,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,11 +16,13 @@ import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -63,6 +69,7 @@ function ScanVPActiveBody() {
 function ScanUpsellBody() {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const dispatch = useDispatch();
+	const isWpcom = useSelector( ( state ) => isSiteWpcom( state, siteId ) );
 
 	const onClick = useCallback(
 		() => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ),
@@ -72,15 +79,26 @@ function ScanUpsellBody() {
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
-			<QueryProductsList type="jetpack" />
+			{ isWpcom && <QueryProductsList /> }
+			{ ! isWpcom && <QueryProductsList type="jetpack" /> }
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<UpsellProductCard
-				featureType={ FEATURE_TYPE_JETPACK_SCAN }
-				nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
-				siteId={ siteId }
-				onCtaButtonClick={ onClick }
-			/>
+			{ isWpcom && (
+				<UpsellProductWpcomPlanCard
+					WPcomPlanSlug={ PLAN_BUSINESS }
+					nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
+			{ ! isWpcom && (
+				<UpsellProductCard
+					featureType={ FEATURE_TYPE_JETPACK_SCAN }
+					nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
 		</>
 	);
 }

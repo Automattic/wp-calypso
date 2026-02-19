@@ -10,6 +10,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { siteLogsActivityRoute } from '../../../app/router/sites';
 import { DataViews } from '../../../components/dataviews';
+import { getActivityLogHiddenGroups } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
@@ -61,12 +62,15 @@ function SiteActivityLogsDataViews( {
 
 	const searchTerm = view.search?.trim() ?? '';
 
+	const notGroup = getActivityLogHiddenGroups( site );
+
 	const activityLogQueryParams: ActivityLogParams = {
 		sort_order: view.sort?.direction,
 		number: view.perPage || ACTIVITY_LOGS_DEFAULT_PAGE_SIZE,
 		page: view.page,
 		after: afterIso,
 		before: beforeIso,
+		...( notGroup?.length && { not_group: notGroup } ),
 	};
 
 	if ( searchTerm ) {
@@ -97,6 +101,7 @@ function SiteActivityLogsDataViews( {
 			after: afterIso,
 			before: beforeIso,
 			number: 1000,
+			...( notGroup?.length && { not_group: notGroup } ),
 		} )
 	);
 	const isFetching = isFetchingData || isFetchingFilters;
