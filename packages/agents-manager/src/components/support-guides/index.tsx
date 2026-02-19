@@ -62,7 +62,7 @@ interface Props {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
-	isChatDocked: boolean;
+	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user aborts the current request. */
@@ -74,7 +74,7 @@ interface Props {
 export default function SupportGuides( {
 	isOpen,
 	chatHeaderOptions,
-	isChatDocked,
+	isDocked,
 	onAbort,
 	onClose,
 }: Props ) {
@@ -94,14 +94,14 @@ export default function SupportGuides( {
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
-			variant={ isChatDocked ? 'embedded' : 'floating' }
+			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onStop={ onAbort }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isChatDocked }
+					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }

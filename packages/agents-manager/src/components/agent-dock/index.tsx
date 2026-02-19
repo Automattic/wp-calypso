@@ -240,11 +240,11 @@ export default function AgentDock( {
 			isEligibleForChat={ isEligibleForChat }
 			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			sectionName={ sectionName }
 			currentSiteDomain={ site?.domain }
 			chatHeaderOptions={ chatHeaderOptions }
-			isChatDocked={ isDocked }
 		/>
 	);
 
@@ -252,9 +252,9 @@ export default function AgentDock( {
 		<SupportGuides
 			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			chatHeaderOptions={ chatHeaderOptions }
-			isChatDocked={ isDocked }
 		/>
 	);
 
