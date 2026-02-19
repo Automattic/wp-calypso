@@ -41,7 +41,7 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 		const currentUser = useSelector( getCurrentUser );
 
 		useEffect( () => {
-			if ( source?.startsWith( 'ciab-' ) ) {
+			if ( source?.startsWith( 'ciab-' ) && config.isEnabled( 'posthog-tracking' ) ) {
 				initPostHog( config( 'ciab_posthog_api_key' ), currentUser ?? undefined );
 			}
 		}, [ source, currentUser ] );

@@ -18,7 +18,7 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	posthog: config( 'ciab_posthog_api_key' ),
+	posthog: config.isEnabled( 'posthog-tracking' ) ? config( 'ciab_posthog_api_key' ) : undefined,
 	basePath: getCiabDashboardBasePath( window.location.hostname ),
 	mainRoute: '/sites',
 	Logo: null,
