@@ -2,7 +2,6 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
-import { startSiteCollisionListener } from './site-collision-listener';
 
 declare module '@tanstack/react-query' {
 	interface Register {
@@ -63,8 +62,6 @@ const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryCli
 		},
 	},
 } );
-
-startSiteCollisionListener( queryClient );
 
 export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
 

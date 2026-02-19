@@ -24,7 +24,6 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 // Mock email validator
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
-	startSiteCollisionListener: jest.fn( () => jest.fn() ),
 	isAutomatticianQuery: jest.fn( () => ( {
 		queryKey: [ 'me', 'is-automattician' ],
 		queryFn: jest.fn(),
