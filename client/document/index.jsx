@@ -248,6 +248,18 @@ class Document extends Component {
 						/>
 					) }
 
+					{ sectionName === 'login' &&
+						config.isEnabled( 'blackbox-login' ) &&
+						config( 'blackbox_api_key' ) && (
+							<script
+								nonce={ inlineScriptNonce }
+								async
+								defer
+								src={ config( 'blackbox_url' ) }
+								data-apikey={ config( 'blackbox_api_key' ) }
+							/>
+						) }
+
 					{ entrypoint?.language?.manifest && (
 						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />
 					) }

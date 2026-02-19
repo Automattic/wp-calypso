@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
@@ -19,8 +20,10 @@ import 'calypso/state/login/init';
  * @returns {Function}                   A thunk that can be dispatched
  */
 export const loginUserWithTwoFactorVerificationCode =
-	( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
+	( twoStepCode, twoFactorAuthType ) => async ( dispatch, getState ) => {
 		dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+
+		const blackboxSessionId = await getBlackboxSessionId();
 
 		return postLoginRequest( 'two-step-authentication-endpoint', {
 			user_id: getTwoFactorUserId( getState() ),
@@ -30,6 +33,7 @@ export const loginUserWithTwoFactorVerificationCode =
 			remember_me: true,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} )
 			.then( ( response ) => {
 				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
