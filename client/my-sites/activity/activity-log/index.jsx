@@ -556,7 +556,6 @@ class ActivityLog extends Component {
 						{ showVisibleDaysLimitUpsell && (
 							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 						) }
-						{ ! hasFullActivityLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
