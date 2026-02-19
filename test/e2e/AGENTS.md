@@ -3,10 +3,12 @@
 ## Documentation
 
 Full documentation is available in:
+
 - docs/ - Legacy framework documentation
 - docs-new/ - New Playwright Test framework documentation
 
 Key docs to reference:
+
 - docs-new/overview.md
 - docs-new/setup.md
 - docs-new/running_debugging_tests.md
@@ -18,15 +20,17 @@ Key docs to reference:
 
 We are migrating from the legacy framework to Playwright Test:
 
-**Legacy Framework (Playwright + Jest runner)**
+### Legacy Framework (Playwright + Jest runner)
+
 - Test files: `test/e2e/specs/**/*.ts` (without `.spec.` in filename)
-- Examples: specs/blocks/blocks__core.ts, specs/published-content/likes__post.ts
+- Examples: `specs/blocks/blocks__core.ts`, `specs/published-content/likes__post.ts`
 - Documentation: docs/
 - Status: Being phased out, do not write new tests in this format
 
-**New Framework (Playwright Test)**
+### New Framework (Playwright Test)
+
 - Test files: `test/e2e/specs/**/*.spec.ts` (with `.spec.` in filename)
-- Examples: specs/tools/import__sites-squarespace.spec.ts, specs/tools/marketing__seo.spec.ts
+- Examples: `specs/tools/import__sites-squarespace.spec.ts`, `specs/tools/marketing__seo.spec.ts`
 - Documentation: docs-new/
 - Status: Target framework for all new and migrated tests
 
@@ -52,6 +56,7 @@ yarn playwright test specs/path/to/test.spec.ts
 ```
 
 For legacy tests (`*.ts` without `.spec.`), use the Jest runner:
+
 ```bash
 yarn test specs/path/to/test.ts
 ```
@@ -139,6 +144,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 **Accounts**: `accountDefaultUser`, `accountGivenByEnvironment`, `accountAtomic`, `accountGutenbergSimple`, `accounti18n`, `accountPreRelease`, `accountSimpleSiteFreePlan`, `accountSMS`
 
 **Pages/Components**: Follow naming conventions:
+
 - `page*` - Pages (e.g., `pageLogin`, `pageEditor`, `pagePeople`)
 - `component*` - Components (e.g., `componentSidebar`, `componentGutenberg`)
 - `flow*` - Flows (e.g., `flowStartWriting`)
@@ -150,6 +156,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 ### Given/When/Then Pattern
 
 Use `test.step()` with descriptive names:
+
 - **Given**: Preconditions
 - **When**: Actions
 - **Then**: Assertions
