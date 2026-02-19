@@ -100,7 +100,7 @@ export const NEW_SUBSCRIPTION_CONFIG: Record< NewSubscriptionType, ReaderNewSubs
 			icon: <ReaderTumblrIcon iconSize={ 75 } />,
 			title: translate( 'Common Tumblr URLs' ),
 			infoList: [
-				{ label: translate( 'Staff Picks:' ), info: 'staff.tumblr.com/rss' },
+				{ label: translate( 'Staff picks:' ), info: 'staff.tumblr.com/rss' },
 				{ label: translate( 'A blog:' ), info: '{ BLOG_NAME }.tumblr.com/rss' },
 				{
 					label: translate( 'Blog tag:' ),
