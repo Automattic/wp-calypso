@@ -263,14 +263,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
 							if ( triggerBackendBuild ) {
-								let wpAdminUrl = `${ siteURL }/wp-admin/`;
-
-								// Add the PostHog session ID to the URL to track the user session (if available).
 								const ph = queryParams.get( '_ph' );
-								wpAdminUrl += ph ? `?_ph=${ encodeURIComponent( ph ) }` : '';
-
-								// Redirect to wp-admin.
-								window.location.replace( wpAdminUrl );
+								window.location.replace(
+									addQueryArgs( `${ siteURL }/wp-admin/`, {
+										...( ph && { _ph: ph } ),
+									} )
+								);
 							} else {
 								window.location.replace(
 									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
