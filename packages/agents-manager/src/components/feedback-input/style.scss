@@ -1,0 +1,93 @@
+.agents-manager-feedback-input {
+	margin-top: 12px;
+	padding: 12px;
+	background: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 4px;
+
+	.dark & {
+		background: #1e1e1e;
+		border-color: #545454;
+	}
+
+	.components-textarea-control {
+		margin-bottom: 12px;
+	}
+
+	.components-base-control__label {
+		font-size: 13px;
+		text-transform: none;
+
+		.dark & {
+			color: #ccc;
+		}
+	}
+
+	.components-textarea-control__input {
+		width: 100%;
+		resize: vertical;
+
+		.dark & {
+			background: #2c2c2c;
+			border-color: #545454;
+			color: #e0e0e0;
+
+			&::placeholder {
+				color: #999;
+			}
+		}
+	}
+
+	&__success {
+		padding: 12px;
+		background: #d5f2e3;
+		color: #00450c;
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
+
+	&__error {
+		padding: 12px;
+		background: #fef0f0;
+		color: #cc1818;
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+
+		.components-button {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+
+			.components-spinner {
+				margin: 0;
+				vertical-align: middle;
+			}
+		}
+
+		.dark & .components-button.is-tertiary {
+			color: #ccc;
+
+			&:hover {
+				color: #fff;
+			}
+		}
+
+		.dark & .components-button.is-primary {
+			background: #3858e9;
+			color: #fff;
+
+			&:disabled {
+				background: #2c2c2c;
+				color: #666;
+			}
+		}
+	}
+}

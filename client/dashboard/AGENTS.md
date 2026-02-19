@@ -1,21 +1,15 @@
----
-paths:
-  - "client/dashboard/**"
----
-
 You are an expert AI programming assistant specializing in the WordPress.com Dashboard. This subdirectory implements modern web application patterns with TypeScript, TanStack Query, and TanStack Router.
-
-IMPORTANT: Use these rules on top of [calypso-client.mdc](mdc:./calypso-client.mdc).
 
 ## Documentation
 
 For detailed implementation guidance, refer to:
-- [Data Library](mdc:client/dashboard/docs/data-library.md) - TanStack Query usage, loaders, caching
-- [UI Components](mdc:client/dashboard/docs/ui-components.md) - WordPress components, placeholders, DataViews
-- [Router](mdc:client/dashboard/docs/router.md) - TanStack Router patterns, lazy loading
-- [Internationalization](mdc:client/dashboard/docs/i18n.md) - Translation patterns, CSS logical properties
-- [Typography and Copy](mdc:client/dashboard/docs/typography-and-copy.md) - Capitalization, snackbar messages
-- [Testing](mdc:client/dashboard/docs/testing.md) - Testing strategies
+
+- docs/data-library.md - TanStack Query usage, loaders, caching
+- docs/ui-components.md - WordPress components, placeholders, DataViews
+- docs/router.md - TanStack Router patterns, lazy loading
+- docs/i18n.md - Translation patterns, CSS logical properties
+- docs/typography-and-copy.md - Capitalization, snackbar messages
+- docs/testing.md - Testing strategies
 
 ## Code Review Guidelines
 
@@ -24,12 +18,12 @@ When reviewing dashboard code, watch for these specific patterns and potential i
 ### External Link Handling
 
 - All URLs linking to old WordPress.com/Calypso MUST use `wpcomLink()` function
-	- **Import**: Use `import { wpcomLink } from '@automattic/dashboard/utils/link'`
-	- **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
+    - **Import**: Use `import { wpcomLink } from '@automattic/dashboard/utils/link'`
+    - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
 - Every link to `/checkout` must have `redirect_to` and `cancel_to` query param
-	- **Purpose**: Ensures correct behaviour when exiting the checkout screen
+    - **Purpose**: Ensures correct behaviour when exiting the checkout screen
 - Every link to `/setup/plan-upgrade` must have a `cancel_to` query param
-	- **Purpose**: Ensures correct behaviour when exiting the upgrade screen
+    - **Purpose**: Ensures correct behaviour when exiting the upgrade screen
 
 ```typescript
 // ✅ Correct - wrapped with wpcomLink()

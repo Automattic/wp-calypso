@@ -78,23 +78,14 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ) {
-	const { isSummerSpecial } = props || {};
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
-		isSummerSpecial,
 	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ): Partial< FeatureGroupMap > {
-	const { isSummerSpecial } = props || {};
-	return resolveFeatureGroupsForFeaturesGrid( {
-		isSummerSpecial,
-	} );
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid( props?: {

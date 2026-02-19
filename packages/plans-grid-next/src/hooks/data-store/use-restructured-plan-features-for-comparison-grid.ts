@@ -22,7 +22,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	isSummerSpecial,
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
@@ -36,7 +35,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
@@ -53,7 +51,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
@@ -67,7 +64,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			isSummerSpecial,
 			useLongSetFeatures,
 			useLongSetStackedFeatures,
 			useShortSetStackedFeatures,
@@ -93,28 +89,20 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				// regardless of which experiment variant (var1, var1d, var3, var4, var5) is active.
 				if (
 					isExperimentVariant &&
-					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.( {
-						isSummerSpecial,
-					} )?.length
+					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj
-							.get2023PlanComparisonFeatureOverrideForExperiment( {
-								isSummerSpecial,
-							} )
-							.slice(),
+						planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment().slice(),
 						isExperimentVariant
 					);
 				} else if (
 					// Check if there's a specific override for comparison
-					planConstantObj.get2023PlanComparisonFeatureOverride?.( {
-						isSummerSpecial,
-					} ).length
+					planConstantObj.get2023PlanComparisonFeatureOverride?.().length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PlanComparisonFeatureOverride( { isSummerSpecial } ).slice()
+						planConstantObj.get2023PlanComparisonFeatureOverride().slice()
 					);
 				} else if ( 'plans-wordpress-hosting' === intent ) {
 					// Use visual split features for WordPress hosting intent
@@ -132,14 +120,14 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						// Fallback to default features
 						wpcomFeatures = getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupWpcomFeatures?.( { isSummerSpecial } ).slice()
+							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 						);
 					}
 				} else {
 					// Default case
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupWpcomFeatures?.( { isSummerSpecial } ).slice()
+						planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 					);
 				}
 
@@ -250,7 +238,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			planFeaturesForGridPlans,
 			intent,
 			hasRedeemedDomainCredit,
-			isSummerSpecial,
 			isExperimentVariant,
 		] );
 	};

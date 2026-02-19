@@ -1,5 +1,4 @@
 import { getPlan } from '@automattic/calypso-products';
-import { useSummerSpecialStatus } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import {
 	ReactElement,
@@ -72,9 +71,6 @@ function UpsellSwitch( props: Props ) {
 	} = props;
 	const { state, reason } = siteState || {};
 
-	// Check if site has summer special enabled
-	const hasSummerSpecialSticker = useSummerSpecialStatus( { siteId } );
-
 	const [ uiState, setUiState ] = useState< UiState >( null );
 	const [ showUpsell, setUpsell ] = useState( false );
 
@@ -91,12 +87,12 @@ function UpsellSwitch( props: Props ) {
 			const sitePlanDetails = getPlan( sitePlan.product_slug );
 			productsList = [
 				...productsList,
-				...( sitePlanDetails?.getIncludedFeatures?.( hasSummerSpecialSticker ) ?? [] ),
+				...( sitePlanDetails?.getIncludedFeatures?.() ?? [] ),
 				...( sitePlanDetails?.getInferiorFeatures?.() ?? [] ),
 			];
 		}
 		return !! productsList.find( productSlugTest );
-	}, [ siteProducts, productSlugTest, sitePlan, hasSummerSpecialSticker ] ) as boolean;
+	}, [ siteProducts, productSlugTest, sitePlan ] ) as boolean;
 
 	// Reset states when site or section changes
 	useEffect( () => {
