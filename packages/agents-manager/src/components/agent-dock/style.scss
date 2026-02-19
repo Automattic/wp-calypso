@@ -1,4 +1,3 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 @import '../../styles/variables.scss';
 
@@ -51,7 +50,7 @@
 		top: $layout-spacing + $admin-bar-height + 1px !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
-		border: 1px solid $border-color;
+		border: 1px solid $admin-border-color;
 		border-top: none;
 		border-left: none;
 	}
@@ -98,7 +97,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		right: $sidebar-width;
 		width: auto !important;
 		border-radius: $main-border-radius $main-border-radius 0 0;
-		border: 1px solid $border-color;
+		border: 1px solid $admin-border-color;
 		border-bottom: none;
 		box-sizing: border-box;
 		height: calc( var( --masterbar-height ) + 1px );
@@ -110,8 +109,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		top: $admin-content-top;
 		left: $layout-spacing;
 		height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) ) !important;
-		border-left: 1px solid $border-color;
-		border-bottom: 1px solid $border-color;
+		border-left: 1px solid $admin-border-color;
+		border-bottom: 1px solid $admin-border-color;
 		border-bottom-left-radius: $main-border-radius;
 	}
 
@@ -126,8 +125,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		padding-left: $layout-spacing;
 		bottom: $layout-spacing - 1px;
 		border-bottom-right-radius: $main-border-radius;
-		border-right: 1px solid $border-color;
-		border-bottom: 1px solid $border-color;
+		border-right: 1px solid $admin-border-color;
+		border-bottom: 1px solid $admin-border-color;
 		overflow-y: auto;
 		overflow-x: hidden;
 		background-color: $admin-background-color;
@@ -185,7 +184,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			right: $sidebar-width;
 			width: auto;
 			border-radius: $main-border-radius $main-border-radius 0 0;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 			border-bottom: none;
 			box-sizing: border-box;
 			height: calc( var( --masterbar-height ) + 1px );
@@ -215,7 +214,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			min-height: unset;
 			margin: 0 !important;
 			overflow: auto !important;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 		}
 
 		#secondary {
@@ -224,7 +223,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			bottom: $layout-spacing;
 			overflow: hidden;
 			border-radius: 0 0 0 $main-border-radius;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 			border-top: none;
 			border-right: none;
 		}
@@ -538,14 +537,14 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 				flex: 1;
 			}
 			&.confirmation-action-destructive {
-				background-color: #cc1818;
+				background-color: $alert-red;
 				p,
 				span {
 					color: $white;
 				}
 				&:hover {
 					color: $white;
-					background-color: #cc1818;
+					background-color: $alert-red;
 					filter: brightness( 90% );
 				}
 			}
