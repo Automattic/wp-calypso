@@ -68,6 +68,8 @@ export interface SiteSpecConfig {
 			logoAlt?: string; // Alt text for logo when string URL
 			url?: string; // Click-through link
 			position?: 'header' | 'footer';
+			showOnOnboarding?: boolean;
+			opacity?: number;
 		};
 
 		promptSuggestions?: {
@@ -99,6 +101,7 @@ export interface SiteSpecConfig {
 		typography?: {
 			body?: string;
 			headings?: string;
+			headingWeight?: number;
 		};
 
 		// Identification/metadata
