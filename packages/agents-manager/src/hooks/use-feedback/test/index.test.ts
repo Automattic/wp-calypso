@@ -29,7 +29,9 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
-jest.mock( '@automattic/calypso-analytics' );
+jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
+	virtual: true,
+} );
 jest.mock( '../../../utils/agent-session' );
 jest.mock( '../../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
