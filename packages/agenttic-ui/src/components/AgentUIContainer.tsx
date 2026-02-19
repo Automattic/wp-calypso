@@ -83,6 +83,7 @@ export function AgentUIContainer( {
 	maxInputLength = 600, // Default to 600 characters
 	onInputLimitExceeded,
 	expandOnClick,
+	expandOnHover = true,
 	thinkingMessage,
 	initialChatPosition,
 	onChatPositionChange,
@@ -297,6 +298,10 @@ export function AgentUIContainer( {
 
 	// Handle hover to show compact view
 	const handleHover = useCallback( () => {
+		if ( ! expandOnHover ) {
+			return;
+		}
+
 		if ( chat.state === 'collapsed' ) {
 			chat.setState( 'compact' );
 			// Only auto-collapse if initial state was collapsed
