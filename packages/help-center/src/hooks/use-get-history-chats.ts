@@ -156,19 +156,19 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	// When in CIAB context, filter interactions to only those matching the CIAB bot slug.
 	// This ensures the chat history only shows CIAB conversations.
 	const filteredOdieSupportInteractions = useMemo( () => {
-		if ( ! isCommerceGarden || ! odieSupportInteractions ) {
+		if ( ! isCommerceGarden ) {
 			return odieSupportInteractions;
 		}
-		return odieSupportInteractions.filter(
+		return odieSupportInteractions?.filter(
 			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
 		);
 	}, [ isCommerceGarden, newInteractionsBotSlug, odieSupportInteractions ] );
 
 	const filteredOtherSupportInteractions = useMemo( () => {
-		if ( ! isCommerceGarden || ! otherSupportInteractions ) {
+		if ( ! isCommerceGarden ) {
 			return otherSupportInteractions;
 		}
-		return otherSupportInteractions.filter(
+		return otherSupportInteractions?.filter(
 			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
 		);
 	}, [ isCommerceGarden, newInteractionsBotSlug, otherSupportInteractions ] );
