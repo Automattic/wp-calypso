@@ -9,9 +9,11 @@
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
+	"blackbox_api_key": "1f3Ze6VdnMmKdWGi",
 	"features": {
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
+		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
