@@ -123,6 +123,7 @@ const SidebarDemo: React.FC = () => {
 					height: 100%;
 					display: flex;
 					flex-direction: column;
+					padding: 16px;
 				}
 
 				.sidebar-demo__header {
