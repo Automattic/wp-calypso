@@ -1,19 +1,19 @@
-import { QueryClient } from '@tanstack/react-query';
+import nock from 'nock';
+import { queryClient } from '../query-client';
+import { siteBySlugQuery, siteByIdQuery } from '../site';
 import { startSiteCollisionListener } from '../site-collision-listener';
 import type { Site } from '@automattic/api-core';
 
-// Mock site query key builders to avoid circular dependency on query-client.
-jest.mock( '../site', () => ( {
-	siteBySlugQuery: ( slug: string ) => ( {
-		queryKey: [ 'site-by-slug', slug ],
-	} ),
-	siteByIdQuery: ( id: number ) => ( {
-		queryKey: [ 'site-by-id', id ],
-	} ),
-} ) );
+// Mock with Jest so that the same client is used in siteBySlugQuery/siteByIdQuery
+jest.mock( '../query-client', () => {
+	const { QueryClient: QC } = require( '@tanstack/react-query' );
+	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
+	return { queryClient: qc };
+} );
 
-jest.mock( '../sites', () => ( {
-	sitesQueryKey: [ 'sites' ],
+// notFound used in queryFn error handling — won't fire in success-path tests.
+jest.mock( '@tanstack/react-router', () => ( {
+	notFound: () => new Error( 'Not found' ),
 } ) );
 
 function makeSite( overrides: Partial< Site > ): Site {
@@ -28,115 +28,122 @@ function makeSite( overrides: Partial< Site > ): Site {
 	} as Site;
 }
 
+function mockFetchSite( siteIdOrSlug: string | number, site: Site ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ siteIdOrSlug }` )
+		.query( true )
+		.reply( 200, site );
+}
+
+function seedJetpackUrls( urls: string[] ) {
+	queryClient.setQueryData( [ 'jetpack-site-urls' ], urls );
+}
+
 describe( 'startSiteCollisionListener', () => {
-	let qc: QueryClient;
 	let unsubscribe: () => void;
 
 	beforeEach( () => {
-		qc = new QueryClient();
-		unsubscribe = startSiteCollisionListener( qc );
+		unsubscribe = startSiteCollisionListener( queryClient );
 	} );
 
 	afterEach( () => {
 		unsubscribe();
-		qc.clear();
+		queryClient.clear();
 	} );
 
-	function seedJetpackUrls( urls: string[] ) {
-		qc.setQueryData( [ 'jetpack-site-urls' ], urls );
-	}
-
-	it( 'rewrites slug on site-by-slug when jetpack URLs are cached', () => {
+	test( 'rewrites slug on site-by-slug when jetpack URLs are cached', async () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
-		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		mockFetchSite( 'example.com', makeSite( {} ) );
+		await queryClient.fetchQuery( siteBySlugQuery( 'example.com' ) );
 
-		const fixed = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'seeds corrected slug key', () => {
+	test( 'seeds corrected slug key', async () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
-		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		mockFetchSite( 'example.com', makeSite( {} ) );
+		await queryClient.fetchQuery( siteBySlugQuery( 'example.com' ) );
 
-		const atNewKey = qc.getQueryData< Site >( [ 'site-by-slug', 'example.wordpress.com' ] );
+		const atNewKey = queryClient.getQueryData(
+			siteBySlugQuery( 'example.wordpress.com' ).queryKey
+		);
 		expect( atNewKey?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'rewrites slug on site-by-id', () => {
+	test( 'rewrites slug on site-by-id', async () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
-		const site = makeSite( { ID: 42 } );
-		qc.setQueryData( [ 'site-by-id', 42 ], site );
+		mockFetchSite( 42, makeSite( { ID: 42 } ) );
+		await queryClient.fetchQuery( siteByIdQuery( 42 ) );
 
-		const fixed = qc.getQueryData< Site >( [ 'site-by-id', 42 ] );
+		const fixed = queryClient.getQueryData( siteByIdQuery( 42 ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'does not rewrite jetpack sites', () => {
+	test( 'does not rewrite jetpack sites', () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
 		const site = makeSite( { jetpack: true } );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
-	it( 'adds jetpack site URL to cached set when a jetpack site arrives', () => {
+	test( 'adds jetpack site URL to cached set when a jetpack site arrives', async () => {
 		seedJetpackUrls( [] );
 
-		const site = makeSite( { jetpack: true, URL: 'https://jp-site.com' } );
-		qc.setQueryData( [ 'site-by-slug', 'jp-site.com' ], site );
+		mockFetchSite( 'jp-site.com', makeSite( { jetpack: true, URL: 'https://jp-site.com' } ) );
+		await queryClient.fetchQuery( siteBySlugQuery( 'jp-site.com' ) );
 
-		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		const urls = queryClient.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
 		expect( urls ).toContain( 'jp-site.com' );
 	} );
 
-	it( 'does not duplicate when jetpack URL already in set', () => {
+	test( 'does not duplicate when jetpack URL already in set', () => {
 		seedJetpackUrls( [ 'jp-site.com' ] );
 
 		const site = makeSite( { jetpack: true, URL: 'https://jp-site.com' } );
-		qc.setQueryData( [ 'site-by-slug', 'jp-site.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'jp-site.com' ).queryKey, site );
 
-		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		const urls = queryClient.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
 		expect( urls ).toHaveLength( 1 );
 	} );
 
-	it( 'does not rewrite when no collision', () => {
+	test( 'does not rewrite when no collision', () => {
 		seedJetpackUrls( [ 'other.com' ] );
 
 		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
-	it( 'does nothing when jetpack URLs are not yet cached', () => {
+	test( 'does nothing when jetpack URLs are not yet cached', () => {
 		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const result = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const result = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( result?.slug ).toBe( 'example.com' );
 	} );
 
-	it( 'replaces slashes with :: in corrected slug', () => {
+	test( 'replaces slashes with :: in corrected slug', () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
 		const site = makeSite( {
 			options: { unmapped_url: 'https://example.wordpress.com/path' } as Site[ 'options' ],
 		} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		const fixed = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com::path' );
 	} );
 
-	it( 'adds jetpack URLs from sites list to cached set', () => {
+	test( 'adds jetpack URLs from sites list to cached set', () => {
 		seedJetpackUrls( [] );
 
 		const sites = [
@@ -144,52 +151,52 @@ describe( 'startSiteCollisionListener', () => {
 			makeSite( { ID: 2, jetpack: true, URL: 'https://jp2.com', slug: 'jp2.com' } ),
 			makeSite( { ID: 3, jetpack: false, slug: 'wpcom.com' } ),
 		];
-		qc.setQueryData( [ 'sites', 'all' ], sites );
+		queryClient.setQueryData( [ 'sites', 'all' ], sites );
 
-		const urls = qc.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
+		const urls = queryClient.getQueryData< string[] >( [ 'jetpack-site-urls' ] );
 		expect( urls ).toContain( 'jp1.com' );
 		expect( urls ).toContain( 'jp2.com' );
 		expect( urls ).toHaveLength( 2 );
 	} );
 
-	it( 'rewrites sites in a sites list array', () => {
+	test( 'rewrites sites in a sites list array', () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
 		const sites = [ makeSite( {} ) ];
-		qc.setQueryData( [ 'sites', 'extra' ], sites );
+		queryClient.setQueryData( [ 'sites', 'extra' ], sites );
 
-		const fixed = qc.getQueryData< Site[] >( [ 'sites', 'extra' ] );
+		const fixed = queryClient.getQueryData< Site[] >( [ 'sites', 'extra' ] );
 		expect( fixed?.[ 0 ].slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'rewrites sites in a paginated response', () => {
+	test( 'rewrites sites in a paginated response', () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
 		const data = { sites: [ makeSite( {} ) ], total: 1 };
-		qc.setQueryData( [ 'sites', 'paginated' ], data );
+		queryClient.setQueryData( [ 'sites', 'paginated' ], data );
 
-		const fixed = qc.getQueryData< { sites: Site[] } >( [ 'sites', 'paginated' ] );
+		const fixed = queryClient.getQueryData< { sites: Site[] } >( [ 'sites', 'paginated' ] );
 		expect( fixed?.sites[ 0 ].slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'retroactively fixes cached sites when jetpack URLs arrive', () => {
+	test( 'retroactively fixes cached sites when jetpack URLs arrive', () => {
 		// Site cached before jetpack URLs are available.
 		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
-		expect( qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] )?.slug ).toBe(
+		expect( queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey )?.slug ).toBe(
 			'example.com'
 		);
 
 		// Jetpack URLs arrive — should retroactively fix.
 		seedJetpackUrls( [ 'example.com' ] );
 
-		expect( qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] )?.slug ).toBe(
+		expect( queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey )?.slug ).toBe(
 			'example.wordpress.com'
 		);
 	} );
 
-	it( 'uses fallback scan to detect collisions before jetpack-site-urls query resolves', () => {
+	test( 'uses fallback scan to detect collisions before jetpack-site-urls query resolves', () => {
 		// A jetpack site is already cached by ID (e.g. restored from persistence).
 		const jpSite = makeSite( {
 			ID: 99,
@@ -197,27 +204,27 @@ describe( 'startSiteCollisionListener', () => {
 			URL: 'https://example.com',
 			slug: 'example.com',
 		} );
-		qc.setQueryData( [ 'site-by-id', 99 ], jpSite );
+		queryClient.setQueryData( siteByIdQuery( 99 ).queryKey, jpSite );
 
 		// A non-jetpack site with same URL arrives at a different key.
 		// No jetpack-site-urls query yet — fallback scan should find the JP site by ID.
 		const wpcomSite = makeSite( { ID: 2 } );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], wpcomSite );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, wpcomSite );
 
-		const fixed = qc.getQueryData< Site >( [ 'site-by-slug', 'example.com' ] );
+		const fixed = queryClient.getQueryData( siteBySlugQuery( 'example.com' ).queryKey );
 		expect( fixed?.slug ).toBe( 'example.wordpress.com' );
 	} );
 
-	it( 'does not infinite-loop from cascading setQueryData calls', () => {
+	test( 'does not infinite-loop from cascading setQueryData calls', () => {
 		seedJetpackUrls( [ 'example.com' ] );
 
 		let callCount = 0;
-		const innerUnsubscribe = qc.getQueryCache().subscribe( () => {
+		const innerUnsubscribe = queryClient.getQueryCache().subscribe( () => {
 			callCount++;
 		} );
 
 		const site = makeSite( {} );
-		qc.setQueryData( [ 'site-by-slug', 'example.com' ], site );
+		queryClient.setQueryData( siteBySlugQuery( 'example.com' ).queryKey, site );
 
 		innerUnsubscribe();
 
