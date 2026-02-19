@@ -318,6 +318,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				// Spec preview submit button
 				'--spec-preview-chip-fg': '#ffffff',
 				'--spec-preview-chip-bg': 'rgba(56, 88, 233, 1)',
+				'--spec-preview-checkbox-appearance': 'none',
 			},
 		},
 		tosConfig: {
