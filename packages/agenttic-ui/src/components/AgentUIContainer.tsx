@@ -640,6 +640,7 @@ export function AgentUIContainer( {
 				ref={ chatRef }
 				data-slot="chat-floating"
 				className={ cn( className, styles.container, styles.floating, {
+					[ styles.expanded ]: chat.state === 'expanded',
 					animating: isAnimating,
 				} ) }
 				onMouseLeave={

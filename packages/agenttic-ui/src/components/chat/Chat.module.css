@@ -26,6 +26,10 @@
     box-shadow: var(--shadow-lg);
 }
 
+.container.expanded .content {
+    padding: var(--spacing-3);
+}
+
 /* Override drag cursor for textarea and input elements */
 .container.floating [data-slot="chat-input"],
 .container.floating [data-slot="chat-input"] .textareaContainer,

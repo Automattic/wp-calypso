@@ -31,5 +31,10 @@ export default defineConfig(({ mode }) => {
 				},
 			],
 		},
+		css: {
+			modules: {
+				generateScopedName: '[name]_[local]',
+			},
+		},
 	}
 } );

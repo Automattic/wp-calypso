@@ -3,8 +3,9 @@
     width: 100%;
     border-radius: var(--radius-md);
     border: 0;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
     background-color: transparent;
-    min-height: var(--spacing-10);
     padding: var(--spacing-2);
     scrollbar-width: none;
     resize: none;
@@ -15,8 +16,11 @@
     font-weight: var(--font-weight-medium);
 }
 
+.textarea:focus,
 .textarea:focus-visible {
     outline: none;
+    border: 0;
+    box-shadow: none;
 }
 
 .textarea:disabled {

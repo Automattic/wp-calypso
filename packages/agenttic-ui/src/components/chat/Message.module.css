@@ -1,12 +1,12 @@
 .message {
     display: flex;
     align-items: flex-start;
-    padding: 0 var(--spacing-3);
+    padding: var(--spacing) var(--spacing-4);
     color: var(--color-foreground);
 }
 
 .message.user {
-    padding-right: var(--spacing-4);
+    padding: 0 var(--spacing-4);
 }
 
 .message.user .bubble {
@@ -35,10 +35,14 @@
 
 /* MARKDOWN */
 
-.message p {
+.message * {
     font-size: var(--text-sm);
     font-weight: 400;
     line-height: var(--text-sm--line-height);
+    color: var(--color-foreground);
+}
+
+.message p {
     text-wrap-style: pretty;
     margin-top: 0;
     margin-bottom: var(--spacing-3);
@@ -60,6 +64,10 @@
 .message ul {
     margin-bottom: var(--spacing-3);
     padding-left: var(--spacing-6);
+}
+
+.message ul {
+    list-style-type: disc;
 }
 
 .message p+:where(ol,ul) {
