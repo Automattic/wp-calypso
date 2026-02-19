@@ -1,6 +1,6 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
-import { forwardRef, useImperativeHandle } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
@@ -21,36 +21,27 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Called when the message count changes. */
+	onMessagesCountChange: ( count: number ) => void;
 }
 
-export interface ZendeskChatHandle {
-	/** Returns the number of messages in the current Zendesk conversation. */
-	getMessagesCount: () => number;
-}
-
-function ZendeskChatInner(
-	{
-		chatHeaderOptions,
-		isDocked,
-		isOpen,
-		onClose,
-		onExpand,
-		markdownComponents = {},
-		markdownExtensions = {},
-	}: Props,
-	ref: React.ForwardedRef< ZendeskChatHandle >
-) {
+export default function ZendeskChat( {
+	chatHeaderOptions,
+	isDocked,
+	isOpen,
+	onClose,
+	onExpand,
+	markdownComponents = {},
+	markdownExtensions = {},
+	onMessagesCountChange,
+}: Props ) {
 	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
 		useManagedZendeskChat();
 
-	// Expose imperative methods to parent component
-	useImperativeHandle(
-		ref,
-		() => ( {
-			getMessagesCount: () => agentticMessages.length,
-		} ),
-		[ agentticMessages.length ]
-	);
+	// Notify parent when message count changes
+	useEffect( () => {
+		onMessagesCountChange( agentticMessages.length );
+	}, [ agentticMessages.length, onMessagesCountChange ] );
 
 	return (
 		<AgentChat
@@ -72,6 +63,3 @@ function ZendeskChatInner(
 		/>
 	);
 }
-
-const ZendeskChat = forwardRef( ZendeskChatInner );
-export default ZendeskChat;

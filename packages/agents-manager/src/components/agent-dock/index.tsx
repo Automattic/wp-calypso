@@ -1,10 +1,11 @@
+import { getAgentManager } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useRef } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -17,10 +18,10 @@ import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
-import OrchestratorChat, { type OrchestratorChatHandle } from '../orchestrator-chat';
+import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
-import ZendeskChat, { type ZendeskChatHandle } from '../zendesk-chat';
+import ZendeskChat from '../zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
@@ -68,8 +69,8 @@ export default function AgentDock( {
 
 	const [ isCompactMode, setIsCompactMode ] = useState( false );
 	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
-	const orchestratorChatRef = useRef< OrchestratorChatHandle >( null );
-	const zendeskChatRef = useRef< ZendeskChatHandle >( null );
+	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
+	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const {
 		hasLoaded: isStoreReady,
@@ -116,7 +117,7 @@ export default function AgentDock( {
 		setShouldRenderChat,
 	} );
 
-	const handleAbort = () => orchestratorChatRef.current?.abortCurrentRequest();
+	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
 
 	const handleNewChat = () => navigate( '/' );
 
@@ -135,27 +136,24 @@ export default function AgentDock( {
 		} else {
 			const sessionId = conversation.session_id || '';
 
-			orchestratorChatRef.current?.abortCurrentRequest();
+			handleAbort();
 			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		const orchestratorMessagesCount = orchestratorChatRef.current?.getMessagesCount() ?? 0;
-		const zendeskMessagesCount = zendeskChatRef.current?.getMessagesCount() ?? 0;
-
 		return [
 			{
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/chat' && ! orchestratorMessagesCount,
+				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
 				onClick: handleNewChat,
 			},
 			{
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && ! zendeskMessagesCount,
+				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
 				onClick: () => {
 					handleAbort();
 					navigate( '/zendesk' );
@@ -185,7 +183,6 @@ export default function AgentDock( {
 
 	const OrchestratorChatRoute = (
 		<OrchestratorChat
-			ref={ orchestratorChatRef }
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
@@ -202,12 +199,12 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			navigate={ navigate }
 			useImageUpload={ useImageUpload }
+			onMessagesCountChange={ setOrchestratorMsgCount }
 		/>
 	);
 
 	const ZendeskChatRoute = (
 		<ZendeskChat
-			ref={ zendeskChatRef }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			onClose={ handleClose }
@@ -215,6 +212,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
+			onMessagesCountChange={ setZendeskMsgCount }
 		/>
 	);
 

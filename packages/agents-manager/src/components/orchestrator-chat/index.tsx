@@ -4,14 +4,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
-import {
-	useState,
-	useCallback,
-	useMemo,
-	useEffect,
-	useImperativeHandle,
-	forwardRef,
-} from '@wordpress/element';
+import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
@@ -65,36 +58,29 @@ interface Props {
 	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
+	/** Called when the message count changes. */
+	onMessagesCountChange: ( count: number ) => void;
 }
 
-export interface OrchestratorChatHandle {
-	/** Aborts the current in-flight request. */
-	abortCurrentRequest: () => void;
-	/** Returns the number of messages in the current conversation. */
-	getMessagesCount: () => number;
-}
-
-function OrchestratorChatInner(
-	{
-		emptyViewSuggestions,
-		isDocked,
-		isOpen,
-		onClose,
-		onExpand,
-		chatHeaderOptions,
-		markdownComponents,
-		markdownExtensions,
-		isCompactMode,
-		useNavigationContinuation,
-		useAbilitiesSetup,
-		useSuggestions,
-		getChatComponent,
-		siteBuildUtils,
-		useImageUpload,
-		navigate,
-	}: Props,
-	ref: React.ForwardedRef< OrchestratorChatHandle >
-) {
+export default function OrchestratorChat( {
+	emptyViewSuggestions,
+	isDocked,
+	isOpen,
+	onClose,
+	onExpand,
+	chatHeaderOptions,
+	markdownComponents,
+	markdownExtensions,
+	isCompactMode,
+	useNavigationContinuation,
+	useAbilitiesSetup,
+	useSuggestions,
+	getChatComponent,
+	siteBuildUtils,
+	useImageUpload,
+	onMessagesCountChange,
+	navigate,
+}: Props ) {
 	const { agentConfig } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -121,15 +107,10 @@ function OrchestratorChatInner(
 		registerMessageActions,
 	} = useAgentChat( agentConfig! );
 
-	// Expose imperative methods to parent component
-	useImperativeHandle(
-		ref,
-		() => ( {
-			abortCurrentRequest,
-			getMessagesCount: () => messages.length,
-		} ),
-		[ abortCurrentRequest, messages.length ]
-	);
+	// Notify parent when message count changes
+	useEffect( () => {
+		onMessagesCountChange( messages.length );
+	}, [ messages.length, onMessagesCountChange ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -327,6 +308,3 @@ function OrchestratorChatInner(
 		/>
 	);
 }
-
-const OrchestratorChat = forwardRef( OrchestratorChatInner );
-export default OrchestratorChat;
