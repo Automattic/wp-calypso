@@ -5,7 +5,6 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { init as initPostHog } from '@automattic/posthog';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -28,7 +27,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { name } = useAppContext();
+	const { posthog } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -37,10 +36,10 @@ function AnalyticsProviderWithClient( {
 	}, [ user, router ] );
 
 	useEffect( () => {
-		if ( name === 'CIAB' ) {
-			initPostHog( config( 'ciab_posthog_api_key' ), user );
+		if ( posthog ) {
+			initPostHog( posthog, user );
 		}
-	}, [ user, name ] );
+	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
