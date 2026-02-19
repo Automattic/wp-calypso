@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
-import { createElement } from 'react';
+import { createElement, type ReactElement } from 'react';
 import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 
 // Raw config structure from the server
@@ -318,7 +318,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 			},
 		},
 		tosConfig: {
-			showToS: false,
+			showToS: true,
 		},
 	};
 }
