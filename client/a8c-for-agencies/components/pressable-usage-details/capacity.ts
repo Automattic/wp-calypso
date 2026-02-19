@@ -10,6 +10,10 @@ function getNormalizedLicenseQuantity( quantity: number | null ): number {
 	return quantity && quantity > 0 ? quantity : 1;
 }
 
+function normalizePressableAddonKey( licenseKey: string ): string {
+	return licenseKey.split( '_' )[ 0 ];
+}
+
 export function calculateAddonCapacityFromLicenses( licenses: License[] = [] ): PressableCapacity {
 	return licenses.reduce(
 		( total, license ) => {
@@ -21,7 +25,8 @@ export function calculateAddonCapacityFromLicenses( licenses: License[] = [] ): 
 				return total;
 			}
 
-			const addOnInfo = getPressablePlan( license.licenseKey );
+			const addOnKey = normalizePressableAddonKey( license.licenseKey );
+			const addOnInfo = getPressablePlan( addOnKey );
 
 			if ( ! addOnInfo ) {
 				return total;
