@@ -647,11 +647,18 @@ export default function CancelPurchase() {
 		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
 		customerConfirmedUnderstanding = false
 	) => {
-		// Only show domain options as a separate step if radio buttons will be displayed
-		if (
+		// When the eligibility notice is active and the user clicks the default cancel button
+		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
+		// no need to ask about the domain. Skip straight to the survey.
+		const skippingDomainOptionsForAutoRenew =
+			shouldShowRefundEligibilityNotice( purchase ) && cancelIntent !== 'refund';
+
+		const needsDomainOptions =
+			! skippingDomainOptionsForAutoRenew &&
 			includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
-		) {
+			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
+
+		if ( needsDomainOptions ) {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
@@ -660,7 +667,6 @@ export default function CancelPurchase() {
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
-			// For direct cancellations (no domain options step), show survey directly
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
