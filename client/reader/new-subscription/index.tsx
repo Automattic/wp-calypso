@@ -76,7 +76,7 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			<ReaderAddSubscription config={ selectedTabConfig } />
+			<ReaderAddSubscription key={ selectedTab } config={ selectedTabConfig } />
 		</ReaderMain>
 	);
 }
