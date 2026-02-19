@@ -72,14 +72,13 @@ export default function AgentDock( {
 	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
 	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const {
-		hasLoaded: isStoreReady,
-		isOpen: isPersistedOpen = false,
-		isDocked: isPersistedDocked = false,
-	} = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
+		( select ) => {
+			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+			return store.getAgentsManagerState();
+		},
+		[]
+	);
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 
@@ -88,7 +87,6 @@ export default function AgentDock( {
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			onOpenSidebar: () => {
