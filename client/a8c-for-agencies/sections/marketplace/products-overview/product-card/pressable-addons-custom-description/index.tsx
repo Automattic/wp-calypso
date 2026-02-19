@@ -10,18 +10,75 @@ type Props = {
 	productSlug: string;
 };
 
-const getAddonCount = ( productSlug: string ): number | null => {
+type PressableAddonType = 'sites' | 'storage' | 'visits' | 'unknown';
+
+const getAddonType = ( productSlug: string ): PressableAddonType => {
+	if ( productSlug.startsWith( 'pressable-addon-sites-' ) ) {
+		return 'sites';
+	}
+
+	if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
+		return 'storage';
+	}
+
+	if ( productSlug.startsWith( 'pressable-addon-visits-' ) ) {
+		return 'visits';
+	}
+
+	return 'unknown';
+};
+
+const getAddonValue = ( productSlug: string ): string | null => {
 	const parts = productSlug.split( '-' );
 	const lastPart = parts[ parts.length - 1 ];
-	const count = Number( lastPart );
-
-	return Number.isFinite( count ) ? count : null;
+	return lastPart || null;
 };
 
 export default function PressableAddonsCustomDescription( { productName, productSlug }: Props ) {
 	const translate = useTranslate();
 	const { description } = useProductDescription( productSlug );
-	const count = getAddonCount( productSlug );
+	const addOnType = getAddonType( productSlug );
+	const count = getAddonValue( productSlug );
+
+	const getCalloutCopy = () => {
+		if ( addOnType === 'sites' ) {
+			return translate( 'Site limit will be increased by %(count)s on your Signature plan', {
+				args: { count },
+			} );
+		}
+
+		if ( addOnType === 'storage' ) {
+			return translate( 'Storage limit will be increased by %(count)s on your Signature plan', {
+				args: { count },
+			} );
+		}
+
+		if ( addOnType === 'visits' ) {
+			return translate( 'Visits limit will be increased by %(count)s on your Signature plan', {
+				args: { count },
+			} );
+		}
+
+		return translate( 'Plan limit will be increased by %(count)s on your Signature plan', {
+			args: { count },
+		} );
+	};
+
+	const getDetailLimitCopy = () => {
+		if ( addOnType === 'sites' ) {
+			return translate( "Site add-ons raise your plan's limits while your plan is active." );
+		}
+
+		if ( addOnType === 'storage' ) {
+			return translate( "Storage add-ons raise your plan's limits while your plan is active." );
+		}
+
+		if ( addOnType === 'visits' ) {
+			return translate( "Visits add-ons raise your plan's limits while your plan is active." );
+		}
+
+		return translate( "Add-ons raise your plan's limits while your plan is active." );
+	};
 
 	return (
 		<div className="pressable-addons-custom-description">
@@ -37,11 +94,7 @@ export default function PressableAddonsCustomDescription( { productName, product
 			{ count !== null && (
 				<div className="pressable-addons-custom-description__callout">
 					<Icon icon={ info } size={ 16 } />
-					<span>
-						{ translate( 'Site limit will be increased by %(count)d on your Signature plan', {
-							args: { count },
-						} ) }
-					</span>
+					<span>{ getCalloutCopy() }</span>
 				</div>
 			) }
 			<div className="pressable-addons-custom-description__section">
@@ -52,9 +105,7 @@ export default function PressableAddonsCustomDescription( { productName, product
 							'Add-ons let you customize your Pressable plan without upgrading to the next plan tier.'
 						) }
 					</li>
-					<li>
-						{ translate( "Site add-ons raise your plan's limits while your plan is active." ) }
-					</li>
+					<li>{ getDetailLimitCopy() }</li>
 					<li>
 						{ translate(
 							'Add-ons must be attached to an active Pressable plan. If you cancel your Pressable plan, any add-ons will be canceled automatically.'
