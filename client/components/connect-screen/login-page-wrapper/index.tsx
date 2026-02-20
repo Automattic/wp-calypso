@@ -1,12 +1,14 @@
 import { FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
-import { isValidElement } from '@wordpress/element';
+import { createInterpolateElement, isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { FormDivider } from 'calypso/blocks/authentication';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { BrandHeader } from '../brand-header';
+import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
 import { ScreenLayout } from '../screen-layout';
 import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
@@ -34,8 +36,6 @@ export interface LoginPageWrapperBranding {
 
 export interface LoginPageWrapperProps {
 	title: ReactNode;
-	description?: ReactNode;
-	descriptionSecondary?: ReactNode;
 	branding?: LoginPageWrapperBranding;
 	primaryNavLink?: LoginPageWrapperLink;
 	secondaryNavLink?: LoginPageWrapperLink;
@@ -48,6 +48,11 @@ export interface LoginPageWrapperProps {
 	onUsernameOrEmailChange?: ( value: string ) => void;
 	usernameOrEmailInputId?: string;
 	usernameOrEmailInputName?: string;
+	showTermsNotice?: boolean;
+	termsNotice?: ReactNode;
+	showForgotPasswordLink?: boolean;
+	forgotPasswordHref?: string;
+	onForgotPasswordClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 	children: ReactNode;
 	/**
 	 * Optional right-side social buttons column.
@@ -113,8 +118,6 @@ function renderLogo(
  */
 export function LoginPageWrapper( {
 	title,
-	description,
-	descriptionSecondary,
 	branding,
 	primaryNavLink,
 	secondaryNavLink,
@@ -127,6 +130,11 @@ export function LoginPageWrapper( {
 	onUsernameOrEmailChange,
 	usernameOrEmailInputId = 'usernameOrEmail',
 	usernameOrEmailInputName = 'usernameOrEmail',
+	showTermsNotice = true,
+	termsNotice,
+	showForgotPasswordLink = true,
+	forgotPasswordHref = '/log-in/lostpassword',
+	onForgotPasswordClick,
 	children,
 	socialButtons,
 	showSocialDivider = true,
@@ -169,6 +177,30 @@ export function LoginPageWrapper( {
 		branding?.topBarLogoWidth,
 		branding?.topBarLogoHeight
 	);
+
+	const renderedTermsNotice =
+		termsNotice ??
+		createInterpolateElement(
+			translate(
+				'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
+			),
+			{
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			}
+		);
 
 	const renderLoginIdentifierField = () => (
 		<div className="connect-screen-login-page-wrapper__login-field">
@@ -245,14 +277,13 @@ export function LoginPageWrapper( {
 						logoWidth={ branding?.logoWidth }
 						logoHeight={ branding?.logoHeight }
 						title={ title }
-						description={ description }
 						className="connect-screen-login-page-wrapper__header"
 					/>
 
-					{ descriptionSecondary && (
-						<p className="connect-screen-login-page-wrapper__description-secondary">
-							{ descriptionSecondary }
-						</p>
+					{ showTermsNotice && (
+						<ConsentText className="connect-screen-login-page-wrapper__terms-notice">
+							{ renderedTermsNotice }
+						</ConsentText>
 					) }
 
 					{ isLoading ? (
@@ -308,6 +339,17 @@ export function LoginPageWrapper( {
 									</div>
 								) }
 							</div>
+							{ showForgotPasswordLink && (
+								<div className="connect-screen-login-page-wrapper__forgot-password-wrapper">
+									<a
+										className="connect-screen-login-page-wrapper__forgot-password-link"
+										href={ addRedirectToQuery( forgotPasswordHref, redirectTo ) }
+										onClick={ onForgotPasswordClick }
+									>
+										{ translate( 'Forgot password?' ) }
+									</a>
+								</div>
+							) }
 							{ footer && (
 								<div className="connect-screen-login-page-wrapper__footer">{ footer }</div>
 							) }

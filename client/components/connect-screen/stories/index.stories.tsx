@@ -6,7 +6,15 @@ import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
-import { MagicLoginButton, UsernameOrEmailButton } from '../../social-buttons';
+import {
+	AppleLoginButton,
+	GithubSocialButton,
+	GoogleSocialButton,
+	MagicLoginButton,
+	PayPalSocialButton,
+	QrCodeLoginButton,
+	UsernameOrEmailButton,
+} from '../../social-buttons';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
@@ -34,6 +42,27 @@ const socialButtonsStore = createStore( () => ( {
 	login: {
 		isFormDisabled: false,
 	},
+	route: {
+		query: {
+			initial: {},
+			current: {},
+		},
+	},
+	ui: {
+		route: {
+			path: {
+				currentRoute: '/log-in',
+			},
+		},
+	},
+	language: {
+		locale: 'en',
+	},
+	signup: {
+		flow: {
+			currentFlowName: null,
+		},
+	},
 	oauth2Clients: {
 		ui: {
 			currentClientId: null,
@@ -47,7 +76,17 @@ const SocialButtonsPanel = () => (
 			<div className="auth-form__social-buttons">
 				<div className="auth-form__social-buttons-container">
 					<UsernameOrEmailButton onClick={ () => {} } />
+					<GoogleSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
+					<AppleLoginButton
+						responseHandler={ () => {} }
+						onClick={ () => {} }
+						socialServiceResponse={ {} }
+						isLogin
+					/>
+					<GithubSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
+					<PayPalSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
 					<MagicLoginButton loginUrl="https://wordpress.com/log-in/link" />
+					<QrCodeLoginButton loginUrl="https://wordpress.com/log-in/link" />
 				</div>
 			</div>
 		</div>
@@ -60,7 +99,6 @@ const LoginPageWrapperControlledInputStory = () => {
 	return (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
 			usernameOrEmail={ usernameOrEmail }
 			onUsernameOrEmailChange={ setUsernameOrEmail }
 		>
@@ -278,7 +316,6 @@ export const LoginPageWrapperVariants: StoryObj< typeof LoginPageWrapper > = {
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 		>
 			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
@@ -290,8 +327,6 @@ export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper >
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to Woo"
-			description="Continue with your WordPress.com account."
-			descriptionSecondary="By continuing, you agree to our Terms of Service."
 			branding={ {
 				logo: CIAB_PARTNERS.woo.logo.src,
 				logoAlt: CIAB_PARTNERS.woo.logo.alt,
@@ -306,13 +341,6 @@ export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper >
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }
 		>
 			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-			<ConsentText>
-				By continuing, you agree to our{ ' ' }
-				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
-					Terms of Service
-				</a>
-				.
-			</ConsentText>
 		</LoginPageWrapper>
 	),
 };
@@ -321,7 +349,6 @@ export const LoginPageWrapperWithRedirectTo: StoryObj< typeof LoginPageWrapper >
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="All top links include redirect_to when provided."
 			redirectTo="https://wordpress.com/home/example.wordpress.com"
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks?source=login' } }
@@ -335,7 +362,6 @@ export const LoginPageWrapperLoading: StoryObj< typeof LoginPageWrapper > = {
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
 			isLoading
 			loadingMessage="Loading account details..."
 		>
@@ -348,7 +374,6 @@ export const LoginPageWrapperSocialTwoColumn: StoryObj< typeof LoginPageWrapper 
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			socialButtons={ <SocialButtonsPanel /> }
 		>
@@ -361,7 +386,6 @@ export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWr
 	render: () => (
 		<LoginPageWrapper
 			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			socialButtons={ <SocialButtonsPanel /> }
 		>

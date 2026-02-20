@@ -4,24 +4,80 @@ import React from 'react';
 import { LoginPageWrapper } from '../index';
 
 describe( 'LoginPageWrapper', () => {
-	it( 'renders title, descriptions, and content', () => {
+	it( 'renders title and content', () => {
 		render(
-			<LoginPageWrapper
-				title="Log in to your account"
-				description="Use your WordPress.com account to continue."
-				descriptionSecondary="Need help? Contact support."
-			>
+			<LoginPageWrapper title="Log in to your account">
 				<div>Form content</div>
 			</LoginPageWrapper>
 		);
 
 		expect( screen.getByRole( 'heading', { name: 'Log in to your account' } ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Use your WordPress.com account to continue.' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Need help? Contact support.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Form content' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'WordPress.com email address or username' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email address or username' ) ).toBeInTheDocument();
+
+		const termsNode = document.querySelector( '.connect-screen-consent-text' );
+		expect( termsNode?.textContent ).toContain(
+			'Just a little reminder that by continuing with any of the options below, you agree to our Terms of Service and Privacy Policy.'
+		);
+		expect( screen.getByRole( 'link', { name: 'Forgot password?' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'name', 'usernameOrEmail' );
+	} );
+
+	it( 'renders terms links below brand header using ConsentText', () => {
+		render(
+			<LoginPageWrapper title="Log in">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( document.querySelector( '.connect-screen-consent-text' ) ).toBeInTheDocument();
+
+		expect( screen.getByRole( 'link', { name: 'Terms of Service' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/tos/'
+		);
+		expect( screen.getByRole( 'link', { name: 'Privacy Policy' } ) ).toHaveAttribute(
+			'href',
+			'https://automattic.com/privacy/'
+		);
+	} );
+
+	it( 'allows hiding terms notice', () => {
+		render(
+			<LoginPageWrapper title="Log in" showTermsNotice={ false }>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect(
+			screen.queryByText(
+				'Just a little reminder that by continuing with any of the options below, you agree to our Terms of Service and Privacy Policy.'
+			)
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'renders forgot password link below form area and supports custom href', () => {
+		render(
+			<LoginPageWrapper title="Log in" forgotPasswordHref="/log-in/jetpack/lostpassword">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Forgot password?' } ) ).toHaveAttribute(
+			'href',
+			'/log-in/jetpack/lostpassword'
+		);
+	} );
+
+	it( 'allows hiding forgot password link', () => {
+		render(
+			<LoginPageWrapper title="Log in" showForgotPasswordLink={ false }>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.queryByRole( 'link', { name: 'Forgot password?' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'calls onUsernameOrEmailChange with updated value', () => {

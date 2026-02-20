@@ -91,15 +91,8 @@
 	text-align: center;
 }
 
-.connect-screen-login-page-wrapper__description-secondary {
-	margin: -0.5rem 0 0;
-	text-align: center;
-	font-size: 0.875rem;
-	color: color-mix(
-		in srgb,
-		var( --connect-screen-login-page-wrapper-text-color ) 72%,
-		transparent
-	);
+.connect-screen-login-page-wrapper__terms-notice {
+	margin-top: -0.5rem;
 }
 
 .connect-screen-login-page-wrapper__before-content {
@@ -214,6 +207,24 @@
 
 	a {
 		color: var( --connect-screen-login-page-wrapper-link-color );
+	}
+}
+
+.connect-screen-login-page-wrapper__forgot-password-wrapper {
+	margin-top: 0.5rem;
+	text-align: center;
+}
+
+.connect-screen-login-page-wrapper__forgot-password-link {
+	color: var( --studio-gray-70 );
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 0.2rem;
+
+	&:hover,
+	&:focus {
+		color: var( --studio-gray-70 );
 	}
 }
 
