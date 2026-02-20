@@ -3,7 +3,6 @@
  */
 
 import { act, screen } from '@testing-library/react';
-import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/new-subscription.const';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AddSubscriptionForm from '../index';
@@ -45,9 +44,7 @@ describe( 'AddSubscriptionForm', () => {
 	describe( 'email verification notice', () => {
 		it( 'shows a warning when the user email is not verified', () => {
 			mockIsCurrentUserEmailVerified.mockReturnValue( false );
-			const { container } = renderWithProvider(
-				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
-			);
+			const { container } = renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			expect(
 				screen.getByText( 'Please verify your email before subscribing.' )
@@ -62,9 +59,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'does not show a warning when the user email is verified', () => {
-			const { container } = renderWithProvider(
-				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
-			);
+			const { container } = renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			expect(
 				screen.queryByText( 'Please verify your email before subscribing.' )
@@ -81,9 +76,7 @@ describe( 'AddSubscriptionForm', () => {
 				'calypso/landing/subscriptions/components/site-subscriptions-list'
 			);
 
-			renderWithProvider(
-				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			expect( screen.getByText( 'Your subscriptions' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
@@ -94,9 +87,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'does not dispatch requestFollows on subscribe toggle', () => {
-			renderWithProvider(
-				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			act( () => capturedOnChangeSubscribe() );
 
@@ -104,9 +95,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'hides the subscriptions list when a feed preview becomes active', () => {
-			renderWithProvider(
-				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 
@@ -118,7 +107,7 @@ describe( 'AddSubscriptionForm', () => {
 
 	describe( 'platform specific tabs', () => {
 		it( 'shows instructions when the config provides them', () => {
-			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
+			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
 			expect( screen.getByTestId( 'instructions-icon' ) ).toBeInTheDocument();
@@ -128,7 +117,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'dispatches requestFollows on subscribe toggle', () => {
-			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
+			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
 
 			act( () => capturedOnChangeSubscribe() );
 
@@ -136,7 +125,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'hides instructions when a feed preview becomes active', () => {
-			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
+			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
 
 			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
 
@@ -149,7 +138,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'closes the feed preview when the subscription is toggled', () => {
-			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
+			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
 
 			act( () => capturedOnChangeFeedPreview( true ) );
 

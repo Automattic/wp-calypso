@@ -5,10 +5,10 @@ import ReaderTumblrIcon from 'calypso/reader/components/icons/tumblr-icon';
 import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
 import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 
-export type NewSubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
+export type SubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
 
-export interface AddSubscriptionFormConfig {
-	slug: NewSubscriptionType;
+interface AddSubscriptionFormConfig {
+	slug: SubscriptionType;
 	title: string;
 	url: string;
 	pathname: string; // @TODO: Remove when isDiscoverV3Enabled() is removed.
@@ -22,7 +22,7 @@ export interface AddSubscriptionFormConfig {
 }
 
 const BASE_URL: string = 'reader/new';
-export const ADD_SUBSCRIPTION_CONFIGS: Record< NewSubscriptionType, AddSubscriptionFormConfig > = {
+export const ADD_SUBSCRIPTION_CONFIGS: Record< SubscriptionType, AddSubscriptionFormConfig > = {
 	[ 'add-new' ]: {
 		slug: 'add-new',
 		title: translate( 'Add new' ),
