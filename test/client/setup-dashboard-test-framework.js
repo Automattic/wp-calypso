@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom';
 
 const { TextEncoder, TextDecoder } = require( 'util' );
+const { configure } = require( '@testing-library/react' );
 const nock = require( 'nock' );
+
+configure( { asyncUtilTimeout: 5000 } );
 
 // Fail any network requests which aren't mocked.
 nock.disableNetConnect();
