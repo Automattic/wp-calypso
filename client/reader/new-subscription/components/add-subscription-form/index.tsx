@@ -12,15 +12,13 @@ import {
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { ReaderNewSubscriptionConfig } from '../../new-subscription.const';
+import { AddSubscriptionFormConfig } from '../../new-subscription.const';
 
-interface ReaderAddSubscriptionProps {
-	config: ReaderNewSubscriptionConfig;
+interface AddSubscriptionFormProps {
+	config: AddSubscriptionFormConfig;
 }
 
-export default function ReaderAddSubscription( {
-	config,
-}: ReaderAddSubscriptionProps ): JSX.Element {
+export default function AddSubscriptionForm( { config }: AddSubscriptionFormProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );

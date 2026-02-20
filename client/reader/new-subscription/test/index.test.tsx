@@ -12,7 +12,7 @@ import ReaderNewSubscriptionPage from '../index';
 jest.mock(
 	'../components/add-subscription',
 	() =>
-		function ReaderAddSubscription( { config }: { config: { slug: string } } ) {
+		function AddSubscriptionForm( { config }: { config: { slug: string } } ) {
 			return <div data-testid="add-subscription" data-config-slug={ config.slug } />;
 		}
 );
@@ -118,7 +118,7 @@ describe( 'ReaderNewSubscriptionPage', () => {
 		);
 	} );
 
-	it( 'renders ReaderAddSubscription with the config for the selected tab', () => {
+	it( 'renders AddSubscriptionForm with the config for the selected tab', () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="youtube" /> );
 
 		expect( screen.getByTestId( 'add-subscription' ) ).toHaveAttribute(

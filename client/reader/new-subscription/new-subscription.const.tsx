@@ -7,7 +7,7 @@ import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 
 export type NewSubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
 
-export interface ReaderNewSubscriptionConfig {
+export interface AddSubscriptionFormConfig {
 	slug: NewSubscriptionType;
 	title: string;
 	url: string;
@@ -22,7 +22,7 @@ export interface ReaderNewSubscriptionConfig {
 }
 
 const BASE_URL: string = 'reader/new';
-export const NEW_SUBSCRIPTION_CONFIG: Record< NewSubscriptionType, ReaderNewSubscriptionConfig > = {
+export const ADD_SUBSCRIPTION_CONFIGS: Record< NewSubscriptionType, AddSubscriptionFormConfig > = {
 	[ 'add-new' ]: {
 		slug: 'add-new',
 		title: translate( 'Add new' ),
