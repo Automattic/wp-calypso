@@ -40,9 +40,16 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { createLazyRoute, createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
+import {
+	createLazyRoute,
+	createRoute,
+	lazyRouteComponent,
+	notFound,
+	redirect,
+} from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
+	canManageSite,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 	canViewSiteVisibilitySettings,
@@ -120,6 +127,10 @@ export const siteRoute = createRoute( {
 		} catch ( e ) {
 			// Do nothing and propagate the error through the loader function.
 			return;
+		}
+
+		if ( ! canManageSite( site ) ) {
+			throw notFound();
 		}
 
 		const overviewUrl = `/sites/${ siteSlug }`;
