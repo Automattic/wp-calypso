@@ -54,6 +54,7 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
+	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -78,6 +79,7 @@ import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
+import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import type { CancelPurchaseState } from './types';
 import type {
@@ -629,7 +631,7 @@ export default function CancelPurchase() {
 	const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		setState( ( state ) => ( {
 			...state,
-			newState,
+			...newState,
 		} ) );
 	};
 
@@ -641,21 +643,44 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
-	const onCancellationStart = () => {
-		// Only show domain options as a separate step if radio buttons will be displayed
-		if (
+	const onCancellationStart = (
+		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
+		customerConfirmedUnderstanding = false
+	) => {
+		// When the eligibility notice is active and the user clicks the default cancel button
+		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
+		// no need to ask about the domain. Skip straight to the survey.
+		const skippingDomainOptionsForAutoRenew =
+			shouldShowRefundEligibilityNotice( purchase ) && cancelIntent !== 'refund';
+
+		const needsDomainOptions =
+			! skippingDomainOptionsForAutoRenew &&
 			includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
-		) {
+			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
+
+		if ( needsDomainOptions ) {
 			setState( ( state ) => ( {
 				...state,
+				cancelIntent,
+				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
-			// For direct cancellations (no domain options step), show survey directly
-			setState( ( state ) => ( { ...state, siteId: purchase.blog_id, surveyShown: true } ) );
+			setState( ( state ) => ( {
+				...state,
+				cancelIntent,
+				customerConfirmedUnderstanding,
+				siteId: purchase.blog_id,
+				surveyShown: true,
+			} ) );
 		}
+	};
+
+	const onCancellationStartForRefund = () => {
+		// Explicitly clicking the refund notice button is the user's confirmation — skip the
+		// confirmation checkbox that would otherwise be required on the pre-survey screen.
+		onCancellationStart( 'refund', true );
 	};
 
 	const clickNext = () => {
@@ -972,14 +997,79 @@ export default function CancelPurchase() {
 		} );
 	};
 
+	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
+		setPurchaseAutoRenewMutation.mutate(
+			{ purchaseId: purchase.ID, autoRenew: false },
+			{
+				onSuccess: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const subscriptionEndDate = intlFormat(
+						purchase.expiry_date,
+						{ dateStyle: 'medium' },
+						{ locale: 'en-US' }
+					);
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+							__(
+								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+							),
+							{
+								purchaseName,
+								subscriptionEndDate,
+							}
+						),
+						{ type: 'snackbar' }
+					);
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
+				},
+				onError: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					createErrorNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased. */
+							__(
+								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+							),
+							{ purchaseName }
+						),
+						{ type: 'snackbar' }
+					);
+					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+				},
+			}
+		);
+	};
+
 	const onSurveyComplete = () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
-		switch ( flowType ) {
+
+		// Determine effective flow type based on cancel intent
+		let effectiveFlowType = flowType;
+
+		// If user clicked refund button, use refund flow
+		if ( state.cancelIntent === 'refund' ) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		}
+		// If default Cancel button on refundable wpcom plan, use auto-renew flow
+		else if (
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
+			shouldShowRefundEligibilityNotice( purchase )
+		) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		switch ( effectiveFlowType ) {
 			case CANCEL_FLOW_TYPE.REMOVE:
 				submitRemovePurchase( purchase );
 				break;
 			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				submitTurnOffAutoRenew( purchase );
+				break;
 			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
 				submitCancelAndRefundPurchase( purchase );
 				break;
@@ -1220,7 +1310,18 @@ export default function CancelPurchase() {
 					prefix={ <Breadcrumbs length={ 4 } /> }
 				/>
 			}
-			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
+			notices={
+				! state.surveyShown &&
+				! state.showDomainOptionsStep &&
+				( shouldShowRefundEligibilityNotice( purchase ) ? (
+					<RefundEligibilityNotice
+						purchase={ purchase }
+						onClaimRefund={ onCancellationStartForRefund }
+					/>
+				) : (
+					<TimeRemainingNotice purchase={ purchase } />
+				) )
+			}
 		>
 			<Card>
 				<CardBody>
