@@ -12,17 +12,18 @@ import {
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { AddSubscriptionFormConfig } from '../../new-subscription.const';
+import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './add-subscription-form.consts';
 
 interface AddSubscriptionFormProps {
-	config: AddSubscriptionFormConfig;
+	type: SubscriptionType;
 }
 
-export default function AddSubscriptionForm( { config }: AddSubscriptionFormProps ): JSX.Element {
+export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
+	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const { slug, instructions: configInstructions } = config;
 	const isAddNewTab = slug === 'add-new';
 

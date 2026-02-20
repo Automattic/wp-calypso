@@ -7,13 +7,14 @@ import userEvent from '@testing-library/user-event';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SubscriptionType } from '../components/add-subscription-form/add-subscription-form.consts';
 import ReaderNewSubscriptionPage from '../index';
 
 jest.mock(
-	'../components/add-subscription',
+	'../components/add-subscription-form',
 	() =>
-		function AddSubscriptionForm( { config }: { config: { slug: string } } ) {
-			return <div data-testid="add-subscription" data-config-slug={ config.slug } />;
+		function AddSubscriptionForm( { type }: { type: SubscriptionType } ) {
+			return <div data-testid="add-subscription" data-subscription-type={ type } />;
 		}
 );
 
@@ -69,10 +70,9 @@ jest.mock(
 			onClick: () => void;
 		} ) {
 			return (
-				<li>
-					<button aria-current={ selected ? 'page' : undefined } onClick={ onClick }>
-						{ children }
-					</button>
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events
+				<li aria-current={ selected } role="menuitem" onClick={ onClick }>
+					{ children }
 				</li>
 			);
 		}
@@ -99,30 +99,31 @@ describe( 'ReaderNewSubscriptionPage', () => {
 		expect(
 			screen.getByText( 'Subscribe to new blogs, newsletters, and RSS feeds.' )
 		).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add new' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Reddit' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'YouTube' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Tumblr' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Substack' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'YouTube' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Tumblr' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Substack' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'marks the selected tab as current', () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="reddit" /> );
 
-		expect( screen.getByRole( 'button', { name: 'Reddit' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toHaveAttribute(
 			'aria-current',
-			'page'
+			'true'
 		);
-		expect( screen.getByRole( 'button', { name: 'Add new' } ) ).not.toHaveAttribute(
-			'aria-current'
+		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).toHaveAttribute(
+			'aria-current',
+			'false'
 		);
 	} );
 
-	it( 'renders AddSubscriptionForm with the config for the selected tab', () => {
+	it( 'renders AddSubscriptionForm for the selected tab', () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="youtube" /> );
 
 		expect( screen.getByTestId( 'add-subscription' ) ).toHaveAttribute(
-			'data-config-slug',
+			'data-subscription-type',
 			'youtube'
 		);
 	} );
@@ -130,7 +131,7 @@ describe( 'ReaderNewSubscriptionPage', () => {
 	it( 'records analytics when a tab is clicked', async () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="add-new" /> );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Reddit' } ) );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Reddit' } ) );
 
 		expect( recordAction ).toHaveBeenCalledWith( 'click_new_subscription_tab' );
 		expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked New Subscription Tab' );

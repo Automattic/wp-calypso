@@ -11,18 +11,17 @@ import ReaderMain from '../components/reader-main';
 import AddSubscriptionForm from './components/add-subscription-form';
 import {
 	ADD_SUBSCRIPTION_CONFIGS,
-	NewSubscriptionType,
-	AddSubscriptionFormConfig,
-} from './new-subscription.const';
+	SubscriptionType,
+} from './components/add-subscription-form/add-subscription-form.consts';
 
 interface Tab {
-	slug: NewSubscriptionType;
+	slug: SubscriptionType;
 	title: TranslateResult;
 	path: string;
 }
 
 interface ReaderNewSubscriptionPageProps {
-	selectedTab: NewSubscriptionType;
+	selectedTab: SubscriptionType;
 }
 
 export default function ReaderNewSubscriptionPage(
@@ -32,13 +31,12 @@ export default function ReaderNewSubscriptionPage(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const ADD_SUBSCRIPTION_TABS: Tab[] = Object.values( ADD_SUBSCRIPTION_CONFIGS ).map(
-		( config: AddSubscriptionFormConfig ): Tab => ( {
+		( config ): Tab => ( {
 			slug: config.slug,
 			title: config.title,
 			path: config.url,
 		} )
 	);
-	const selectedTabConfig = ADD_SUBSCRIPTION_CONFIGS[ selectedTab ];
 
 	function recordTabClick( selectedTab: string ): void {
 		recordAction( 'click_new_subscription_tab' );
@@ -76,7 +74,7 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			<AddSubscriptionForm key={ selectedTab } config={ selectedTabConfig } />
+			<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
 		</ReaderMain>
 	);
 }
