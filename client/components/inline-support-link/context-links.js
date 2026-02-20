@@ -19,6 +19,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
+	'ai-tools': {
+		link: 'https://wordpress.com/support/ai-website-builder/',
+		post_id: 404989,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',
 		post_id: 267092,
@@ -159,6 +163,11 @@ const contextLinks = {
 	'hosting-mysql': {
 		link: 'https://wordpress.com/support/database/',
 		post_id: 420896,
+	},
+	'hosting-cron': {
+		link: 'https://developer.wordpress.com/docs/developer-tools/server-cron-jobs/',
+		post_id: 129967,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-elasticsearch': {
 		link: 'https://developer.wordpress.com/docs/elasticsearch/elasticsearch-queries/',

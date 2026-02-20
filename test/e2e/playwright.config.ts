@@ -31,7 +31,6 @@ const reporter: ReporterDescription[] = [
 
 if ( process.env.CI ) {
 	reporter.push( [ 'list' ] );
-	reporter.push( [ 'blob' ] );
 }
 
 // All end-to-end tests use a custom user agent containing this string.
@@ -83,7 +82,13 @@ export default defineConfig( {
 	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [
 		{
+			name: 'mailosaur-usage-check',
+			testMatch: /mailosaur-usage\.setup\.ts/,
+			testDir: './setup',
+		},
+		{
 			name: 'chrome',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
@@ -92,6 +97,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'firefox',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Firefox' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
@@ -100,6 +106,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'webkit',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Safari' ],
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
@@ -108,6 +115,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'pixel',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -117,6 +125,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'galaxy',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Galaxy S24' ],
 				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
@@ -126,6 +135,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'iphone',
+			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'iPhone 15 Pro' ],
 				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
@@ -135,6 +145,7 @@ export default defineConfig( {
 		},
 		{
 			name: 'authentication',
+			dependencies: [ 'mailosaur-usage-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
 			use: {

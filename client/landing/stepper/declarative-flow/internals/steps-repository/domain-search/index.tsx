@@ -34,7 +34,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -85,6 +85,8 @@ const DomainSearchStep: StepType< {
 	const sourceSlug = queryParams.get( 'sourceSlug' );
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
+
+	const isCiab = dashboard === 'ciab';
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -310,7 +312,7 @@ const DomainSearchStep: StepType< {
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
-				isDomainFlow( flow ) ||
+				( isDomainFlow( flow ) && ! isCiab ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
 				isDomainAndPlanFlow( flow )
 			}

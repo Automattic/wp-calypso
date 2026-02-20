@@ -5,7 +5,6 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import {
 	mockUserSettings,
@@ -25,6 +24,7 @@ jest.mock( '../update-username/username-validation-utils', () => ( {
 // Mock email validator
 // Mock the API queries (return query configurations, not data)
 jest.mock( '@automattic/api-queries', () => ( {
+	startSiteCollisionListener: jest.fn( () => jest.fn() ),
 	isAutomatticianQuery: jest.fn( () => ( {
 		queryKey: [ 'me', 'is-automattician' ],
 		queryFn: jest.fn(),
@@ -86,10 +86,8 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 
 describe( 'PersonalDetailsSection', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		mockCreateSuccessNotice.mockClear();
 		mockCreateErrorNotice.mockClear();
-		nock.cleanAll();
 	} );
 
 	describe( 'Basic rendering', () => {

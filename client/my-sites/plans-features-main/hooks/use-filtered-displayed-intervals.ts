@@ -2,6 +2,7 @@ import {
 	getPlan,
 	getBillingMonthsForTerm,
 	isFreePlan,
+	isWooHostedFreePlan,
 	URL_FRIENDLY_TERMS_MAPPING,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
@@ -28,7 +29,7 @@ const useFilteredDisplayedIntervals = ( {
 		let filteredIntervals = displayedIntervals;
 
 		// Hide interval terms that are less than the current plan's term in months
-		if ( productSlug && ! isFreePlan( productSlug ) ) {
+		if ( productSlug && ! isFreePlan( productSlug ) && ! isWooHostedFreePlan( productSlug ) ) {
 			const currentPlanIntervalInMonths = getBillingMonthsForTerm(
 				getPlan( productSlug )?.term || ''
 			);

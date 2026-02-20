@@ -236,7 +236,7 @@ const CancelPurchaseDomainOptions = ( {
 	if (
 		'domain_transfer' === includedDomainPurchase.product_slug ||
 		! purchase.is_refundable ||
-		! includedDomainPurchase.is_refundable
+		! includedDomainPurchase.cost_to_unbundle_display
 	) {
 		return (
 			<CancelPlanWithoutCancellingDomainMessage

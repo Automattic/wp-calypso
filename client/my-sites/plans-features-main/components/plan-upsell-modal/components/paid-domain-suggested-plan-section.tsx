@@ -25,10 +25,10 @@ export default function PaidDomainSuggestedPlanSection( props: {
 	const hasEnTranslation = useHasEnTranslation();
 	const { paidDomainName, onPlanSelected, isBusy } = props;
 
-	const previousCopy = translate( 'Free for one year. Includes Premium themes.' );
-	const updatedCopy = translate( 'Free for one year, includes Premium themes' );
+	const previousCopy = translate( 'Free for one year, includes Premium themes' );
+	const updatedCopy = translate( 'Free for one year, includes all Premium themes' );
 	const hasTranslationForUpdatedCopy = hasEnTranslation(
-		'Free for one year, includes Premium themes'
+		'Free for one year, includes all Premium themes'
 	);
 
 	return (

@@ -36,14 +36,19 @@ export default function useConversation( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey: [ 'agents-manager-conversation', sessionId ],
 		queryFn: async () => {
+			const urlSearchParams = new URLSearchParams( window.location.search );
+			const hasAgentParam = urlSearchParams.has( 'agent' );
+			const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+
 			return await loadAllMessagesFromServer(
 				sessionId,
 				{
-					botId: createOdieBotId( agentId ),
+					botId,
 					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
-				maxPages
+				maxPages,
+				true
 			);
 		},
 		enabled: !! sessionId,

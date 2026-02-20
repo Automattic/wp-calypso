@@ -82,6 +82,7 @@ export default function ConfirmModal( {
 						onClick={ handleOnConfirm }
 						isBusy={ confirmButtonProps?.isBusy }
 						disabled={ confirmButtonProps?.disabled }
+						isDestructive={ confirmButtonProps?.isDestructive }
 						ref={ confirmButtonRef }
 					>
 						{ confirmButtonProps.label }

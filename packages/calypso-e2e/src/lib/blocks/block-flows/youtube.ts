@@ -26,7 +26,7 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 */
 	constructor( configurationData: ConfigurationData ) {
 		this.configurationData = configurationData;
-		selectors.publishedYouTubeIframe = `iframe[title="${ this.configurationData.expectedVideoTitle }"]`;
+		selectors.publishedYouTubeIframe = 'iframe.youtube-player';
 	}
 
 	blockSidebarName = 'YouTube Embed';
@@ -57,11 +57,18 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedVideoTitleLocator = context.page
-			.frameLocator( selectors.publishedYouTubeIframe )
-			.locator( `text=${ this.configurationData.expectedVideoTitle }` )
-			.first(); // The video title may be multiple places in the frame.
+		// Wait for the iframe to load
+		await context.page.locator( selectors.publishedYouTubeIframe ).waitFor();
 
-		await expectedVideoTitleLocator.waitFor();
+		// Get the iframe element and its content frame
+		const iframe = context.page.frameLocator( selectors.publishedYouTubeIframe );
+
+		// Find the video title link within the iframe
+		const videoTitleLink = iframe.getByRole( 'link', {
+			name: this.configurationData.expectedVideoTitle,
+		} );
+
+		// Wait for and verify the video title link is present
+		await videoTitleLink.waitFor();
 	}
 }

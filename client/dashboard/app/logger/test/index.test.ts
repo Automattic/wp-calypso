@@ -31,10 +31,6 @@ const createErrorInfo = ( stack = 'at SomeComponent' ): ErrorInfo => ( {
 } );
 
 describe( 'handleOnCatch', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'does not log or capture benign inaccessible Jetpack error', () => {
 		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
 		error.name = 'ParseError';

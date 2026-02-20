@@ -177,6 +177,10 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 		align-items: flex-start;
 	}
 
+	&__image {
+		max-width: 60px;
+	}
+
 	&__header {
 		display: flex;
 		align-items: center;

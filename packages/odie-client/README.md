@@ -52,7 +52,6 @@ const defaultContextInterfaceValues = {
 	clearChat: noop, // Function to clear the current chat.
 	isLoading: false, // Flag for general loading state.
 	isMinimized: false, // Flag to check if the chat is minimized.
-	setMessageLikedStatus: noop, // Function to set the liked status of a message.
 	setIsLoading: noop, // Function to set the general loading state.
 	trackEvent: noop, // Function to track events.
 };

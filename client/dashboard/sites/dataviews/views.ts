@@ -1,5 +1,4 @@
 import type { AnalyticsClient } from '../../app/analytics';
-import type { User } from '@automattic/api-core';
 import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {
@@ -37,7 +36,7 @@ export const DEFAULT_PER_PAGE = 12;
 
 const DEFAULT_VIEW: Partial< View > = {
 	perPage: DEFAULT_PER_PAGE,
-	fields: [ 'visibility', 'visitors', 'subscribers_count', 'plan' ],
+	fields: [ 'visibility', 'plan' ],
 	sort: {
 		field: 'name',
 		direction: 'asc' as SortDirection,
@@ -45,15 +44,15 @@ const DEFAULT_VIEW: Partial< View > = {
 };
 
 export function getDefaultView( {
-	user,
+	siteCount,
 	isAutomattician,
 	isRestoringAccount,
 }: {
-	user: User;
+	siteCount: number;
 	isAutomattician: boolean;
 	isRestoringAccount: boolean;
 } ): View {
-	const type = isRestoringAccount || user.site_count > DEFAULT_PER_PAGE ? 'table' : 'grid';
+	const type = isRestoringAccount || siteCount > DEFAULT_PER_PAGE ? 'table' : 'grid';
 
 	const defaultView = {
 		type,

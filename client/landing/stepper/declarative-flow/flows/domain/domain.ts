@@ -3,9 +3,9 @@ import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products'
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
-	addPlanToCart,
 	addProductsToCart,
 	clearStepPersistedState,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -25,8 +25,9 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
@@ -61,12 +62,16 @@ const domain: FlowV2< typeof initialize > = {
 	initialize,
 	useAssertConditions() {
 		const { site, siteSlug } = useSiteData();
+		const selectedSite = useSelector( getSelectedSite );
 
 		if ( ! siteSlug ) {
 			return { state: AssertConditionState.SUCCESS };
 		}
 
-		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+		// We want to render the step only if the site and selected site are in the Redux store
+		return {
+			state: site && selectedSite ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING,
+		};
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
@@ -89,6 +94,8 @@ const domain: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
+
+		const isCiab = useQuery().get( 'dashboard' ) === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -344,7 +351,15 @@ const domain: FlowV2< typeof initialize > = {
 								};
 							}
 
-							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+							} else {
+								await addProductsToCart(
+									providedDependencies.siteSlug,
+									this.name,
+									domainCartItems
+								);
+							}
 						}
 
 						return {
@@ -383,16 +398,16 @@ const domain: FlowV2< typeof initialize > = {
 						}
 					} else if ( siteSlug ) {
 						setPendingAction( async () => {
-							if ( pickedPlan ) {
-								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
-							}
+							const aggregatedCartItems = [
+								...( pickedPlan ? [ pickedPlan ] : [] ),
+								...( addOns.length > 0 ? addOns : [] ),
+								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+							];
 
-							if ( addOns.length > 0 ) {
-								await addProductsToCart( siteSlug, this.name, addOns );
-							}
-
-							if ( domainCartItems ) {
-								await addProductsToCart( siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+							} else {
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
 							}
 
 							return {

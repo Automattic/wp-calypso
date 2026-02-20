@@ -8,9 +8,11 @@ import {
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { isAfter, parseISO, startOfDay } from 'date-fns';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
@@ -42,12 +44,43 @@ export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
+/**
+ * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ */
+export function isFailedAutoRenewal( purchase: Purchase ): boolean {
+	return (
+		isInExpirationGracePeriod( purchase ) &&
+		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
+	);
+}
+
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
+}
+
+export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
+
+	if ( new Date( purchase.expiry_date ) >= new Date() ) {
+		return false;
+	}
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
+		return false;
+	}
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -108,7 +141,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -120,17 +153,25 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	) {
 		return false;
 	}
-	if (
-		new Date( purchase.expiry_date ).getTime() >
-		getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime()
-	) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Both dates are in UTC (YYYY-MM-DD format), parse and compare them
+		return isAfter( parseISO( purchase.expiry_date ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		parseISO( purchase.expiry_date ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -142,10 +183,21 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	if ( new Date().getTime() > getDateFromCreditCardExpiry( purchase.payment_expiry ).getTime() ) {
-		return true;
+
+	// Use payment_expiry_date if available for more accurate expiry checking
+	if ( purchase.payment_expiry_date ) {
+		// Compare current UTC date with payment expiry date (both YYYY-MM-DD in UTC)
+		return isAfter( startOfDay( new Date() ), parseISO( purchase.payment_expiry_date ) );
 	}
-	return false;
+
+	// Fall back to payment_expiry for backward compatibility
+	if ( ! purchase.payment_expiry ) {
+		return false;
+	}
+	return isAfter(
+		startOfDay( new Date() ),
+		getDateFromCreditCardExpiry( purchase.payment_expiry )
+	);
 }
 
 export function isTransferredOwnership(
@@ -280,6 +332,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	return purchase.product_name;
+}
+
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
+	}
+	return getTitleForDisplay( purchase );
 }
 
 /**
@@ -509,7 +573,9 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 	) {
 		return false;
 	}
-	return isCloseToExpiration( purchase );
+	// Include purchases past expiry (grace period) that are still renewable
+	const isPastExpiry = new Date( purchase.expiry_date ) < new Date();
+	return isCloseToExpiration( purchase ) || isPastExpiry;
 }
 
 export function isPartnerPurchase(
@@ -588,9 +654,29 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns true if the refund eligibility notice should be shown for the given purchase.
+ *
+ * The notice is shown for refundable WordPress.com plans when the feature flag is enabled.
+ * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
+ * flow, offering the refund as an explicit opt-in action instead.
+ */
+export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
+	return (
+		config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+		hasAmountAvailableToRefund( purchase ) &&
+		isDotcomPlan( purchase )
+	);
+}
+
+/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
+	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 

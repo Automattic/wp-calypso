@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

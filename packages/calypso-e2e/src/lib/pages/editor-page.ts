@@ -708,13 +708,21 @@ export class EditorPage {
 	}
 
 	/**
-	 * Enters SEO details on the Editor sidebar.
+	 * Enters SEO details on the document sidebar.
+	 *
+	 * The SEO fields are located in the main document sidebar under the
+	 * Post/Page tab, not the Jetpack sidebar.
 	 *
 	 * @param param0 Keyed object parameter.
 	 * @param {string} param0.title SEO title.
 	 * @param {string} param0.description SEO description.
 	 */
 	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'SEO' );
 		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
 		await this.editorSettingsSidebarComponent.enterText( description, {
 			label: 'SEO DESCRIPTION',
@@ -909,8 +917,8 @@ export class EditorPage {
 		 * Closure to confirm that post is shown on screen as expected.
 		 *
 		 * In rare cases, visiting the post immediately after it has been published can result
-		 * in the post not being visible to the public yet. In such cases, an error message is
-		 * instead shown to the user.
+		 * in the post not being visible to the public yet. In such cases, an error message or
+		 * 404 page is instead shown to the user.
 		 *
 		 * When used in conjunction with `reloadAndRetry` this method will reload the page
 		 * multiple times to ensure the post content is shown.
@@ -918,7 +926,14 @@ export class EditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.getByRole( 'main' ).waitFor( { timeout: timeout } );
+			const main = page.getByRole( 'main' );
+			await main.waitFor( { timeout: timeout } );
+
+			const error404 = main.locator( 'div.error-404' );
+			if ( ( await error404.count() ) > 0 ) {
+				await page.waitForTimeout( 1000 ); // Give it a second before retrying.
+				throw new Error( 'Post not found - 404 error displayed' );
+			}
 		}
 	}
 

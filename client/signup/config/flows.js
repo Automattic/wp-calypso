@@ -7,6 +7,8 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
@@ -41,6 +43,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
+	const dashboard = getDashboardFromQuery();
+
 	return addQueryArgs(
 		{
 			signup: 1,
@@ -51,6 +55,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			checkoutBackUrl: finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
 			...( destination && { redirect_to: destination } ),
+			...( dashboard && { dashboard } ),
 		},
 		checkoutURL
 	);
@@ -102,16 +107,27 @@ function getLaunchDestination( dependencies ) {
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
-	if ( domainItem && cartItem && designType !== 'existing-site' ) {
+function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
+	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
+
+	// This designType represents a new site.
+	if ( designType === 'page' ) {
+		if ( dashboardType ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
+
 		return addQueryArgs( { siteId }, '/start/setup-site' );
 	} else if ( designType === 'existing-site' ) {
-		return `/checkout/thank-you/${ siteSlug }`;
+		if ( dashboardType ) {
+			return dashboardLink( `/sites/${ siteSlug }/domains` );
+		}
+
+		// Redirection URL handled by the checkout controller
+		return '';
 	}
 
-	// `getThankYouPageUrl` appends a receipt ID to this slug even if it doesn't contain the
-	// `:receipt_id` placeholder
-	return '/checkout/thank-you/no-site';
+	// Redirection URL handled by the checkout controller
+	return '';
 }
 
 function getEmailSignupFlowDestination( { siteId, siteSlug } ) {

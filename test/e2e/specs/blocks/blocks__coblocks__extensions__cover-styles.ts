@@ -48,7 +48,8 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		const siteSlug = testAccount.getSiteURL( { protocol: false } );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it( 'Insert Cover block', async () => {

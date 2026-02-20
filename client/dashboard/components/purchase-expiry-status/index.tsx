@@ -24,6 +24,7 @@ import {
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
+	isInExpirationGracePeriod,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -41,10 +42,10 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 
 export function PurchaseExpiryStatus( {
 	purchase,
-	isDisconnectedSite,
+	isSiteMissing,
 }: {
 	purchase: Purchase;
-	isDisconnectedSite?: boolean;
+	isSiteMissing?: boolean;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
@@ -73,7 +74,7 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if (
-		isDisconnectedSite &&
+		isSiteMissing &&
 		isTemporarySitePurchase( purchase ) &&
 		purchase.product_type === 'jetpack'
 	) {
@@ -95,11 +96,16 @@ export function PurchaseExpiryStatus( {
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if ( isSiteMissing && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType ) {
+	if (
+		isSiteMissing &&
+		! isA4APurchase &&
+		! isKnownTemporarySiteProductType &&
+		! purchase.is_domain
+	) {
 		return (
 			<span>
 				{ createInterpolateElement(
@@ -136,7 +142,8 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		isRenewing( purchase )
+		isRenewing( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
 	) {
 		return createInterpolateElement(
 			sprintf(
@@ -160,7 +167,11 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if ( purchase.introductory_offer?.is_within_period && isIntroductoryOfferFreeTrial ) {
+	if (
+		purchase.introductory_offer?.is_within_period &&
+		isIntroductoryOfferFreeTrial &&
+		! isInExpirationGracePeriod( purchase )
+	) {
 		return (
 			<span>
 				{
@@ -189,6 +200,27 @@ export function PurchaseExpiryStatus( {
 					}
 				) }
 			</span>
+		);
+	}
+
+	// Check if expired within the grace period (not actually expired)
+	if ( isInExpirationGracePeriod( purchase ) ) {
+		if ( isRenewing( purchase ) ) {
+			// Auto-renew ON, renewal failing
+			return <Text intent="error">{ __( 'Pending renewal' ) }</Text>;
+		}
+
+		// Auto-renew OFF (isExpiring)
+		return (
+			<Text intent="error">
+				{ sprintf(
+					// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
+					__( 'Expired %(timeSinceExpiry)s' ),
+					{
+						timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+					}
+				) }
+			</Text>
 		);
 	}
 

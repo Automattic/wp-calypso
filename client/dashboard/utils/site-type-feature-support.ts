@@ -12,6 +12,7 @@ export type SiteTypeFeatureSupports = {
 	emails: boolean;
 	settings: boolean;
 	settingsGeneral?: boolean;
+	settingsGeneralAITools?: boolean;
 	settingsGeneralRedirect?: boolean;
 	settingsServer?: boolean;
 	settingsSecurity?: boolean;
@@ -58,6 +59,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			emails: true,
 			settings: true,
 			settingsGeneral: true,
+			settingsGeneralAITools: false,
 			settingsGeneralRedirect: true,
 			settingsServer: false,
 			settingsSecurity: false,
@@ -76,6 +78,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		emails: true,
 		settings: true,
 		settingsGeneral: true,
+		settingsGeneralAITools: true,
 		settingsGeneralRedirect: true,
 		settingsServer: true,
 		settingsSecurity: true,

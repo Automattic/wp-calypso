@@ -30,6 +30,7 @@ import {
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
@@ -49,7 +50,8 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { masterbarIsVisible } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -86,10 +88,12 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isCIABSite,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const { ciabConfig } = usePartnerBranding();
 
 	const stepContainerV2Context = useMemo( () => {
 		// Detect CIAB dashboard for Woo branding.
@@ -166,6 +170,7 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
+		'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
@@ -257,6 +262,7 @@ const LayoutLoggedOut = ( {
 				isCheckoutPending={ isCheckoutPending }
 				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
+				isCIABSite={ isCIABSite }
 			/>
 		);
 	}
@@ -399,6 +405,10 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
+			const isCIABSite = site?.is_garden && site.garden_name === 'commerce';
+
 			return {
 				isAkismet,
 				isPassport,
@@ -422,6 +432,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isCIABSite,
 			};
 		},
 		{ clearLastActionRequiresLogin }

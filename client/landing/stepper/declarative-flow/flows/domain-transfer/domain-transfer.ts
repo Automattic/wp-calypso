@@ -1,8 +1,10 @@
 import { DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -58,7 +60,7 @@ const domainTransfer: FlowV1 = {
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/domains`,
+			redirectTo: addQueryArgs( `/setup/${ flowName }/domains`, window.location.search ),
 			pageTitle: 'Bulk Transfer',
 		} );
 
@@ -85,14 +87,24 @@ const domainTransfer: FlowV1 = {
 							? `/setup/${ this.variantSlug }/domains`
 							: '/setup/domain-transfer/domains',
 						window.location.href
+					).href;
+
+					const checkoutBackURLWithQueryArgs = addQueryArgs(
+						checkoutBackURL,
+						window.location.search
 					);
 
+					const destination = addQueryArgs( '/checkout/no-site', {
+						signup: 0,
+						isDomainOnly: 1,
+						redirect_to: new URLSearchParams( window.location.search ).get( 'dashboard' )
+							? dashboardLink( '/domains' )
+							: undefined,
+						checkoutBackUrl: checkoutBackURLWithQueryArgs,
+					} );
+
 					// use replace instead of assign to remove the processing URL from history
-					return window.location.replace(
-						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
-							checkoutBackURL.href
-						) }`
-					);
+					return window.location.replace( destination );
 				}
 				default:
 					return;

@@ -5,8 +5,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { convertTimeRangeToUnix, chartColors } from '../monitoring/utils';
 import MonitoringCard from '../monitoring-card';
 import type { LegendData } from '../monitoring/types';

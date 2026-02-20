@@ -1,0 +1,22 @@
+@import "../styles/variables";
+
+.image-studio-notice {
+	position: relative;
+	max-width: 400px;
+
+	.components-snackbar {
+		color: #1e1e1e;
+		backdrop-filter: none;
+		box-shadow: 0 0 8px 0 #0007;
+	}
+
+	&-error {
+		background-color: #f4a2a2;
+		border-left: 3px solid #cc1818;
+	}
+
+	&-success {
+		background-color: #eff9f1;
+		border-left: 3px solid #4ab866;
+	}
+}

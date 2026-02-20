@@ -72,6 +72,8 @@ export const useGetCombinedChat = (
 		sessionId,
 		botSlug
 	);
+	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
+
 	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
@@ -91,11 +93,22 @@ export const useGetCombinedChat = (
 		// Logged out chats don't have interactions. Only direct odie IDs.
 		const interactionHasChanged =
 			previousUuidRef.current !== currentSupportInteraction?.uuid ||
-			previousOdieIdRef.current !== odieId;
+			// If the ID has changed from something to something else, we need to clear the chat.
+			// If the ID changed from nothing to something, we need to ignore the change, because
+			// it's just a transition from an empty chat to a new one after the first message.
+			( previousOdieIdRef.current && previousOdieIdRef.current !== odieId ) ||
+			// Check if the current chat state matches the URL's odieId.
+			// This handles back navigation where we navigate from a new chat (no odieId)
+			// to an existing chat (with odieId). In this case, previousOdieIdRef was undefined
+			// so interactionHasChanged is false, but we still need to reload the chat.
+			mainChatState.odieId?.toString() !== odieId?.toString();
+
+		previousOdieIdRef.current = odieId;
 
 		if (
 			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
+			isFetchingConversation ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
 			( chatStatus !== 'loading' && ! interactionHasChanged )
@@ -104,7 +117,6 @@ export const useGetCombinedChat = (
 		}
 
 		previousUuidRef.current = currentSupportInteraction?.uuid;
-		previousOdieIdRef.current = odieId;
 
 		const supportInteractionId = currentSupportInteraction?.uuid ?? null;
 
@@ -141,6 +153,7 @@ export const useGetCombinedChat = (
 		}
 
 		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
+			setIsFetchingConversation( true );
 			getZendeskConversation( conversationId )
 				?.then( ( conversation ) => {
 					if ( conversation ) {
@@ -150,7 +163,8 @@ export const useGetCombinedChat = (
 								prevChat.conversationId === conversation.id;
 
 							return {
-								...( odieChat ? odieChat : {} ),
+								odieId: odieId ? Number( odieId ) : null,
+								wpcomUserId: odieChat?.wpcomUserId || prevChat.wpcomUserId,
 								supportInteractionId,
 								conversationId: conversation.id,
 								messages: [
@@ -185,6 +199,7 @@ export const useGetCombinedChat = (
 				} )
 				.finally( () => {
 					setRefreshingAfterReconnect( false );
+					setIsFetchingConversation( false );
 				} );
 		}
 	}, [
@@ -193,6 +208,7 @@ export const useGetCombinedChat = (
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
+		isFetchingConversation,
 		conversationId,
 		odieId,
 		currentSupportInteraction,
@@ -204,6 +220,7 @@ export const useGetCombinedChat = (
 		botSlug,
 		isLoadingCurrentSupportInteraction,
 		mainChatState?.messages?.length,
+		mainChatState?.odieId,
 		odieChat,
 	] );
 

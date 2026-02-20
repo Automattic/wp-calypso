@@ -15,6 +15,10 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOO_HOSTED_FREE,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_PRO,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_CENTENNIALLY,
@@ -53,6 +57,8 @@ import {
 	resolveFeatureGroupsForComparisonGrid,
 	resolveFeatureGroupsForFeaturesGrid,
 	resolveWooExpressFeatureGroupsForComparisonGrid,
+	resolveWooHostedFeatureGroupsForFeaturesGrid,
+	resolveWooHostedFeatureGroupsForComparisonGrid,
 	resolveWordPressHostingFeatureGroupsForFeaturesGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
@@ -72,23 +78,14 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ) {
-	const { isSummerSpecial } = props || {};
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
-		isSummerSpecial,
 	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ): Partial< FeatureGroupMap > {
-	const { isSummerSpecial } = props || {};
-	return resolveFeatureGroupsForFeaturesGrid( {
-		isSummerSpecial,
-	} );
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid( props?: {
@@ -108,6 +105,14 @@ export function getWordPressHostingFeaturesGroupedForFeaturesGrid(): Partial< Fe
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
 	return resolveWooExpressFeatureGroupsForComparisonGrid();
+}
+
+export function getWooHostedFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForFeaturesGrid();
+}
+
+export function getWooHostedFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {
@@ -181,8 +186,12 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-woo-hosted-trial';
 	}
 
-	if ( isWooHostedPlan( planKey ) ) {
-		return 'is-woo-hosted-plan';
+	if ( isWooHostedBasicPlan( planKey ) ) {
+		return 'is-woo-hosted-basic-plan';
+	}
+
+	if ( isWooHostedProPlan( planKey ) ) {
+		return 'is-woo-hosted-pro-plan';
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
@@ -401,6 +410,14 @@ export function isWooExpressPlan( planSlug: string ): boolean {
 
 export function isWooHostedFreePlan( planSlug: string ): boolean {
 	return [ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooHostedBasicPlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_BASIC, PLAN_WOO_HOSTED_BASIC_MONTHLY ].includes( planSlug );
+}
+
+export function isWooHostedProPlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_PRO, PLAN_WOO_HOSTED_PRO_MONTHLY ].includes( planSlug );
 }
 
 export function isWooHostedPlan( planSlug: string ): boolean {

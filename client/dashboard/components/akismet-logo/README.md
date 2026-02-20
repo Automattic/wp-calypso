@@ -21,5 +21,5 @@ export default function AkismetLogoExample() {
 ## Props
 
 - `className` : (string) Custom classname to be added to the SVG element in addition to the default "akismet-logo" class
-- `size`      : ( object: { height: number, width: number } ) The height and width of the logo
-- `color`     : (string) Color of the logo
+- `size` : (object: { height: number, width: number }) The height and width of the logo
+- `color` : (string) Color of the logo

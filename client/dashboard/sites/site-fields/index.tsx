@@ -31,7 +31,7 @@ import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
-import { isSitePlanTrial } from '../plans';
+import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -65,13 +65,22 @@ export const titleFieldTextOverflowStyles = {
 	whiteSpace: 'nowrap',
 } as const;
 
-export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+export function SiteLink( {
+	site,
+	expanded,
+	...props
+}: ComponentProps< typeof Link > & { site: Site; expanded?: boolean } ) {
 	return (
 		<Link
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+			style={ {
+				width: expanded ? '100%' : 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				...props.style,
+			} }
 		/>
 	);
 }
@@ -220,7 +229,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 
 export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const {
 		data: lastBackup,
@@ -343,6 +352,9 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isTrial = isSitePlanTrial( site );
+	const upgradeLink = isSitePlanWooHosted( site )
+		? wpcomLink( `/setup/woo-hosted-plans/${ site.slug }` )
+		: wpcomLink( `/plans/${ site.slug }` );
 
 	return (
 		<>
@@ -353,7 +365,7 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			<ExternalLink
 				href={
 					isTrial
-						? wpcomLink( `/plans/${ site.slug }` )
+						? upgradeLink
 						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {

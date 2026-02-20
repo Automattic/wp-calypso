@@ -56,8 +56,13 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
 		paymentMethod = 'existingCard';
 	}
+	// existing PayPal PPCP methods have unique paymentMethodIds
+	if ( paymentMethod.startsWith( 'existingPayPalPPCP' ) ) {
+		paymentMethod = 'existingPayPalPPCP';
+	}
 	switch ( paymentMethod ) {
 		case 'existingCard':
+		case 'existingPayPalPPCP':
 			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'pix':
 			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix';
@@ -125,6 +130,9 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	if ( slug.startsWith( 'existingCard' ) ) {
 		slug = 'existingCard';
 	}
+	if ( slug.startsWith( 'existingPayPalPPCP' ) ) {
+		slug = 'existingPayPalPPCP';
+	}
 	switch ( slug ) {
 		case 'ebanx':
 		case 'pix':
@@ -135,6 +143,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'card':
 		case 'stripe':
 		case 'existingCard':
+		case 'existingPayPalPPCP':
 		case 'alipay':
 		case 'bancontact':
 		case 'ideal':

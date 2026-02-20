@@ -38,15 +38,8 @@ const renderWithUserData = ( userData = mockUserSettings, props = defaultProps )
 
 describe( 'EmailSection', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		nock.cleanAll();
-
 		const emailValidator = require( 'email-validator' );
 		emailValidator.validate.mockReturnValue( true );
-	} );
-
-	afterEach( () => {
-		nock.cleanAll();
 	} );
 
 	it( 'renders email input field', async () => {

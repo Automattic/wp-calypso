@@ -114,7 +114,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips } = usePlansGridContext();
+	const { enableFeatureTooltips, isExperimentVariant, isVar1dVariant, isVar4Variant } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -145,6 +146,17 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'upload-video',
 				];
 
+				// Apply green styling for domain feature in experiment variants (not var1d, var4, or control)
+				const isCustomDomainFeatureWithPaidDomain =
+					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
+					paidDomainName &&
+					! isFreePlan( planSlug );
+				const shouldHighlightDomainFeature =
+					isCustomDomainFeatureWithPaidDomain &&
+					isExperimentVariant &&
+					! isVar1dVariant &&
+					! isVar4Variant;
+
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
@@ -161,6 +173,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const itemTitleClasses = clsx( 'plan-features-2023-grid__item-title', {
 					'is-bold': isHighlightedFeature,
 					'is-differentiator-feature': currentFeature.isDifferentiatorFeature,
+					'is-domain-included-highlight': shouldHighlightDomainFeature,
 				} );
 
 				return (

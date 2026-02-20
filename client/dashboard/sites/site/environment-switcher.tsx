@@ -20,10 +20,10 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';

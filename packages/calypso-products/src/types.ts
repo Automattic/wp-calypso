@@ -43,6 +43,7 @@ import {
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_P2_13GB_STORAGE,
 	FEATURE_P2_3GB_STORAGE,
@@ -66,6 +67,12 @@ import {
 	FEATURE_GROUP_WP_HOSTING_COMMERCE,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_GROUP_WORDADS,
+	FEATURE_GROUP_WOO_HOSTED,
+	FEATURE_GROUP_WOO_HOSTED_CREATE_STORE,
+	FEATURE_GROUP_WOO_HOSTED_PAYMENTS,
+	FEATURE_GROUP_WOO_HOSTED_PRODUCTS,
+	FEATURE_GROUP_WOO_HOSTED_MANAGE,
+	FEATURE_GROUP_WOO_HOSTED_GROW,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -106,6 +113,7 @@ const WPCOM_PLAN_STORAGE_FEATURES = < const >[
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_P2_13GB_STORAGE,
 	FEATURE_P2_3GB_STORAGE,
@@ -291,7 +299,13 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_WP_HOSTING_SUPPORT
 	| typeof FEATURE_GROUP_PAYMENT_TRANSACTION_FEES
 	| typeof FEATURE_GROUP_WORDADS
-	| typeof FEATURE_GROUP_WP_HOSTING_COMMERCE;
+	| typeof FEATURE_GROUP_WP_HOSTING_COMMERCE
+	| typeof FEATURE_GROUP_WOO_HOSTED
+	| typeof FEATURE_GROUP_WOO_HOSTED_CREATE_STORE
+	| typeof FEATURE_GROUP_WOO_HOSTED_PAYMENTS
+	| typeof FEATURE_GROUP_WOO_HOSTED_PRODUCTS
+	| typeof FEATURE_GROUP_WOO_HOSTED_MANAGE
+	| typeof FEATURE_GROUP_WOO_HOSTED_GROW;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];
@@ -327,7 +341,7 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
@@ -357,16 +371,14 @@ export type Plan = BillingTerm & {
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PlanComparisonFeatureOverride?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
+	get2023PlanComparisonFeatureOverride?: () => Feature[];
 
 	/**
 	 * Experimental: Comparison grid features for experiment variants.
 	 * This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	 * When present, this takes precedence over get2023PlanComparisonFeatureOverride when isExperimentVariant is true.
 	 */
-	get2023PlanComparisonFeatureOverrideForExperiment?: ( props?: {
-		isSummerSpecial?: boolean;
-	} ) => Feature[];
+	get2023PlanComparisonFeatureOverrideForExperiment?: () => Feature[];
 
 	/**
 	 * Features to be shown in the plan details jetpack section and the jetpack features in the plans comparison table.
@@ -422,7 +434,7 @@ export type Plan = BillingTerm & {
 	 * to determine what a given plan *may* be capable of doing
 	 * before verifying with an API.
 	 */
-	getIncludedFeatures?: ( hasSummerSpecialSticker?: boolean ) => Feature[];
+	getIncludedFeatures?: () => Feature[];
 
 	/**
 	 * Features that are superseded by another feature included in this plan.

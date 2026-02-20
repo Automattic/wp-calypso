@@ -4,18 +4,17 @@ import {
 	BlockTools,
 	BlockList,
 	BlockCanvas,
-	store as blockEditorStore,
 	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useState, useEffect, useCallback, useRef } from '@wordpress/element';
+import React, { useState, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { safeParse } from '../utils';
+import InitialBlockSelector from './components/InitialBlockSelector';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
 import type { FC, MouseEvent } from 'react';
@@ -23,6 +22,7 @@ import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mod
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
+const EDITOR_MAIN_CLASS: string = 'editor__main';
 const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
 	return css + '\n' + item;
 }, '' );
@@ -32,6 +32,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
  */
 export const Editor: FC< EditorProps > = ( {
 	initialContent = '',
+	focusOnMount = true,
 	onChange,
 	isRTL,
 	isDarkMode,
@@ -107,7 +108,11 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
-					<InitialBlockSelector onBlockSelect={ () => setIsEditing( true ) } />
+					<InitialBlockSelector
+						editorClass={ EDITOR_MAIN_CLASS }
+						focusOnMount={ focusOnMount }
+						onBlockSelect={ () => setIsEditing( true ) }
+					/>
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
@@ -116,7 +121,7 @@ export const Editor: FC< EditorProps > = ( {
 							<Popover.Slot />
 						</div>
 					</div>
-					<div className="editor__main">
+					<div className={ EDITOR_MAIN_CLASS }>
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas
@@ -148,32 +153,3 @@ export const Editor: FC< EditorProps > = ( {
 		</SlotFillProvider>
 	);
 };
-
-/**
- * Component to select the last block on initial load.
- *
- * NOTE: Must be rendered inside BlockEditorProvider to access the correct store context.
- */
-function InitialBlockSelector( { onBlockSelect }: { onBlockSelect: () => void } ) {
-	const { selectBlock } = useDispatch( blockEditorStore );
-	const storeBlocks = useSelect( ( select ) => select( blockEditorStore ).getBlocks(), [] );
-	const hasInitialized = useRef( false );
-
-	useEffect( () => {
-		// To ensure we only run this useEffect once.
-		if ( hasInitialized.current ) {
-			return;
-		}
-
-		const lastBlock = storeBlocks[ storeBlocks.length - 1 ];
-		if ( ! lastBlock ) {
-			return;
-		}
-
-		hasInitialized.current = true;
-		selectBlock( lastBlock.clientId );
-		onBlockSelect();
-	}, [ selectBlock, storeBlocks, onBlockSelect ] );
-
-	return null;
-}

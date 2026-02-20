@@ -31,7 +31,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
@@ -146,6 +146,7 @@ const DomainSearchUI = (
 						addQueryArgs( '/setup/domain-transfer/intro', {
 							new: initialQuery,
 							search: 'yes',
+							dashboard,
 						} )
 					);
 				}
@@ -378,7 +379,13 @@ const DomainSearchUI = (
 	// For /start flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) || isDomainOnlyFlow ) {
+		if (
+			siteSlug ||
+			siteId ||
+			isMonthlyOrFreeFlow( flowName ) ||
+			isDomainOnlyFlow ||
+			isDomainForGravatarFlow( flowName )
+		) {
 			return false;
 		}
 		return true;
@@ -388,6 +395,7 @@ const DomainSearchUI = (
 		<StepWrapper
 			{ ...props }
 			className="step-wrapper--domain-search"
+			isSticky={ false }
 			hideSkip
 			customizedActionButtons={ getUseDomainIOwnLink() }
 			headerText={ headerText }
