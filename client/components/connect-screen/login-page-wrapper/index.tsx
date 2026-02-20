@@ -54,7 +54,6 @@ export interface LoginPageWrapperProps {
 	/** @deprecated use usernameOrEmail */
 	usernameOrEmailValue?: string;
 	onUsernameOrEmailChange?: ( value: string ) => void;
-	isUsernameOnly?: boolean;
 	usernameOrEmailInputId?: string;
 	usernameOrEmailInputName?: string;
 	children: ReactNode;
@@ -135,7 +134,6 @@ export function LoginPageWrapper( {
 	defaultUsernameOrEmail,
 	usernameOrEmailValue,
 	onUsernameOrEmailChange,
-	isUsernameOnly = false,
 	usernameOrEmailInputId = 'usernameOrEmail',
 	usernameOrEmailInputName = 'usernameOrEmail',
 	children,
@@ -170,11 +168,9 @@ export function LoginPageWrapper( {
 		}
 	};
 
-	const usernameOrEmailLabel = isUsernameOnly ? (
-		translate( 'Your username' )
-	) : (
+	const usernameOrEmailLabel = (
 		<>
-			<span className="screen-reader-text">
+			<span className="connect-screen-login-page-wrapper__sr-only">
 				{ translate( 'WordPress.com email address or username' ) }
 			</span>
 			<span aria-hidden="true">{ translate( 'Email address or username' ) }</span>
@@ -219,7 +215,10 @@ export function LoginPageWrapper( {
 	);
 
 	return (
-		<ScreenLayout backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }>
+		<ScreenLayout
+			backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }
+			containerMaxWidth={ 660 }
+		>
 			<div
 				className={ clsx( 'connect-screen-login-page-wrapper', className, {
 					'connect-screen-login-page-wrapper--social-first': isSocialFirst,

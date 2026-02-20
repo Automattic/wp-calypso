@@ -8,9 +8,22 @@
 
 	color: var( --connect-screen-login-page-wrapper-text-color );
 	width: 100%;
+	max-width: 660px;
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
+}
+
+.connect-screen-login-page-wrapper__sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border: 0;
 }
 
 .connect-screen-login-page-wrapper__top-bar {

@@ -376,18 +376,6 @@ export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWr
 	},
 };
 
-export const LoginPageWrapperUsernameOnlyLabel: StoryObj< typeof LoginPageWrapper > = {
-	render: () => (
-		<LoginPageWrapper
-			title="Log in to your account"
-			description="Use your WordPress.com account to continue."
-			isUsernameOnly
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
-	),
-};
-
 export const LoginPageWrapperControlledInput: StoryObj< typeof LoginPageWrapper > = {
 	render: () => <LoginPageWrapperControlledInputStory />,
 };

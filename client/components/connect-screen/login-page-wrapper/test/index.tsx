@@ -24,17 +24,6 @@ describe( 'LoginPageWrapper', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'name', 'usernameOrEmail' );
 	} );
 
-	it( 'renders username-only label when isUsernameOnly is enabled', () => {
-		render(
-			<LoginPageWrapper title="Log in" isUsernameOnly>
-				<div>Form content</div>
-			</LoginPageWrapper>
-		);
-
-		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Email address or username' ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'calls onUsernameOrEmailChange with updated value', () => {
 		const onUsernameOrEmailChange = jest.fn();
 
