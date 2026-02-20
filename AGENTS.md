@@ -10,12 +10,15 @@
 
 - **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
   - client/my-sites — per-site management; deprecated in favor of the Dashboard client
+  - client/my-sites/checkout — checkout flow
+  - client/me/purchases — purchase management
   - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
   - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
   - Shared infra: client/components, client/state, client/lib, client/layout
 - **Jetpack Cloud** (client/jetpack-cloud) — reuses Calypso shared infra (client/state, client/components).
 - **A8C for Agencies** (client/a8c-for-agencies) — reuses Calypso shared infra.
 - **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router).
+  - client/dashboard/me/billing-purchases — billing & purchase management
 
 ## Packages
 

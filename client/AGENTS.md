@@ -1,67 +1,81 @@
-You are an expert React + TypeScript programming assistant focused on producing clear, readable, and production-quality code.
+# Calypso Client
 
-## Core Principles
+React + TypeScript application clients for WordPress.com. For repo-level context, see root `AGENTS.md`.
 
-- Provide concise, technical answers with accurate TypeScript examples.
-- Use functional, declarative React (no classes).
-- Prefer composition and modularization over duplication.
-- Prioritize accessibility, performance, and scalability.
-- Read linked documentation files to have wider context.
-- Research existing patterns and conventions in the codebase before coming up with new solutions.
+## Project Knowledge
 
-## Code Style
+Two coexisting architectures: Classic (`client/me/`, `client/my-sites/`) uses Redux +
+page.js routing. Dashboard (`client/dashboard/`) uses TanStack Query + TanStack Router.
 
-- Use TypeScript strictly; no `any` unless justified.
-  - Type-check with `yarn typecheck-client` (note: this is slow)
-- Keep components small and focused.
-- Use `import clsx from 'clsx'` instead of `classnames`.
-- There should be 1 empty line between `import './style.scss'` and other imports.
-- Adhere strictly to lint rules.
-  - Lint JS/TS/TSX: `yarn eslint <file>`
-  - Lint + fix JS/TS/TSX: `yarn eslint --fix <file>`
-  - Lint CSS/SCSS: `yarn stylelint <file>`
-- Format any file with `yarn prettier --write <file>` or only with `yarn prettier --check <file>`.
+## Commands
 
-## Naming
+```bash
+yarn eslint <file>                    # Lint JS/TS/TSX
+yarn eslint --fix <file>              # Lint + fix
+yarn stylelint <file>                 # Lint CSS/SCSS
+yarn prettier --write <file>          # Format
+yarn typecheck-client                 # Type-check (slow)
+yarn test-client <test-file>          # Run specific test
+yarn test-client --findRelatedTests <file>  # Find + run related tests
+```
 
-- Descriptive names with auxiliary verbs (e.g., `isLoading`, `hasError`).
-- kebab-case directories (e.g., `components/auth-wizard`).
+## Conventions
 
-## Styling
+- Use `import clsx from 'clsx'` — not `classnames`.
+- One empty line between `import './style.scss'` and other imports.
+- Avoid BEM shortcuts (`&--`, `&__`) in SCSS.
+- Use CSS logical properties (`margin-inline-start`, not `margin-left`).
+- Prefer `@wordpress/components` over custom UI primitives (Button, Modal, Card, etc.). Avoid `__experimental*` components unless existing usage in codebase.
+- No `any` unless justified — strict TypeScript throughout.
+- kebab-case for directories (e.g., `components/auth-wizard`).
+- `userEvent` over `fireEvent` in tests. `toBeVisible` over `toBeInTheDocument`.
+- Dialog buttons on mobile: `.dialog__action-buttons` flips to
+  `flex-direction: column-reverse` below `$break-mobile`. Flex labels inside
+  buttons need `width: 100%` for `justify-content: center` to work.
 
-- Avoid BEM shortcuts (`&--`, `&__`).
-- Use logical properties (e.g., `margin-inline-start`).
-- Prefer scalable, accessible layouts.
+## Billing & Payments
 
-## WordPress UI Components
+Skip this section if your task doesn't touch checkout, purchases, or billing.
 
-- When building UI, prefer existing components from `@wordpress/components` instead of creating custom implementations.
-- Do NOT recreate common primitives such as:
-  - Button
-  - Modal
-  - Card
-  - Panel
-  - Notice
-  - Tooltip
-  - Spinner
-  - TextControl / SelectControl / ToggleControl / CheckboxControl
-  - Flex / VStack / HStack / Grid
-  - Popover / Dropdown
-  - Form controls and layout primitives
-- Only build custom components if no suitable WordPress component exists.
-- Avoid `__experimental*` components unless explicitly requested or there are already existing examples.
+Cross-cutting knowledge for checkout, purchases, and billing areas. Sub-area
+AGENTS.md files: `client/my-sites/checkout/`, `client/dashboard/me/billing-purchases/`,
+`client/me/purchases/`.
 
-## Documentation
+| Aspect | Classic (`client/me/`, `client/my-sites/`) | Dashboard (`client/dashboard/`) |
+|--------|-------------------------------------------|--------------------------------|
+| Purchase type | `calypso/lib/purchases/types` (camelCase) | `@automattic/api-core` (snake_case) |
+| Expiry values | `'autoRenewing'`, `'manualRenew'` | `'auto-renewing'`, `'manual-renew'` |
+| Query key prefix | N/A (Redux) | `'upgrades'` (NOT `'purchases'`) |
 
-- Follow JSDoc.
-- Explain intent and reasoning, not obvious behavior.
-- Wrap comments at 100 columns.
+### Package Boundaries
 
-## Testing
+| Package | Role | Key Rule |
+|---------|------|----------|
+| `composite-checkout` | Generic multi-step checkout framework | NO WP.com logic here |
+| `wpcom-checkout` | WP.com-specific checkout (line items, tax, payment methods) | WP.com logic goes here |
+| `shopping-cart` | Cart state via `useShoppingCart()` | Independent of checkout |
+| `calypso-stripe` | Stripe.js wrapper | Stripe-specific integration |
+| `api-core` | Fetchers, mutators, types for all API calls | Foundation layer |
+| `api-queries` | TanStack Query wrappers around api-core | Dashboard consumes these |
 
-- Use React Testing Library.
-- Prefer `userEvent` over `fireEvent`.
-- Use `toBeVisible` for user-visible assertions instead of `toBeInTheDocument`.
-- Run tests to verify changes:
-  - Run specific test file: `yarn test-client <test-file>`
-  - Find + run tests for a source file: `yarn test-client --findRelatedTests <file>`
+### API Layer
+
+Queries live in `@automattic/api-queries` (`packages/api-queries/`), NOT in
+`client/dashboard/data/` or `client/dashboard/app/queries/`. Adding a new query requires
+a fetcher in `@automattic/api-core` (`packages/api-core/src/`) first, then a query
+wrapper in `api-queries`. Query keys are domain-specific: purchases use `'upgrades'`
+(historical), receipts use `'receipt'`, payment methods use `'me'`. Check existing
+query key patterns in `api-queries` before adding new ones — wrong prefix silently
+breaks cache invalidation.
+
+### Common Pitfalls
+
+1. **Two `Purchase` types** — Same name, incompatible fields (camelCase vs snake_case, different string values). Never copy logic between Classic and Dashboard without converting.
+
+2. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
+
+3. **Transferred purchases** — Always check ownership before allowing purchase actions.
+
+4. **Don't mix architectures** — Redux in Dashboard or TanStack in Classic = subtle bugs.
+
+5. **Route params are strings** — `purchaseId` from URL params must be `parseInt()`'d before passing to query functions.
