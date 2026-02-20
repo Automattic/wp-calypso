@@ -6,6 +6,7 @@ import {
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
 	DOMAIN_FOR_GRAVATAR_FLOW,
+	ART_DOMAIN_FLOW,
 	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
@@ -291,6 +292,17 @@ export function generateFlows( {
 			lastModified: '2024-05-07',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+		},
+		{
+			name: ART_DOMAIN_FLOW,
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
+			destination: getDomainSignupFlowDestination,
+			description: 'Domain flow for .art domains',
+			disallowResume: true,
+			lastModified: '2026-02-20',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'site-selected',

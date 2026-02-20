@@ -1,6 +1,7 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import {
+	ART_DOMAIN_FLOW,
 	isDomainForGravatarFlow,
 	isEcommerceFlow,
 	isFreeFlow,
@@ -69,6 +70,7 @@ const DomainSearchUI = (
 	} = props;
 
 	const isDomainOnlyFlow = flowName === 'domain';
+	const isArtDomainFlow = flowName === ART_DOMAIN_FLOW;
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
 	const site = useSelector( getSelectedSite );
@@ -180,7 +182,7 @@ const DomainSearchUI = (
 					}
 				);
 
-				if ( isDomainForGravatarFlow( flowName ) ) {
+				if ( isDomainForGravatarFlow( flowName ) || isArtDomainFlow ) {
 					submitSignupStep(
 						{
 							stepName: 'site-or-domain',
@@ -236,6 +238,7 @@ const DomainSearchUI = (
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,
+		isArtDomainFlow,
 	] );
 
 	const allowedTldParam = queryObject.tld;
@@ -248,17 +251,21 @@ const DomainSearchUI = (
 		return {
 			vendor: getSuggestionsVendor( {
 				isSignup: true,
-				isDomainOnly: isDomainOnlyFlow,
+				isDomainOnly: isDomainOnlyFlow || isArtDomainFlow,
 				flowName: flowName,
 			} ),
-			allowedTlds,
+			allowedTlds: isArtDomainFlow ? [ 'art' ] : allowedTlds,
 			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
-				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
-			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
-			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+				! isDomainOnlyFlow &&
+				! isDomainForGravatarFlow( flowName ) &&
+				! isOnboardingWithEmailFlow &&
+				! isArtDomainFlow,
+			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow && ! isArtDomainFlow,
+			allowsUsingOwnDomain:
+				! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow && ! isArtDomainFlow,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam, isArtDomainFlow ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -267,7 +274,8 @@ const DomainSearchUI = (
 					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
-					isOnboardingWithEmailFlow
+					isOnboardingWithEmailFlow ||
+					isArtDomainFlow
 				) {
 					return null;
 				}
@@ -279,7 +287,8 @@ const DomainSearchUI = (
 					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
-					isOnboardingWithEmailFlow
+					isOnboardingWithEmailFlow ||
+					isArtDomainFlow
 				) {
 					return null;
 				}
@@ -287,7 +296,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow, isArtDomainFlow ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
@@ -296,20 +305,20 @@ const DomainSearchUI = (
 			return __( 'Choose a domain for your Professional Email' );
 		}
 
-		if ( isDomainForGravatarFlow( flowName ) ) {
+		if ( isDomainForGravatarFlow( flowName ) || isArtDomainFlow ) {
 			return __( 'Choose a domain' );
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flowName, isOnboardingWithEmailFlow, __ ] );
+	}, [ flowName, isOnboardingWithEmailFlow, __, isArtDomainFlow ] );
 
 	const subHeaderText = useMemo( () => {
-		if ( isDomainForGravatarFlow( flowName ) ) {
+		if ( isDomainForGravatarFlow( flowName ) || isArtDomainFlow ) {
 			return __( 'Enter some descriptive keywords to get started.' );
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flowName, __ ] );
+	}, [ flowName, __, isArtDomainFlow ] );
 
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
@@ -320,14 +329,14 @@ const DomainSearchUI = (
 
 		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' ) && ! goBack;
 
-		const hideBack = flowName === 'domain' || shouldHideBack;
+		const hideBack = isDomainOnlyFlow || isArtDomainFlow || shouldHideBack;
 
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
 				? [ __( 'Back to My Home' ), '/home' ]
 				: [ __( 'Back to sites' ), dashboardOptIn ? dashboardLink( '/sites' ) : '/sites' ];
 
-		if ( isDomainForGravatarFlow( flowName ) ) {
+		if ( isDomainForGravatarFlow( flowName ) || isArtDomainFlow ) {
 			backUrl = null;
 			backLabelText = null;
 		} else if ( 'with-plugin' === flowName ) {
@@ -358,7 +367,16 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [
+		dashboardOptIn,
+		flowName,
+		previousStepName,
+		goBack,
+		userSiteCount,
+		__,
+		isDomainOnlyFlow,
+		isArtDomainFlow,
+	] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
@@ -377,7 +395,7 @@ const DomainSearchUI = (
 	};
 
 	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
+	// except if we're in a site context or some specific flows
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if (
 			siteSlug ||

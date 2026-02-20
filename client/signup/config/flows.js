@@ -4,7 +4,11 @@ import {
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
+import {
+	ART_DOMAIN_FLOW,
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
+} from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
@@ -23,7 +27,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
-	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
+	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW, ART_DOMAIN_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
