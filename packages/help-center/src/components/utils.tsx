@@ -1,6 +1,5 @@
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
-import { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
-import Smooch from 'smooch';
+import { ZendeskConversation, ZendeskMessage, Smooch } from '@automattic/zendesk-client';
 import type { OdieConversation, OdieMessage, SupportInteraction } from '@automattic/odie-client';
 
 const isMatchingInteraction = (

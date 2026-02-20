@@ -1,5 +1,5 @@
+import { Smooch } from '@automattic/zendesk-client';
 import { useMutation } from '@tanstack/react-query';
-import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getConversationIdFromInteraction } from '../utils';
@@ -68,7 +68,6 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 				}, 5000 );
 				function onMessageSent( message: Message ) {
 					if ( message.metadata?.temporary_id === messageToSend.metadata?.temporary_id ) {
-						// @ts-expect-error -- 'off' is not part of the def.
 						Smooch.off( 'message:sent', onMessageSent );
 						resolve( message );
 						clearTimeout( timeout );

@@ -4,8 +4,8 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
-import SmoochLibrary from 'smooch';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
+import SmoochLibrary from './smooch';
 import { ZendeskConversation } from './types';
 import {
 	useAuthenticateZendeskMessaging,
@@ -248,17 +248,11 @@ export const useManagedZendeskChat = () => {
 			Smooch.on( 'typing:stop', typingStopListener );
 
 			return () => {
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'message:received', getUnreadListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'disconnected', disconnectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'reconnecting', reconnectingListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'connected', connectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'typing:stop', typingStopListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'typing:start', typingStartListener );
 			};
 		}

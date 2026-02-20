@@ -26,3 +26,5 @@ export type * from './types';
 export { zendeskMessageConverter } from './zendesk-message-converter';
 export { useManagedZendeskChat } from './use-managed-zendesk-chat';
 export { useGetZendeskConversations } from './use-managed-zendesk-chat';
+export { default as Smooch } from './smooch';
+export { useLoadSmoochScript } from './use-load-smooch-script';

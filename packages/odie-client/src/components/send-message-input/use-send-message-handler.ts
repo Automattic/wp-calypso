@@ -1,5 +1,5 @@
+import { Smooch } from '@automattic/zendesk-client';
 import { useCallback } from '@wordpress/element';
-import Smooch from 'smooch';
 import { Message, Chat } from '../../types';
 import { MAX_MESSAGE_LENGTH } from '../notices/use-message-size-error-notice';
 

@@ -1,10 +1,10 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
+import { Smooch } from '@automattic/zendesk-client';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
-import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { AgentUIFooter } from '../chat-footer';

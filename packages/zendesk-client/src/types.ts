@@ -99,6 +99,10 @@ export type ZendeskMessage = {
 	mediaUrl?: string;
 	metadata?: Record< string, any >;
 	htmlText?: string;
+	userId?: string;
+	displayName?: string;
+	payload?: string;
+	fields?: unknown[];
 };
 
 export type ZendeskConversation = {

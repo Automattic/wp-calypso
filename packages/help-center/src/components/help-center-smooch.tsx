@@ -3,18 +3,18 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils/csat';
 import {
-	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 	isTestModeEnvironment,
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
 	useCanConnectToZendeskMessaging,
+	Smooch,
+	useLoadSmoochScript,
 } from '@automattic/zendesk-client';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import Smooch from 'smooch';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
@@ -104,7 +104,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const authJwt = authData?.jwt;
 	const authExternalId = authData?.externalId;
 	const authIsLoggedIn = authData?.isLoggedIn;
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
+	const { isSmoochScriptLoaded } = useLoadSmoochScript( allowChat );
 	const {
 		setIsChatLoaded,
 		setZendeskClientId,
@@ -139,13 +139,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	}, [ setZendeskConnectionStatus ] );
 
 	const typingStartListener = useCallback(
-		( { conversation }: ConversationData ) => {
+		( { conversation }: { conversation: { id: string } } ) => {
 			setSupportTypingStatus( conversation.id, true );
 		},
 		[ setSupportTypingStatus ]
 	);
 	const typingStopListener = useCallback(
-		( { conversation }: ConversationData ) => {
+		( { conversation }: { conversation: { id: string } } ) => {
 			setSupportTypingStatus( conversation.id, false );
 		},
 		[ setSupportTypingStatus ]
@@ -165,7 +165,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			if ( message?.source?.type === 'web' && message.source?.id ) {
 				setZendeskClientId( message.source?.id );
 				// Unregister the listener after setting the client ID
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch?.off?.( 'message:sent', clientIdListener );
 			}
 		},
@@ -174,7 +173,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
+		if ( ! isSmoochScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
 			return;
 		}
 
@@ -218,7 +217,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		initialize();
 
 		if ( smoochRef.current ) {
-			Smooch.render( smoochRef.current );
+			Smooch?.render( smoochRef.current );
 		}
 
 		return () => {
@@ -227,7 +226,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch?.destroy?.();
 		};
 	}, [
-		isMessagingScriptLoaded,
+		isSmoochScriptLoaded,
 		authIsLoggedIn,
 		authJwt,
 		authExternalId,
@@ -250,19 +249,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		}
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:sent', clientIdListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'disconnected', disconnectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'reconnecting', reconnectingListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:stop', typingStopListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [

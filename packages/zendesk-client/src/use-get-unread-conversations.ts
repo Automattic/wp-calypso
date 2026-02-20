@@ -1,12 +1,10 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
-import Smooch from 'smooch';
+import Smooch from './smooch';
 import type { ZendeskConversation } from './types';
 
-export const calculateUnread = (
-	conversations: Conversation[] | ZendeskConversation[] | undefined | null
-) => {
+export const calculateUnread = ( conversations: ZendeskConversation[] | undefined | null ) => {
 	if ( ! Array.isArray( conversations ) || conversations.length === 0 ) {
 		return { numberOfUnreadConversations: 0, numberOfUnreadMessages: 0 };
 	}
@@ -29,7 +27,7 @@ export const useGetUnreadConversations = () => {
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	return useCallback(
-		( conversations?: Conversation[] | ZendeskConversation[] ) => {
+		( conversations?: ZendeskConversation[] ) => {
 			const conversationsToCheck = conversations ? conversations : Smooch?.getConversations?.();
 			const { numberOfUnreadConversations, numberOfUnreadMessages } =
 				calculateUnread( conversationsToCheck );

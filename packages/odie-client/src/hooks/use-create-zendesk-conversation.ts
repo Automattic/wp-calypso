@@ -1,6 +1,9 @@
-import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
+import {
+	useUpdateZendeskUserFields,
+	type ZendeskConversation,
+	Smooch,
+} from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Smooch from 'smooch';
 import {
 	getErrorTryAgainLaterMessage,
 	getOdieTransferMessages,
@@ -135,6 +138,10 @@ export const useCreateZendeskConversation = () => {
 			} );
 		} catch ( error ) {
 			handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
+			return;
+		}
+
+		if ( ! conversation ) {
 			return;
 		}
 

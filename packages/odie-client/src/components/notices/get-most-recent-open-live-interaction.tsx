@@ -1,4 +1,4 @@
-import Smooch from 'smooch';
+import { Smooch } from '@automattic/zendesk-client';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 const AGE_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days

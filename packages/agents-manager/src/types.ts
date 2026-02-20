@@ -1,5 +1,5 @@
 import type { ServerConversationListItem } from '@automattic/agenttic-client';
-import type Smooch from 'smooch';
+import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
 /**
  * Common types used across the agents-manager package.
@@ -16,8 +16,7 @@ export type {
 	BigSkyMessage,
 } from './extension-types';
 
-export type ZendeskConversation = ReturnType< typeof Smooch.getConversations >[ number ];
-export type ZendeskMessage = ZendeskConversation[ 'messages' ][ number ];
+export type { ZendeskConversation, ZendeskMessage };
 export type LocalConversationListItem = Omit< ServerConversationListItem, 'chat_id' > & {
 	chat_id?: number;
 	conversation_id?: string;
