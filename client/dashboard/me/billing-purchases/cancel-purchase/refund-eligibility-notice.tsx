@@ -1,7 +1,11 @@
 import { Button } from '@wordpress/components';
-import { sprintf, __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
-import { shouldShowRefundEligibilityNotice } from '../../../utils/purchase';
+import {
+	hasAmountAvailableToRefund,
+	shouldShowRefundEligibilityNotice,
+} from '../../../utils/purchase';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
@@ -14,29 +18,22 @@ export default function RefundEligibilityNotice( {
 	purchase,
 	onClaimRefund,
 }: RefundEligibilityNoticeProps ) {
-	if ( ! shouldShowRefundEligibilityNotice( purchase ) ) {
-		return null;
-	}
-
-	const refundAmount = RefundAmountString( {
-		purchase,
-		cancelBundledDomain: false,
-		includedDomainPurchase: undefined,
-	} );
-
-	if ( ! refundAmount ) {
+	if (
+		! shouldShowRefundEligibilityNotice( purchase ) ||
+		! hasAmountAvailableToRefund( purchase )
+	) {
 		return null;
 	}
 
 	return (
 		<Notice variant="info">
-			{ sprintf(
-				/* translators: %(refundAmount)s is a monetary amount in the form "[currency-symbol][amount]" */
+			{ createInterpolateElement(
+				/* translators: <refundAmount /> is a monetary amount in the form "[currency-symbol][amount]" */
 				__(
-					"You're eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away."
+					"You're eligible for a <refundAmount /> refund if you remove your plan now. Your features will be unavailable right away."
 				),
 				{
-					refundAmount,
+					refundAmount: <RefundAmountString purchase={ purchase } cancelBundledDomain={ false } />,
 				}
 			) }{ ' ' }
 			<Button variant="link" isDestructive onClick={ onClaimRefund }>
