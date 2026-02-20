@@ -1020,7 +1020,7 @@ export const mcpSitesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Site restrictions' ),
+				title: __( 'External AI access exceptions' ),
 			},
 		],
 	} ),
@@ -1041,7 +1041,7 @@ export const mcpAiAssistantRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'AI assistant site exceptions' ),
+				title: __( 'AI assistant exceptions' ),
 			},
 		],
 	} ),

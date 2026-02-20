@@ -33,7 +33,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { connection, lock, unseen, seen, pencil } from '@wordpress/icons';
+import { connection, lock, notAllowed, unseen, seen, pencil } from '@wordpress/icons';
 import { useState, useSyncExternalStore } from 'react';
 import {
 	getAccountMcpAbilities,
@@ -1036,10 +1036,10 @@ function McpComponentExplore() {
 			{
 				text:
 					disabledSiteIds.length === 0
-						? __( 'No restrictions' )
+						? __( 'No exceptions' )
 						: sprintf(
-								/* translators: %d is number of restricted sites */
-								__( '%d restricted' ),
+								/* translators: %d is number of sites with exceptions */
+								__( '%d exceptions' ),
 								disabledSiteIds.length
 						  ),
 				intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
@@ -1089,7 +1089,7 @@ function McpComponentExplore() {
 									<RouterLinkSummaryButton
 										to="/me/preferences/ai-and-mcp/ai-assistant"
 										title={ __( 'Site exceptions' ) }
-										decoration={ <Icon icon={ unseen } /> }
+										decoration={ <Icon icon={ notAllowed } /> }
 										badges={ aiAssistantSitesBadges }
 										density="medium"
 									/>
@@ -1099,71 +1099,74 @@ function McpComponentExplore() {
 					) }
 				</Card>
 
-				{ /* Master toggle card */ }
-				<Card>
-					<CardBody>
-						<VStack spacing={ 8 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'AI access' ) }
-								description={ __(
-									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+				{ /* AI MCP access — combined AI access toggle + MCP access sub-items */ }
+				<Card className="dashboard-summary-button-list has-density-medium">
+					<CardHeader>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'External AI assistant access' ) }
+							description={ __(
+								'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+							) }
+							actions={
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ anyToolsEnabled }
+									onChange={ handleToggleAll }
+									label={ __( 'Enable external access' ) }
+								/>
+							}
+						/>
+					</CardHeader>
+					{ hasTools && anyToolsEnabled && (
+						<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+							<ul className="dashboard-summary-button-list__children-list">
+								{ readTools.length > 0 && (
+									<li className="dashboard-summary-button-list__children-list-item">
+										<RouterLinkSummaryButton
+											key="read"
+											to="/me/preferences/ai-and-mcp/tools/read"
+											title={ __( 'Read' ) }
+											decoration={ <Icon icon={ seen } /> }
+											badges={ badgesFor( readTools ) }
+											density="medium"
+										/>
+									</li>
 								) }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ anyToolsEnabled }
-								onChange={ handleToggleAll }
-								label={ __( 'Enable AI access' ) }
-							/>
-						</VStack>
-					</CardBody>
+								{ writeTools.length > 0 && (
+									<li className="dashboard-summary-button-list__children-list-item">
+										<RouterLinkSummaryButton
+											key="write"
+											to="/me/preferences/ai-and-mcp/tools/write"
+											title={ __( 'Write' ) }
+											decoration={ <Icon icon={ pencil } /> }
+											badges={ badgesFor( writeTools ) }
+											density="medium"
+										/>
+									</li>
+								) }
+								<li className="dashboard-summary-button-list__children-list-item">
+									<RouterLinkSummaryButton
+										to="/me/preferences/ai-and-mcp/sites"
+										title={ __( 'Site exceptions' ) }
+										decoration={ <Icon icon={ notAllowed } /> }
+										badges={ sitesBadgesG }
+										density="medium"
+									/>
+								</li>
+							</ul>
+						</CardBody>
+					) }
 				</Card>
 
-				{ /* Permission-level links — Read and Write (merged with Manage) */ }
+				{ /* Connect AI assistant — only shown when MCP access is on */ }
 				{ hasTools && anyToolsEnabled && (
-					<>
-						<SummaryButtonList
-							title={ __( 'MCP access' ) }
-							description={ __(
-								'Control what your external AI assistant can do on your account and sites.'
-							) }
-							density="medium"
-						>
-							{ readTools.length > 0 && (
-								<RouterLinkSummaryButton
-									key="read"
-									to="/me/preferences/ai-and-mcp/tools/read"
-									title={ __( 'Read' ) }
-									decoration={ <Icon icon={ seen } /> }
-									badges={ badgesFor( readTools ) }
-								/>
-							) }
-							{ writeTools.length > 0 && (
-								<RouterLinkSummaryButton
-									key="write"
-									to="/me/preferences/ai-and-mcp/tools/write"
-									title={ __( 'Write' ) }
-									decoration={ <Icon icon={ pencil } /> }
-									badges={ badgesFor( writeTools ) }
-								/>
-							) }
-							<RouterLinkSummaryButton
-								to="/me/preferences/ai-and-mcp/sites"
-								title={ __( 'Site restrictions' ) }
-								description={ __( 'Restrict AI access for specific sites.' ) }
-								decoration={ <Icon icon={ unseen } /> }
-								badges={ sitesBadgesG }
-							/>
-						</SummaryButtonList>
-
-						<RouterLinkSummaryButton
-							to="/me/preferences/ai-and-mcp/setup"
-							title={ __( 'Connect AI assistant' ) }
-							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-							decoration={ <Icon icon={ connection } /> }
-						/>
-					</>
+					<RouterLinkSummaryButton
+						to="/me/preferences/ai-and-mcp/setup"
+						title={ __( 'Connect external AI assistant' ) }
+						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+						decoration={ <Icon icon={ connection } /> }
+					/>
 				) }
 			</VStack>
 		);

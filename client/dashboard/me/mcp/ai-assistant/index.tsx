@@ -108,9 +108,9 @@ export default function McpAiAssistant() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'AI assistant site exceptions' ) }
+					title={ __( 'AI assistant exceptions' ) }
 					description={ __(
-						'The WordPress.com AI assistant is enabled on all your sites. Add exceptions for specific sites here.'
+						'The WordPress.com AI assistant is enabled on all your paid sites. Add exceptions for specific sites here.'
 					) }
 				/>
 			}
@@ -150,7 +150,7 @@ export default function McpAiAssistant() {
 
 				{ disabledSites.length > 0 && (
 					<VStack spacing={ 4 }>
-						<SectionHeader level={ 3 } title={ __( 'Sites with exceptions' ) } />
+						<SectionHeader level={ 3 } title={ __( 'Restricted sites' ) } />
 						<ActionList>
 							{ disabledSites.map( ( site ) => (
 								<ActionList.ActionItem

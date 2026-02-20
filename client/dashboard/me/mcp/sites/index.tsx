@@ -39,7 +39,7 @@ export default function McpSites() {
 		},
 	} );
 
-	// ComboboxControl options — exclude already-restricted sites.
+	// ComboboxControl options — exclude already-excepted sites.
 	const siteOptions = sites
 		.filter( ( site ) => ! disabledSiteIds.includes( site.ID ) )
 		.map( ( site ) => ( {
@@ -78,9 +78,9 @@ export default function McpSites() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'Site restrictions' ) }
+					title={ __( 'External AI access exceptions' ) }
 					description={ __(
-						'By default, AI assistants can access all your sites. Restrict access for specific sites here.'
+						'External AI access is enabled on all your sites. Add exceptions for specific sites here.'
 					) }
 				/>
 			}
@@ -91,8 +91,8 @@ export default function McpSites() {
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								level={ 3 }
-								title={ __( 'Restrict a site' ) }
-								description={ __( 'Search for a site to disable AI access.' ) }
+								title={ __( 'Add an exception' ) }
+								description={ __( 'Search for sites to disable external AI access.' ) }
 							/>
 
 							<ComboboxControl
