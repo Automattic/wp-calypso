@@ -117,6 +117,39 @@
 	gap: 1rem;
 	width: 100%;
 
+	&.is-social-first {
+		.auth-form__separator {
+			width: 100%;
+			margin: 20px 0;
+
+			@include break-medium {
+				width: 24px;
+				align-self: stretch;
+				margin-inline: 40px;
+				margin-block: 0;
+
+				&::before,
+				&::after {
+					border-inline-start: 1px solid #eaeaeb;
+					border-block-start: 0;
+					inset-block-start: 0;
+					inset-inline-start: 50%;
+					height: 40%;
+					width: 0;
+				}
+
+				&::after {
+					top: 60%;
+					left: auto;
+				}
+
+				.auth-form__separator-text {
+					padding: 24px 0;
+				}
+			}
+		}
+	}
+
 	@include break-mobile {
 		flex-direction: row;
 		align-items: flex-start;
@@ -158,21 +191,6 @@
 
 	.auth-form__social.is-social-first .auth-form__social-buttons-container {
 		gap: 16px;
-	}
-}
-
-.connect-screen-login-page-wrapper__divider {
-	display: none;
-
-	@include break-mobile {
-		display: block;
-		width: 1px;
-		align-self: stretch;
-		background: color-mix(
-			in srgb,
-			var( --connect-screen-login-page-wrapper-text-color ) 12%,
-			transparent
-		);
 	}
 }
 

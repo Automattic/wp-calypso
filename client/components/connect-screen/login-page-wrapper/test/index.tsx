@@ -194,6 +194,7 @@ describe( 'LoginPageWrapper', () => {
 		expect(
 			container.querySelector( '.connect-screen-login-page-wrapper__column--social' )
 		).toBeInTheDocument();
+		expect( container.querySelector( '.auth-form__separator' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'social-buttons-content' ) ).toBeInTheDocument();
 	} );
 
@@ -208,9 +209,7 @@ describe( 'LoginPageWrapper', () => {
 			</LoginPageWrapper>
 		);
 
-		expect(
-			container.querySelector( '.connect-screen-login-page-wrapper__divider' )
-		).not.toBeInTheDocument();
+		expect( container.querySelector( '.auth-form__separator' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'calls nav link onClick handlers', () => {

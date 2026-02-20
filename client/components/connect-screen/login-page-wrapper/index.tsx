@@ -3,6 +3,7 @@ import { Step } from '@automattic/onboarding';
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { FormDivider } from 'calypso/blocks/authentication';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useTranslate } from 'calypso/i18n';
 import { BrandHeader } from '../brand-header';
@@ -296,7 +297,7 @@ export function LoginPageWrapper( {
 								) }
 							>
 								{ isSocialFirst ? (
-									<div className="connect-screen-login-page-wrapper__columns">
+									<div className="connect-screen-login-page-wrapper__columns is-social-first">
 										<div
 											className={ clsx(
 												'connect-screen-login-page-wrapper__column',
@@ -307,12 +308,7 @@ export function LoginPageWrapper( {
 											{ renderLoginIdentifierField() }
 											{ children }
 										</div>
-										{ showSocialDivider && (
-											<div
-												className="connect-screen-login-page-wrapper__divider"
-												aria-hidden="true"
-											/>
-										) }
+										{ showSocialDivider && <FormDivider isHorizontal={ false } /> }
 										<div
 											className={ clsx(
 												'connect-screen-login-page-wrapper__column',
