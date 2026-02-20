@@ -11,8 +11,6 @@ import {
 	getDiscoverStreamTags,
 	RECOMMENDED_TAB,
 	buildDiscoverStreamKey,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
 	FRESHLY_PRESSED_TAB,
 } from './helper';
 
@@ -30,19 +28,12 @@ const DiscoverStream = ( props ) => {
 		selectedTag: selectedTag,
 	};
 
-	const TAB_COMPONENTS = {
-		[ ADD_NEW_TAB ]: <AddSubscriptionForm type="add-new" />,
-		[ REDDIT_TAB ]: <AddSubscriptionForm type="reddit" />,
-	};
-
-	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
+	const ContentComponent = <AddSubscriptionForm type={ selectedTab } />;
 	if ( ContentComponent ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
-				<div className="reader__content">
-					<ContentComponent />
-				</div>
+				<div className="reader__content">{ ContentComponent }</div>
 			</ReaderMain>
 		);
 	}
