@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { Step } from '@automattic/onboarding';
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -215,128 +216,132 @@ export function LoginPageWrapper( {
 	);
 
 	return (
-		<ScreenLayout
-			backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }
-			containerMaxWidth={ 660 }
-		>
-			<div
-				className={ clsx( 'connect-screen-login-page-wrapper', className, {
-					'connect-screen-login-page-wrapper--social-first': isSocialFirst,
-				} ) }
-				style={ customStyles }
-			>
-				<div className="connect-screen-login-page-wrapper__top-bar">
-					<div className="connect-screen-login-page-wrapper__top-bar-start">
-						{ topBarLogo && (
-							<div className="connect-screen-login-page-wrapper__top-bar-logo">{ topBarLogo }</div>
-						) }
-					</div>
-					<div className="connect-screen-login-page-wrapper__top-bar-end">
-						{ secondaryNavLink && (
-							<a
-								className="connect-screen-login-page-wrapper__top-bar-link"
-								href={ addRedirectToQuery( secondaryNavLink.href, redirectTo ) }
-								onClick={ secondaryNavLink.onClick }
-								target={ secondaryNavLink.target }
-								rel={ secondaryNavLink.rel }
-							>
-								{ secondaryNavLink.label }
-							</a>
-						) }
-						{ primaryNavLink && (
-							<a
-								className="connect-screen-login-page-wrapper__top-bar-link"
-								href={ addRedirectToQuery( primaryNavLink.href, redirectTo ) }
-								onClick={ primaryNavLink.onClick }
-								target={ primaryNavLink.target }
-								rel={ primaryNavLink.rel }
-							>
-								{ primaryNavLink.label }
-							</a>
-						) }
-					</div>
-				</div>
-
-				<BrandHeader
-					logo={ branding?.logo }
-					logoAlt={ branding?.logoAlt }
-					logoWidth={ branding?.logoWidth }
-					logoHeight={ branding?.logoHeight }
-					title={ title }
-					description={ description }
-					className="connect-screen-login-page-wrapper__header"
-				/>
-
-				{ descriptionSecondary && (
-					<p className="connect-screen-login-page-wrapper__description-secondary">
-						{ descriptionSecondary }
-					</p>
-				) }
-
-				{ isLoading ? (
-					<LoadingScreen
-						message={ loadingMessage }
-						className="connect-screen-login-page-wrapper__loading"
-					/>
-				) : (
-					<>
-						{ beforeContent && (
-							<div className="connect-screen-login-page-wrapper__before-content">
-								{ beforeContent }
-							</div>
-						) }
-						<div
-							className={ clsx(
-								'connect-screen-login-page-wrapper__content',
-								! isSocialFirst && contentClassName
+		<>
+			<div className="connect-screen-login-page-wrapper__top-bar-shell" style={ customStyles }>
+				<Step.TopBar
+					compactLogo="always"
+					logo={ topBarLogo ?? undefined }
+					hideLogo={ ! topBarLogo }
+					rightElement={
+						<nav className="connect-screen-login-page-wrapper__top-bar-nav">
+							{ secondaryNavLink && (
+								<a
+									className="connect-screen-login-page-wrapper__top-bar-link"
+									href={ addRedirectToQuery( secondaryNavLink.href, redirectTo ) }
+									onClick={ secondaryNavLink.onClick }
+									target={ secondaryNavLink.target }
+									rel={ secondaryNavLink.rel }
+								>
+									{ secondaryNavLink.label }
+								</a>
 							) }
-						>
-							{ isSocialFirst ? (
-								<div className="connect-screen-login-page-wrapper__columns">
+							{ primaryNavLink && (
+								<a
+									className="connect-screen-login-page-wrapper__top-bar-link"
+									href={ addRedirectToQuery( primaryNavLink.href, redirectTo ) }
+									onClick={ primaryNavLink.onClick }
+									target={ primaryNavLink.target }
+									rel={ primaryNavLink.rel }
+								>
+									{ primaryNavLink.label }
+								</a>
+							) }
+						</nav>
+					}
+				/>
+			</div>
+			<ScreenLayout
+				className="connect-screen-login-page-wrapper__layout"
+				backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }
+				containerMaxWidth={ 660 }
+			>
+				<div
+					className={ clsx( 'connect-screen-login-page-wrapper', className, {
+						'connect-screen-login-page-wrapper--social-first': isSocialFirst,
+					} ) }
+					style={ customStyles }
+				>
+					<BrandHeader
+						logo={ branding?.logo }
+						logoAlt={ branding?.logoAlt }
+						logoWidth={ branding?.logoWidth }
+						logoHeight={ branding?.logoHeight }
+						title={ title }
+						description={ description }
+						className="connect-screen-login-page-wrapper__header"
+					/>
+
+					{ descriptionSecondary && (
+						<p className="connect-screen-login-page-wrapper__description-secondary">
+							{ descriptionSecondary }
+						</p>
+					) }
+
+					{ isLoading ? (
+						<LoadingScreen
+							message={ loadingMessage }
+							className="connect-screen-login-page-wrapper__loading"
+						/>
+					) : (
+						<>
+							{ beforeContent && (
+								<div className="connect-screen-login-page-wrapper__before-content">
+									{ beforeContent }
+								</div>
+							) }
+							<div
+								className={ clsx(
+									'connect-screen-login-page-wrapper__content',
+									! isSocialFirst && contentClassName
+								) }
+							>
+								{ isSocialFirst ? (
+									<div className="connect-screen-login-page-wrapper__columns">
+										<div
+											className={ clsx(
+												'connect-screen-login-page-wrapper__column',
+												'connect-screen-login-page-wrapper__column--form',
+												contentClassName
+											) }
+										>
+											{ renderLoginIdentifierField() }
+											{ children }
+										</div>
+										{ showSocialDivider && (
+											<div
+												className="connect-screen-login-page-wrapper__divider"
+												aria-hidden="true"
+											/>
+										) }
+										<div
+											className={ clsx(
+												'connect-screen-login-page-wrapper__column',
+												'connect-screen-login-page-wrapper__column--social',
+												socialColumnClassName
+											) }
+										>
+											{ socialButtons }
+										</div>
+									</div>
+								) : (
 									<div
 										className={ clsx(
 											'connect-screen-login-page-wrapper__column',
-											'connect-screen-login-page-wrapper__column--form',
 											contentClassName
 										) }
 									>
 										{ renderLoginIdentifierField() }
 										{ children }
 									</div>
-									{ showSocialDivider && (
-										<div
-											className="connect-screen-login-page-wrapper__divider"
-											aria-hidden="true"
-										/>
-									) }
-									<div
-										className={ clsx(
-											'connect-screen-login-page-wrapper__column',
-											'connect-screen-login-page-wrapper__column--social',
-											socialColumnClassName
-										) }
-									>
-										{ socialButtons }
-									</div>
-								</div>
-							) : (
-								<div
-									className={ clsx(
-										'connect-screen-login-page-wrapper__column',
-										contentClassName
-									) }
-								>
-									{ renderLoginIdentifierField() }
-									{ children }
-								</div>
+								) }
+							</div>
+							{ footer && (
+								<div className="connect-screen-login-page-wrapper__footer">{ footer }</div>
 							) }
-						</div>
-						{ footer && (
-							<div className="connect-screen-login-page-wrapper__footer">{ footer }</div>
-						) }
-					</>
-				) }
-			</div>
-		</ScreenLayout>
+						</>
+					) }
+				</div>
+			</ScreenLayout>
+		</>
 	);
 }

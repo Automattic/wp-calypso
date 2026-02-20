@@ -47,6 +47,57 @@ describe( 'LoginPageWrapper', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'controlled-user' );
 	} );
 
+	it( 'hides default Step.TopBar logo when no topBar logo is passed', () => {
+		const { container } = render(
+			<LoginPageWrapper title="Log in">
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect(
+			container.querySelector( '.step-container-v2__top-bar-wordpress-logo-wrapper' )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'renders Step.TopBar outside ScreenLayout container for full viewport width', () => {
+		const { container } = render(
+			<LoginPageWrapper
+				title="Log in"
+				primaryNavLink={ {
+					label: 'Create an account',
+					href: '/start/account',
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		const topBarShell = container.querySelector(
+			'.connect-screen-login-page-wrapper__top-bar-shell'
+		);
+		const layoutContainer = container.querySelector( '.connect-screen-layout__container' );
+
+		expect( topBarShell ).toBeInTheDocument();
+		expect( layoutContainer ).toBeInTheDocument();
+		expect( layoutContainer?.contains( topBarShell as Node ) ).toBe( false );
+	} );
+
+	it( 'renders topBar logo when branding topBarLogo is provided', () => {
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				branding={ {
+					topBarLogo: 'https://example.com/logo.svg',
+					topBarLogoAlt: 'Partner logo',
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'img', { name: 'Partner logo' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'applies wrapper className and contentClassName', () => {
 		const { container } = render(
 			<LoginPageWrapper title="Log in" className="custom-wrapper" contentClassName="custom-content">
