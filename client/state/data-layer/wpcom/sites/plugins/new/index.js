@@ -32,7 +32,8 @@ export const uploadPlugin = ( action ) => {
 
 const showErrorNotice = ( error ) => {
 	const knownErrors = {
-		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
+		'too large': translate( 'The plugin zip file is too large.' ),
+		'http 413': translate( 'The plugin zip file is too large.' ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};

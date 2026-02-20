@@ -126,7 +126,30 @@ describe( 'receiveError', () => {
 				type: 'NOTICE_CREATE',
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'The plugin zip file must be smaller than 10MB.',
+					text: 'The plugin zip file is too large.',
+					showDismiss: true,
+				} ),
+			} )
+		);
+	} );
+
+	test( 'should return expected actions for HTTP 413 error (http_error)', () => {
+		const error = { error: 'http_error', message: 'HTTP 413' };
+		const actions = receiveError( { siteId }, error );
+
+		expect( actions[ 0 ] ).toEqual(
+			recordTracksEvent( 'calypso_plugin_upload_error', {
+				error_code: error.error,
+				error_message: error.message,
+			} )
+		);
+		expect( actions[ 1 ] ).toEqual( pluginUploadError( siteId, error ) );
+		expect( actions[ 2 ] ).toEqual(
+			expect.objectContaining( {
+				type: 'NOTICE_CREATE',
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'The plugin zip file is too large.',
 					showDismiss: true,
 				} ),
 			} )
