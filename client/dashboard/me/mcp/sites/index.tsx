@@ -111,7 +111,11 @@ export default function McpSites() {
 
 				{ disabledSites.length > 0 && (
 					<VStack spacing={ 4 }>
-						<SectionHeader level={ 3 } title={ __( 'Restricted sites' ) } />
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Restricted sites' ) }
+							description={ __( 'These sites will not have MCP access.' ) }
+						/>
 						<ActionList>
 							{ disabledSites.map( ( site ) => (
 								<ActionList.ActionItem

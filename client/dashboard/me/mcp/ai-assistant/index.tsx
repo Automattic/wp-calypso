@@ -96,9 +96,11 @@ export default function McpAiAssistant() {
 
 	// In "global on" mode: search enabled sites to disable them, list disabled as exceptions.
 	// In "global off" mode: search disabled sites to enable them, list enabled as added sites.
-	// Unavailable (free plan) sites always appear in search so users can upgrade them.
+	// Unavailable (free plan) sites only appear in "add" mode so users can upgrade them.
 	const eligibleSearchPool = isGlobalOn ? enabledSites : disabledSites;
-	const searchPool = [ ...eligibleSearchPool, ...unavailableSites ];
+	const searchPool = isGlobalOn
+		? eligibleSearchPool
+		: [ ...eligibleSearchPool, ...unavailableSites ];
 	const listedSites = isGlobalOn ? disabledSites : enabledSites;
 
 	const siteOptions =
@@ -160,6 +162,9 @@ export default function McpAiAssistant() {
 		? __( 'Search for eligible sites to disable the AI assistant.' )
 		: __( 'Search for a site to enable the AI assistant.' );
 	const listTitle = isGlobalOn ? __( 'Restricted sites' ) : __( 'Enabled sites' );
+	const listDescription = isGlobalOn
+		? __( 'These sites will not have the AI assistant.' )
+		: __( 'These sites have the AI assistant enabled.' );
 
 	return (
 		<PageLayout
@@ -207,7 +212,7 @@ export default function McpAiAssistant() {
 
 				{ listedSites.length > 0 && (
 					<VStack spacing={ 4 }>
-						<SectionHeader level={ 3 } title={ listTitle } />
+						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
 						<ActionList>
 							{ listedSites.map( ( site ) => (
 								<ActionList.ActionItem
