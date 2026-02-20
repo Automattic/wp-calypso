@@ -103,6 +103,9 @@ export const BylineSettings = ( {
 						'You can customize the date format in your site’s {{link}}general settings{{/link}}',
 						{
 							components: {
+								// ExternalLink opens in a new tab with an external link icon.
+								// Space child satisfies its required children prop;
+								// translate() replaces it with the interpolated text at runtime.
 								link: <ExternalLink href={ generalSettingsUrl }> </ExternalLink>,
 							},
 						}
