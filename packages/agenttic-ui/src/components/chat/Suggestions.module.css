@@ -29,7 +29,7 @@
     width: 100%;
     height: unset;
     justify-content: start;
-    font-size: 13px;
+    font-size: var(--text-xs);
     line-height: 20px;
     padding: 14px 16px;
     border: 1px solid var(--color-muted);

@@ -151,7 +151,7 @@ export function Messages( {
 							className="error-message"
 							style={ {
 								color: 'var(--color-error)',
-								padding: '1rem',
+								padding: 'var(--spacing-4)',
 								textAlign: 'center',
 							} }
 						>
