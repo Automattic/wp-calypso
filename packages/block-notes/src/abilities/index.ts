@@ -1,4 +1,3 @@
-import logger from '@utils/log-debug';
 import { registerAbility } from '@wordpress/abilities';
 import { select } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
@@ -186,7 +185,7 @@ export async function registerBlockNotesAbility(): Promise< void > {
 							sessionId: threadSessionId,
 						} );
 					}
-					logger.error( 'Block Notes: Ability execution failed', error );
+					window.console?.error( 'Block Notes: Ability execution failed', error );
 					return {
 						success: false,
 						error: `Failed to perform note action: ${
@@ -198,7 +197,7 @@ export async function registerBlockNotesAbility(): Promise< void > {
 			},
 		} );
 		isRegistered = true;
-		logger.info( 'Block Notes: Ability registered successfully' );
+		window.console?.info( 'Block Notes: Ability registered successfully' );
 	} catch ( error ) {
 		// Ignore if already registered
 		if ( error instanceof Error && error.message.includes( 'already registered' ) ) {

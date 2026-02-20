@@ -6,11 +6,11 @@
  */
 
 // Mock the tracks module
-jest.mock( '@utils/tracks', () => ( {
+jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-import { recordTracksEvent } from '@utils/tracks';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	trackBlockNoteAiReplyCreated,
 	trackBlockNoteAiReplyFailed,

@@ -4,8 +4,7 @@
  * Centralized tracking functions for Block Notes events.
  */
 
-// @ts-ignore - tracks.js is a JavaScript file
-import { recordTracksEvent } from '@utils/tracks';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 interface TrackBlockNoteAtMentionUsedOptions {
 	postId: number;

@@ -8,9 +8,8 @@
  * 4. Error handling
  */
 
-import * as tracking from '@block-notes/utils/tracking';
-import logger from '@utils/log-debug';
 import { registerAbility } from '@wordpress/abilities';
+import * as tracking from '../utils/tracking';
 import * as utils from './utils';
 import { ABILITY_NAME, type BlockNotesCallback, registerBlockNotesAbility } from './index';
 
@@ -37,23 +36,12 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbility: jest.fn(),
 } ) );
 
-// Mock internal dependencies
-jest.mock( '@utils/log-debug', () => ( {
-	info: jest.fn(),
-	error: jest.fn(),
-	debug: jest.fn(),
-} ) );
-
-jest.mock( '@block-notes/utils/tracking', () => ( {
+jest.mock( '../utils/tracking', () => ( {
 	trackBlockNoteAiReplyCreated: jest.fn(),
 	trackBlockNoteAiReplyFailed: jest.fn(),
 } ) );
 
-jest.mock( '@utils/request-jetpack-token', () => ( {
-	getBlogId: jest.fn( () => 'test-blog-id' ),
-} ) );
-
-jest.mock( '@block-notes/utils/session', () => ( {
+jest.mock( '../utils/session', () => ( {
 	getBlockNoteThreadSessionId: jest.fn( () => Promise.resolve( 'test-session-id' ) ),
 } ) );
 
@@ -63,9 +51,13 @@ describe( 'Block Notes Ability', () => {
 	const TEST_REPLY_TEXT = 'This is a test reply';
 
 	let mockCallback: BlockNotesCallback;
+	let consoleInfoSpy: jest.SpyInstance;
+	let consoleErrorSpy: jest.SpyInstance;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		consoleInfoSpy = jest.spyOn( console, 'info' ).mockImplementation( () => {} );
+		consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		// Setup default mock return value for getCurrentPostId
 		mockGetCurrentPostId.mockReturnValue( TEST_POST_ID );
@@ -75,6 +67,10 @@ describe( 'Block Notes Ability', () => {
 			mockCallback = config.callback;
 			return Promise.resolve();
 		} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
 	} );
 
 	describe( 'registerBlockNotesAbility', () => {
@@ -95,7 +91,9 @@ describe( 'Block Notes Ability', () => {
 					callback: expect.any( Function ),
 				} )
 			);
-			expect( logger.info ).toHaveBeenCalledWith( 'Block Notes: Ability registered successfully' );
+			expect( consoleInfoSpy ).toHaveBeenCalledWith(
+				'Block Notes: Ability registered successfully'
+			);
 		} );
 
 		it( 'should prevent duplicate registration within same session', async () => {
@@ -260,7 +258,7 @@ describe( 'Block Notes Ability', () => {
 				errorType: 'ability_failed',
 				sessionId: 'test-session-id',
 			} );
-			expect( logger.error ).toHaveBeenCalledWith(
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
 				'Block Notes: Ability execution failed',
 				testError
 			);

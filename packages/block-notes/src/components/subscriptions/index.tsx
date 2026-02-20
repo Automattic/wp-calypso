@@ -1,6 +1,5 @@
 import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
 import { store as aiStore } from '@store';
-import logger from '@utils/log-debug';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useRegistry, useSelect } from '@wordpress/data';
@@ -51,7 +50,7 @@ const markNoteAsProcessed = async (
 
 		await saveEditedEntityRecord( 'root', 'comment', noteId );
 	} catch ( error ) {
-		logger.error( `Block Notes: Error marking note ${ noteId } as processed:`, error );
+		window.console?.error( `Block Notes: Error marking note ${ noteId } as processed:`, error );
 		// If database operation fails, remove from memory set
 		processedNotesSet.delete( Number( noteId ) );
 		throw error;
@@ -149,7 +148,10 @@ const handleStaleNotes = ( {
 				removeInProcessBlockNote( note.note_ID, note.note_post_ID );
 			} )
 			.catch( ( error ) => {
-				logger.error( `Block Notes: Error processing stale note ID ${ note.note_ID }:`, error );
+				window.console?.error(
+					`Block Notes: Error processing stale note ID ${ note.note_ID }:`,
+					error
+				);
 				removeInProcessBlockNote( note.note_ID, note.note_post_ID );
 			} );
 	} );
@@ -177,7 +179,7 @@ const isNoteStale = ( note: NoteEntity ): boolean => {
 
 		// Validate that the date is valid
 		if ( isNaN( noteDate.getTime() ) ) {
-			logger.error( 'Block Notes: Invalid date_gmt format:', note.date_gmt );
+			window.console?.error( 'Block Notes: Invalid date_gmt format:', note.date_gmt );
 			return false;
 		}
 
@@ -186,7 +188,7 @@ const isNoteStale = ( note: NoteEntity ): boolean => {
 
 		return ageInMs > NOTE_STALE_THRESHOLD_MS;
 	} catch ( error ) {
-		logger.error( 'Block Notes: Error parsing note date_gmt:', error );
+		window.console?.error( 'Block Notes: Error parsing note date_gmt:', error );
 		return false;
 	}
 };
@@ -434,7 +436,7 @@ const processAiNote = async (
 			sessionId: threadSessionId,
 		} );
 	} catch ( error ) {
-		logger.error(
+		window.console?.error(
 			`Block Notes: Error submitting note id ${ note.note_ID } to agent with error ${ error }.`
 		);
 		trackBlockNoteAiResponseFailed( {
@@ -451,7 +453,7 @@ const processAiNote = async (
 			'AI [Experimental]'
 		);
 	} finally {
-		logger.info( `Block Notes: Marking note ID ${ note.note_ID } as processed.` );
+		window.console?.info( `Block Notes: Marking note ID ${ note.note_ID } as processed.` );
 
 		// Mark as processed in database and in-memory
 		await markNoteAsProcessed(
@@ -649,7 +651,7 @@ function BlockNoteSubscriptionsChat( {
 					} )
 					.catch( ( error ) => {
 						// Clean up on error
-						logger.error(
+						window.console?.error(
 							`Block Notes: Error in async processing for note ID ${ transformedNote.note_ID }:`,
 							error
 						);

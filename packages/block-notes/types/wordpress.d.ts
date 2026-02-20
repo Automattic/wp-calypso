@@ -5,4 +5,11 @@ declare module '@wordpress/block-editor' {
 }
 
 // Global data injected by PHP
-declare const blockNotesData: { enabled: boolean } | undefined;
+interface BlockNotesData {
+	enabled: boolean;
+	siteId?: number;
+}
+
+interface Window {
+	blockNotesData?: BlockNotesData;
+}

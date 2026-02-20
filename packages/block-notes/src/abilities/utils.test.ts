@@ -27,14 +27,6 @@ jest.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '@utils/log-debug', () => ( {
-	__esModule: true,
-	default: {
-		error: jest.fn(),
-	},
-} ) );
-
-import logger from '@utils/log-debug';
 import { convertEntityNoteFormat, getBlockNotes, replyToNote } from './utils';
 
 describe( 'Block Notes Utils', () => {
@@ -48,8 +40,11 @@ describe( 'Block Notes Utils', () => {
 	const TEST_DATE_GMT = '2024-01-01T00:00:00';
 	const ERROR_MESSAGE = 'API error';
 
+	let consoleErrorSpy: jest.SpyInstance;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
+		consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		// Default: current user exists
 		mockGetCurrentUser.mockResolvedValue( {
@@ -57,6 +52,10 @@ describe( 'Block Notes Utils', () => {
 			name: TEST_AUTHOR_NAME,
 			email: TEST_AUTHOR_EMAIL,
 		} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
 	} );
 
 	describe( 'getBlockNotes', () => {
@@ -122,7 +121,7 @@ describe( 'Block Notes Utils', () => {
 
 			await expect( getBlockNotes( TEST_POST_ID, TEST_NOTE_ID ) ).rejects.toThrow( ERROR_MESSAGE );
 
-			expect( logger.error ).toHaveBeenCalledWith(
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
 				'Block Notes: API error:',
 				expect.objectContaining( {
 					message: ERROR_MESSAGE,
@@ -224,7 +223,10 @@ describe( 'Block Notes Utils', () => {
 				replyToNote( TEST_POST_ID, TEST_NOTE_ID, TEST_NOTE_CONTENT, TEST_AUTHOR_NAME )
 			).rejects.toThrow( ERROR_MESSAGE );
 
-			expect( logger.error ).toHaveBeenCalledWith( '❌ Failed to create block note:', createError );
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
+				'❌ Failed to create block note:',
+				createError
+			);
 		} );
 	} );
 

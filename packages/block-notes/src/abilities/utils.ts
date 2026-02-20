@@ -1,4 +1,3 @@
-import logger from '@utils/log-debug';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect } from '@wordpress/data';
 
@@ -120,7 +119,7 @@ export const getBlockNotes = async (
 
 		return blockNoteResponse;
 	} catch ( error ) {
-		logger.error( 'Block Notes: API error:', {
+		window.console?.error( 'Block Notes: API error:', {
 			message: ( error as Error ).message,
 			code: ( error as WPRestApiError ).code,
 			data: ( error as WPRestApiError ).data,
@@ -174,7 +173,7 @@ const createBlockNoteInDB = async ( {
 
 		return convertEntityNoteFormat( newNote );
 	} catch ( error ) {
-		logger.error( '❌ Failed to create block note:', error );
+		window.console?.error( '❌ Failed to create block note:', error );
 		throw error;
 	}
 };
@@ -203,7 +202,7 @@ export const replyToNote = async (
 		} );
 		return result;
 	} catch ( error ) {
-		logger.error( 'Block Notes: Error in replyToNote:', error );
+		window.console?.error( 'Block Notes: Error in replyToNote:', error );
 		throw error;
 	}
 };

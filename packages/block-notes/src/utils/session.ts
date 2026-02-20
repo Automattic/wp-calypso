@@ -1,7 +1,3 @@
-// @ts-ignore - js file
-import logger from '@utils/log-debug';
-import { getBlogId } from '@utils/request-jetpack-token';
-
 /**
  * Generate a deterministic session ID for a block note thread using SHA-256 hash.
  *
@@ -17,9 +13,9 @@ export async function getBlockNoteThreadSessionId(
 	postId: number | undefined,
 	noteId: number
 ): Promise< string | undefined > {
-	const blogId = getBlogId();
+	const blogId = window.blockNotesData?.siteId;
 	if ( ! blogId || ! postId || ! noteId ) {
-		logger.warn( 'Block Notes: Missing required parameters for session ID generation', {
+		window.console?.warn( 'Block Notes: Missing required parameters for session ID generation', {
 			blogId: !! blogId,
 			postId: !! postId,
 			noteId: !! noteId,
@@ -45,7 +41,10 @@ export async function getBlockNoteThreadSessionId(
 			16
 		) }-${ hashHex.slice( 16, 20 ) }-${ hashHex.slice( 20, 32 ) }`;
 	} catch ( error ) {
-		logger.error( 'Block Notes: Failed to generate session ID - crypto operation failed', error );
+		window.console?.error(
+			'Block Notes: Failed to generate session ID - crypto operation failed',
+			error
+		);
 		return undefined;
 	}
 }

@@ -9,15 +9,12 @@
  */
 // @ts-expect-error - mock exports from __mocks__ directory
 import { mockHasAgent, mockOnSubmit } from '@automattic/agenttic-client';
-import { replyToNote } from '@block-notes/abilities/utils';
-import {
-	trackBlockNoteAiResponseFailed,
-	trackBlockNoteAtMentionUsed,
-} from '@block-notes/utils/tracking';
 import { act, render, waitFor } from '@testing-library/react';
+import { replyToNote } from '../../abilities/utils';
+import { trackBlockNoteAiResponseFailed, trackBlockNoteAtMentionUsed } from '../../utils/tracking';
 import '@testing-library/jest-dom';
 import BlockNoteSubscriptions from './index';
-import type { NoteEntity } from '@block-notes/abilities/utils';
+import type { NoteEntity } from '../../abilities/utils';
 
 // Mock WordPress dependencies
 const mockGetCurrentPostId = jest.fn();
@@ -103,16 +100,11 @@ jest.mock( '@store', () => ( {
 } ) );
 
 // Mock feature flagging to always true.
-jest.mock( '@block-notes/utils/feature-flag', () => ( {
+jest.mock( '../../utils/feature-flag', () => ( {
 	areBlockNotesEnabled: jest.fn( () => true ),
 } ) );
 
-jest.mock( '@utils/log-debug', () => ( {
-	info: jest.fn(),
-	error: jest.fn(),
-} ) );
-
-jest.mock( '@block-notes/components/mention-autocomplete/index', () => {
+jest.mock( '../mention-autocomplete/index', () => {
 	return function MockBlockNoteMentionAutocomplete() {
 		return null;
 	};
@@ -122,7 +114,7 @@ jest.mock( '@block-notes/components/mention-autocomplete/index', () => {
 jest.mock( '@automattic/agenttic-client' );
 
 // Mock block-notes agent config
-jest.mock( '@block-notes/agent-config', () => ( {
+jest.mock( '../../agent-config', () => ( {
 	blockNotesAgentConfig: {
 		createAgentConfig: jest.fn( ( sessionId: string ) =>
 			Promise.resolve( {
@@ -134,7 +126,7 @@ jest.mock( '@block-notes/agent-config', () => ( {
 } ) );
 
 // Mock utils
-jest.mock( '@block-notes/abilities/utils', () => ( {
+jest.mock( '../../abilities/utils', () => ( {
 	convertEntityNoteFormat: jest.fn( ( note: NoteEntity ) => ( {
 		note_ID: note.id,
 		note_post_ID: note.post,
@@ -151,16 +143,12 @@ jest.mock( '@block-notes/abilities/utils', () => ( {
 } ) );
 
 // Mock tracking
-jest.mock( '@block-notes/utils/tracking', () => ( {
+jest.mock( '../../utils/tracking', () => ( {
 	trackBlockNoteAiResponseFailed: jest.fn(),
 	trackBlockNoteAtMentionUsed: jest.fn(),
 } ) );
 
-jest.mock( '@utils/request-jetpack-token', () => ( {
-	getBlogId: jest.fn( () => 'test-blog-id' ),
-} ) );
-
-jest.mock( '@block-notes/utils/session', () => ( {
+jest.mock( '../../utils/session', () => ( {
 	getBlockNoteThreadSessionId: jest.fn( () => Promise.resolve( 'test-session-id-123' ) ),
 } ) );
 

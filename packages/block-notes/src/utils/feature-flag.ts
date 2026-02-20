@@ -2,8 +2,7 @@
  * Checks if the block notes feature should be enabled.
  *
  * This function returns true if the feature is enabled via
- * `window.bigSkyBlockNotes.enabled`, set by the Block Notes PHP enqueue.
- * Matches Image Studio's pattern (`window.bigSkyImageStudio.enabled`).
+ * `window.blockNotesData.enabled`, set by the Block Notes PHP enqueue.
  *
  * @returns {boolean} Whether the block notes feature should be enabled
  */
@@ -12,5 +11,5 @@ export function areBlockNotesEnabled(): boolean {
 		return false;
 	}
 
-	return !! window.bigSkyBlockNotes?.enabled;
+	return !! window.blockNotesData?.enabled;
 }
