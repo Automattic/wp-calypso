@@ -5,7 +5,6 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
-import { init as initPostHog } from '@automattic/posthog';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
@@ -37,7 +36,7 @@ function AnalyticsProviderWithClient( {
 
 	useEffect( () => {
 		if ( posthog ) {
-			initPostHog( posthog, user );
+			import( '@automattic/posthog' ).then( ( { init } ) => init( posthog, user ) );
 		}
 	}, [ user, posthog ] );
 
