@@ -21,7 +21,23 @@ describe( 'LoginPageWrapper', () => {
 			'Just a little reminder that by continuing with any of the options below, you agree to our Terms of Service and Privacy Policy.'
 		);
 		expect( screen.getByRole( 'link', { name: 'Forgot password?' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Log in' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'name', 'usernameOrEmail' );
+	} );
+
+	it( 'renders configurable primary action label and handles click', () => {
+		const onPrimaryActionClick = jest.fn();
+
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				primaryActionLabel="Continue"
+				onPrimaryActionClick={ onPrimaryActionClick }
+			/>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		expect( onPrimaryActionClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'renders terms links below brand header using ConsentText', () => {
@@ -167,6 +183,9 @@ describe( 'LoginPageWrapper', () => {
 		expect( container.querySelector( '.connect-screen-login-page-wrapper__content' ) ).toHaveClass(
 			'custom-content'
 		);
+		expect(
+			container.querySelector( '.connect-screen-login-page-wrapper__column' )
+		).not.toHaveClass( 'custom-content' );
 	} );
 
 	it( 'renders top bar links and appends redirectTo to their href', () => {

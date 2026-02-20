@@ -101,9 +101,7 @@ const LoginPageWrapperControlledInputStory = () => {
 			title="Log in to your account"
 			usernameOrEmail={ usernameOrEmail }
 			onUsernameOrEmailChange={ setUsernameOrEmail }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	);
 };
 
@@ -317,9 +315,7 @@ export const LoginPageWrapperVariants: StoryObj< typeof LoginPageWrapper > = {
 		<LoginPageWrapper
 			title="Log in to your account"
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 };
 
@@ -339,9 +335,7 @@ export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper >
 			} }
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 };
 
@@ -352,9 +346,7 @@ export const LoginPageWrapperWithRedirectTo: StoryObj< typeof LoginPageWrapper >
 			redirectTo="https://wordpress.com/home/example.wordpress.com"
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks?source=login' } }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 };
 
@@ -364,9 +356,7 @@ export const LoginPageWrapperLoading: StoryObj< typeof LoginPageWrapper > = {
 			title="Log in to your account"
 			isLoading
 			loadingMessage="Loading account details..."
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 };
 
@@ -376,9 +366,7 @@ export const LoginPageWrapperSocialTwoColumn: StoryObj< typeof LoginPageWrapper 
 			title="Log in to your account"
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			socialButtons={ <SocialButtonsPanel /> }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 };
 
@@ -388,9 +376,7 @@ export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWr
 			title="Log in to your account"
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			socialButtons={ <SocialButtonsPanel /> }
-		>
-			<ActionButtons primaryLabel="Log in" primaryOnClick={ () => {} } />
-		</LoginPageWrapper>
+		/>
 	),
 	parameters: {
 		viewport: {

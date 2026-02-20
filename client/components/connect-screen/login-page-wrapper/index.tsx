@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { FormDivider } from 'calypso/blocks/authentication';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
@@ -53,7 +54,20 @@ export interface LoginPageWrapperProps {
 	showForgotPasswordLink?: boolean;
 	forgotPasswordHref?: string;
 	onForgotPasswordClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
-	children: ReactNode;
+	primaryActionLabel?: ReactNode;
+	onPrimaryActionClick?: () => void;
+	primaryActionType?: 'button' | 'submit';
+	primaryActionLoading?: boolean;
+	primaryActionDisabled?: boolean;
+	primaryActionClassName?: string;
+	secondaryActionLabel?: ReactNode;
+	secondaryActionOnClick?: () => void;
+	secondaryActionDisabled?: boolean;
+	secondaryActionClassName?: string;
+	tertiaryActionLabel?: ReactNode;
+	tertiaryActionOnClick?: () => void;
+	actionButtonsClassName?: string;
+	children?: ReactNode;
 	/**
 	 * Optional right-side social buttons column.
 	 * Pass a composition using components from `calypso/components/social-buttons`.
@@ -135,6 +149,19 @@ export function LoginPageWrapper( {
 	showForgotPasswordLink = true,
 	forgotPasswordHref = '/log-in/lostpassword',
 	onForgotPasswordClick,
+	primaryActionLabel,
+	onPrimaryActionClick = () => {},
+	primaryActionType = 'button',
+	primaryActionLoading = false,
+	primaryActionDisabled = false,
+	primaryActionClassName,
+	secondaryActionLabel,
+	secondaryActionOnClick,
+	secondaryActionDisabled = false,
+	secondaryActionClassName,
+	tertiaryActionLabel,
+	tertiaryActionOnClick,
+	actionButtonsClassName,
 	children,
 	socialButtons,
 	showSocialDivider = true,
@@ -226,6 +253,30 @@ export function LoginPageWrapper( {
 		</div>
 	);
 
+	const renderFormArea = () => (
+		<>
+			{ renderLoginIdentifierField() }
+			{ children }
+			<div className="connect-screen-login-page-wrapper__actions">
+				<ActionButtons
+					primaryLabel={ primaryActionLabel ?? translate( 'Log in' ) }
+					primaryOnClick={ onPrimaryActionClick }
+					primaryType={ primaryActionType }
+					primaryLoading={ primaryActionLoading }
+					primaryDisabled={ primaryActionDisabled }
+					primaryClassName={ primaryActionClassName }
+					secondaryLabel={ secondaryActionLabel }
+					secondaryOnClick={ secondaryActionOnClick }
+					secondaryDisabled={ secondaryActionDisabled }
+					secondaryClassName={ secondaryActionClassName }
+					tertiaryLabel={ tertiaryActionLabel }
+					tertiaryOnClick={ tertiaryActionOnClick }
+					className={ actionButtonsClassName }
+				/>
+			</div>
+		</>
+	);
+
 	return (
 		<>
 			<div className="connect-screen-login-page-wrapper__top-bar-shell">
@@ -309,12 +360,10 @@ export function LoginPageWrapper( {
 										<div
 											className={ clsx(
 												'connect-screen-login-page-wrapper__column',
-												'connect-screen-login-page-wrapper__column--form',
-												contentClassName
+												'connect-screen-login-page-wrapper__column--form'
 											) }
 										>
-											{ renderLoginIdentifierField() }
-											{ children }
+											{ renderFormArea() }
 										</div>
 										{ showSocialDivider && <FormDivider isHorizontal={ false } /> }
 										<div
@@ -331,11 +380,10 @@ export function LoginPageWrapper( {
 									<div
 										className={ clsx(
 											'connect-screen-login-page-wrapper__column',
-											contentClassName
+											'connect-screen-login-page-wrapper__column--form'
 										) }
 									>
-										{ renderLoginIdentifierField() }
-										{ children }
+										{ renderFormArea() }
 									</div>
 								) }
 							</div>
