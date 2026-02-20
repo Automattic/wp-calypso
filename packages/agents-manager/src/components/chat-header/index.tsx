@@ -8,15 +8,10 @@ import './style.scss';
 export type Options = ComponentProps< typeof DropdownMenu >[ 'controls' ];
 
 interface Props {
-	/** Title displayed in the chat header. */
 	title?: string;
-	/** Indicates if the chat is docked in the sidebar. */
 	isChatDocked: boolean;
-	/** Called when the chat is closed. */
 	onClose: () => void;
-	/** Chat header menu options. */
 	options: Options;
-	/** Called when the back button is clicked. */
 	onBack?: () => void;
 }
 
