@@ -1,5 +1,5 @@
 import { Gravatar, FormLabel } from '@automattic/components';
-import { ToggleControl, Button } from '@wordpress/components';
+import { ExternalLink, ToggleControl, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import {
@@ -103,7 +103,7 @@ export const BylineSettings = ( {
 						'You can customize the date format in your site’s {{link}}general settings{{/link}}',
 						{
 							components: {
-								link: <a href={ generalSettingsUrl } />,
+								link: <ExternalLink href={ generalSettingsUrl }> </ExternalLink>,
 							},
 						}
 					) }
