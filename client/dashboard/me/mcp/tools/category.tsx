@@ -47,8 +47,18 @@ export default function McpToolsCategory() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
 
+	// Options C & D merge Write + Manage into a single "Write" page.
+	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
+	const isMergedWrite = ( variation === 'C' || variation === 'D' ) && categorySlug === 'write';
+
 	// Filter to tools matching this permission level
-	const tools = allTools.filter( ( [ , tool ] ) => getPermissionLevel( tool ) === categorySlug );
+	const tools = allTools.filter( ( [ , tool ] ) => {
+		const level = getPermissionLevel( tool );
+		if ( isMergedWrite ) {
+			return level === 'write' || level === 'manage';
+		}
+		return level === categorySlug;
+	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
 		mutation.mutate( { mcp_abilities: { account: { [ toolId ]: enabled } } } as any );
@@ -75,14 +85,15 @@ export default function McpToolsCategory() {
 		grouped[ displayCategory ].push( [ toolId, tool ] );
 	} );
 
-	const title = permissionLevel?.label ?? __( 'MCP access' );
-	const description = permissionLevel?.description ?? '';
+	const title = isMergedWrite ? __( 'Write' ) : permissionLevel?.label ?? __( 'MCP access' );
+	const description = isMergedWrite
+		? __( 'Create, edit, and delete content, plugins, and settings.' )
+		: permissionLevel?.description ?? '';
 
-	// Option 3 (Flat) links directly here, skipping the tools index page.
+	// Options 3 & 4 (Flat) link directly here, skipping the tools index page.
 	// Exclude the "MCP access" breadcrumb segment so the trail reads
 	// "Preferences / AI and MCP / [Read|Write|Manage]".
-	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isFlat = variation === 'C';
+	const isFlat = variation === 'C' || variation === 'D';
 	const excludeHrefs = isFlat ? [ '/me/preferences/ai-and-mcp/tools' ] : undefined;
 	const breadcrumbLength = isFlat ? 3 : 4;
 
@@ -117,8 +128,12 @@ export default function McpToolsCategory() {
 										checked={ anyEnabled }
 										disabled={ mutation.isPending }
 										label={
-											<Text weight="bold">
-												{ anyEnabled ? __( 'Disable all' ) : __( 'Enable all' ) }
+											<Text weight={ 500 }>
+												{ sprintf(
+													/* translators: %s is the category name, e.g. "Posts" */
+													__( 'Enable all for %s' ),
+													categoryName
+												) }
 											</Text>
 										}
 										onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }

@@ -8,6 +8,7 @@
  * Option 1 — Baseline: Current screen (everything on one page, all toggles visible)
  * Option 2 — Hub: Master toggle + summary cards linking to sub-pages (matches Security pattern)
  * Option 3 — Flat: Medium-density permission-level links (Read/Write/Manage) inline, skipping the tools sub-page
+ * Option 4 — Action: Copy of Option 3 for further iteration
  */
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -22,7 +23,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { connection, lock, unseen, seen, pencil, cog } from '@wordpress/icons';
+import { connection, lock, unseen, seen, pencil } from '@wordpress/icons';
 import { useState, useSyncExternalStore } from 'react';
 import {
 	getAccountMcpAbilities,
@@ -32,6 +33,7 @@ import {
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { EXPLORATIONS_STORAGE_KEY } from '../../app/explorations-helper';
+import { ActionList } from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -42,12 +44,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteDisplayName } from '../../utils/site-name';
-import {
-	CATEGORY_ORDER,
-	getDisplayCategory,
-	PERMISSION_LEVEL_ORDER,
-	getPermissionLevel,
-} from './categories';
+import { CATEGORY_ORDER, getDisplayCategory, getPermissionLevel } from './categories';
 import type { Site } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
@@ -57,6 +54,7 @@ const VARIATIONS = [
 	{ key: 'A', label: 'Option 1 — Baseline' },
 	{ key: 'B', label: 'Option 2 — Hub' },
 	{ key: 'C', label: 'Option 3 — Flat' },
+	{ key: 'D', label: 'Option 4 — Action' },
 ] as const;
 
 type VariationKey = ( typeof VARIATIONS )[ number ][ 'key' ];
@@ -282,7 +280,7 @@ function McpComponentExplore() {
 							<HStack justify="space-between" alignment="top">
 								<SectionHeader
 									level={ 3 }
-									title={ __( 'AI Access' ) }
+									title={ __( 'AI access' ) }
 									description={ __(
 										'Control what AI assistants can access your WordPress.com account and sites.'
 									) }
@@ -303,7 +301,7 @@ function McpComponentExplore() {
 								onChange={ handleToggleAll }
 								label={
 									<Text>
-										{ anyToolsEnabled ? __( 'Disable AI Access' ) : __( 'Enable AI Access' ) }
+										{ anyToolsEnabled ? __( 'Disable AI access' ) : __( 'Enable AI access' ) }
 									</Text>
 								}
 							/>
@@ -403,20 +401,6 @@ function McpComponentExplore() {
 			},
 		];
 
-		const sitesBadges: SummaryButtonBadgeProps[] = [
-			{
-				text:
-					disabledSiteIds.length === 0
-						? __( 'No restrictions' )
-						: sprintf(
-								/* translators: %d is number of restricted sites */
-								__( '%d restricted' ),
-								disabledSiteIds.length
-						  ),
-				intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
-			},
-		];
-
 		return (
 			<VStack spacing={ 6 }>
 				{ /* Master toggle card */ }
@@ -425,7 +409,7 @@ function McpComponentExplore() {
 						<VStack spacing={ 8 }>
 							<SectionHeader
 								level={ 3 }
-								title={ __( 'AI Access' ) }
+								title={ __( 'AI access' ) }
 								description={ __(
 									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
 								) }
@@ -459,14 +443,6 @@ function McpComponentExplore() {
 							description={ __( 'Get instructions for connecting your AI assistant.' ) }
 							decoration={ <Icon icon={ connection } /> }
 						/>
-
-						<RouterLinkSummaryButton
-							to="/me/preferences/ai-and-mcp/sites"
-							title={ __( 'Site restrictions' ) }
-							description={ __( 'Restrict AI access for specific sites.' ) }
-							decoration={ <Icon icon={ unseen } /> }
-							badges={ sitesBadges }
-						/>
 					</>
 				) }
 			</VStack>
@@ -476,9 +452,7 @@ function McpComponentExplore() {
 	// ─── Variation C: Flat — permission-level links inline (no tools sub-page) ──
 
 	const renderVariationC = () => {
-		const LEVEL_ICONS = { read: seen, write: pencil, manage: cog } as const;
-
-		// Group tools by permission level for per-row badges
+		// Group tools by permission level, merging Write + Manage
 		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
 		availableTools.forEach( ( [ toolId, tool ] ) => {
 			const level = getPermissionLevel( tool );
@@ -487,6 +461,30 @@ function McpComponentExplore() {
 			}
 			permissionGroups[ level ].push( [ toolId, tool ] );
 		} );
+
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		const badgesFor = ( tools: Array< [ string, McpAbility ] > ): SummaryButtonBadgeProps[] => {
+			const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return [
+				{
+					text:
+						enabledCount === tools.length
+							? __( 'All enabled' )
+							: sprintf(
+									/* translators: %1$d is enabled count, %2$d is total */
+									__( '%1$d of %2$d enabled' ),
+									enabledCount,
+									tools.length
+							  ),
+					intent: enabledCount === tools.length ? 'success' : 'default',
+				},
+			];
+		};
 
 		const sitesBadgesC: SummaryButtonBadgeProps[] = [
 			{
@@ -510,7 +508,7 @@ function McpComponentExplore() {
 						<VStack spacing={ 8 }>
 							<SectionHeader
 								level={ 3 }
-								title={ __( 'AI Access' ) }
+								title={ __( 'AI access' ) }
 								description={ __(
 									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
 								) }
@@ -525,7 +523,7 @@ function McpComponentExplore() {
 					</CardBody>
 				</Card>
 
-				{ /* Permission-level links — directly to Read / Write / Manage pages */ }
+				{ /* Permission-level links — Read and Write (merged with Manage) */ }
 				{ hasTools && anyToolsEnabled && (
 					<>
 						<SummaryButtonList
@@ -535,36 +533,31 @@ function McpComponentExplore() {
 							) }
 							density="medium"
 						>
-							{ PERMISSION_LEVEL_ORDER.map( ( level ) => {
-								const tools = permissionGroups[ level.key ] || [];
-								if ( tools.length === 0 ) {
-									return null;
-								}
-								const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
-								const badges: SummaryButtonBadgeProps[] = [
-									{
-										text:
-											enabledCount === tools.length
-												? __( 'All enabled' )
-												: sprintf(
-														/* translators: %1$d is enabled count, %2$d is total */
-														__( '%1$d of %2$d enabled' ),
-														enabledCount,
-														tools.length
-												  ),
-										intent: enabledCount === tools.length ? 'success' : 'default',
-									},
-								];
-								return (
-									<RouterLinkSummaryButton
-										key={ level.key }
-										to={ `/me/preferences/ai-and-mcp/tools/${ level.key }` }
-										title={ level.label }
-										decoration={ <Icon icon={ LEVEL_ICONS[ level.key ] } /> }
-										badges={ badges }
-									/>
-								);
-							} ) }
+							{ readTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="read"
+									to="/me/preferences/ai-and-mcp/tools/read"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } /> }
+									badges={ badgesFor( readTools ) }
+								/>
+							) }
+							{ writeTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="write"
+									to="/me/preferences/ai-and-mcp/tools/write"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } /> }
+									badges={ badgesFor( writeTools ) }
+								/>
+							) }
+							<RouterLinkSummaryButton
+								to="/me/preferences/ai-and-mcp/sites"
+								title={ __( 'Site restrictions' ) }
+								description={ __( 'Restrict AI access for specific sites.' ) }
+								decoration={ <Icon icon={ unseen } /> }
+								badges={ sitesBadgesC }
+							/>
 						</SummaryButtonList>
 
 						<RouterLinkSummaryButton
@@ -573,14 +566,126 @@ function McpComponentExplore() {
 							description={ __( 'Get instructions for connecting your AI assistant.' ) }
 							decoration={ <Icon icon={ connection } /> }
 						/>
+					</>
+				) }
+			</VStack>
+		);
+	};
 
-						<RouterLinkSummaryButton
-							to="/me/preferences/ai-and-mcp/sites"
-							title={ __( 'Site restrictions' ) }
-							description={ __( 'Restrict AI access for specific sites.' ) }
-							decoration={ <Icon icon={ unseen } /> }
-							badges={ sitesBadgesC }
-						/>
+	// ─── Variation D: ActionList — settings-page danger-zone pattern ──
+
+	const renderVariationD = () => {
+		// Group tools by permission level
+		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
+
+		// Merge Write + Manage into a single "Write" bucket
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		return (
+			<VStack spacing={ 6 }>
+				{ /* Master toggle card */ }
+				<Card>
+					<CardBody>
+						<VStack spacing={ 8 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'AI access' ) }
+								description={ __(
+									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
+								) }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleToggleAll }
+								label={ __( 'Enable AI access' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				{ /* ActionList items — settings page pattern */ }
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<ActionList
+							title={ __( 'MCP access' ) }
+							description={ __(
+								'Control what your AI assistant can do on your account and sites.'
+							) }
+						>
+							{ readTools.length > 0 && (
+								<ActionList.ActionItem
+									key="read"
+									title={ __( 'Read' ) }
+									description={ __( 'View your sites, posts, and account info.' ) }
+									actions={
+										<RouterLinkButton
+											variant="secondary"
+											size="compact"
+											to="/me/preferences/ai-and-mcp/tools/read"
+										>
+											{ __( 'Manage' ) }
+										</RouterLinkButton>
+									}
+								/>
+							) }
+							{ writeTools.length > 0 && (
+								<ActionList.ActionItem
+									key="write"
+									title={ __( 'Write' ) }
+									description={ __( 'Create, edit, and delete content, plugins, and settings.' ) }
+									actions={
+										<RouterLinkButton
+											variant="secondary"
+											size="compact"
+											to="/me/preferences/ai-and-mcp/tools/write"
+										>
+											{ __( 'Manage' ) }
+										</RouterLinkButton>
+									}
+								/>
+							) }
+							<ActionList.ActionItem
+								title={ __( 'Site restrictions' ) }
+								description={ __( 'Restrict AI access for specific sites.' ) }
+								actions={
+									<RouterLinkButton
+										variant="secondary"
+										size="compact"
+										to="/me/preferences/ai-and-mcp/sites"
+									>
+										{ __( 'Manage' ) }
+									</RouterLinkButton>
+								}
+							/>
+						</ActionList>
+
+						<ActionList>
+							<ActionList.ActionItem
+								title={ __( 'Connect AI assistant' ) }
+								description={ __( 'Get instructions for connecting your AI assistant.' ) }
+								actions={
+									<RouterLinkButton
+										variant="secondary"
+										size="compact"
+										to="/me/preferences/ai-and-mcp/setup"
+									>
+										{ __( 'Setup' ) }
+									</RouterLinkButton>
+								}
+							/>
+						</ActionList>
 					</>
 				) }
 			</VStack>
@@ -597,6 +702,8 @@ function McpComponentExplore() {
 				return renderVariationB();
 			case 'C':
 				return renderVariationC();
+			case 'D':
+				return renderVariationD();
 			default:
 				return renderVariationA();
 		}

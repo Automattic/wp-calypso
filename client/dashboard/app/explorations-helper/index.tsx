@@ -10,6 +10,7 @@ const VARIATIONS = [
 	{ key: 'A', label: 'Option 1 — Baseline' },
 	{ key: 'B', label: 'Option 2 — Hub' },
 	{ key: 'C', label: 'Option 3 — Flat' },
+	{ key: 'D', label: 'Option 4 — Action' },
 ] as const;
 
 type VariationKey = ( typeof VARIATIONS )[ number ][ 'key' ];

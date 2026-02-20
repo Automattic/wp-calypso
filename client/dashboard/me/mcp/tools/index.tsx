@@ -3,8 +3,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Navigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { seen, pencil, cog } from '@wordpress/icons';
-import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
+import { seen, pencil, cog, unseen } from '@wordpress/icons';
+import { getAccountMcpAbilities, getDisabledSiteIds } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { EXPLORATIONS_STORAGE_KEY } from '../../../app/explorations-helper';
 import { PageHeader } from '../../../components/page-header';
@@ -32,14 +32,15 @@ const LEVEL_ICONS = {
 export default function McpTools() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
-	// Option 3 (Flat) skips this intermediate page — redirect back to AI and MCP.
+	// Options 3 & 4 (Flat) skip this intermediate page — redirect back to AI and MCP.
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	if ( variation === 'C' ) {
+	if ( variation === 'C' || variation === 'D' ) {
 		return <Navigate to="/me/preferences/ai-and-mcp" replace />;
 	}
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
+	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 
 	// Group tools by permission level
 	const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
@@ -97,6 +98,25 @@ export default function McpTools() {
 						/>
 					);
 				} ) }
+				<RouterLinkSummaryButton
+					to="/me/preferences/ai-and-mcp/sites"
+					title={ __( 'Site restrictions' ) }
+					description={ __( 'Restrict AI access for specific sites.' ) }
+					decoration={ <Icon icon={ unseen } /> }
+					badges={ [
+						{
+							text:
+								disabledSiteIds.length === 0
+									? __( 'No restrictions' )
+									: sprintf(
+											/* translators: %d is number of restricted sites */
+											__( '%d restricted' ),
+											disabledSiteIds.length
+									  ),
+							intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+						},
+					] }
+				/>
 			</VStack>
 		</PageLayout>
 	);
