@@ -11,10 +11,18 @@
  * Option 4 — Action: Copy of Option 3 for further iteration
  * Option 5 — Copy of Option 3 for further iteration
  * Option 6 — Copy of Option 3 for further iteration
+ * Option 7 — Copy of Option 6 for further iteration
  */
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { updateBigSkyPlugin } from '@automattic/api-core';
+import {
+	bigSkyPluginQuery,
+	queryClient,
+	siteQueryFilter,
+	userSettingsQuery,
+	userSettingsMutation,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQueries, useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -36,7 +44,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { EXPLORATIONS_STORAGE_KEY } from '../../app/explorations-helper';
 import { ActionList } from '../../components/action-list';
-import { Card, CardBody } from '../../components/card';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -59,6 +67,7 @@ const VARIATIONS = [
 	{ key: 'D', label: 'Option 4 — Action' },
 	{ key: 'E', label: 'Option 5' },
 	{ key: 'F', label: 'Option 6' },
+	{ key: 'G', label: 'Option 7' },
 ] as const;
 
 type VariationKey = ( typeof VARIATIONS )[ number ][ 'key' ];
@@ -105,6 +114,33 @@ function McpComponentExplore() {
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
+	// Fetch BigSky plugin status for all sites (used by Option 7's AI assistant card)
+	const bigSkyQueries = useQueries( {
+		queries: sites.map( ( site ) => ( {
+			...bigSkyPluginQuery( site.ID ),
+			enabled: sites.length > 0,
+		} ) ),
+	} );
+
+	// Compute AI assistant stats across all sites
+	const bigSkyAvailableSiteIds: number[] = [];
+	let bigSkyEnabledCount = 0;
+	let bigSkyDisabledCount = 0;
+	sites.forEach( ( site, index ) => {
+		const result = bigSkyQueries[ index ];
+		if ( result?.data && result.data.available ) {
+			bigSkyAvailableSiteIds.push( site.ID );
+			if ( result.data.enabled ) {
+				bigSkyEnabledCount++;
+			} else {
+				bigSkyDisabledCount++;
+			}
+		}
+	} );
+	// The global toggle is "on" if ANY eligible site has AI assistant enabled.
+	// Individual site restrictions are exceptions and don't affect the global state.
+	const bigSkyGlobalEnabled = bigSkyEnabledCount > 0;
+
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< number[] >( [] );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 	const disabledSites = disabledSiteIds.map( ( siteId ) => {
@@ -123,6 +159,27 @@ function McpComponentExplore() {
 			snackbar: {
 				success: __( 'MCP settings saved.' ),
 				error: __( 'Failed to save MCP settings.' ),
+			},
+		},
+	} );
+
+	// Bulk toggle AI assistant for all eligible sites
+	const bigSkyBulkMutation = useMutation( {
+		mutationFn: async ( { enable }: { enable: boolean } ) => {
+			await Promise.all(
+				bigSkyAvailableSiteIds.map( ( siteId ) => updateBigSkyPlugin( siteId, { enable } ) )
+			);
+		},
+		onSuccess: () => {
+			bigSkyAvailableSiteIds.forEach( ( siteId ) => {
+				queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
+				queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+			} );
+		},
+		meta: {
+			snackbar: {
+				success: __( 'AI assistant settings saved.' ),
+				error: __( 'Failed to save AI assistant settings.' ),
 			},
 		},
 	} );
@@ -179,6 +236,20 @@ function McpComponentExplore() {
 			enabledCount,
 			totalCount
 		);
+	};
+
+	// Shared helper: compute badge intent for a set of tools.
+	const getBadgeIntent = (
+		enabledCount: number,
+		totalCount: number
+	): 'success' | 'info' | 'default' => {
+		if ( enabledCount === totalCount ) {
+			return 'success';
+		}
+		if ( enabledCount > 0 ) {
+			return 'info';
+		}
+		return 'default';
 	};
 
 	const siteSuggestions = sites.map( ( site ) => {
@@ -415,7 +486,7 @@ function McpComponentExplore() {
 		const toolsBadges: SummaryButtonBadgeProps[] = [
 			{
 				text: getBadgeText( enabledToolsCount, availableTools.length ),
-				intent: enabledToolsCount === availableTools.length ? 'success' : 'default',
+				intent: getBadgeIntent( enabledToolsCount, availableTools.length ),
 			},
 		];
 
@@ -491,7 +562,7 @@ function McpComponentExplore() {
 			return [
 				{
 					text: getBadgeText( enabledCount, tools.length ),
-					intent: enabledCount === tools.length ? 'success' : 'default',
+					intent: getBadgeIntent( enabledCount, tools.length ),
 				},
 			];
 		};
@@ -726,7 +797,7 @@ function McpComponentExplore() {
 			return [
 				{
 					text: getBadgeText( enabledCount, tools.length ),
-					intent: enabledCount === tools.length ? 'success' : 'default',
+					intent: getBadgeIntent( enabledCount, tools.length ),
 				},
 			];
 		};
@@ -841,7 +912,7 @@ function McpComponentExplore() {
 			return [
 				{
 					text: getBadgeText( enabledCount, tools.length ),
-					intent: enabledCount === tools.length ? 'success' : 'default',
+					intent: getBadgeIntent( enabledCount, tools.length ),
 				},
 			];
 		};
@@ -932,6 +1003,172 @@ function McpComponentExplore() {
 		);
 	};
 
+	// ─── Variation G: Option 7 — Flat + WordPress.com AI assistant card ──
+
+	const renderVariationG = () => {
+		// Group tools by permission level, merging Write + Manage
+		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
+
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		const badgesFor = ( tools: Array< [ string, McpAbility ] > ): SummaryButtonBadgeProps[] => {
+			const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return [
+				{
+					text: getBadgeText( enabledCount, tools.length ),
+					intent: getBadgeIntent( enabledCount, tools.length ),
+				},
+			];
+		};
+
+		const sitesBadgesG: SummaryButtonBadgeProps[] = [
+			{
+				text:
+					disabledSiteIds.length === 0
+						? __( 'No restrictions' )
+						: sprintf(
+								/* translators: %d is number of restricted sites */
+								__( '%d restricted' ),
+								disabledSiteIds.length
+						  ),
+				intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+			},
+		];
+
+		const aiAssistantSitesBadges: SummaryButtonBadgeProps[] = [
+			{
+				text:
+					bigSkyDisabledCount === 0
+						? __( 'No exceptions' )
+						: sprintf(
+								/* translators: %d is number of sites with exceptions */
+								__( '%d exceptions' ),
+								bigSkyDisabledCount
+						  ),
+				intent: bigSkyDisabledCount === 0 ? 'default' : 'warning',
+			},
+		];
+
+		return (
+			<VStack spacing={ 6 }>
+				{ /* WordPress.com AI assistant */ }
+				<Card className="dashboard-summary-button-list has-density-medium">
+					<CardHeader>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'WordPress.com AI assistant' ) }
+							description={ __(
+								'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
+							) }
+							actions={
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ bigSkyGlobalEnabled }
+									disabled={ bigSkyBulkMutation.isPending || bigSkyAvailableSiteIds.length === 0 }
+									onChange={ ( checked ) => bigSkyBulkMutation.mutate( { enable: checked } ) }
+									label={ __( 'Enable WordPress.com AI assistant' ) }
+								/>
+							}
+						/>
+					</CardHeader>
+					{ bigSkyGlobalEnabled && (
+						<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+							<ul className="dashboard-summary-button-list__children-list">
+								<li className="dashboard-summary-button-list__children-list-item">
+									<RouterLinkSummaryButton
+										to="/me/preferences/ai-and-mcp/ai-assistant"
+										title={ __( 'Site exceptions' ) }
+										decoration={ <Icon icon={ unseen } /> }
+										badges={ aiAssistantSitesBadges }
+										density="medium"
+									/>
+								</li>
+							</ul>
+						</CardBody>
+					) }
+				</Card>
+
+				{ /* Master toggle card */ }
+				<Card>
+					<CardBody>
+						<VStack spacing={ 8 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'AI access' ) }
+								description={ __(
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+								) }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleToggleAll }
+								label={ __( 'Enable AI access' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				{ /* Permission-level links — Read and Write (merged with Manage) */ }
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<SummaryButtonList
+							title={ __( 'MCP access' ) }
+							description={ __(
+								'Control what your external AI assistant can do on your account and sites.'
+							) }
+							density="medium"
+						>
+							{ readTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="read"
+									to="/me/preferences/ai-and-mcp/tools/read"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } /> }
+									badges={ badgesFor( readTools ) }
+								/>
+							) }
+							{ writeTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="write"
+									to="/me/preferences/ai-and-mcp/tools/write"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } /> }
+									badges={ badgesFor( writeTools ) }
+								/>
+							) }
+							<RouterLinkSummaryButton
+								to="/me/preferences/ai-and-mcp/sites"
+								title={ __( 'Site restrictions' ) }
+								description={ __( 'Restrict AI access for specific sites.' ) }
+								decoration={ <Icon icon={ unseen } /> }
+								badges={ sitesBadgesG }
+							/>
+						</SummaryButtonList>
+
+						<RouterLinkSummaryButton
+							to="/me/preferences/ai-and-mcp/setup"
+							title={ __( 'Connect AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } /> }
+						/>
+					</>
+				) }
+			</VStack>
+		);
+	};
+
 	// ─── Variation Router ───────────────────────────────────────────
 
 	const renderCurrentVariation = () => {
@@ -948,6 +1185,8 @@ function McpComponentExplore() {
 				return renderVariationE();
 			case 'F':
 				return renderVariationF();
+			case 'G':
+				return renderVariationG();
 			default:
 				return renderVariationA();
 		}

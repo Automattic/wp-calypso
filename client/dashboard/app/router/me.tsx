@@ -1037,6 +1037,24 @@ export const mcpSitesRoute = createRoute( {
 	)
 );
 
+export const mcpAiAssistantRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'AI assistant site exceptions' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'ai-assistant',
+} ).lazy( () =>
+	import( '../../me/mcp/ai-assistant' ).then( ( d ) =>
+		createLazyRoute( 'mcp-ai-assistant' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
@@ -1057,6 +1075,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 							mcpSetupRoute,
 							mcpToolsRoute.addChildren( [ mcpToolsIndexRoute, mcpToolsCategoryRoute ] ),
 							mcpSitesRoute,
+							mcpAiAssistantRoute,
 						] ),
 				  ]
 				: [] ),

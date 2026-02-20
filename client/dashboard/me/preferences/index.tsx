@@ -23,9 +23,9 @@ export default function PreferencesIndex() {
 		>
 			<VStack spacing={ 6 }>
 				{ optIn && <PreferencesNewHostingDashboardSummary /> }
+				<McpSummary />
 				<PreferencesLanguageSummary />
 				<PreferencesDefaultLandingSummary />
-				<McpSummary />
 			</VStack>
 		</PageLayout>
 	);

@@ -34,7 +34,13 @@ export default function McpTools() {
 
 	// Options 3 & 4 (Flat) skip this intermediate page — redirect back to AI and MCP.
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	if ( variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F' ) {
+	if (
+		variation === 'C' ||
+		variation === 'D' ||
+		variation === 'E' ||
+		variation === 'F' ||
+		variation === 'G'
+	) {
 		return <Navigate to="/me/preferences/ai-and-mcp" replace />;
 	}
 
@@ -72,6 +78,13 @@ export default function McpTools() {
 
 					const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 
+					let badgeIntent: SummaryButtonBadgeProps[ 'intent' ] = 'default';
+					if ( enabledCount === tools.length ) {
+						badgeIntent = 'success';
+					} else if ( enabledCount > 0 ) {
+						badgeIntent = 'info';
+					}
+
 					const badges: SummaryButtonBadgeProps[] = [
 						{
 							text:
@@ -83,7 +96,7 @@ export default function McpTools() {
 											enabledCount,
 											tools.length
 									  ),
-							intent: enabledCount === tools.length ? 'success' : 'default',
+							intent: badgeIntent,
 						},
 					];
 

@@ -52,10 +52,14 @@ export default function McpToolsCategory() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
 
-	// Options C, D, E & F merge Write + Manage into a single "Write" page.
+	// Options C, D, E, F & G merge Write + Manage into a single "Write" page.
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
 	const isMergedWrite =
-		( variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F' ) &&
+		( variation === 'C' ||
+			variation === 'D' ||
+			variation === 'E' ||
+			variation === 'F' ||
+			variation === 'G' ) &&
 		categorySlug === 'write';
 
 	// Filter to tools matching this permission level
@@ -189,12 +193,17 @@ export default function McpToolsCategory() {
 	// Options 3, 4 & 5 (Flat) link directly here, skipping the tools index page.
 	// Exclude the "MCP access" breadcrumb segment so the trail reads
 	// "Preferences / AI and MCP / [Read|Write|Manage]".
-	const isFlat = variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F';
+	const isFlat =
+		variation === 'C' ||
+		variation === 'D' ||
+		variation === 'E' ||
+		variation === 'F' ||
+		variation === 'G';
 	const excludeHrefs = isFlat ? [ '/me/preferences/ai-and-mcp/tools' ] : undefined;
 	const breadcrumbLength = isFlat ? 3 : 4;
 
 	const isAccordion = variation === 'E';
-	const isToggleHeader = variation === 'F';
+	const isToggleHeader = variation === 'F' || variation === 'G';
 	let isFirstCategory = true;
 
 	const renderCategoryContent = () => {
