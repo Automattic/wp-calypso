@@ -18,14 +18,13 @@ interface AddSubscriptionFormProps {
 	type: SubscriptionType;
 }
 
-export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): JSX.Element {
+export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
-	const { slug, instructions: configInstructions } = config;
-	const isAddNewTab = slug === 'add-new';
+	const isAddNewTab = props.type === 'add-new';
 
 	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
 		setHasFeedPreview( hasPreview );
@@ -40,6 +39,11 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 		}
 	}, [ dispatch, isAddNewTab ] );
 
+	if ( ! config ) {
+		return null;
+	}
+
+	const { slug, instructions: configInstructions } = config;
 	return (
 		<div className="reader-add-subscription">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
