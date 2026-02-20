@@ -53,12 +53,24 @@
 
 .connect-screen-login-page-wrapper__layout {
 	padding-top: 2rem;
+
+	.connect-screen-layout__container {
+		display: flex;
+		justify-content: center;
+		width: auto;
+	}
+
+	@include break-medium {
+		padding-top: 2.5rem;
+	}
 }
 
 .connect-screen-login-page-wrapper__top-bar-nav {
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 .connect-screen-login-page-wrapper__top-bar-link {
@@ -150,30 +162,32 @@
 		}
 	}
 
-	@include break-mobile {
+	@include break-medium {
 		flex-direction: row;
 		align-items: flex-start;
 		justify-content: center;
 		gap: 1rem;
-		max-width: 758px;
 		margin: 0 auto;
 	}
 }
 
 .connect-screen-login-page-wrapper__column {
 	width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 }
 
 .connect-screen-login-page-wrapper__column--form,
 .connect-screen-login-page-wrapper__column--social {
-	@include break-mobile {
-		max-width: var( --login-form-column-max-width, 327px );
+	@include break-medium {
+		flex: 1 1 0;
+		max-width: none;
 	}
 }
 
 .connect-screen-login-page-wrapper__column--form {
-	@include break-mobile {
-		padding: 0 16px;
+	@include break-medium {
+		padding: 0;
 	}
 }
 
