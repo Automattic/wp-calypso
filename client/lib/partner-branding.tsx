@@ -20,13 +20,6 @@ interface LogoConfig {
 	height?: number;
 }
 
-interface PartnerColorsConfig {
-	backgroundColor?: string;
-	textColor?: string;
-	linkColor?: string;
-	accentColor?: string;
-}
-
 /**
  * CIAB Partner configuration
  * All partner-specific settings are centralized here
@@ -46,8 +39,6 @@ export interface CiabPartnerConfig {
 	ssoProviders: string[];
 	/** Font style identifier for login/signup headings */
 	fontStyle?: 'system';
-	/** Optional partner-specific color palette for login/connect surfaces */
-	colors?: PartnerColorsConfig;
 }
 
 /**
@@ -78,12 +69,6 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		},
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
-		colors: {
-			backgroundColor: '#f6f7f7',
-			textColor: '#1d2327',
-			linkColor: '#3858e9',
-			accentColor: '#3858e9',
-		},
 	},
 };
 

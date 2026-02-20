@@ -301,7 +301,6 @@ export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper >
 				topBarLogoAlt: CIAB_PARTNERS.woo.compactLogo?.alt,
 				topBarLogoWidth: CIAB_PARTNERS.woo.compactLogo?.width,
 				topBarLogoHeight: CIAB_PARTNERS.woo.compactLogo?.height,
-				colors: CIAB_PARTNERS.woo.colors,
 			} }
 			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
 			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }

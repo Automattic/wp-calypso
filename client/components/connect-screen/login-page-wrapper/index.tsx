@@ -2,14 +2,14 @@ import { FormLabel } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { isValidElement } from '@wordpress/element';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { FormDivider } from 'calypso/blocks/authentication';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { useTranslate } from 'calypso/i18n';
 import { BrandHeader } from '../brand-header';
 import { LoadingScreen } from '../loading-screen';
 import { ScreenLayout } from '../screen-layout';
-import type { ChangeEvent, CSSProperties, MouseEvent, ReactNode } from 'react';
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
 
 import './style.scss';
 
@@ -21,13 +21,6 @@ export interface LoginPageWrapperLink {
 	target?: string;
 }
 
-export interface LoginPageWrapperColors {
-	backgroundColor?: string;
-	textColor?: string;
-	linkColor?: string;
-	accentColor?: string;
-}
-
 export interface LoginPageWrapperBranding {
 	logo?: string | ReactNode;
 	logoAlt?: string;
@@ -37,7 +30,6 @@ export interface LoginPageWrapperBranding {
 	topBarLogoAlt?: string;
 	topBarLogoWidth?: number;
 	topBarLogoHeight?: number;
-	colors?: LoginPageWrapperColors;
 }
 
 export interface LoginPageWrapperProps {
@@ -179,12 +171,6 @@ export function LoginPageWrapper( {
 		</>
 	);
 
-	const customStyles: CSSProperties = {
-		'--connect-screen-login-page-wrapper-text-color': branding?.colors?.textColor,
-		'--connect-screen-login-page-wrapper-link-color': branding?.colors?.linkColor,
-		'--connect-screen-login-page-wrapper-accent-color': branding?.colors?.accentColor,
-	} as CSSProperties;
-
 	const topBarLogo = renderLogo(
 		branding?.topBarLogo,
 		branding?.topBarLogoAlt,
@@ -218,7 +204,7 @@ export function LoginPageWrapper( {
 
 	return (
 		<>
-			<div className="connect-screen-login-page-wrapper__top-bar-shell" style={ customStyles }>
+			<div className="connect-screen-login-page-wrapper__top-bar-shell">
 				<Step.TopBar
 					compactLogo="always"
 					logo={ topBarLogo ?? undefined }
@@ -253,14 +239,13 @@ export function LoginPageWrapper( {
 			</div>
 			<ScreenLayout
 				className="connect-screen-login-page-wrapper__layout"
-				backgroundColor={ branding?.colors?.backgroundColor ?? backgroundColor }
+				backgroundColor={ backgroundColor }
 				containerMaxWidth={ 660 }
 			>
 				<div
 					className={ clsx( 'connect-screen-login-page-wrapper', className, {
 						'connect-screen-login-page-wrapper--social-first': isSocialFirst,
 					} ) }
-					style={ customStyles }
 				>
 					<BrandHeader
 						logo={ branding?.logo }

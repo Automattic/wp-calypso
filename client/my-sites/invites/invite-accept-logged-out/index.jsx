@@ -12,7 +12,7 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
@@ -85,7 +85,7 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	renderFormHeader = () => {
-		return <InviteFormHeaderLoggedOut site={ this.props.invite?.site } />;
+		return <InviteFormHeader { ...this.props.invite } />;
 	};
 
 	loginUser = () => {
@@ -204,7 +204,6 @@ class InviteAcceptLoggedOut extends Component {
 						) }
 						submitButtonLabel={ this.props.translate( 'Create an account' ) }
 						labelText={ this.props.translate( 'Your email address' ) }
-						useConnectScreenActions
 					/>
 					{ this.state.userData && this.loginUser() }
 				</div>
