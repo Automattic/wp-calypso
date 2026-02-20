@@ -8,9 +8,7 @@ import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
-	/** Called when a conversation is selected. */
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
-	/** Called when the user starts a new chat. */
 	onNewChat: () => void;
 }
 
