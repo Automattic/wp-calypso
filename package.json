@@ -76,7 +76,7 @@
 		"build-docker": "node bin/build-docker.js",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
-		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --verbose run prepare",
+		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --topological --verbose run prepare",
 		"build-server": "mkdir -p build && BROWSERSLIST_ENV=server webpack --config client/webpack.config.node.js --stats-preset errors-only && yarn run build-server:copy-modules",
 		"build-server-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-server",
 		"build-server:copy-modules": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || node bin/copy-production-modules.js",
