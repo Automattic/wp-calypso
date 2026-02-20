@@ -4,6 +4,6 @@ export interface Crontab extends CrontabFormData {
 }
 
 export interface CrontabFormData {
-	schedule: string;
-	command: string; // this item we should send to backend, and backend return the value inside requested_schedule field. command will have raw cron schedule, e.g. "45 10 * * *"
+	schedule: string; // this item we should send to backend, and backend return the value inside requested_schedule field. The "schedule" will contain raw cron schedule, e.g. "45 10 * * *"
+	command: string;
 }
