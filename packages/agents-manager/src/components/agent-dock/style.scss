@@ -160,7 +160,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 	}
 }
 
-/* WP Admin: Fixes for specific pages */
+// Import fixes for specific pages. This is done after the base styles are applied to ensure the fixes are applied after the base styles.
 @import './fixes-woocommerce.scss';
 @import './fixes-jetpack.scss';
 
