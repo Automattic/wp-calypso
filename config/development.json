@@ -68,7 +68,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domain-transfer-redesign": true,
-		"domains/new-thank-you-page": true,
 		"email-accounts/enabled": true,
 		"global-styles/on-personal-plan": true,
 		"google-drive": true,
