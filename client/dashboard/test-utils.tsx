@@ -39,6 +39,7 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 interface RenderOptions {
 	user?: User;
 	queryClient?: QueryClient;
+	useSiteCollisionListener?: boolean;
 }
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
@@ -51,7 +52,10 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 			},
 		} );
 	const router = createTestRouter( ui );
-	startSiteCollisionListener( queryClient );
+
+	if ( options.useSiteCollisionListener ) {
+		startSiteCollisionListener( queryClient );
+	}
 
 	const recordTracksEvent = jest.fn();
 	const recordPageView = jest.fn();

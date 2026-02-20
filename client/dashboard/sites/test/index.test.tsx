@@ -119,6 +119,7 @@ describe( '<Sites>', () => {
 			user: {
 				site_count: 13, // more than 12 sites to force the table layout
 			} as User,
+			useSiteCollisionListener: true,
 		} );
 
 		// The collision listener (started by test-utils) should auto-detect the
