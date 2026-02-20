@@ -160,12 +160,14 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 	}
 }
 
-// Import fixes for specific pages. This is done after the base styles are applied to ensure the fixes are applied after the base styles.
+/* WP Admin: Fixes for specific pages */
 @import './fixes-woocommerce.scss';
 @import './fixes-jetpack.scss';
 
 /* Calypso */
-body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(.wp-admin) {
+body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(
+		.wp-admin
+	) {
 	@include sidebar-base( '#wpcom #content' );
 
 	#content {
@@ -263,7 +265,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 
 	.step-route {
 		min-height: 100vh;
-		background-color: var(--color-main-background) !important;
+		background-color: var( --color-main-background ) !important;
 		overflow: hidden;
 	}
 
@@ -272,7 +274,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base('#wpcom .step-route');
+		@include sidebar-open-base( '#wpcom .step-route' );
 
 		.step-route {
 			position: relative;
@@ -288,6 +290,23 @@ body.is-section-stepper.agents-manager-sidebar-container {
 				min-height: unset;
 			}
 		}
+	}
+}
+
+/* Calypso: Fix for the search categories fixed top position on the plugins marketplace page */
+.agents-manager-sidebar-container--sidebar-open
+	.layout__secondary
+	~ .layout__primary
+	.plugins-browser--site-view
+	.search-categories.fixed-top {
+	top: calc( $admin-bar-height + $layout-spacing + 1px );
+	left: -174px;
+	padding-top: 11px;
+	max-width: 1028px;
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	&::after {
+		display: none;
 	}
 }
 
@@ -319,23 +338,6 @@ body.site-editor-php.agents-manager-sidebar-container {
 			width: calc( 100% - $sidebar-width ) !important;
 			margin: 0 !important;
 		}
-	}
-}
-
-// Fix for the search categories fixed top position on the plugins marketplace page
-.agents-manager-sidebar-container--sidebar-open
-	.layout__secondary
-	~ .layout__primary
-	.plugins-browser--site-view
-	.search-categories.fixed-top {
-	top: calc( $admin-bar-height + $layout-spacing + 1px );
-	left: -174px;
-	padding-top: 11px;
-	max-width: 1028px;
-	border-bottom: 1px solid var( --color-neutral-5 );
-
-	&::after {
-		display: none;
 	}
 }
 
