@@ -72,6 +72,7 @@ export interface AgentUIProps {
 	messageRenderer?: ComponentType< { children: string } >;
 	messagesPosition?: 'top' | 'bottom';
 	expandOnClick?: boolean;
+	expandOnHover?: boolean;
 
 	// Controlled input props (optional)
 	inputValue?: string;
