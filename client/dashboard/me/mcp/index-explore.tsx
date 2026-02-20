@@ -30,6 +30,7 @@ import {
 	__experimentalHStack as HStack,
 	FormTokenField,
 	Icon,
+	Spinner,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -57,6 +58,14 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { CATEGORY_ORDER, getDisplayCategory, getPermissionLevel } from './categories';
 import type { Site } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+
+// Big Sky star icon — uses paths from BigSkyLogo.CentralLogo (heartless variant)
+// without explicit fill attributes so CSS hover color changes work via `currentColor`.
+const bigSkyIcon = (
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+		<path d="m19.223 11.55-3.095-1.068a4.21 4.21 0 0 1-2.61-2.61L12.45 4.777c-.145-.426-.755-.426-.9 0l-1.068 3.095a4.21 4.21 0 0 1-2.61 2.61L4.777 11.55c-.426.145-.426.755 0 .9l3.095 1.068a4.21 4.21 0 0 1 2.61 2.61l1.068 3.095c.145.426.755.426.9 0l1.068-3.095a4.21 4.21 0 0 1 2.61-2.61l3.095-1.068c.426-.145.426-.755 0-.9Zm-3.613.68-1.547.533a2.105 2.105 0 0 0-1.306 1.305l-.533 1.548a.24.24 0 0 1-.453 0l-.534-1.548a2.105 2.105 0 0 0-1.305-1.305l-1.548-.534a.24.24 0 0 1 0-.453l1.548-.534a2.105 2.105 0 0 0 1.305-1.305l.534-1.547a.24.24 0 0 1 .453 0l.534 1.547c.21.615.695 1.095 1.305 1.305l1.547.534a.24.24 0 0 1 0 .453Z" />
+	</svg>
+);
 
 // ─── Exploration Options ────────────────────────────────────────────────────
 
@@ -137,9 +146,17 @@ function McpComponentExplore() {
 			}
 		}
 	} );
-	// The global toggle is "on" if ANY eligible site has AI assistant enabled.
-	// Individual site restrictions are exceptions and don't affect the global state.
-	const bigSkyGlobalEnabled = bigSkyEnabledCount > 0;
+	// The global toggle is "on" when most eligible sites have AI assistant enabled,
+	// matching the sub-page logic. When only a few sites are enabled (user added
+	// individual sites while the toggle was off), the toggle stays off.
+	const bigSkyGlobalEnabled = bigSkyEnabledCount > 0 && bigSkyEnabledCount >= bigSkyDisabledCount;
+
+	// Only show loading state when we have zero BigSky data — truly cold cache.
+	// Once any query has resolved data, the toggle can render with real state.
+	// This avoids flashing the spinner on re-mounts when stale data is being refetched.
+	const bigSkyHasAnyData = bigSkyQueries.some( ( q ) => q.data !== undefined );
+	const bigSkyIsFetching = bigSkyQueries.some( ( q ) => q.isFetching );
+	const bigSkyIsInitialLoading = ! bigSkyHasAnyData && bigSkyIsFetching;
 
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< number[] >( [] );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
@@ -1060,10 +1077,39 @@ function McpComponentExplore() {
 			},
 		];
 
+		const aiAssistantEnabledBadges: SummaryButtonBadgeProps[] = [
+			{
+				text:
+					bigSkyEnabledCount === 0
+						? __( 'No sites' )
+						: sprintf(
+								/* translators: %d is number of sites with AI assistant enabled */
+								__( '%d sites' ),
+								bigSkyEnabledCount
+						  ),
+				intent: bigSkyEnabledCount === 0 ? 'default' : 'info',
+			},
+		];
+
 		return (
 			<VStack spacing={ 6 }>
 				{ /* WordPress.com AI assistant */ }
-				<Card className="dashboard-summary-button-list has-density-medium">
+				<Card
+					className="dashboard-summary-button-list has-density-medium"
+					style={ { position: 'relative' } }
+				>
+					{ bigSkyIsInitialLoading && (
+						<Spinner
+							style={ {
+								width: 16,
+								height: 16,
+								margin: 0,
+								position: 'absolute',
+								top: 16,
+								right: 16,
+							} }
+						/>
+					) }
 					<CardHeader>
 						<SectionHeader
 							level={ 3 }
@@ -1075,24 +1121,38 @@ function McpComponentExplore() {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ bigSkyGlobalEnabled }
-									disabled={ bigSkyBulkMutation.isPending || bigSkyAvailableSiteIds.length === 0 }
+									disabled={
+										bigSkyIsInitialLoading ||
+										bigSkyBulkMutation.isPending ||
+										bigSkyAvailableSiteIds.length === 0
+									}
 									onChange={ ( checked ) => bigSkyBulkMutation.mutate( { enable: checked } ) }
-									label={ __( 'Enable WordPress.com AI assistant' ) }
+									label={ __( 'Enable AI assistant' ) }
 								/>
 							}
 						/>
 					</CardHeader>
-					{ bigSkyGlobalEnabled && (
+					{ ! bigSkyIsInitialLoading && (
 						<CardBody className="dashboard-summary-button-list__children-list-wrapper">
 							<ul className="dashboard-summary-button-list__children-list">
 								<li className="dashboard-summary-button-list__children-list-item">
-									<RouterLinkSummaryButton
-										to="/me/preferences/ai-and-mcp/ai-assistant"
-										title={ __( 'Site exceptions' ) }
-										decoration={ <Icon icon={ notAllowed } /> }
-										badges={ aiAssistantSitesBadges }
-										density="medium"
-									/>
+									{ bigSkyGlobalEnabled ? (
+										<RouterLinkSummaryButton
+											to="/me/preferences/ai-and-mcp/ai-assistant"
+											title={ __( 'Site exceptions' ) }
+											decoration={ <Icon icon={ notAllowed } /> }
+											badges={ aiAssistantSitesBadges }
+											density="medium"
+										/>
+									) : (
+										<RouterLinkSummaryButton
+											to="/me/preferences/ai-and-mcp/ai-assistant"
+											title={ __( 'Add to specific sites' ) }
+											decoration={ <Icon icon={ bigSkyIcon } /> }
+											badges={ aiAssistantEnabledBadges }
+											density="medium"
+										/>
+									) }
 								</li>
 							</ul>
 						</CardBody>
@@ -1113,7 +1173,7 @@ function McpComponentExplore() {
 									__nextHasNoMarginBottom
 									checked={ anyToolsEnabled }
 									onChange={ handleToggleAll }
-									label={ __( 'Enable external access' ) }
+									label={ __( 'Enable MCP access' ) }
 								/>
 							}
 						/>

@@ -22,6 +22,12 @@
 			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		}
 
+		.summary-button-badge-list > span {
+			--base-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			background-color: color-mix(in srgb, #fff 90%, var(--base-color));
+			color: color-mix(in srgb, #000 50%, var(--base-color));
+		}
+
 		&.has-density-low {
 			&:not(:focus-visible) {
 				border: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
