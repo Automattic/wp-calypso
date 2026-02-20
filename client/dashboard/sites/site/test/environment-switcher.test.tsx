@@ -84,12 +84,14 @@ function setupNock(
 		} );
 
 	nock( 'https://public-api.wordpress.com:443' )
+		.persist()
 		.get( `/rest/v1.1/sites/${ productionSite.ID }` )
 		.query( true )
 		.reply( 200, productionSite );
 
 	if ( extra.stagingSite ) {
 		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
 			.get( `/rest/v1.1/sites/${ extra.stagingSite.ID }` )
 			.query( true )
 			.reply( 200, extra.stagingSite );

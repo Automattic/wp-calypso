@@ -118,6 +118,7 @@ const defaultProps = {
 
 function mockSite( site: Site ) {
 	nock( 'https://public-api.wordpress.com' )
+		.persist()
 		.get( `/rest/v1.1/sites/${ site.ID }` )
 		.query( true )
 		.reply( 200, site );

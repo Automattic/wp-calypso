@@ -158,6 +158,7 @@ function nockSiteAndSettings( {
 	timezoneString = '',
 }: { gmtOffset?: number; timezoneString?: string } = {} ) {
 	nock( API_BASE )
+		.persist()
 		.get( '/rest/v1.1/sites/test-site' )
 		.query( true )
 		.reply( 200, {

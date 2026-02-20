@@ -25,6 +25,7 @@ const site = {
 
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
+		.persist()
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
 		.query( true )
 		.reply( 200, mockedSite );

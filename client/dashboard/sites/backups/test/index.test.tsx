@@ -157,7 +157,11 @@ function renderBackupsListPage( {
 	backupEntries?: ActivityLogEntry[];
 	activityLogTimes?: number;
 } = {} ) {
-	nock( API_BASE ).get( '/rest/v1.1/sites/test-site' ).query( true ).reply( 200, mockSite );
+	nock( API_BASE )
+		.persist()
+		.get( '/rest/v1.1/sites/test-site' )
+		.query( true )
+		.reply( 200, mockSite );
 
 	nock( API_BASE )
 		.get( `/rest/v1.4/sites/${ mockSiteId }/settings` )
