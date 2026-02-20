@@ -9,6 +9,8 @@
  * Option 2 — Hub: Master toggle + summary cards linking to sub-pages (matches Security pattern)
  * Option 3 — Flat: Medium-density permission-level links (Read/Write/Manage) inline, skipping the tools sub-page
  * Option 4 — Action: Copy of Option 3 for further iteration
+ * Option 5 — Copy of Option 3 for further iteration
+ * Option 6 — Copy of Option 3 for further iteration
  */
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -55,6 +57,8 @@ const VARIATIONS = [
 	{ key: 'B', label: 'Option 2 — Hub' },
 	{ key: 'C', label: 'Option 3 — Flat' },
 	{ key: 'D', label: 'Option 4 — Action' },
+	{ key: 'E', label: 'Option 5' },
+	{ key: 'F', label: 'Option 6' },
 ] as const;
 
 type VariationKey = ( typeof VARIATIONS )[ number ][ 'key' ];
@@ -136,7 +140,13 @@ function McpComponentExplore() {
 	const handleToggleAll = ( enabled: boolean ) => {
 		const accountAbilities: Record< string, boolean > = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			accountAbilities[ toolId ] = enabled;
+			if ( enabled ) {
+				// When enabling: only turn on read tools, keep write/manage off.
+				const level = getPermissionLevel( mcpAbilities[ toolId ] );
+				accountAbilities[ toolId ] = level === 'read';
+			} else {
+				accountAbilities[ toolId ] = false;
+			}
 		} );
 		mutation.mutate( { mcp_abilities: { account: accountAbilities } } as any );
 	};
@@ -153,6 +163,22 @@ function McpComponentExplore() {
 			grouped[ displayCategory ].push( [ toolId, tool ] );
 		} );
 		return grouped;
+	};
+
+	// Shared helper: compute badge text for a set of tools.
+	const getBadgeText = ( enabledCount: number, totalCount: number ): string => {
+		if ( enabledCount === totalCount ) {
+			return __( 'All enabled' );
+		}
+		if ( enabledCount === 0 ) {
+			return __( 'Disabled' );
+		}
+		return sprintf(
+			/* translators: %1$d is enabled count, %2$d is total */
+			__( '%1$d of %2$d enabled' ),
+			enabledCount,
+			totalCount
+		);
 	};
 
 	const siteSuggestions = sites.map( ( site ) => {
@@ -282,7 +308,7 @@ function McpComponentExplore() {
 									level={ 3 }
 									title={ __( 'AI access' ) }
 									description={ __(
-										'Control what AI assistants can access your WordPress.com account and sites.'
+										'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
 									) }
 								/>
 								<VStack style={ { flexShrink: 0 } }>
@@ -388,15 +414,7 @@ function McpComponentExplore() {
 	const renderVariationB = () => {
 		const toolsBadges: SummaryButtonBadgeProps[] = [
 			{
-				text:
-					enabledToolsCount === availableTools.length
-						? __( 'All enabled' )
-						: sprintf(
-								/* translators: %1$d is number of enabled tools, %2$d is total tools */
-								__( '%1$d of %2$d enabled' ),
-								enabledToolsCount,
-								availableTools.length
-						  ),
+				text: getBadgeText( enabledToolsCount, availableTools.length ),
 				intent: enabledToolsCount === availableTools.length ? 'success' : 'default',
 			},
 		];
@@ -411,7 +429,7 @@ function McpComponentExplore() {
 								level={ 3 }
 								title={ __( 'AI access' ) }
 								description={ __(
-									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
 								) }
 							/>
 							<ToggleControl
@@ -431,7 +449,7 @@ function McpComponentExplore() {
 							to="/me/preferences/ai-and-mcp/tools"
 							title={ __( 'MCP access' ) }
 							description={ __(
-								'Control what your AI assistant can do on your account and sites.'
+								'Control what your external AI assistant can do on your account and sites.'
 							) }
 							decoration={ <Icon icon={ lock } /> }
 							badges={ toolsBadges }
@@ -440,7 +458,7 @@ function McpComponentExplore() {
 						<RouterLinkSummaryButton
 							to="/me/preferences/ai-and-mcp/setup"
 							title={ __( 'Connect AI assistant' ) }
-							description={ __( 'Get instructions for connecting your AI assistant.' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 							decoration={ <Icon icon={ connection } /> }
 						/>
 					</>
@@ -472,15 +490,7 @@ function McpComponentExplore() {
 			const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 			return [
 				{
-					text:
-						enabledCount === tools.length
-							? __( 'All enabled' )
-							: sprintf(
-									/* translators: %1$d is enabled count, %2$d is total */
-									__( '%1$d of %2$d enabled' ),
-									enabledCount,
-									tools.length
-							  ),
+					text: getBadgeText( enabledCount, tools.length ),
 					intent: enabledCount === tools.length ? 'success' : 'default',
 				},
 			];
@@ -510,7 +520,7 @@ function McpComponentExplore() {
 								level={ 3 }
 								title={ __( 'AI access' ) }
 								description={ __(
-									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
 								) }
 							/>
 							<ToggleControl
@@ -529,7 +539,7 @@ function McpComponentExplore() {
 						<SummaryButtonList
 							title={ __( 'MCP access' ) }
 							description={ __(
-								'Control what your AI assistant can do on your account and sites.'
+								'Control what your external AI assistant can do on your account and sites.'
 							) }
 							density="medium"
 						>
@@ -563,7 +573,7 @@ function McpComponentExplore() {
 						<RouterLinkSummaryButton
 							to="/me/preferences/ai-and-mcp/setup"
 							title={ __( 'Connect AI assistant' ) }
-							description={ __( 'Get instructions for connecting your AI assistant.' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 							decoration={ <Icon icon={ connection } /> }
 						/>
 					</>
@@ -602,7 +612,7 @@ function McpComponentExplore() {
 								level={ 3 }
 								title={ __( 'AI access' ) }
 								description={ __(
-									'Allow AI assistants to access your WordPress.com account and sites via MCP.'
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
 								) }
 							/>
 							<ToggleControl
@@ -621,7 +631,7 @@ function McpComponentExplore() {
 						<ActionList
 							title={ __( 'MCP access' ) }
 							description={ __(
-								'Control what your AI assistant can do on your account and sites.'
+								'Control what your external AI assistant can do on your account and sites.'
 							) }
 						>
 							{ readTools.length > 0 && (
@@ -674,7 +684,7 @@ function McpComponentExplore() {
 						<ActionList>
 							<ActionList.ActionItem
 								title={ __( 'Connect AI assistant' ) }
-								description={ __( 'Get instructions for connecting your AI assistant.' ) }
+								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 								actions={
 									<RouterLinkButton
 										variant="secondary"
@@ -686,6 +696,236 @@ function McpComponentExplore() {
 								}
 							/>
 						</ActionList>
+					</>
+				) }
+			</VStack>
+		);
+	};
+
+	// ─── Variation E: Copy of Option 3 (Flat) for further iteration ──
+
+	const renderVariationE = () => {
+		// Group tools by permission level, merging Write + Manage
+		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
+
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		const badgesFor = ( tools: Array< [ string, McpAbility ] > ): SummaryButtonBadgeProps[] => {
+			const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return [
+				{
+					text: getBadgeText( enabledCount, tools.length ),
+					intent: enabledCount === tools.length ? 'success' : 'default',
+				},
+			];
+		};
+
+		const sitesBadgesE: SummaryButtonBadgeProps[] = [
+			{
+				text:
+					disabledSiteIds.length === 0
+						? __( 'No restrictions' )
+						: sprintf(
+								/* translators: %d is number of restricted sites */
+								__( '%d restricted' ),
+								disabledSiteIds.length
+						  ),
+				intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+			},
+		];
+
+		return (
+			<VStack spacing={ 6 }>
+				{ /* Master toggle card */ }
+				<Card>
+					<CardBody>
+						<VStack spacing={ 8 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'AI access' ) }
+								description={ __(
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+								) }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleToggleAll }
+								label={ __( 'Enable AI access' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				{ /* Permission-level links — Read and Write (merged with Manage) */ }
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<SummaryButtonList
+							title={ __( 'MCP access' ) }
+							description={ __(
+								'Control what your external AI assistant can do on your account and sites.'
+							) }
+							density="medium"
+						>
+							{ readTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="read"
+									to="/me/preferences/ai-and-mcp/tools/read"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } /> }
+									badges={ badgesFor( readTools ) }
+								/>
+							) }
+							{ writeTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="write"
+									to="/me/preferences/ai-and-mcp/tools/write"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } /> }
+									badges={ badgesFor( writeTools ) }
+								/>
+							) }
+							<RouterLinkSummaryButton
+								to="/me/preferences/ai-and-mcp/sites"
+								title={ __( 'Site restrictions' ) }
+								description={ __( 'Restrict AI access for specific sites.' ) }
+								decoration={ <Icon icon={ unseen } /> }
+								badges={ sitesBadgesE }
+							/>
+						</SummaryButtonList>
+
+						<RouterLinkSummaryButton
+							to="/me/preferences/ai-and-mcp/setup"
+							title={ __( 'Connect AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } /> }
+						/>
+					</>
+				) }
+			</VStack>
+		);
+	};
+
+	// ─── Variation F: Copy of Option 3 (Flat) for further iteration ──
+
+	const renderVariationF = () => {
+		// Group tools by permission level, merging Write + Manage
+		const permissionGroups: Record< string, Array< [ string, McpAbility ] > > = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
+
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		const badgesFor = ( tools: Array< [ string, McpAbility ] > ): SummaryButtonBadgeProps[] => {
+			const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return [
+				{
+					text: getBadgeText( enabledCount, tools.length ),
+					intent: enabledCount === tools.length ? 'success' : 'default',
+				},
+			];
+		};
+
+		const sitesBadgesF: SummaryButtonBadgeProps[] = [
+			{
+				text:
+					disabledSiteIds.length === 0
+						? __( 'No restrictions' )
+						: sprintf(
+								/* translators: %d is number of restricted sites */
+								__( '%d restricted' ),
+								disabledSiteIds.length
+						  ),
+				intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+			},
+		];
+
+		return (
+			<VStack spacing={ 6 }>
+				{ /* Master toggle card */ }
+				<Card>
+					<CardBody>
+						<VStack spacing={ 8 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'AI access' ) }
+								description={ __(
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+								) }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleToggleAll }
+								label={ __( 'Enable AI access' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				{ /* Permission-level links — Read and Write (merged with Manage) */ }
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<SummaryButtonList
+							title={ __( 'MCP access' ) }
+							description={ __(
+								'Control what your external AI assistant can do on your account and sites.'
+							) }
+							density="medium"
+						>
+							{ readTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="read"
+									to="/me/preferences/ai-and-mcp/tools/read"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } /> }
+									badges={ badgesFor( readTools ) }
+								/>
+							) }
+							{ writeTools.length > 0 && (
+								<RouterLinkSummaryButton
+									key="write"
+									to="/me/preferences/ai-and-mcp/tools/write"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } /> }
+									badges={ badgesFor( writeTools ) }
+								/>
+							) }
+							<RouterLinkSummaryButton
+								to="/me/preferences/ai-and-mcp/sites"
+								title={ __( 'Site restrictions' ) }
+								description={ __( 'Restrict AI access for specific sites.' ) }
+								decoration={ <Icon icon={ unseen } /> }
+								badges={ sitesBadgesF }
+							/>
+						</SummaryButtonList>
+
+						<RouterLinkSummaryButton
+							to="/me/preferences/ai-and-mcp/setup"
+							title={ __( 'Connect AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } /> }
+						/>
 					</>
 				) }
 			</VStack>
@@ -704,6 +944,10 @@ function McpComponentExplore() {
 				return renderVariationC();
 			case 'D':
 				return renderVariationD();
+			case 'E':
+				return renderVariationE();
+			case 'F':
+				return renderVariationF();
 			default:
 				return renderVariationA();
 		}

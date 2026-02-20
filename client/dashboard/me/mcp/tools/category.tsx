@@ -1,7 +1,12 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import {
+	__experimentalVStack as VStack,
+	ToggleControl,
+	PanelBody,
+	Panel,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { EXPLORATIONS_STORAGE_KEY } from '../../../app/explorations-helper';
@@ -47,9 +52,11 @@ export default function McpToolsCategory() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
 
-	// Options C & D merge Write + Manage into a single "Write" page.
+	// Options C, D, E & F merge Write + Manage into a single "Write" page.
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isMergedWrite = ( variation === 'C' || variation === 'D' ) && categorySlug === 'write';
+	const isMergedWrite =
+		( variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F' ) &&
+		categorySlug === 'write';
 
 	// Filter to tools matching this permission level
 	const tools = allTools.filter( ( [ , tool ] ) => {
@@ -85,29 +92,224 @@ export default function McpToolsCategory() {
 		grouped[ displayCategory ].push( [ toolId, tool ] );
 	} );
 
+	// Normalise a tool title to its root entity for grouping.
+	// "Search site posts" → "post", "Get synced pattern" → "pattern",
+	// "List comments" → "comment", "Get theme presets" → "theme",
+	// "Get active theme" → "theme", "List allowed blocks" → "block".
+	const getEntity = ( toolTitle: string ) => {
+		const lower = toolTitle.toLowerCase();
+		// Strip the leading action verb.
+		const withoutVerb = lower.replace(
+			/^(search|get|list|create|update|delete|view|manage|set|activate|install|deactivate)\s+/,
+			''
+		);
+		// Strip filler words: "site", "your", "a", "an", "all".
+		const withoutFiller = withoutVerb.replace( /\b(site|your|a|an|all)\s+/g, '' );
+		// Take the first remaining word as the core noun (e.g. "synced patterns" → "synced",
+		// "theme presets" → "theme", "post" → "post", "allowed blocks" → "allowed").
+		const firstWord = withoutFiller.split( ' ' )[ 0 ] || '';
+		// Basic singular/plural normalisation.
+		const singularised = firstWord
+			.replace( /ies$/, 'y' ) // categories → category
+			.replace( /(?<![su])s$/, '' ); // posts → post, but not "access" or "status"
+		// Map adjectives to their noun: "synced" → "pattern", "active" → "theme", "allowed" → "block".
+		const adjectiveMap: Record< string, string > = {
+			synced: 'pattern',
+			active: 'theme',
+			allowed: 'block',
+		};
+		return adjectiveMap[ singularised ] || singularised;
+	};
+
+	// Render tools sorted by entity group with dividers between groups.
+	// Dividers only appear when there are multiple distinct entity groups
+	// with more than one tool each (i.e. CRUD sets or List/Get pairs).
+	const renderToolsWithDividers = ( categoryTools: Array< [ string, McpAbility ] > ) => {
+		// Sort tools so that same-entity tools are adjacent.
+		const sorted = [ ...categoryTools ].sort( ( a, b ) => {
+			const ea = getEntity( a[ 1 ].title );
+			const eb = getEntity( b[ 1 ].title );
+			if ( ea !== eb ) {
+				return ea.localeCompare( eb );
+			}
+			return 0;
+		} );
+
+		// Count how many tools belong to each entity.
+		const entityCounts: Record< string, number > = {};
+		sorted.forEach( ( [ , tool ] ) => {
+			const entity = getEntity( tool.title );
+			if ( entity ) {
+				entityCounts[ entity ] = ( entityCounts[ entity ] || 0 ) + 1;
+			}
+		} );
+
+		// Only show dividers if there are multiple entity groups AND at least
+		// two groups have more than one tool (i.e. real groupings, not singletons).
+		const multiToolGroups = Object.values( entityCounts ).filter( ( c ) => c > 1 ).length;
+		const showDividers = multiToolGroups >= 2;
+
+		const elements: JSX.Element[] = [];
+		let lastEntity = '';
+		sorted.forEach( ( [ toolId, tool ], index ) => {
+			const entity = getEntity( tool.title );
+			if ( showDividers && index > 0 && entity !== lastEntity ) {
+				elements.push(
+					<hr
+						key={ `divider-${ toolId }` }
+						style={ {
+							margin: '8px 0',
+							border: 'none',
+							borderTop: '1px solid #e0e0e0',
+							width: '100%',
+						} }
+					/>
+				);
+			}
+			lastEntity = entity;
+			elements.push(
+				<ToggleControl
+					key={ toolId }
+					__nextHasNoMarginBottom
+					checked={ tool.enabled }
+					label={ tool.title }
+					help={ tool.description }
+					onChange={ ( checked: boolean ) => handleToolChange( toolId, checked ) }
+				/>
+			);
+		} );
+		return elements;
+	};
+
 	const title = isMergedWrite ? __( 'Write' ) : permissionLevel?.label ?? __( 'MCP access' );
 	const description = isMergedWrite
 		? __( 'Create, edit, and delete content, plugins, and settings.' )
 		: permissionLevel?.description ?? '';
 
-	// Options 3 & 4 (Flat) link directly here, skipping the tools index page.
+	// Options 3, 4 & 5 (Flat) link directly here, skipping the tools index page.
 	// Exclude the "MCP access" breadcrumb segment so the trail reads
 	// "Preferences / AI and MCP / [Read|Write|Manage]".
-	const isFlat = variation === 'C' || variation === 'D';
+	const isFlat = variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F';
 	const excludeHrefs = isFlat ? [ '/me/preferences/ai-and-mcp/tools' ] : undefined;
 	const breadcrumbLength = isFlat ? 3 : 4;
 
-	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ breadcrumbLength } excludeHrefs={ excludeHrefs } /> }
-					title={ title }
-					description={ description }
-				/>
-			}
-		>
+	const isAccordion = variation === 'E';
+	const isToggleHeader = variation === 'F';
+	let isFirstCategory = true;
+
+	const renderCategoryContent = () => {
+		if ( isToggleHeader ) {
+			return (
+				<VStack spacing={ 8 }>
+					{ CATEGORY_ORDER.map( ( categoryName ) => {
+						const categoryTools = grouped[ categoryName ];
+						if ( ! categoryTools || categoryTools.length === 0 ) {
+							return null;
+						}
+
+						const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+
+						return (
+							<Card key={ categoryName }>
+								<CardBody>
+									<SectionHeader
+										level={ 3 }
+										title={ categoryName }
+										actions={
+											<ToggleControl
+												__nextHasNoMarginBottom
+												checked={ allEnabled }
+												label={ <Text weight={ 500 }>{ __( 'Enable all' ) }</Text> }
+												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
+											/>
+										}
+									/>
+								</CardBody>
+								<hr style={ { margin: 0, border: 'none', borderTop: '1px solid #e0e0e0' } } />
+								<CardBody>
+									<VStack spacing={ 3 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
+								</CardBody>
+							</Card>
+						);
+					} ) }
+				</VStack>
+			);
+		}
+
+		if ( isAccordion ) {
+			return (
+				<Card>
+					<CardBody style={ { padding: 0 } }>
+						<Panel>
+							{ CATEGORY_ORDER.map( ( categoryName ) => {
+								const categoryTools = grouped[ categoryName ];
+								if ( ! categoryTools || categoryTools.length === 0 ) {
+									return null;
+								}
+
+								const enabledCount = categoryTools.filter( ( [ , tool ] ) => tool.enabled ).length;
+								const allEnabled = enabledCount === categoryTools.length;
+								const badge = sprintf(
+									/* translators: %1$d is enabled count, %2$d is total */
+									__( '%1$d/%2$d' ),
+									enabledCount,
+									categoryTools.length
+								);
+
+								// First category opens by default, rest closed.
+								const shouldOpen = isFirstCategory;
+								isFirstCategory = false;
+
+								const panelTitle = `${ categoryName }  —  ${ badge }`;
+
+								return (
+									<PanelBody key={ categoryName } title={ panelTitle } initialOpen={ shouldOpen }>
+										<VStack spacing={ 4 }>
+											<ToggleControl
+												__nextHasNoMarginBottom
+												checked={ allEnabled }
+												disabled={ mutation.isPending }
+												label={
+													<Text weight={ 500 }>
+														{ allEnabled
+															? sprintf(
+																	/* translators: %s is the category name */
+																	__( 'Disable all for %s' ),
+																	categoryName
+															  )
+															: sprintf(
+																	/* translators: %s is the category name */
+																	__( 'Enable all for %s' ),
+																	categoryName
+															  ) }
+													</Text>
+												}
+												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
+											/>
+
+											<VStack spacing={ 3 }>
+												{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
+													<ToggleControl
+														key={ toolId }
+														__nextHasNoMarginBottom
+														checked={ tool.enabled }
+														label={ tool.title }
+														help={ tool.description }
+														onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+													/>
+												) ) }
+											</VStack>
+										</VStack>
+									</PanelBody>
+								);
+							} ) }
+						</Panel>
+					</CardBody>
+				</Card>
+			);
+		}
+
+		return (
 			<VStack spacing={ 8 }>
 				{ CATEGORY_ORDER.map( ( categoryName ) => {
 					const categoryTools = grouped[ categoryName ];
@@ -115,7 +317,7 @@ export default function McpToolsCategory() {
 						return null;
 					}
 
-					const anyEnabled = categoryTools.some( ( [ , tool ] ) => tool.enabled );
+					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
 
 					return (
 						<Card key={ categoryName }>
@@ -125,7 +327,7 @@ export default function McpToolsCategory() {
 
 									<ToggleControl
 										__nextHasNoMarginBottom
-										checked={ anyEnabled }
+										checked={ allEnabled }
 										disabled={ mutation.isPending }
 										label={
 											<Text weight={ 500 }>
@@ -139,13 +341,12 @@ export default function McpToolsCategory() {
 										onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 									/>
 
-									<VStack>
+									<VStack spacing={ 3 }>
 										{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
 											<ToggleControl
 												key={ toolId }
 												__nextHasNoMarginBottom
 												checked={ tool.enabled }
-												disabled={ mutation.isPending }
 												label={ tool.title }
 												help={ tool.description }
 												onChange={ ( checked ) => handleToolChange( toolId, checked ) }
@@ -158,6 +359,21 @@ export default function McpToolsCategory() {
 					);
 				} ) }
 			</VStack>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ breadcrumbLength } excludeHrefs={ excludeHrefs } /> }
+					title={ title }
+					description={ description }
+				/>
+			}
+		>
+			{ renderCategoryContent() }
 		</PageLayout>
 	);
 }

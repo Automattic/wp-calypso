@@ -34,7 +34,7 @@ export default function McpTools() {
 
 	// Options 3 & 4 (Flat) skip this intermediate page — redirect back to AI and MCP.
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	if ( variation === 'C' || variation === 'D' ) {
+	if ( variation === 'C' || variation === 'D' || variation === 'E' || variation === 'F' ) {
 		return <Navigate to="/me/preferences/ai-and-mcp" replace />;
 	}
 
