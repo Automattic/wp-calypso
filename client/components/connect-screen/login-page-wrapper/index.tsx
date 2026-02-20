@@ -45,8 +45,6 @@ export interface LoginPageWrapperProps {
 	beforeContent?: ReactNode;
 	usernameOrEmail?: string;
 	defaultUsernameOrEmail?: string;
-	/** @deprecated use usernameOrEmail */
-	usernameOrEmailValue?: string;
 	onUsernameOrEmailChange?: ( value: string ) => void;
 	usernameOrEmailInputId?: string;
 	usernameOrEmailInputName?: string;
@@ -126,7 +124,6 @@ export function LoginPageWrapper( {
 	beforeContent,
 	usernameOrEmail,
 	defaultUsernameOrEmail,
-	usernameOrEmailValue,
 	onUsernameOrEmailChange,
 	usernameOrEmailInputId = 'usernameOrEmail',
 	usernameOrEmailInputName = 'usernameOrEmail',
@@ -144,20 +141,15 @@ export function LoginPageWrapper( {
 		defaultUsernameOrEmail ?? ''
 	);
 	const isSocialFirst = Boolean( socialButtons );
-	let loginIdentifierValue = localUsernameOrEmailValue;
-
-	if ( typeof usernameOrEmail !== 'undefined' ) {
-		loginIdentifierValue = usernameOrEmail;
-	} else if ( typeof usernameOrEmailValue !== 'undefined' ) {
-		loginIdentifierValue = usernameOrEmailValue;
-	}
+	const loginIdentifierValue =
+		typeof usernameOrEmail !== 'undefined' ? usernameOrEmail : localUsernameOrEmailValue;
 
 	const handleUsernameOrEmailChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const nextValue = event.target.value;
 
 		onUsernameOrEmailChange?.( nextValue );
 
-		if ( typeof usernameOrEmail === 'undefined' && typeof usernameOrEmailValue === 'undefined' ) {
+		if ( typeof usernameOrEmail === 'undefined' ) {
 			setLocalUsernameOrEmailValue( nextValue );
 		}
 	};
