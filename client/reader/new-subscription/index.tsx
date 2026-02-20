@@ -8,11 +8,11 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
-import ReaderAddSubscription from './components/add-subscription';
+import AddSubscriptionForm from './components/add-subscription-form';
 import {
-	NEW_SUBSCRIPTION_CONFIG,
+	ADD_SUBSCRIPTION_CONFIGS,
 	NewSubscriptionType,
-	ReaderNewSubscriptionConfig,
+	AddSubscriptionFormConfig,
 } from './new-subscription.const';
 
 interface Tab {
@@ -31,14 +31,14 @@ export default function ReaderNewSubscriptionPage(
 	const { selectedTab } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const NEW_SUBSCRIPTION_TABS: Tab[] = Object.values( NEW_SUBSCRIPTION_CONFIG ).map(
-		( config: ReaderNewSubscriptionConfig ): Tab => ( {
+	const ADD_SUBSCRIPTION_TABS: Tab[] = Object.values( ADD_SUBSCRIPTION_CONFIGS ).map(
+		( config: AddSubscriptionFormConfig ): Tab => ( {
 			slug: config.slug,
 			title: config.title,
 			path: config.url,
 		} )
 	);
-	const selectedTabConfig = NEW_SUBSCRIPTION_CONFIG[ selectedTab ];
+	const selectedTabConfig = ADD_SUBSCRIPTION_CONFIGS[ selectedTab ];
 
 	function recordTabClick( selectedTab: string ): void {
 		recordAction( 'click_new_subscription_tab' );
@@ -61,7 +61,7 @@ export default function ReaderNewSubscriptionPage(
 
 			<SectionNav className="new-subscription-navigation" variation="minimal" enforceTabsView>
 				<NavTabs>
-					{ NEW_SUBSCRIPTION_TABS.map(
+					{ ADD_SUBSCRIPTION_TABS.map(
 						( tab: Tab ): JSX.Element => (
 							<NavItem
 								key={ tab.slug }
@@ -76,7 +76,7 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			<ReaderAddSubscription key={ selectedTab } config={ selectedTabConfig } />
+			<AddSubscriptionForm key={ selectedTab } config={ selectedTabConfig } />
 		</ReaderMain>
 	);
 }

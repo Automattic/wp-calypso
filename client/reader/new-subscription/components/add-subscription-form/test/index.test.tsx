@@ -3,10 +3,10 @@
  */
 
 import { act, screen } from '@testing-library/react';
-import { NEW_SUBSCRIPTION_CONFIG } from 'calypso/reader/new-subscription/new-subscription.const';
+import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/new-subscription.const';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import ReaderAddSubscription from '../index';
+import AddSubscriptionForm from '../index';
 
 // Capture AddSitesForm callbacks so tests can trigger them directly.
 let capturedOnChangeFeedPreview: ( hasPreview: boolean ) => void;
@@ -36,7 +36,7 @@ jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 	requestFollows: () => mockRequestFollows(),
 } ) );
 
-describe( 'ReaderAddSubscription', () => {
+describe( 'AddSubscriptionForm', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsCurrentUserEmailVerified.mockReturnValue( true );
@@ -46,7 +46,7 @@ describe( 'ReaderAddSubscription', () => {
 		it( 'shows a warning when the user email is not verified', () => {
 			mockIsCurrentUserEmailVerified.mockReturnValue( false );
 			const { container } = renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'add-new' ] } />
+				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
 			);
 
 			expect(
@@ -63,7 +63,7 @@ describe( 'ReaderAddSubscription', () => {
 
 		it( 'does not show a warning when the user email is verified', () => {
 			const { container } = renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'add-new' ] } />
+				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
 			);
 
 			expect(
@@ -82,7 +82,7 @@ describe( 'ReaderAddSubscription', () => {
 			);
 
 			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'add-new' ] } />
+				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
 			);
 
 			expect( screen.getByText( 'Your subscriptions' ) ).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe( 'ReaderAddSubscription', () => {
 
 		it( 'does not dispatch requestFollows on subscribe toggle', () => {
 			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'add-new' ] } />
+				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
 			);
 
 			act( () => capturedOnChangeSubscribe() );
@@ -105,7 +105,7 @@ describe( 'ReaderAddSubscription', () => {
 
 		it( 'hides the subscriptions list when a feed preview becomes active', () => {
 			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'add-new' ] } />
+				<AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS[ 'add-new' ] } />
 			);
 
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
@@ -118,9 +118,7 @@ describe( 'ReaderAddSubscription', () => {
 
 	describe( 'platform specific tabs', () => {
 		it( 'shows instructions when the config provides them', () => {
-			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'reddit' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
 			expect( screen.getByTestId( 'instructions-icon' ) ).toBeInTheDocument();
@@ -130,9 +128,7 @@ describe( 'ReaderAddSubscription', () => {
 		} );
 
 		it( 'dispatches requestFollows on subscribe toggle', () => {
-			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'reddit' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
 
 			act( () => capturedOnChangeSubscribe() );
 
@@ -140,9 +136,7 @@ describe( 'ReaderAddSubscription', () => {
 		} );
 
 		it( 'hides instructions when a feed preview becomes active', () => {
-			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'reddit' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
 
 			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
 
@@ -155,9 +149,7 @@ describe( 'ReaderAddSubscription', () => {
 		} );
 
 		it( 'closes the feed preview when the subscription is toggled', () => {
-			renderWithProvider(
-				<ReaderAddSubscription config={ NEW_SUBSCRIPTION_CONFIG[ 'reddit' ] } />
-			);
+			renderWithProvider( <AddSubscriptionForm config={ ADD_SUBSCRIPTION_CONFIGS.reddit } /> );
 
 			act( () => capturedOnChangeFeedPreview( true ) );
 
