@@ -187,3 +187,21 @@ Deployed as part of the `agents-manager` bundle to `widgets.wp.com`. PHP in `jet
 - Include before/after screenshots for any UI changes
 - Test in both Edit and Generate modes if the change affects shared components
 - Test in Media Library and Block Editor contexts
+
+## Manual Browser Testing
+
+Verify the image generation flow on the user's sandboxed site using Playwright MCP and DON'T use playwright-test. If the user has not provided a test site URL, ask them for one before proceeding.
+
+### Rules
+
+- Prefer `browser_evaluate` over screenshots or snapshots for verifying page state and interacting with elements.
+- Prefer `browser_wait_for` over polling or sleeping when waiting for content.
+- Only use screenshots as a last resort when debugging failures.
+
+### Testing Steps
+
+1. Navigate to `/wp-admin/upload.php` on the test site and verify the Media Library loaded
+2. Click the "Generate Image" button to open the generation UI
+3. Enter an image prompt (e.g. "A sunset over a mountain lake") in the prompt text field
+4. Click the Generate/Submit button and wait for the image to be generated
+5. Verify the generated image is displayed
