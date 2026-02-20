@@ -11,7 +11,9 @@ import PageLayout from '../../components/page-layout';
 import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
-import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
+import { isCommerceGarden } from '../../utils/site-types';
+import { isSitePlanTrial } from '../plans';
+import { CiabTrialLaunchNotice, LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
 
@@ -23,6 +25,10 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	} );
 
 	const renderContent = () => {
+		if ( isCommerceGarden( site ) && isSitePlanTrial( site ) ) {
+			return <CiabTrialLaunchNotice site={ site } />;
+		}
+
 		if ( site.launch_status === 'unlaunched' ) {
 			return (
 				<>

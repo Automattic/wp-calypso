@@ -9,8 +9,10 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { getCurrentDashboard } from '../../app/routing';
 import Notice from '../../components/notice';
-import { a4aLink } from '../../utils/link';
+import { a4aLink, wpcomLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -133,5 +135,34 @@ export function LaunchForm( { site }: { site: Site } ) {
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>
 		</>
+	);
+}
+
+export function CiabTrialLaunchNotice( { site }: { site: Site } ) {
+	return (
+		<Notice
+			title={ __( 'Your site is in coming soon mode' ) }
+			actions={
+				<>
+					<Button
+						size="compact"
+						variant="primary"
+						href={ addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+							siteSlug: site.slug,
+							dashboard: getCurrentDashboard(),
+						} ) }
+					>
+						{ __( 'View plans' ) }
+					</Button>
+					<Button size="compact" variant="secondary" href={ site.options?.admin_url }>
+						{ __( 'Manage store' ) }
+					</Button>
+				</>
+			}
+		>
+			{ __(
+				'Select a plan to launch your site and make it visible to everyone. Visitors will see a “Coming soon” page while you finish setting up.'
+			) }
+		</Notice>
 	);
 }
