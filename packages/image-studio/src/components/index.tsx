@@ -1,3 +1,4 @@
+import { FeedbackInput } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -15,6 +16,7 @@ import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDraftCleanup } from '../hooks/use-draft-cleanup';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
+import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
@@ -22,14 +24,8 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
-import {
-	type ImageStudioConfig,
-	ImageStudioMode,
-	type ImageStudioProps,
-	ToolbarOption,
-} from '../types';
-import { defaultAgentConfigFactory, type AgentConfigFactory } from '../utils/agent-config';
-import { getSessionId } from '../utils/session';
+import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
+import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
@@ -50,11 +46,17 @@ function ImageStudioAgentChat( {
 	attachmentId,
 	mode,
 	onChatSubmit,
+	showFeedbackInput = false,
+	handleSubmitFeedbackText,
+	onFeedbackDone,
 }: {
 	agentConfig: any;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
+	showFeedbackInput?: boolean;
+	handleSubmitFeedbackText: ( feedbackText: string ) => Promise< void >;
+	onFeedbackDone?: () => void;
 } ) {
 	const agentChatProps = useAgentChat( agentConfigProp );
 	const { addNotice } = useDispatch( imageStudioStore );
@@ -180,6 +182,9 @@ function ImageStudioAgentChat( {
 		>
 			<AgentUI.ConversationView showHeader={ false }>
 				<AgentUI.Messages />
+				{ showFeedbackInput && onFeedbackDone && (
+					<FeedbackInput onSubmit={ handleSubmitFeedbackText } onCancel={ onFeedbackDone } />
+				) }
 				<AgentUI.Footer>
 					{ suggestionsComponent }
 					<AgentUI.Notice />
@@ -195,36 +200,34 @@ function ImageStudioAgentChat( {
 }
 
 const ImageStudioAgentUIComponent = ( {
-	config,
+	agentConfig,
+	attachmentId,
 	modalOpenKey,
 	onChatSubmit,
 	mode,
-	agentConfigFactory = defaultAgentConfigFactory,
+	showFeedbackInput = false,
+	handleSubmitFeedbackText,
+	onFeedbackDone,
 }: {
-	config: ImageStudioConfig;
+	agentConfig: any;
+	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
-	agentConfigFactory?: AgentConfigFactory;
+	showFeedbackInput?: boolean;
+	handleSubmitFeedbackText: ( feedbackText: string ) => Promise< void >;
+	onFeedbackDone?: () => void;
 } ) => {
-	const attachmentId = config?.attachmentId;
-	const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
-
-	if ( ! agentConfigState ) {
-		return (
-			<div className="image-studio-agent-loading">
-				{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
-			</div>
-		);
-	}
-
 	return (
 		<ImageStudioAgentChat
 			key={ `agentchat-${ modalOpenKey || 'default' }` }
-			agentConfig={ agentConfigState }
+			agentConfig={ agentConfig }
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
+			showFeedbackInput={ showFeedbackInput }
+			handleSubmitFeedbackText={ handleSubmitFeedbackText }
+			onFeedbackDone={ onFeedbackDone }
 		/>
 	);
 };
@@ -281,9 +284,6 @@ const ImageStudioContent = withInstanceId(
 
 		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-		// Get session ID (persistent across sessions)
-		const sessionId = getSessionId();
-
 		const {
 			handleAnnotationDone,
 			hasAnnotations,
@@ -294,11 +294,19 @@ const ImageStudioContent = withInstanceId(
 			originalImageUrl,
 		} );
 
+		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
+
 		const [ isPromptSent, setIsPromptSent ] = useState( false );
 		const [ activeToolbarOption, setActiveToolbarOption ] = useState< ToolbarOption | null >(
 			null
 		);
 		const [ isSaving, setIsSaving ] = useState( false );
+		const { showFeedbackInput, handleFeedback, handleCancelFeedback, handleSubmitFeedbackText } =
+			useImageStudioFeedback( {
+				displayImageUrl,
+				authProvider: agentConfigState?.authProvider,
+				sessionId: agentConfigState?.sessionId,
+			} );
 
 		// Track the last modal key to detect when modal reopens
 		const lastModalOpenKey = useRef< number | undefined >();
@@ -460,12 +468,12 @@ const ImageStudioContent = withInstanceId(
 			<CanvasControls
 				imageUrl={ finalDisplayUrl }
 				attachmentId={ attachmentId }
-				sessionId={ sessionId }
 				mode={ mode }
 				showFeedbackButtons={ showFeedbackButtons }
 				showImageActionsMenu={ showImageActionsMenu }
 				onSave={ handleSaveWithNotification }
 				onRevertToOriginal={ handleRevertToOriginal }
+				onFeedback={ handleFeedback }
 			/>
 		) : null;
 
@@ -522,13 +530,22 @@ const ImageStudioContent = withInstanceId(
 
 						<Footer
 							chatComponent={
-								<ImageStudioAgentUI
-									config={ memoizedConfig }
-									modalOpenKey={ modalOpenKey }
-									onChatSubmit={ handleChatSubmit }
-									mode={ mode }
-									agentConfigFactory={ agentConfigFactory }
-								/>
+								agentConfigState ? (
+									<ImageStudioAgentUI
+										agentConfig={ agentConfigState }
+										attachmentId={ attachmentId ?? undefined }
+										modalOpenKey={ modalOpenKey }
+										onChatSubmit={ handleChatSubmit }
+										mode={ mode }
+										showFeedbackInput={ showFeedbackInput }
+										handleSubmitFeedbackText={ handleSubmitFeedbackText }
+										onFeedbackDone={ handleCancelFeedback }
+									/>
+								) : (
+									<div className="image-studio-agent-loading">
+										{ __( 'Loading AI assistant…', 'big-sky' ) }
+									</div>
+								)
 							}
 						></Footer>
 					</div>

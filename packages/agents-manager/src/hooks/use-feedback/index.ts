@@ -9,18 +9,18 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-interface UseFeedbackConfig {
+export interface UseFeedbackConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
 }
 
-interface UseFeedbackReturn {
+export interface UseFeedbackReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
 }
 
-async function rateMessage(
+export async function rateMessage(
 	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
@@ -47,7 +47,7 @@ interface PreviousMessage {
 	text: string;
 }
 
-async function submitFeedback(
+export async function submitFeedback(
 	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,

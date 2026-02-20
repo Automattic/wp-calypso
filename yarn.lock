@@ -1572,6 +1572,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/agenttic-client": "npm:^0.1.46"
     "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/calypso-analytics": "workspace:^"
