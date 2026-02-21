@@ -41,12 +41,13 @@ export default function () {
 		clientRender
 	);
 
+	// EXPLORE: temporarily pointing to mcpExplore (original: controller.mcp)
 	page(
 		'/me/mcp',
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
 		controller.sidebar,
-		controller.mcp,
+		controller.mcpExplore,
 		makeLayout,
 		clientRender
 	);
@@ -56,6 +57,42 @@ export default function () {
 		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
 		controller.sidebar,
 		controller.mcpSetup,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-tools',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/ai-and-mcp/tools' ),
+		controller.sidebar,
+		controller.mcpTools,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-tools/:categorySlug',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/ai-and-mcp/tools' ),
+		controller.sidebar,
+		controller.mcpToolsCategory,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-sites',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/ai-and-mcp/sites' ),
+		controller.sidebar,
+		controller.mcpSites,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp-ai-assistant',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/ai-and-mcp/ai-assistant' ),
+		controller.sidebar,
+		controller.mcpAiAssistant,
 		makeLayout,
 		clientRender
 	);

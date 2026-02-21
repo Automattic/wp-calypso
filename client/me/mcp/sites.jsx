@@ -1,0 +1,164 @@
+/**
+ * MCP Sites — Site exceptions page
+ * Legacy port of: client/dashboard/me/mcp/sites/index.tsx
+ */
+import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, ComboboxControl, Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { ActionList } from '../../dashboard/components/action-list';
+import { Card, CardBody } from '../../dashboard/components/card';
+import { SectionHeader } from '../../dashboard/components/section-header';
+import { getDisabledSiteIds } from './utils';
+
+function getSiteDisplayName( site ) {
+	return site.name || site.URL?.replace( /^https?:\/\//, '' ) || String( site.ID );
+}
+
+export default function McpSites( { path } ) {
+	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+	const tanstackQueryClient = useQueryClient();
+
+	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
+
+	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+	const disabledSites = disabledSiteIds.map( ( siteId ) => {
+		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
+		const name = site ? getSiteDisplayName( site ) : `Site ID: ${ siteId }`;
+		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
+		return { id: siteId, name, domain };
+	} );
+
+	const mutation = useMutation( {
+		...userSettingsMutation(),
+		onSuccess: ( newData ) => {
+			tanstackQueryClient.setQueryData( userSettingsQuery().queryKey, newData );
+			reduxDispatch(
+				successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } )
+			);
+		},
+		onError: () => {
+			reduxDispatch(
+				errorNotice( translate( 'Failed to save MCP settings.' ), {
+					id: 'mcp-settings-error',
+				} )
+			);
+		},
+	} );
+
+	// ComboboxControl options — exclude already-excepted sites.
+	const siteOptions = sites
+		.filter( ( site ) => ! disabledSiteIds.includes( site.ID ) )
+		.map( ( site ) => ( {
+			value: String( site.ID ),
+			label: getSiteDisplayName( site ),
+		} ) );
+
+	const handleSiteSelect = ( value ) => {
+		if ( ! value ) {
+			return;
+		}
+		const siteId = Number( value );
+		if ( isNaN( siteId ) ) {
+			return;
+		}
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [ { blog_id: siteId, account_tools_enabled: false } ],
+			},
+		} );
+	};
+
+	const handleRemoveSite = ( siteId ) => {
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [ { blog_id: siteId, account_tools_enabled: true } ],
+			},
+		} );
+	};
+
+	return (
+		<Main wideLayout className="mcp-sites">
+			<PageViewTracker path={ path } title="MCP Sites" />
+			<DocumentHead title={ translate( 'External AI access exceptions' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'AI and MCP' ) }
+				subtitle={ translate(
+					'Control how AI assistants interact with your WordPress.com account and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
+			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
+				{ translate( 'External AI access exceptions' ) }
+			</HeaderCake>
+			<VStack spacing={ 6 }>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								level={ 3 }
+								title={ translate( 'Add an exception' ) }
+								description={ translate( 'Search for sites to disable external AI access.' ) }
+							/>
+
+							<ComboboxControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={ translate( 'Search sites' ) }
+								hideLabelFromVision
+								value={ null }
+								onChange={ handleSiteSelect }
+								options={ siteOptions }
+								placeholder={ translate( 'Search for a site\u2026' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				{ disabledSites.length > 0 && (
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ translate( 'Restricted sites' ) }
+							description={ translate( 'These sites will not have MCP access.' ) }
+						/>
+						<ActionList>
+							{ disabledSites.map( ( site ) => (
+								<ActionList.ActionItem
+									key={ site.id }
+									title={ site.name }
+									description={ site.domain }
+									actions={
+										<Button
+											variant="secondary"
+											size="compact"
+											disabled={ mutation.isPending }
+											onClick={ () => handleRemoveSite( site.id ) }
+										>
+											{ translate( 'Remove' ) }
+										</Button>
+									}
+								/>
+							) ) }
+						</ActionList>
+					</VStack>
+				) }
+			</VStack>
+		</Main>
+	);
+}

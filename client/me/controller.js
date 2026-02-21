@@ -6,8 +6,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import AppsComponent from 'calypso/me/get-apps';
+import McpAiAssistantComponent from 'calypso/me/mcp/ai-assistant';
 import McpComponent from 'calypso/me/mcp/main';
+// EXPLORE: temporarily using explore file (original: 'calypso/me/mcp/main')
+import McpComponentExplore from 'calypso/me/mcp/main-explore';
 import McpSetupComponent from 'calypso/me/mcp/setup';
+import McpSitesComponent from 'calypso/me/mcp/sites';
+import McpToolsComponent from 'calypso/me/mcp/tools';
+import McpToolsCategoryComponent from 'calypso/me/mcp/tools-category';
 import SidebarComponent from 'calypso/me/sidebar';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -87,6 +93,60 @@ export function mcpSetup( context, next ) {
 			<McpSetupTitle />
 			<QueryUserSettings />
 			<McpSetupComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+// EXPLORE: temporarily renders the explore file instead of the original mcp main.
+export function mcpExplore( context, next ) {
+	context.primary = (
+		<>
+			<QueryUserSettings />
+			<McpComponentExplore path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpTools( context, next ) {
+	context.primary = (
+		<>
+			<QueryUserSettings />
+			<McpToolsComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpToolsCategory( context, next ) {
+	context.primary = (
+		<>
+			<QueryUserSettings />
+			<McpToolsCategoryComponent
+				path={ context.path }
+				categorySlug={ context.params.categorySlug }
+			/>
+		</>
+	);
+	next();
+}
+
+export function mcpSites( context, next ) {
+	context.primary = (
+		<>
+			<QueryUserSettings />
+			<McpSitesComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpAiAssistant( context, next ) {
+	context.primary = (
+		<>
+			<QueryUserSettings />
+			<McpAiAssistantComponent path={ context.path } />
 		</>
 	);
 	next();

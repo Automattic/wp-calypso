@@ -5,15 +5,17 @@ import {
 	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
-import { sidebar, mcp } from 'calypso/me/controller';
+// EXPLORE: temporarily using mcpExplore (original: mcp)
+import { sidebar, mcpExplore } from 'calypso/me/controller';
 
 export default function () {
+	// EXPLORE: temporarily pointing to mcpExplore (original: mcp)
 	page(
 		'/me/mcp',
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
 		sidebar,
-		mcp,
+		mcpExplore,
 		makeLayout,
 		clientRender
 	);
