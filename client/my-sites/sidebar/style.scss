@@ -295,6 +295,15 @@ $font-size: rem(14px);
 			opacity: 0.8;
 		}
 
+		.sidebar__inline-icon {
+			opacity: 0.8;
+			position: absolute;
+			right: 16px;
+			&::before {
+				font-size: 16px;
+			}
+		}
+
 		img.sidebar__menu-icon {
 			opacity: 0.6;
 		}
@@ -684,6 +693,10 @@ $font-size: rem(14px);
 				}
 			}
 		}
+
+		.sidebar__inline-icon {
+			right: 8px;
+		}
 	}
 
 	&.is-classic-bright,
@@ -817,6 +830,9 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__inline-text {
+			display: none;
+		}
+		.sidebar__inline-icon {
 			display: none;
 		}
 

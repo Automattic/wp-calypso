@@ -19,6 +19,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	badge,
 	count,
 	icon,
+	inlineIcon,
 	isSubItem = false,
 	selected = false,
 	slug,
@@ -53,6 +54,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			onNavigate={ onNavigate }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
+			inlineIcon={ inlineIcon }
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }

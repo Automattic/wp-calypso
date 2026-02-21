@@ -364,7 +364,7 @@ export default function DomainDns() {
 					</DataViews>
 				) }
 			</DataViewsCard>
-			<EmailSetup />
+			{ domain.has_wpcom_nameservers && <EmailSetup /> }
 			<RestoreDefaultARecords
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }

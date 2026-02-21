@@ -48,7 +48,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
@@ -72,7 +71,6 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActivityLogBanner from '../activity-log-banner';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import IntroBanner from '../activity-log-banner/intro-banner';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
@@ -436,7 +434,6 @@ class ActivityLog extends Component {
 			translate,
 			isAtomic,
 			isJetpack,
-			isIntroDismissed,
 			isMultisite,
 			areCredentialsInvalid,
 		} = this.props;
@@ -502,10 +499,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				<IntroBanner siteId={ siteId } />
-				{ ! hasFullActivityLog && isIntroDismissed && ! isMultisite && (
-					<UpgradeBanner siteId={ siteId } />
-				) }
+				{ ! hasFullActivityLog && ! isMultisite && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -557,7 +551,6 @@ class ActivityLog extends Component {
 						{ showVisibleDaysLimitUpsell && (
 							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 						) }
-						{ ! hasFullActivityLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -720,7 +713,6 @@ export default connect(
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			hasFullActivityLog: siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG ),
-			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			areCredentialsInvalid: areJetpackCredentialsInvalid( state, siteId, 'main' ),
 		};

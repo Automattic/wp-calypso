@@ -8,6 +8,7 @@ import {
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -650,6 +651,21 @@ export const getIncludedDomainPurchase = (
 
 export function hasAmountAvailableToRefund( purchase: Purchase ) {
 	return purchase.refund_amount > 0;
+}
+
+/**
+ * Returns true if the refund eligibility notice should be shown for the given purchase.
+ *
+ * The notice is shown for refundable WordPress.com plans when the feature flag is enabled.
+ * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
+ * flow, offering the refund as an explicit opt-in action instead.
+ */
+export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
+	return (
+		config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+		hasAmountAvailableToRefund( purchase ) &&
+		isDotcomPlan( purchase )
+	);
 }
 
 /**

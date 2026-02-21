@@ -1,7 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { OptionContent } from 'calypso/components/option-content';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	createSiteFromDomainOnly,
@@ -21,7 +23,7 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 import './style.scss';
 
-export default function DomainOnlyNew( {
+export default function DomainOnly( {
 	domainPurchase,
 	currency,
 }: {
@@ -35,9 +37,9 @@ export default function DomainOnlyNew( {
 	const planUpgradeCreditsApplicable = useDomainToPlanCreditsApplicable( domainPurchase.blogId );
 
 	return (
-		<div className="checkout-thank-you__domain-only-new-container">
+		<div className="checkout-thank-you__domain-only-container">
 			<Step.CenteredColumnLayout
-				className="step-container-v2--domain-only-new domain-only-new"
+				className="step-container-v2--domain-only"
 				columnWidth={ 6 }
 				heading={
 					<Step.Heading
@@ -105,8 +107,11 @@ export default function DomainOnlyNew( {
 					}
 				/>
 				<Step.LinkButton
-					className="domain-only-new__migrate-link"
-					href={ `/setup/site-migration?siteSlug=${ domainPurchase.meta }` }
+					className="domain-only__migrate-link"
+					href={ addQueryArgs( '/setup/site-migration', {
+						dashboard: getDashboardFromQuery(),
+						siteSlug: domainPurchase.meta,
+					} ) }
 				>
 					{ translate( 'Migrate an existing site' ) }
 				</Step.LinkButton>

@@ -7,9 +7,9 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 export function persistAgentsManagerState( data: Record< string, unknown > ): void {
 	if ( canAccessWpcomApis() ) {
 		wpcomRequest( {
-			path: '/me/preferences',
+			path: '/agents-manager/state',
 			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
+			method: 'POST',
 			body: { calypso_preferences: data },
 		} ).catch( () => {} );
 	} else {

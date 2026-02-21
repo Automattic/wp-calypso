@@ -22,3 +22,13 @@
 - `yarn install`
 - `yarn start` to start the dev server.
 - `yarn start-dashboard` to start the dev server for the Dashboard client only.
+
+## Creating Pull Requests
+
+- Create PRs as draft. Follow the template in .github/PULL_REQUEST_TEMPLATE.md.
+- Follow the branch naming conventions in docs/git-workflow.md.
+- In the PR description:
+  - Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs.
+  - Avoid mentioning people's names.
+  - Do not link to wordpress.com URLs.
+  - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).

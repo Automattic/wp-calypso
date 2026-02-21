@@ -1,4 +1,3 @@
-import { WPCOM_FEATURES_BACKUPS_SELF_SERVE } from '@automattic/calypso-products';
 import { FunctionComponent, ReactNode, useCallback } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
@@ -9,21 +8,25 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 type Props = {
+	feature: string;
 	trueComponent: ReactNode;
 	falseComponent: ReactNode;
 	loadingComponent?: ReactNode;
 };
 
-const NoBackupRestoreFeatureSwitch: FunctionComponent< Props > = ( {
+/**
+ * Renders trueComponent when the site does NOT have the specified feature,
+ * falseComponent when it does. Handles loading state while features are being fetched.
+ */
+const NoFeatureSwitch: FunctionComponent< Props > = ( {
+	feature,
 	trueComponent,
 	falseComponent,
 	loadingComponent,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const hasBackupRestoreFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
-	);
+	const hasFeature = useSelector( ( state ) => siteHasFeature( state, siteId, feature ) );
 
 	const isRequesting = useSelector( ( state ) => isRequestingSiteFeatures( state, siteId ) );
 	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
@@ -34,11 +37,8 @@ const NoBackupRestoreFeatureSwitch: FunctionComponent< Props > = ( {
 		[ isRequesting, siteFeatures ]
 	);
 
-	// Render the `trueComponent` (upsell) if the site doesn't have the backup restore feature.
-	const renderCondition = useCallback(
-		() => ! hasBackupRestoreFeature,
-		[ hasBackupRestoreFeature ]
-	);
+	// Render the `trueComponent` (upsell) if the site doesn't have the feature.
+	const renderCondition = useCallback( () => ! hasFeature, [ hasFeature ] );
 
 	const loadingDefaultPlaceholder = (
 		<div className="loading">
@@ -58,4 +58,4 @@ const NoBackupRestoreFeatureSwitch: FunctionComponent< Props > = ( {
 	);
 };
 
-export default NoBackupRestoreFeatureSwitch;
+export default NoFeatureSwitch;

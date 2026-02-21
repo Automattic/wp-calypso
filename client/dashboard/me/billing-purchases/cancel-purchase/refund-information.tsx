@@ -2,7 +2,11 @@ import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
-import { hasAmountAvailableToRefund, isOneTimePurchase } from '../../../utils/purchase';
+import {
+	hasAmountAvailableToRefund,
+	isOneTimePurchase,
+	shouldShowRefundEligibilityNotice,
+} from '../../../utils/purchase';
 import type { Purchase, Domain } from '@automattic/api-core';
 
 interface CancelPurchaseRefundInformationProps {
@@ -20,7 +24,10 @@ const CancelPurchaseRefundInformation = ( {
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
 	let text;
 
-	if ( purchase.is_refundable ) {
+	// Treat refundable dotcom plans as non-refundable since refund is offered via the notice
+	const treatAsNonRefundable = shouldShowRefundEligibilityNotice( purchase );
+
+	if ( purchase.is_refundable && ! treatAsNonRefundable ) {
 		if ( purchase.is_domain_registration ) {
 			// Domain bought with domain credits, so there's no refund
 			if ( ! hasAmountAvailableToRefund( purchase ) ) {

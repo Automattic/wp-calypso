@@ -7,6 +7,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NoFeatureSwitch from 'calypso/components/jetpack/no-feature-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
@@ -23,7 +24,6 @@ import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
 import MultisiteNoBackupPlanSwitch from './multisite-no-backup-plan-switch';
-import NoBackupRestoreFeatureSwitch from './no-backup-restore-feature-switch';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
@@ -133,7 +133,8 @@ export function showUpsellIfNoBackupRestoreFeature( context, next ) {
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
 
 	context.primary = (
-		<NoBackupRestoreFeatureSwitch
+		<NoFeatureSwitch
+			feature={ WPCOM_FEATURES_BACKUPS_SELF_SERVE }
 			trueComponent={ <UpsellComponent /> }
 			falseComponent={ context.primary }
 		/>
