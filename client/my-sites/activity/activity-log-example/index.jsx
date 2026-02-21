@@ -3,15 +3,13 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import ActivityLogItem from '../activity-log-item';
 
 import './style.scss';
 
 class ActivityLogExample extends Component {
 	render() {
-		const { isIntroDismissed, siteId, siteIsOnFreePlan, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		const exampleContents = [
 			{
@@ -55,12 +53,10 @@ class ActivityLogExample extends Component {
 
 		return (
 			<div className="activity-log-example">
-				{ isIntroDismissed && (
-					<FormattedHeader
-						headerText={ translate( 'Welcome to Activity' ) }
-						subHeaderText={ translate( 'All of your site activity will appear here.' ) }
-					/>
-				) }
+				<FormattedHeader
+					headerText={ translate( 'Welcome to Activity' ) }
+					subHeaderText={ translate( 'All of your site activity will appear here.' ) }
+				/>
 				<FeatureExample role="presentation">
 					{ exampleItems.map( ( log ) => (
 						<ActivityLogItem
@@ -72,7 +68,6 @@ class ActivityLogExample extends Component {
 						/>
 					) ) }
 				</FeatureExample>
-				{ siteIsOnFreePlan && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -80,5 +75,4 @@ class ActivityLogExample extends Component {
 
 export default connect( ( state, { siteId } ) => ( {
 	siteId,
-	isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 } ) )( localize( ActivityLogExample ) );

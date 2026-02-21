@@ -10,6 +10,7 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { useGetSupportInteractions } from './use-get-support-interactions';
 import type {
@@ -130,6 +131,7 @@ const splitConversationsByRecency = (
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
+	const { isCommerceGarden, newInteractionsBotSlug } = useHelpCenterContext();
 
 	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -150,8 +152,29 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		useGetSupportInteractions( 'zendesk' );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
 		useGetSupportInteractions( 'odie' );
+
+	// When in CIAB context, filter interactions to only those matching the CIAB bot slug.
+	// This ensures the chat history only shows CIAB conversations.
+	const filteredOdieSupportInteractions = useMemo( () => {
+		if ( ! isCommerceGarden ) {
+			return odieSupportInteractions;
+		}
+		return odieSupportInteractions?.filter(
+			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
+		);
+	}, [ isCommerceGarden, newInteractionsBotSlug, odieSupportInteractions ] );
+
+	const filteredOtherSupportInteractions = useMemo( () => {
+		if ( ! isCommerceGarden ) {
+			return otherSupportInteractions;
+		}
+		return otherSupportInteractions?.filter(
+			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
+		);
+	}, [ isCommerceGarden, newInteractionsBotSlug, otherSupportInteractions ] );
+
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
-		useGetOdieConversations( odieSupportInteractions );
+		useGetOdieConversations( filteredOdieSupportInteractions );
 
 	const isLoadingInteractions =
 		isLoadingOtherSupportInteractions ||
@@ -159,8 +182,11 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		isLoadingOdieConversations;
 
 	const supportInteractions: SupportInteraction[] = useMemo(
-		() => [ ...( odieSupportInteractions || [] ), ...( otherSupportInteractions || [] ) ],
-		[ odieSupportInteractions, otherSupportInteractions ]
+		() => [
+			...( filteredOdieSupportInteractions || [] ),
+			...( filteredOtherSupportInteractions || [] ),
+		],
+		[ filteredOdieSupportInteractions, filteredOtherSupportInteractions ]
 	);
 
 	useEffect( () => {
@@ -175,7 +201,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...filterAndUpdateConversationsWithStatus( zendeskConversations, supportInteractions ),
 			...getAndUpdateOdieConversationsWithSupportInteractions(
 				odieConversations,
-				odieSupportInteractions || []
+				filteredOdieSupportInteractions || []
 			),
 			...( loggedOutSession && loggedOutChat.data
 				? [
@@ -198,8 +224,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		isLoadingInteractions,
 		loggedOutSession,
 		loggedOutChat.data,
-		odieSupportInteractions,
-		otherSupportInteractions,
+		filteredOdieSupportInteractions,
+		filteredOtherSupportInteractions,
 		odieConversations,
 		supportInteractions,
 	] );
