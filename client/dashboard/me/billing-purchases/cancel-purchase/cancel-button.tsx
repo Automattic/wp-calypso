@@ -43,7 +43,7 @@ export default function CancelButton( {
 			! state.atomicRevertConfirmed &&
 			purchase.is_plan ) ||
 		( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
-		! ( state?.customerConfirmedUnderstanding || false );
+		( ! state.showDomainOptionsStep && ! state.customerConfirmedUnderstanding );
 
 	const cancelButtonText = ( () => {
 		if ( includedDomainPurchase ) {

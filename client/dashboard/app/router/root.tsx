@@ -1,4 +1,8 @@
-import { rawUserPreferencesQuery, queryClient } from '@automattic/api-queries';
+import {
+	rawUserPreferencesQuery,
+	jetpackSiteUrlsQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
@@ -21,6 +25,11 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => {
 		if ( cause === 'preload' ) {
 			return { fullPageLoad: false };
+		}
+
+		if ( cause === 'enter' ) {
+			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
+			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );

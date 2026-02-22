@@ -8,6 +8,7 @@ import {
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -333,6 +334,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	return purchase.product_name;
 }
 
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
+	}
+	return getTitleForDisplay( purchase );
+}
+
 /**
  * Return a short description of a purchase, usually used as a subtitle for that
  * purchase's product name (as defined by `getTitleForDisplay`).
@@ -641,9 +654,29 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns true if the refund eligibility notice should be shown for the given purchase.
+ *
+ * The notice is shown for refundable WordPress.com plans when the feature flag is enabled.
+ * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
+ * flow, offering the refund as an explicit opt-in action instead.
+ */
+export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
+	return (
+		config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+		hasAmountAvailableToRefund( purchase ) &&
+		isDotcomPlan( purchase )
+	);
+}
+
+/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
+	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 

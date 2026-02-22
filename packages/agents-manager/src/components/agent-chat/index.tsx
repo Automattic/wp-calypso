@@ -1,7 +1,9 @@
+import { SubmitOptions } from '@automattic/agenttic-client';
 import {
 	AgentUI,
 	createMessageRenderer,
 	EmptyView,
+	ImageUploader,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
@@ -14,8 +16,10 @@ import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
+import type { UseImageUploadResult } from '../../utils/load-external-providers';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -39,7 +43,7 @@ interface AgentChatProps {
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Called when the user submits a message. */
-	onSubmit: ( message: string ) => void;
+	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void > | void;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -60,6 +64,14 @@ interface AgentChatProps {
 	onInputChange?: ( value: string ) => void;
 	/** Whether to render the floating chat in compact mode. */
 	isCompactMode?: boolean;
+	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
+	imageUpload?: UseImageUploadResult;
+	/** Whether to show the feedback text input (after thumbs down). */
+	showFeedbackInput?: boolean;
+	/** Called when the user submits feedback text. */
+	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
+	/** Called when the user cancels the feedback input. */
+	onCancelFeedback?: () => void;
 }
 
 export default function AgentChat( {
@@ -84,12 +96,17 @@ export default function AgentChat( {
 	inputValue,
 	onInputChange,
 	isCompactMode = false,
+	imageUpload,
+	showFeedbackInput = false,
+	onSubmitFeedbackText = () => Promise.resolve(),
+	onCancelFeedback = () => {},
 }: AgentChatProps ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
@@ -145,9 +162,31 @@ export default function AgentChat( {
 			<AgentUI.ConversationView>
 				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ showFeedbackInput && (
+					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
+				) }
 				<AgentUI.Footer>
 					<AgentUI.Suggestions />
 					<AgentUI.Notice />
+					{ imageUpload && (
+						<ImageUploader
+							images={ imageUpload.pendingImages }
+							uploadingImages={ imageUpload.uploadingImages }
+							onFilesSelected={ imageUpload.handleFilesSelected }
+							onRemoveImage={ imageUpload.handleRemoveImage }
+							acceptedFileTypes={ [
+								'image/jpeg',
+								'image/png',
+								'image/heic',
+								'image/heif',
+								'image/heic-sequence',
+								'image/heif-sequence',
+							] }
+							showFileMetadata
+							allowDragToInsert={ false }
+						/>
+					) }
+
 					<SelectedBlock />
 					<AgentUI.Input />
 				</AgentUI.Footer>

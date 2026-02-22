@@ -1,3 +1,4 @@
+import { PRODUCT_CATEGORY_PRESSABLE_ADDON } from '../../constants';
 import {
 	PLAN_CATEGORY_STANDARD,
 	PLAN_CATEGORY_ENTERPRISE,
@@ -13,6 +14,7 @@ export type PressablePlan = {
 	storage: number;
 	category: string;
 	worker?: number;
+	unit?: string;
 };
 
 const PLAN_DATA: Record< string, PressablePlan > = {
@@ -439,6 +441,88 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		storage: 175,
 		worker: 25,
 		category: PLAN_CATEGORY_PREMIUM,
+	},
+
+	// [Add-ons] Pressable add-ons capacity values.
+	site_addon_1: {
+		slug: 'site_addon_1',
+		install: 1,
+		visits: 10000,
+		storage: 10,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	site_addon_5: {
+		slug: 'site_addon_5',
+		install: 5,
+		visits: 50000,
+		storage: 20,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	site_addon_10: {
+		slug: 'site_addon_10',
+		install: 10,
+		visits: 100000,
+		storage: 20,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	visits_addon_10k: {
+		slug: 'visits_addon_10k',
+		install: 0,
+		visits: 10000,
+		storage: 0,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	storage_addon_1gb: {
+		slug: 'storage_addon_1gb',
+		install: 0,
+		visits: 0,
+		storage: 1,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	titan_addon: {
+		slug: 'titan_addon',
+		install: 0,
+		visits: 0,
+		storage: 0,
+		unit: 'inbox',
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+
+	// [Add-ons] License key aliases used in A4A/Jetpack licensing.
+	'pressable-addon-sites-1': {
+		slug: 'pressable-addon-sites-1',
+		install: 1,
+		visits: 10000,
+		storage: 10,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-sites-5': {
+		slug: 'pressable-addon-sites-5',
+		install: 5,
+		visits: 50000,
+		storage: 20,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-sites-10': {
+		slug: 'pressable-addon-sites-10',
+		install: 10,
+		visits: 100000,
+		storage: 20,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-visits-10k': {
+		slug: 'pressable-addon-visits-10k',
+		install: 0,
+		visits: 10000,
+		storage: 0,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-1gb': {
+		slug: 'pressable-addon-storage-1gb',
+		install: 0,
+		visits: 0,
+		storage: 1,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	},
 };
 

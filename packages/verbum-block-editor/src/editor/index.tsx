@@ -10,9 +10,11 @@ import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/com
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import React, { useCallback } from '@wordpress/element';
+import React, { useState, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
+import clsx from 'clsx';
 import { safeParse } from '../utils';
+import InitialBlockSelector from './components/InitialBlockSelector';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
 import type { FC, MouseEvent } from 'react';
@@ -20,6 +22,7 @@ import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mod
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
+const EDITOR_MAIN_CLASS: string = 'editor__main';
 const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) => {
 	return css + '\n' + item;
 }, '' );
@@ -29,6 +32,7 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
  */
 export const Editor: FC< EditorProps > = ( {
 	initialContent = '',
+	focusOnMount = true,
 	onChange,
 	isRTL,
 	isDarkMode,
@@ -43,6 +47,8 @@ export const Editor: FC< EditorProps > = ( {
 	} = useStateWithHistory(
 		initialContent !== '' ? safeParse( initialContent ) : [ createBlock( 'core/paragraph' ) ]
 	) as unknown as StateWithUndoManager;
+	const [ isEditing, setIsEditing ] = useState( false );
+
 	/**
 	 * This prevents the editor from copying the theme styles inside the iframe. We don't want to copy the styles inside.
 	 * See: https://github.com/WordPress/gutenberg/blob/4c319590947b5f7853411e3c076861193942c6d2/packages/block-editor/src/components/iframe/index.js#L160
@@ -102,7 +108,12 @@ export const Editor: FC< EditorProps > = ( {
 						},
 					] }
 				>
-					<div className="editor__header">
+					<InitialBlockSelector
+						editorClass={ EDITOR_MAIN_CLASS }
+						focusOnMount={ focusOnMount }
+						onBlockSelect={ () => setIsEditing( true ) }
+					/>
+					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
 								<BlockToolbar hideDragHandle />
@@ -110,7 +121,7 @@ export const Editor: FC< EditorProps > = ( {
 							<Popover.Slot />
 						</div>
 					</div>
-					<div className="editor__main">
+					<div className={ EDITOR_MAIN_CLASS }>
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas

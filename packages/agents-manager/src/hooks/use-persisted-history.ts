@@ -121,11 +121,11 @@ class MemoryHistory {
 
 		if ( canAccessWpcomApis() ) {
 			wpcomRequest( {
-				path: '/me/preferences',
+				path: '/agents-manager/state',
 				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
+				method: 'POST',
 				body: {
-					calypso_preferences: {
+					state: {
 						agents_manager_router_history: { entries: this.entries, index: this.index },
 					},
 				},

@@ -64,27 +64,27 @@ const AddReddit = () => {
 						<ul className="reader-add-reddit__instructions-list">
 							<li>
 								<strong>{ translate( 'Front page:' ) }</strong>
-								{ ' https://www.reddit.com/.rss' }
+								{ ' www.reddit.com/.rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'A subreddit:' ) }</strong>
-								{ ' https://www.reddit.com/r/{ SUBREDDIT }/.rss' }
+								{ ' www.reddit.com/r/{ SUBREDDIT }/.rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'A user:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/.rss' }
+								{ ' www.reddit.com/user/{ REDDITOR }/.rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'User comments:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/comments/.rss' }
+								{ ' www.reddit.com/user/{ REDDITOR }/comments/.rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'User submissions:' ) }</strong>
-								{ ' https://www.reddit.com/user/{ REDDITOR }/submitted/.rss' }
+								{ ' www.reddit.com/user/{ REDDITOR }/submitted/.rss' }
 							</li>
 							<li>
 								<strong>{ translate( 'Search result:' ) }</strong>
-								{ ' https://www.reddit.com/search.rss?q={ QUERY }' }
+								{ ' www.reddit.com/search.rss?q={ QUERY }' }
 							</li>
 						</ul>
 					</div>
