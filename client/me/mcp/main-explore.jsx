@@ -16,7 +16,6 @@
 import { updateBigSkyPlugin } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
-	queryClient,
 	siteQueryFilter,
 	sitesQuery,
 	userSettingsQuery,
@@ -185,8 +184,10 @@ function McpComponentExplore( { path } ) {
 		},
 		onSuccess: () => {
 			bigSkyAvailableSiteIds.forEach( ( siteId ) => {
-				queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
-				queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+				tanstackQueryClient.invalidateQueries( {
+					queryKey: bigSkyPluginQuery( siteId ).queryKey,
+				} );
+				tanstackQueryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			} );
 			reduxDispatch(
 				successNotice( translate( 'AI assistant settings saved.' ), {

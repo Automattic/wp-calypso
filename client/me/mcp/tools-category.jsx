@@ -14,7 +14,6 @@ import {
 	Panel,
 	Card,
 	CardBody,
-	CardDivider,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
@@ -118,7 +117,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 		return adjectiveMap[ singularised ] || singularised;
 	};
 
-	// Render tools sorted by entity group with dividers
+	// Render tools sorted by entity group with dividers between groups.
 	const renderToolsWithDividers = ( categoryTools ) => {
 		const sorted = [ ...categoryTools ].sort( ( a, b ) => {
 			const ea = getEntity( a[ 1 ].title );
@@ -146,13 +145,12 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 			const entity = getEntity( tool.title );
 			if ( showDividers && index > 0 && entity !== lastEntity ) {
 				elements.push(
-					<hr
+					<div
 						key={ `divider-${ toolId }` }
 						style={ {
 							margin: '8px 0',
-							border: 'none',
-							borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-							width: '100%',
+							height: '1px',
+							backgroundColor: 'var(--color-border-subtle)',
 						} }
 					/>
 				);
@@ -212,7 +210,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 										}
 									/>
 								</CardBody>
-								<CardDivider />
+								<div style={ { height: '1px', backgroundColor: 'var(--color-border-subtle)' } } />
 								<CardBody>
 									<VStack spacing={ 3 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
 								</CardBody>
