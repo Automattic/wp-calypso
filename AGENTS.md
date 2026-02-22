@@ -19,9 +19,44 @@
 
 ## Development
 
-- `yarn install`
-- `yarn start` to start the dev server.
-- `yarn start-dashboard` to start the dev server for the Dashboard client only.
+```bash
+# Setup
+yarn install
+
+# Build and start the dev server
+yarn start
+
+# Build and start the dev server for the Dashboard client only.
+yarn start-dashboard
+```
+
+## Testing instructions
+
+> **Note**: E2E tests require a local Calypso development instance to be running.
+
+```bash
+# JavaScript tests
+yarn test                                       # Run unit tests for client, packages, server, and build-tools
+yarn test-build-tools                           # Run unit tests for build-tools
+yarn test-client                                # Run unit tests for client
+yarn test-integration                           # Run integration tests
+yarn test-apps                                  # Run apps unit tests
+yarn test-packages                              # Run packages unit tests
+yarn test-server                                # Run server unit tests
+yarn test-server:coverage                       # Run server unit tests with coverage info
+
+yarn test-client:watch                          # Run unit tests for client in watch mode
+yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory
+yarn test-client --testNamePattern="<TestName>" # Run a specific client unit test
+
+# E2E tests - refer to: test/e2e/AGENTS.md
+
+# Code Quality
+yarn lint           # Lint everything
+yarn lint:css       # Lint CSS
+yarn lint:js        # Lint JavaScript
+yarn reformat-files # Fix formatting with Prettier
+```
 
 ## Creating Pull Requests
 
