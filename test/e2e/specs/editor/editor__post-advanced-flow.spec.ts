@@ -144,6 +144,7 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 	test.describe( 'Revert post to draft', () => {
 		test( 'Given published post When reopening from Posts page Then editor opens', async () => {
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
+			postsPage = new PostsPage( page );
 			await postsPage.visit();
 			await postsPage.clickPost( postTitle );
 			editorPage = new EditorPage( page );
@@ -170,11 +171,11 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 
 	test.describe( 'Trash post', () => {
 		test.beforeAll( async () => {
+			postsPage = new PostsPage( page );
 			await postsPage.visit();
 		} );
 
 		test( 'Given draft post When moving to trash Then post is trashed', async () => {
-			await postsPage.clickTab( 'Drafts' );
 			await postsPage.clickActionItemForPost( { title: postTitle, action: 'Trash' } );
 		} );
 
@@ -187,6 +188,11 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 	} );
 
 	test.describe( 'Permanently delete post', () => {
+		test.beforeAll( async () => {
+			postsPage = new PostsPage( page );
+			await postsPage.visit();
+		} );
+
 		test( 'Given trashed posts When viewing trash tab Then posts are listed', async () => {
 			await postsPage.clickTab( 'Trash' );
 		} );
