@@ -68,11 +68,8 @@ test.describe(
 
 			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
-		} );
 
-		test( 'Given user authenticated When starting new post Then editor loads with title', async () => {
 			editorPage = new EditorPage( page );
-
 			await editorPage.visit( 'post', {
 				siteSlug: testAccount.getSiteURL( { protocol: false } ),
 			} );
