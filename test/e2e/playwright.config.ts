@@ -42,7 +42,7 @@ function getWorkers(): number | string {
 	if ( process.env.PW_WORKERS ) {
 		return parseInt( process.env.PW_WORKERS, 10 );
 	}
-	return process.env.CI ? '50%' : '100%';
+	return process.env.CI ? '20%' : '100%';
 }
 
 /**
