@@ -1,4 +1,3 @@
-import { startSiteCollisionListener } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
@@ -39,7 +38,6 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 interface RenderOptions {
 	user?: User;
 	queryClient?: QueryClient;
-	useSiteCollisionListener?: boolean;
 }
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
@@ -52,10 +50,6 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 			},
 		} );
 	const router = createTestRouter( ui );
-
-	if ( options.useSiteCollisionListener ) {
-		startSiteCollisionListener( queryClient );
-	}
 
 	const recordTracksEvent = jest.fn();
 	const recordPageView = jest.fn();
