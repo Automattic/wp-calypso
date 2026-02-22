@@ -41,19 +41,17 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		// Initialize page objects that will be used across describe blocks
-		postsPage = new PostsPage( page );
-		editorPage = new EditorPage( page );
 	} );
 
 	test.describe( 'Publish post', () => {
 		test( 'Given user on Posts page When creating new post Then editor loads', async () => {
+			postsPage = new PostsPage( page );
 			await postsPage.visit();
 			await postsPage.newPost();
 		} );
 
 		test( 'Given editor loaded When entering post title Then title is set', async () => {
+			editorPage = new EditorPage( page );
 			await editorPage.enterTitle( postTitle );
 		} );
 
