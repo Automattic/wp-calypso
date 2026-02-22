@@ -1,3 +1,4 @@
+import { startSiteCollisionListener } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
@@ -37,16 +38,20 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 
 interface RenderOptions {
 	user?: User;
+	queryClient?: QueryClient;
 }
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
-	const { user = defaultUser } = options;
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	} );
+	const { user = defaultUser, queryClient: providedClient } = options;
+	const queryClient =
+		providedClient ??
+		new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	const router = createTestRouter( ui );
+	startSiteCollisionListener( queryClient );
 
 	const recordTracksEvent = jest.fn();
 	const recordPageView = jest.fn();

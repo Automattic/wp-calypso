@@ -127,6 +127,7 @@ function AgentSetup( { currentRoute }: UnifiedAIAgentProps ): JSX.Element | null
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
+			useImageUpload={ loadedProviders.useImageUpload }
 		/>
 	);
 }

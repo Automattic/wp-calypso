@@ -6,7 +6,6 @@ import { useState, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
-import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
@@ -25,14 +24,12 @@ export default function CreditCardPayButton( {
 	onClick,
 	store,
 	shouldUseEbanx,
-	shouldUseVgs,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
-	shouldUseVgs?: boolean;
 	submitButtonContent: ReactNode;
 } ) {
 	const { __ } = useI18n();
@@ -130,9 +127,8 @@ export default function CreditCardPayButton( {
 				}
 
 				if ( paymentPartner === 'ebanx' ) {
-					debug( 'submitting ebanx payment', { useVgs: shouldUseVgs } );
+					debug( 'submitting ebanx payment' );
 
-					// Common billing details for both VGS and traditional flow
 					const billingDetails = {
 						name: cardholderName?.value || '',
 						countryCode: fields?.countryCode?.value || '',
@@ -145,49 +141,37 @@ export default function CreditCardPayButton( {
 						document: fields?.document?.value || '', // Taxpayer Identification Number
 					};
 
-					if ( shouldUseVgs ) {
-						// VGS flow: validate form before attempting submission
-						// This will trigger VGS to show validation errors for invalid fields
-						const vgsValidation = validateVgsForm();
-						if ( ! vgsValidation.isValid ) {
-							debug( 'VGS form validation failed', vgsValidation.errorMessage );
-							// Mark form submission as attempted to show field errors
-							store.dispatch( actions.setFormSubmitAttempted( true ) );
-							setDisplayFieldsError(
-								vgsValidation.errorMessage || __( 'Please check your card details and try again.' )
-							);
-							return;
-						}
-
-						// VGS form is valid, proceed with submission
-						// Set form to submitting state immediately to show loading indicator
-						setFormSubmitting();
-						try {
-							const vgsTokens = await submitVgsForm();
-							onClick( {
-								...billingDetails,
-								paymentPartner: 'ebanx',
-								vgsTokens,
-							} );
-						} catch ( error ) {
-							debug( 'VGS form submission failed', error );
-							// Reset form status to allow user to retry
-							setFormReady();
-							setDisplayFieldsError(
-								__( 'Failed to process card information. Please check your details and try again.' )
-							);
-						}
+					// VGS flow: validate form before attempting submission
+					// This will trigger VGS to show validation errors for invalid fields
+					const vgsValidation = validateVgsForm();
+					if ( ! vgsValidation.isValid ) {
+						debug( 'VGS form validation failed', vgsValidation.errorMessage );
+						// Mark form submission as attempted to show field errors
+						store.dispatch( actions.setFormSubmitAttempted( true ) );
+						setDisplayFieldsError(
+							vgsValidation.errorMessage || __( 'Please check your card details and try again.' )
+						);
 						return;
 					}
 
-					// Traditional flow: use card data from form fields
-					onClick( {
-						...billingDetails,
-						paymentPartner: 'ebanx',
-						number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
-						cvv: fields?.cvv?.value || '',
-						'expiration-date': fields[ 'expiration-date' ]?.value || '',
-					} );
+					// VGS form is valid, proceed with submission
+					// Set form to submitting state immediately to show loading indicator
+					setFormSubmitting();
+					try {
+						const vgsTokens = await submitVgsForm();
+						onClick( {
+							...billingDetails,
+							paymentPartner: 'ebanx',
+							vgsTokens,
+						} );
+					} catch ( error ) {
+						debug( 'VGS form submission failed', error );
+						// Reset form status to allow user to retry
+						setFormReady();
+						setDisplayFieldsError(
+							__( 'Failed to process card information. Please check your details and try again.' )
+						);
+					}
 					return;
 				}
 
@@ -253,70 +237,32 @@ function isCreditCardFormValid(
 
 			const rawState = selectors.getFields( store.getState() );
 
-			// Check if we're using VGS (determined by feature flag at runtime)
-			// Simple heuristic: if card number field is empty, we're likely using VGS
-			const isUsingVgs = ! rawState?.number?.value;
-
-			if ( isUsingVgs ) {
-				// For VGS mode, we validate billing fields only here
-				// VGS card fields validation is handled separately via useVgsFormValidation hook
-				// which checks the VGS form state directly
-				let isValid = true;
-				const requiredFields = [
-					'cardholderName',
-					'state',
-					'city',
-					'postal-code',
-					'address-1',
-					'street-number',
-					'phone-number',
-					'document',
-				];
-
-				requiredFields.forEach( ( fieldName ) => {
-					const fieldValue = rawState[ fieldName ]?.value;
-					if ( ! fieldValue || fieldValue.trim() === '' ) {
-						isValid = false;
-						store.dispatch( actions.setFieldError( fieldName, __( 'This field is required' ) ) );
-					}
-				} );
-
-				debug( 'ebanx validation (VGS mode) - cardholder name and contact details', {
-					isValid,
-				} );
-
-				return isValid;
-			}
-
-			// Traditional flow: validate all card and contact fields
+			// Validate billing fields only here
+			// VGS card fields validation is handled separately via useVgsFormValidation hook
+			// which checks the VGS form state directly
 			let isValid = true;
-			const cardholderName = rawState.cardholderName;
-			const numberWithoutSpaces = {
-				value: rawState?.number?.value?.replace( /\s+/g, '' ),
-			}; // the validator package we're using requires this
-			const paymentDetailsData = {
-				...rawState,
-				country: rawState.countryCode,
-				name: cardholderName,
-				number: numberWithoutSpaces,
-			};
-			const validationResults = validatePaymentDetails(
-				Object.entries( paymentDetailsData ).reduce< Record< string, string > >(
-					( accum, [ key, managedValue ] ) => {
-						accum[ key ] = managedValue?.value;
-						return accum;
-					},
-					{}
-				),
-				'ebanx'
-			);
-			Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
-				errors.map( ( error ) => {
+			const requiredFields = [
+				'cardholderName',
+				'state',
+				'city',
+				'postal-code',
+				'address-1',
+				'street-number',
+				'phone-number',
+				'document',
+			];
+
+			requiredFields.forEach( ( fieldName ) => {
+				const fieldValue = rawState[ fieldName ]?.value;
+				if ( ! fieldValue || fieldValue.trim() === '' ) {
 					isValid = false;
-					store.dispatch( actions.setFieldError( key, error ) );
-				} );
+					store.dispatch( actions.setFieldError( fieldName, __( 'This field is required' ) ) );
+				}
 			} );
-			debug( 'ebanx validation (traditional mode) - card details', validationResults );
+
+			debug( 'ebanx validation - cardholder name and contact details', {
+				isValid,
+			} );
 
 			return isValid;
 		}

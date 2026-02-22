@@ -661,10 +661,26 @@ class ReaderStream extends Component {
 		let baseClassnames = clsx( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
+		const sidebarContentFn = this.props.streamSidebar;
+
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent?.();
-			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
-				body = <EmptyContent />;
+			let emptyBody = this.props.emptyContent?.();
+			if ( ! emptyBody && this.props.showDefaultEmptyContentIfMissing ) {
+				emptyBody = <EmptyContent />;
+			}
+
+			// In wide display with a sidebar, render the two-column layout so the sidebar
+			// (with follow button, subscriber count, tags) remains visible for empty feeds.
+			if ( wideDisplay && sidebarContentFn && streamType !== 'search' ) {
+				body = (
+					<div className="stream__two-column">
+						<div className="reader__content">{ emptyBody }</div>
+						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+					</div>
+				);
+				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+			} else {
+				body = emptyBody;
 			}
 			showingStream = false;
 		} else {
@@ -685,8 +701,6 @@ class ReaderStream extends Component {
 					selectedItem={ selectedPostKey }
 				/>
 			);
-
-			const sidebarContentFn = this.props.streamSidebar;
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {

@@ -1,3 +1,4 @@
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { chevronLeftSmall } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -5,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import WooIconSmall from 'calypso/assets/images/woocommerce/woo_icon_small.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import Main from 'calypso/components/main';
@@ -54,6 +56,13 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		} );
 
 		const darkColorScheme = false;
+		const wooTopBarLogo = (
+			<img
+				src={ WooIconSmall }
+				alt={ translate( 'WooCommerce' ) }
+				className="jetpack-connect__woo-topbar-icon"
+			/>
+		);
 
 		return (
 			<Main className={ clsx( className, wrapperClassName ) }>
@@ -97,6 +106,11 @@ export class JetpackConnectMainWrapper extends PureComponent {
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							darkColorScheme={ darkColorScheme }
 						/>
+					</div>
+				) }
+				{ ! useCompactLogo && isWooJPC && (
+					<div className="jetpack-connect__woo-topbar">
+						<Step.TopBar compactLogo="always" logo={ wooTopBarLogo } />
 					</div>
 				) }
 				{ children }

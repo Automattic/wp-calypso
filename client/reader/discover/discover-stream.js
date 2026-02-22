@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
-import Reddit from 'calypso/reader/discover/components/reddit';
+import AddNew from 'calypso/reader/new-subscription/components/add-new';
+import AddReddit from 'calypso/reader/new-subscription/components/add-reddit';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -32,8 +32,8 @@ const DiscoverStream = ( props ) => {
 	};
 
 	const TAB_COMPONENTS = {
-		[ ADD_NEW_TAB ]: DiscoverAddNew,
-		[ REDDIT_TAB ]: Reddit,
+		[ ADD_NEW_TAB ]: AddNew,
+		[ REDDIT_TAB ]: AddReddit,
 	};
 
 	const ContentComponent = TAB_COMPONENTS[ selectedTab ];

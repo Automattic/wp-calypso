@@ -1,4 +1,8 @@
-import { PLAN_BUSINESS, WPCOM_FEATURES_SCAN, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -86,7 +90,7 @@ const ScanUpsellBody = () => {
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
 	const hasScanFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
 	);
 
 	// Show Business plan upsell for simple/atomic sites without scan feature

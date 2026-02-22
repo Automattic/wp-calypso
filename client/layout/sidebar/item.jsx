@@ -19,7 +19,7 @@ export default function SidebarItem( props ) {
 		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { icon, customIcon, count, badge } = props;
+	const { icon, customIcon, count, badge, inlineIcon } = props;
 
 	let _preloaded = false;
 
@@ -84,6 +84,9 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
+				{ inlineIcon && (
+					<span className={ 'sidebar__inline-icon dashicons-before ' + inlineIcon } aria-hidden />
+				) }
 				{ ( showAsExternal || props.forceShowExternalIcon ) &&
 					! ( sidebarIsCollapsed || props.sidebarIsCollapsed ) && (
 						<Icon icon={ external } size={ 18 } />
@@ -114,4 +117,5 @@ SidebarItem.propTypes = {
 	count: PropTypes.number,
 	badge: PropTypes.string,
 	sidebarIsCollapsed: PropTypes.bool,
+	inlineIcon: PropTypes.string,
 };

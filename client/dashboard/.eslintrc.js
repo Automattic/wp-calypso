@@ -166,5 +166,6 @@ module.exports = {
 				],
 			},
 		],
+		'@tanstack/query/exhaustive-deps': 'error',
 	},
 };

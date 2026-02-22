@@ -2,7 +2,10 @@ import { Badge, Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
-import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import {
+	isPressableAddonProduct,
+	isPressableHostingProduct,
+} from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import useGetPressablePlanByProductId from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan-by-product-id';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -48,6 +51,8 @@ export default function LicenseDetails( {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isPressableAddonLicense =
+		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( product );
 	const shouldShowSubscription = subscription && licenseState !== LicenseState.Revoked;
 	const subscriptionDateLabel = ( () => {
 		if ( ! shouldShowSubscription ) {
@@ -124,51 +129,20 @@ export default function LicenseDetails( {
 								<Gridicon icon="clipboard" />
 							</ClipboardButton>
 						</div>
-
-						{ shouldShowSubscription && (
-							<>
-								<div className="license-details__subscription-row">
-									{ subscriptionBadgeLabel && (
-										<Badge
-											type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
-											className="license-details__subscription-badge"
-										>
-											{ subscriptionBadgeLabel }
-										</Badge>
-									) }
-									<span className="license-details__subscription-label">
-										{ subscriptionDateLabel }
-									</span>
-									<span className="license-details__subscription-date">
-										{ subscription?.expiry ? (
-											<FormattedDate
-												date={ subscription.expiry }
-												format={ DETAILS_DATE_FORMAT_SHORT }
-											/>
-										) : (
-											'-'
-										) }
-										{ subscriptionIntervalLabel && (
-											<span className="license-details__subscription-interval">
-												{ ` ${ subscriptionIntervalLabel }` }
-											</span>
-										) }
-									</span>
-								</div>
-							</>
-						) }
 					</li>
 				) }
-				{ isPressableLicense && licenseState !== LicenseState.Revoked && (
-					<div>
-						<h4 className="license-details__label">
-							{ translate( 'Manage your Pressable licenses' ) }
-						</h4>
-						{ ! referral && pressablePlan && (
-							<PressableUsageDetails existingPlan={ pressablePlan } />
-						) }
-					</div>
-				) }
+				{ isPressableLicense &&
+					! isPressableAddonLicense &&
+					licenseState !== LicenseState.Revoked && (
+						<div>
+							<h4 className="license-details__label">
+								{ translate( 'Manage your Pressable licenses' ) }
+							</h4>
+							{ ! referral && pressablePlan && (
+								<PressableUsageDetails existingPlan={ pressablePlan } />
+							) }
+						</div>
+					) }
 
 				<li className="license-details__list-item-small">
 					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
@@ -217,6 +191,32 @@ export default function LicenseDetails( {
 				productId={ productId }
 				subscription={ subscription }
 			/>
+
+			{ shouldShowSubscription ? (
+				<div className="license-details__subscription-row">
+					{ subscriptionBadgeLabel && (
+						<Badge
+							type={ subscription?.status === 'inactive' ? 'info-green' : 'info' }
+							className="license-details__subscription-badge"
+						>
+							{ subscriptionBadgeLabel }
+						</Badge>
+					) }
+					<span className="license-details__subscription-label">{ subscriptionDateLabel }</span>
+					<span className="license-details__subscription-date">
+						{ subscription?.expiry ? (
+							<FormattedDate date={ subscription.expiry } format={ DETAILS_DATE_FORMAT_SHORT } />
+						) : (
+							'-'
+						) }
+						{ subscriptionIntervalLabel && (
+							<span className="license-details__subscription-interval">
+								{ ` ${ subscriptionIntervalLabel }` }
+							</span>
+						) }
+					</span>
+				</div>
+			) : null }
 		</Card>
 	);
 }

@@ -22,21 +22,6 @@ jest.mock( '@wordpress/data', () => ( {
 	register: jest.fn(),
 } ) );
 
-jest.mock(
-	'@automattic/api-queries',
-	() => {
-		// Use the real updateUserSettings from api-core so nock can intercept HTTP calls
-		const { updateUserSettings } = jest.requireActual( '@automattic/api-core' );
-		return {
-			userSettingsQuery: jest.fn(),
-			userSettingsMutation: jest.fn( () => ( {
-				mutationFn: updateUserSettings,
-			} ) ),
-		};
-	},
-	{ virtual: true }
-);
-
 describe( 'GravatarProfileSection Notifications', () => {
 	beforeEach( () => {
 		( useDispatch as jest.Mock ).mockReturnValue( {
@@ -44,11 +29,10 @@ describe( 'GravatarProfileSection Notifications', () => {
 			createErrorNotice: mockCreateErrorNotice,
 		} );
 
-		const { userSettingsQuery } = require( '@automattic/api-queries' );
-		userSettingsQuery.mockReturnValue( {
-			queryKey: [ 'me', 'settings' ],
-			queryFn: () => Promise.resolve( mockUserSettings ),
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, mockUserSettings );
 	} );
 
 	it( 'should show success notification when form is saved successfully', async () => {
