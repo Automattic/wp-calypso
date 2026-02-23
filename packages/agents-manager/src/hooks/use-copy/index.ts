@@ -1,5 +1,5 @@
 import { createElement, useEffect } from '@wordpress/element';
-import { check, copy, Icon } from '@wordpress/icons';
+import { copy, Icon } from '@wordpress/icons';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -33,65 +33,38 @@ function getCopyableText( message: UIMessage ): string {
  */
 export default function useCopy( registerMessageActions: RegisterMessageActions ): void {
 	useEffect( () => {
-		let copiedId: string | null = null;
-		let timer: ReturnType< typeof setTimeout >;
-
-		const getActions = ( message: UIMessage ) => {
-			if ( message.role !== 'agent' ) {
-				return [];
-			}
-
-			const text = getCopyableText( message );
-			if ( ! text ) {
-				return [];
-			}
-
-			const isCopied = copiedId === message.id;
-
-			return [
-				{
-					id: 'copy',
-					label: isCopied ? 'Copied' : 'Copy',
-					disabled: isCopied,
-					icon: createElement( Icon, {
-						icon: isCopied ? check : copy,
-						className:
-							'agents-manager-message-action-icon agents-manager-message-action-icon--copy',
-					} ),
-					onClick: async () => {
-						try {
-							await navigator.clipboard.writeText( text );
-						} catch ( error ) {
-							// eslint-disable-next-line no-console
-							console.error( '[useCopy] Failed to copy text to clipboard:', error );
-							return;
-						}
-
-						copiedId = message.id;
-						registerMessageActions( {
-							id: 'agents-manager-copy',
-							actions: getActions,
-						} );
-
-						timer = setTimeout( () => {
-							copiedId = null;
-							registerMessageActions( {
-								id: 'agents-manager-copy',
-								actions: getActions,
-							} );
-						}, 2000 );
-					},
-				},
-			];
-		};
-
 		registerMessageActions( {
 			id: 'agents-manager-copy',
-			actions: getActions,
-		} );
+			actions: ( message: UIMessage ) => {
+				if ( message.role !== 'agent' ) {
+					return [];
+				}
 
-		return () => {
-			clearTimeout( timer );
-		};
+				const text = getCopyableText( message );
+				if ( ! text ) {
+					return [];
+				}
+
+				return [
+					{
+						id: 'copy',
+						label: 'Copy',
+						icon: createElement( Icon, {
+							icon: copy,
+							className:
+								'agents-manager-message-action-icon agents-manager-message-action-icon--copy',
+						} ),
+						onClick: async () => {
+							try {
+								await navigator.clipboard.writeText( text );
+							} catch ( error ) {
+								// eslint-disable-next-line no-console
+								console.error( '[useCopy] Failed to copy text to clipboard:', error );
+							}
+						},
+					},
+				];
+			},
+		} );
 	}, [ registerMessageActions ] );
 }
