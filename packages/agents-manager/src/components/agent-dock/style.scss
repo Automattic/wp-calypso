@@ -404,22 +404,7 @@ body.post-new-php.agents-manager-sidebar-container {
 
 /* Agenttic UI: Styles for both docked and undocked chat */
 .agenttic {
-	.Message-module_message ul {
-		margin-left: var( --spacing-2 );
-	}
-
 	.Messages-module_container {
-		padding-bottom: 24px;
-
-		&.Messages-module_emptyState {
-			justify-content: start;
-		}
-
-		.EmptyView-module_container {
-			height: auto;
-			padding-block: 8px;
-		}
-
 		.big-sky__completed-plan:first-child {
 			margin-top: 0;
 		}
@@ -427,41 +412,6 @@ body.post-new-php.agents-manager-sidebar-container {
 		.big-sky-next-step-button {
 			margin-top: 20px;
 		}
-
-		// Add spacing after picker messages when followed by a message without completed-plan
-		.Message-module_message:has(
-				.big-sky__dock__menu__variation-picker,
-				.big-sky__dock__menu__pattern-picker
-			):has( + .Message-module_message ):not(
-				:has( + .Message-module_message .big-sky__completed-plan )
-			) {
-			margin-bottom: 24px;
-		}
-	}
-
-	.ChatFooter-module_container {
-		&:has( .Suggestions-module_container ) {
-			margin-top: 48px;
-		}
-
-		.Notice-module_container {
-			// Only override the default BG color
-			&:not( [class*='Notice-module_is'] ) {
-				background-color: #e9e9e9;
-			}
-
-			.Notice-module_content p {
-				margin: 0;
-			}
-		}
-	}
-
-	.EmptyView-module_container .Suggestions-module_container {
-		padding: 0;
-	}
-
-	.Textarea-module_textarea {
-		line-height: 1.8;
 	}
 
 	.big-sky__chat-actions {
@@ -618,38 +568,7 @@ body.post-new-php.agents-manager-sidebar-container {
 
 /* Agenttic UI: Styles for the docked chat */
 .agents-manager-chat--docked .agenttic {
-	.ConversationView-module_container {
-		position: relative;
-	}
-
-	.Messages-module_container {
-		margin-top: $chat-header-height;
-		padding-top: 0;
-
-		// Push messages to the bottom while maintaining scroll functionality in a dynamic height container
-		> *:first-child {
-			margin-top: auto;
-		}
-	}
-
 	.Message-module_message {
-		color: $white;
-		font-size: 0.875rem;
-		line-height: 1.6;
-
-		p {
-			font-size: inherit;
-			line-height: inherit;
-		}
-
-		ul {
-			list-style: disc;
-		}
-
-		a {
-			color: $white;
-		}
-
 		.big-sky__dock__menu__variation-picker {
 			min-height: unset;
 
@@ -707,123 +626,6 @@ body.post-new-php.agents-manager-sidebar-container {
 	// Prevent item picker content overflow (e.g., Patterns)
 	.Message-module_content {
 		width: 100%;
-
-		// Fix extra top margin on the first paragraph
-		.Message-module_bubble > p:first-of-type {
-			margin-top: 0;
-		}
-	}
-
-	.Message-module_user {
-		padding: 0 12px;
-
-		.Message-module_bubble {
-			border-radius: 24px 24px 8px 24px;
-			background: #484848;
-
-			p {
-				color: $gray-100;
-				margin: 0;
-			}
-		}
-	}
-
-	.EmptyView-module {
-		&_container {
-			width: 100%;
-			height: auto;
-			align-items: start;
-			padding: 0;
-		}
-
-		&_icon {
-			width: 40px;
-			height: 40px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin-left: 12px;
-
-			svg {
-				width: 32px;
-				height: 32px;
-				color: $white;
-			}
-		}
-
-		&_heading,
-		&_help {
-			font-size: 0.875rem;
-			line-height: 1.6;
-			color: $white;
-			padding: 0 12px;
-		}
-
-		&_suggestionsWrapper .Suggestions-module_container {
-			flex-direction: column;
-			gap: 0;
-			padding: 0;
-
-			.button-module_button {
-				width: 100%;
-				height: unset;
-				justify-content: start;
-				border-radius: 0;
-				background-color: unset;
-				padding: 14px 16px;
-				color: $gray-200;
-				font-size: 13px;
-				line-height: 20px;
-				border: 1px solid #545454;
-
-				&:hover {
-					background-color: $gray-800;
-				}
-
-				&:focus-visible {
-					outline-offset: -3px;
-					outline-color: var( --wp-admin-theme-color );
-				}
-			}
-
-			> div + div .button-module_button {
-				margin-top: -1px;
-			}
-
-			> div:only-of-type .button-module_button {
-				border-radius: 8px;
-			}
-
-			> div:first-of-type:not( :only-of-type ) .button-module_button {
-				border-radius: 8px 8px 0 0;
-			}
-
-			> div:last-of-type:not( :only-of-type ) .button-module_button {
-				border-radius: 0 0 8px 8px;
-			}
-		}
-	}
-
-	.ChatFooter-module_container {
-		background-color: $gray-800;
-		transition: margin-top 0.3s ease;
-
-		.Suggestions-module_container .button-module_outline {
-			color: $gray-100;
-			background-color: #484848;
-		}
-	}
-
-	.Textarea-module_textarea {
-		color: $gray-200;
-		font-size: 0.875rem;
-		line-height: 1.625;
-		box-shadow: none;
-	}
-
-	.ChatInput-module_button:disabled {
-		background-color: $gray-700;
-		color: $gray-400;
 	}
 }
 
@@ -831,22 +633,6 @@ body.post-new-php.agents-manager-sidebar-container {
 .agents-manager-chat--undocked .agenttic.Chat-module_container.Chat-module_floating {
 	// Fix the undocked chat overlapping with the nav menu
 	z-index: 9999;
-
-	p {
-		font-size: inherit;
-		line-height: inherit;
-		margin: inherit;
-	}
-
-	ul {
-		list-style: disc;
-		margin-top: var( --spacing-3 );
-	}
-
-	.Messages-module_container.Messages-module_emptyState {
-		padding-bottom: 0;
-		padding-top: 0;
-	}
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
 		&.is-active,
