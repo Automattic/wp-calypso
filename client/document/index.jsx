@@ -1,6 +1,6 @@
 import { parse } from 'path';
 import config from '@automattic/calypso-config';
-import { WordPressLogo, WooDashboardLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -332,12 +332,11 @@ function LoadingPlaceholder( {
 		isWpMobileApp: app?.isWpMobileApp,
 		isWcMobileApp: app?.isWcMobileApp,
 		isWCCOM,
-		isGarden: isGarden,
 	} );
 	return <LoadingLogo size={ 72 } className="wpcom-site__logo" />;
 }
 
-function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM, isGarden } ) {
+function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
 	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
 	}
@@ -348,10 +347,6 @@ function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM, isGarden } 
 
 	if ( isA8CForAgencies() ) {
 		return A4ALogo;
-	}
-
-	if ( isGarden ) {
-		return WooDashboardLogo;
 	}
 
 	return WordPressLogo;
