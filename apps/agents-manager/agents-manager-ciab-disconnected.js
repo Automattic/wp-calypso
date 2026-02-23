@@ -50,6 +50,3 @@ const unsubscribe = subscribe( () => {
 		} );
 	}
 } );
-
-// eslint-disable-next-line no-console
-console.log( '[AgentsManager] ciab-disconnected variant loaded (minimal mode)' );

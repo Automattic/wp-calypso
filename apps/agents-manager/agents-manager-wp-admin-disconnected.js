@@ -48,6 +48,3 @@ if ( document.readyState === 'loading' ) {
 } else {
 	initHelpCenterTracking();
 }
-
-// eslint-disable-next-line no-console
-console.log( '[AgentsManager] wp-admin-disconnected variant loaded (minimal mode)' );

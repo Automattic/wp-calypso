@@ -81,6 +81,3 @@ function AgentsManagerHelpButton() {
 registerPlugin( 'agents-manager-help-center', {
 	render: AgentsManagerHelpButton,
 } );
-
-// eslint-disable-next-line no-console
-console.log( '[AgentsManager] gutenberg-disconnected variant loaded (minimal mode)' );
