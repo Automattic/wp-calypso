@@ -43,30 +43,49 @@ describe( 'GetApps', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'shows Mobile section before Desktop for single-site users', () => {
+	it( 'shows Jetpack mobile first for single-site users', () => {
 		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( 1 );
 
 		renderWithProvider( <GetApps /> );
 
-		const headings = screen.getAllByRole( 'heading', { level: 2 } );
-		const headingTexts = headings.map( ( h ) => h.textContent );
+		const mobile = screen.getByTestId( 'mobile-download-card' );
+		const studio = screen.getByTestId( 'desktop-app-wordpress-studio' );
+		const desktop = screen.getByTestId( 'desktop-app-wordpress' );
 
-		expect( headingTexts.indexOf( 'Mobile' ) ).toBeLessThan(
-			headingTexts.indexOf( 'Desktop' )
-		);
+		expect(
+			mobile.compareDocumentPosition( studio ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			studio.compareDocumentPosition( desktop ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 	} );
 
-	it( 'shows Desktop section before Mobile for multi-site users', () => {
+	it( 'shows Studio first for multi-site users', () => {
 		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( 2 );
 
 		renderWithProvider( <GetApps /> );
 
-		const headings = screen.getAllByRole( 'heading', { level: 2 } );
-		const headingTexts = headings.map( ( h ) => h.textContent );
+		const studio = screen.getByTestId( 'desktop-app-wordpress-studio' );
+		const mobile = screen.getByTestId( 'mobile-download-card' );
+		const desktop = screen.getByTestId( 'desktop-app-wordpress' );
 
-		expect( headingTexts.indexOf( 'Desktop' ) ).toBeLessThan(
-			headingTexts.indexOf( 'Mobile' )
-		);
+		expect(
+			studio.compareDocumentPosition( mobile ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+		expect(
+			mobile.compareDocumentPosition( desktop ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'always shows WordPress.com desktop app last', () => {
+		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( 5 );
+
+		renderWithProvider( <GetApps /> );
+
+		const desktop = screen.getByTestId( 'desktop-app-wordpress' );
+		const allTestIds = screen.getAllByTestId( /desktop-app-|mobile-download/ );
+
+		expect( allTestIds[ allTestIds.length - 1 ] ).toBe( desktop );
 	} );
 
 	it( 'treats null site count as single-site user', () => {
@@ -74,11 +93,11 @@ describe( 'GetApps', () => {
 
 		renderWithProvider( <GetApps /> );
 
-		const headings = screen.getAllByRole( 'heading', { level: 2 } );
-		const headingTexts = headings.map( ( h ) => h.textContent );
+		const mobile = screen.getByTestId( 'mobile-download-card' );
+		const studio = screen.getByTestId( 'desktop-app-wordpress-studio' );
 
-		expect( headingTexts.indexOf( 'Mobile' ) ).toBeLessThan(
-			headingTexts.indexOf( 'Desktop' )
-		);
+		expect(
+			mobile.compareDocumentPosition( studio ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 	} );
 } );
