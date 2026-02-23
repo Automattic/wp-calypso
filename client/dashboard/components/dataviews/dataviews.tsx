@@ -3,6 +3,7 @@ import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { DataViewsSearch } from './dataviews-search';
 import { sanitizeView } from './sanitize-view';
 import type { ComponentProps } from 'react';
 
@@ -16,6 +17,7 @@ export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 export function DataViews< Item >( {
 	view,
 	isPlaceholderData,
+	onChangeView,
 	onResetView,
 	header,
 	search = true,
@@ -71,7 +73,9 @@ export function DataViews< Item >( {
 					spacing={ 1 }
 				>
 					<HStack justify="start" expanded={ false } className="dataviews__search">
-						{ search && <WPDataViews.Search label={ searchLabel } /> }
+						{ search && (
+							<DataViewsSearch label={ searchLabel } view={ view } onChangeView={ onChangeView } />
+						) }
 						<WPDataViews.FiltersToggle />
 					</HStack>
 					<HStack spacing={ 1 } expanded={ false } style={ { flexShrink: 0 } }>
@@ -92,6 +96,7 @@ export function DataViews< Item >( {
 	return (
 		<WPDataViews< Item >
 			view={ sanitizedView }
+			onChangeView={ onChangeView }
 			header={ header }
 			search={ search }
 			searchLabel={ searchLabel }
