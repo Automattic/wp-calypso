@@ -10,6 +10,7 @@ import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useConversation from '../../hooks/use-conversation';
 import useFeedback from '../../hooks/use-feedback';
+import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
 import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
 import AgentChat from '../agent-chat';
@@ -141,6 +142,9 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
+
+	// Save new chat route for cross-domain conversation restore.
+	useSaveNewChatRoute( agentId, messages );
 
 	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
 		registerMessageActions,
