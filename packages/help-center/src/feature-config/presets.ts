@@ -52,8 +52,8 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	},
 };
 
-/** CIAB: chat enabled with filtered history, no dotcom-specific links. */
-const ciabPreset: HelpCenterFeatureConfig = {
+/** Commerce Garden: chat enabled with filtered history, no dotcom-specific links. */
+const commerceGardenPreset: HelpCenterFeatureConfig = {
 	header: {
 		ellipsisMenu: true,
 	},
@@ -81,5 +81,5 @@ const ciabPreset: HelpCenterFeatureConfig = {
 export const PRODUCT_PRESETS: Record< HelpCenterProduct, HelpCenterFeatureConfig > = {
 	wpcom: wpcomPreset,
 	a4a: a4aPreset,
-	ciab: ciabPreset,
+	'commerce-garden': commerceGardenPreset,
 };

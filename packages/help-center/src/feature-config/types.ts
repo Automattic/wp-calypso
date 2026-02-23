@@ -43,4 +43,4 @@ export type HelpCenterFeatureConfig = {
  * Product identifier for the help center.
  * Each product gets a preset feature configuration.
  */
-export type HelpCenterProduct = 'wpcom' | 'a4a' | 'ciab';
+export type HelpCenterProduct = 'wpcom' | 'a4a' | 'commerce-garden';

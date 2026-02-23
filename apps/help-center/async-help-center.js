@@ -26,7 +26,7 @@ export default function loadHelpCenter() {
 					hasPurchases={ false }
 					onboardingUrl="https://wordpress.com/start"
 					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-					product={ helpCenterData.isCommerceGarden ? 'ciab' : undefined }
+					product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 					{ ...botProps }
 				/>
 			</QueryClientProvider>
