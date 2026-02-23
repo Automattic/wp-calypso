@@ -571,20 +571,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<PageHeader
-				rightSection={
-					shouldRenderModuleToggler && (
-						<PageModuleToggler
-							selectedItem="traffic"
-							moduleToggles={ moduleToggles }
-							siteId={ siteId }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							onTooltipDismiss={ onTooltipDismiss }
-							customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-						/>
-					)
-				}
-			/>
+			<PageHeader />
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }
@@ -646,6 +633,17 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				{ ! wpcomShowUpsell && (
 					<>
 						{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
+
+						{ shouldRenderModuleToggler && (
+							<PageModuleToggler
+								selectedItem="traffic"
+								moduleToggles={ moduleToggles }
+								siteId={ siteId }
+								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+								onTooltipDismiss={ onTooltipDismiss }
+								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+							/>
+						) }
 
 						<StatsModuleListing className={ moduleListClassNames } siteId={ siteId }>
 							<StatsModuleTopPosts
