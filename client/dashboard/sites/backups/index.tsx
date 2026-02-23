@@ -13,6 +13,7 @@ import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-pa
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -251,6 +252,7 @@ export function BackupsListPage() {
 					) }
 				</>
 			) }
+			<PerformanceTrackerStop id="dashboard-site-backups" siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -103,6 +104,7 @@ export default function PurchasesList() {
 					/>
 				</DataViewsCard>
 			</div>
+			<PerformanceTrackerStop id="dashboard-me-purchases" />
 		</PageLayout>
 	);
 }

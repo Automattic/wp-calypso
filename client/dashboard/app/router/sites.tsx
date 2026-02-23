@@ -239,6 +239,11 @@ export const siteDeploymentsRoute = createRoute( {
 export const siteDeploymentsListRoute = createRoute( {
 	getParentRoute: () => siteDeploymentsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-deployments', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
@@ -262,6 +267,11 @@ export const siteMonitoringRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-monitoring', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
@@ -281,6 +291,11 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-logs', { fullPageLoad } );
+		}
+	},
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -368,6 +383,11 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-scan', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
@@ -454,6 +474,11 @@ export const siteBackupsRoute = createRoute( {
 export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-backups', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
@@ -537,6 +562,11 @@ export const siteDomainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-domains', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
@@ -556,6 +586,11 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-performance', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -590,6 +625,11 @@ export const siteSettingsRoute = createRoute( {
 export const siteSettingsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-site-settings', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {

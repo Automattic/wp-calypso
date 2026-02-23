@@ -173,6 +173,11 @@ export const domainRoute = createRoute( {
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-overview', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
@@ -208,6 +213,11 @@ export const domainDnsRoute = createRoute( {
 export const domainDnsIndexRoute = createRoute( {
 	getParentRoute: () => domainDnsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-dns', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
@@ -280,6 +290,11 @@ export const domainDiagnosticsRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'diagnostics',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-diagnostics', { fullPageLoad } );
+		}
+	},
 	loader: ( { params: { domainName } } ) => {
 		return queryClient.ensureQueryData( domainDiagnosticsQuery( domainName ) );
 	},
@@ -313,6 +328,11 @@ export const domainForwardingRoute = createRoute( {
 export const domainForwardingIndexRoute = createRoute( {
 	getParentRoute: () => domainForwardingRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-forwarding', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-forwarding' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding' )( {
@@ -379,6 +399,11 @@ export const domainContactInfoRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-contact-info', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -401,6 +426,11 @@ export const domainContactVerificationRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'contact-verification',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-contact-verification', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { domainName } } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( domainQuery( domainName ) ),
@@ -425,6 +455,11 @@ export const domainNameServersRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-name-servers', { fullPageLoad } );
+		}
+	},
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainNameServersQuery( domainName ) ),
 	component: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
@@ -450,6 +485,11 @@ export const domainGlueRecordsRoute = createRoute( {
 export const domainGlueRecordsIndexRoute = createRoute( {
 	getParentRoute: () => domainGlueRecordsRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-glue-records', { fullPageLoad } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-glue-records' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
@@ -518,6 +558,11 @@ export const domainSecurityRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'security',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-security', { fullPageLoad } );
+		}
+	},
 	loader: ( { params: { domainName } } ) => {
 		return queryClient.ensureQueryData( sslDetailsQuery( domainName ) );
 	},
@@ -574,6 +619,11 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-transfer', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
@@ -686,6 +736,11 @@ export const domainConnectionSetupRoute = createRoute( {
 	} ),
 	getParentRoute: () => domainRoute,
 	path: 'domain-connection-setup',
+	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
+		if ( cause === 'enter' ) {
+			startPerformanceTracking( 'dashboard-domain-connection-setup', { fullPageLoad } );
+		}
+	},
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await queryClient.ensureQueryData(

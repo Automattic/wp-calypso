@@ -10,6 +10,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -141,6 +142,7 @@ function SiteMonitoring() {
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
 			</PageLayout>
+			<PerformanceTrackerStop id="dashboard-site-monitoring" siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

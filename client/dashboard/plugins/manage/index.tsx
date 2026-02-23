@@ -12,6 +12,7 @@ import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -152,6 +153,7 @@ export default function PluginsList() {
 						paginationInfo={ paginationInfo }
 					/>
 				) }
+				<PerformanceTrackerStop id="dashboard-plugin-list" />
 			</PageLayout>
 		);
 	}
@@ -179,6 +181,7 @@ export default function PluginsList() {
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 			</Grid>
+			<PerformanceTrackerStop id="dashboard-plugin-list" />
 		</PageLayout>
 	);
 }

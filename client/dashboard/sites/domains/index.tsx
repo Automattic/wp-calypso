@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
@@ -107,6 +108,9 @@ function SiteDomains() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
+			{ ! isLoading && (
+				<PerformanceTrackerStop id="dashboard-site-domains" siteSlug={ siteSlug } />
+			) }
 		</PageLayout>
 	);
 }

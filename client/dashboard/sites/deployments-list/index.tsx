@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	siteRoute,
 	siteSettingsRepositoriesRoute,
@@ -228,6 +229,9 @@ function DeploymentsList() {
 						onSuccess={ handleDeploymentTriggered }
 					/>
 				</Modal>
+			) }
+			{ ! isLoading && (
+				<PerformanceTrackerStop id="dashboard-site-deployments" siteSlug={ siteSlug } />
 			) }
 		</PageLayout>
 	);
