@@ -1,12 +1,12 @@
 @import '@wordpress/base-styles/colors';
 @import '../../styles/mixins.scss';
 
-.agents-manager-feedback-input-container {
+.agents-manager-feedback-input {
 	margin-left: 12px;
 	margin-right: 12px;
 	margin-bottom: 24px;
 
-	.agents-manager-feedback-input {
+	.agents-manager-feedback-input-inner {
 		margin-top: 12px;
 		padding: 12px;
 		background: $white;
@@ -26,47 +26,47 @@
 			width: 100%;
 			resize: vertical;
 		}
+	}
 
-		&__success {
-			padding: 12px;
-			background: #d5f2e3;
-			color: #00450c;
-			border-radius: 4px;
-			text-align: center;
-			font-size: 14px;
-		}
+	&__success {
+		padding: 12px;
+		background: #d5f2e3;
+		color: #00450c;
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
 
-		&__error {
-			padding: 12px;
-			background: #fef0f0;
-			color: $alert-red;
-			border-radius: 4px;
-			text-align: center;
-			font-size: 14px;
-		}
+	&__error {
+		padding: 12px;
+		background: #fef0f0;
+		color: $alert-red;
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
 
-		&__actions {
+	&__actions {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+
+		.components-button {
 			display: flex;
-			gap: 8px;
-			justify-content: flex-end;
+			align-items: center;
+			gap: 4px;
+		}
 
-			.components-button {
-				display: flex;
-				align-items: center;
-				gap: 4px;
-
-				.components-spinner {
-					margin: 0;
-					vertical-align: middle;
-				}
-			}
+		.agents-manager-feedback-input__spinner {
+			width: 16px;
+			height: 16px;
 		}
 	}
 }
 
 // Dark theme overrides for the docked chat
 @include docked-chat-without-modal {
-	.agents-manager-feedback-input {
+	.agents-manager-feedback-input-inner {
 		background: $gray-900;
 		border-color: #545454;
 
@@ -83,24 +83,24 @@
 				color: #999;
 			}
 		}
+	}
 
-		&__actions {
-			.components-button.is-tertiary {
-				color: $gray-400;
+	.agents-manager-feedback-input__actions {
+		.components-button.is-tertiary {
+			color: $gray-400;
 
-				&:hover {
-					color: $white;
-				}
-			}
-
-			.components-button.is-primary {
-				background: #3858e9;
+			&:hover {
 				color: $white;
+			}
+		}
 
-				&:disabled {
-					background: #2c2c2c;
-					color: #666;
-				}
+		.components-button.is-primary {
+			background: #3858e9;
+			color: $white;
+
+			&:disabled {
+				background: #2c2c2c;
+				color: #666;
 			}
 		}
 	}
