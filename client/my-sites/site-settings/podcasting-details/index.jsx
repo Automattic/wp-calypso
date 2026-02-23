@@ -46,10 +46,6 @@ import TopicsSelector from './topics-selector';
 
 import './style.scss';
 
-// WordPress always creates category ID 1 as "Uncategorized" on install.
-// It can be renamed but not deleted, so this is safe to use as a default.
-const UNCATEGORIZED_CATEGORY_ID = 1;
-
 const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
@@ -80,6 +76,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 } ) => {
 	const translate = useTranslate();
 	const [ isCoverImageUploading, setIsCoverImageUploading ] = useState( false );
+	const [ isEnabling, setIsEnabling ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
@@ -109,35 +106,40 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const isAudioUploadEnabled =
 		plansDataLoaded && ( site?.options?.upgraded_filetypes_enabled || isJetpack );
 
-	const disabled = isRequestingSettings || isSavingSettings || isCoverImageUploading;
+	const disabled = isRequestingSettings || isSavingSettings;
 
 	const newPostUrl = `/post/${ siteSlug }`;
 
 	const onTogglePodcasting = useCallback(
 		( isEnabled ) => {
+			if ( disabled ) {
+				return;
+			}
+
 			if ( isEnabled ) {
-				// Enable: set default category and title, but don't auto-save.
-				// Let the user fill in details and save when ready.
-				const fieldsToUpdate = {
-					podcasting_category_id: String( UNCATEGORIZED_CATEGORY_ID ),
-				};
+				// Show settings so the user can pick a category and fill in details.
+				// Pre-fill the title from the site name if not already set.
+				setIsEnabling( true );
 				if ( ! fields.podcasting_title ) {
-					fieldsToUpdate.podcasting_title = settings?.blogname || '';
+					updateFields( { podcasting_title: settings?.blogname || '' } );
 				}
-				updateFields( fieldsToUpdate );
 			} else {
-				// Disable: save immediately to stop the podcast feed.
-				updateFields( { podcasting_category_id: '0' }, () => {
-					submitForm();
-				} );
+				setIsEnabling( false );
+				if ( isPodcastingEnabled ) {
+					// Disable: clear category and save immediately to stop the feed.
+					updateFields( { podcasting_category_id: '0' }, () => {
+						submitForm();
+					} );
+				}
 			}
 		},
-		[ fields.podcasting_title, settings?.blogname, updateFields, submitForm ]
+		[ disabled, isPodcastingEnabled, fields.podcasting_title, settings?.blogname, updateFields, submitForm ]
 	);
 
 	const onCategorySelected = useCallback(
 		( category ) => {
 			updateFields( { podcasting_category_id: String( category.ID ) } );
+			setIsEnabling( false );
 		},
 		[ updateFields ]
 	);
@@ -195,7 +197,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				name={ key }
 				value={ decodeEntities( fields[ key ] ) || '' }
 				onChange={ onChangeField( key ) }
-				disabled={ disabled || ! isPodcastingEnabled }
+				disabled={ disabled }
 			/>
 		</FormFieldset>
 	);
@@ -207,7 +209,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			{ /* Podcasting enable toggle */ }
 			<Card className="site-settings__card">
 				<ToggleControl
-					checked={ isPodcastingEnabled }
+					checked={ isPodcastingEnabled || isEnabling }
 					onChange={ onTogglePodcasting }
 					disabled={ disabled }
 					label={ translate( 'Enable podcasting on this site' ) }
@@ -216,7 +218,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			</Card>
 
 			{ /* Upsell nudge for audio upload */ }
-			{ isPodcastingEnabled && plansDataLoaded && ! isAudioUploadEnabled && (
+			{ ( isPodcastingEnabled || isEnabling ) && plansDataLoaded && ! isAudioUploadEnabled && (
 				<UpsellNudge
 					plan={ PLAN_PERSONAL }
 					title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
@@ -231,11 +233,11 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				/>
 			) }
 
-			{ isPodcastingEnabled && (
+			{ ( isPodcastingEnabled || isEnabling ) && (
 				<>
 					{ /* Podcast category */ }
 					<SettingsSectionHeader
-						disabled={ disabled }
+						disabled={ disabled || ! isPodcastingEnabled }
 						id="podcast-category"
 						isSaving={ isSavingSettings }
 						onButtonClick={ handleSubmitForm }
@@ -243,7 +245,21 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						title={ translate( 'Podcast category' ) }
 					/>
 					<Card className="site-settings__card">
-						<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
+						{ isEnabling && ! isPodcastingEnabled && (
+							<Notice
+								isCompact
+								status="is-info"
+								showDismiss={ false }
+								text={ translate(
+									'Select a category for your podcast feed, then save your settings.'
+								) }
+							/>
+						) }
+						{ isPodcastingEnabled && (
+							<div className="podcasting-details__publish-wrapper">
+								<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
+							</div>
+						) }
 						<FormFieldset>
 							<FormSettingExplanation>
 								{ translate(
@@ -269,14 +285,16 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 								/>
 							) }
 						</FormFieldset>
-						<Button className="podcasting-details__publish-button" href={ newPostUrl }>
-							{ translate( 'Create Episode' ) }
-						</Button>
+						{ isPodcastingEnabled && (
+							<Button className="podcasting-details__publish-button" href={ newPostUrl }>
+								{ translate( 'Create Episode' ) }
+							</Button>
+						) }
 					</Card>
 
 					{ /* Podcast details */ }
 					<SettingsSectionHeader
-						disabled={ disabled }
+						disabled={ disabled || ! isPodcastingEnabled }
 						id="podcast-details"
 						isSaving={ isSavingSettings }
 						onButtonClick={ handleSubmitForm }
@@ -296,7 +314,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 								onRemove={ onCoverImageRemoved }
 								onSelect={ onCoverImageSelected }
 								onUploadStateChange={ setIsCoverImageUploading }
-								isDisabled={ disabled }
+								isDisabled={ disabled || isCoverImageUploading }
 							/>
 							<div className="podcasting-details__title-subtitle-wrapper">
 								{ renderTextField( {
@@ -322,7 +340,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 					{ /* Feed settings */ }
 					<SettingsSectionHeader
-						disabled={ disabled }
+						disabled={ disabled || ! isPodcastingEnabled }
 						id="feed-settings"
 						isSaving={ isSavingSettings }
 						onButtonClick={ handleSubmitForm }
@@ -387,23 +405,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 								'This email address will be displayed in the feed and is required for some services such as Google Play.'
 							),
 						} ) }
-					</Card>
-
-					{ /* Disable podcasting */ }
-					<Card className="podcasting-details__disable-card">
-						<span className="podcasting-details__disable-text">
-							{ translate(
-								'Disabling will remove your podcast feed. Your posts will not be affected.'
-							) }
-						</span>
-						<Button
-							scary
-							onClick={ () => onTogglePodcasting( false ) }
-							busy={ isSavingSettings }
-							disabled={ isCoverImageUploading }
-						>
-							{ translate( 'Disable Podcasting' ) }
-						</Button>
 					</Card>
 				</>
 			) }

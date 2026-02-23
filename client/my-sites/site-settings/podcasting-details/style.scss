@@ -75,14 +75,3 @@
 	}
 }
 
-.podcasting-details__disable-card.card {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-}
-
-.podcasting-details__disable-text {
-	color: var( --color-text-subtle );
-	font-size: $font-body-small;
-}
