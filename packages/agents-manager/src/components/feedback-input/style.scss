@@ -57,9 +57,9 @@
 			gap: 4px;
 		}
 
+		// Fix spinner vertical alignment in the button
 		.agents-manager-feedback-input__spinner {
-			width: 16px;
-			height: 16px;
+			margin-top: 0;
 		}
 	}
 }
