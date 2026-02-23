@@ -7,7 +7,12 @@ export function isAlreadyMemberError( error: string ): boolean {
 	return ALREADY_MEMBER_ERRORS.includes( error );
 }
 
-const INVALID_INVITE_ERRORS = [ 'unauthorized_created_by_self', 'invalid_input_invite_used' ];
+const INVALID_INVITE_ERRORS = [
+	'unauthorized_created_by_self',
+	'invalid_input_invite_used',
+	'invalid_input_incorrect_site',
+	'unknown_invite',
+];
 
 /**
  * Check if an error string indicates the invite is not valid
