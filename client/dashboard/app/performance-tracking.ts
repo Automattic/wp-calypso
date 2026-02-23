@@ -5,9 +5,30 @@ import { useLayoutEffect } from 'react';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { getSiteFromCache } from './analytics/super-props';
 import { AUTH_QUERY_KEY } from './auth';
-import { consumeFirstLoad } from './router/first-load-tracker';
 import type { User } from '@automattic/api-core';
 import type { Collector } from '@automattic/browser-data-collector';
+
+let isFirstLoad = true;
+
+/**
+ * Returns true if this is the first page load, without consuming the flag.
+ * Use in beforeLoad handlers where the root route may re-run on internal redirects.
+ */
+export function peekFirstLoad(): boolean {
+	return isFirstLoad;
+}
+
+/**
+ * Returns true if this is the first page load, and consumes the flag so subsequent
+ * calls return false. Call this when actually starting a performance measurement.
+ */
+function consumeFirstLoad(): boolean {
+	if ( isFirstLoad ) {
+		isFirstLoad = false;
+		return true;
+	}
+	return false;
+}
 
 function buildCollector( siteSlug?: string ): Collector {
 	const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );

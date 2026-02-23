@@ -7,9 +7,9 @@ import config from '@automattic/calypso-config';
 import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
 import { AUTH_QUERY_KEY } from '../auth';
+import { peekFirstLoad } from '../performance-tracking';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
-import { peekFirstLoad } from './first-load-tracker';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 
