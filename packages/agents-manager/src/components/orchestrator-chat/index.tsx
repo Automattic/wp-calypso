@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useConversation from '../../hooks/use-conversation';
-import useCopy from '../../hooks/use-copy';
+import useCopyMessage from '../../hooks/use-copy-message';
 import useFeedback from '../../hooks/use-feedback';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
@@ -154,7 +154,7 @@ export default function OrchestratorChat( {
 	} );
 
 	// Register a "Copy" action on plain-text agent messages.
-	useCopy( registerMessageActions );
+	useCopyMessage( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];

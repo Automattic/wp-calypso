@@ -31,7 +31,7 @@ function getCopyableText( message: UIMessage ): string {
 /**
  * Registers a "Copy" action on agent messages that copies the text content to the clipboard.
  */
-export default function useCopy( registerMessageActions: RegisterMessageActions ): void {
+export default function useCopyMessage( registerMessageActions: RegisterMessageActions ): void {
 	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-copy',
@@ -60,7 +60,7 @@ export default function useCopy( registerMessageActions: RegisterMessageActions 
 								await navigator.clipboard.writeText( text );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
-								console.error( '[useCopy] Failed to copy text to clipboard:', error );
+								console.error( '[useCopyMessage] Failed to copy text to clipboard:', error );
 							}
 						},
 					},
