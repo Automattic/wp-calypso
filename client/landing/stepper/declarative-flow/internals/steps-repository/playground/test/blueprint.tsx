@@ -212,36 +212,6 @@ describe( 'getBlueprint', () => {
 		}
 	);
 
-	it( 'returns default blueprint when fetch fails with invalid URL', async () => {
-		setLocationHref(
-			'https://example.com/?blueprint-url=https://invalid-example.com/blueprint.json'
-		);
-
-		// Mock fetch to return a failed response
-		jest.spyOn( global, 'fetch' ).mockResolvedValue( {
-			ok: false,
-			status: 404,
-			statusText: 'Not Found',
-		} as unknown as Response );
-
-		const blueprint = await getBlueprint( false, '8.3' );
-
-		// Verify fetch was called
-		expect( global.fetch ).toHaveBeenCalledWith( 'https://invalid-example.com/blueprint.json', {
-			credentials: 'omit',
-		} );
-
-		// When fetch fails with an HTTP error, it should return the default blueprint
-		expect( blueprint ).toEqual( {
-			...DEFAULT_BLUEPRINT,
-			preferredVersions: {
-				wp: 'latest',
-				php: '8.3',
-			},
-			steps: [],
-		} );
-	} );
-
 	it( 'returns default blueprint when fetch throws a network error', async () => {
 		setLocationHref(
 			'https://example.com/?blueprint-url=https://unreachable-server.com/blueprint.json'

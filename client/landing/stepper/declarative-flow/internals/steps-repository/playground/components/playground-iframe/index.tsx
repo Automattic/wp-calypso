@@ -74,7 +74,7 @@ export function PlaygroundIframe( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ playgroundError, recommendedPHPVersion ] );
 
-	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {
+	if ( playgroundError ) {
 		return <PlaygroundError createNewPlayground={ createNewPlayground } />;
 	}
 

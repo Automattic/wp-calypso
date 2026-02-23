@@ -1,9 +1,5 @@
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
-import {
-	ZipFilesystem,
-	resolveRemoteBlueprint,
-	BlueprintFetchError,
-} from './resolve-remote-blueprint-standalone';
+import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
 import type {
 	Blueprint,
 	BlueprintBundle,
@@ -189,56 +185,42 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Bl
 		return getDefaultBlueprint( recommendedPhpVersion );
 	}
 
-	try {
-		const resolvedBlueprint = await resolveBlueprintFromURL( url );
+	const resolvedBlueprint = await resolveBlueprintFromURL( url );
 
-		// ZIP bundles pass through unchanged
-		if ( resolvedBlueprint instanceof ZipFilesystem ) {
-			return resolvedBlueprint as BlueprintBundle;
-		}
-
-		// For JSON-based blueprints, extract the blueprint object for modification
-		const blueprintFile = await resolvedBlueprint.read( '/blueprint.json' );
-		const content = await blueprintFile.arrayBuffer();
-		const blueprint: BlueprintV1Declaration = JSON.parse( new TextDecoder().decode( content ) );
-
-		// Create a deeply merged blueprint where custom properties override defaults
-		// but nested objects are merged properly
-		// Some properties are always set to an ensured value, like login: true and networking: true
-		// in the end, to ensure any new properties that might be added in the future are handled nicely
-		return {
-			...DEFAULT_BLUEPRINT,
-			...blueprint,
-			// Ensure steps are combined
-			steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ].filter(
-				Boolean
-			),
-			// Ensure nested objects like preferredVersions are merged properly
-			preferredVersions: {
-				...DEFAULT_BLUEPRINT.preferredVersions,
-				...blueprint.preferredVersions,
-				php: getPHPVersion( recommendedPhpVersion ), // Always ensure PHP version is set correctly
-				wp: 'latest', // Always ensure WordPress version is set to latest
-			},
-			// Ensure nested objects like features are merged properly
-			features: {
-				...DEFAULT_BLUEPRINT.features,
-				...blueprint.features,
-				networking: true, // ensure its always true
-			},
-			login: true, // ensure its always true, even though PG code already enforces this
-		} as BlueprintV1Declaration;
-	} catch ( error ) {
-		if ( error instanceof BlueprintFetchError ) {
-			// HTTP-level failure (e.g. 404): fall back to the default blueprint.
-			return {
-				...getDefaultBlueprint( recommendedPhpVersion ),
-				steps: [],
-			};
-		}
-		// Network errors and other unexpected failures propagate as-is.
-		throw error;
+	// ZIP bundles pass through unchanged
+	if ( resolvedBlueprint instanceof ZipFilesystem ) {
+		return resolvedBlueprint as BlueprintBundle;
 	}
+
+	// For JSON-based blueprints, extract the blueprint object for modification
+	const blueprintFile = await resolvedBlueprint.read( '/blueprint.json' );
+	const content = await blueprintFile.arrayBuffer();
+	const blueprint: BlueprintV1Declaration = JSON.parse( new TextDecoder().decode( content ) );
+
+	// Create a deeply merged blueprint where custom properties override defaults
+	// but nested objects are merged properly
+	// Some properties are always set to an ensured value, like login: true and networking: true
+	// in the end, to ensure any new properties that might be added in the future are handled nicely
+	return {
+		...DEFAULT_BLUEPRINT,
+		...blueprint,
+		// Ensure steps are combined
+		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ].filter( Boolean ),
+		// Ensure nested objects like preferredVersions are merged properly
+		preferredVersions: {
+			...DEFAULT_BLUEPRINT.preferredVersions,
+			...blueprint.preferredVersions,
+			php: getPHPVersion( recommendedPhpVersion ), // Always ensure PHP version is set correctly
+			wp: 'latest', // Always ensure WordPress version is set to latest
+		},
+		// Ensure nested objects like features are merged properly
+		features: {
+			...DEFAULT_BLUEPRINT.features,
+			...blueprint.features,
+			networking: true, // ensure its always true
+		},
+		login: true, // ensure its always true, even though PG code already enforces this
+	} as BlueprintV1Declaration;
 }
 
 export async function getBlueprint(
