@@ -110,7 +110,7 @@ describe( 'AddSubscriptionForm', () => {
 			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
-			expect( screen.getByTestId( 'instructions-icon' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'Reddit Icon' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Front page:' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'www.reddit.com/.rss' ) ).toBeInTheDocument();
