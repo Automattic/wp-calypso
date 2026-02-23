@@ -60,6 +60,19 @@
 		}
 	}
 
+	&__title-group {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	&__subtitle {
+		font-size: $default-font-size;
+		color: var(--wp-components-color-gray-600, #666);
+		margin: 0;
+		line-height: 1.4;
+	}
+
 	&__title {
 		font-size: 20px;
 		font-weight: 500;
