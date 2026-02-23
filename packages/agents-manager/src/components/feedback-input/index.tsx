@@ -1,7 +1,6 @@
 /**
  * Feedback Input Component
  * Allows users to submit text feedback after clicking thumbs down.
- * Adapted from big-sky-plugin's FeedbackInput component.
  */
 import { Button, Spinner, TextareaControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
