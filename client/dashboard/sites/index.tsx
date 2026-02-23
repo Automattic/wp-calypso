@@ -1,5 +1,4 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	useQuery,
 	useQueryClient,
@@ -7,7 +6,6 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -36,41 +34,13 @@ import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-si
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNotices } from './notices';
 import { OptInWelcomeModal } from './welcome-modal';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	Site,
-	DashboardFilters,
-} from '@automattic/api-core';
+import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 type SiteListQueryOptions = {
 	isDefaultView?: boolean;
 	isRestoringAccount: boolean;
 	isAutomattician: boolean;
-};
-
-const getFetchSitesOptions = (
-	view: View,
-	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions
-): FetchSitesOptions => {
-	const filters = view.filters ?? [];
-
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
-
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
-		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
-	}
-
-	return {
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
-		include_a8c_owned: shouldIncludeA8COwned,
-	};
 };
 
 const getFetchPaginatedSitesOptions = (
@@ -132,41 +102,24 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const { data: siteFilters } = useQuery( {
 		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
-		enabled:
-			isEnabled( 'dashboard/v2/paginated-site-list' ) &&
-			!! view.filters?.find( ( filter ) => filter.field === 'plan' ),
-	} );
-
-	const sitesQueryResult = useQuery( {
-		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
-		placeholderData: keepPreviousData,
-		enabled: ! isEnabled( 'dashboard/v2/paginated-site-list' ),
+		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
 		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		placeholderData: keepPreviousData,
-		enabled: isEnabled( 'dashboard/v2/paginated-site-list' ),
 		meta: {
 			fullPageLoader: true,
 		},
 	} );
 
-	const result = isEnabled( 'dashboard/v2/paginated-site-list' )
-		? {
-				sites: paginatedSitesQueryResult.data?.sites,
-				hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
-				isLoadingSites: paginatedSitesQueryResult.isLoading,
-				isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
-				totalItems: paginatedSitesQueryResult.data?.total,
-		  }
-		: {
-				sites: sitesQueryResult.data,
-				hasNoData: sitesQueryResult.data?.length === 0,
-				isLoadingSites: sitesQueryResult.isLoading,
-				isPlaceholderData: sitesQueryResult.isPlaceholderData,
-				totalItems: sitesQueryResult.data?.length,
-		  };
+	const result = {
+		sites: paginatedSitesQueryResult.data?.sites,
+		hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
+		isLoadingSites: paginatedSitesQueryResult.isLoading,
+		isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
+		totalItems: paginatedSitesQueryResult.data?.total,
+	};
 
 	useEffect( () => {
 		if ( result.sites ) {
@@ -233,9 +186,11 @@ export default function Sites() {
 
 	const userHasSites = user.site_count > 0;
 
-	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
-		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
-		: filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
+	);
 
 	return (
 		<>
