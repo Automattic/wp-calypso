@@ -141,7 +141,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 export function CiabTrialLaunchNotice( { site }: { site: Site } ) {
 	return (
 		<Notice
-			title={ __( 'Your site is in coming soon mode' ) }
+			title={ __( 'Your site is in Coming Soon mode' ) }
 			actions={
 				<>
 					<Button
@@ -161,7 +161,7 @@ export function CiabTrialLaunchNotice( { site }: { site: Site } ) {
 			}
 		>
 			{ __(
-				'Select a plan to launch your site and make it visible to everyone. Visitors will see a “Coming soon” page while you finish setting up.'
+				'Select a plan to launch your site and make it visible to everyone. Visitors will see a “Coming Soon” page while you finish setting up.'
 			) }
 		</Notice>
 	);
