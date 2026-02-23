@@ -10,6 +10,7 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: string[];
 			useUnifiedExperience?: boolean;
+			helpCenterUrl?: string;
 	  }
 	| undefined;
 
