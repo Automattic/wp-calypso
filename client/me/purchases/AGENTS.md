@@ -2,7 +2,8 @@
 
 Redux/page.js-based billing and purchase management. Covers the full purchase
 lifecycle: listing, detail, payment methods, billing history, cancellation, and
-tax details. For cross-cutting B&P architecture, see `client/AGENTS.md`.
+tax details. Related billing areas: `client/dashboard/me/billing-purchases/`
+(Dashboard), `client/my-sites/checkout/` (Checkout).
 
 ## Project Knowledge
 
@@ -28,6 +29,14 @@ before trusting results.
 
 `getByPurchaseId` searches ALL purchases (user + site) from a single flat array.
 What's in that array depends on which `Query*Purchases` components have mounted.
+
+### Architecture Context
+
+Classic uses `Purchase` from `calypso/lib/purchases/types` (camelCase fields, e.g.,
+`purchase.siteSlug`). Expiry values: `'autoRenewing'`, `'manualRenew'`. Dashboard
+(`client/dashboard/me/billing-purchases/`) uses a different `Purchase` type from
+`@automattic/api-core` (snake_case, different string values) — never copy logic
+between the two without converting field names and values.
 
 ## Architectural Decisions
 
@@ -89,3 +98,7 @@ What's in that array depends on which `Query*Purchases` components have mounted.
    `{ error: string, message: string }` but no field indicator. Map error
    codes to fields: `missing_country`/`invalid_country` → country field,
    `invalid_vat`/`missing_id`/`validation_failed` → id field.
+
+9. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never query site data for these — use `purchase.domain` for display, skip site-dependent UI entirely.
+
+10. **Transferred purchases** — Always check ownership before allowing purchase actions.

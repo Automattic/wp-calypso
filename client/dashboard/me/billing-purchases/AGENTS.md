@@ -1,8 +1,8 @@
 # Dashboard Billing — Purchase Management
 
 TanStack Query/Router-based billing and purchase management. The largest and most
-complex billing area in the Dashboard client. For cross-cutting B&P architecture,
-see `client/AGENTS.md`.
+complex billing area in the Dashboard client. Related billing areas:
+`client/me/purchases/` (Classic), `client/my-sites/checkout/` (Checkout).
 
 ## Project Knowledge
 
@@ -34,6 +34,23 @@ Non-obvious details about sibling directories under `client/dashboard/me/`:
 
 Helpers in `client/dashboard/utils/purchase.ts` (~50 functions). Queries are loaded
 via router loaders in `client/dashboard/app/router/me.tsx`.
+
+### Architecture Context
+
+Dashboard uses `Purchase` from `@automattic/api-core` (snake_case fields, e.g.,
+`purchase.site_slug`). Expiry values: `'auto-renewing'`, `'manual-renew'`. Classic
+(`client/me/purchases/`) uses a different `Purchase` type from
+`calypso/lib/purchases/types` (camelCase, different string values) — never copy
+logic between the two without converting field names and values.
+
+Query key prefix for purchases is `'upgrades'` (NOT `'purchases'` — historical).
+Receipts use `'receipt'`, payment methods use `'me'`. Wrong prefix silently breaks
+cache invalidation.
+
+Queries live in `@automattic/api-queries` (`packages/api-queries/`), NOT in
+`client/dashboard/data/` or `client/dashboard/app/queries/`. Adding a new query
+requires a fetcher in `@automattic/api-core` (`packages/api-core/src/`) first,
+then a query wrapper in `api-queries`.
 
 ## Architectural Decisions
 
@@ -86,3 +103,9 @@ marketplace subscriptions on site.
 
 5. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
+
+6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
+
+7. **Transferred purchases** — Always check ownership before allowing purchase actions.
+
+8. **Route params are strings** — `purchaseId` from URL params must be `parseInt()`'d before passing to query functions.

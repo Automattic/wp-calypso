@@ -1,6 +1,7 @@
 # Checkout — WordPress.com Purchase Flow
 
-Customer-facing checkout UI. For cross-cutting B&P architecture, see `client/AGENTS.md`.
+Customer-facing checkout UI. Related billing areas:
+`client/me/purchases/` (Classic), `client/dashboard/me/billing-purchases/` (Dashboard).
 
 ## Project Knowledge
 
@@ -50,6 +51,17 @@ The sidebar/summary view is NOT a step — visibility is manually managed via
 
 Processors must handle four response paths: immediate success, redirect (PayPal/WeChat),
 3DS challenge (Stripe), and polling (PIX). Not all paths apply to all processors.
+
+### Package Boundaries
+
+| Package              | Role                                                        | Key Rule                    |
+| -------------------- | ----------------------------------------------------------- | --------------------------- |
+| `composite-checkout` | Generic multi-step checkout framework                       | NO WP.com logic here        |
+| `wpcom-checkout`     | WP.com-specific checkout (line items, tax, payment methods) | WP.com logic goes here      |
+| `shopping-cart`      | Cart state via `useShoppingCart()`                          | Independent of checkout     |
+| `calypso-stripe`     | Stripe.js wrapper                                           | Stripe-specific integration |
+| `api-core`           | Fetchers, mutators, types for all API calls                 | Foundation layer            |
+| `api-queries`        | TanStack Query wrappers around api-core                     | Dashboard consumes these    |
 
 ## Architectural Decisions
 
@@ -108,3 +120,7 @@ Steps 6-7 are the ones agents miss — without slug mapping the method never app
 
 9. **Atomic sites use `.wpcomstaging.com`** — Thank-you URL logic replaces
    `.wordpress.com` with `.wpcomstaging.com` for Atomic sites.
+
+10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never query site data for these.
+
+11. **Transferred purchases** — Always check ownership before allowing purchase actions.
