@@ -1,12 +1,5 @@
-@keyframes skeleton-pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.4;
-	}
-}
+@import '../../styles/animations.scss';
+@import '../../styles/mixins.scss';
 
 .agents-manager-conversation-list-skeleton {
 	width: 100%;
@@ -59,5 +52,20 @@
 		width: 40%;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
 		animation-delay: 0.2s;
+	}
+}
+
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
+	.agents-manager-conversation-list-skeleton {
+		&__item {
+			border-color: #464646;
+		}
+
+		&__avatar,
+		&__title,
+		&__subtitle {
+			background-color: rgba( 255, 255, 255, 0.1 );
+		}
 	}
 }

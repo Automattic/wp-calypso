@@ -1,6 +1,7 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
+import { shouldShowRefundEligibilityNotice } from '../../../utils/purchase';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
@@ -24,7 +25,8 @@ export default function CancellationFullText( {
 		includedDomainPurchase,
 	} );
 
-	if ( refundAmountString ) {
+	// Skip refund text for refundable dotcom plans since refund is offered via the notice
+	if ( refundAmountString && ! shouldShowRefundEligibilityNotice( purchase ) ) {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: $(refundText)s is of the form "[currency-symbol][amount]" i.e. "$20" */

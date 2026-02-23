@@ -6,28 +6,38 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import ChatHeader, { Options } from '../chat-header';
+import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
+
+interface Props {
+	/** Chat header menu options. */
+	chatHeaderOptions: ChatHeaderOptions;
+	/** Indicates if the chat is docked in the sidebar. */
+	isDocked: boolean;
+	/** Indicates if the chat is expanded (floating mode). */
+	isOpen: boolean;
+	/** Called when the user aborts the current request. */
+	onAbort: () => void;
+	/** Called when the chat is closed. */
+	onClose: () => void;
+	/** The current site domain for contextual support. */
+	currentSiteDomain?: string;
+	/** The current Calypso section name. */
+	sectionName: string;
+	/** Indicates if the user is eligible for live chat support. */
+	isEligibleForChat: boolean;
+}
 
 export default function SupportGuide( {
 	isOpen,
 	chatHeaderOptions,
-	isChatDocked,
+	isDocked,
 	onAbort,
 	onClose,
 	currentSiteDomain,
 	sectionName,
 	isEligibleForChat,
-}: {
-	chatHeaderOptions: Options;
-	isChatDocked: boolean;
-	isOpen: boolean;
-	onAbort: () => void;
-	onClose: () => void;
-	currentSiteDomain?: string;
-	sectionName: string;
-	isEligibleForChat: boolean;
-} ) {
+}: Props ) {
 	const navigate = useNavigate();
 	const location = useLocation().search;
 	const query = new URLSearchParams( location );
@@ -38,11 +48,6 @@ export default function SupportGuide( {
 		return store.getAgentsManagerState();
 	}, [] );
 
-	function handleSubmit( value: string ) {
-		// eslint-disable-next-line no-console
-		console.log( 'Submitted message:', value );
-	}
-
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
@@ -51,15 +56,15 @@ export default function SupportGuide( {
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
-			onSubmit={ handleSubmit }
-			variant={ isChatDocked ? 'embedded' : 'floating' }
+			onSubmit={ () => {} }
+			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onStop={ onAbort }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isChatDocked }
+					isChatDocked={ isDocked }
 					onClose={ onClose }
 					onBack={ () => navigate( -1 ) }
 					options={ chatHeaderOptions }

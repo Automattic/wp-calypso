@@ -1,12 +1,5 @@
-@keyframes skeleton-pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.4;
-	}
-}
+@import '../../styles/animations.scss';
+@import '../../styles/mixins.scss';
 
 .agents-manager-chat-message-skeleton {
 	display: flex;
@@ -74,6 +67,23 @@
 		&--short {
 			width: 50%;
 			animation-delay: 0.2s;
+		}
+	}
+}
+
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
+	.agents-manager-chat-message-skeleton {
+		&__bubble {
+			background-color: #484848;
+		}
+
+		&__bubble &__line {
+			background-color: rgba( 255, 255, 255, 0.3 ) !important;
+		}
+
+		&__line {
+			background-color: rgba( 255, 255, 255, 0.15 ) !important;
 		}
 	}
 }

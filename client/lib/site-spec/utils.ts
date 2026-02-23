@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
+import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { createElement, type ReactElement } from 'react';
 import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 
 // Raw config structure from the server
@@ -33,10 +35,10 @@ export interface SiteSpecConfig {
 	buildSiteUrl?: string;
 	theme?: {
 		// Branding
-		brandIcon?: SVGRectElement | string | null; // ReactElement or image URL; null hides
+		brandIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
 		brandIconAlt?: string; // Alt text for brandIcon when string URL
 		brandIconHeight?: number | string;
-		initialIcon?: SVGRectElement | string | null; // ReactElement or image URL; null hides
+		initialIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
 		initialIconAlt?: string; // Alt text for initialIcon when string URL
 
 		// Copy overrides
@@ -62,10 +64,12 @@ export interface SiteSpecConfig {
 		// Powered by
 		poweredBy?: {
 			label?: string; // e.g., 'Powered by'
-			logo?: SVGRectElement | string; // React element or image URL
+			logo?: ReactElement | string; // React element or image URL
 			logoAlt?: string; // Alt text for logo when string URL
 			url?: string; // Click-through link
 			position?: 'header' | 'footer';
+			showOnOnboarding?: boolean;
+			opacity?: number;
 		};
 
 		promptSuggestions?: {
@@ -97,6 +101,7 @@ export interface SiteSpecConfig {
 		typography?: {
 			body?: string;
 			headings?: string;
+			headingWeight?: number;
 		};
 
 		// Identification/metadata
@@ -204,51 +209,31 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		},
 		theme: {
 			brandId: 'ciab',
-			brandIcon: 'https://woocommerce.com/wp-content/uploads/2025/01/Logo-Black.png',
-			initialIcon: 'https://woocommerce.com/wp-content/uploads/2025/01/Logo-Black.png',
+			brandIcon: null,
+			initialIcon: createElement( WooLogo, { width: 148, height: 38 } ),
 			brandIconHeight: 32,
-			brandColor: '#000000',
+			brandColor: 'rgba(56, 88, 233, 1)',
 			onboardingTitle: __( 'Your success story starts here.', 'site-spec' ),
 			onboardingSubtitle: __(
 				'Describe what you want to sell or offer, and the kind of store you want to create. We’ll use this to design your store — whether you take bookings, sell products, or both.',
 				'site-spec'
 			),
 			colors: {
-				background: '#F5F7FA',
-				primary: '#000000',
-				primaryForeground: '#F5F7FA',
-				foreground: '#1F2933',
-				border: '#000000',
-				muted: '#E3E8EF',
-			},
-			cssVariables: {
-				'--spec-preview-input-bg': 'rgba(0, 0, 0, 0.04)',
-				// For the create-site button
-				'--spec-preview-create-bg':
-					'var(--ss-suggestion-solid-bg, var(--ss-color-primary, #000000))',
-				'--spec-preview-create-fg':
-					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
-				'--spec-preview-create-border':
-					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
-
-				// For the footer submit button
-				'--spec-preview-chip-bg': 'var(--ss-suggestion-solid-bg, var(--ss-color-primary, #000000))',
-				'--spec-preview-chip-fg':
-					'var(--ss-suggestion-solid-text, var(--ss-color-primary-foreground, #F5F7FA))',
-				'--spec-preview-chip-border':
-					'1px solid var(--ss-suggestion-solid-border, var(--ss-color-primary, #000000))',
-
-				// For the spec preview checkbox
-				'--spec-preview-checkbox-appearance': 'none',
+				background: '#F0F0F0',
+				primary: 'rgba(56, 88, 233, 1)',
+				primaryForeground: '#FFFFFF',
+				foreground: '#1F1F1F',
+				border: 'rgba(56, 88, 233, 1)',
+				muted: '#E3E3E3',
+				mutedForeground: '#717171',
 			},
 			promptSuggestions: {
-				variant: 'solid' as const,
-				background: '#000000',
-				border: '#000000',
-				text: '#F5F7FA',
-				hoverBackground: '#111111',
-				hoverBorder: '#000000',
-				hoverText: '#F5F7FA',
+				variant: 'solid',
+				background: 'none',
+				border: 'rgba(0, 0, 0, 0.1)',
+				text: '#000000',
+				hoverBackground: 'rgba(255,255,255,0.8)',
+				hoverBorder: 'rgba(0, 0, 0, 0.1)',
 				hoverOpacity: 0.85,
 				enabled: true,
 				items: [
@@ -301,25 +286,43 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 				input: '14px',
 			},
 			effects: {
-				glow: true,
-				glowColor: '#eee',
+				glow: false,
 			},
 			typography: {
-				body: "'Inter', sans-serif",
-				headings: "'Inter', sans-serif",
+				body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+				headings:
+					'"Proxima Vara", "Proxima Nova", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+				headingWeight: 600,
 			},
 			poweredBy: {
-				label: __( 'Powered by' ),
-				logo: 'https://woocommerce.com/wp-content/uploads/2025/01/Logo-Black.png',
+				label: 'Powered by',
+				logo: createElement( WooLogo, { width: 69, height: 18 } ),
 				url: 'https://woocommerce.com',
+				showOnOnboarding: false,
+				opacity: 1,
 			},
 			buttons: {
 				textColor: '#1F2933',
-				hoverTextColor: '#000000',
+				hoverTextColor: 'rgba(56, 88, 233, 1)',
+			},
+			cssVariables: {
+				'--spec-preview-create-bg': 'rgba(56, 88, 233, 1)',
+				'--spec-preview-create-fg': '#FFFFFF',
+				'--spec-preview-bg': '#FCFCFC',
+				'--spec-preview-border': 'rgba(0, 0, 0, 0.1)',
+				'--spec-preview-input-bg': '#FFFFFF',
+				'--spec-preview-input-border': '1px solid #E0E0E0',
+				'--spec-preview-checkbox-checked-bg': 'rgba(56, 88, 233, 1)',
+				'--spec-preview-input-focus-border': 'rgba(0, 0, 0, 0.1)',
+				'--spec-preview-checkbox-checked-border': 'rgba(56, 88, 233, 1)',
+				// Spec preview submit button
+				'--spec-preview-chip-fg': '#ffffff',
+				'--spec-preview-chip-bg': 'rgba(56, 88, 233, 1)',
+				'--spec-preview-checkbox-appearance': 'none',
 			},
 		},
 		tosConfig: {
-			showToS: false,
+			showToS: true,
 		},
-	} as SiteSpecConfig;
+	};
 }

@@ -6,11 +6,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
-	agentId: string;
-	sessionId: string;
-	authProvider?: () => Promise< Record< string, string > >;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -21,13 +19,9 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( {
-	agentId,
-	sessionId,
-	authProvider,
-	maxPages = 10,
-	onSuccess = () => {},
-}: Config ): Result {
+export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, sessionId, authProvider } = agentConfig!;
 	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;

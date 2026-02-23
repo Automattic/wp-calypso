@@ -268,7 +268,10 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				<AgentsManagerLoader sectionName={ this.props.sectionName } />
+				<AgentsManagerLoader
+					sectionName={ this.props.sectionName }
+					currentRoute={ this.props.currentRoute }
+				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }

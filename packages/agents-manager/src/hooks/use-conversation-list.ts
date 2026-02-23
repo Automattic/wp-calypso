@@ -7,17 +7,15 @@ import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 import { LocalConversationListItem } from '../types';
 import { parseUTCTimestamp } from '../utils/conversation-history-formatters';
 import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
-interface Options {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
-}
-
-export default function useConversationList( { agentId, authProvider }: Options ) {
+export default function useConversationList() {
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
 	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );

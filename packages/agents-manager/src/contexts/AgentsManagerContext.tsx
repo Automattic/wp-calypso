@@ -1,4 +1,5 @@
-import { createContext, useContext } from '@wordpress/element';
+import { createContext, useContext, useState } from '@wordpress/element';
+import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
 /**
@@ -14,19 +15,28 @@ export interface AgentsManagerContextType {
 	site?: AgentsManagerSite | null;
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
 	sectionName: string;
+	/** The current route path. */
+	currentRoute?: string;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
 	 * TODO: Implement with dedicated endpoint. Currently hardcoded to false.
 	 */
 	isEligibleForChat: boolean;
+	/** The agent configuration created during setup. */
+	agentConfig: UseAgentChatConfig | null;
+	/** Sets the agent configuration (called from AgentSetup after initialization). */
+	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	site: null,
 	sectionName: 'wp-admin',
+	currentRoute: undefined,
 	isEligibleForChat: false,
+	agentConfig: null,
+	setAgentConfig: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -56,8 +66,12 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	children,
 	value,
 } ) => {
+	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+
 	return (
-		<AgentsManagerContext.Provider value={ { ...defaultContext, ...value } }>
+		<AgentsManagerContext.Provider
+			value={ { ...defaultContext, ...value, agentConfig, setAgentConfig } }
+		>
 			{ children }
 		</AgentsManagerContext.Provider>
 	);

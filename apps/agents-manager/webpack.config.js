@@ -96,6 +96,9 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 	];
 }
 

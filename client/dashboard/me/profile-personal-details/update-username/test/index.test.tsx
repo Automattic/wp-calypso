@@ -20,6 +20,7 @@ jest.mock( '../username-validation-utils', () => ( {
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
+	startSiteCollisionListener: jest.fn( () => jest.fn() ),
 	updateUsernameMutation: jest.fn( () => ( {
 		mutationFn: jest.fn(),
 	} ) ),

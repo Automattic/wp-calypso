@@ -3,6 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	createSiteFromDomainOnly,
@@ -14,7 +15,7 @@ import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-feature
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import DomainOnlyNew from '../index';
+import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
@@ -31,6 +32,11 @@ jest.mock(
 		useDomainToPlanCreditsApplicable: jest.fn(),
 	} )
 );
+
+jest.mock( 'calypso/dashboard/app/routing', () => ( {
+	...jest.requireActual( 'calypso/dashboard/app/routing' ),
+	getDashboardFromQuery: jest.fn(),
+} ) );
 
 const mockDomainPurchase: ReceiptPurchase = {
 	meta: 'example.com',
@@ -56,11 +62,11 @@ const mockDomainPurchase: ReceiptPurchase = {
 
 function renderComponent( { currency = 'USD' }: { currency?: string } = {} ) {
 	return renderWithProvider(
-		<DomainOnlyNew domainPurchase={ mockDomainPurchase } currency={ currency } />
+		<DomainOnly domainPurchase={ mockDomainPurchase } currency={ currency } />
 	);
 }
 
-describe( 'DomainOnlyNew', () => {
+describe( 'DomainOnly', () => {
 	beforeEach( () => {
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
@@ -198,6 +204,16 @@ describe( 'DomainOnlyNew', () => {
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
 				'href',
 				`/setup/site-migration?siteSlug=${ mockDomainPurchase.meta }`
+			);
+		} );
+
+		it( 'links to the site migration setup flow with dashboard query param if present', () => {
+			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+			renderComponent();
+
+			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
+				'href',
+				`/setup/site-migration?dashboard=ciab&siteSlug=${ mockDomainPurchase.meta }`
 			);
 		} );
 	} );
