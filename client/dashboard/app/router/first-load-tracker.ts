@@ -1,14 +1,21 @@
+let isFirstLoad = true;
+
 /**
- * Used for detecting whether a navigation is a fresh page load (see `./root.tsx`)
- * @returns true if this function hasn't been called before.
+ * Returns true if this is the first page load, without consuming the flag.
+ * Use in beforeLoad handlers where the root route may re-run on internal redirects.
  */
-export const consumeFirstLoad = ( () => {
-	let isFirstLoad = true;
-	return () => {
-		if ( isFirstLoad ) {
-			isFirstLoad = false;
-			return true;
-		}
-		return false;
-	};
-} )();
+export function peekFirstLoad(): boolean {
+	return isFirstLoad;
+}
+
+/**
+ * Returns true if this is the first page load, and consumes the flag so subsequent
+ * calls return false. Call this when actually starting a performance measurement.
+ */
+export function consumeFirstLoad(): boolean {
+	if ( isFirstLoad ) {
+		isFirstLoad = false;
+		return true;
+	}
+	return false;
+}

@@ -5,6 +5,7 @@ import { useLayoutEffect } from 'react';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { getSiteFromCache } from './analytics/super-props';
 import { AUTH_QUERY_KEY } from './auth';
+import { consumeFirstLoad } from './router/first-load-tracker';
 import type { User } from '@automattic/api-core';
 import type { Collector } from '@automattic/browser-data-collector';
 
@@ -46,6 +47,11 @@ function buildCollector( siteSlug?: string ): Collector {
 export function startPerformanceTracking( id: string, { fullPageLoad = false } = {} ) {
 	if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 		return;
+	}
+	// Consume the first-load flag here (not in the root route) so that internal router
+	// redirects (e.g. / → /sites) don't eat it before the leaf route starts tracking.
+	if ( fullPageLoad ) {
+		consumeFirstLoad();
 	}
 	cancel( id );
 	start( id, { fullPageLoad } );
