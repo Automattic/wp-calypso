@@ -80,6 +80,11 @@ export const loginUser =
 					error,
 				} );
 
+				// Reset Blackbox so the next login attempt gets a fresh session.
+				if ( window.Blackbox?.reset ) {
+					window.Blackbox.reset();
+				}
+
 				return Promise.reject( error );
 			} );
 	};
