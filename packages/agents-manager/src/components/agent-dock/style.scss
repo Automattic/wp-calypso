@@ -537,6 +537,7 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 			&.confirmation-action-destructive {
 				flex: 1;
 			}
+
 			&.confirmation-action-destructive {
 				background-color: $alert-red;
 				p,
