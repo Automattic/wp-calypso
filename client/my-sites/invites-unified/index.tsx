@@ -7,7 +7,8 @@ import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
-import { isAlreadyMemberError } from './utils';
+import InvalidInviteScreen from './screens/invalid-invite-screen';
+import { isAlreadyMemberError, isInvalidInviteError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
 import './style.scss';
@@ -82,9 +83,16 @@ export function UnifiedInviteAccept( {
 		);
 	}
 
+	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
+
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
+	}
+
+	// Invalid invite → show invalid-invite screen
+	if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+		return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
 	}
 
 	const invite = { ...inviteData, inviteKey, activationKey } as Invite;
