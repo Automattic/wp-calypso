@@ -47,6 +47,7 @@ export default function useAgentLayoutManager( {
 	onUndock = () => {},
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
+	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const isDesktop = useMediaQuery( desktopMediaQuery );
 	const { height } = useWindowDimensions();
@@ -131,6 +132,10 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
+			if ( wasOpenRef.current ) {
+				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+			}
+
 			onDockRef.current();
 		} else {
 			container.classList.remove(
@@ -173,6 +178,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		wasOpenRef.current = true;
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
@@ -183,6 +189,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onCloseSidebarRef.current();
