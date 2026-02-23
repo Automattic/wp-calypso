@@ -595,6 +595,18 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						showArrows={ ! wpcomShowUpsell }
 						slug={ slug }
 						dateRange={ customChartRange }
+						endContent={
+							shouldRenderModuleToggler && (
+								<PageModuleToggler
+									selectedItem="traffic"
+									moduleToggles={ moduleToggles }
+									siteId={ siteId }
+									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+									onTooltipDismiss={ onTooltipDismiss }
+									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+								/>
+							)
+						}
 					>
 						{ ' ' }
 						<DatePicker
@@ -633,17 +645,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				{ ! wpcomShowUpsell && (
 					<>
 						{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
-
-						{ shouldRenderModuleToggler && (
-							<PageModuleToggler
-								selectedItem="traffic"
-								moduleToggles={ moduleToggles }
-								siteId={ siteId }
-								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-								onTooltipDismiss={ onTooltipDismiss }
-								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-							/>
-						) }
 
 						<StatsModuleListing className={ moduleListClassNames } siteId={ siteId }>
 							<StatsModuleTopPosts
