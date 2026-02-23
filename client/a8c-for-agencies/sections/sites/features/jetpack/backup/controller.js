@@ -16,7 +16,6 @@ import { FileBrowserProvider } from 'calypso/my-sites/backup/backup-contents-pag
 import BackupUpsell from 'calypso/my-sites/backup/backup-upsell';
 import BackupCloneFlow from 'calypso/my-sites/backup/clone-flow';
 import BackupsPage from 'calypso/my-sites/backup/main';
-import MultisiteNoBackupPlanSwitch from 'calypso/my-sites/backup/multisite-no-backup-plan-switch';
 import BackupRewindFlow, { RewindFlowPurpose } from 'calypso/my-sites/backup/rewind-flow';
 import WPCOMBackupUpsell from 'calypso/my-sites/backup/wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from 'calypso/my-sites/backup/wpcom-backup-upsell-placeholder';
@@ -24,6 +23,7 @@ import { setFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
@@ -109,23 +109,16 @@ export function showUnavailableForVaultPressSites( context, next ) {
 }
 
 export function showUnavailableForMultisites( context, next ) {
-	debug( 'controller: showUnavailableForMultisites', context.params );
-
-	// Only show "Multisite not supported" card if the multisite does not already own a Backup subscription.
-	// https://href.li/?https://wp.me/pbuNQi-1jg
-	const message =
-		isJetpackCloud() || isA8CForAgencies() ? (
-			<BackupUpsell reason="multisite_not_supported" />
-		) : (
-			<WPCOMBackupUpsell reason="multisite_not_supported" />
-		);
-
-	context.featurePreview = (
-		<MultisiteNoBackupPlanSwitch
-			trueComponent={ message }
-			falseComponent={ context.featurePreview }
-		/>
-	);
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( siteId && isJetpackSiteMultiSite( state, siteId ) ) {
+		context.featurePreview =
+			isJetpackCloud() || isA8CForAgencies() ? (
+				<BackupUpsell reason="multisite_not_supported" />
+			) : (
+				<WPCOMBackupUpsell reason="multisite_not_supported" />
+			);
+	}
 
 	next();
 }

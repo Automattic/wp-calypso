@@ -176,8 +176,7 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 	};
 
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	// If the site is a multisite and doesn't already have a backup, we want to show a message that the backup is not supported
-	if ( isMultiSite && ! hasBackup ) {
+	if ( isMultiSite ) {
 		return (
 			<ExpandedCard
 				isEnabled={ false }
