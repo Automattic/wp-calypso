@@ -488,7 +488,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
@@ -805,7 +805,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@wordpress/data": "npm:^10.23.0"
@@ -1013,7 +1013,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/typography": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -1113,7 +1113,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
@@ -1785,7 +1785,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
@@ -1846,14 +1846,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "@automattic/number-formatters@npm:1.0.15"
+"@automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15, @automattic/number-formatters@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@automattic/number-formatters@npm:1.1.0"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: 033aee63dbb320d3ab6e34eec73453bf434911123371501014027fed5251793bedf96047d7158ef326cfc35fe75175dbe48a6c53f2343ec91004d43c007ea022
+  checksum: 277a5dd990141795cf11efcad0a0a5e072c92cb91915f6ce3cc0d834527744bf518977da0ea48566480da845e901d28969783236ed1ebd582265aec714b5a1a8
   languageName: node
   linkType: hard
 
@@ -2037,7 +2037,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -2580,7 +2580,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/js-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@fnando/cnpj": "npm:2.0.0"
@@ -21474,7 +21474,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
@@ -37815,7 +37815,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"

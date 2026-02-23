@@ -49,7 +49,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
-		"@automattic/number-formatters": "^1.0.1",
+		"@automattic/number-formatters": "^1.1.0",
 		"@automattic/typography": "workspace:^",
 		"@automattic/ui": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
