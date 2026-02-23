@@ -58,11 +58,20 @@ export default function useCopy( registerMessageActions: RegisterMessageActions 
 						className:
 							'agents-manager-message-action-icon agents-manager-message-action-icon--copy',
 					} ),
-					onClick: () => {
-						navigator.clipboard.writeText( text );
+					onClick: async () => {
+						try {
+							await navigator.clipboard.writeText( text );
+						} catch ( error ) {
+							// eslint-disable-next-line no-console
+							console.error( '[useCopy] Failed to copy text to clipboard:', error );
+							return;
+						}
 
 						copiedId = message.id;
-						registerMessageActions( { id: 'agents-manager-copy', actions: getActions } );
+						registerMessageActions( {
+							id: 'agents-manager-copy',
+							actions: getActions,
+						} );
 
 						timer = setTimeout( () => {
 							copiedId = null;
