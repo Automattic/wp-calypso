@@ -387,7 +387,7 @@ function StepButtons( {
 			>
 				{ __( 'Submit' ) }
 			</Button>
-			{ ( ! canGoNext || isCancelling ) && ! hasWarningStep && (
+			{ ! canGoNext && ! hasWarningStep && (
 				<Button
 					variant="tertiary"
 					isBusy={ isCancelling }
