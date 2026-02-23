@@ -25,10 +25,10 @@ billing-purchases/
 
 Non-obvious details about sibling directories under `client/dashboard/me/`:
 
-| Directory | Trap |
-|-----------|------|
-| `billing-payment-methods/` | Delete dialog queries `userPurchasesQuery()` to show affected subscriptions |
-| `billing-tax-details/` | Read-only when `can_user_edit === false` — no error, just silently disables form |
+| Directory                  | Trap                                                                             |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| `billing-payment-methods/` | Delete dialog queries `userPurchasesQuery()` to show affected subscriptions      |
+| `billing-tax-details/`     | Read-only when `can_user_edit === false` — no error, just silently disables form |
 
 ### Data Layer
 
@@ -55,11 +55,11 @@ Three flow types, derived by `getPurchaseCancellationFlowType()` in
 `utils/purchase.ts` from `is_refundable`, `hasAmountAvailableToRefund()`, and
 `is_auto_renew_enabled` (not passed as props):
 
-| Flow Type | When | API Call |
-|-----------|------|----------|
-| `REMOVE` | Expired, grace-period, or (not refundable AND auto-renew off) | `removePurchaseMutation()` (DELETE) |
-| `CANCEL_WITH_REFUND` | Refundable, amount > 0, auto-renew on | `cancelAndRefundPurchaseMutation()` |
-| `CANCEL_AUTORENEW` | Not refundable, auto-renew on | Turns off auto-renew |
+| Flow Type            | When                                                          | API Call                            |
+| -------------------- | ------------------------------------------------------------- | ----------------------------------- |
+| `REMOVE`             | Expired, grace-period, or (not refundable AND auto-renew off) | `removePurchaseMutation()` (DELETE) |
+| `CANCEL_WITH_REFUND` | Refundable, amount > 0, auto-renew on                         | `cancelAndRefundPurchaseMutation()` |
+| `CANCEL_AUTORENEW`   | Not refundable, auto-renew on                                 | Turns off auto-renew                |
 
 Survey steps vary by product type (Jetpack, domains, plans, Akismet, marketplace).
 Agency partner purchases skip survey. Marketplace plan cancellation cascades to all
@@ -86,4 +86,3 @@ marketplace subscriptions on site.
 
 5. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
-

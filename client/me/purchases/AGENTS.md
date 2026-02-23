@@ -33,6 +33,7 @@ What's in that array depends on which `Query*Purchases` components have mounted.
 
 1. **Two cancel paths (mutually exclusive)** — `manage-purchase/index.tsx` renders one
    of two cancel entry points based on `canAutoRenewBeTurnedOff(purchase)`:
+
    - **True** → `renderCancelPurchaseNavItem()` → navigates to cancel page (full flow)
    - **False** → `renderRemovePurchaseNavItem()` → renders `<RemovePurchase>` inline (delete)
 

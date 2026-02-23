@@ -108,4 +108,3 @@ Steps 6-7 are the ones agents miss — without slug mapping the method never app
 
 9. **Atomic sites use `.wpcomstaging.com`** — Thank-you URL logic replaces
    `.wordpress.com` with `.wpcomstaging.com` for Atomic sites.
-

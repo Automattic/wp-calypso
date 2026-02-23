@@ -41,22 +41,22 @@ Cross-cutting knowledge for checkout, purchases, and billing areas. Sub-area
 AGENTS.md files: `client/my-sites/checkout/`, `client/dashboard/me/billing-purchases/`,
 `client/me/purchases/`.
 
-| Aspect | Classic (`client/me/`, `client/my-sites/`) | Dashboard (`client/dashboard/`) |
-|--------|-------------------------------------------|--------------------------------|
-| Purchase type | `calypso/lib/purchases/types` (camelCase) | `@automattic/api-core` (snake_case) |
-| Expiry values | `'autoRenewing'`, `'manualRenew'` | `'auto-renewing'`, `'manual-renew'` |
-| Query key prefix | N/A (Redux) | `'upgrades'` (NOT `'purchases'`) |
+| Aspect           | Classic (`client/me/`, `client/my-sites/`) | Dashboard (`client/dashboard/`)     |
+| ---------------- | ------------------------------------------ | ----------------------------------- |
+| Purchase type    | `calypso/lib/purchases/types` (camelCase)  | `@automattic/api-core` (snake_case) |
+| Expiry values    | `'autoRenewing'`, `'manualRenew'`          | `'auto-renewing'`, `'manual-renew'` |
+| Query key prefix | N/A (Redux)                                | `'upgrades'` (NOT `'purchases'`)    |
 
 ### Package Boundaries
 
-| Package | Role | Key Rule |
-|---------|------|----------|
-| `composite-checkout` | Generic multi-step checkout framework | NO WP.com logic here |
-| `wpcom-checkout` | WP.com-specific checkout (line items, tax, payment methods) | WP.com logic goes here |
-| `shopping-cart` | Cart state via `useShoppingCart()` | Independent of checkout |
-| `calypso-stripe` | Stripe.js wrapper | Stripe-specific integration |
-| `api-core` | Fetchers, mutators, types for all API calls | Foundation layer |
-| `api-queries` | TanStack Query wrappers around api-core | Dashboard consumes these |
+| Package              | Role                                                        | Key Rule                    |
+| -------------------- | ----------------------------------------------------------- | --------------------------- |
+| `composite-checkout` | Generic multi-step checkout framework                       | NO WP.com logic here        |
+| `wpcom-checkout`     | WP.com-specific checkout (line items, tax, payment methods) | WP.com logic goes here      |
+| `shopping-cart`      | Cart state via `useShoppingCart()`                          | Independent of checkout     |
+| `calypso-stripe`     | Stripe.js wrapper                                           | Stripe-specific integration |
+| `api-core`           | Fetchers, mutators, types for all API calls                 | Foundation layer            |
+| `api-queries`        | TanStack Query wrappers around api-core                     | Dashboard consumes these    |
 
 ### API Layer
 
