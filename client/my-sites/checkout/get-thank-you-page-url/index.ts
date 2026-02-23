@@ -25,6 +25,7 @@ import {
 } from '@automattic/calypso-url';
 import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
 import {
 	getGoogleApps,
@@ -73,7 +74,7 @@ type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 const allowedExternalSites = [
 	'my.wordpress.com',
 	'my.localhost',
-	'my.woo.com',
+	'my.woo.ai',
 	'my.woo.localhost',
 	'cloud.jetpack.com',
 	'jetpack.cloud.localhost',
@@ -461,7 +462,16 @@ export default function getThankYouPageUrl( {
 		debug( 'adding Gravatar domain query param to fallback URL', fallbackUrl );
 	}
 
-	return getUrlWithQueryParam( fallbackUrl );
+	const queryParams: Record< string, string > = {};
+
+	const dashboard = getDashboardFromQuery();
+
+	if ( dashboard ) {
+		queryParams.dashboard = dashboard;
+		debug( 'adding dashboard query param to fallback URL', dashboard );
+	}
+
+	return getUrlWithQueryParam( fallbackUrl, queryParams );
 }
 
 function updateUrlInCookie( {

@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
@@ -30,7 +31,7 @@ export function SubscriptionPurchase( {
 					className="manage-pressable-link"
 					target="_blank"
 					rel="norefferer nooppener"
-					href="https://my.pressable.com/agency/auth"
+					href={ EXTERNAL_PRESSABLE_AUTH_URL }
 					variant="link"
 				>
 					{ translate( 'Manage in Pressable ↗' ) }

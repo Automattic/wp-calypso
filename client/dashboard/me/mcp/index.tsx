@@ -33,6 +33,9 @@ interface McpAbility {
 	description: string;
 	enabled: boolean;
 	category?: string;
+	category_label?: string;
+	type?: string;
+	annotations?: Record< string, unknown >;
 }
 
 interface McpSite {
@@ -86,7 +89,7 @@ function McpComponent() {
 	const availableTools = Object.entries( mcpAbilities );
 	const hasTools = availableTools.length > 0;
 
-	// Check if any tools are enabled (for master toggle state)
+	// Check if any tools are enabled (for toggle-all state)
 	const anyToolsEnabled =
 		hasTools && Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
 
@@ -102,7 +105,7 @@ function McpComponent() {
 		mutation.mutate( payload as any );
 	};
 
-	const handleMasterToggle = ( enabled: boolean ) => {
+	const handleToggleAll = ( enabled: boolean ) => {
 		// Create payload with all tools set to the same state (just booleans)
 		const accountAbilities: Record< string, boolean > = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
@@ -124,7 +127,7 @@ function McpComponent() {
 		const grouped: Record< string, Array< [ string, McpAbility ] > > = {};
 
 		tools.forEach( ( [ toolId, tool ] ) => {
-			const displayCategory = getDisplayCategory( toolId );
+			const displayCategory = getDisplayCategory( toolId, tool );
 			if ( ! grouped[ displayCategory ] ) {
 				grouped[ displayCategory ] = [];
 			}
@@ -313,7 +316,7 @@ function McpComponent() {
 
 		return (
 			<VStack spacing={ 8 }>
-				{ /* MCP Tool Access Master Toggle */ }
+				{ /* MCP Tool Access Toggle All */ }
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -339,7 +342,7 @@ function McpComponent() {
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ anyToolsEnabled }
-								onChange={ handleMasterToggle }
+								onChange={ handleToggleAll }
 								label={
 									<Text>
 										{ anyToolsEnabled ? __( 'Disable AI Access' ) : __( 'Enable AI Access' ) }

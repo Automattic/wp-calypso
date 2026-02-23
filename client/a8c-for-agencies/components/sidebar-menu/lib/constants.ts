@@ -74,3 +74,6 @@ export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me';
 export const EXTERNAL_WPCOM_PAYMENT_METHODS_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/payment-methods`;
 export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/billing`;
+
+// Pressable External links
+export const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';

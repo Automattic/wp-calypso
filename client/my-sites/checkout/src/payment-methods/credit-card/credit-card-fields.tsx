@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -52,9 +51,6 @@ export default function CreditCardFields( {
 	const stripeLoadTimeoutRef = useRef< NodeJS.Timeout | null >( null );
 	const hasLoggedStripeLoadTimeoutRef = useRef( false );
 
-	// Check if VGS form should be used
-	const isVgsEbanxEnabled = isEnabled( 'checkout/vgs-ebanx' );
-	const shouldUseVgsForm = isVgsEbanxEnabled && shouldUseEbanx;
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -148,8 +144,8 @@ export default function CreditCardFields( {
 
 	// Set up a timeout to detect if Stripe elements fail to load
 	useEffect( () => {
-		// Only monitor for Stripe loading if not using VGS or Ebanx
-		if ( shouldUseVgsForm || shouldUseEbanx || shouldShowContactFields ) {
+		// Only monitor for Stripe loading if not using Ebanx
+		if ( shouldUseEbanx || shouldShowContactFields ) {
 			return;
 		}
 
@@ -182,10 +178,10 @@ export default function CreditCardFields( {
 				clearTimeout( stripeLoadTimeoutRef.current );
 			}
 		};
-	}, [ isStripeFullyLoaded, shouldUseVgsForm, shouldUseEbanx, shouldShowContactFields ] );
+	}, [ isStripeFullyLoaded, shouldUseEbanx, shouldShowContactFields ] );
 
-	// Render VGS form if enabled (let VgsCreditCardFields handle its own loading state)
-	if ( shouldUseVgsForm && ! vgsFormError ) {
+	// Render VGS form for Ebanx payments
+	if ( shouldUseEbanx && ! vgsFormError ) {
 		return (
 			<CreditCardFormFields className="vgs-credit-card-form-fields">
 				<CreditCardFieldsWrapper isLoaded>

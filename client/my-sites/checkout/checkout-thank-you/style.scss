@@ -602,14 +602,6 @@
 	}
 }
 
-.is-section-checkout,
-.is-section-checkout-pending,
-.is-section-checkout-thank-you {
-	&:not( :has( .step-container-v2 ) ) {
-		background: var( --studio-white, #fff );
-	}
-}
-
 .is-section-checkout-pending .empty-content__title,
 .is-section-checkout-thank-you .empty-content__title {
 	font-size: $font-title-small;
@@ -623,6 +615,10 @@
 }
 
 .is-section-checkout-pending {
+	&:not( :has( .step-container-v2 ) ) {
+		background: var( --studio-white, #fff );
+	}
+
 	&.has-no-sidebar {
 		.layout__content {
 			padding: 0;

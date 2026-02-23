@@ -7,6 +7,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -16,6 +17,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
@@ -105,6 +107,7 @@ import { ConnectingYourAccountStage, PlaceholderStage } from './woo-loader-stage
  */
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const MAX_AUTH_ATTEMPTS = 3;
+const WOO_LOADER_STAGES = [ ConnectingYourAccountStage, PlaceholderStage ];
 
 export class JetpackAuthorize extends Component {
 	static propTypes = {
@@ -515,12 +518,16 @@ export class JetpackAuthorize extends Component {
 		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
 	}
 
-	handleSignIn = async ( e, loginURL ) => {
-		e.preventDefault();
+	handleSignIn = async ( eOrLoginURL, loginURL ) => {
+		const hasEvent = !! eOrLoginURL && typeof eOrLoginURL.preventDefault === 'function';
+		const event = hasEvent ? eOrLoginURL : null;
+		const targetLoginURL = hasEvent ? loginURL : eOrLoginURL;
+
+		event?.preventDefault();
 
 		const { recordTracksEvent } = this.props;
 		switch ( true ) {
-			case this.isWooJPC():
+			case this.isWooJPC(): {
 				// Logout user before redirecting to login page.
 				try {
 					await this.props.logoutUser();
@@ -532,18 +539,22 @@ export class JetpackAuthorize extends Component {
 					document.cookie = 'wordpress_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
 				}
 				recordTracksEvent( 'calypso_jpc_wc_coreprofiler_different_user_click' );
-				window.location.href = e.target.href;
+				const loginHref = targetLoginURL
+					? Object.assign( document.createElement( 'a' ), { href: targetLoginURL } ).href
+					: event?.target?.href;
+				window.location.href = loginHref;
 				break;
+			}
 			default:
 				try {
-					const { redirect_to: redirectTo } = await this.props.logoutUser( loginURL );
+					const { redirect_to: redirectTo } = await this.props.logoutUser( targetLoginURL );
 					disablePersistence();
 					await clearStore();
 					window.location.href = redirectTo || '/';
 				} catch ( error ) {
 					// The logout endpoint might fail if the nonce has expired.
 					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-					this.props.redirectToLogout( loginURL );
+					this.props.redirectToLogout( targetLoginURL );
 				}
 		}
 	};
@@ -798,7 +809,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isWooJPC() ) {
-			return translate( 'Connect to WordPress.com' );
+			return translate( 'Connect' );
 		}
 
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
@@ -994,36 +1005,34 @@ export class JetpackAuthorize extends Component {
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
 		if ( this.isWooJPC() ) {
+			const loginURL = login( {
+				isJetpack: true,
+				redirectTo: window.location.href,
+				from: authQuery.from,
+				pluginName: authQuery.plugin_name,
+			} );
+
 			return (
 				<Fragment>
-					<div className="jetpack-connect__logged-in-content">
-						<Card className="jetpack-connect__logged-in-card">
-							<div className="jetpack-connect__logged-in-form-user">
-								<Gravatar user={ user } size={ 40 } />
-								<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-							</div>
-							<LoggedOutFormLinkItem
-								href={ login( {
-									isJetpack: true,
-									redirectTo: window.location.href,
-									from: authQuery.from,
-									pluginName: authQuery.plugin_name,
-								} ) }
-								onClick={ this.handleSignIn }
-							>
-								{ translate( 'Sign in as a different user' ) }
-							</LoggedOutFormLinkItem>
-						</Card>
-
-						<div className="jetpack-connect__logged-in-bottom">
+					<div className="jetpack-connect__woo-connect-screen-content">
+						<UserCard
+							user={ {
+								displayName: user.display_name,
+								email: user.email,
+								avatarUrl: user.avatar_URL,
+							} }
+							size="large"
+						/>
+						<ConsentText>
 							<Disclaimer
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
 								isWooJPC={ this.isWooJPC() }
+								as="span"
 							/>
-							{ this.renderStateAction() }
-						</div>
+						</ConsentText>
+						{ this.renderStateAction( loginURL ) }
 					</div>
 					{ authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 				</Fragment>
@@ -1164,7 +1173,7 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
-	renderStateAction() {
+	renderStateAction( wooLoginURL ) {
 		const { authorizeSuccess } = this.props.authorizationData;
 
 		if ( this.props.isSiteBlocked ) {
@@ -1180,15 +1189,15 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.isWooJPC() ) {
 			return (
-				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-					<Button
-						primary
-						disabled={ isLoading || this.isAuthorizing() || this.props.hasXmlrpcError }
-						onClick={ this.handleSubmit }
-					>
-						{ isLoading ? <WPSpinner /> : this.getButtonText() }
-					</Button>
-				</LoggedOutFormFooter>
+				<ActionButtons
+					className="jetpack-connect__woo-connect-screen-actions"
+					primaryLabel={ this.getButtonText() }
+					primaryLoading={ isLoading }
+					primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+					primaryOnClick={ this.handleSubmit }
+					tertiaryLabel={ this.props.translate( 'Sign in as a different user' ) }
+					tertiaryOnClick={ () => this.handleSignIn( wooLoginURL ) }
+				/>
 			);
 		}
 
@@ -1213,6 +1222,7 @@ export class JetpackAuthorize extends Component {
 				siteName={ decodeEntities( blogname ) }
 				companyName={ this.getCompanyName() }
 				from={ from }
+				as={ this.isFromJetpackOnboarding() || this.isFromMyJetpack() ? 'span' : 'p' }
 				buttonText={
 					this.isFromJetpackOnboarding() || this.isFromMyJetpack()
 						? this.getButtonText()
@@ -1228,6 +1238,7 @@ export class JetpackAuthorize extends Component {
 					<ConsentText>{ disclaimer }</ConsentText>
 					<ActionButtons
 						primaryLabel={ this.getButtonText() }
+						primaryLoading={ isLoading }
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
 						primaryOnClick={ this.handleSubmit }
 					/>
@@ -1254,6 +1265,13 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
+		const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+		const siteUrlFromQuery = getQueryArg( currentUrl, 'site_url' );
+		const siteName = decodeEntities(
+			( siteUrlFromQuery || this.props.authQuery.siteUrl || '' )
+				.replace( /^https?:\/\//, '' )
+				.replace( /\/$/, '' )
+		);
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isFromJetpackOnboarding = this.isFromJetpackOnboarding();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
@@ -1270,7 +1288,7 @@ export class JetpackAuthorize extends Component {
 					shouldCloseOnEsc={ false }
 					isDismissible={ false }
 				>
-					<WooLoader stages={ [ ConnectingYourAccountStage, PlaceholderStage ] } />
+					<WooLoader stages={ WOO_LOADER_STAGES } />
 				</Modal>
 			);
 		}
@@ -1310,7 +1328,30 @@ export class JetpackAuthorize extends Component {
 								</p>
 							</div>
 						) }
-						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && (
+						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && this.isWooJPC() && (
+							<BrandHeader
+								title={ translate( 'Connect your account' ) }
+								description={ translate(
+									'To access all of the features and functionality in WooPayments, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+									{
+										args: {
+											siteName,
+										},
+										components: {
+											siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
+											doc: (
+												<a
+													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							/>
+						) }
+						{ ! ( isFromJetpackOnboarding || isFromMyJetpack ) && ! this.isWooJPC() && (
 							<AuthFormHeader
 								authQuery={ this.props.authQuery }
 								isWooJPC={ this.isWooJPC() }

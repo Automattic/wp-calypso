@@ -27,13 +27,14 @@ export default function StagingSiteDeleteModal( {
 	const { recordTracksEvent } = useAnalytics();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
-	const { data: productionSite } = useQuery( {
+	const { data: productionSite, isLoading: isLoadingProductionSite } = useQuery( {
 		...siteByIdQuery( productionSiteId ?? 0 ),
 		enabled: !! productionSiteId,
 	} );
 	const productionSiteSlug = productionSite?.slug;
 
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
+	const isDisabled = mutation.isPending || isLoadingProductionSite;
 
 	if ( ! productionSiteId ) {
 		return null;
@@ -88,8 +89,8 @@ export default function StagingSiteDeleteModal( {
 						__next40pxDefaultSize
 						variant="primary"
 						isDestructive
-						isBusy={ mutation.isPending }
-						disabled={ mutation.isPending }
+						isBusy={ isDisabled }
+						disabled={ isDisabled }
 						onClick={ handleDelete }
 					>
 						{ __( 'Delete staging site' ) }

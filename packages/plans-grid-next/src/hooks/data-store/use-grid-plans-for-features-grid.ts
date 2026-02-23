@@ -1,7 +1,6 @@
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
-import { useSummerSpecialStatus } from './use-summer-special-status';
 import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
@@ -55,9 +54,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isExperimentVariant,
 	} );
 
-	// Get summer special status early
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
-
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
 		gridPlans: gridPlans || [],
@@ -66,7 +62,6 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,

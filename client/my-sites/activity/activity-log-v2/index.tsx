@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getActivityLogHiddenGroups from 'calypso/state/selectors/get-activity-log-hidden-groups';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -40,7 +41,9 @@ const ActivityLogV2: FunctionComponent = () => {
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const { data: logs } = useActivityLogQuery( siteId, filter );
+	const notGroup = useSelector( ( state ) => getActivityLogHiddenGroups( state, siteId ) );
+	const filterWithNotGroup = notGroup ? { ...filter, notGroup } : filter;
+	const { data: logs } = useActivityLogQuery( siteId, filterWithNotGroup );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 

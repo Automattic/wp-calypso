@@ -33,7 +33,6 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
-	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -748,9 +747,6 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
-
 	// Determine feature groups for comparison grid
 	let featureGroupMapForComparisonGrid;
 	if ( hasWooHostedFeatures ) {
@@ -773,18 +769,14 @@ const PlansFeaturesMain = ( {
 	} else if ( useVar3Features || useVar4Features || useVar1Features || useVar5Features ) {
 		// Experiment: stacked variants should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
-		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()
 		);
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
 	}
 
 	const getComparisonGridToggleLabel = () => {
