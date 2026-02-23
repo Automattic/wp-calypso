@@ -88,6 +88,42 @@ export function checkoutUnifiedSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'unified' } );
 }
 
+export function checkoutRenewalBySubscriptionId( context, next ) {
+	const { subscriptionId } = context.params;
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+
+	setSectionMiddleware( { name: 'checkout' } )( context );
+
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CheckoutDocumentTitle />
+
+			<CheckoutMainWrapper
+				purchaseId={ subscriptionId }
+				productAliasFromUrl={ undefined }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOut }
+				sitelessCheckoutType={ undefined }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
+	);
+
+	next();
+}
+
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
