@@ -22,36 +22,30 @@ export function formatScheduleLabel( requestedSchedule: string ): string {
 		if ( customNumber === 1 ) {
 			return PREDEFINED_SCHEDULES.find( ( s ) => s.value === 'hourly' )?.label ?? '';
 		}
-		const interval = Math.floor( 60 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times cron job runs */
 			__( '%1$d times per hour' ),
-			customNumber,
-			interval
+			customNumber
 		);
 	}
 	if ( customFrequency === 'd' ) {
 		if ( customNumber === 1 ) {
 			return PREDEFINED_SCHEDULES.find( ( s ) => s.value === 'daily' )?.label ?? '';
 		}
-		const interval = Math.floor( 24 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times cron job runs */
 			__( '%1$d times per day' ),
-			customNumber,
-			interval
+			customNumber
 		);
 	}
 	if ( customFrequency === 'w' ) {
 		if ( customNumber === 1 ) {
 			return PREDEFINED_SCHEDULES.find( ( s ) => s.value === 'weekly' )?.label ?? '';
 		}
-		const interval = Math.floor( 7 / customNumber );
 		return sprintf(
 			/* translators: %1$d is the number of times cron job runs */
 			__( '%1$d times per week' ),
-			customNumber,
-			interval
+			customNumber
 		);
 	}
 
