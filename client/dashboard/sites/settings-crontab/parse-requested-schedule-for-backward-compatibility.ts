@@ -1,6 +1,6 @@
 /**
  * Parses a requestedSchedule and returns the schedule type.
- * Previously we din't have requested_schedule field and in this case we receive raw schedule here instead of daily/weekly/2h/5w/etc, so we need to parse it and return expected schedule type.
+ * Previously we didn't have requested_schedule field and in this case we receive raw schedule here instead of daily/weekly/2h/5w/etc, so we need to parse it and return expected schedule type.
  *
  * Patterns:
  * - Hourly: `M * * * *`
@@ -11,6 +11,11 @@
 export function parseRequestedScheduleForBackwardCompatibility(
 	requestedSchedule: string
 ): string {
+	// Guard against missing values from older API responses.
+	if ( ! requestedSchedule ) {
+		return 'hourly';
+	}
+
 	// Predefined schedule names pass through
 	if ( [ 'hourly', 'twicedaily', 'daily', 'weekly' ].includes( requestedSchedule ) ) {
 		return requestedSchedule;

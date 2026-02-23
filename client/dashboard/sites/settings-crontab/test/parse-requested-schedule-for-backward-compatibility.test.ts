@@ -114,6 +114,12 @@ describe( 'parseRequestedScheduleForBackwardCompatibility', () => {
 			expect( parseRequestedScheduleForBackwardCompatibility( '' ) ).toBe( 'hourly' );
 		} );
 
+		test( 'returns hourly for undefined', () => {
+			expect(
+				parseRequestedScheduleForBackwardCompatibility( undefined as unknown as string )
+			).toBe( 'hourly' );
+		} );
+
 		test( 'returns hourly for malformed cron with too few parts', () => {
 			expect( parseRequestedScheduleForBackwardCompatibility( '0 *' ) ).toBe( 'hourly' );
 		} );
