@@ -69,32 +69,6 @@ describe( 'GetApps', () => {
 		);
 	} );
 
-	it( 'shows WordPress.com desktop app before Studio for single-site users', () => {
-		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( 1 );
-
-		renderWithProvider( <GetApps /> );
-
-		const desktopApp = screen.getByTestId( 'desktop-app-wordpress' );
-		const studio = screen.getByTestId( 'desktop-app-wordpress-studio' );
-
-		expect(
-			desktopApp.compareDocumentPosition( studio ) & Node.DOCUMENT_POSITION_FOLLOWING
-		).toBeTruthy();
-	} );
-
-	it( 'shows Studio before WordPress.com desktop app for multi-site users', () => {
-		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( 2 );
-
-		renderWithProvider( <GetApps /> );
-
-		const studio = screen.getByTestId( 'desktop-app-wordpress-studio' );
-		const desktopApp = screen.getByTestId( 'desktop-app-wordpress' );
-
-		expect(
-			studio.compareDocumentPosition( desktopApp ) & Node.DOCUMENT_POSITION_FOLLOWING
-		).toBeTruthy();
-	} );
-
 	it( 'treats null site count as single-site user', () => {
 		( getCurrentUserSiteCount as jest.Mock ).mockReturnValue( null );
 

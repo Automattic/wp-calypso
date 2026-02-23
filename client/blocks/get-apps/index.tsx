@@ -17,9 +17,10 @@ export const GetApps = () => {
 	const siteCount = useSelector( getCurrentUserSiteCount );
 	const isMultiSiteUser = ( siteCount ?? 0 ) >= 2;
 
-	const desktopApps = isMultiSiteUser
-		? [ createWordPressStudioConfig( translate ), createWordPressDesktopConfig( translate ) ]
-		: [ createWordPressDesktopConfig( translate ), createWordPressStudioConfig( translate ) ];
+	const desktopApps = [
+		createWordPressStudioConfig( translate ),
+		createWordPressDesktopConfig( translate ),
+	];
 
 	return (
 		<>
