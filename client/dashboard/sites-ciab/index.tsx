@@ -1,12 +1,10 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { type View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import deepmerge from 'deepmerge';
-import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useHelpCenter } from '../app/help-center';
@@ -27,12 +25,10 @@ import {
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
 import { wpcomLink } from '../utils/link';
-import type { Site } from '@automattic/api-core';
 
 export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
@@ -69,12 +65,7 @@ export default function CIABSites() {
 	};
 
 	const handleViewChange = ( nextView: View ) => {
-		if ( nextView.type === 'list' ) {
-			return;
-		}
-
 		recordViewChanges( view, nextView, recordTracksEvent );
-
 		updateView( nextView );
 	};
 
@@ -94,16 +85,6 @@ export default function CIABSites() {
 	} else if ( hasFilterOrSearch ) {
 		emptyDescription = __( 'Your search did not match any stores.' );
 	}
-
-	useEffect( () => {
-		if ( sites ) {
-			sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ sites, queryClient ] );
 
 	const addNewStoreUrl = addQueryArgs( wpcomLink( '/setup/ai-site-builder-spec' ), {
 		source: 'ciab-sites-dashboard',
