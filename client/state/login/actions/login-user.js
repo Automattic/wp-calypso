@@ -81,8 +81,10 @@ export const loginUser =
 				} );
 
 				// Reset Blackbox so the next login attempt gets a fresh session.
-				if ( window.Blackbox?.reset ) {
-					window.Blackbox.reset();
+				try {
+					window.Blackbox?.reset();
+				} catch {
+					// Intentionally ignored — Blackbox must never interfere with login.
 				}
 
 				return Promise.reject( error );
