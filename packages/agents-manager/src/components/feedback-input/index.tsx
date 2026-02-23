@@ -74,7 +74,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	if ( submitSuccess ) {
 		return (
 			<div className="agents-manager-feedback-input">
-				<div className="agents-manager-feedback-input-inner">
+				<div className="agents-manager-feedback-input__inner">
 					<div className="agents-manager-feedback-input__success">
 						{ __( 'Feedback submitted, thank you!', '__i18n_text_domain__' ) }
 					</div>
@@ -86,7 +86,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	if ( submitError ) {
 		return (
 			<div className="agents-manager-feedback-input">
-				<div className="agents-manager-feedback-input-inner">
+				<div className="agents-manager-feedback-input__inner">
 					<div className="agents-manager-feedback-input__error">{ submitError }</div>
 				</div>
 			</div>
@@ -95,7 +95,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 
 	return (
 		<div className="agents-manager-feedback-input">
-			<div className="agents-manager-feedback-input-inner" ref={ textareaContainerRef }>
+			<div className="agents-manager-feedback-input__inner" ref={ textareaContainerRef }>
 				<TextareaControl
 					label={ __( 'What could be improved?', '__i18n_text_domain__' ) }
 					value={ feedbackText }

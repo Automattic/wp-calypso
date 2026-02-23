@@ -6,7 +6,7 @@
 	margin-right: 12px;
 	margin-bottom: 24px;
 
-	.agents-manager-feedback-input-inner {
+	&__inner {
 		margin-top: 12px;
 		padding: 12px;
 		background: $white;
@@ -66,7 +66,7 @@
 
 // Dark theme overrides for the docked chat
 @include docked-chat-without-modal {
-	.agents-manager-feedback-input-inner {
+	.agents-manager-feedback-input__inner {
 		background: $gray-900;
 		border-color: #545454;
 
