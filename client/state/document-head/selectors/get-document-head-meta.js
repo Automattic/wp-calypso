@@ -7,5 +7,5 @@ import 'calypso/state/document-head/init';
  * @returns {Object[]}       Array of meta objects
  */
 export function getDocumentHeadMeta( state ) {
-	return state.documentHead.meta;
+	return state.documentHead?.meta ?? [];
 }

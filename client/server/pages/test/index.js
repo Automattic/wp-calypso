@@ -108,6 +108,9 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
+const addQueryArgs = ( path, query ) =>
+	`${ path.split( '?' )[ 0 ] }?${ new URLSearchParams( query ) }`;
+
 /**
  * Builds an app for an specific environment.
  *
@@ -293,10 +296,11 @@ const buildApp = ( environment ) => {
 		},
 		run( { request = {}, response = {} } = {} ) {
 			return new Promise( ( resolve ) => {
+				const query = request.query ?? {};
+				const url = request.url ?? defaultUrl;
 				const mockRequest = Object.assign( new IncomingMessage(), {
 					body: {},
 					cookies: defaultCookies,
-					query: {},
 					params: {},
 					// Setup by parent app using 'express-useragent'
 					useragent: {
@@ -305,7 +309,6 @@ const buildApp = ( environment ) => {
 					headers: {
 						'user-agent': userAgent,
 					},
-					url: defaultUrl,
 					method: 'GET',
 					get: jest.fn(),
 					socket: {},
@@ -313,6 +316,8 @@ const buildApp = ( environment ) => {
 						error: jest.fn(),
 					},
 					...request,
+					query,
+					url: request.query ? addQueryArgs( url, query ) : url,
 				} );
 
 				// Using cloneDeep to capture the state of the request/response objects right now, in case
@@ -370,7 +375,19 @@ const assertDefaultContext = ( { url, entry } ) => {
 		app.withMockFilesystem();
 		app.withEvergreenBrowser();
 		app.withReduxStore( {
-			getState: () => ( {} ),
+			getState: () => ( {
+				sites: {
+					items: {
+						'unabashedly-instant-starlight.commerce-garden.com': {
+							is_garden: true,
+						},
+						'almost-inspiring-winner.commerce-garden.com': {
+							is_garden: true,
+						},
+					},
+				},
+			} ),
+			dispatch: () => {},
 		} );
 	} );
 
@@ -414,9 +431,9 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.lang ).toEqual( 'en' );
 	} );
 
-	it( 'sets hideWooHostedLogo to false for non-Woo Hosted routes', async () => {
+	it( 'sets selectedSite to undefined for URL without either site fragment or query parameter', async () => {
 		const { request } = await app.run();
-		expect( request.context.hideWooHostedLogo ).toEqual( false );
+		expect( request.context.selectedSite ).toEqual( undefined );
 	} );
 
 	if ( entry ) {
@@ -497,31 +514,63 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.useTranslationChunks ).toEqual( true );
 	} );
 
-	it( 'sets hideWooHostedLogo for Woo Hosted setup URLs', async () => {
+	it( 'sets selectedSite for Woo Hosted setup URLs', async () => {
+		const query = {
+			siteSlug: 'unabashedly-instant-starlight.commerce-garden.com',
+			dashboard: 'ciab',
+			sessionId: 'Z0',
+		};
+
 		const { request } = await app.run( {
 			request: {
-				url: '/setup/woo-hosted-plans/plans?siteSlug=unabashedly-instant-starlight.commerce-garden.com&dashboard=ciab&sessionId=Z0',
+				url: '/setup/woo-hosted-plans/plans?siteSlug=&=ciab&sessionId=Z0',
+				query,
 			},
 		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
+
+		expect( request.context.selectedSite ).toEqual(
+			expect.objectContaining( {
+				is_garden: true,
+			} )
+		);
 	} );
 
-	it( 'sets hideWooHostedLogo for Woo Hosted checkout URLs', async () => {
+	it( 'sets selectedSite for Woo Hosted checkout URLs', async () => {
+		const query = {
+			redirect_to: 'https%3A%2F%2Fmy.wordpress.com%2Fciab%2Fsites',
+			cancel_to:
+				'%2Fsetup%2Fwoo-hosted-plans%2Fplans%3FsiteSlug%3Dunabashedly-instant-starlight.commerce-garden.com%26dashboard%3Dciab%26sessionId%3DZ0',
+		};
+
 		const { request } = await app.run( {
 			request: {
-				url: '/checkout/unabashedly-instant-starlight.commerce-garden.com?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fciab%2Fsites&cancel_to=%2Fsetup%2Fwoo-hosted-plans%2Fplans%3FsiteSlug%3Dunabashedly-instant-starlight.commerce-garden.com%26dashboard%3Dciab%26sessionId%3DZ0',
+				url: '/checkout/unabashedly-instant-starlight.commerce-garden.com',
+				query,
 			},
 		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
+
+		expect( request.context.selectedSite ).toEqual(
+			expect.objectContaining( {
+				is_garden: true,
+			} )
+		);
 	} );
 
-	it( 'sets hideWooHostedLogo for Woo Hosted checkout plan URLs', async () => {
+	it( 'sets selectedSite for Woo Hosted checkout plan URLs', async () => {
 		const { request } = await app.run( {
 			request: {
-				url: '/checkout/almost-inspiring-winner.commerce-garden.com/woo_hosted_basic_plan_yearly?redirect_to=%2F',
+				url: '/checkout/almost-inspiring-winner.commerce-garden.com/woo_hosted_basic_plan_yearly',
+				query: {
+					redirect_to: '%2F',
+				},
 			},
 		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
+
+		expect( request.context.selectedSite ).toEqual(
+			expect.objectContaining( {
+				is_garden: true,
+			} )
+		);
 	} );
 
 	it( 'sets the client ip', async () => {

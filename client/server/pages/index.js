@@ -24,7 +24,6 @@ import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/r
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { shouldHideWooHostedLogo } from 'calypso/document/utils/should-hide-woo-hosted-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -212,7 +211,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
-		hideWooHostedLogo: shouldHideWooHostedLogo( request.url ?? '' ),
 	} );
 
 	context.app = {
@@ -500,7 +498,7 @@ function setUpLoggedInRoute( req, res, next ) {
 }
 
 async function setUpSelectedSite( req, res, next ) {
-	const siteFragment = getSiteFragment( req.path );
+	const siteFragment = req.query.siteSlug ?? req.query.siteId ?? getSiteFragment( req.path );
 
 	// Do nothing if the path fragment does not resemble a site.
 	if (
