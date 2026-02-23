@@ -28,7 +28,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import PromoCards from '../promo-cards';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import PageViewTracker from '../stats-page-view-tracker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';

@@ -9,7 +9,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';

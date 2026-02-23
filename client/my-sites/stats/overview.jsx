@@ -13,7 +13,7 @@ import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { ALL_SITES_ID } from 'calypso/state/stats/lists/actions';
-import DatePicker from './stats-date-picker';
+import DatePicker from './stats-date-label';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import PageViewTracker from './stats-page-view-tracker';
 import SiteOverview from './stats-site-overview';

@@ -13,7 +13,7 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
-import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import DatePicker from 'calypso/my-sites/stats/stats-date-label';
 import StatsPeriodHeader from 'calypso/my-sites/stats/stats-period-header';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

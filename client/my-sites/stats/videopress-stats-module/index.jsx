@@ -19,7 +19,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import '../stats-module/style.scss';
