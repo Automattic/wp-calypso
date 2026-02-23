@@ -41,6 +41,7 @@ export default function useCopy( registerMessageActions: RegisterMessageActions 
 				}
 
 				const text = getCopyableText( message );
+
 				if ( ! text ) {
 					return [];
 				}
