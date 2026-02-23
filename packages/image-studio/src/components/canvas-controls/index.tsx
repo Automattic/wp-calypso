@@ -3,10 +3,12 @@
  *
  * Displays thumbs up/down feedback buttons overlaid on the bottom-left of the generated image.
  * Uses the Agenttic UI MessageActions component for consistent styling and behavior.
+ * Shows a feedback text input popover when the thumbs down button is clicked.
  */
+import { FeedbackInput } from '@automattic/agents-manager';
 import { MessageActions, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
-import { __unstableMotion as motion } from '@wordpress/components';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { Popover, __unstableMotion as motion } from '@wordpress/components';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { trackImageStudioImageFeedback } from '../../utils/tracking';
 import { ImageActionsMenu } from '../image-actions-menu';
@@ -23,6 +25,7 @@ interface CanvasControlsProps {
 	onSave?: () => void;
 	onRevertToOriginal?: () => void;
 	onFeedback?: ( feedback: 'up' | 'down' ) => void;
+	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
 }
 
 export const CanvasControls = ( {
@@ -34,12 +37,16 @@ export const CanvasControls = ( {
 	onSave,
 	onRevertToOriginal,
 	onFeedback,
+	onSubmitFeedbackText,
 }: CanvasControlsProps ) => {
 	const [ selectedFeedback, setSelectedFeedback ] = useState< 'up' | 'down' | null >( null );
+	const [ showFeedbackPopover, setShowFeedbackPopover ] = useState( false );
+	const feedbackAnchorRef = useRef< HTMLDivElement | null >( null );
 
 	// Reset feedback when image changes
 	useEffect( () => {
 		setSelectedFeedback( null );
+		setShowFeedbackPopover( false );
 	}, [ imageUrl ] );
 
 	const handleFeedback = useCallback(
@@ -52,9 +59,17 @@ export const CanvasControls = ( {
 			setSelectedFeedback( feedback );
 			trackImageStudioImageFeedback( { feedback, attachmentId, mode } );
 			onFeedback?.( feedback );
+
+			if ( feedback === 'down' && onSubmitFeedbackText ) {
+				setShowFeedbackPopover( true );
+			}
 		},
-		[ mode, attachmentId, selectedFeedback, onFeedback ]
+		[ mode, attachmentId, selectedFeedback, onFeedback, onSubmitFeedbackText ]
 	);
+
+	const handleCloseFeedbackPopover = useCallback( () => {
+		setShowFeedbackPopover( false );
+	}, [] );
 
 	// Create a synthetic message object to use with MessageActions component
 	const actionMessage = useMemo(
@@ -98,10 +113,26 @@ export const CanvasControls = ( {
 			exit={ { opacity: 0 } }
 			transition={ { duration: 0.3 } }
 		>
-			<div className="canvas-controls__left">
+			<div className="canvas-controls__left" ref={ feedbackAnchorRef }>
 				{ showFeedbackButtons && <MessageActions message={ actionMessage } /> }
 				{ showImageActionsMenu && (
 					<ImageActionsMenu onSave={ onSave } onRevertToOriginal={ onRevertToOriginal } />
+				) }
+				{ showFeedbackPopover && onSubmitFeedbackText && (
+					<Popover
+						className="canvas-controls__feedback-popover dark"
+						placement="bottom-start"
+						anchor={ feedbackAnchorRef.current }
+						onClose={ handleCloseFeedbackPopover }
+						variant="unstyled"
+						offset={ 12 }
+						shift
+					>
+						<FeedbackInput
+							onSubmit={ onSubmitFeedbackText }
+							onCancel={ handleCloseFeedbackPopover }
+						/>
+					</Popover>
 				) }
 			</div>
 			<div className="canvas-controls__right">

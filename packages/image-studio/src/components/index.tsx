@@ -1,4 +1,3 @@
-import { FeedbackInput } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -46,17 +45,11 @@ function ImageStudioAgentChat( {
 	attachmentId,
 	mode,
 	onChatSubmit,
-	showFeedbackInput = false,
-	handleSubmitFeedbackText,
-	onFeedbackDone,
 }: {
 	agentConfig: any;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
-	showFeedbackInput?: boolean;
-	handleSubmitFeedbackText: ( feedbackText: string ) => Promise< void >;
-	onFeedbackDone?: () => void;
 } ) {
 	const agentChatProps = useAgentChat( agentConfigProp );
 	const { addNotice } = useDispatch( imageStudioStore );
@@ -182,9 +175,6 @@ function ImageStudioAgentChat( {
 		>
 			<AgentUI.ConversationView showHeader={ false }>
 				<AgentUI.Messages />
-				{ showFeedbackInput && onFeedbackDone && (
-					<FeedbackInput onSubmit={ handleSubmitFeedbackText } onCancel={ onFeedbackDone } />
-				) }
 				<AgentUI.Footer>
 					{ suggestionsComponent }
 					<AgentUI.Notice />
@@ -205,18 +195,12 @@ const ImageStudioAgentUIComponent = ( {
 	modalOpenKey,
 	onChatSubmit,
 	mode,
-	showFeedbackInput = false,
-	handleSubmitFeedbackText,
-	onFeedbackDone,
 }: {
 	agentConfig: any;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
-	showFeedbackInput?: boolean;
-	handleSubmitFeedbackText: ( feedbackText: string ) => Promise< void >;
-	onFeedbackDone?: () => void;
 } ) => {
 	return (
 		<ImageStudioAgentChat
@@ -225,9 +209,6 @@ const ImageStudioAgentUIComponent = ( {
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
-			showFeedbackInput={ showFeedbackInput }
-			handleSubmitFeedbackText={ handleSubmitFeedbackText }
-			onFeedbackDone={ onFeedbackDone }
 		/>
 	);
 };
@@ -301,12 +282,12 @@ const ImageStudioContent = withInstanceId(
 			null
 		);
 		const [ isSaving, setIsSaving ] = useState( false );
-		const { showFeedbackInput, handleFeedback, handleCancelFeedback, handleSubmitFeedbackText } =
-			useImageStudioFeedback( {
-				displayImageUrl,
-				authProvider: agentConfigState?.authProvider,
-				sessionId: agentConfigState?.sessionId,
-			} );
+		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
+			authProvider: agentConfigState?.authProvider,
+			sessionId: agentConfigState?.sessionId,
+			displayImageUrl,
+			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
+		} );
 
 		// Track the last modal key to detect when modal reopens
 		const lastModalOpenKey = useRef< number | undefined >();
@@ -474,6 +455,7 @@ const ImageStudioContent = withInstanceId(
 				onSave={ handleSaveWithNotification }
 				onRevertToOriginal={ handleRevertToOriginal }
 				onFeedback={ handleFeedback }
+				onSubmitFeedbackText={ handleSubmitFeedbackText }
 			/>
 		) : null;
 
@@ -537,9 +519,6 @@ const ImageStudioContent = withInstanceId(
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
-										showFeedbackInput={ showFeedbackInput }
-										handleSubmitFeedbackText={ handleSubmitFeedbackText }
-										onFeedbackDone={ handleCancelFeedback }
 									/>
 								) : (
 									<div className="image-studio-agent-loading">

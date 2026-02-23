@@ -1,52 +1,44 @@
 import { rateMessage, submitFeedback } from '@automattic/agents-manager';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
+import type { ImageStudioMode } from '../types';
 import type { AuthProvider } from '@automattic/agenttic-client';
 
 interface UseImageStudioFeedbackConfig {
-	/** Current displayed image URL — resets feedback state on change. */
-	displayImageUrl?: string | null;
-	/** Auth provider for API calls. */
 	authProvider?: AuthProvider;
-	/** Session ID for API calls. */
 	sessionId?: string;
+	displayImageUrl?: string | null;
+	mode?: ImageStudioMode;
 }
 
-/**
- * Manages feedback for the image studio — both UI state and API calls.
- */
 export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {} ) => {
-	const { displayImageUrl, authProvider, sessionId } = config;
-
-	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
-
-	// Reset feedback state when the displayed image changes
-	useEffect( () => {
-		setShowFeedbackInput( false );
-	}, [ displayImageUrl ] );
+	const { authProvider, sessionId, displayImageUrl, mode } = config;
 
 	const lastAgentMessageId = useSelect(
 		( select ) => select( imageStudioStore ).getLastAgentMessageId(),
 		[]
 	);
 
+	const metadata = useMemo( () => {
+		const meta: Record< string, unknown > = {};
+		if ( displayImageUrl ) {
+			meta.image_url = displayImageUrl;
+		}
+		if ( mode ) {
+			meta.mode = mode;
+		}
+		return Object.keys( meta ).length > 0 ? meta : undefined;
+	}, [ displayImageUrl, mode ] );
+
 	const handleFeedback = useCallback(
 		( feedback: 'up' | 'down' ) => {
-			if ( feedback === 'down' ) {
-				setShowFeedbackInput( true );
-			}
-
 			if ( authProvider && sessionId && lastAgentMessageId ) {
-				rateMessage( authProvider, sessionId, lastAgentMessageId, feedback );
+				rateMessage( authProvider, sessionId, lastAgentMessageId, feedback, undefined, metadata );
 			}
 		},
-		[ authProvider, sessionId, lastAgentMessageId ]
+		[ authProvider, sessionId, lastAgentMessageId, metadata ]
 	);
-
-	const handleCancelFeedback = useCallback( () => {
-		setShowFeedbackInput( false );
-	}, [] );
 
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
@@ -55,15 +47,12 @@ export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {
 			}
 
 			await submitFeedback( authProvider, sessionId, lastAgentMessageId, feedbackText.trim() );
-			setShowFeedbackInput( false );
 		},
 		[ sessionId, authProvider, lastAgentMessageId ]
 	);
 
 	return {
-		showFeedbackInput,
 		handleFeedback,
-		handleCancelFeedback,
 		handleSubmitFeedbackText,
 	};
 };
