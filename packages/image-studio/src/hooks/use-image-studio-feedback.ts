@@ -21,7 +21,7 @@ export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {
 	);
 
 	const metadata = useMemo( () => {
-		const meta: Record< string, unknown > = {};
+		const meta: Record< string, string > = {};
 		if ( displayImageUrl ) {
 			meta.image_url = displayImageUrl;
 		}

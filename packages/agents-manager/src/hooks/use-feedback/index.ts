@@ -26,15 +26,22 @@ export async function rateMessage(
 	messageId: string,
 	rating: 'up' | 'down',
 	messageText?: string,
-	metadata?: Record< string, unknown >
+	metadata?: Record< string, string >
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
-	const body: Record< string, unknown > = { message_id: messageId, rating };
+	const body: {
+		message_id: string;
+		rating: 'up' | 'down';
+		message_text?: string;
+		metadata?: Record< string, string >;
+	} = { message_id: messageId, rating };
+
 	if ( messageText ) {
 		body.message_text = messageText;
 	}
+
 	if ( metadata ) {
 		body.metadata = metadata;
 	}
