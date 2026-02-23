@@ -131,18 +131,14 @@ export default function HeadingInformation( props: Props ) {
 							{ translate( 'Register domain' ) }
 						</Button>
 					) }
-					{ ( finalStatus === 'transfer-domain' ||
-						finalStatus === 'transfer-domain-hosting' ||
-						finalStatus === 'transfer-google-domain' ||
-						finalStatus === 'transfer-google-domain-hosting' ) && (
+					{ ( finalStatus === 'transfer-domain' || finalStatus === 'transfer-domain-hosting' ) && (
 						<Button variant="primary" className="button-action" onClick={ onTransferDomain }>
 							{ translate( 'Transfer domain' ) }
 						</Button>
 					) }
 					{ ( finalStatus === 'transfer-hosting' ||
 						finalStatus === 'transfer-hosting-wp' ||
-						finalStatus === 'transfer-domain-hosting-wp' ||
-						finalStatus === 'transfer-google-domain-hosting-wp' ) && (
+						finalStatus === 'transfer-domain-hosting-wp' ) && (
 						<Button variant="primary" className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>

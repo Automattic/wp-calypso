@@ -46,13 +46,7 @@ const Intro: React.FC< Props > = ( { onSubmit } ) => {
 					{
 						key: 'finalize',
 						title: __( 'Checkout' ),
-						description: (
-							<p>
-								{ __(
-									"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
-								) }
-							</p>
-						),
+						description: <p>{ __( 'Review your payment and contact details.' ) }</p>,
 						icon: <Icon icon={ payment } />,
 						value: 'finalize',
 						actionText: null,

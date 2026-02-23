@@ -81,9 +81,6 @@ export default function StatusCtaInfo( props: Props ) {
 				</p>
 			);
 		case 'transfer-domain':
-		case 'transfer-google-domain':
-		case 'transfer-google-domain-hosting':
-		case 'transfer-google-domain-hosting-wp':
 			return (
 				<p>
 					{ translate(
