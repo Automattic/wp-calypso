@@ -17,6 +17,10 @@
 - **A8C for Agencies** (client/a8c-for-agencies) — reuses Calypso shared infra.
 - **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router).
 
+## Packages
+
+- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. See `packages/image-studio/AGENTS.md` for architecture, conventions, and manual browser testing steps.
+
 ## Development
 
 ```bash
