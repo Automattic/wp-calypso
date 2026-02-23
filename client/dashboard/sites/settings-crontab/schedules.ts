@@ -75,31 +75,43 @@ export function formatScheduleDescription(
 
 	// Custom schedule
 	if ( customFrequency === 'h' ) {
-		const interval = Math.floor( 60 / customNumber );
-		return sprintf(
-			/* translators: %1$d is the interval for running cron job */
-			__( 'Every %1$d minutes' ),
-			interval
-		);
+		return 60 % customNumber === 0
+			? sprintf(
+					/* translators: %1$d is the interval in minutes for running cron job */
+					__( 'Every %1$d minutes' ),
+					60 / customNumber
+			  )
+			: sprintf(
+					/* translators: %1$s is the approximate interval in minutes for running cron job */
+					__( 'Approximately every %1$s minutes' ),
+					( 60 / customNumber ).toFixed( 1 )
+			  );
 	}
 	if ( customFrequency === 'd' ) {
-		const interval = Math.floor( 24 / customNumber );
-		return sprintf(
-			/* translators: %1$d is the interval for running cron job */
-			__( 'Every %1$d hours' ),
-			interval
-		);
+		return 24 % customNumber === 0
+			? sprintf(
+					/* translators: %1$d is the interval in hours for running cron job */
+					__( 'Every %1$d hours' ),
+					24 / customNumber
+			  )
+			: sprintf(
+					/* translators: %1$s is the approximate interval in hours for running cron job */
+					__( 'Approximately every %1$s hours' ),
+					( 24 / customNumber ).toFixed( 1 )
+			  );
 	}
 	if ( customFrequency === 'w' ) {
-		const interval = Math.floor( 7 / customNumber );
 		return sprintf(
-			/* translators: %1$d is the interval for running cron job */
-			__( 'Every %1$d days' ),
-			interval
+			/* translators: %1$s is the approximate interval in days for running cron job */
+			__( 'Approximately every %1$s days' ),
+			( 7 / customNumber ).toFixed( 1 )
 		);
 	}
 
-	return '';
+	return cronstrue.toString( rawSchedule, {
+		verbose: true,
+		locale,
+	} );
 }
 
 export function parseSchedule( value: string ): {
