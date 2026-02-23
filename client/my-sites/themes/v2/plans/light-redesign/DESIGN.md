@@ -49,7 +49,7 @@ Design post: https://wpbranddesign.wordpress.com/2025/09/25/themes-lp/
 **Modern**: New `filter-bar-modern/` component replaces both blocks when flag is on:
 - **Category pills**: Horizontal scrollable list — "Recommended" (default), "All", + dynamic subject filters from the `/theme-filters` API. Same data as today (`getTabFilters()`), new pill-shaped visual treatment.
 - **Plan dropdown**: Tier filter (Free, Premium, etc.). Same `getTiers()` data, styled to match the pills.
-- **Search input**: Plain text, same `doSearch` handler. Cleaner styling, no taxonomy dropdown suggestions.
+- **Search input**: Reuses the existing `SearchThemes` component from `client/components/search-themes/` (SSR-proven, provides clear button, enter-to-search, and tracks events). Restyled via CSS overrides within `.filter-bar-modern`.
 - **Sticky**: CSS `position: sticky` when scrolled past the hero. No JS scroll listeners — replaces the current `InView` + `shouldThemeControlsSticky` state for the logged-out case.
 
 **Data stays the same**: All filter/search handlers (`doSearch`, `onTierSelectFilter`, `onFilterClick`) are passed as callback props. Filter data sources (`getTabFilters()`, `getTiers()`, `getSelectedTabFilter()`) unchanged. `QueryThemeFilters` still renders.
@@ -70,7 +70,7 @@ New marketing banners, interleaved into the theme grid. Each is a presentational
 - **DIFM Banner**: Follows the Plugins LP `BusinessPlanBanner` structure — dark background, feature highlights, CTA to the DIFM landing page.
 - **Contextual Plan Banners**: Reuses the existing `UpsellNudge` component from `client/blocks/upsell-nudge/`. Appears when filtering by a specific plan tier. Themes-specific copy and event names.
 
-**Interleaving**: Uses the same pattern as `ShowcaseThemeCollection` — banners are passed as children to `ThemesSelection` and rendered at defined positions in the grid.
+**Interleaving**: Uses the same CSS Grid pattern as `SecondUpsellNudge` and `WooDesignWithAIBanner` in `ThemesList` — banners are rendered as siblings to theme cards inside the `div.themes-list` CSS Grid container, spanning all columns with `grid-column: 1/-1` and positioned to specific rows with `grid-row-start`. Passed as children through `ThemesSelection` → `ThemesList`.
 
 **Visibility logic**: Lives in `theme-showcase.jsx`. The banners themselves are purely presentational — the showcase decides when to render each one based on the current filter state and feature flag.
 
@@ -118,7 +118,7 @@ client/my-sites/themes/
 - `theme-showcase.jsx` — conditional render of `filter-bar-modern` vs current controls/filters; banner interleaving in the showcase section.
 - `theme-showcase.scss` — `.is-modern` card overrides, general logged-out modern styles.
 - `config/development.json`, `config/test.json` — feature flag `true`.
-- `config/production.json`, `config/stage.json`, `config/horizon.json`, `config/wpcalypso.json`, `config/dashboard-*.json` — feature flag `false`.
+- `config/production.json`, `config/stage.json`, `config/horizon.json`, `config/wpcalypso.json` — feature flag `false`. (Skip `config/dashboard-*.json` — Calypso-only feature.)
 
 ---
 
@@ -164,3 +164,5 @@ This light redesign is a stepping stone. It validates the business hypothesis wi
 - The banner components are reusable as-is in the full refactor.
 - The `themes/showcase-modern` flag can coexist with a future `themes/showcase-v2` flag, or be migrated.
 - The "v2" namespace (directory, component names, feature flag) remains available for the full refactor.
+
+**Cleanup path for `-modern` suffix:** If metrics validate the redesign, rename/promote the `-modern` components to be the default (remove suffix, remove feature flag gating, delete old code paths). If metrics don't validate, delete the `-modern` components entirely.

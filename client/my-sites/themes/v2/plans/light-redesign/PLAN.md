@@ -29,16 +29,12 @@ Goal: Feature flag + new hero section. Everything else stays unchanged.
 - Modify: `config/stage.json`
 - Modify: `config/horizon.json`
 - Modify: `config/wpcalypso.json`
-- Modify: `config/dashboard-development.json`
-- Modify: `config/dashboard-horizon.json`
-- Modify: `config/dashboard-production.json`
-- Modify: `config/dashboard-stage.json`
 
 **Step 1: Add the feature flag to all config files**
 
-In each file, find the `"features"` object and add `"themes/showcase-modern"`. Place it alphabetically near the existing `"marketplace-redesign"` key (which is in all 10 files).
+In each file, find the `"features"` object and add `"themes/showcase-modern"`. Place it alphabetically near the existing `"marketplace-redesign"` key.
 
-Set to `true` in `development.json` and `test.json` only. Set to `false` in all other files (8 files).
+Set to `true` in `development.json` and `test.json` only. Set to `false` in all other files (4 files). Skip `config/dashboard-*.json` — this is a Calypso feature, not a Dashboard feature.
 
 Example (in `config/development.json`, inside `"features"`, near line 129):
 
@@ -58,7 +54,7 @@ Example (in `config/production.json`, inside `"features"`):
 grep -r "themes/showcase-modern" config/
 ```
 
-Expected: 10 files, 2 with `true`, 8 with `false`.
+Expected: 6 files, 2 with `true`, 4 with `false`.
 
 **Step 3: Commit**
 
@@ -257,7 +253,7 @@ Create `client/my-sites/themes/hero-modern/index.tsx`:
 
 ```tsx
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import FullWidthSection from 'calypso/components/full-width-section';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -271,7 +267,6 @@ interface HeroModernProps {
 }
 
 const HeroModern = ( { title, description, isSearching = false }: HeroModernProps ) => {
-	const { __ } = useI18n();
 
 	return (
 		<FullWidthSection
@@ -592,7 +587,7 @@ describe( 'FilterBarModern', () => {
 
 	test( 'renders search input', () => {
 		render( <FilterBarModern { ...defaultProps } /> );
-		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		expect( screen.getByPlaceholderText( /search themes/i ) ).toBeVisible();
 	} );
 } );
 ```
@@ -611,10 +606,12 @@ Create `client/my-sites/themes/filter-bar-modern/index.tsx`:
 
 ```tsx
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { search as searchIcon } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback } from 'react';
+import { SearchThemes } from 'calypso/components/search-themes';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 import './style.scss';
 
@@ -651,27 +648,9 @@ const FilterBarModern = ( {
 	onSearch,
 	showTierFilter = true,
 }: FilterBarModernProps ) => {
-	const { __ } = useI18n();
-	const [ localSearch, setLocalSearch ] = useState( searchQuery );
-	const searchRef = useRef< HTMLInputElement >( null );
-
-	const handleSearchSubmit = useCallback(
-		( event: React.FormEvent ) => {
-			event.preventDefault();
-			onSearch( localSearch );
-		},
-		[ localSearch, onSearch ]
-	);
-
-	const handleSearchChange = useCallback(
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
-			setLocalSearch( event.target.value );
-			if ( event.target.value === '' ) {
-				onSearch( '' );
-			}
-		},
-		[ onSearch ]
-	);
+	const handleRecordTracksEvent = useCallback( ( eventName: string ) => {
+		recordTracksEvent( eventName );
+	}, [] );
 
 	return (
 		<div className="filter-bar-modern">
@@ -708,22 +687,11 @@ const FilterBarModern = ( {
 						) ) }
 					</select>
 				) }
-				<form
-					className="filter-bar-modern__search"
-					role="search"
-					onSubmit={ handleSearchSubmit }
-				>
-					<input
-						ref={ searchRef }
-						className="filter-bar-modern__search-input"
-						type="search"
-						role="searchbox"
-						placeholder={ __( 'Search themes…' ) }
-						value={ localSearch }
-						onChange={ handleSearchChange }
-						aria-label={ __( 'Search themes' ) }
-					/>
-				</form>
+				<SearchThemes
+					query={ searchQuery }
+					onSearch={ onSearch }
+					recordTracksEvent={ handleRecordTracksEvent }
+				/>
 			</div>
 		</div>
 	);
@@ -732,7 +700,7 @@ const FilterBarModern = ( {
 export default FilterBarModern;
 ```
 
-⚠️ **NOTE:** The tier dropdown uses a plain `<select>` instead of `CustomSelectWrapper`/`CustomSelectControl` because: (a) it's SSR-safe without a mount check, (b) simpler to style, (c) the custom select's only purpose was SSR compatibility. If design requires a more stylized dropdown, swap for `CustomSelectWrapper` later.
+⚠️ **NOTE:** Reuses `SearchThemes` from `client/components/search-themes/` — it's SSR-proven (renders in the logged-out showcase today), provides clear button with tracks event, enter-to-search behavior, and consistent `SearchControl` styling. Restyle via CSS overrides on `.search-themes-card` within `.filter-bar-modern` if needed.
 
 ⚠️ **VERIFY:** The `onTierSelect` callback shape matches the existing `this.onTierSelectFilter` in `theme-showcase.jsx:341-365` — it expects `{ selectedItem: { key } }`. Confirm this by reading line 342.
 
@@ -819,28 +787,10 @@ Create `client/my-sites/themes/filter-bar-modern/style.scss`:
 	}
 }
 
-.filter-bar-modern__search {
+// SearchThemes overrides within the filter bar
+.filter-bar-modern .search-themes-card {
 	flex: 1;
 	min-width: 200px;
-}
-
-.filter-bar-modern__search-input {
-	width: 100%;
-	height: 40px;
-	border: 1px solid var( --studio-gray-10 );
-	border-radius: 4px;
-	padding: 0 12px;
-	font-size: $font-body-small;
-
-	&:focus {
-		border-color: var( --studio-blue-50 );
-		outline: none;
-		box-shadow: 0 0 0 1px var( --studio-blue-50 );
-	}
-
-	&::placeholder {
-		color: var( --studio-gray-30 );
-	}
 }
 ```
 
@@ -1042,7 +992,7 @@ In `client/my-sites/themes/theme-showcase.scss`, add at the end of the file:
 	}
 
 	// Hide style variation swatches for logged-out modern view
-	.theme-card__style-variations {
+	.theme-card__info-style-variations {
 		display: none;
 	}
 }
@@ -1142,7 +1092,7 @@ Create `client/my-sites/themes/banners-modern/ai-builder-banner.tsx`:
 
 ```tsx
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -1152,7 +1102,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const AIBuilderBanner = () => {
-	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
 
 	const trackClick = useCallback( () => {
@@ -1453,7 +1402,7 @@ Create `client/my-sites/themes/banners-modern/difm-banner.tsx`:
 
 ```tsx
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -1462,7 +1411,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const DIFMBanner = () => {
-	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
 
 	const trackClick = useCallback( () => {
@@ -1598,17 +1546,14 @@ yarn test-client client/my-sites/themes/banners-modern/test/plan-banner.test.tsx
 Create `client/my-sites/themes/banners-modern/plan-banner.tsx`:
 
 ```tsx
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 interface PlanBannerProps {
 	tier: string;
 }
 
-const tierConfig: Record< string, { title: string; description: string; plan: string } > = {};
-
 const PlanBanner = ( { tier }: PlanBannerProps ) => {
-	const { __ } = useI18n();
 
 	// Define tier-specific copy inside the component so translations work.
 	const configs: Record< string, { title: string; description: string } > = {
@@ -1680,9 +1625,9 @@ git commit -m "feat(themes): add contextual plan banner for modern themes showca
 **Files:**
 - Modify: `client/my-sites/themes/theme-showcase.jsx`
 
-**Context:** Banners need to be interleaved into the theme grid. The existing pattern uses `ThemesSelection` children (see `allThemes()` method at line 413-446 — `ShowcaseThemeCollection` is already rendered as a child of `ThemesSelection`). We follow the same pattern.
+**Context:** Banners need to be interleaved **between grid rows**, not rendered above the grid. The existing pattern in `ThemesList` (`client/components/themes-list/index.jsx`) renders banners as **siblings to theme cards** inside the CSS Grid container, using `grid-column: 1/-1` to span all columns and `grid-row-start: N` to position at specific rows (see `SecondUpsellNudge` at row 7, `WooDesignWithAIBanner` at row 2).
 
-The `renderBanner()` method (line 473-501) currently returns JITM banners for logged-in users. For the modern logged-out experience, we render the new banners instead.
+Do NOT use `renderBanner()` — that renders banners above the entire grid. Instead, pass banners as children through `ThemesSelection` → `ThemesList`, and position them with CSS Grid properties.
 
 **Step 1: Add imports**
 
@@ -1694,32 +1639,46 @@ import DIFMBanner from './banners-modern/difm-banner';
 import PlanBanner from './banners-modern/plan-banner';
 ```
 
-**Step 2: Add modern banner rendering**
+**Step 2: Pass banners as children to ThemesSelection**
 
-Update the `renderBanner()` method to handle the modern case:
+In the render method, find where `ThemesSelection` is rendered (inside `allThemes()` method, around line 413-446). When `isModern` is true, pass the banner components as children — the same way `ShowcaseThemeCollection` is already rendered as a child:
 
 ```jsx
-renderBanner = () => {
-	const { loggedOutComponent, upsellBanner, isUpsellCardDisplayed, isSiteECommerceFreeTrial, isLoggedIn } =
-		this.props;
-	const isModern = config.isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
-
-	// Modern logged-out banners
-	if ( isModern ) {
-		const tier = this.props.tier || 'all';
-		return (
-			<>
-				<AIBuilderBanner />
-				{ tier !== 'all' && <PlanBanner tier={ tier } /> }
-				<DIFMBanner />
-			</>
-		);
-	}
-
-	// ... existing banner logic unchanged below ...
+{ isModern && (
+	<>
+		<AIBuilderBanner />
+		{ tier !== 'all' && <PlanBanner tier={ tier } /> }
+		<DIFMBanner />
+	</>
+) }
 ```
 
-⚠️ **IMPORTANT:** Keep all existing banner logic in the else path. Only prepend the modern check.
+⚠️ **VERIFY:** Read the `allThemes()` method and the `ThemesSelection` / `ThemesList` components to confirm how children are rendered inside the CSS Grid. The banners should become siblings of theme cards within `div.themes-list`.
+
+**Step 3: Add CSS Grid positioning for banners**
+
+In `client/my-sites/themes/banners-modern/style.scss`, add grid positioning rules so banners span the full grid width and appear at specific row positions:
+
+```scss
+// Grid interleaving — banners as siblings to theme cards inside .themes-list
+.themes-list .ai-builder-banner,
+.themes-list .difm-banner,
+.themes-list .plan-banner {
+	grid-column: 1 / -1;
+}
+
+.themes-list .ai-builder-banner {
+	grid-row-start: 4; // After first row of 3 cards
+}
+
+.themes-list .difm-banner {
+	grid-row-start: 10; // After ~3 rows of cards
+}
+```
+
+⚠️ **NOTE:** Grid row numbers depend on column count. Verify the correct rows visually at different breakpoints.
+
+⚠️ **IMPORTANT:** Do NOT modify `renderBanner()` — leave existing banner logic untouched. The modern banners use a completely different rendering path (CSS Grid children).
 
 **Step 3: Run existing tests**
 
@@ -1780,20 +1739,7 @@ onChange={ ( event ) => {
 } }
 ```
 
-Add tracking on search submit:
-
-```tsx
-const handleSearchSubmit = useCallback(
-	( event: React.FormEvent ) => {
-		event.preventDefault();
-		recordTracksEvent( 'calypso_themeshowcase_modern_search', {
-			query: localSearch,
-		} );
-		onSearch( localSearch );
-	},
-	[ localSearch, onSearch ]
-);
-```
+⚠️ **NOTE:** Search analytics are already handled by `SearchThemes` (it calls `recordTracksEvent` via its prop). No additional search tracking needed in FilterBarModern.
 
 **Step 2: Add tracks events to HeroModern**
 
@@ -1926,10 +1872,6 @@ git commit -m "fix(themes): responsive polish and accessibility fixes for modern
 - `config/stage.json` — feature flag `false`
 - `config/horizon.json` — feature flag `false`
 - `config/wpcalypso.json` — feature flag `false`
-- `config/dashboard-development.json` — feature flag `false`
-- `config/dashboard-horizon.json` — feature flag `false`
-- `config/dashboard-production.json` — feature flag `false`
-- `config/dashboard-stage.json` — feature flag `false`
 - `client/my-sites/themes/theme-showcase-header.jsx` — conditional hero rendering
 - `client/my-sites/themes/theme-showcase.jsx` — conditional filter bar, banner integration, `is-modern` class
 - `client/my-sites/themes/theme-showcase.scss` — `.is-modern` card overrides
