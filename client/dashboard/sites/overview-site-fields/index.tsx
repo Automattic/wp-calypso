@@ -62,7 +62,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 						{
 							link: (
 								<ExternalLink href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
-									{ site.URL }
+									{ getSiteDisplayUrl( site ) }
 								</ExternalLink>
 							),
 						}
