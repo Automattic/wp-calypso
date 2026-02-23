@@ -1846,18 +1846,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "@automattic/number-formatters@npm:1.0.15"
-  dependencies:
-    "@wordpress/date": "npm:^5.19.0"
-    debug: "npm:^4.4.0"
-    tslib: "npm:^2.5.0"
-  checksum: 033aee63dbb320d3ab6e34eec73453bf434911123371501014027fed5251793bedf96047d7158ef326cfc35fe75175dbe48a6c53f2343ec91004d43c007ea022
-  languageName: node
-  linkType: hard
-
-"@automattic/number-formatters@npm:^1.1.0":
+"@automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15, @automattic/number-formatters@npm:^1.1.0":
   version: 1.1.0
   resolution: "@automattic/number-formatters@npm:1.1.0"
   dependencies:
