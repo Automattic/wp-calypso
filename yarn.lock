@@ -37971,6 +37971,8 @@ __metadata:
       built: false
     fsevents:
       optional: true
+    lzma-native:
+      built: false
   languageName: unknown
   linkType: soft
 

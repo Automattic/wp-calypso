@@ -431,6 +431,9 @@
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
+		},
+		"lzma-native": {
+			"built": false
 		}
 	}
 }
