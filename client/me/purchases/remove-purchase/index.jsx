@@ -12,6 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -224,7 +225,14 @@ class RemovePurchase extends Component {
 	);
 
 	shouldShowNonPrimaryDomainWarning() {
-		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase } = this.props;
+		const { hasNonPrimaryDomainsFlag, isAtomicSite, hasCustomPrimaryDomain, purchase, site } =
+			this.props;
+
+		// Free subdomains like .home.blog stay as primary after downgrade, so don't show the warning
+		if ( site?.domain && isFreeUrlDomainName( site.domain ) ) {
+			return false;
+		}
+
 		return (
 			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && hasCustomPrimaryDomain
 		);
