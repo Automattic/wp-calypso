@@ -76,6 +76,14 @@ describe( 'Document LoadingPlaceholder', () => {
 		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
+	it( 'renders no logo when hideLoadingLogo is true', () => {
+		const html = renderToStaticMarkup(
+			<Document { ...baseProps } hideLoadingLogo sectionName="dashboard-ciab" />
+		);
+
+		expect( html ).not.toContain( 'wpcom-site__logo' );
+	} );
+
 	it( 'shows the WordPress logo when hideWooHostedLogo is false', () => {
 		const html = renderToStaticMarkup(
 			<Document

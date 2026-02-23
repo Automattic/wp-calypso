@@ -731,6 +731,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 		req.context.sectionGroup = section.group;
 	}
 
+	if ( section.hideLoadingLogo ) {
+		req.context.hideLoadingLogo = true;
+	}
+
 	if ( Array.isArray( section.links ) ) {
 		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
 	}

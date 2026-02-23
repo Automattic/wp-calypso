@@ -63,6 +63,7 @@ class Document extends Component {
 			renderedLayout,
 			sectionGroup,
 			sectionName,
+			hideLoadingLogo,
 			hideWooHostedLogo,
 			storeSandboxHelper,
 			target,
@@ -186,6 +187,7 @@ class Document extends Component {
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
+										hideLoadingLogo={ hideLoadingLogo }
 										hideWooHostedLogo={ hideWooHostedLogo }
 									/>
 								</div>
@@ -309,8 +311,13 @@ function LoadingPlaceholder( {
 	isWCCOM,
 	isOneTapAuth,
 	showStepContainerV2Loader,
+	hideLoadingLogo,
 	hideWooHostedLogo,
 } ) {
+	if ( hideLoadingLogo ) {
+		return null;
+	}
+
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
 		sectionName === 'stepper' ||
