@@ -1,4 +1,5 @@
 @import '../../styles/animations.scss';
+@import '../../styles/mixins.scss';
 
 .agents-manager-conversation-list-skeleton {
 	width: 100%;
@@ -54,8 +55,8 @@
 	}
 }
 
-// Docked chat overrides
-body:not( .modal-open ) .agents-manager-chat--docked {
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
 	.agents-manager-conversation-list-skeleton {
 		&__item {
 			border-color: #464646;

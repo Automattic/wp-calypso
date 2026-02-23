@@ -1,4 +1,5 @@
 @import '../../styles/animations.scss';
+@import '../../styles/mixins.scss';
 
 .agents-manager-chat-message-skeleton {
 	display: flex;
@@ -70,8 +71,8 @@
 	}
 }
 
-// Docked chat overrides
-body:not( .modal-open ) .agents-manager-chat--docked {
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
 	.agents-manager-chat-message-skeleton {
 		&__bubble {
 			background-color: #484848;

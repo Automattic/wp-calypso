@@ -1,4 +1,5 @@
 @import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -364,7 +365,8 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
-body:not( .modal-open ) .agents-manager-chat--docked {
+// Base layout for the docked chat sidebar
+@include docked-chat-without-modal {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
