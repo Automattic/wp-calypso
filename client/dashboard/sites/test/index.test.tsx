@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../test-utils';
@@ -115,11 +116,12 @@ describe( '<Sites>', () => {
 			} as unknown as Site,
 		] );
 
-		render( <Sites />, {
+		const { queryClient } = render( <Sites />, {
 			user: {
 				site_count: 13, // more than 12 sites to force the table layout
 			} as User,
 		} );
+		startSiteCollisionListener( queryClient );
 
 		// The collision listener (started by test-utils) should auto-detect the
 		// Jetpack site and fix the wpcom site's slug without manual intervention.
