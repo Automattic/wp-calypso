@@ -188,7 +188,7 @@ class Document extends Component {
 										app={ app }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
-										isGarden={ selectedSite.is_garden }
+										isGarden={ selectedSite?.is_garden }
 										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 										hideWooHostedLogo={ hideWooHostedLogo }

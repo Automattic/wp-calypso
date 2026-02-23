@@ -369,6 +369,9 @@ const assertDefaultContext = ( { url, entry } ) => {
 		app.withServerRender( '' );
 		app.withMockFilesystem();
 		app.withEvergreenBrowser();
+		app.withReduxStore( {
+			getState: () => ( {} ),
+		} );
 	} );
 
 	afterEach( () => {
