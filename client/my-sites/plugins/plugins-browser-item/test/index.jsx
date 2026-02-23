@@ -29,7 +29,7 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		isAtomicSite.mockImplementation( () => false );
 
 		const props = {
-			plugin: { name: 'wordfence', slug: 'wordfence' },
+			plugin: { name: 'really-simple-ssl', slug: 'really-simple-ssl' },
 		};
 
 		render( <PluginsBrowserListElement { ...props } /> );
