@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef } from '@wordpress/element';
+import { createElement, useEffect } from '@wordpress/element';
 import { check, copy, Icon } from '@wordpress/icons';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
@@ -32,9 +32,8 @@ function getCopyableText( message: UIMessage ): string {
  * Registers a "Copy" action on agent messages that copies the text content to the clipboard.
  */
 export default function useCopy( registerMessageActions: RegisterMessageActions ): void {
-	const copiedIdRef = useRef< string | null >( null );
-
 	useEffect( () => {
+		let copiedId: string | null = null;
 		let timer: ReturnType< typeof setTimeout >;
 
 		const getActions = ( message: UIMessage ) => {
@@ -47,7 +46,7 @@ export default function useCopy( registerMessageActions: RegisterMessageActions 
 				return [];
 			}
 
-			const isCopied = copiedIdRef.current === message.id;
+			const isCopied = copiedId === message.id;
 
 			return [
 				{
@@ -62,11 +61,11 @@ export default function useCopy( registerMessageActions: RegisterMessageActions 
 					onClick: () => {
 						navigator.clipboard.writeText( text );
 
-						copiedIdRef.current = message.id;
+						copiedId = message.id;
 						registerMessageActions( { id: 'agents-manager-copy', actions: getActions } );
 
 						timer = setTimeout( () => {
-							copiedIdRef.current = null;
+							copiedId = null;
 							registerMessageActions( {
 								id: 'agents-manager-copy',
 								actions: getActions,
