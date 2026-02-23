@@ -81,10 +81,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 				{ ! hasFeedPreview &&
 					( configInstructions ? (
 						<div className="reader-add-subscription__instructions">
-							<div
-								className="reader-add-subscription__instructions-icon"
-								data-testid="instructions-icon"
-							>
+							<div className="reader-add-subscription__instructions-icon">
 								{ configInstructions.icon }
 							</div>
 

@@ -95,15 +95,15 @@ describe( 'ReaderNewSubscriptionPage', () => {
 	it( 'renders all tabs', () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="add-new" /> );
 
-		expect( screen.getByRole( 'heading', { name: 'New Subscription' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'New Subscription' } ) ).toBeVisible();
 		expect(
 			screen.getByText( 'Subscribe to new blogs, newsletters, and RSS feeds.' )
 		).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'YouTube' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Tumblr' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Substack' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'YouTube' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Tumblr' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Substack' } ) ).toBeVisible();
 	} );
 
 	it( 'marks the selected tab as current', () => {
