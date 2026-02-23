@@ -207,8 +207,8 @@ export default function useFeedback( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
 			icons: {
-				up: createElement( ThumbsUpIcon, { size: 24 } ),
-				down: createElement( ThumbsDownIcon, { size: 24 } ),
+				up: createElement( ThumbsUpIcon, { className: 'agents-manager-feedback-icon' } ),
+				down: createElement( ThumbsDownIcon, { className: 'agents-manager-feedback-icon' } ),
 			},
 		} );
 

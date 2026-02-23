@@ -416,22 +416,19 @@ body.post-new-php.agents-manager-sidebar-container {
 			padding-block: 8px;
 		}
 
-		.big-sky__completed-plan:first-child {
-			margin-top: 0;
+		.button-module_button:has( .agents-manager-feedback-icon ) {
+			width: 32px;
+			height: 32px;
+
+			.agents-manager-feedback-icon {
+				width: 28px;
+				height: 28px;
+			}
 		}
 
 		.big-sky-next-step-button {
+			width: fit-content;
 			margin-top: 20px;
-		}
-
-		// Add spacing after picker messages when followed by a message without completed-plan
-		.Message-module_message:has(
-				.big-sky__dock__menu__variation-picker,
-				.big-sky__dock__menu__pattern-picker
-			):has( + .Message-module_message ):not(
-				:has( + .Message-module_message .big-sky__completed-plan )
-			) {
-			margin-bottom: 24px;
 		}
 	}
 
@@ -671,8 +668,9 @@ body.post-new-php.agents-manager-sidebar-container {
 			}
 		}
 
-		.big-sky__item-picker__arrows,
-		.big-sky__completed-plan {
+		.big-sky__item-picker__arrows {
+			bottom: -42px;
+
 			.components-button {
 				color: $gray-700;
 
@@ -689,10 +687,6 @@ body.post-new-php.agents-manager-sidebar-container {
 					background-color: #484848;
 				}
 			}
-		}
-
-		.big-sky__item-picker__arrows {
-			bottom: -42px;
 		}
 
 		.big-sky__item-picker__pager {
