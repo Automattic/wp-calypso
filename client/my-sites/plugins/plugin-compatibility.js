@@ -110,7 +110,6 @@ const incompatiblePlugins = new Set( [
 	'wpstagecoach',
 	'yuzo-related-post',
 	'zapp-proxy-server',
-
 ] );
 
 export function isCompatiblePlugin( pluginSlug ) {
