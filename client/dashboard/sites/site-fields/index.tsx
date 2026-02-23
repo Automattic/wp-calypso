@@ -28,7 +28,6 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
@@ -140,7 +139,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ getSiteFormattedUrl( site ) }
+			href={ site.URL }
 		>
 			{ value }
 		</ExternalLink>
