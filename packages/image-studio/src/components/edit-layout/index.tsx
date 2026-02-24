@@ -77,14 +77,14 @@ export const EditLayout = ( {
 	return (
 		<div className="image-studio-edit-layout">
 			<div role="status" aria-live="polite" aria-atomic="true" className="image-studio-sr-only">
-				{ isAnnotationSaving && __( 'Saving your annotation…', 'big-sky' ) }
+				{ isAnnotationSaving && __( 'Saving your annotation…', __i18n_text_domain__ ) }
 				{ ! isAnnotationSaving &&
 					isAiProcessing &&
-					__( 'AI is currently editing your image. Please wait.', 'big-sky' ) }
+					__( 'AI is currently editing your image. Please wait.', __i18n_text_domain__ ) }
 				{ ! isAnnotationSaving &&
 					! isAiProcessing &&
 					isAiProcessed &&
-					__( 'AI has finished editing your image.', 'big-sky' ) }
+					__( 'AI has finished editing your image.', __i18n_text_domain__ ) }
 			</div>
 
 			<Canvas fit="contain" overlay={ overlay } loading={ shouldShowLoading }>

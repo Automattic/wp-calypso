@@ -52,7 +52,7 @@ function getIndividualConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( './dist/chunks-map.json' ),
+				output: path.resolve( `./dist/chunks-map-${ name }.json` ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill,

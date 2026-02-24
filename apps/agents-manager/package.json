@@ -26,7 +26,8 @@
 		"build": "NODE_ENV=production yarn dev && find dist -maxdepth 1 -type f ! -name '*.min.js' -name '*.js' -delete",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/agents-manager",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "yarn run clean && yarn run build",
+		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/agents-manager.pot' && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
@@ -36,11 +37,13 @@
 		"@wordpress/components": "^28.23.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
+		"@wordpress/i18n": "^6.13.0",
 		"@wordpress/plugins": "^7.23.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"webpack": "^5.99.8"

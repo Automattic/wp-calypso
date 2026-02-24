@@ -71,7 +71,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 									__next40pxDefaultSize
 									onClick={ handleOpen }
 								>
-									{ __( 'Generate Image', 'big-sky' ) }
+									{ __( 'Generate Image', __i18n_text_domain__ ) }
 								</Button>
 							</>
 						);

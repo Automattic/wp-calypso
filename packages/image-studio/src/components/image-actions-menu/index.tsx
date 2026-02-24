@@ -20,13 +20,13 @@ export const ImageActionsMenu = ( { onSave, onRevertToOriginal }: ImageActionsMe
 		const controls = [];
 		if ( onSave ) {
 			controls.push( {
-				title: __( 'Save to media library', 'big-sky' ),
+				title: __( 'Save to media library', __i18n_text_domain__ ),
 				onClick: onSave,
 			} );
 		}
 		if ( onRevertToOriginal ) {
 			controls.push( {
-				title: __( 'Revert to original', 'big-sky' ),
+				title: __( 'Revert to original', __i18n_text_domain__ ),
 				onClick: onRevertToOriginal,
 			} );
 		}
@@ -43,7 +43,7 @@ export const ImageActionsMenu = ( { onSave, onRevertToOriginal }: ImageActionsMe
 			<DropdownMenu
 				className="image-actions-menu__dropdown"
 				icon={ moreVertical }
-				label={ __( 'More options', 'big-sky' ) }
+				label={ __( 'More options', __i18n_text_domain__ ) }
 				controls={ menuControls }
 				popoverProps={ {
 					className: 'image-actions-menu__dropdown-popover',

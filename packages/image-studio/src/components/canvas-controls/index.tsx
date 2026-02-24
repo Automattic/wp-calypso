@@ -123,19 +123,19 @@ export const CanvasControls = ( {
 			actions: [
 				{
 					id: 'feedback-up',
-					label: __( 'Good response', 'big-sky' ),
+					label: __( 'Good response', __i18n_text_domain__ ),
 					icon: <ThumbsUpIcon />,
 					onClick: () => handleFeedback( 'up' ),
-					tooltip: __( 'Good response', 'big-sky' ),
+					tooltip: __( 'Good response', __i18n_text_domain__ ),
 					disabled: selectedFeedback === 'down',
 					pressed: selectedFeedback === 'up',
 				},
 				{
 					id: 'feedback-down',
-					label: __( 'Bad response', 'big-sky' ),
+					label: __( 'Bad response', __i18n_text_domain__ ),
 					icon: <ThumbsDownIcon />,
 					onClick: () => handleFeedback( 'down' ),
-					tooltip: __( 'Bad response', 'big-sky' ),
+					tooltip: __( 'Bad response', __i18n_text_domain__ ),
 					disabled: selectedFeedback === 'up',
 					pressed: selectedFeedback === 'down',
 				},
