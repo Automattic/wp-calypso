@@ -49,7 +49,6 @@
 		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
-		"checkout/vgs-ebanx": true,
 		"comments/filters-in-posts": true,
 		"cookie-banner": false,
 		"current-site/domain-warning": false,

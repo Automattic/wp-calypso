@@ -28,6 +28,7 @@ import './style.scss';
 
 function ChangePaymentMethod() {
 	const { purchaseId } = changePaymentMethodRoute.useParams();
+	const { redirect_to } = changePaymentMethodRoute.useSearch();
 	const navigate = useNavigate();
 
 	const numericId = parseInt( purchaseId );
@@ -63,6 +64,17 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
+		if ( redirect_to ) {
+			try {
+				const parsed = new URL( redirect_to );
+				if ( purchase.domain && parsed.hostname === purchase.domain ) {
+					window.location.href = redirect_to;
+					return;
+				}
+			} catch {
+				// Invalid URL — fall through to default navigation.
+			}
+		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
 

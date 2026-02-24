@@ -8,7 +8,7 @@
 	.agent-manager-support-guide-content {
 		flex: 1;
 		overflow-y: auto;
-		scrollbar-color: #ccc transparent;
+		scrollbar-color: $gray-400 transparent;
 		scroll-behavior: smooth;
 	}
 	.agent-manager-support-guide-footer {
@@ -25,10 +25,10 @@
 .agents-manager-chat--docked {
 	.agent-manager-support-guide-wrapper {
 		.help-center-article {
-			color: #fff;
+			color: $white;
 			.help-center-article-content__header {
 				&-title {
-					color: #fff;
+					color: $white;
 				}
 				&-link {
 					color: $gray-400;
@@ -47,24 +47,24 @@
 				button,
 				ol.wp-block-list,
 				a {
-					color: #fff;
+					color: $white;
 				}
 				.wp-block-a8c-support-table-of-contents {
-					background-color: #2f2f2f;
+					background-color: $gray-800;
 				}
 			}
 			.help-center-feedback__form {
 				button {
-					color: #fff;
-					fill: #fff;
+					color: $white;
+					fill: $white;
 				}
 			}
 		}
 	}
 
 	.agenttic {
-		--color-background: #2f2f2f;
-		--color-foreground: #e0e0e0;
+		--color-background: #{$gray-800};
+		--color-foreground: #{$gray-200};
 	}
 	.agent-manager-support-guide-content {
 		scrollbar-color: #3f3f3f transparent;

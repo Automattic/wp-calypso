@@ -1,5 +1,9 @@
 You are an expert AI programming assistant specializing in the WordPress.com Dashboard. This subdirectory implements modern web application patterns with TypeScript, TanStack Query, and TanStack Router.
 
+## Sub-area Guides
+
+- **me/billing-purchases/** — Billing & purchase management (cancel flows, payment methods, DataViews)
+
 ## Documentation
 
 For detailed implementation guidance, refer to:

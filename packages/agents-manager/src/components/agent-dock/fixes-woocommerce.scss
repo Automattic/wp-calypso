@@ -48,13 +48,13 @@ body.wp-admin.woocommerce-admin-page.agents-manager-sidebar-container--sidebar-o
 // The payments page is special
 body.wp-admin.woocommerce_page_wc-settings.agents-manager-sidebar-container--sidebar-open {
 	#wpbody {
-		background-color: #fff;
+		background-color: $white;
 		margin-top: 88px !important;
 		height: calc(100vh - 32px - 120px) !important;
 		border-right: none !important;
 	}
 
 	#wpfooter {
-		background-color: #fff;
+		background-color: $white;
 	}
 }

@@ -13,7 +13,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import ChatHeader, { Options } from '../chat-header';
+import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
 /**
@@ -58,30 +58,32 @@ function SearchResults( { searchInput }: { searchInput: string } ) {
 	);
 }
 
+interface Props {
+	/** Chat header menu options. */
+	chatHeaderOptions: ChatHeaderOptions;
+	/** Indicates if the chat is docked in the sidebar. */
+	isDocked: boolean;
+	/** Indicates if the chat is expanded (floating mode). */
+	isOpen: boolean;
+	/** Called when the user aborts the current request. */
+	onAbort: () => void;
+	/** Called when the chat is closed. */
+	onClose: () => void;
+}
+
 export default function SupportGuides( {
 	isOpen,
 	chatHeaderOptions,
-	isChatDocked,
+	isDocked,
 	onAbort,
 	onClose,
-}: {
-	chatHeaderOptions: Options;
-	isChatDocked: boolean;
-	isOpen: boolean;
-	onAbort: () => void;
-	onClose: () => void;
-} ) {
+}: Props ) {
 	const [ searchInput, setSearchInput ] = useState( '' );
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-
-	function handleSubmit( value: string ) {
-		// eslint-disable-next-line no-console
-		console.log( 'Submitted message:', value );
-	}
 
 	return (
 		<AgentUI.Container
@@ -91,15 +93,15 @@ export default function SupportGuides( {
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
-			onSubmit={ handleSubmit }
-			variant={ isChatDocked ? 'embedded' : 'floating' }
+			onSubmit={ () => {} }
+			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onStop={ onAbort }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isChatDocked }
+					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }

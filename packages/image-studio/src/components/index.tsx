@@ -83,8 +83,8 @@ function ImageStudioAgentChat( {
 
 	const placeholder =
 		mode === ImageStudioMode.Edit
-			? __( 'Describe what you want to add, remove, or replace…', 'big-sky' )
-			: __( 'Describe your image', 'big-sky' );
+			? __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ )
+			: __( 'Describe your image', __i18n_text_domain__ );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
 		useImageStudioSuggestions( {
@@ -110,7 +110,7 @@ function ImageStudioAgentChat( {
 					attachmentId,
 				} );
 
-				addNotice( __( 'Failed to send message.', 'big-sky' ), 'error' );
+				addNotice( __( 'Failed to send message.', __i18n_text_domain__ ), 'error' );
 
 				// Abort if onChatSubmit errors
 				return;
@@ -147,7 +147,7 @@ function ImageStudioAgentChat( {
 		const errorMessage =
 			( agentError as unknown as Error )?.message ||
 			String( agentError ) ||
-			__( 'An error occurred while generating content.', 'big-sky' );
+			__( 'An error occurred while generating content.', __i18n_text_domain__ );
 		addNotice( errorMessage, 'error' );
 	}, [ agentError, addNotice ] );
 
@@ -157,7 +157,7 @@ function ImageStudioAgentChat( {
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
-			<ThinkingMessage content={ __( 'Generating suggestions…', 'big-sky' ) } />
+			<ThinkingMessage content={ __( 'Generating suggestions…', __i18n_text_domain__ ) } />
 		</div>
 	) : (
 		<AgentUI.Suggestions />
@@ -212,7 +212,9 @@ const ImageStudioAgentUIComponent = ( {
 
 	if ( ! agentConfigState ) {
 		return (
-			<div className="image-studio-agent-loading">{ __( 'Loading AI assistant…', 'big-sky' ) }</div>
+			<div className="image-studio-agent-loading">
+				{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
+			</div>
 		);
 	}
 
@@ -358,7 +360,7 @@ const ImageStudioContent = withInstanceId(
 			try {
 				await onSave();
 				// Show success message via notice system
-				addNotice( __( 'Image saved to Media Library', 'big-sky' ), 'success' );
+				addNotice( __( 'Image saved to Media Library', __i18n_text_domain__ ), 'success' );
 			} finally {
 				setIsSaving( false );
 			}
@@ -368,7 +370,9 @@ const ImageStudioContent = withInstanceId(
 		const isMediumUp = useMediaQuery( '(min-width: 768px)' );
 
 		const imageAltText =
-			config?.imageData?.alt || config?.imageData?.title || __( 'Image being edited', 'big-sky' );
+			config?.imageData?.alt ||
+			config?.imageData?.title ||
+			__( 'Image being edited', __i18n_text_domain__ );
 
 		const imageUrl = useImageUrl( originalImageUrl );
 		const finalDisplayUrl = displayImageUrl || imageUrl;
@@ -473,7 +477,7 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={ __( 'Image Studio', 'big-sky' ) }
+					aria-label={ __( 'Image Studio', __i18n_text_domain__ ) }
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -559,23 +563,23 @@ const ImageStudioContent = withInstanceId(
 				{ isConfirmDialogOpen && (
 					<ConfirmationDialog
 						isOpen={ isConfirmDialogOpen }
-						title={ __( 'Unsaved changes', 'big-sky' ) }
+						title={ __( 'Unsaved changes', __i18n_text_domain__ ) }
 						actions={ [
 							{
-								text: __( 'Discard', 'big-sky' ),
+								text: __( 'Discard', __i18n_text_domain__ ),
 								onClick: handleConfirmDiscard,
 								variant: 'secondary',
 								isDestructive: true,
 							},
 							{
-								text: __( 'Save', 'big-sky' ),
+								text: __( 'Save', __i18n_text_domain__ ),
 								onClick: handleConfirmSave,
 								variant: 'primary',
 							},
 						] }
 						onClose={ handleConfirmCancel }
 					>
-						{ __( 'Do you want to save this image?', 'big-sky' ) }
+						{ __( 'Do you want to save this image?', __i18n_text_domain__ ) }
 					</ConfirmationDialog>
 				) }
 			</>

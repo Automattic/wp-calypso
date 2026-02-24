@@ -6,7 +6,8 @@ import './style.scss';
 
 export interface ActionButtonsProps {
 	primaryLabel: ReactNode;
-	primaryOnClick: () => void;
+	primaryOnClick?: () => void;
+	primaryType?: 'button' | 'submit';
 	primaryLoading?: boolean;
 	primaryDisabled?: boolean;
 	primaryClassName?: string;
@@ -37,6 +38,7 @@ export interface ActionButtonsProps {
 export function ActionButtons( {
 	primaryLabel,
 	primaryOnClick,
+	primaryType = 'button',
 	primaryLoading = false,
 	primaryDisabled = false,
 	primaryClassName,
@@ -63,6 +65,7 @@ export function ActionButtons( {
 				) }
 				<Button
 					variant="primary"
+					type={ primaryType }
 					onClick={ primaryOnClick }
 					disabled={ primaryDisabled || primaryLoading }
 					className={ clsx( 'connect-screen-action-buttons__primary', primaryClassName ) }

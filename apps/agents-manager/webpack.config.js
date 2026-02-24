@@ -52,7 +52,7 @@ function getIndividualConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( './dist/chunks-map.json' ),
+				output: path.resolve( `./dist/chunks-map-${ name }.json` ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill,
@@ -96,6 +96,9 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 	];
 }
 

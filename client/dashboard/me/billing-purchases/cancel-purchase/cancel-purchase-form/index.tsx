@@ -308,11 +308,16 @@ function StepButtons( {
 	if ( ! isLastStep ) {
 		return (
 			<ButtonStack justify="flex-start">
-				<Button variant="primary" disabled={ ! canGoNext } onClick={ clickNext }>
+				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
 					{ __( 'Continue' ) }
 				</Button>
 				{ ! hasWarningStep && (
-					<Button variant="tertiary" onClick={ onSubmit }>
+					<Button
+						variant="tertiary"
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ onSubmit }
+					>
 						{ __( 'Skip' ) }
 					</Button>
 				) }
@@ -382,8 +387,13 @@ function StepButtons( {
 			>
 				{ __( 'Submit' ) }
 			</Button>
-			{ ! canGoNext && ! isCancelling && ! hasWarningStep && (
-				<Button variant="tertiary" onClick={ onSubmit }>
+			{ ! canGoNext && ! hasWarningStep && (
+				<Button
+					variant="tertiary"
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ onSubmit }
+				>
 					{ __( 'Skip' ) }
 				</Button>
 			) }
