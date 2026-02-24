@@ -32,6 +32,9 @@ type Props = {
 	productSearchQuery?: string;
 	usePublicQuery?: boolean;
 	selectedProductFilters?: SelectedFilters;
+	isReferralMode?: boolean;
+	hasActiveAgencyPressablePlanLicense?: boolean;
+	hasActiveReferralPressablePlanLicense?: boolean;
 };
 
 // This function gets the displayable Plans based on how it should be arranged in the listing.
@@ -113,6 +116,9 @@ export default function useProductAndPlans( {
 	selectedSite,
 	selectedProductFilters,
 	productSearchQuery,
+	isReferralMode,
+	hasActiveAgencyPressablePlanLicense,
+	hasActiveReferralPressablePlanLicense,
 }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
@@ -140,8 +146,20 @@ export default function useProductAndPlans( {
 			);
 		}
 
+		const hasVisibilityState =
+			typeof isReferralMode === 'boolean' &&
+			typeof hasActiveAgencyPressablePlanLicense === 'boolean' &&
+			typeof hasActiveReferralPressablePlanLicense === 'boolean';
+
 		// Hide Pressable add-ons behind feature flag across marketplace products UI.
-		if ( ! isPressableAddonsEnabled ) {
+		// When mode visibility state is provided, enforce strict mode-specific license checks.
+		if (
+			! isPressableAddonsEnabled ||
+			( hasVisibilityState &&
+				( isReferralMode
+					? ! hasActiveReferralPressablePlanLicense
+					: ! hasActiveAgencyPressablePlanLicense ) )
+		) {
 			const pressableAddonProductIds = new Set(
 				filterProductsAndPlansByType(
 					PRODUCT_TYPE_PRESSABLE_ADDON,
@@ -202,5 +220,8 @@ export default function useProductAndPlans( {
 		addedPlanAndProducts,
 		isLoadingProducts,
 		isPressableAddonsEnabled,
+		isReferralMode,
+		hasActiveAgencyPressablePlanLicense,
+		hasActiveReferralPressablePlanLicense,
 	] );
 }
