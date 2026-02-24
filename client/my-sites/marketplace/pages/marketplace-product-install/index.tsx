@@ -86,13 +86,11 @@ const MarketplaceProductInstall = ( {
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
 	const pluginExists = pluginUploadError?.error === 'folder_exists';
 	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
-	const pluginTooBig = ( () => {
-		if ( ! pluginUploadError ) {
-			return false;
-		}
-		const errorString = `${ pluginUploadError.error }${ pluginUploadError.message }`.toLowerCase();
-		return errorString.includes( 'too large' ) || errorString.includes( 'http 413' );
-	} )();
+	const pluginTooBigError = pluginUploadError
+		? `${ pluginUploadError.error }${ pluginUploadError.message }`.toLowerCase()
+		: '';
+	const pluginTooBig =
+		pluginTooBigError.includes( 'too large' ) || pluginTooBigError.includes( 'http 413' );
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, pluginSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, pluginSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
