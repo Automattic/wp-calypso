@@ -9,7 +9,7 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { plus, trash } from '@wordpress/icons';
-import { translate, fixMe } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -443,11 +443,7 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'date_subscribed',
-				label: fixMe( {
-					text: 'Date subscribed',
-					newCopy: translate( 'Date subscribed' ),
-					oldCopy: translate( 'Since' ),
-				} ) as string,
+				label: translate( 'Date subscribed' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					getFormattedSubscriptionDate( item, locale ),
 				render: ( { item }: { item: Subscriber } ) => getFormattedSubscriptionDate( item, locale ),
