@@ -34,7 +34,9 @@ Run both before creating a PR. Test files go alongside source: `use-foo.ts` → 
 
 ## UI Testing
 
-Refer to comprehensive UI tests in [packages/image-studio/.agents/skills/ui-testing/SKILL.md](packages/image-studio/.agents/skills/ui-testing/SKILL.md)
+No local dev server. Visual testing requires a sandbox on `widgets.wp.com`. Without a sandbox, focus on unit tests and type checks.
+
+When sandbox is available and **user explicitly requests UI testing**, follow `.agents/skills/ui-testing/SKILL.md`. Use Playwright MCP (not playwright-test). Do not run UI tests automatically.
 
 ## PR Guidelines
 
