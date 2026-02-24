@@ -142,6 +142,7 @@ export default function AgentChat( {
 			messageRenderer={ messageRenderer }
 			inputValue={ inputValue }
 			onInputChange={ onInputChange }
+			messagesPosition="bottom"
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -154,13 +155,13 @@ export default function AgentChat( {
 								: undefined
 						}
 						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <AI size={ 41 } color="#3858e8" /> }
+						icon={ <AI size={ 32 } /> }
 					/>
 				)
 			}
 		>
 			<AgentUI.ConversationView>
-				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />

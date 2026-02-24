@@ -6,12 +6,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: end;
-	height: 56px;
-	padding: 4px 16px;
+	gap: 4px;
+	padding-bottom: 4px;
 
 	.agents-manager-chat-header__back-btn {
+		color: var(--color-foreground);
 		padding: 0;
-		padding-right: 4px;
 	}
 
 	&:has( .agents-manager-chat-header__title ) {
@@ -21,58 +21,27 @@
 	&__title {
 		font-size: 14px;
 		font-weight: 600;
-		color: #1f1f1f;
+		color: var(--color-foreground);
 		flex-grow: 1;
 	}
 
 	&__actions {
 		display: flex;
-		gap: 4px;
+		gap: 8px;
 		align-items: center;
+		padding-block: 2px;
 	}
 
 	&__more-options,
 	&__history-btn,
 	&__close-btn {
 		svg {
-			fill: #1f1f1f;
+			fill: var(--color-foreground);
 		}
 	}
-}
 
-// Dark theme overrides for the docked chat
-@include docked-chat-without-modal {
-	.agents-manager-chat-header {
-		position: absolute;
-		top: 0;
-		width: 100%;
-		height: $chat-header-height;
-		margin: 0;
-		padding: 0;
-
-		&__title {
-			color: $gray-100;
-		}
-
-		&__back-btn,
-		&__more-options,
-		&__history-btn,
-		&__close-btn {
-			svg {
-				fill: $gray-100;
-			}
-
-			& .components-dropdown-menu__toggle.has-icon,
-			&.has-icon {
-				min-width: unset;
-				width: 32px;
-				height: 32px;
-				padding: 0;
-			}
-		}
-
-		&__back-btn svg {
-			margin-left: 0;
-		}
+	&__close-btn svg {
+		width: 20px;
+		height: 20px;
 	}
 }

@@ -7,6 +7,7 @@
 	flex: 1;
 	width: 100%;
 	min-height: 0;
+	padding-top: 12px;
 
 	&__content {
 		flex: 1;
@@ -81,8 +82,6 @@
 // Dark theme overrides for the docked chat
 @include docked-chat-without-modal {
 	.agents-manager-conversation-history-view {
-		padding-top: 48px;
-
 		&__content {
 			padding-top: 0;
 			padding-left: 0;
