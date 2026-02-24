@@ -5,6 +5,7 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
+import type { CreateSiteParams } from '@automattic/data-stores';
 
 interface CreateAccountResponse {
 	success: boolean;
@@ -49,17 +50,20 @@ export async function createAccount( {
 	email,
 	siteId,
 	recaptchaClientId,
+	newSiteParams,
 }: {
 	signupFlowName: string;
 	email: string | undefined;
 	siteId: number | undefined;
 	recaptchaClientId: number | undefined;
+	newSiteParams?: CreateSiteParams;
 } ): Promise< CreateAccountResponse > {
-	let newSiteParams = null;
-	try {
-		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
-	} catch ( err ) {
-		newSiteParams = {};
+	if ( ! newSiteParams ) {
+		try {
+			newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+		} catch ( err ) {
+			newSiteParams = undefined;
+		}
 	}
 
 	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
@@ -91,7 +95,7 @@ export async function createAccount( {
 			extra: { username_hint: blogName },
 			signup_flow_name: signupFlowName,
 			validate: false,
-			new_site_params: newSiteParams,
+			new_site_params: newSiteParams ?? {},
 			should_create_site: ! siteId,
 			locale: getLocaleSlug(),
 			client_id: config( 'wpcom_signup_id' ),

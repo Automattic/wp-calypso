@@ -2,6 +2,7 @@ import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
+import { Visibility } from '@automattic/data-stores';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isValueTruthy,
@@ -68,6 +69,7 @@ import type {
 	PaymentEventCallbackArguments,
 	PaymentMethod,
 } from '@automattic/composite-checkout';
+import type { CreateSiteParams } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
@@ -469,6 +471,37 @@ export default function CheckoutMain( {
 		[ addProductsToCart ]
 	);
 
+	const newSiteParams: CreateSiteParams | undefined = useMemo( () => {
+		if ( sitelessCheckoutType !== 'unified' ) {
+			return undefined;
+		}
+
+		let savedNewSiteParams: CreateSiteParams | undefined = undefined;
+		try {
+			savedNewSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+		} catch ( err ) {
+			savedNewSiteParams = undefined;
+		}
+		if ( savedNewSiteParams?.blog_title ) {
+			// Typically this comes from signup in which case we don't want to
+			// override it. It will be fetched from localStorage inside
+			// `createAccount()`.
+			return undefined;
+		}
+
+		return {
+			blog_name: '',
+			blog_title: translate( 'My Site' ),
+			public: Visibility.PublicNotIndexed,
+			options: {
+				site_creation_flow: 'unified',
+				wpcom_public_coming_soon: 1,
+			},
+			find_available_url: true,
+			validate: false,
+		};
+	}, [ sitelessCheckoutType, translate ] );
+
 	const isAkismetSitelessCheckout = responseCart.products.some(
 		( product ) => product.extra.isAkismetSitelessCheckout
 	);
@@ -492,6 +525,7 @@ export default function CheckoutMain( {
 			fromSiteSlug,
 			isJetpackNotAtomic,
 			isAkismetSitelessCheckout,
+			newSiteParams,
 		} ),
 		[
 			contactDetails,
@@ -510,6 +544,7 @@ export default function CheckoutMain( {
 			fromSiteSlug,
 			isJetpackNotAtomic,
 			isAkismetSitelessCheckout,
+			newSiteParams,
 		]
 	);
 

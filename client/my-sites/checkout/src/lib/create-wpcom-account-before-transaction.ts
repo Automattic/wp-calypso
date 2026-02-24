@@ -46,6 +46,7 @@ export async function createWpcomAccountBeforeTransaction(
 		email: transactionOptions.contactDetails?.email?.value,
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,
+		newSiteParams: transactionOptions.newSiteParams,
 	} ).then( ( response ) => {
 		const siteIdFromResponse: number | undefined = parseInt(
 			response?.blog_details?.blogid ?? '0'

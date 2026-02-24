@@ -1,6 +1,7 @@
 import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { CreateSiteParams } from '@automattic/data-stores';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
@@ -30,4 +31,16 @@ export interface PaymentProcessorOptions {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+
+	/**
+	 * Data provided to the new user endpoint when creating a user and site
+	 * before the transaction is submitted (see
+	 * `createWpcomAccountBeforeTransaction()`) for userless checkout. Without this data, a new site will not be created.
+	 *
+	 * If this is set, it will always be used, but most of the time you should
+	 * not need to set it because our signup flows set the `siteParams`
+	 * property of `localStorage` which will be used if this is not set. This
+	 * will always override the localStorage setting so use it with care.
+	 */
+	newSiteParams?: CreateSiteParams;
 }
