@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -89,7 +90,7 @@ export default function SupportGuides( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
@@ -101,7 +102,6 @@ export default function SupportGuides( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
