@@ -7,6 +7,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 } from '@automattic/calypso-products';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getCurrentPlan } from '.';
@@ -35,6 +39,10 @@ export default function isSiteBigSkyTrial( state: AppState, siteId: number ) {
 		PLAN_PREMIUM_MONTHLY,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_PREMIUM_3_YEARS,
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_MONTHLY,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PERSONAL_3_YEARS,
 	];
 
 	const productSlug = currentPlan?.productSlug || site?.plan?.product_slug;
