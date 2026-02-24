@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useImportBlueprint } from '../../lib/import-blueprint';
 import { importPlaygroundSite } from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
@@ -22,6 +23,28 @@ export const PlaygroundSetupStep: Step< {
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { siteId, siteSlug } = useSiteData();
 	const [ query ] = useSearchParams();
+	const { mutateAsync: importBlueprint } = useImportBlueprint();
+
+	useEffect( () => {
+		// If blueprint exists, import it and then submit
+		const blueprint = query.get( 'blueprint' );
+		if ( blueprint && submit && siteId ) {
+			const runBlueprintImport = async () => {
+				try {
+					await importBlueprint( { blueprint, siteId } );
+					submit( {
+						siteSlug,
+						siteId,
+					} );
+				} catch ( error ) {
+					// Add error handling
+					// eslint-disable-next-line no-console
+					console.error( error );
+				}
+			};
+			runBlueprintImport();
+		}
+	}, [ query, submit, siteSlug, siteId, importBlueprint ] );
 
 	useEffect( () => {
 		// Clean up any playground-related localStorage items on unmount
@@ -63,14 +86,18 @@ export const PlaygroundSetupStep: Step< {
 	};
 
 	const getStepContent = () => {
+		const hasBlueprint = query.get( 'blueprint' );
+
 		return (
 			<>
 				<Loading title={ __( 'Preparing your site for import' ) } />
-				<PlaygroundIframe
-					className="playground__onboarding-iframe"
-					playgroundClient={ playgroundClientRef.current }
-					setPlaygroundClient={ startImport }
-				/>
+				{ ! hasBlueprint && (
+					<PlaygroundIframe
+						className="playground__onboarding-iframe"
+						playgroundClient={ playgroundClientRef.current }
+						setPlaygroundClient={ startImport }
+					/>
+				) }
 			</>
 		);
 	};
