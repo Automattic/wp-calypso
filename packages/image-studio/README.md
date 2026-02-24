@@ -61,43 +61,36 @@ Run the unit tests with Jest:
 
 ```bash
 # From wp-calypso root
-yarn workspace @automattic/image-studio test
-
-# Or from the package directory
-cd packages/image-studio
-yarn test
+yarn jest packages/image-studio --config packages/image-studio/jest.config.js
 ```
 
 Test files are located alongside their source files with `.test.ts` or `.test.tsx` extensions.
 
-### Manual Testing
-
-**Step 1 — Build the package:**
+### Type Check
 
 ```bash
-yarn workspace @automattic/image-studio build
+yarn workspace @automattic/image-studio tsc --build --dry
 ```
 
-**Step 2 — Test on a WordPress site:**
+### Manual Testing
 
-- Navigate to Media Library: `/wp-admin/upload.php?flags=image-studio-calypso`
-- Click on any image to open Image Studio in Edit mode
-- Or click "Generate" to create new images
+**Step 1 — Build and sync to sandbox:**
+
+```bash
+cd apps/agents-manager && yarn dev --sync
+```
+
+**Step 2 — Test on a sandboxed WordPress site:**
+
+- Navigate to Media Library: `/wp-admin/upload.php`
+- Click on any image → "Edit with AI" to open Image Studio in Edit mode
+- Or click "Generate Image" to create new images
 
 **Step 3 — Test in Block Editor:**
 
 - Open the post/page editor
-- Add an Image block
-- Select the image and look for the Image Studio toolbar button
-
-### E2E Testing
-
-For end-to-end testing with Playwright:
-
-```bash
-# From wp-calypso root
-yarn workspace @automattic/calypso-e2e test --grep "image-studio"
-```
+- Add an Image block → click "Generate" in the placeholder
+- Or select an existing image → click "Edit with AI" in the toolbar
 
 ## Deployment
 
@@ -158,7 +151,7 @@ yarn clean
 yarn lint
 
 # Type check
-yarn tsc --noEmit
+yarn workspace @automattic/image-studio tsc --build --dry
 ```
 
 ### Project Structure
@@ -166,17 +159,26 @@ yarn tsc --noEmit
 ```
 src/
 ├── index.tsx              # Main exports and initialization
-├── store/                 # WordPress data store
+├── store/                 # WordPress data store (single file)
 ├── components/            # React components
-│   ├── image-studio/      # Main Image Studio UI
 │   ├── annotation-canvas/ # Drawing/annotation tools
-│   ├── canvas-controls/   # Image manipulation controls
-│   └── style-picker/      # Style selection UI
-├── hooks/                 # Custom React hooks
-├── abilities/             # WordPress Abilities API integrations
-├── extensions/            # Block editor filters
+│   ├── aspect-ratio-picker/ # Aspect ratio selection
+│   ├── canvas/            # Image display
+│   ├── canvas-controls/   # Revision navigator
+│   ├── confirmation-dialog/ # Unsaved changes prompt
+│   ├── edit-layout/       # Edit mode container
+│   ├── footer/            # Agent chat UI
+│   ├── generate-layout/   # Generate mode container
+│   ├── header/            # Toolbar, save, navigation
+│   ├── image-feedback-buttons/ # Thumbs up/down
+│   ├── sidebar/           # Metadata editing, file details
+│   ├── style-picker/      # Style selection UI
+│   └── styles/            # Shared SCSS variables and mixins
+├── hooks/                 # Custom React hooks (feature logic)
+├── abilities/             # WordPress Abilities API handlers
+├── extensions/            # Block editor filter registrations
 ├── provider/              # Exports for agents-manager integration
-├── types/                 # TypeScript types
+├── types/                 # TypeScript type definitions
 └── utils/                 # Utility functions
 ```
 
@@ -225,8 +227,6 @@ Filters registered for Gutenberg:
 
 ## Related Documentation
 
-- [NOT_IMPLEMENTED.md](./NOT_IMPLEMENTED.md) - Features not yet migrated
-- [Migration Plan](/.claude/plans/kind-crunching-manatee.md) - Original migration plan
 - [@automattic/agents-manager](../agents-manager/README.md) - Parent integration package
 
 ## License
