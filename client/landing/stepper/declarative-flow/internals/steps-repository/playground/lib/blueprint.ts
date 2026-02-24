@@ -257,5 +257,11 @@ async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 		);
 	}
 
-	return await resolveRemoteBlueprint( source );
+	try {
+		return await resolveRemoteBlueprint( source );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( error );
+		throw new Error( `Failed to resolve blueprint: ${ source }` );
+	}
 }
