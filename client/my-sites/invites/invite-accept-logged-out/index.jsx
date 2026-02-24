@@ -183,6 +183,7 @@ class InviteAcceptLoggedOut extends Component {
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm
+						className="signup-form--connect-screen"
 						redirectToAfterLoginUrl={ window.location.href }
 						isPasswordless
 						displayUsernameInput={ false }
