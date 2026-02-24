@@ -85,6 +85,7 @@ describe( 'useFeedback', () => {
 		mockGetStoredSessionId.mockReturnValue( 'stored-session-123' );
 		mockUseAgentsManagerContext.mockReturnValue( {
 			agentConfig: defaultAgentConfig,
+			isLoggedIn: true,
 		} as unknown as ReturnType< typeof useAgentsManagerContext > );
 	} );
 
@@ -105,6 +106,17 @@ describe( 'useFeedback', () => {
 			);
 		} );
 
+		it( 'does not register feedback actions when user is not logged in', () => {
+			mockUseAgentsManagerContext.mockReturnValue( {
+				agentConfig: defaultAgentConfig,
+				isLoggedIn: false,
+			} as unknown as ReturnType< typeof useAgentsManagerContext > );
+
+			renderHook( () => useFeedback( defaultConfig ) );
+
+			expect( mockRegisterMessageActions ).not.toHaveBeenCalled();
+		} );
+
 		it( 'only registers once across rerenders', () => {
 			const { rerender } = renderHook( () => useFeedback( defaultConfig ) );
 			rerender();
@@ -119,6 +131,7 @@ describe( 'useFeedback', () => {
 
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
+				isLoggedIn: true,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			rerender( defaultConfig );
@@ -287,6 +300,7 @@ describe( 'useFeedback', () => {
 		it( 'uses stored session ID when `sessionId` is empty', async () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: '' },
+				isLoggedIn: true,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
@@ -333,6 +347,7 @@ describe( 'useFeedback', () => {
 		it( 'does not send rating when `authProvider` is not provided', async () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, authProvider: undefined },
+				isLoggedIn: true,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedback( defaultConfig ) );

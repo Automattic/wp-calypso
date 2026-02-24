@@ -152,7 +152,7 @@ export default function useFeedback( {
 	registerMessageActions,
 	messages,
 }: UseFeedbackConfig ): UseFeedbackReturn {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, isLoggedIn } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
@@ -203,6 +203,11 @@ export default function useFeedback( {
 	}, [] );
 
 	useEffect( () => {
+		// Only register feedback actions for logged-in users.
+		if ( ! isLoggedIn ) {
+			return;
+		}
+
 		const feedbackManager = createFeedbackActions( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
@@ -227,7 +232,7 @@ export default function useFeedback( {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, sessionId ] );
+	}, [ registerMessageActions, handleFeedback, sessionId, isLoggedIn ] );
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );
