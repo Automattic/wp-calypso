@@ -92,7 +92,14 @@ export default function McpAiAssistant() {
 	// Determine the mode based on whether more sites are enabled or disabled.
 	// Global ON: most sites enabled → page shows "exceptions" (disabled sites)
 	// Global OFF: most sites disabled → page shows "add to sites" (enabled sites)
-	const isGlobalOn = enabledSites.length > 0 && enabledSites.length >= disabledSites.length;
+	// Lock the mode on first meaningful calculation so adding/removing exceptions
+	// doesn't flip the page mode mid-interaction.
+	const lockedModeRef = useRef< boolean | null >( null );
+	const computedIsGlobalOn = enabledSites.length > 0 && enabledSites.length >= disabledSites.length;
+	if ( lockedModeRef.current === null && ( enabledSites.length > 0 || disabledSites.length > 0 ) ) {
+		lockedModeRef.current = computedIsGlobalOn;
+	}
+	const isGlobalOn = lockedModeRef.current ?? computedIsGlobalOn;
 
 	// In "global on" mode: search enabled sites to disable them, list disabled as exceptions.
 	// In "global off" mode: search disabled sites to enable them, list enabled as added sites.

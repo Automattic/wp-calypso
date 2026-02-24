@@ -180,12 +180,20 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 
 	const isAccordion = variation === 'E';
 	const isToggleHeader = variation === 'F' || variation === 'G';
+	const isSquareCorners = variation === 'G';
 	let isFirstCategory = true;
 
 	const renderCategoryContent = () => {
 		if ( isToggleHeader ) {
 			return (
 				<VStack spacing={ 8 }>
+					{ isSquareCorners && (
+						<style>
+							{
+								'.dashboard-section-header .dashboard-section-header__heading-row { min-height: 0; }'
+							}
+						</style>
+					) }
 					{ CATEGORY_ORDER.map( ( categoryName ) => {
 						const categoryTools = grouped[ categoryName ];
 						if ( ! categoryTools || categoryTools.length === 0 ) {
@@ -195,7 +203,11 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 						const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
 
 						return (
-							<Card key={ categoryName }>
+							<Card
+								key={ categoryName }
+								isRounded={ ! isSquareCorners }
+								style={ isSquareCorners ? { borderRadius: 0 } : undefined }
+							>
 								<CardBody>
 									<SectionHeader
 										level={ 3 }
@@ -204,7 +216,11 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 											<ToggleControl
 												__nextHasNoMarginBottom
 												checked={ allEnabled }
-												label={ <Text weight={ 500 }>{ translate( 'Enable all' ) }</Text> }
+												label={
+													<Text weight={ variation === 'G' ? 400 : 500 }>
+														{ translate( 'Enable all' ) }
+													</Text>
+												}
 												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 											/>
 										}
@@ -212,7 +228,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 								</CardBody>
 								<div style={ { height: '1px', backgroundColor: 'var(--color-border-subtle)' } } />
 								<CardBody>
-									<VStack spacing={ 3 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
+									<VStack spacing={ 4 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
 								</CardBody>
 							</Card>
 						);
@@ -264,7 +280,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 											/>
 
-											<VStack spacing={ 3 }>
+											<VStack spacing={ 4 }>
 												{ categoryTools.map( ( [ toolId, tool ] ) => (
 													<ToggleControl
 														key={ toolId }

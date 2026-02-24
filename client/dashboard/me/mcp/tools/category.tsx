@@ -228,7 +228,11 @@ export default function McpToolsCategory() {
 											<ToggleControl
 												__nextHasNoMarginBottom
 												checked={ allEnabled }
-												label={ <Text weight={ 500 }>{ __( 'Enable all' ) }</Text> }
+												label={
+													<Text weight={ variation === 'G' ? 400 : 500 }>
+														{ __( 'Enable all' ) }
+													</Text>
+												}
 												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 											/>
 										}
@@ -236,7 +240,7 @@ export default function McpToolsCategory() {
 								</CardBody>
 								<hr style={ { margin: 0, border: 'none', borderTop: '1px solid #e0e0e0' } } />
 								<CardBody>
-									<VStack spacing={ 3 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
+									<VStack spacing={ 4 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
 								</CardBody>
 							</Card>
 						);
@@ -296,7 +300,7 @@ export default function McpToolsCategory() {
 												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 											/>
 
-											<VStack spacing={ 3 }>
+											<VStack spacing={ 4 }>
 												{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
 													<ToggleControl
 														key={ toolId }

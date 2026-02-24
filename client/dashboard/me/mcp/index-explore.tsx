@@ -222,7 +222,16 @@ function McpComponentExplore() {
 				accountAbilities[ toolId ] = false;
 			}
 		} );
-		mutation.mutate( { mcp_abilities: { account: accountAbilities } } as any );
+
+		// Option G: also clear site exceptions when toggling
+		const mutationPayload: any = { mcp_abilities: { account: accountAbilities } };
+		if ( variation === 'G' && disabledSiteIds.length > 0 ) {
+			mutationPayload.mcp_abilities.sites = disabledSiteIds.map( ( siteId: number ) => ( {
+				blog_id: siteId,
+				account_tools_enabled: true,
+			} ) );
+		}
+		mutation.mutate( mutationPayload );
 	};
 
 	const groupToolsByCategory = (

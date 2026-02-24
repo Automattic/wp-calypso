@@ -4,8 +4,14 @@
  */
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ComboboxControl, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	ComboboxControl,
+	Button,
+	Spinner,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -19,6 +25,8 @@ import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { getDisabledSiteIds } from './utils';
 
+const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
+
 function getSiteDisplayName( site ) {
 	return site.name || site.URL?.replace( /^https?:\/\//, '' ) || String( site.ID );
 }
@@ -31,6 +39,9 @@ export default function McpSites( { path } ) {
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
 
+	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
+	const isSquareCorners = variation === 'G';
+
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 	const disabledSites = disabledSiteIds.map( ( siteId ) => {
 		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
@@ -38,6 +49,9 @@ export default function McpSites( { path } ) {
 		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
 		return { id: siteId, name, domain };
 	} );
+
+	// Track whether the last mutation was an "add" action (for spinner placement)
+	const isAddingRef = useRef( false );
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
@@ -72,6 +86,10 @@ export default function McpSites( { path } ) {
 		if ( isNaN( siteId ) ) {
 			return;
 		}
+		isAddingRef.current = true;
+		if ( document.activeElement ) {
+			document.activeElement.blur();
+		}
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [ { blog_id: siteId, account_tools_enabled: false } ],
@@ -80,6 +98,7 @@ export default function McpSites( { path } ) {
 	};
 
 	const handleRemoveSite = ( siteId ) => {
+		isAddingRef.current = false;
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [ { blog_id: siteId, account_tools_enabled: true } ],
@@ -107,13 +126,21 @@ export default function McpSites( { path } ) {
 				{ translate( 'External AI access exceptions' ) }
 			</HeaderCake>
 			<VStack spacing={ 6 }>
-				<Card>
+				<Card
+					isRounded={ ! isSquareCorners }
+					style={ isSquareCorners ? { borderRadius: 0 } : undefined }
+				>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								level={ 3 }
 								title={ translate( 'Add an exception' ) }
 								description={ translate( 'Search for sites to disable external AI access.' ) }
+								actions={
+									mutation.isPending && isAddingRef.current ? (
+										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
+									) : undefined
+								}
 							/>
 
 							<ComboboxControl
@@ -137,25 +164,29 @@ export default function McpSites( { path } ) {
 							title={ translate( 'Restricted sites' ) }
 							description={ translate( 'These sites will not have MCP access.' ) }
 						/>
-						<ActionList>
-							{ disabledSites.map( ( site ) => (
-								<ActionList.ActionItem
-									key={ site.id }
-									title={ site.name }
-									description={ site.domain }
-									actions={
-										<Button
-											variant="secondary"
-											size="compact"
-											disabled={ mutation.isPending }
-											onClick={ () => handleRemoveSite( site.id ) }
-										>
-											{ translate( 'Remove' ) }
-										</Button>
-									}
-								/>
-							) ) }
-						</ActionList>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className={ isSquareCorners ? 'mcp-square-corners' : undefined }>
+							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
+							<ActionList>
+								{ disabledSites.map( ( site ) => (
+									<ActionList.ActionItem
+										key={ site.id }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ translate( 'Remove' ) }
+											</Button>
+										}
+									/>
+								) ) }
+							</ActionList>
+						</div>
 					</VStack>
 				) }
 			</VStack>

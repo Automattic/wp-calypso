@@ -1,7 +1,13 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ComboboxControl, Button } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	ComboboxControl,
+	Button,
+	Spinner,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useRef } from 'react';
 import { getDisabledSiteIds } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
@@ -29,6 +35,9 @@ export default function McpSites() {
 		return { id: siteId, name, domain };
 	} );
 
+	// Track whether the last mutation was an "add" action (for spinner placement)
+	const isAddingRef = useRef( false );
+
 	const mutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -55,6 +64,10 @@ export default function McpSites() {
 		if ( isNaN( siteId ) ) {
 			return;
 		}
+		isAddingRef.current = true;
+		if ( document.activeElement instanceof HTMLElement ) {
+			document.activeElement.blur();
+		}
 		// Immediately restrict this site.
 		mutation.mutate( {
 			mcp_abilities: {
@@ -64,6 +77,7 @@ export default function McpSites() {
 	};
 
 	const handleRemoveSite = ( siteId: number ) => {
+		isAddingRef.current = false;
 		// Re-enable AI access for this site.
 		mutation.mutate( {
 			mcp_abilities: {
@@ -93,6 +107,11 @@ export default function McpSites() {
 								level={ 3 }
 								title={ __( 'Add an exception' ) }
 								description={ __( 'Search for sites to disable external AI access.' ) }
+								actions={
+									mutation.isPending && isAddingRef.current ? (
+										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
+									) : undefined
+								}
 							/>
 
 							<ComboboxControl

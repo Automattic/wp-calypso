@@ -228,7 +228,16 @@ function McpComponentExplore( { path } ) {
 				accountAbilities[ toolId ] = false;
 			}
 		} );
-		mutation.mutate( { mcp_abilities: { account: accountAbilities } } );
+
+		// Option G: also clear site exceptions when toggling
+		const mutationPayload = { mcp_abilities: { account: accountAbilities } };
+		if ( variation === 'G' && disabledSiteIds.length > 0 ) {
+			mutationPayload.mcp_abilities.sites = disabledSiteIds.map( ( siteId ) => ( {
+				blog_id: siteId,
+				account_tools_enabled: true,
+			} ) );
+		}
+		mutation.mutate( mutationPayload );
 	};
 
 	const handleSiteToggle = ( siteId, enabled ) => {
@@ -783,8 +792,9 @@ function McpComponentExplore( { path } ) {
 			<VStack spacing={ 6 }>
 				{ /* WordPress.com AI assistant */ }
 				<Card
+					isRounded={ false }
 					className="dashboard-summary-button-list has-density-medium"
-					style={ { position: 'relative' } }
+					style={ { position: 'relative', borderRadius: 0 } }
 				>
 					{ bigSkyIsInitialLoading && (
 						<Spinner
@@ -848,7 +858,11 @@ function McpComponentExplore( { path } ) {
 				</Card>
 
 				{ /* External AI assistant access */ }
-				<Card className="dashboard-summary-button-list has-density-medium">
+				<Card
+					isRounded={ false }
+					className="dashboard-summary-button-list has-density-medium"
+					style={ { borderRadius: 0 } }
+				>
 					<CardHeader>
 						<VStack spacing={ 4 }>
 							<SectionHeader
@@ -916,6 +930,7 @@ function McpComponentExplore( { path } ) {
 							'Get instructions for connecting your external AI assistant.'
 						) }
 						decoration={ <Icon icon={ connection } /> }
+						style={ { borderRadius: 0 } }
 					/>
 				) }
 			</VStack>

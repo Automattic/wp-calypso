@@ -9,9 +9,11 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -44,6 +46,7 @@ const clientDocumentation: Record< McpClient, string > = {
 
 const SERVER_NAME = 'wpcom-mcp';
 const MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1';
+const CLAUDE_CODE_COMMAND = `claude mcp add --transport http ${ SERVER_NAME } ${ MCP_URL }`;
 
 function generateMcpConfig( client: McpClient ) {
 	const baseConfig = { url: MCP_URL };
@@ -72,12 +75,18 @@ function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
+	const [ commandCopyStatus, setCommandCopyStatus ] = useState( 'idle' );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const copyToClipboard = async () => {
 		const configText = JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 );
 		try {
 			await navigator.clipboard.writeText( configText );
 			setCopyStatus( 'success' );
+			createSuccessNotice( __( 'Copied to clipboard' ), {
+				type: 'snackbar',
+				isDismissible: true,
+			} );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
 		} catch {
 			setCopyStatus( 'error' );
@@ -87,6 +96,32 @@ function McpSetupComponent() {
 
 	const getCopyIcon = () => {
 		switch ( copyStatus ) {
+			case 'success':
+				return check;
+			case 'error':
+				return error;
+			default:
+				return copy;
+		}
+	};
+
+	const copyCommandToClipboard = async () => {
+		try {
+			await navigator.clipboard.writeText( CLAUDE_CODE_COMMAND );
+			setCommandCopyStatus( 'success' );
+			createSuccessNotice( __( 'Copied to clipboard' ), {
+				type: 'snackbar',
+				isDismissible: true,
+			} );
+			setTimeout( () => setCommandCopyStatus( 'idle' ), 2000 );
+		} catch {
+			setCommandCopyStatus( 'error' );
+			setTimeout( () => setCommandCopyStatus( 'idle' ), 2000 );
+		}
+	};
+
+	const getCommandCopyIcon = () => {
+		switch ( commandCopyStatus ) {
 			case 'success':
 				return check;
 			case 'error':
@@ -170,16 +205,31 @@ function McpSetupComponent() {
 						<Text as="p" variant="muted">
 							{ __( 'Run this command in your terminal:' ) }
 						</Text>
-						<code
-							style={ {
-								...codeStyle,
-								padding: '8px 12px',
-								display: 'block',
-								wordBreak: 'break-all',
-							} }
-						>
-							claude mcp add --transport http wpcom-mcp { MCP_URL }
-						</code>
+						<div style={ { position: 'relative' } }>
+							<code
+								style={ {
+									...codeStyle,
+									padding: '12px 48px 12px 16px',
+									display: 'block',
+									wordBreak: 'break-all',
+								} }
+							>
+								{ CLAUDE_CODE_COMMAND }
+							</code>
+							<Button
+								icon={ getCommandCopyIcon() }
+								variant="tertiary"
+								iconSize={ 20 }
+								style={ {
+									position: 'absolute',
+									top: '4px',
+									right: '4px',
+									color: commandCopyStatus === 'error' ? 'var(--color-error)' : undefined,
+								} }
+								onClick={ copyCommandToClipboard }
+								aria-label={ __( 'Copy command to clipboard' ) }
+							/>
+						</div>
 						<Text as="p" variant="muted">
 							{ createInterpolateElement(
 								__( 'Then run <code/> in Claude Code to authenticate.' ),
@@ -248,14 +298,7 @@ function McpSetupComponent() {
 					<Card>
 						<CardBody>
 							<VStack spacing={ 4 }>
-								<SectionHeader
-									level={ 3 }
-									title={ sprintf(
-										/* translators: %s is the name of the MCP client */
-										__( 'Set up %s' ),
-										clientLabel
-									) }
-								/>
+								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 								{ quickSetup }
 							</VStack>
 						</CardBody>

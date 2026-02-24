@@ -3,13 +3,8 @@
  * Legacy port of: client/dashboard/me/mcp/ai-assistant/index.tsx
  */
 import { updateBigSkyPlugin } from '@automattic/api-core';
-import {
-	bigSkyPluginQuery,
-	queryClient,
-	sitesQuery,
-	siteQueryFilter,
-} from '@automattic/api-queries';
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+import { bigSkyPluginQuery, sitesQuery, siteQueryFilter } from '@automattic/api-queries';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	ComboboxControl,
@@ -31,6 +26,8 @@ import { ActionList } from '../../dashboard/components/action-list';
 import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
 
+const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
+
 function getSiteDisplayName( site ) {
 	return site.name || site.URL?.replace( /^https?:\/\//, '' ) || String( site.ID );
 }
@@ -38,6 +35,9 @@ function getSiteDisplayName( site ) {
 export default function McpAiAssistant( { path } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+	const tanstackQueryClient = useQueryClient();
+	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
+	const isSquareCorners = variation === 'G';
 
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 
@@ -55,8 +55,8 @@ export default function McpAiAssistant( { path } ) {
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, enable } ) => updateBigSkyPlugin( siteId, { enable } ),
 		onSuccess: ( _data, { siteId } ) => {
-			queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
-			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+			tanstackQueryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
+			tanstackQueryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			reduxDispatch(
 				successNotice( translate( 'AI assistant settings saved.' ), {
 					id: 'bigsky-settings-saved',
@@ -98,7 +98,14 @@ export default function McpAiAssistant( { path } ) {
 	} );
 
 	// Determine mode based on whether more sites are enabled or disabled.
-	const isGlobalOn = enabledSites.length > 0 && enabledSites.length >= disabledSites.length;
+	// Lock the mode on first meaningful calculation so adding/removing exceptions
+	// doesn't flip the page mode mid-interaction.
+	const lockedModeRef = useRef( null );
+	const computedIsGlobalOn = enabledSites.length > 0 && enabledSites.length >= disabledSites.length;
+	if ( lockedModeRef.current === null && ( enabledSites.length > 0 || disabledSites.length > 0 ) ) {
+		lockedModeRef.current = computedIsGlobalOn;
+	}
+	const isGlobalOn = lockedModeRef.current ?? computedIsGlobalOn;
 
 	const eligibleSearchPool = isGlobalOn ? enabledSites : disabledSites;
 	const searchPool = isGlobalOn
@@ -151,9 +158,16 @@ export default function McpAiAssistant( { path } ) {
 		? translate( 'AI assistant exceptions' )
 		: translate( 'Add AI assistant to sites' );
 	const searchTitle = isGlobalOn ? translate( 'Add an exception' ) : translate( 'Add a site' );
-	const searchDescription = isGlobalOn
-		? translate( 'Search for eligible sites to disable the AI assistant.' )
-		: translate( 'Search for a site to enable the AI assistant.' );
+	let searchDescription;
+	if ( isGlobalOn ) {
+		searchDescription = translate( 'Search for eligible sites to disable the AI assistant.' );
+	} else if ( variation === 'G' ) {
+		searchDescription = translate(
+			'The WordPress.com AI assistant is disabled. Add it to individual sites here.'
+		);
+	} else {
+		searchDescription = translate( 'Search for a site to enable the AI assistant.' );
+	}
 	const listTitle = isGlobalOn ? translate( 'Restricted sites' ) : translate( 'Enabled sites' );
 	const listDescription = isGlobalOn
 		? translate( 'These sites will not have the AI assistant.' )
@@ -179,7 +193,10 @@ export default function McpAiAssistant( { path } ) {
 				{ pageTitle }
 			</HeaderCake>
 			<VStack spacing={ 6 }>
-				<Card>
+				<Card
+					isRounded={ ! isSquareCorners }
+					style={ isSquareCorners ? { borderRadius: 0 } : undefined }
+				>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
@@ -214,25 +231,29 @@ export default function McpAiAssistant( { path } ) {
 				{ listedSites.length > 0 && (
 					<VStack spacing={ 4 }>
 						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
-						<ActionList>
-							{ listedSites.map( ( site ) => (
-								<ActionList.ActionItem
-									key={ site.id }
-									title={ site.name }
-									description={ site.domain }
-									actions={
-										<Button
-											variant="secondary"
-											size="compact"
-											disabled={ mutation.isPending }
-											onClick={ () => handleRemoveSite( site.id ) }
-										>
-											{ translate( 'Remove' ) }
-										</Button>
-									}
-								/>
-							) ) }
-						</ActionList>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className={ isSquareCorners ? 'mcp-square-corners' : undefined }>
+							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
+							<ActionList>
+								{ listedSites.map( ( site ) => (
+									<ActionList.ActionItem
+										key={ site.id }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ translate( 'Remove' ) }
+											</Button>
+										}
+									/>
+								) ) }
+							</ActionList>
+						</div>
 					</VStack>
 				) }
 			</VStack>
