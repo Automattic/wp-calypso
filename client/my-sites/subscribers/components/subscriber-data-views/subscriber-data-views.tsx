@@ -650,7 +650,7 @@ export default function SubscriberDataViews( {
 				<Page
 					title={
 						<span className="subscriber-data-views__title">
-							<JetpackLogo size={ 20 } />
+							{ ! isJetpackCloud() && <JetpackLogo size={ 20 } /> }
 							{ translate( 'Subscribers' ) }
 						</span>
 					}
