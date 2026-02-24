@@ -9,10 +9,10 @@ import { shouldLoadInlineHelp } from './utils';
 
 export default function AgentsManagerLoader( {
 	sectionName,
-	currentRoute,
+	currentRoute = window.location.pathname,
 }: {
 	sectionName: string;
-	currentRoute: string;
+	currentRoute?: string;
 } ) {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
