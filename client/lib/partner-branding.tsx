@@ -9,7 +9,10 @@ import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import type { AllowedSocialService } from 'calypso/components/social-buttons/utils';
+import type {
+	AllowedSocialService,
+	SignupAllowedService,
+} from 'calypso/components/social-buttons/utils';
 
 /**
  * Logo configuration
@@ -37,7 +40,7 @@ export interface CiabPartnerConfig {
 	/** Compact logo for TopBar (falls back to logo if not provided) */
 	compactLogo?: LogoConfig;
 	/** SSO providers to show (in order). Others will be hidden. */
-	ssoProviders: AllowedSocialService[];
+	ssoProviders: SignupAllowedService[];
 	/** Font style identifier for login/signup headings */
 	fontStyle?: 'system';
 }

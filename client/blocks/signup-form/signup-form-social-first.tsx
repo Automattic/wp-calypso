@@ -16,7 +16,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
-import type { AllowedSocialService } from 'calypso/components/social-buttons/utils';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 import './style.scss';
 
 interface QueryArgs {
@@ -52,7 +52,7 @@ interface SignupFormSocialFirst {
 	isEmailVariation?: boolean;
 	isMessagingVariation?: boolean;
 	isSliderVariation?: boolean;
-	allowedSocialServices?: AllowedSocialService[];
+	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
 

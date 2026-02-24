@@ -7,8 +7,14 @@ import type { AppState } from 'calypso/types';
 
 export type SocialService = 'google' | 'apple' | 'github' | 'paypal';
 
+/** Service identifiers valid in signup context. */
+export type SignupAllowedService = SocialService | 'magic-login' | 'email';
+
+/** Service identifiers valid in login context. */
+export type LoginAllowedService = SocialService | 'magic-login' | 'qr-code' | 'email';
+
 /** All service identifiers that can appear in allowedSocialServices lists. */
-export type AllowedSocialService = SocialService | 'magic-login' | 'qr-code' | 'email';
+export type AllowedSocialService = SignupAllowedService | LoginAllowedService;
 
 export const getUxMode = ( state: AppState ) => {
 	const currentRoute = getCurrentRoute( state );
