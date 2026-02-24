@@ -41,7 +41,7 @@ function GenAIButton( {
 		const errorMessage =
 			( agentChatProps.error as unknown as Error )?.message ||
 			String( agentChatProps.error ) ||
-			__( 'An error occurred while generating content.', 'big-sky' );
+			__( 'An error occurred while generating content.', __i18n_text_domain__ );
 		addNotice( errorMessage, 'error' );
 	}, [ agentChatProps.error, addNotice ] );
 
@@ -59,7 +59,7 @@ function GenAIButton( {
 	return (
 		<Button
 			icon={ <RegenerateIcon /> }
-			label={ __( 'Regenerate', 'big-sky' ) }
+			label={ __( 'Regenerate', __i18n_text_domain__ ) }
 			onClick={ handleClick }
 			size="small"
 			disabled={ agentChatProps.isProcessing }
