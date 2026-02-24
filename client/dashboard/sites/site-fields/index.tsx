@@ -99,6 +99,8 @@ export function NameRenderer( {
 } ) {
 	const renderBadge = () => {
 		switch ( badge ) {
+			case 'redirect':
+				return <Badge>{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
 				return <Badge>{ __( 'Staging' ) }</Badge>;
 			case 'trial':
