@@ -41,11 +41,19 @@ export function siteBySlugQuery( siteSlug: string ) {
 			try {
 				return await fetchSite( siteSlug );
 			} catch ( e ) {
-				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
-					throw notFound();
+				if ( ! isInaccessibleJetpackError( e ) ) {
+					if ( isSiteNotFoundError( e ) ) {
+						throw notFound();
+					}
+					throw e;
 				}
-				throw e;
 			}
+
+			const site = await fetchSite( siteSlug, { force: 'wpcom' } );
+			return {
+				...site,
+				__has_inaccessible_jetpack_error: true,
+			};
 		},
 		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
 			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
@@ -84,11 +92,19 @@ export function siteByIdQuery( siteId: number ) {
 			try {
 				return await fetchSite( siteId );
 			} catch ( e ) {
-				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
-					throw notFound();
+				if ( ! isInaccessibleJetpackError( e ) ) {
+					if ( isSiteNotFoundError( e ) ) {
+						throw notFound();
+					}
+					throw e;
 				}
-				throw e;
 			}
+
+			const site = await fetchSite( siteId, { force: 'wpcom' } );
+			return {
+				...site,
+				__has_inaccessible_jetpack_error: true,
+			};
 		},
 		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
 			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
