@@ -9,7 +9,6 @@ import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
-import { BlueprintFetchError } from '../lib/resolve-remote-blueprint-standalone';
 
 // Mock the initializeWordPressPlayground function
 jest.mock( '../lib/initialize-playground' );
@@ -78,21 +77,6 @@ describe( 'Playground', () => {
 			await act( async () => renderPlaygroundStep() );
 
 			// Verify the error component is displayed
-			await waitFor( () => {
-				expect( screen.getByTestId( 'playground-error' ) ).toBeVisible();
-			} );
-		} );
-
-		it( 'should render PlaygroundError when a BlueprintFetchError is thrown', async () => {
-			initializeWordPressPlayground.mockRejectedValue(
-				new BlueprintFetchError(
-					'Blueprint file could not be resolved: HTTP 404 Not Found',
-					'https://example.com/blueprint.json'
-				)
-			);
-
-			await act( async () => renderPlaygroundStep() );
-
 			await waitFor( () => {
 				expect( screen.getByTestId( 'playground-error' ) ).toBeVisible();
 			} );

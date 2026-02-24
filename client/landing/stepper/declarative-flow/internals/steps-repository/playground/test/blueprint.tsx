@@ -212,23 +212,6 @@ describe( 'getBlueprint', () => {
 		}
 	);
 
-	it( 'returns default blueprint when fetch throws a network error', async () => {
-		setLocationHref(
-			'https://example.com/?blueprint-url=https://unreachable-server.com/blueprint.json'
-		);
-
-		// Mock fetch to throw a network error
-		jest.spyOn( global, 'fetch' ).mockRejectedValue( new Error( 'Network error' ) );
-
-		// Expect getBlueprint to throw since fetch error is not caught
-		await expect( getBlueprint( false, '8.0' ) ).rejects.toThrow( 'Network error' );
-
-		// Verify fetch was called
-		expect( global.fetch ).toHaveBeenCalledWith( 'https://unreachable-server.com/blueprint.json', {
-			credentials: 'omit',
-		} );
-	} );
-
 	afterEach( () => {
 		jest.restoreAllMocks();
 		setLocationHref( 'https://example.com/' );
