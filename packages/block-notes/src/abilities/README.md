@@ -33,9 +33,9 @@ When a user adds a note to a block containing `@ai`, the flow is:
 
 The AI agent receives:
 
--   User's prompt (without `@ai`)
--   Note metadata (IDs, author, etc.)
--   Instructions to use the `big-sky/block-notes` ability to reply
+- User's prompt (without `@ai`)
+- Note metadata (IDs, author, etc.)
+- Instructions to use the `big-sky/block-notes` ability to reply
 
 The agent then:
 
@@ -89,38 +89,37 @@ The block notes ability supports two operations:
 
 Contains only reusable utility functions:
 
--   `getBlockNotes()` - Fetch notes for a block
--   `replyToNote()` - Reply to an existing note
--   `convertEntityNoteFormat()` - Convert API format
-
+- `getBlockNotes()` - Fetch notes for a block
+- `replyToNote()` - Reply to an existing note
+- `convertEntityNoteFormat()` - Convert API format
 
 ### `src/components/block-notes-subscriptions/` - AI Monitoring
 
 React component that monitors for `@ai` mentions:
 
--   Subscribes to WordPress comment data store
--   Detects new notes with `@ai`
--   Submits context to headless wp-orchestrator via `agentSubmit()`
--   Marks notes as processed (meta: `bigsky_ai_processed_date`) to prevent duplicates
--   **Does NOT hardcode replies** - lets the agent use the ability
+- Subscribes to WordPress comment data store
+- Detects new notes with `@ai`
+- Submits context to headless wp-orchestrator via `agentSubmit()`
+- Marks notes as processed (meta: `bigsky_ai_processed_date`) to prevent duplicates
+- **Does NOT hardcode replies** - lets the agent use the ability
 
 ## Note Meta Fields
 
 Notes are marked as processed using comment meta:
 
--   `bigsky_ai_processed_date` - ISO timestamp when processed
--   Prevents reprocessing on page reload
--   Persists across sessions
+- `bigsky_ai_processed_date` - ISO timestamp when processed
+- Prevents reprocessing on page reload
+- Persists across sessions
 
 ## Integration Points
 
 ### Entry Point (`src/ai/wp-orchestrator/headless/index.tsx`)
 
--   Initializes orchestrator with `renderUI: false`
--   Renders `<BlockNoteSubscriptions />` component after initialization
--   Creates React root for monitoring `@ai` mentions
+- Initializes orchestrator with `renderUI: false`
+- Renders `<BlockNoteSubscriptions />` component after initialization
+- Creates React root for monitoring `@ai` mentions
 
 ### Ability Registration (`src/abilities/block-notes/index.ts`)
 
--   Registers `big-sky/block-notes` ability via WordPress Abilities API
--   Callback handles `get` and `reply` operations using utils functions
+- Registers `big-sky/block-notes` ability via WordPress Abilities API
+- Callback handles `get` and `reply` operations using utils functions
