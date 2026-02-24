@@ -11,7 +11,44 @@ import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store'
 import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
-const TRACKS_PREFIX = 'jetpack_big_sky';
+const TRACKS_PREFIX_MAP: Record< ImageStudioPlatform, string > = {
+	wpcom: 'wpcom',
+	jetpack: 'jetpack',
+};
+
+export type ImageStudioPlatform = 'wpcom' | 'jetpack';
+
+// Cached platform value — doesn't change during a session
+let cachedPlatform: ImageStudioPlatform | null = null;
+
+/**
+ * Detect the current product where Image Studio is running.
+ * - 'wpcom': Big Sky plugin is active (WP.com AI Assistant)
+ * - 'jetpack': Loaded via Agents Manager / Jetpack (Jetpack AI Assistant)
+ * Result is cached since platform doesn't change during a session.
+ * @returns The detected platform identifier
+ */
+export function detectPlatform(): ImageStudioPlatform {
+	if ( cachedPlatform ) {
+		return cachedPlatform;
+	}
+
+	// Big Sky plugin sets this global when active
+	if ( window.bigSkyInitialState ) {
+		cachedPlatform = 'wpcom';
+	} else {
+		cachedPlatform = 'jetpack';
+	}
+
+	return cachedPlatform;
+}
+
+/**
+ * Reset the cached platform value. Exported for testing only.
+ */
+export function resetPlatformCache(): void {
+	cachedPlatform = null;
+}
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -42,7 +79,7 @@ function getImageStudioEntryPoint(): string | null {
 }
 
 /**
- * Record a tracks event with the Big Sky prefix
+ * Record a tracks event with a platform-specific prefix
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
  */
@@ -50,7 +87,8 @@ function recordTracksEvent(
 	eventName: string,
 	properties: Record< string, string | number | boolean > = {}
 ): void {
-	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, properties );
+	const prefix = TRACKS_PREFIX_MAP[ detectPlatform() ];
+	recordTracksEventBase( `${ prefix }_${ eventName }`, properties );
 }
 
 /**
