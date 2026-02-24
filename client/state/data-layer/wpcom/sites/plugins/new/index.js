@@ -30,10 +30,15 @@ export const uploadPlugin = ( action ) => {
 	];
 };
 
+const PLUGIN_UPLOAD_SIZE_LIMIT = '100MB';
+
 const showErrorNotice = ( error ) => {
+	const fileTooLargeMessage = translate( 'The plugin zip file must be smaller than %(limit)s.', {
+		args: { limit: PLUGIN_UPLOAD_SIZE_LIMIT },
+	} );
 	const knownErrors = {
-		'too large': translate( 'The plugin zip file is too large.' ),
-		'http 413': translate( 'The plugin zip file is too large.' ),
+		'too large': fileTooLargeMessage,
+		'http 413': fileTooLargeMessage,
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
