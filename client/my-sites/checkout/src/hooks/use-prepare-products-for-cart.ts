@@ -142,8 +142,14 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading;
+
+	// For siteless checkout, we usually want to leave the products in the URL
+	// because the cart is not persisted, so if checkout reloads we need to
+	// recreate the cart from the URL again.
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
+			addHandler === 'doNotAdd' ||
+			addHandler === 'addRenewalBySubscriptionId' ||
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
 			sitelessCheckoutType === 'marketplace' ||
