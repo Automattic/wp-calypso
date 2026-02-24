@@ -1,15 +1,12 @@
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { Page } from '@wordpress/admin-ui';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { plus } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
-import DocumentHead from 'calypso/components/data/document-head';
-import JetpackTitle from 'calypso/components/jetpack-title';
-import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -113,44 +110,42 @@ export const SubscribersHeader = ( {
 	}, [] );
 
 	return (
-		<>
-			<DocumentHead title="Subscribers" />
-			<NavigationHeader
-				className="subscribers__header"
-				title={ <JetpackTitle title={ translate( 'Subscribers' ) } /> }
-				subtitle={
-					hideSubtitle
-						? null
-						: fixMe( {
-								text: 'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
-								newCopy: translate(
-									'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
-									subtitleOptions
-								),
-								oldCopy: translate(
-									'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-									subtitleOptions
-								),
-						  } )
-				}
-				screenReader={ navItems.insights?.label }
-				navigationItems={ [] }
-			>
-				<Button
-					variant="primary"
-					disabled={ disableCta }
-					onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
-					size="compact"
-					icon={ <Icon icon={ plus } size={ 18 } /> }
-					{ ...{ [ hideAddButtonLabel ? 'label' : 'text' ]: translate( 'Add subscribers' ) } }
-				/>
-				<SubscribersHeaderPopover
-					siteId={ siteId }
-					openMigrateSubscribersModal={ () =>
-						setShowSubscriberModal( SubscriberModalType.MIGRATE )
-					}
-				/>
-			</NavigationHeader>
+		<Page
+			title={ translate( 'Subscribers' ) }
+			subtitle={
+				hideSubtitle
+					? null
+					: fixMe( {
+							text: 'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+							newCopy: translate(
+								'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+								subtitleOptions
+							),
+							oldCopy: translate(
+								'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+								subtitleOptions
+							),
+					  } )
+			}
+			actions={
+				<>
+					<Button
+						variant="primary"
+						disabled={ disableCta }
+						onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
+						size="compact"
+						icon={ <Icon icon={ plus } size={ 18 } /> }
+						{ ...{ [ hideAddButtonLabel ? 'label' : 'text' ]: translate( 'Add subscribers' ) } }
+					/>
+					<SubscribersHeaderPopover
+						siteId={ siteId }
+						openMigrateSubscribersModal={ () =>
+							setShowSubscriberModal( SubscriberModalType.MIGRATE )
+						}
+					/>
+				</>
+			}
+		>
 			{ siteId && (
 				<AddSubscribersModal
 					isVisible={ showSubscriberModal === SubscriberModalType.ADD }
@@ -172,6 +167,6 @@ export const SubscribersHeader = ( {
 					} }
 				/>
 			) }
-		</>
+		</Page>
 	);
 };
