@@ -296,6 +296,7 @@ __metadata:
   resolution: "@automattic/agents-manager-app@workspace:apps/agents-manager"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/block-notes": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -357,7 +358,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.45":
+"@automattic/agenttic-client@npm:^0.1.44, @automattic/agenttic-client@npm:^0.1.45":
   version: 0.1.45
   resolution: "@automattic/agenttic-client@npm:0.1.45"
   dependencies:
@@ -524,7 +525,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/block-notes@workspace:packages/block-notes":
+"@automattic/block-notes@workspace:^, @automattic/block-notes@workspace:packages/block-notes":
   version: 0.0.0-use.local
   resolution: "@automattic/block-notes@workspace:packages/block-notes"
   dependencies:

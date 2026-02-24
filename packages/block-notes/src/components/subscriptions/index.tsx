@@ -1,5 +1,4 @@
 import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
-import { store as aiStore } from '@store';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useRegistry, useSelect } from '@wordpress/data';
@@ -8,6 +7,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { convertEntityNoteFormat, replyToNote } from '../../abilities/utils';
 import { blockNotesAgentConfig } from '../../agent-config';
 import { useAgentConfig } from '../../hooks/use-agent-config';
+import { store as aiStore } from '../../store';
 import { hasAiMention } from '../../utils/content';
 import { areBlockNotesEnabled } from '../../utils/feature-flag';
 import { getBlockNoteThreadSessionId } from '../../utils/session';

@@ -5,12 +5,17 @@
  * Wraps the shared createAgentConfig with block-notes-specific metadata.
  */
 
-import { AGENT_URL, createAgentConfig } from '@ai/wp-orchestrator';
+import { createAgentConfig } from '@automattic/agents-manager/src/utils/agent-config';
+import { createToolProvider } from './utils/tool-provider';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
+
+export interface AgentConfigFactory {
+	createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
+}
 
 /**
  * Create agent configuration for block notes context.
- * Wrapper around createAgentConfig that passes block-notes-specific context.
+ * Wrapper around createAgentConfig that passes block-notes-specific context and tool provider.
  *
  * @param sessionId Session ID for the agent chat
  * @returns Promise resolving to complete UseAgentChatConfig
@@ -18,15 +23,22 @@ import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 export async function createBlockNotesAgentConfig(
 	sessionId: string
 ): Promise< UseAgentChatConfig > {
-	return createAgentConfig( sessionId, {
-		blockNotes: {
-			isActive: true,
+	return createAgentConfig( {
+		sessionId,
+		environment: 'calypso',
+		toolProvider: createToolProvider(),
+		contextProvider: {
+			getClientContext: () => ( {
+				blockNotes: { isActive: true },
+				environment: 'wp-block-notes',
+				url: window.location.href,
+				pathname: window.location.pathname,
+				search: window.location.search,
+			} ),
 		},
-		environment: 'wp-block-notes',
 	} );
 }
 
-export const blockNotesAgentConfig = {
-	url: AGENT_URL,
+export const blockNotesAgentConfig: AgentConfigFactory = {
 	createAgentConfig: createBlockNotesAgentConfig,
 };

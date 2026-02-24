@@ -46,7 +46,7 @@ jest.mock( '@wordpress/data', () => ( {
 					getEntityRecords: mockGetEntityRecords,
 				};
 			}
-			if ( storeName === 'big-sky/ai' ) {
+			if ( storeName === 'block-notes/store' ) {
 				return {
 					getInProcessBlockNotes: mockGetInProcessBlockNotes,
 					getSessionId: jest.fn( () => 'test-session' ),
@@ -63,7 +63,7 @@ jest.mock( '@wordpress/data', () => ( {
 				saveEditedEntityRecord: mockSaveEditedEntityRecord,
 			};
 		}
-		if ( storeName === 'big-sky/ai' ) {
+		if ( storeName === 'block-notes/store' ) {
 			return {
 				addInProcessBlockNote: mockAddInProcessBlockNote,
 				removeInProcessBlockNote: mockRemoveInProcessBlockNote,
@@ -95,8 +95,8 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	store: '@wordpress/block-editor',
 } ) );
 
-jest.mock( '@store', () => ( {
-	store: 'big-sky/ai',
+jest.mock( '../../store', () => ( {
+	store: 'block-notes/store',
 } ) );
 
 // Mock feature flagging to always true.

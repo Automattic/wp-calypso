@@ -1,18 +1,15 @@
 /**
  * Block Notes Entry Point
  *
- * Self-initializing entry point for Block Notes feature.
- * Creates its own DOM container and React root, matching Image Studio's pattern.
- *
- * Abilities are registered by the headless orchestrator (via registerAbilities()),
- * not here — following Image Studio's pattern where abilities live in the shared registry.
+ * Exports the initBlockNotes function which initializes the Block Notes feature.
+ * Initialization is triggered by the entry point (apps/agents-manager/block-notes.js),
  */
 
 import { createRoot, StrictMode } from '@wordpress/element';
 import BlockNoteSubscriptions from './components/subscriptions';
 import { areBlockNotesEnabled } from './utils/feature-flag';
 
-function initBlockNotes(): void {
+export function initBlockNotes(): void {
 	if ( ! areBlockNotesEnabled() ) {
 		return;
 	}
@@ -30,11 +27,4 @@ function initBlockNotes(): void {
 			<BlockNoteSubscriptions />
 		</StrictMode>
 	);
-}
-
-// Initialize when DOM is ready
-if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', initBlockNotes );
-} else {
-	initBlockNotes();
 }
