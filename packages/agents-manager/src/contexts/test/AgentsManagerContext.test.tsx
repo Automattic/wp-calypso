@@ -8,7 +8,7 @@ import {
 	type AgentsManagerContextType,
 } from '../AgentsManagerContext';
 
-// Test component that displays context values
+// Test component that displays `context` values
 function ContextConsumer() {
 	const context = useAgentsManagerContext();
 	return (
@@ -36,7 +36,7 @@ describe( 'AgentsManagerContext', () => {
 	} );
 
 	describe( 'AgentsManagerContextProvider', () => {
-		it( 'provides sectionName to children', () => {
+		it( 'provides `sectionName` to children', () => {
 			render(
 				<AgentsManagerContextProvider value={ { sectionName: 'gutenberg' } }>
 					<ContextConsumer />
@@ -46,7 +46,7 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'sectionName' ).textContent ).toBe( 'gutenberg' );
 		} );
 
-		it( 'provides currentUser to children', () => {
+		it( 'provides `currentUser` to children', () => {
 			const mockUser = {
 				ID: 123,
 				username: 'testuser',
@@ -63,7 +63,7 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'userId' ).textContent ).toBe( '123' );
 		} );
 
-		it( 'provides site to children', () => {
+		it( 'provides `site` to children', () => {
 			const mockSite = {
 				ID: 456,
 				domain: 'example.com',
@@ -92,7 +92,7 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'siteId' ).textContent ).toBe( 'none' );
 		} );
 
-		it( 'derives isLoggedIn as true when currentUser has an ID', () => {
+		it( 'derives `isLoggedIn` as `true` when `currentUser` has an `ID`', () => {
 			const mockUser = { ID: 123 } as AgentsManagerContextType[ 'currentUser' ];
 
 			render(
@@ -104,7 +104,7 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'isLoggedIn' ).textContent ).toBe( 'true' );
 		} );
 
-		it( 'derives isLoggedIn as false when currentUser is not provided', () => {
+		it( 'derives `isLoggedIn` as `false` when `currentUser` is not provided', () => {
 			render(
 				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
 					<ContextConsumer />
@@ -122,7 +122,7 @@ describe( 'AgentsManagerContext', () => {
 					value={ {
 						sectionName: 'wp-admin',
 						currentUser: mockUser,
-						// site not provided - should use default (null)
+						// `site` not provided - should use default (`null`)
 					} }
 				>
 					<ContextConsumer />
@@ -133,7 +133,7 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'siteId' ).textContent ).toBe( 'none' );
 		} );
 
-		it( 'always returns isEligibleForChat as false (hardcoded)', () => {
+		it( 'always returns `isEligibleForChat` as `false` (hardcoded)', () => {
 			render(
 				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
 					<ContextConsumer />
