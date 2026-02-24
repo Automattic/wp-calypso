@@ -60,7 +60,6 @@ export default function AgentHistory( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }

@@ -9,7 +9,6 @@ export type Options = ComponentProps< typeof DropdownMenu >[ 'controls' ];
 
 interface Props {
 	title?: string;
-	isChatDocked: boolean;
 	onClose: () => void;
 	options: Options;
 	onBack?: () => void;

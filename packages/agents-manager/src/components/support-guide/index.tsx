@@ -65,7 +65,6 @@ export default function SupportGuide( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					onBack={ () => navigate( -1 ) }
 					options={ chatHeaderOptions }

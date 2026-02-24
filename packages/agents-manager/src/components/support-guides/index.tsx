@@ -102,7 +102,6 @@ export default function SupportGuides( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
