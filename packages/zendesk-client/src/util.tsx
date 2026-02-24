@@ -12,7 +12,7 @@ export const isTestModeEnvironment = () => {
 	} catch ( error ) {
 		// `env_id` not configured in this environment; fall through to `env` check below
 		// eslint-disable-next-line no-console
-		console.warn( '[isTestModeEnvironment] failed to read env_id from config', error );
+		console.warn( '[isTestModeEnvironment] failed to read `env_id` from config', error );
 	}
 
 	// During SU sessions, we want to always target prod. See HAL-154.
@@ -37,7 +37,7 @@ export const isTestModeEnvironment = () => {
 	} catch ( error ) {
 		// `env` not configured in this environment
 		// eslint-disable-next-line no-console
-		console.warn( '[isTestModeEnvironment] failed to read env from config', error );
+		console.warn( '[isTestModeEnvironment] failed to read `env` from config', error );
 	}
 
 	return env !== 'production';
