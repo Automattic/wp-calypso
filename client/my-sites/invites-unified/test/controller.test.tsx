@@ -28,6 +28,7 @@ describe( 'maybeUseUnifiedInvite', () => {
 	let context: {
 		params: Record< string, string >;
 		inviteData?: unknown;
+		inviteError?: unknown;
 		useUnifiedInvite?: boolean;
 		primary?: React.ReactNode;
 	};
@@ -154,5 +155,95 @@ describe( 'maybeUseUnifiedInvite', () => {
 		expect( context.primary ).toBeDefined();
 		// The component is rendered with the correct props (verified by the mock being called)
 		expect( context.useUnifiedInvite ).toBe( true );
+	} );
+
+	describe( 'already a member errors', () => {
+		test( 'uses unified flow for already_member error with unified flag', async () => {
+			mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+				if ( param === 'unified' ) {
+					return '1';
+				}
+				return undefined;
+			} );
+
+			const apiError = {
+				error: 'already_member',
+				message: 'You are already a member of this site',
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBe( true );
+			expect( context.inviteError ).toEqual( {
+				error: 'already_member',
+				message: 'You are already a member of this site',
+			} );
+			expect( context.primary ).toBeDefined();
+			expect( next ).toHaveBeenCalled();
+		} );
+
+		test( 'uses unified flow for already_subscribed error with unified flag', async () => {
+			mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+				if ( param === 'unified' ) {
+					return '1';
+				}
+				return undefined;
+			} );
+
+			const apiError = {
+				error: 'already_subscribed',
+				message: 'You are already a follower of this site',
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBe( true );
+			expect( context.primary ).toBeDefined();
+			expect( next ).toHaveBeenCalled();
+		} );
+
+		test( 'uses unified flow for already_member error with garden data', async () => {
+			const apiError = {
+				error: 'already_member',
+				message: 'You are already a member of this site',
+				data: {
+					garden_name: 'commerce',
+					garden_partner: 'woo',
+				},
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBe( true );
+			expect( context.inviteError ).toEqual( {
+				error: 'already_member',
+				message: 'You are already a member of this site',
+			} );
+			expect( context.inviteData ).toEqual( {
+				blog_details: {
+					is_garden_site: true,
+					garden: { name: 'commerce', partner: 'woo' },
+				},
+			} );
+			expect( context.primary ).toBeDefined();
+			expect( next ).toHaveBeenCalled();
+		} );
+
+		test( 'falls back to legacy for already_member error without garden data or unified flag', async () => {
+			const apiError = {
+				error: 'already_member',
+				message: 'You are already a member of this site',
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBeUndefined();
+			expect( context.primary ).toBeUndefined();
+			expect( next ).toHaveBeenCalled();
+		} );
 	} );
 } );

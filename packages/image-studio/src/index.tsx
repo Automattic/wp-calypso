@@ -275,7 +275,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			if ( addMediaLink ) {
 				generateButton = document.createElement( 'button' );
 				generateButton.className = 'page-title-action big-sky-image-studio-link';
-				generateButton.textContent = __( 'Generate Image', 'big-sky' );
+				generateButton.textContent = __( 'Generate Image', __i18n_text_domain__ );
 				generateButton.type = 'button';
 				generateButton.setAttribute( 'data-attachment-id', '' );
 				addMediaLink.insertAdjacentElement( 'afterend', generateButton );
@@ -305,7 +305,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 			const img = await getImageData( originalAttachmentId );
 			if ( ! img ) {
-				addNotice( __( "Image doesn't exist", 'big-sky' ), 'error' );
+				addNotice( __( "Image doesn't exist", __i18n_text_domain__ ), 'error' );
 				return;
 			}
 
@@ -591,23 +591,5 @@ function ImageStudioIntegration(): JSX.Element | null {
 		/>
 	);
 }
-
-// Initialize when DOM is ready
-let initialized = false;
-function initialize(): void {
-	if ( initialized ) {
-		return;
-	}
-	initialized = true;
-
-	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', initImageStudioIntegration );
-	} else {
-		initImageStudioIntegration();
-	}
-}
-
-initialize();
-registerBlockEditorFilters();
 
 export { initImageStudioIntegration, registerBlockEditorFilters };

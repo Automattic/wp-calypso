@@ -11,24 +11,24 @@ import './file-details.scss';
  */
 function formatFileSize( bytes: number ): string {
 	if ( ! bytes || bytes === 0 ) {
-		return __( 'Unknown', 'big-sky' );
+		return __( 'Unknown', __i18n_text_domain__ );
 	}
 
 	const gb = bytes / ( 1024 * 1024 * 1024 );
 	if ( gb >= 1 ) {
 		// translators: %.1f: File size in gigabytes
-		return sprintf( __( '%.1f GB', 'big-sky' ), gb );
+		return sprintf( __( '%.1f GB', __i18n_text_domain__ ), gb );
 	}
 
 	const mb = bytes / ( 1024 * 1024 );
 	if ( mb >= 1 ) {
 		// translators: %.1f: File size in megabytes
-		return sprintf( __( '%.1f MB', 'big-sky' ), mb );
+		return sprintf( __( '%.1f MB', __i18n_text_domain__ ), mb );
 	}
 
 	const kb = bytes / 1024;
 	// translators: %.1f: File size in kilobytes
-	return sprintf( __( '%.1f KB', 'big-sky' ), kb );
+	return sprintf( __( '%.1f KB', __i18n_text_domain__ ), kb );
 }
 
 interface FileDetailsProps {
@@ -92,16 +92,16 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				minute: 'numeric',
 				hour12: true,
 		  } )
-		: __( 'Unknown', 'big-sky' );
+		: __( 'Unknown', __i18n_text_domain__ );
 
-	const authorName = author?.name || author?.display_name || __( 'Unknown', 'big-sky' );
+	const authorName = author?.name || author?.display_name || __( 'Unknown', __i18n_text_domain__ );
 	const authorLink = author?.link || null;
 
-	const fileType = attachment.mime_type || __( 'Unknown', 'big-sky' );
+	const fileType = attachment.mime_type || __( 'Unknown', __i18n_text_domain__ );
 
 	const fileSize = attachment.media_details?.filesize
 		? formatFileSize( attachment.media_details.filesize )
-		: __( 'Unknown', 'big-sky' );
+		: __( 'Unknown', __i18n_text_domain__ );
 
 	const width = attachment.media_details?.width || 0;
 	const height = attachment.media_details?.height || 0;
@@ -109,22 +109,27 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 		width && height
 			? sprintf(
 					// translators: %1$d: Image width, %2$d: Image height
-					__( '%1$d × %2$d', 'big-sky' ),
+					__( '%1$d × %2$d', __i18n_text_domain__ ),
 					width,
 					height
 			  )
-			: __( 'Unknown', 'big-sky' );
+			: __( 'Unknown', __i18n_text_domain__ );
 
 	// Extract filename from source_url
-	const filename = extractFilenameFromUrl( attachment.source_url, __( 'Untitled', 'big-sky' ) );
+	const filename = extractFilenameFromUrl(
+		attachment.source_url,
+		__( 'Untitled', __i18n_text_domain__ )
+	);
 
 	return (
 		<div className="image-studio-file-details">
-			<h3 className="image-studio-file-details__title">{ __( 'File Details', 'big-sky' ) }</h3>
+			<h3 className="image-studio-file-details__title">
+				{ __( 'File Details', __i18n_text_domain__ ) }
+			</h3>
 			<div className="image-studio-file-details__content">
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'File name:', 'big-sky' ) }
+						{ __( 'File name:', __i18n_text_domain__ ) }
 					</span>
 					<span className="image-studio-file-details__value" style={ { wordBreak: 'break-all' } }>
 						{ filename }
@@ -132,14 +137,14 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				</div>
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Uploaded on:', 'big-sky' ) }
+						{ __( 'Uploaded on:', __i18n_text_domain__ ) }
 					</span>
 					<span className="image-studio-file-details__value">{ uploadedDate }</span>
 				</div>
 				{ parentPost && (
 					<div className="image-studio-file-details__row">
 						<span className="image-studio-file-details__label">
-							{ __( 'Uploaded to:', 'big-sky' ) }
+							{ __( 'Uploaded to:', __i18n_text_domain__ ) }
 						</span>
 						<a
 							href={ parentPost.link }
@@ -153,7 +158,7 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				) }
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Uploaded by:', 'big-sky' ) }
+						{ __( 'Uploaded by:', __i18n_text_domain__ ) }
 					</span>
 					{ authorLink ? (
 						<a
@@ -170,17 +175,19 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				</div>
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'File type:', 'big-sky' ) }
+						{ __( 'File type:', __i18n_text_domain__ ) }
 					</span>
 					<span className="image-studio-file-details__value">{ fileType }</span>
 				</div>
 				<div className="image-studio-file-details__row">
-					<span className="image-studio-file-details__label">{ __( 'Size:', 'big-sky' ) }</span>
+					<span className="image-studio-file-details__label">
+						{ __( 'Size:', __i18n_text_domain__ ) }
+					</span>
 					<span className="image-studio-file-details__value">{ fileSize }</span>
 				</div>
 				<div className="image-studio-file-details__row">
 					<span className="image-studio-file-details__label">
-						{ __( 'Dimensions:', 'big-sky' ) }
+						{ __( 'Dimensions:', __i18n_text_domain__ ) }
 					</span>
 					<span className="image-studio-file-details__value">{ dimensions }</span>
 				</div>

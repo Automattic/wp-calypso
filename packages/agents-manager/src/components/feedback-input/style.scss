@@ -1,14 +1,12 @@
+@import '@wordpress/base-styles/colors';
+@import '../../styles/mixins.scss';
+
 .agents-manager-feedback-input {
 	margin-top: 12px;
 	padding: 12px;
-	background: #fff;
+	background: $white;
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	border-radius: 4px;
-
-	.dark & {
-		background: #1e1e1e;
-		border-color: #545454;
-	}
 
 	.components-textarea-control {
 		margin-bottom: 12px;
@@ -17,25 +15,11 @@
 	.components-base-control__label {
 		font-size: 13px;
 		text-transform: none;
-
-		.dark & {
-			color: #ccc;
-		}
 	}
 
 	.components-textarea-control__input {
 		width: 100%;
 		resize: vertical;
-
-		.dark & {
-			background: #2c2c2c;
-			border-color: #545454;
-			color: #e0e0e0;
-
-			&::placeholder {
-				color: #999;
-			}
-		}
 	}
 
 	&__success {
@@ -50,7 +34,7 @@
 	&__error {
 		padding: 12px;
 		background: #fef0f0;
-		color: #cc1818;
+		color: $alert-red;
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -71,22 +55,46 @@
 				vertical-align: middle;
 			}
 		}
+	}
+}
 
-		.dark & .components-button.is-tertiary {
-			color: #ccc;
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
+	.agents-manager-feedback-input {
+		background: $gray-900;
+		border-color: #545454;
 
-			&:hover {
-				color: #fff;
+		.components-base-control__label {
+			color: $gray-400;
+		}
+
+		.components-textarea-control__input {
+			background: #2c2c2c;
+			border-color: #545454;
+			color: $gray-200;
+
+			&::placeholder {
+				color: #999;
 			}
 		}
 
-		.dark & .components-button.is-primary {
-			background: #3858e9;
-			color: #fff;
+		&__actions {
+			.components-button.is-tertiary {
+				color: $gray-400;
 
-			&:disabled {
-				background: #2c2c2c;
-				color: #666;
+				&:hover {
+					color: $white;
+				}
+			}
+
+			.components-button.is-primary {
+				background: #3858e9;
+				color: $white;
+
+				&:disabled {
+					background: #2c2c2c;
+					color: #666;
+				}
 			}
 		}
 	}

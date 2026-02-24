@@ -1,6 +1,5 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
-@import '../variables.scss';
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
 	background-color: $gray-900 !important;
@@ -51,7 +50,7 @@
 		top: $layout-spacing + $admin-bar-height + 1px !important;
 		bottom: $layout-spacing !important;
 		border-bottom-right-radius: $main-border-radius !important;
-		border: 1px solid $border-color;
+		border: 1px solid $admin-border-color;
 		border-top: none;
 		border-left: none;
 	}
@@ -98,7 +97,7 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		right: $sidebar-width;
 		width: auto !important;
 		border-radius: $main-border-radius $main-border-radius 0 0;
-		border: 1px solid $border-color;
+		border: 1px solid $admin-border-color;
 		border-bottom: none;
 		box-sizing: border-box;
 		height: calc( var( --masterbar-height ) + 1px );
@@ -110,8 +109,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		top: $admin-content-top;
 		left: $layout-spacing;
 		height: calc( 100vh - $admin-bar-height - ( $layout-spacing * 2 ) ) !important;
-		border-left: 1px solid $border-color;
-		border-bottom: 1px solid $border-color;
+		border-left: 1px solid $admin-border-color;
+		border-bottom: 1px solid $admin-border-color;
 		border-bottom-left-radius: $main-border-radius;
 	}
 
@@ -126,8 +125,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		padding-left: $layout-spacing;
 		bottom: $layout-spacing - 1px;
 		border-bottom-right-radius: $main-border-radius;
-		border-right: 1px solid $border-color;
-		border-bottom: 1px solid $border-color;
+		border-right: 1px solid $admin-border-color;
+		border-bottom: 1px solid $admin-border-color;
 		overflow-y: auto;
 		overflow-x: hidden;
 		background-color: $admin-background-color;
@@ -167,7 +166,9 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 @import './fixes-jetpack.scss';
 
 /* Calypso */
-body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(.wp-admin) {
+body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(
+		.wp-admin
+	) {
 	@include sidebar-base( '#wpcom #content' );
 
 	#content {
@@ -185,7 +186,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			right: $sidebar-width;
 			width: auto;
 			border-radius: $main-border-radius $main-border-radius 0 0;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 			border-bottom: none;
 			box-sizing: border-box;
 			height: calc( var( --masterbar-height ) + 1px );
@@ -215,7 +216,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			min-height: unset;
 			margin: 0 !important;
 			overflow: auto !important;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 		}
 
 		#secondary {
@@ -224,7 +225,7 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			bottom: $layout-spacing;
 			overflow: hidden;
 			border-radius: 0 0 0 $main-border-radius;
-			border: 1px solid $border-color;
+			border: 1px solid $admin-border-color;
 			border-top: none;
 			border-right: none;
 		}
@@ -265,7 +266,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 
 	.step-route {
 		min-height: 100vh;
-		background-color: var(--color-main-background) !important;
+		background-color: var( --color-main-background ) !important;
 		overflow: hidden;
 	}
 
@@ -274,7 +275,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		@include sidebar-open-base('#wpcom .step-route');
+		@include sidebar-open-base( '#wpcom .step-route' );
 
 		.step-route {
 			position: relative;
@@ -290,6 +291,23 @@ body.is-section-stepper.agents-manager-sidebar-container {
 				min-height: unset;
 			}
 		}
+	}
+}
+
+/* Calypso: Fix for the search categories fixed top position on the plugins marketplace page */
+.agents-manager-sidebar-container--sidebar-open
+	.layout__secondary
+	~ .layout__primary
+	.plugins-browser--site-view
+	.search-categories.fixed-top {
+	top: calc( $admin-bar-height + $layout-spacing + 1px );
+	left: -174px;
+	padding-top: 11px;
+	max-width: 1028px;
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	&::after {
+		display: none;
 	}
 }
 
@@ -324,23 +342,6 @@ body.site-editor-php.agents-manager-sidebar-container {
 	}
 }
 
-// Fix for the search categories fixed top position on the plugins marketplace page
-.agents-manager-sidebar-container--sidebar-open
-	.layout__secondary
-	~ .layout__primary
-	.plugins-browser--site-view
-	.search-categories.fixed-top {
-	top: calc( $admin-bar-height + $layout-spacing + 1px );
-	left: -174px;
-	padding-top: 11px;
-	max-width: 1028px;
-	border-bottom: 1px solid var( --color-neutral-5 );
-
-	&::after {
-		display: none;
-	}
-}
-
 /* Page editor */
 body.post-php.agents-manager-sidebar-container,
 body.post-new-php.agents-manager-sidebar-container {
@@ -364,7 +365,8 @@ body.post-new-php.agents-manager-sidebar-container {
 	}
 }
 
-body:not( .modal-open ) .agents-manager-chat--docked {
+// Base layout for the docked chat sidebar
+@include docked-chat-without-modal {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -374,101 +376,6 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 	width: $sidebar-width;
 	box-sizing: border-box;
 	z-index: $agents-manager-z-index-docked;
-
-	.agents-manager-chat-header {
-		position: absolute;
-		top: 0;
-		width: 100%;
-		height: $chat-header-height;
-		margin: 0;
-		padding: 0;
-
-		&__title {
-			color: $gray-100;
-		}
-
-		&__back-btn,
-		&__more-options,
-		&__history-btn,
-		&__close-btn {
-			svg {
-				fill: $gray-100;
-			}
-
-			& .components-dropdown-menu__toggle.has-icon,
-			&.has-icon {
-				min-width: unset;
-				width: 32px;
-				height: 32px;
-				padding: 0;
-			}
-		}
-
-		&__back-btn svg {
-			margin-left: 0;
-		}
-	}
-
-	.agents-manager-conversation-history-view {
-		padding-top: 48px;
-
-		&__content {
-			padding-top: 0;
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		&__footer {
-			padding: 0;
-		}
-
-		&__loading,
-		&__error,
-		&__empty {
-			color: $white;
-		}
-	}
-
-	.agents-manager-conversation-list-item {
-		&:hover {
-			background-color: rgba( 255, 255, 255, 0.05 );
-		}
-
-		&:focus {
-			background-color: rgba( 255, 255, 255, 0.08 );
-		}
-
-		&__text,
-		&__title {
-			color: var( --color-foreground-inverted, #eff0f1 );
-		}
-	}
-
-	.agents-manager-conversation-list-skeleton {
-		&__item {
-			border-color: #464646;
-		}
-
-		&__avatar,
-		&__title,
-		&__subtitle {
-			background-color: rgba( 255, 255, 255, 0.1 );
-		}
-	}
-
-	.agents-manager-chat-message-skeleton {
-		&__bubble {
-			background-color: #484848;
-		}
-
-		&__bubble &__line {
-			background-color: rgba( 255, 255, 255, 0.3 ) !important;
-		}
-
-		&__line {
-			background-color: rgba( 255, 255, 255, 0.15 ) !important;
-		}
-	}
 
 	.agents-manager-sidebar-fab {
 		visibility: visible;
@@ -632,15 +539,16 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 			&.confirmation-action-destructive {
 				flex: 1;
 			}
+
 			&.confirmation-action-destructive {
-				background-color: #cc1818;
+				background-color: $alert-red;
 				p,
 				span {
 					color: $white;
 				}
 				&:hover {
 					color: $white;
-					background-color: #cc1818;
+					background-color: $alert-red;
 					filter: brightness( 90% );
 				}
 			}
@@ -912,22 +820,6 @@ body:not( .modal-open ) .agents-manager-chat--docked {
 	.ChatInput-module_button:disabled {
 		background-color: $gray-700;
 		color: $gray-400;
-	}
-
-	.agents-manager-selected-block {
-		color: $white;
-		border: 1px solid rgba( $white, 0.1 );
-		margin-top: 8px;
-
-		&__divider {
-			border-left: 1px solid rgba( $white, 0.1 );
-		}
-
-		&__remove {
-			&.components-button {
-				color: $white;
-			}
-		}
 	}
 }
 

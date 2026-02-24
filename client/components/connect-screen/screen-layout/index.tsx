@@ -7,6 +7,7 @@ export interface ScreenLayoutProps {
 	children: ReactNode;
 	className?: string;
 	backgroundColor?: string;
+	containerMaxWidth?: number | string;
 }
 
 /**
@@ -22,12 +23,16 @@ export function ScreenLayout( {
 	children,
 	className,
 	backgroundColor,
+	containerMaxWidth,
 }: ScreenLayoutProps ): JSX.Element {
 	const style = backgroundColor ? { backgroundColor } : undefined;
+	const containerStyle = containerMaxWidth ? { maxWidth: containerMaxWidth } : undefined;
 
 	return (
 		<div className={ clsx( 'connect-screen-layout', className ) } style={ style }>
-			<div className="connect-screen-layout__container">{ children }</div>
+			<div className="connect-screen-layout__container" style={ containerStyle }>
+				{ children }
+			</div>
 		</div>
 	);
 }

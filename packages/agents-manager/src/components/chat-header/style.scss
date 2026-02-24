@@ -1,3 +1,6 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
@@ -33,6 +36,43 @@
 	&__close-btn {
 		svg {
 			fill: #1f1f1f;
+		}
+	}
+}
+
+// Dark theme overrides for the docked chat
+@include docked-chat-without-modal {
+	.agents-manager-chat-header {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: $chat-header-height;
+		margin: 0;
+		padding: 0;
+
+		&__title {
+			color: $gray-100;
+		}
+
+		&__back-btn,
+		&__more-options,
+		&__history-btn,
+		&__close-btn {
+			svg {
+				fill: $gray-100;
+			}
+
+			& .components-dropdown-menu__toggle.has-icon,
+			&.has-icon {
+				min-width: unset;
+				width: 32px;
+				height: 32px;
+				padding: 0;
+			}
+		}
+
+		&__back-btn svg {
+			margin-left: 0;
 		}
 	}
 }

@@ -1,0 +1,6 @@
+// Apply styles to `.agents-manager-chat--docked` only when no modal is open.
+@mixin docked-chat-without-modal {
+	body:not( .modal-open ) .agents-manager-chat--docked {
+		@content;
+	}
+}

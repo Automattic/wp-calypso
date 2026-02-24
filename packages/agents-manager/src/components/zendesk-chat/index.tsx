@@ -1,11 +1,12 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
+import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
-interface ZendeskChatProps {
+interface Props {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -20,9 +21,11 @@ interface ZendeskChatProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Called when the message count changes. */
+	onMessagesCountChange: ( count: number ) => void;
 }
 
-export function ZendeskChat( {
+export default function ZendeskChat( {
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
@@ -30,9 +33,15 @@ export function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-}: ZendeskChatProps ) {
+	onMessagesCountChange,
+}: Props ) {
 	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
 		useManagedZendeskChat();
+
+	// Notify parent when message count changes
+	useEffect( () => {
+		onMessagesCountChange( agentticMessages.length );
+	}, [ agentticMessages.length, onMessagesCountChange ] );
 
 	return (
 		<AgentChat
