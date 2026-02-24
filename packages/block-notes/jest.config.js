@@ -6,5 +6,6 @@ module.exports = {
 	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'^@block-notes/(.*)$': '<rootDir>/src/$1',
+		'^@automattic/agenttic-client$': '<rootDir>/__mocks__/@automattic/agenttic-client.js',
 	},
 };

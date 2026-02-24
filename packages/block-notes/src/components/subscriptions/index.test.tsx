@@ -110,9 +110,6 @@ jest.mock( '../mention-autocomplete/index', () => {
 	};
 } );
 
-// Mock agenttic-client for useAgentChat
-jest.mock( '@automattic/agenttic-client' );
-
 // Mock block-notes agent config
 jest.mock( '../../agent-config', () => ( {
 	blockNotesAgentConfig: {

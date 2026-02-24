@@ -36,6 +36,10 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbility: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/core-data', () => ( {
+	store: 'core',
+} ) );
+
 jest.mock( '../utils/tracking', () => ( {
 	trackBlockNoteAiReplyCreated: jest.fn(),
 	trackBlockNoteAiReplyFailed: jest.fn(),
