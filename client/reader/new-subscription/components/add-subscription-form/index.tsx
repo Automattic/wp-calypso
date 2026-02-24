@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './add-subscription-form.consts';
+import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './consts';
 
 interface AddSubscriptionFormProps {
 	type: SubscriptionType;

@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { SubscriptionType } from '../components/add-subscription-form/add-subscription-form.consts';
+import { SubscriptionType } from '../components/add-subscription-form/consts';
 import ReaderNewSubscriptionPage from '../index';
 
 jest.mock(

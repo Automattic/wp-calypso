@@ -12,7 +12,7 @@ import AddSubscriptionForm from './components/add-subscription-form';
 import {
 	ADD_SUBSCRIPTION_CONFIGS,
 	SubscriptionType,
-} from './components/add-subscription-form/add-subscription-form.consts';
+} from './components/add-subscription-form/consts';
 
 interface Tab {
 	slug: SubscriptionType;
