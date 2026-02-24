@@ -5,7 +5,7 @@ import { Button, Icon } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { plus } from '@wordpress/icons';
-import { translate, fixMe } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
@@ -14,6 +14,7 @@ import { useAddSubscribersCallback, useMigrateSubscribersCallback } from '../../
 import { AddSubscribersModal } from '../add-subscribers-modal';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
 import { SubscribersHeaderPopover } from '../subscribers-header-popover';
+import '@wordpress/admin-ui/build-style/style.css';
 
 enum SubscriberModalType {
 	NONE = 'none',
@@ -45,24 +46,6 @@ export const SubscribersHeader = ( {
 
 	const openHelpCenter = () => {
 		setShowSupportDoc( localizeUrl( supportUrl ) );
-	};
-
-	const subtitleOptions = {
-		components: {
-			link: (
-				<a
-					href={ localizeUrl( supportUrl ) }
-					target="blank"
-					onClick={ ( event ) => {
-						if ( ! isJetpackCloud() ) {
-							event.preventDefault();
-							openHelpCenter();
-						}
-					} }
-					rel="noreferrer"
-				/>
-			),
-		},
 	};
 
 	/**
@@ -112,20 +95,28 @@ export const SubscribersHeader = ( {
 	return (
 		<Page
 			title={ translate( 'Subscribers' ) }
-			subtitle={
-				hideSubtitle
-					? null
-					: fixMe( {
-							text: 'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
-							newCopy: translate(
-								'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
-								subtitleOptions
+			subTitle={
+				! hideSubtitle &&
+				translate(
+					'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+					{
+						components: {
+							link: (
+								<a
+									href={ localizeUrl( supportUrl ) }
+									target="blank"
+									onClick={ ( event ) => {
+										if ( ! isJetpackCloud() ) {
+											event.preventDefault();
+											openHelpCenter();
+										}
+									} }
+									rel="noreferrer"
+								/>
 							),
-							oldCopy: translate(
-								'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-								subtitleOptions
-							),
-					  } )
+						},
+					}
+				)
 			}
 			actions={
 				<>
@@ -145,6 +136,8 @@ export const SubscribersHeader = ( {
 					/>
 				</>
 			}
+			showSidebarToggle={ false }
+			hasPadding={ false }
 		>
 			{ siteId && (
 				<AddSubscribersModal
