@@ -84,7 +84,7 @@ See `src/hooks/use-setup-custom-actions/README.md` for details.
 | Prop           | Type                           | Description                                                        |
 | -------------- | ------------------------------ | ------------------------------------------------------------------ |
 | `sectionName`  | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').   |
-| `currentUser`  | `CurrentUser` (optional)       | The current user object (from `@automattic/data-stores`). Determines `isLoggedIn` inside the component tree. |
+| `currentUser`  | `CurrentUser` (optional)       | Current user (`@automattic/data-stores`). Determines `isLoggedIn`. |
 | `site`         | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).         |
 | `currentRoute` | `string` (optional)            | The current route path.                                            |
 | `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                   |
