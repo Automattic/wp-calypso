@@ -52,6 +52,23 @@ const domainUpsell: Flow = {
 
 		const submittedDomains = useRef( false );
 
+		async function addToCartAndRedirectToCheckout() {
+			const planCartItem = getPlanCartItem();
+			const domainCartItem = getDomainCartItem();
+
+			if ( planCartItem ) {
+				await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+			}
+
+			if ( domainCartItem ) {
+				await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
+			}
+
+			return window.location.assign(
+				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
+			);
+		}
+
 		function goBack() {
 			if ( currentStep === STEPS.DOMAIN_SEARCH.slug ) {
 				return window.location.assign( returnUrl );
@@ -97,13 +114,7 @@ const domainUpsell: Flow = {
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( hasQualifyingPlan ) {
-						const domainCartItem = getDomainCartItem();
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-						return window.location.assign(
-							`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
-						);
+						return addToCartAndRedirectToCheckout();
 					}
 
 					return navigate( STEPS.PLANS.slug );
@@ -128,13 +139,7 @@ const domainUpsell: Flow = {
 					submittedDomains.current = true;
 
 					if ( hasQualifyingPlan ) {
-						const domainCartItem = getDomainCartItem();
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-						return window.location.assign(
-							`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
-						);
+						return addToCartAndRedirectToCheckout();
 					}
 
 					return navigate( STEPS.PLANS.slug );
@@ -145,20 +150,7 @@ const domainUpsell: Flow = {
 					} );
 
 					if ( providedDependencies?.goToCheckout ) {
-						const planCartItem = getPlanCartItem();
-						const domainCartItem = getDomainCartItem();
-
-						if ( planCartItem ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-						}
-
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-
-						return window.location.assign(
-							`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
-						);
+						return addToCartAndRedirectToCheckout();
 					}
 
 					return window.location.assign( returnUrl );
