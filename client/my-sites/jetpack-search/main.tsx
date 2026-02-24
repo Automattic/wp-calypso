@@ -56,7 +56,7 @@ export default function SearchMain() {
 			: `/settings/performance/${ siteSlug }`;
 
 	return (
-		<Main className="jetpack-search">
+		<Main wideLayout className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
 			{ isCloud && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
