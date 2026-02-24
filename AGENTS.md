@@ -22,7 +22,7 @@
 
 ## Packages
 
-- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. See `packages/image-studio/AGENTS.md` for architecture, conventions, and manual browser testing steps.
+- **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 
 ## Development
 
