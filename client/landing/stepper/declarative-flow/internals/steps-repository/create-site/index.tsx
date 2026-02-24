@@ -3,7 +3,6 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
-	addPlanToCart,
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
@@ -192,12 +191,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
 
-			if ( planCartItem && slug ) {
-				await addPlanToCart( slug, flow, true, theme, planCartItem );
-			}
-
-			if ( productCartItems?.length && slug ) {
-				await addProductsToCart( slug, flow, productCartItems );
+			const manageFlowCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+			];
+			if ( manageFlowCartItems.length && slug ) {
+				await addProductsToCart( slug, flow, manageFlowCartItems );
 			}
 
 			return {
@@ -297,16 +296,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		if ( planCartItem && site?.siteSlug ) {
-			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
-		}
-
-		if ( productCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
-		}
-
-		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, domainCartItems );
+		const additionalCartItems = [
+			...( planCartItem ? [ planCartItem ] : [] ),
+			...( productCartItems ?? [] ),
+		];
+		if ( additionalCartItems.length && site?.siteSlug ) {
+			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
 		}
 
 		return {

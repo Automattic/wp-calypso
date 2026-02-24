@@ -251,16 +251,10 @@ export const createSiteWithCart = async (
 	}
 
 	if ( domainCartItems.length ) {
-		for ( const domainCartItem of domainCartItems ) {
-			await processItemCart(
-				siteSlug,
-				isFreeThemePreselected,
-				themeSlugWithRepo,
-				flowName,
-				userIsLoggedIn,
-				domainCartItem
-			);
+		if ( isFreeThemePreselected ) {
+			await setThemeOnSite( siteSlug, themeSlugWithRepo );
 		}
+		await addProductsToCart( siteSlug, flowName, domainCartItems );
 	}
 
 	return providedDependencies;
