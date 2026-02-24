@@ -38,6 +38,8 @@ export const PlaygroundSetupStep: Step< {
 					} );
 				} catch ( error ) {
 					// Add error handling
+					// eslint-disable-next-line no-console
+					console.error( error );
 				}
 			};
 			runBlueprintImport();
