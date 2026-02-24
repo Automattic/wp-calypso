@@ -15,7 +15,7 @@
 		padding: 16px;
 		display: flex;
 		justify-content: stretch;
-		
+
 		button {
 			flex: 1
 		}
@@ -62,10 +62,6 @@
 		}
 	}
 
-	.agenttic {
-		--color-background: #{$gray-800};
-		--color-foreground: #{$gray-200};
-	}
 	.agent-manager-support-guide-content {
 		scrollbar-color: #3f3f3f transparent;
 	}
