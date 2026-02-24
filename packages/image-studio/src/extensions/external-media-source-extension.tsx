@@ -1,5 +1,6 @@
 import { BigSkyIcon } from '@automattic/agenttic-ui';
 import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
@@ -42,7 +43,7 @@ export const addImageStudioMediaSource = (
 	return [
 		{
 			id: 'big-sky-image-studio',
-			label: 'Generate Image',
+			label: __( 'Generate Image', __i18n_text_domain__ ),
 			icon: <BigSkyIcon />,
 			onClick: handleOpen,
 		},
