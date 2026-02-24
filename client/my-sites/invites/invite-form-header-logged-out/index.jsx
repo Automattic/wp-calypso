@@ -7,6 +7,23 @@ import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 function InviteFormHeaderLoggedOut( { site } ) {
 	const translate = useTranslate();
 	const siteName = site?.title || site?.domain || translate( 'this site' );
+	const siteUrl = site?.URL;
+
+	const title = createInterpolateElement(
+		translate( 'Create an account for <siteLink>%(siteName)s</siteLink>', {
+			args: { siteName },
+		} ),
+		{
+			siteLink: siteUrl ? (
+				<a
+					href={ siteUrl }
+					onClick={ () => recordTracksEvent( 'calypso_invite_accept_form_header_site_link_click' ) }
+				/>
+			) : (
+				<span />
+			),
+		}
+	);
 
 	const description = createInterpolateElement(
 		translate(
@@ -34,12 +51,7 @@ function InviteFormHeaderLoggedOut( { site } ) {
 
 	return (
 		<div className="invite-form-header invite-form-header--logged-out">
-			<BrandHeader
-				title={ translate( 'Create an account for %(siteName)s', {
-					args: { siteName },
-				} ) }
-				description={ description }
-			/>
+			<BrandHeader title={ title } description={ description } />
 		</div>
 	);
 }

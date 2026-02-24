@@ -49,6 +49,10 @@ body.is-section-accept-invite {
 		text-underline-position: from-font;
 	}
 
+	.invite-form-header--logged-out .connect-screen-brand-header__title a {
+		text-decoration: none;
+	}
+
 	.card.logged-out-form {
 		box-shadow: none;
 		padding: 0;
