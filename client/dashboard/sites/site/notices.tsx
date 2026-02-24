@@ -2,7 +2,7 @@ import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
 
-export function InaccessibleJetpackNotice() {
+export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 	return (
 		<Notice
 			variant="warning"
@@ -13,9 +13,7 @@ export function InaccessibleJetpackNotice() {
 				</ExternalLink>
 			}
 		>
-			{ __(
-				'We‘re having trouble connecting to your site, so we can‘t sync data or make updates at the moment. Your site may still be working normally for visitors.'
-			) }
+			{ error.message }
 		</Notice>
 	);
 }

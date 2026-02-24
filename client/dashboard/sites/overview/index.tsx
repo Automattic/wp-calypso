@@ -236,7 +236,9 @@ function SiteOverview( {
 			}
 			notices={
 				<>
-					{ site.__has_inaccessible_jetpack_error && <InaccessibleJetpackNotice /> }
+					{ !! site.__inaccessible_jetpack_error && (
+						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
+					) }
 					{ ! isDashboardBackport() && <OptInSurvey /> }
 				</>
 			}

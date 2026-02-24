@@ -46,7 +46,7 @@ export function siteBySlugQuery( siteSlug: string ) {
 					const site = await fetchSite( siteSlug, { force: 'wpcom' } );
 					return {
 						...site,
-						__has_inaccessible_jetpack_error: true,
+						__inaccessible_jetpack_error: e as Error,
 					};
 				}
 
@@ -99,7 +99,7 @@ export function siteByIdQuery( siteId: number ) {
 					const site = await fetchSite( siteId, { force: 'wpcom' } );
 					return {
 						...site,
-						__has_inaccessible_jetpack_error: true,
+						__inaccessible_jetpack_error: e as Error,
 					};
 				}
 

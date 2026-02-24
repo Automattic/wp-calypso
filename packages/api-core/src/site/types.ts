@@ -84,5 +84,5 @@ export interface Site {
 	garden_is_provisioned: boolean | null;
 
 	// Injected local properties
-	__has_inaccessible_jetpack_error?: boolean;
+	__inaccessible_jetpack_error?: Error;
 }
