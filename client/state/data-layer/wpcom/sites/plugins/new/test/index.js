@@ -126,7 +126,7 @@ describe( 'receiveError', () => {
 				type: 'NOTICE_CREATE',
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'The plugin zip file is too large.',
+					text: 'The plugin zip file must be smaller than 100MB.',
 					showDismiss: true,
 				} ),
 			} )
@@ -149,7 +149,7 @@ describe( 'receiveError', () => {
 				type: 'NOTICE_CREATE',
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'The plugin zip file is too large.',
+					text: 'The plugin zip file must be smaller than 100MB.',
 					showDismiss: true,
 				} ),
 			} )
