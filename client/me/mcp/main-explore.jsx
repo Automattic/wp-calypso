@@ -44,6 +44,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import LegacySectionHeader from 'calypso/components/section-header';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -58,6 +61,8 @@ import {
 	getPermissionLevel,
 } from '../../dashboard/me/mcp/categories';
 import { getAccountMcpAbilities, getDisabledSiteIds } from './utils';
+
+import './style.scss';
 
 // Big Sky star icon — paths from BigSkyLogo.CentralLogo (heartless variant)
 // without explicit fill attributes so CSS hover color changes work via `currentColor`.
@@ -229,9 +234,9 @@ function McpComponentExplore( { path } ) {
 			}
 		} );
 
-		// Option G: also clear site exceptions when toggling
+		// Options F & G: also clear site exceptions when toggling
 		const mutationPayload = { mcp_abilities: { account: accountAbilities } };
-		if ( variation === 'G' && disabledSiteIds.length > 0 ) {
+		if ( ( variation === 'F' || variation === 'G' ) && disabledSiteIds.length > 0 ) {
 			mutationPayload.mcp_abilities.sites = disabledSiteIds.map( ( siteId ) => ( {
 				blog_id: siteId,
 				account_tools_enabled: true,
@@ -719,10 +724,180 @@ function McpComponentExplore( { path } ) {
 		);
 	};
 
-	// ─── Variations E & F: Same top-level as C (sub-pages differ) ───
+	// ─── Variation E: Same top-level as C (sub-pages differ) ────────
 
 	const renderVariationE = () => renderVariationC();
-	const renderVariationF = () => renderVariationC();
+
+	// ─── Variation F: Legacy-styled AI Assistant + External AI access ──
+
+	const renderVariationF = () => {
+		const permissionGroups = {};
+		availableTools.forEach( ( [ toolId, tool ] ) => {
+			const level = getPermissionLevel( tool );
+			if ( ! permissionGroups[ level ] ) {
+				permissionGroups[ level ] = [];
+			}
+			permissionGroups[ level ].push( [ toolId, tool ] );
+		} );
+
+		const readTools = permissionGroups.read || [];
+		const writeTools = [
+			...( permissionGroups.write || [] ),
+			...( permissionGroups.manage || [] ),
+		];
+
+		const getToolsSummary = ( tools ) => {
+			const count = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return getBadgeText( count, tools.length );
+		};
+
+		const siteExceptionsSummary =
+			disabledSiteIds.length === 0
+				? translate( 'No exceptions' )
+				: translate( '%(count)d exceptions', { args: { count: disabledSiteIds.length } } );
+
+		let aiAssistantSummary;
+		if ( bigSkyGlobalEnabled ) {
+			aiAssistantSummary =
+				bigSkyDisabledCount === 0
+					? translate( 'No exceptions' )
+					: translate( '%(count)d exceptions', { args: { count: bigSkyDisabledCount } } );
+		} else {
+			aiAssistantSummary =
+				bigSkyEnabledCount === 0
+					? translate( 'No sites added' )
+					: translate( '%(count)d sites', { args: { count: bigSkyEnabledCount } } );
+		}
+
+		return (
+			<>
+				{ /* WordPress.com AI assistant */ }
+				<LegacySectionHeader label={ translate( 'WordPress.com AI assistant' ) } />
+				<Card isRounded={ false } style={ { position: 'relative' } }>
+					{ bigSkyIsInitialLoading && (
+						<Spinner
+							style={ {
+								width: 16,
+								height: 16,
+								margin: 0,
+								position: 'absolute',
+								top: 16,
+								right: 16,
+							} }
+						/>
+					) }
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
+								{ translate(
+									'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
+								) }
+							</p>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ bigSkyGlobalEnabled }
+								disabled={
+									bigSkyIsInitialLoading ||
+									bigSkyBulkMutation.isPending ||
+									bigSkyAvailableSiteIds.length === 0
+								}
+								onChange={ ( checked ) => bigSkyBulkMutation.mutate( { enable: checked } ) }
+								label={ translate( 'Enable AI assistant' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+				{ ! bigSkyIsInitialLoading && (
+					<VerticalNav>
+						<VerticalNavItem path="/me/mcp-ai-assistant" className="vertical-nav-item-enhanced">
+							<Icon
+								icon={ bigSkyGlobalEnabled ? notAllowed : bigSkyIcon }
+								className="vertical-nav-item-enhanced__icon"
+							/>
+							<div>
+								<div>
+									{ bigSkyGlobalEnabled
+										? translate( 'Site exceptions' )
+										: translate( 'Add to specific sites' ) }
+								</div>
+								<small>{ aiAssistantSummary }</small>
+							</div>
+						</VerticalNavItem>
+					</VerticalNav>
+				) }
+
+				{ /* External AI assistant access */ }
+				<LegacySectionHeader
+					label={ translate( 'External AI assistant access' ) }
+					className="mcp__section-header"
+				/>
+				<Card isRounded={ false }>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
+								{ translate(
+									'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+								) }
+							</p>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								onChange={ handleToggleAll }
+								label={ translate( 'Enable MCP access' ) }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
+				{ hasTools && anyToolsEnabled && (
+					<VerticalNav>
+						{ readTools.length > 0 && (
+							<VerticalNavItem path="/me/mcp-tools/read" className="vertical-nav-item-enhanced">
+								<Icon icon={ seen } className="vertical-nav-item-enhanced__icon" />
+								<div>
+									<div>{ translate( 'Read' ) }</div>
+									<small>{ getToolsSummary( readTools ) }</small>
+								</div>
+							</VerticalNavItem>
+						) }
+						{ writeTools.length > 0 && (
+							<VerticalNavItem path="/me/mcp-tools/write" className="vertical-nav-item-enhanced">
+								<Icon icon={ pencil } className="vertical-nav-item-enhanced__icon" />
+								<div>
+									<div>{ translate( 'Write' ) }</div>
+									<small>{ getToolsSummary( writeTools ) }</small>
+								</div>
+							</VerticalNavItem>
+						) }
+						<VerticalNavItem path="/me/mcp-sites" className="vertical-nav-item-enhanced">
+							<Icon icon={ notAllowed } className="vertical-nav-item-enhanced__icon" />
+							<div>
+								<div>{ translate( 'Site exceptions' ) }</div>
+								<small>{ siteExceptionsSummary }</small>
+							</div>
+						</VerticalNavItem>
+					</VerticalNav>
+				) }
+
+				{ /* Setup */ }
+				{ hasTools && anyToolsEnabled && (
+					<>
+						<LegacySectionHeader label={ translate( 'Setup' ) } className="mcp__section-header" />
+						<VerticalNav>
+							<VerticalNavItem path="/me/mcp-setup" className="vertical-nav-item-enhanced">
+								<Icon icon={ connection } className="vertical-nav-item-enhanced__icon" />
+								<div>
+									<div>{ translate( 'Connect external AI assistant' ) }</div>
+									<small>
+										{ translate( 'Get instructions for connecting your external AI assistant.' ) }
+									</small>
+								</div>
+							</VerticalNavItem>
+						</VerticalNav>
+					</>
+				) }
+			</>
+		);
+	};
 
 	// ─── Variation G: AI Assistant + External AI access ──────────────
 

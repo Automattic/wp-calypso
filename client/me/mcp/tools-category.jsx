@@ -22,6 +22,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import LegacySectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
@@ -32,6 +33,8 @@ import {
 	getPermissionLevelBySlug,
 } from '../../dashboard/me/mcp/categories';
 import { getAccountMcpAbilities } from './utils';
+
+import './style.scss';
 
 const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
 
@@ -180,10 +183,52 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 
 	const isAccordion = variation === 'E';
 	const isToggleHeader = variation === 'F' || variation === 'G';
-	const isSquareCorners = variation === 'G';
+	const isSquareCorners = variation === 'F' || variation === 'G';
 	let isFirstCategory = true;
 
+	const isLegacyStyle = variation === 'F';
+
+	let isFirstLegacyCategory = true;
+
 	const renderCategoryContent = () => {
+		if ( isLegacyStyle ) {
+			isFirstLegacyCategory = true;
+			return (
+				<>
+					{ CATEGORY_ORDER.map( ( categoryName ) => {
+						const categoryTools = grouped[ categoryName ];
+						if ( ! categoryTools || categoryTools.length === 0 ) {
+							return null;
+						}
+
+						const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+						const isFirst = isFirstLegacyCategory;
+						isFirstLegacyCategory = false;
+
+						return (
+							<div key={ categoryName } style={ isFirst ? undefined : { marginTop: '16px' } }>
+								<LegacySectionHeader label={ categoryName }>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ allEnabled }
+										label={ translate( 'Enable all' ) }
+										onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
+									/>
+								</LegacySectionHeader>
+								<Card isRounded={ false }>
+									<CardBody>
+										<VStack spacing={ 4 } style={ { padding: '12px 0' } }>
+											{ renderToolsWithDividers( categoryTools ) }
+										</VStack>
+									</CardBody>
+								</Card>
+							</div>
+						);
+					} ) }
+				</>
+			);
+		}
+
 		if ( isToggleHeader ) {
 			return (
 				<VStack spacing={ 8 }>
@@ -217,7 +262,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 												__nextHasNoMarginBottom
 												checked={ allEnabled }
 												label={
-													<Text weight={ variation === 'G' ? 400 : 500 }>
+													<Text weight={ variation === 'F' || variation === 'G' ? 400 : 500 }>
 														{ translate( 'Enable all' ) }
 													</Text>
 												}

@@ -22,12 +22,15 @@ import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import LegacySectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { hasEnabledAccountTools } from './utils';
+
+import './style.scss';
 
 const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
 
@@ -202,7 +205,7 @@ function McpSetupComponent( { path } ) {
 	};
 
 	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isSquareCorners = variation === 'G';
+	const isSquareCorners = variation === 'F' || variation === 'G';
 
 	// Handle error states only - allow loading to continue so reauth can show
 	if ( userSettingsError ) {
@@ -235,45 +238,64 @@ function McpSetupComponent( { path } ) {
 	const hasEnabledTools = hasEnabledAccountTools( userSettings );
 
 	if ( ! hasEnabledTools ) {
+		const isLegacyEmpty = variation === 'F';
 		return renderLayout(
-			<Card
-				isRounded={ ! isSquareCorners }
-				style={ isSquareCorners ? { borderRadius: 0 } : undefined }
-			>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={
-								variation === 'G'
-									? translate( 'Enable AI access first' )
-									: translate( 'Setup Required' )
-							}
-						/>
-						<Text
-							as="p"
-							color={ variation === 'G' ? '#757575' : undefined }
-							size={ variation === 'G' ? undefined : 'medium' }
-						>
-							{ variation === 'G'
-								? translate( 'You need to enable AI access before connecting your assistant.' )
-								: translate( 'No MCP tools are currently enabled for your account.' ) }
-						</Text>
-						{ variation !== 'G' && (
-							<Text as="p" size="medium">
-								{ translate(
-									'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
-								) }
+			isLegacyEmpty ? (
+				<>
+					<LegacySectionHeader label={ translate( 'Enable AI access first' ) } />
+					<Card isRounded={ false }>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
+									{ translate( 'You need to enable AI access before connecting your assistant.' ) }
+								</p>
+								<Button variant="primary" href="/me/mcp" style={ { alignSelf: 'flex-start' } }>
+									{ translate( 'Go to AI and MCP' ) }
+								</Button>
+							</VStack>
+						</CardBody>
+					</Card>
+				</>
+			) : (
+				<Card
+					isRounded={ ! isSquareCorners }
+					style={ isSquareCorners ? { borderRadius: 0 } : undefined }
+				>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								level={ 3 }
+								title={
+									isSquareCorners
+										? translate( 'Enable AI access first' )
+										: translate( 'Setup Required' )
+								}
+							/>
+							<Text
+								as="p"
+								color={ isSquareCorners ? '#646970' : undefined }
+								size={ isSquareCorners ? undefined : 'medium' }
+							>
+								{ isSquareCorners
+									? translate( 'You need to enable AI access before connecting your assistant.' )
+									: translate( 'No MCP tools are currently enabled for your account.' ) }
 							</Text>
-						) }
-						<Button variant="primary" href="/me/mcp" style={ { alignSelf: 'flex-start' } }>
-							{ variation === 'G'
-								? translate( 'Go to AI and MCP' )
-								: translate( 'Go to MCP Settings' ) }
-						</Button>
-					</VStack>
-				</CardBody>
-			</Card>
+							{ ! isSquareCorners && (
+								<Text as="p" size="medium">
+									{ translate(
+										'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
+									) }
+								</Text>
+							) }
+							<Button variant="primary" href="/me/mcp" style={ { alignSelf: 'flex-start' } }>
+								{ isSquareCorners
+									? translate( 'Go to AI and MCP' )
+									: translate( 'Go to MCP Settings' ) }
+							</Button>
+						</VStack>
+					</CardBody>
+				</Card>
+			)
 		);
 	}
 
@@ -294,9 +316,16 @@ function McpSetupComponent( { path } ) {
 			case 'claude':
 				return (
 					<VStack spacing={ 4 }>
-						<ol style={ { color: '#757575', paddingInlineStart: '20px', margin: '0' } }>
+						<ol
+							style={ {
+								color: '#646970',
+								paddingInlineStart: '20px',
+								margin: '0',
+								fontSize: '14px',
+							} }
+						>
 							<li>
-								<Text as="p" color="#757575">
+								<Text as="p" color="#646970">
 									{ createInterpolateElement( translate( 'Open <ClaudeSettings/>.' ), {
 										ClaudeSettings: (
 											<ExternalLink href="https://claude.ai/settings/connectors">
@@ -307,12 +336,12 @@ function McpSetupComponent( { path } ) {
 								</Text>
 							</li>
 							<li>
-								<Text as="p" color="#757575">
+								<Text as="p" color="#646970">
 									{ translate( 'Click "Browse connectors" and search for WordPress.com.' ) }
 								</Text>
 							</li>
 							<li>
-								<Text as="p" color="#757575">
+								<Text as="p" color="#646970">
 									{ translate( 'Select WordPress.com and follow the prompts.' ) }
 								</Text>
 							</li>
@@ -322,7 +351,7 @@ function McpSetupComponent( { path } ) {
 			case 'claude-code':
 				return (
 					<VStack spacing={ 4 }>
-						<Text as="p" color="#757575">
+						<Text as="p" color="#646970">
 							{ translate( 'Run this command in your terminal:' ) }
 						</Text>
 						<div style={ { position: 'relative' } }>
@@ -350,7 +379,7 @@ function McpSetupComponent( { path } ) {
 								aria-label={ translate( 'Copy command to clipboard' ) }
 							/>
 						</div>
-						<Text as="p" color="#757575">
+						<Text as="p" color="#646970">
 							{ createInterpolateElement(
 								translate( 'Then run <code/> in Claude Code to authenticate.' ),
 								{
@@ -382,91 +411,171 @@ function McpSetupComponent( { path } ) {
 		}
 	};
 
-	if ( variation === 'G' ) {
+	if ( isSquareCorners ) {
 		const quickSetup = renderQuickSetupG();
+		const isLegacyStyle = variation === 'F';
 
 		return renderLayout(
 			<>
 				<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 					{ translate( 'Connect AI assistant' ) }
 				</HeaderCake>
-				<VStack spacing={ 6 }>
-					{ /* Card 1: Client picker */ }
-					<Card isRounded={ false } style={ { borderRadius: 0 } }>
-						<CardBody>
-							<SelectControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								label={ translate( 'Choose your AI assistant' ) }
-								value={ selectedMcpClient }
-								options={ mcpClientOptions }
-								onChange={ setSelectedMcpClient }
-							/>
-						</CardBody>
-					</Card>
+				{ isLegacyStyle ? (
+					<>
+						{ /* Client picker */ }
+						<LegacySectionHeader label={ translate( 'AI assistant' ) } />
+						<Card isRounded={ false }>
+							<CardBody>
+								<SelectControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									label={ translate( 'Choose your AI assistant' ) }
+									value={ selectedMcpClient }
+									options={ mcpClientOptions }
+									onChange={ setSelectedMcpClient }
+								/>
+							</CardBody>
+						</Card>
 
-					{ /* Card 2: Quick setup (client-specific) */ }
-					{ quickSetup && (
-						<Card isRounded={ false } style={ { borderRadius: 0 } }>
+						{ /* Quick setup (client-specific) */ }
+						{ quickSetup && (
+							<>
+								<LegacySectionHeader
+									label={ translate( 'Quick setup' ) }
+									className="mcp__section-header"
+								/>
+								<Card isRounded={ false }>
+									<CardBody>{ quickSetup }</CardBody>
+								</Card>
+							</>
+						) }
+
+						{ /* Manual setup — JSON config */ }
+						<LegacySectionHeader
+							label={ translate( 'Manual setup' ) }
+							className="mcp__section-header"
+						>
+							<Button
+								icon={ getCopyIcon() }
+								variant="tertiary"
+								iconSize={ 16 }
+								size="small"
+								style={ {
+									minWidth: '24px',
+									height: '24px',
+									padding: 0,
+									color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+								} }
+								onClick={ copyToClipboard }
+								aria-label={ translate( 'Copy configuration to clipboard' ) }
+							/>
+						</LegacySectionHeader>
+						<Card isRounded={ false }>
 							<CardBody>
 								<VStack spacing={ 4 }>
-									<SectionHeader level={ 3 } title={ translate( 'Quick setup' ) } />
-									{ quickSetup }
+									<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
+										{ translate( "Copy this configuration into your client's MCP settings." ) }
+									</p>
+									<TextareaControl
+										__nextHasNoMarginBottom
+										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+										onChange={ () => {} }
+										readOnly
+										style={ { minHeight: '140px' } }
+									/>
+									{ clientDocumentation[ selectedMcpClient ] && (
+										<ExternalLink
+											href={ clientDocumentation[ selectedMcpClient ] }
+											style={ { fontSize: '13px' } }
+										>
+											{ selectedMcpClient === 'default'
+												? translate( 'View setup instructions' )
+												: sprintf( translate( '%s documentation' ), clientLabel ) }
+										</ExternalLink>
+									) }
 								</VStack>
 							</CardBody>
 						</Card>
-					) }
-
-					{ /* Card 3: Manual setup — JSON config */ }
-					<Card isRounded={ false } style={ { borderRadius: 0 } }>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<div
-									style={ {
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-									} }
-								>
-									<SectionHeader
-										level={ 3 }
-										title={ translate( 'Manual setup' ) }
-										description={ translate(
-											"Copy this configuration into your client's MCP settings."
-										) }
-									/>
-									<Button
-										icon={ getCopyIcon() }
-										variant="tertiary"
-										iconSize={ 20 }
-										style={ {
-											color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-										} }
-										onClick={ copyToClipboard }
-										aria-label={ translate( 'Copy configuration to clipboard' ) }
-									/>
-								</div>
-								<TextareaControl
+					</>
+				) : (
+					<VStack spacing={ 6 }>
+						{ /* Card 1: Client picker */ }
+						<Card isRounded={ false } style={ { borderRadius: 0 } }>
+							<CardBody>
+								<SelectControl
+									__next40pxDefaultSize
 									__nextHasNoMarginBottom
-									value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-									onChange={ () => {} }
-									readOnly
-									style={ { minHeight: '140px' } }
+									label={ translate( 'Choose your AI assistant' ) }
+									value={ selectedMcpClient }
+									options={ mcpClientOptions }
+									onChange={ setSelectedMcpClient }
 								/>
-								{ clientDocumentation[ selectedMcpClient ] && (
-									<ExternalLink
-										href={ clientDocumentation[ selectedMcpClient ] }
-										style={ { fontSize: '13px' } }
+							</CardBody>
+						</Card>
+
+						{ /* Card 2: Quick setup (client-specific) */ }
+						{ quickSetup && (
+							<Card isRounded={ false } style={ { borderRadius: 0 } }>
+								<CardBody>
+									<VStack spacing={ 4 }>
+										<SectionHeader level={ 3 } title={ translate( 'Quick setup' ) } />
+										{ quickSetup }
+									</VStack>
+								</CardBody>
+							</Card>
+						) }
+
+						{ /* Card 3: Manual setup — JSON config */ }
+						<Card isRounded={ false } style={ { borderRadius: 0 } }>
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<div
+										style={ {
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+										} }
 									>
-										{ selectedMcpClient === 'default'
-											? translate( 'View setup instructions' )
-											: sprintf( translate( '%s documentation' ), clientLabel ) }
-									</ExternalLink>
-								) }
-							</VStack>
-						</CardBody>
-					</Card>
-				</VStack>
+										<SectionHeader
+											level={ 3 }
+											title={ translate( 'Manual setup' ) }
+											description={ translate(
+												"Copy this configuration into your client's MCP settings."
+											) }
+										/>
+										<Button
+											icon={ getCopyIcon() }
+											variant="tertiary"
+											iconSize={ 20 }
+											style={ {
+												color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+											} }
+											onClick={ copyToClipboard }
+											aria-label={ translate( 'Copy configuration to clipboard' ) }
+										/>
+									</div>
+									<TextareaControl
+										__nextHasNoMarginBottom
+										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+										onChange={ () => {} }
+										readOnly
+										style={ { minHeight: '140px' } }
+									/>
+									{ clientDocumentation[ selectedMcpClient ] && (
+										<ExternalLink
+											href={ clientDocumentation[ selectedMcpClient ] }
+											style={ { fontSize: '13px' } }
+										>
+											{ selectedMcpClient === 'default'
+												? translate( 'View setup instructions' )
+												: sprintf( translate( '%s documentation' ), clientLabel ) }
+										</ExternalLink>
+									) }
+								</VStack>
+							</CardBody>
+						</Card>
+					</VStack>
+				) }
 			</>
 		);
 	}

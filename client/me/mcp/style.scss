@@ -1,0 +1,63 @@
+@import "@wordpress/base-styles/variables";
+
+.mcp,
+.mcp-setup,
+.mcp-sites,
+.mcp-ai-assistant,
+.mcp-tools-category {
+	.mcp__section-header {
+		margin-top: 16px;
+	}
+
+	.vertical-nav {
+		margin-top: 0;
+	}
+
+	// Match WP Card borders to Calypso CompactCard borders
+	.components-card {
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+	}
+
+	// Site row: icon + name/domain left, button right
+	.mcp__site-row.card.is-compact {
+		display: flex;
+		align-items: center;
+		padding-right: 24px;
+	}
+
+	.mcp__site-row-icon {
+		flex-shrink: 0;
+		width: 36px;
+		height: 36px;
+		border-radius: 4px;
+		margin-right: 16px;
+		object-fit: cover;
+
+		&--fallback {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--color-neutral-5);
+			color: var(--color-neutral-50);
+			font-size: 16px;
+			font-weight: 600;
+		}
+	}
+
+	.mcp__site-row-info {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+
+		small {
+			color: var(--color-neutral-50);
+			font-size: $font-body-small;
+		}
+	}
+
+	.mcp__site-row .components-button {
+		flex-shrink: 0;
+		margin-left: 16px;
+	}
+}
