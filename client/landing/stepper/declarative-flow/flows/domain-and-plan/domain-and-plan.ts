@@ -52,14 +52,15 @@ const domainUpsell: Flow = {
 
 		const submittedDomains = useRef( false );
 
-		async function addToCartAndRedirectToCheckout() {
-			const planCartItem = getPlanCartItem();
-			const domainCartItem = getDomainCartItem();
-
-			if ( planCartItem ) {
-				await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
+			if ( includePlan ) {
+				const planCartItem = getPlanCartItem();
+				if ( planCartItem ) {
+					await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+				}
 			}
 
+			const domainCartItem = getDomainCartItem();
 			if ( domainCartItem ) {
 				await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 			}
@@ -114,7 +115,7 @@ const domainUpsell: Flow = {
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( hasQualifyingPlan ) {
-						return addToCartAndRedirectToCheckout();
+						return addToCartAndRedirectToCheckout( { includePlan: false } );
 					}
 
 					return navigate( STEPS.PLANS.slug );
@@ -139,7 +140,7 @@ const domainUpsell: Flow = {
 					submittedDomains.current = true;
 
 					if ( hasQualifyingPlan ) {
-						return addToCartAndRedirectToCheckout();
+						return addToCartAndRedirectToCheckout( { includePlan: false } );
 					}
 
 					return navigate( STEPS.PLANS.slug );
