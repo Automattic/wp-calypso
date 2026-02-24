@@ -66,20 +66,20 @@ The block notes ability supports two operations:
 
 ### `get` - Retrieve Notes
 
-```javascript
+```json
 {
-  operation: 'get',
-  noteId: 42           // Block note ID from the block's noteId attribute
+  "operation": "get",
+  "noteId": 42
 }
 ```
 
 ### `reply` - Reply to Note
 
-```javascript
+```json
 {
-  operation: 'reply',
-  noteId: 42,        // Block note ID from the block's noteId attribute
-  notes: 'Reply content text here'
+  "operation": "reply",
+  "noteId": 42,
+  "notes": "Reply content text here"
 }
 ```
 
