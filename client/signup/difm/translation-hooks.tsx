@@ -172,3 +172,112 @@ export function useTranslatedPageDescriptions(
 	}
 	return contextualDescriptions[ context ][ pageId ];
 }
+
+/**
+ * Returns a map of all page IDs to their translated descriptions for the given context.
+ * Use this when you need descriptions for multiple pages (e.g. in a list) to avoid calling
+ * useTranslatedPageDescriptions inside callbacks, which violates the rules of hooks.
+ */
+export function useTranslatedPageDescriptionsMap(
+	context?: BBETranslationContext
+): Record< PageId, TranslateResult > {
+	const translate = useTranslate();
+	const defaultDescriptions: Record< PageId, TranslateResult > = useMemo(
+		() => ( {
+			[ HOME_PAGE ]: translate(
+				'Introduce your business, writing, or yourself. Highlight what visitors can expect on your site.'
+			),
+			[ ABOUT_PAGE ]: translate(
+				'Share your story or business background. Explain why you created this website.'
+			),
+			[ CONTACT_PAGE ]: translate(
+				'Provide ways for visitors to contact you. Highlight your preferred contact methods: telephone, email, etc'
+			),
+			[ BLOG_PAGE ]: translate(
+				"Share news, journal entries, or recipes! We'll set up three posts to get you started."
+			),
+			[ PHOTO_GALLERY_PAGE ]: translate(
+				'Showcase creative work or memories. Perfect for photographers, artists, or for visual storytelling.'
+			),
+			[ SERVICES_PAGE ]: translate(
+				'Describe your skills and services to potential clients, highlighting what sets you apart.'
+			),
+			[ VIDEO_GALLERY_PAGE ]: translate(
+				'Show videos of your work or business. Include a description to guide your visitors.'
+			),
+			[ PRICING_PAGE ]: translate(
+				'List what you sell: food, services, books, etc. Highlight pricing details.'
+			),
+			[ PORTFOLIO_PAGE ]: translate(
+				'Display your completed projects, photos, artwork, or articles. Let your work shine.'
+			),
+			[ FAQ_PAGE ]: translate(
+				'Answer common questions from customers or readers. Offer quick information access.'
+			),
+			[ TESTIMONIALS_PAGE ]: translate(
+				'Build trust with reviews or quotes about your work or business. Share success stories.'
+			),
+			[ TEAM_PAGE ]: translate(
+				'Profile your team members with pictures, names, and roles or job titles. Introduce the people behind your business.'
+			),
+			[ SHOP_PAGE ]: translate(
+				'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
+			),
+			[ CUSTOM_PAGE ]: translate(
+				"Craft a page that's perfect for anything you have in mind. You decide the title and content, and we'll create a custom layout."
+			),
+			[ CAREERS_PAGE ]: translate(
+				"Attract top talent with a page dedicated to job opportunities. Showcase your team's culture."
+			),
+			[ EVENTS_PAGE ]: translate(
+				"Show your upcoming events or gatherings. Keep visitors updated on what's happening."
+			),
+			[ DONATE_PAGE ]: translate(
+				'Simplify the donation process for supporters. Help them easily contribute to your mission.'
+			),
+			[ NEWSLETTER_PAGE ]: translate(
+				'Connect with your community through regular updates. Let visitors subscribe to stay in touch with news and events.'
+			),
+			[ CASE_STUDIES_PAGE ]: translate(
+				'Demonstrate your expertise with real-world examples. Show your methods and results.'
+			),
+		} ),
+		[ translate ]
+	);
+	const contextualDescriptions: Record<
+		BBETranslationContext,
+		Record< PageId, TranslateResult >
+	> = useMemo(
+		() => ( {
+			[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: { ...defaultDescriptions },
+			[ BBE_WEBSITE_CONTENT_FILLING_STEP ]: {
+				...defaultDescriptions,
+				[ BLOG_PAGE ]: translate(
+					"Describe the type of blog posts you'll feature, and we'll set up the page with this description. If there are no existing posts, we'll create three to get you started."
+				),
+				[ CONTACT_PAGE ]: translate(
+					'This page includes a contact form. You may also include other contact methods as well.'
+				),
+				[ SHOP_PAGE ]: translate(
+					'Add a short description to explain what type of products will appear on your site. We will set up the page so this description appears above your products; you can add the products later with the editor.'
+				),
+				[ CUSTOM_PAGE ]: translate(
+					"Provide the title and content for this page, and we'll create a custom layout."
+				),
+				[ DONATE_PAGE ]: translate(
+					"This page includes a Donations Form block, which you can connect to your bank account later using the editor. Provide details about your cause, which we'll include on the page."
+				),
+				[ NEWSLETTER_PAGE ]: translate(
+					'This page includes a Newsletter Subscription block, enabling visitors to subscribe via email. Provide details about the kind of updates they can expect to receive by subscribing.'
+				),
+			},
+			[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: { ...defaultDescriptions },
+			[ BBE_STORE_WEBSITE_CONTENT_FILLING_STEP ]: { ...defaultDescriptions },
+		} ),
+		[ translate, defaultDescriptions ]
+	);
+	if ( ! context ) {
+		return defaultDescriptions;
+	}
+	return contextualDescriptions[ context ];
+}

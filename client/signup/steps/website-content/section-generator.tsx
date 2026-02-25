@@ -77,12 +77,16 @@ const generateSiteInformationSection = (
 	};
 };
 
+const isCustomPageId = ( pageId: string ) =>
+	pageId === CUSTOM_PAGE || String( pageId ).startsWith( CUSTOM_PAGE + '_' );
+
 const resolveDisplayedComponent = ( pageId: string ) => {
+	if ( isCustomPageId( pageId ) ) {
+		return CustomPageDetails;
+	}
 	switch ( pageId ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
-		case CUSTOM_PAGE:
-			return CustomPageDetails;
 		default:
 			return DefaultPageDetails;
 	}
@@ -108,11 +112,12 @@ const generateWebsiteContentSections = (
 		const fieldNumber = elapsedSections + index + 1;
 		let pageTitle = page.title;
 
-		if ( ! pageTitle && page.id === CUSTOM_PAGE ) {
+		if ( ! pageTitle && isCustomPageId( page.id ) ) {
 			pageTitle = translate( 'Custom Page' );
 		}
 
 		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
+		const isOptionalPage = !! OPTIONAL_PAGES[ page.id as PageId ] || isCustomPageId( page.id );
 
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
@@ -131,10 +136,10 @@ const generateWebsiteContentSections = (
 					context={ context }
 				/>
 			),
-			showSkip: !! OPTIONAL_PAGES[ page.id ],
+			showSkip: isOptionalPage,
 			validate: () => {
 				const isContentValid =
-					OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length ) || page.useFillerContent;
+					isOptionalPage || Boolean( page.content?.length ) || page.useFillerContent;
 				const isTitleValid = Boolean( page.title?.length );
 
 				return {

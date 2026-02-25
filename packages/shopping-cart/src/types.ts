@@ -952,6 +952,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	privacy_available?: boolean;
 	privacy?: boolean;
 	selected_page_titles?: string[];
+	selected_page_instances?: Array< { id: string; type: string } >;
 	site_title?: string;
 	signup_flow?: string;
 	import_dns_records?: boolean;

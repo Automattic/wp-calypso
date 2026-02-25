@@ -857,7 +857,11 @@ export function generateSteps( {
 		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
-			providesDependencies: [ 'selectedPageTitles', 'newOrExistingSiteChoice' ],
+			providesDependencies: [
+				'selectedPageTitles',
+				'selectedPageInstances',
+				'newOrExistingSiteChoice',
+			],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			props: {
 				hideSkip: true,

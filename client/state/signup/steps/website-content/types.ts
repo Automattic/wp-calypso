@@ -3,16 +3,11 @@ import type { PageId } from 'calypso/signup/difm/constants';
 
 export type MediaUploadType = 'IMAGE' | 'VIDEO' | 'IMAGE-AND-VIDEO';
 
-export type Media = {
-	caption?: string;
-	url: string;
-	mediaType: MediaUploadType;
-	thumbnailUrl?: string;
-	uploadID?: string;
-};
+/** One selected page instance (id may be type or type_n for multi-add). */
+export type SelectedPageInstance = { id: string; type: PageId };
 
 export type PageData = {
-	id: PageId;
+	id: PageId | string; // string allows instance ids (e.g. SERVICES_PAGE_2, CUSTOM_PAGE_2)
 	title: string;
 	content: string;
 	useFillerContent: boolean;
@@ -48,6 +43,7 @@ export interface DIFMDependencies {
 	displayPhone: string;
 	displayAddress: string;
 	selectedPageTitles: string[];
+	selectedPageInstances?: SelectedPageInstance[];
 	isStoreFlow: boolean;
 }
 
@@ -70,6 +66,7 @@ export type WebsiteContentRequestDTO = {
 
 export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
 	selected_page_titles: PageId[];
+	selected_page_instances?: Array< { id: string; type: PageId } >;
 	is_website_content_submitted: boolean;
 	is_store_flow: boolean;
 };
@@ -80,6 +77,7 @@ export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
  */
 export type WebsiteContentServerState = {
 	selectedPageTitles: PageId[];
+	selectedPageInstances?: SelectedPageInstance[];
 	isWebsiteContentSubmitted: boolean;
 	isStoreFlow: boolean;
 	pages: Array< PageData & ContactPageData >;

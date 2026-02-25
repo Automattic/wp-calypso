@@ -48,6 +48,7 @@ export function buildDIFMCartExtrasObject(
 		displayPhone,
 		displayAddress,
 		selectedPageTitles,
+		selectedPageInstances,
 		isStoreFlow,
 	} = dependencies;
 
@@ -75,6 +76,8 @@ export function buildDIFMCartExtrasObject(
 		display_phone: displayPhone,
 		display_address: displayAddress,
 		selected_page_titles: selectedPageTitles,
+		...( Array.isArray( selectedPageInstances ) &&
+			selectedPageInstances.length > 0 && { selected_page_instances: selectedPageInstances } ),
 		is_store_flow: isStoreFlow,
 		afterPurchaseUrl: addQueryArgs( { siteId }, '/start/site-content-collection' ),
 	};
