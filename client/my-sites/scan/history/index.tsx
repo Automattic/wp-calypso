@@ -23,6 +23,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 
 	return (
 		<Main
+			wideLayout
 			className={ clsx( 'scan history', {
 				is_jetpackcom: isJetpackPlatform,
 			} ) }
