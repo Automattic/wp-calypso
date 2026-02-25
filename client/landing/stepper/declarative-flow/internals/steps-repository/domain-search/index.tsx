@@ -279,8 +279,12 @@ const DomainSearchStep: StepType< {
 			return __( 'Find the perfect domain' );
 		}
 
+		if ( isCiab ) {
+			return __( 'Make your store unforgettable' );
+		}
+
 		return __( 'Claim your space on the web' );
-	}, [ flow, __ ] );
+	}, [ flow, isCiab, __ ] );
 
 	const subHeaderText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {
@@ -294,8 +298,12 @@ const DomainSearchStep: StepType< {
 			return __( 'Secure your 100-Year domain and start building your legacy.' );
 		}
 
+		if ( isCiab ) {
+			return __( 'Choose a site address that puts your brand front and center.' );
+		}
+
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, __ ] );
+	}, [ flow, isCiab, __ ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
