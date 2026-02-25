@@ -423,7 +423,7 @@ const PodcastingDetails = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main className="site-settings podcasting-details">
+		<Main wideLayout className="site-settings podcasting-details">
 			<DocumentHead title={ translate( 'Podcasting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
