@@ -149,10 +149,12 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		loggedOutSession ? loggedOutSession.botSlug : undefined
 	);
 
+	const chatEnabled = featureConfig.chat.enabled;
+
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
-		useGetSupportInteractions( 'zendesk' );
+		useGetSupportInteractions( 'zendesk', chatEnabled );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie' );
+		useGetSupportInteractions( 'odie', chatEnabled );
 
 	// When filtering by bot slug is enabled (e.g. CIAB context), only show
 	// conversations matching the current bot slug.
@@ -175,7 +177,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [ featureConfig.chat.filterByBotSlug, newInteractionsBotSlug, otherSupportInteractions ] );
 
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
-		useGetOdieConversations( filteredOdieSupportInteractions );
+		useGetOdieConversations( filteredOdieSupportInteractions, chatEnabled );
 
 	const isLoadingInteractions =
 		isLoadingOtherSupportInteractions ||
@@ -191,7 +193,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	);
 
 	useEffect( () => {
-		if ( isLoadingInteractions ) {
+		if ( ! chatEnabled || isLoadingInteractions ) {
 			return;
 		}
 
@@ -221,6 +223,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		setRecentConversations( recent );
 		setArchivedConversations( archived );
 	}, [
+		chatEnabled,
 		isChatLoaded,
 		isLoadingInteractions,
 		loggedOutSession,
