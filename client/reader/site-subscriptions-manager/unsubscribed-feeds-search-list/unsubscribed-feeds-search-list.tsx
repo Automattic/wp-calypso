@@ -6,12 +6,12 @@ import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 
-interface ReaderUnsubscribedFeedsSearchListProps {
+interface UnsubscribedFeedsSearchListProps {
 	isLoading: boolean;
 	feedItems?: Reader.FeedItem[];
 }
 
-const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
+const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ): JSX.Element => {
 	const { feedItems, isLoading } = props;
 
 	const feedItemComponents = useMemo( () => {
@@ -63,4 +63,4 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 	);
 };
 
-export default ReaderUnsubscribedFeedsSearchList;
+export default UnsubscribedFeedsSearchList;

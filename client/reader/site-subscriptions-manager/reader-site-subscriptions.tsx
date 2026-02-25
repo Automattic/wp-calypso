@@ -1,7 +1,6 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
@@ -11,6 +10,7 @@ import {
 	useRecordSearchByUrlPerformed,
 } from 'calypso/landing/subscriptions/tracks';
 import { resemblesUrl } from 'calypso/lib/url';
+import { UnsubscribedFeedsSearchList } from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
 import { RecommendedSites } from '../recommended-sites';
 import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
