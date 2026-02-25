@@ -1,6 +1,3 @@
-@import '@wordpress/base-styles/colors';
-@import '../../styles/mixins.scss';
-
 .agents-manager-feedback-input {
 	margin-left: 12px;
 	margin-right: 12px;
@@ -9,8 +6,8 @@
 	&__inner {
 		margin-top: 12px;
 		padding: 12px;
-		background: $white;
-		border: 1px solid rgba( 0, 0, 0, 0.15 );
+		background: var(--color-background);
+		border: 1px solid var(--color-muted);
 		border-radius: 4px;
 
 		.components-textarea-control {
@@ -20,18 +17,26 @@
 		.components-base-control__label {
 			font-size: 13px;
 			text-transform: none;
+			color: var(--color-muted-foreground);
 		}
 
 		.components-textarea-control__input {
 			width: 100%;
 			resize: vertical;
+			background: var(--color-popover-muted);
+			border-color: var(--color-muted);
+			color: var(--color-foreground);
+
+			&::placeholder {
+				color: var(--color-muted-foreground);
+			}
 		}
 	}
 
 	&__success {
 		padding: 12px;
-		background: #d5f2e3;
-		color: #00450c;
+		background: var(--color-success-background);
+		color: var(--color-success);
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -39,8 +44,8 @@
 
 	&__error {
 		padding: 12px;
-		background: #fef0f0;
-		color: $alert-red;
+		background: var(--color-error-background);
+		color: var(--color-error);
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -57,51 +62,27 @@
 			gap: 4px;
 		}
 
-		// Fix spinner vertical alignment in the button
-		.agents-manager-feedback-input__spinner {
-			margin-top: 0;
-		}
-	}
-}
-
-// Dark theme overrides for the docked chat
-@include docked-chat-without-modal {
-	.agents-manager-feedback-input__inner {
-		background: $gray-900;
-		border-color: #545454;
-
-		.components-base-control__label {
-			color: $gray-400;
-		}
-
-		.components-textarea-control__input {
-			background: #2c2c2c;
-			border-color: #545454;
-			color: $gray-200;
-
-			&::placeholder {
-				color: #999;
-			}
-		}
-	}
-
-	.agents-manager-feedback-input__actions {
 		.components-button.is-tertiary {
-			color: $gray-400;
+			color: var(--color-muted-foreground);
 
 			&:hover {
-				color: $white;
+				color: var(--color-foreground);
 			}
 		}
 
 		.components-button.is-primary {
-			background: #3858e9;
-			color: $white;
+			background: var(--color-primary);
+			color: var(--color-primary-foreground);
 
 			&:disabled {
-				background: #2c2c2c;
-				color: #666;
+				background: var(--color-muted);
+				color: var(--color-muted-foreground);
 			}
+		}
+
+		// Fix spinner vertical alignment in the button
+		.agents-manager-feedback-input__spinner {
+			margin-top: 0;
 		}
 	}
 }

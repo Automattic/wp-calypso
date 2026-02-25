@@ -367,7 +367,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	};
 
 	return (
-		<HStack style={ { width: 'auto', flexShrink: 0 } }>
+		<HStack expanded={ false } style={ { flexShrink: 0 } }>
 			<Dropdown
 				renderToggle={ ( { isOpen, onToggle } ) => {
 					// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the

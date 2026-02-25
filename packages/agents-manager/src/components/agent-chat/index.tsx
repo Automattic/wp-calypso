@@ -155,7 +155,7 @@ export default function AgentChat( {
 								: undefined
 						}
 						suggestions={ emptyViewSuggestions }
-						icon={ <AI size={ 32 } /> }
+						icon={ <AI size={ 32 } color={ ! isDocked ? '#3858e8' : '#fff' } /> }
 					/>
 				)
 			}
