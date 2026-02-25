@@ -74,13 +74,6 @@ RUN node --version && yarn --version && npm --version
 ENV NODE_ENV production
 RUN yarn run build 2>&1 | tee /tmp/build_log.txt
 
-# Ensure lang-revisions.json exists so the server doesn't 500.
-# When BUILD_TRANSLATION_CHUNKS is false or the CDN is unreachable, the build
-# skips language downloads. An empty JSON object lets the server start without
-# translations instead of crashing.
-RUN mkdir -p /calypso/public/languages && \
-    [ -f /calypso/public/languages/lang-revisions.json ] || echo '{}' > /calypso/public/languages/lang-revisions.json
-
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
 
