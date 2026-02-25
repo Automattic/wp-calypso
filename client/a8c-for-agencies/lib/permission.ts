@@ -55,6 +55,7 @@ import {
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 	A4A_LEARN_LINK,
 	A4A_LEARN_RESOURCE_CENTER_LINK,
+	A4A_DEV_TOOLS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -115,6 +116,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_EXCLUSIVE_OFFERS_LINK ]: [ 'a4a_read_exclusive_offers' ],
 	[ A4A_LEARN_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_LEARN_RESOURCE_CENTER_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_DEV_TOOLS_LINK ]: [ 'a4a_read_learn' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {

@@ -848,6 +848,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-dev-tools',
+		paths: [ '/dev-tools' ],
+		module: 'calypso/a8c-for-agencies/sections/dev-tools',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-migrations',
 		paths: [
 			'/migrations',
