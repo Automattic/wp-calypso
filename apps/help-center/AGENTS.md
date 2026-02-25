@@ -8,16 +8,16 @@ This app takes `@automattic/help-center` and bundles it into 8 separate webpack 
 
 ## Entry Points
 
-| Entry point | Context |
-|---|---|
-| `help-center-gutenberg.js` | Gutenberg editor (connected) |
-| `help-center-gutenberg-disconnected.js` | Gutenberg editor (disconnected from Jetpack) |
-| `help-center-wp-admin.js` | wp-admin bar (connected) |
-| `help-center-wp-admin-disconnected.js` | wp-admin bar (disconnected from Jetpack) |
-| `help-center-ciab-admin.js` | CIAB admin (connected) |
-| `help-center-ciab-admin-disconnected.js` | CIAB admin (disconnected) |
-| `help-center-customizer.js` | Customizer |
-| `help-center-logged-out.js` | Logged-out view |
+| Entry point                              | Context                                      |
+| ---------------------------------------- | -------------------------------------------- |
+| `help-center-gutenberg.js`               | Gutenberg editor (connected)                 |
+| `help-center-gutenberg-disconnected.js`  | Gutenberg editor (disconnected from Jetpack) |
+| `help-center-wp-admin.js`                | wp-admin bar (connected)                     |
+| `help-center-wp-admin-disconnected.js`   | wp-admin bar (disconnected from Jetpack)     |
+| `help-center-ciab-admin.js`              | CIAB admin (connected)                       |
+| `help-center-ciab-admin-disconnected.js` | CIAB admin (disconnected)                    |
+| `help-center-customizer.js`              | Customizer                                   |
+| `help-center-logged-out.js`              | Logged-out view                              |
 
 Each entry point is a standalone JS file in the app root (e.g., `help-center-gutenberg.js`) that imports from `@automattic/help-center` and wires up the environment-specific bootstrap logic.
 
