@@ -86,7 +86,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	return (
 		<>
 			<QuerySiteCredentials siteId={ siteId } />
-			<Main className="backup-contents-page">
+			<Main wideLayout className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<Button
