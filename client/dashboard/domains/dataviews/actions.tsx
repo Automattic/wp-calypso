@@ -48,6 +48,9 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				error: { source: 'server' },
 			},
 		},
+		onSuccess: () => {
+			recordTracksEvent( 'dashboard-test' );
+		},
 	} );
 
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
