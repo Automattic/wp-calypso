@@ -5,6 +5,10 @@
 
 import { getBlockNoteThreadSessionId } from './session';
 
+jest.mock( '@wordpress/editor', () => ( {
+	store: 'core/editor',
+} ) );
+
 describe( 'getBlockNoteThreadSessionId', () => {
 	const TEST_POST_ID = 123;
 	const TEST_NOTE_ID = 456;
