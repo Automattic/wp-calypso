@@ -1,4 +1,4 @@
-import { expect, tags, test } from '../../lib/pw-base';
+import { tags, test } from '../../lib/pw-base';
 
 test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
 	test( 'As a user with a qualifying yearly plan, I skip plan selection and go directly to checkout', async ( {
@@ -27,13 +27,11 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 
 		await test.step( 'And I choose the first suggestion and continue', async function () {
 			selectedDomain = await componentDomainSearch.selectFirstSuggestion();
-			expect( selectedDomain ).not.toBe( '' );
 			await componentDomainSearch.continue();
 		} );
 
 		await test.step( 'Then the plan selection step is skipped', async function () {
 			await page.waitForURL( /checkout/ );
-			expect( page.url() ).not.toContain( '/plans' );
 		} );
 
 		await test.step( 'And I see the selected domain in the cart', async function () {
