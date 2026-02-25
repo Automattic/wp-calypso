@@ -24,6 +24,8 @@
 
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 
+- **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
+
 ## Development
 
 ```bash
