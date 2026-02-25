@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -35,10 +36,12 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
+		useConnectScreenActions: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		locale: 'en',
+		useConnectScreenActions: false,
 	};
 
 	state = {
@@ -307,16 +310,30 @@ class PasswordlessSignupForm extends Component {
 
 	formFooter() {
 		const { isSubmitting } = this.state;
+		const isPrimaryDisabled =
+			isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton;
 		const submitButtonText = isSubmitting
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
+		if ( this.props.useConnectScreenActions ) {
+			return (
+				<>
+					<ActionButtons
+						className="signup-form__action-buttons"
+						primaryLabel={ submitButtonText }
+						primaryType="submit"
+						primaryLoading={ isSubmitting }
+						primaryDisabled={ isPrimaryDisabled }
+					/>
+					{ this.props.secondaryFooterButton }
+				</>
+			);
+		}
+
 		return (
 			<LoggedOutFormFooter>
-				<SignupSubmitButton
-					isBusy={ isSubmitting }
-					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
-				>
+				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }

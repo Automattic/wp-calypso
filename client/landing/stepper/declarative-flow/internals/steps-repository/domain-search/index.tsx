@@ -106,6 +106,7 @@ const DomainSearchStep: StepType< {
 				isSignup:
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
+				isCiab,
 				flowName: flow,
 			} ),
 			priceRules: {
@@ -129,7 +130,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, tldQuery, query ] );
+	}, [ flow, isCiab, tldQuery, query ] );
 
 	const { submit } = navigation;
 
