@@ -13,7 +13,7 @@ import {
 	plugins,
 	chartBar,
 	box,
-	pages,
+	shortcode,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -113,12 +113,12 @@ const useMainMenuItems = ( path: string ) => {
 			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
 				? [
 						{
-							icon: pages,
+							icon: shortcode,
 							path: A4A_LEARN_LINK,
 							link: A4A_LEARN_RESOURCE_CENTER_LINK,
-							title: translate( 'Resource center' ),
+							title: translate( 'Resources and tools' ),
 							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Resource center',
+								menu_item: 'Automattic for Agencies / Resources and tools',
 							},
 							withChevron: true,
 						},

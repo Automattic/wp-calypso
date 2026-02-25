@@ -1,4 +1,4 @@
-import { category, tool } from '@wordpress/icons';
+import { pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
@@ -15,12 +15,12 @@ const useLearnMenuItems = ( path: string ) => {
 		return [
 			createItem(
 				{
-					icon: category,
+					icon: pages,
 					path: A4A_LEARN_LINK,
 					link: A4A_LEARN_RESOURCE_CENTER_LINK,
 					title: translate( 'Guides and articles' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resource center / Guides and articles',
+						menu_item: 'Automattic for Agencies / Resources and tools / Guides and articles',
 					},
 				},
 				path
@@ -32,7 +32,7 @@ const useLearnMenuItems = ( path: string ) => {
 					link: A4A_DEV_TOOLS_LINK,
 					title: translate( 'Developer tools' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resource center / Developer tools',
+						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
 					},
 				},
 				path
