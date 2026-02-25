@@ -194,7 +194,7 @@ class PodcastingDetails extends Component {
 		} );
 
 		return (
-			<Main>
+			<Main wideLayout>
 				<DocumentHead title={ translate( 'Podcasting' ) } />
 				<NavigationHeader
 					navigationItems={ [] }

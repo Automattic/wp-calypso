@@ -400,7 +400,7 @@ const NewsletterSettings = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main className="site-settings">
+		<Main wideLayout className="site-settings">
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
 			<NavigationHeader
 				navigationItems={ [] }

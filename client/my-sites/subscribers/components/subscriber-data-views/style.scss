@@ -37,10 +37,6 @@ body.is-section-subscribers,
 
 	.subscribers.main,
 	.main.is-wide-layout {
-		max-width: none;
-		padding: 0;
-		margin: 0;
-
 		.subscriber-data-views {
 			display: flex;
 			flex-direction: row;
@@ -84,7 +80,7 @@ body.is-section-subscribers,
 				flex-direction: column;
 
 				.navigation-header {
-					padding: $padding-standard 48px;
+					padding: $padding-standard 24px;
 
 					// 430px is the DataViews padding breakpoint.
 					@media ( max-width: 430px ) {
