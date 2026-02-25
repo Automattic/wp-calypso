@@ -16,10 +16,8 @@ export default function LearnSidebar( { path }: Props ) {
 	return (
 		<Sidebar
 			path={ A4A_LEARN_LINK }
-			title={ translate( 'Learn' ) }
-			description={ translate(
-				'Find resources and tutorials to grow your agency and boost your clients.'
-			) }
+			title={ translate( 'Resource center' ) }
+			description={ translate( 'Resources and tools to grow your agency and boost your clients.' ) }
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,
