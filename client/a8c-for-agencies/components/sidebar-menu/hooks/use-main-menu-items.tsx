@@ -116,9 +116,9 @@ const useMainMenuItems = ( path: string ) => {
 							icon: pages,
 							path: A4A_LEARN_LINK,
 							link: A4A_LEARN_RESOURCE_CENTER_LINK,
-							title: translate( 'Learn' ),
+							title: translate( 'Resource center' ),
 							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Learn',
+								menu_item: 'Automattic for Agencies / Resource center',
 							},
 							withChevron: true,
 						},
