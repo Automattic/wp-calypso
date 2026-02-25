@@ -1,7 +1,8 @@
 .agenttic {
-  
-  /* === COLORS === */
+  /* === BASE === */
+  --base-font-size: 1rem;
 
+  /* === COLORS === */
   --color-white: #FFFFFF;
   --color-background: #FCFCFC;
   --color-foreground: #1F1F1F;
@@ -19,23 +20,22 @@
   --color-error-background: #FCF1F1;
   --color-error: #E7000B;
   --color-link: var(--color-primary);
-  /* === TYPOGRAPHY === */
 
+  /* === TYPOGRAPHY === */
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-weight-medium: 450;
   --font-weight-semibold: 500;
   --font-weight-bold: 600;
-  --text-xs: 0.8125rem;
+  --text-xs: calc(0.8125 * var(--base-font-size));
   --text-xs--line-height: 1.538;
-  --text-sm: 0.875rem;
+  --text-sm: calc(0.875 * var(--base-font-size));
   --text-sm--line-height: 1.65;
-  --text-base: 0.9375rem;
+  --text-base: calc(0.9375 * var(--base-font-size));
   --text-base--line-height: 1.625;
   --text-base--tracking: -0.01em;
  
   /* === SPACING === */
-  
-  --spacing: 0.25rem; /* 4px */
+  --spacing: calc(0.25 * var(--base-font-size)); /* 4px */
   --spacing-1: var(--spacing); /* 4px */
   --spacing-1\.5: calc(var(--spacing) * 1.5); /* 6px */
   --spacing-2: calc(var(--spacing) * 2); /* 8px */
@@ -51,8 +51,7 @@
   --spacing-20: calc(var(--spacing) * 20); /* 80px */
   
   /* === BORDER RADIUS === */
-    
-  --radius: 1rem; /* 16px */
+  --radius: var(--base-font-size); /* 16px */
   --radius-xs: calc(var(--radius) - 10px); /* 6px */
   --radius-sm: calc(var(--radius) - 8px); /* 8px */
   --radius-md: calc(var(--radius) - 2px); /* 14px */
@@ -61,7 +60,6 @@
   --radius-full: 9999px;
   
   /* === SHADOWS === */
-  
   --shadow-sm: 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent), 0 0 6px color-mix(in srgb, var(--color-foreground) 5%, transparent); 
   --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.075), 0 2px 24px rgba(0, 0, 0, 0.075);
   --shadow-outline: 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent);
