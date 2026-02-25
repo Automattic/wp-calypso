@@ -109,6 +109,9 @@ function BlockNoteMentionAutocomplete() {
 				const text = textNode.nodeValue;
 				const fragment = document.createDocumentFragment();
 
+				if ( ! text ) {
+					return;
+				}
 				// Split by mentions and create styled spans
 				const parts = splitByAiMention( text );
 

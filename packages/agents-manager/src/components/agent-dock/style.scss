@@ -415,7 +415,9 @@ body.post-new-php.agents-manager-sidebar-container {
 			height: 32px;
 
 			.agents-manager-message-action-icon {
-				fill: var( --color-muted-foreground );
+				path {
+					fill: var( --color-muted-foreground );
+				}
 
 				&:not( .agents-manager-message-action-icon--copy ) {
 					width: 30px;
@@ -423,7 +425,7 @@ body.post-new-php.agents-manager-sidebar-container {
 				}
 			}
 
-			&:hover:not( :disabled ) .agents-manager-message-action-icon {
+			&:hover:not( :disabled ) .agents-manager-message-action-icon path {
 				fill: var( --color-foreground );
 			}
 		}
