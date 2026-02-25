@@ -120,7 +120,7 @@ export const CanvasControls = ( {
 				) }
 				{ showFeedbackPopover && onSubmitFeedbackText && (
 					<Popover
-						className="canvas-controls__feedback-popover dark"
+						className="canvas-controls__feedback-popover"
 						placement="bottom-start"
 						anchor={ feedbackAnchorRef.current }
 						onClose={ handleCloseFeedbackPopover }

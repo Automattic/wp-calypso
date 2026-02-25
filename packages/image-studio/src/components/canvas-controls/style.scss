@@ -5,6 +5,8 @@
  * Now uses MessageActions component for consistent styling
  */
 
+ @import "../styles/variables";
+
 .canvas-controls {
 	z-index: 100;
 	width: 100%;
@@ -53,11 +55,45 @@
 	align-items: center;
 }
 
-.canvas-controls__feedback-popover.dark .agents-manager-feedback-input {
+.canvas-controls__feedback-popover {
 	background-color: #2a2a2a;
-	border: 1px solid #2f2f2f;
+	border: 1px solid $color-border;
 	border-radius: 4px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-	width: 250px;
-	margin-top: 0;
+
+	.agents-manager-feedback-input {
+		background-color: #2a2a2a;
+		border: none;
+		width: 300px;
+		margin-top: 0;
+		padding: 12px;
+	}
+
+	.components-base-control__label {
+		color: $color-foreground;
+	}
+
+	.components-textarea-control__input {
+		background: #404040;
+		border-color: transparent;
+		color: $color-foreground;
+
+		&::placeholder {
+			color: $color-foreground;
+		}
+	}
+
+	.components-button.is-tertiary {
+		color: #ccc;
+
+		&:hover,
+		&:focus {
+			color: $color-foreground;
+		}
+	}
+
+	.components-button.is-primary:not(:disabled) {
+		background: var(--wp-components-color-accent, #3858e9);
+		color: $color-foreground;
+	}
 }
