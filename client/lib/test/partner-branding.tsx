@@ -8,7 +8,10 @@ import {
 	getEffectiveCiabConfig,
 	getEffectivePartnerAllowedSocialServices,
 	getCiabConfig,
+	getCiabConfigFromCurrentDomain,
+	getCiabConfigFromRedirectUrl,
 	getCiabConfigFromGarden,
+	detectCiabConfig,
 	getPartnerAllowedSocialServices,
 	getPartnerSignupTosElement,
 	persistCiabPartnerId,
@@ -66,6 +69,130 @@ describe( 'partner-branding', () => {
 
 			expect( config ).not.toBeNull();
 			expect( config?.id ).toBe( 'woo' );
+		} );
+	} );
+
+	describe( 'getCiabConfigFromCurrentDomain', () => {
+		const originalLocation = window.location;
+
+		afterEach( () => {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				writable: true,
+			} );
+		} );
+
+		test( 'returns partner config when current domain matches', () => {
+			Object.defineProperty( window, 'location', {
+				value: { hostname: 'my.woo.ai' },
+				writable: true,
+			} );
+
+			const result = getCiabConfigFromCurrentDomain();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns null when current domain does not match any partner', () => {
+			Object.defineProperty( window, 'location', {
+				value: { hostname: 'wordpress.com' },
+				writable: true,
+			} );
+
+			const result = getCiabConfigFromCurrentDomain();
+
+			expect( result ).toBeNull();
+		} );
+	} );
+
+	describe( 'getCiabConfigFromRedirectUrl', () => {
+		test( 'returns partner config when redirect URL hostname matches a partner domain', () => {
+			const result = getCiabConfigFromRedirectUrl( 'https://my.woo.ai/dashboard' );
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns partner config when redirect URL has path and query params', () => {
+			const result = getCiabConfigFromRedirectUrl(
+				'https://my.woo.ai/some/path?foo=bar&baz=1'
+			);
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns null when redirect URL hostname does not match any partner', () => {
+			const result = getCiabConfigFromRedirectUrl( 'https://example.com/dashboard' );
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when redirect URL is undefined', () => {
+			const result = getCiabConfigFromRedirectUrl( undefined );
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when redirect URL is an invalid URL', () => {
+			const result = getCiabConfigFromRedirectUrl( 'not-a-url' );
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'handles array of redirect URLs by using first value', () => {
+			const result = getCiabConfigFromRedirectUrl( [
+				'https://my.woo.ai/dashboard',
+				'https://example.com',
+			] );
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'does not match subdomains of partner domains', () => {
+			const result = getCiabConfigFromRedirectUrl( 'https://sub.my.woo.ai/dashboard' );
+
+			expect( result ).toBeNull();
+		} );
+	} );
+
+	describe( 'detectCiabConfig', () => {
+		test( 'detects from redirect_to param', () => {
+			const result = detectCiabConfig( 'https://my.woo.ai/dashboard' );
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'detects from oauth2_redirect param', () => {
+			const result = detectCiabConfig( undefined, 'https://my.woo.ai/dashboard' );
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'prefers redirect_to over oauth2_redirect', () => {
+			const result = detectCiabConfig(
+				'https://my.woo.ai/from-redirect',
+				'https://example.com/from-oauth'
+			);
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns null when no params match', () => {
+			const result = detectCiabConfig( 'https://example.com', 'https://other.com' );
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when both params are undefined', () => {
+			const result = detectCiabConfig( undefined, undefined );
+
+			expect( result ).toBeNull();
 		} );
 	} );
 
@@ -187,6 +314,7 @@ describe( 'partner-branding', () => {
 			expect( wooConfig.logo.src ).toBeDefined();
 			expect( wooConfig.ssoProviders ).toBeInstanceOf( Array );
 			expect( wooConfig.ssoProviders.length ).toBeGreaterThan( 0 );
+			expect( wooConfig.domains ).toContain( 'my.woo.ai' );
 		} );
 	} );
 } );

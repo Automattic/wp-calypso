@@ -29,7 +29,7 @@ interface LogoConfig {
  * All partner-specific settings are centralized here
  */
 export interface CiabPartnerConfig {
-	/** Partner identifier (matches URL ?from= param) */
+	/** Partner identifier */
 	id: string;
 	/** Display name shown in UI (e.g., "Woo") */
 	displayName: string;
@@ -43,6 +43,8 @@ export interface CiabPartnerConfig {
 	ssoProviders: SignupAllowedService[];
 	/** Font style identifier for login/signup headings */
 	fontStyle?: 'system';
+	/** Domains that identify this partner in redirect URLs (e.g., ['my.woo.ai']) */
+	domains?: string[];
 }
 
 /**
@@ -73,6 +75,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		},
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
+		domains: [ 'my.woo.ai' ],
 	},
 };
 
@@ -184,6 +187,72 @@ export function getCiabConfig( from: string | string[] | undefined ): CiabPartne
 	}
 
 	return null;
+}
+
+/**
+ * Get CIAB partner config by matching the current page's hostname against partner domains.
+ */
+export function getCiabConfigFromCurrentDomain(): CiabPartnerConfig | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+
+	const { hostname } = window.location;
+
+	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
+		if ( partnerConfig.domains?.includes( hostname ) ) {
+			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+				return partnerConfig;
+			}
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Get CIAB partner config by matching a redirect URL's hostname against partner domains.
+ * Checks redirect_to and oauth2_redirect query params for known partner domains.
+ */
+export function getCiabConfigFromRedirectUrl(
+	redirectUrl: string | string[] | undefined
+): CiabPartnerConfig | null {
+	const urlValue = Array.isArray( redirectUrl ) ? redirectUrl[ 0 ] : redirectUrl;
+
+	if ( ! urlValue ) {
+		return null;
+	}
+
+	try {
+		const { hostname } = new URL( urlValue );
+
+		for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
+			if ( partnerConfig.domains?.includes( hostname ) ) {
+				if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+					return partnerConfig;
+				}
+			}
+		}
+	} catch {
+		// Invalid URL, ignore
+	}
+
+	return null;
+}
+
+/**
+ * Detect CIAB partner config from the current domain and redirect URL params.
+ * Checks in order: current page domain, redirect_to, oauth2_redirect.
+ */
+export function detectCiabConfig(
+	redirectTo?: string | string[],
+	oauth2Redirect?: string | string[]
+): CiabPartnerConfig | null {
+	return (
+		getCiabConfigFromCurrentDomain() ??
+		getCiabConfigFromRedirectUrl( redirectTo ) ??
+		getCiabConfigFromRedirectUrl( oauth2Redirect )
+	);
 }
 
 export function getEffectiveCiabConfig(
