@@ -144,7 +144,7 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = clsx( 'search-stream__results', 'is-two-columns' );
+		const searchStreamResultsClasses = clsx( 'search-stream__results', 'reader-two-column' );
 
 		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,

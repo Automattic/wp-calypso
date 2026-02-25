@@ -2,6 +2,13 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.reader-two-column.tag-stream__main {
+	.reader__content,
+	.tag-stream__header {
+		max-width: 650px;
+	}
+}
+
 .is-section-reader .tag-stream__header {
 	&.has-description {
 		.info-popover {

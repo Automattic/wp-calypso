@@ -1,0 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+@import '@automattic/typography/styles/variables';
+
+.new-subscription-navigation .section-nav-tabs__list {
+	overflow: auto;
+
+	@include break-small {
+		overflow: hidden;
+	}
+}
+
+.reader-add-new {
+	padding: 10px 0;
+}
+
+.reader-add-new__form-title {
+	margin-bottom: 10px;
+}
+
+.reader-add-new__subscriptions-title {
+	font-size: $font-title-small;
+	font-weight: 500;
+	margin-bottom: 10px;
+}

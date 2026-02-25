@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import connectSite from 'calypso/lib/reader-connect-site';
 import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
-import SubscriptionListItem from '.';
+import ReaderSubscriptionListItem from '.';
 
 const noop = () => {};
 
@@ -76,7 +76,7 @@ class ConnectedSubscriptionListItem extends Component {
 		} = this.props;
 
 		return (
-			<SubscriptionListItem
+			<ReaderSubscriptionListItem
 				feedId={ feedId }
 				siteId={ siteId }
 				site={ site }
