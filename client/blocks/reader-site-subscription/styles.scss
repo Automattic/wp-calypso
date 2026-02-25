@@ -30,6 +30,10 @@
 		font-weight: 500;
 		padding: 0 0 0 0;
 
+		@media screen and (max-width: $break-medium) {
+			left: 48px;
+		}
+
 		svg {
 			margin-right: 0;
 		}

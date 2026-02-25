@@ -13,9 +13,8 @@ body.is-reader-page,
 body.is-reader-page,
 body.is-section-reader {
 	.main {
-		// Override default 720px.
 		&:not(.is-wide-layout) {
-			max-width: 768px;
+			max-width: 768px; // Override default 720px.
 		}
 
 		&:not(.no-padding) {

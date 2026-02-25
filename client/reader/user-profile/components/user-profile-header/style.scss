@@ -16,7 +16,7 @@
 			padding: 0 0 24px;
 			align-items: center;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@media only screen and ( max-width: 1300px ) {
 				padding-top: 20px;
 			}
 		}
