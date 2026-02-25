@@ -6,11 +6,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
-import calculate_plan_intent_php_script from './lib/calculate-plan-intent-php-script';
+import { DEFAULT_PLAN_INTENT } from './lib/constants';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 import './style.scss';
-export const DEFAULT_PLAN_INTENT = 'plans-playground';
 
 export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const { submit } = navigation;
@@ -21,35 +20,20 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
-	// For calculating the intent, which would make launch wait for it as well
-	const [ pgIntent, setPgIntent ] = useState< string | null >( DEFAULT_PLAN_INTENT );
-	const [ calculatingIntent, setCalculatingIntent ] = useState( false );
-	const intentPromiseRef = useRef< Promise< void > | null >( null );
+	const [ pgIntent, setPgIntent ] = useState< string >( DEFAULT_PLAN_INTENT );
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
 	};
 
 	const fetchIntent = () => {
-		const pgc = playgroundClientRef.current;
-		if ( ! pgc || calculatingIntent ) {
-			return;
+		setPgIntent( DEFAULT_PLAN_INTENT ); // hardcode
+		const playgroundId = query.get( 'playground' );
+		if ( playgroundId ) {
+			const keyName = 'playground-plans-intent-' + playgroundId;
+			window.localStorage.setItem( keyName, DEFAULT_PLAN_INTENT );
+			window.localStorage.setItem( keyName + '-ts', String( Math.floor( Date.now() / 1000 ) ) );
 		}
-
-		setCalculatingIntent( true );
-		intentPromiseRef.current = pgc
-			.run( {
-				code: calculate_plan_intent_php_script,
-			} )
-			.then( ( res: { text: string } ) => {
-				setPgIntent( res.text );
-				const keyName = 'playground-plans-intent-' + query.get( 'playground' );
-				window.localStorage.setItem( keyName, res.text || DEFAULT_PLAN_INTENT );
-				window.localStorage.setItem( keyName + '-ts', String( Math.floor( Date.now() / 1000 ) ) );
-			} )
-			.finally( () => {
-				setCalculatingIntent( false );
-			} );
 	};
 
 	const launchSite = async () => {
@@ -60,11 +44,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 		setIsLaunching( true );
 
 		try {
-			// Wait for any existing intent fetch to complete
-			if ( calculatingIntent && intentPromiseRef.current ) {
-				await intentPromiseRef.current;
-			}
-
 			recordTracksEvent( 'calypso_playground_launch_site', {
 				flow,
 				step: 'playground',
