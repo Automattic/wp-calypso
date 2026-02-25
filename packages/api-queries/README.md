@@ -86,6 +86,33 @@ These guidelines should be followed to ensure reusability of the queries and mut
     } );
     ```
 
+- Examples:
+
+  ```typescript
+  // ✅ Correct - callback on mutate call
+  const { mutate: saveSetting } = useMutation( saveSettingMutation() );
+  
+  const handleSave = () => {
+    saveSetting( newValue, {
+      onSuccess: () => {
+        // Component-specific success handling
+        setShowSuccessMessage( true );
+      },
+      onError: ( error ) => {
+        // Component-specific error handling
+        setError( error.message );
+      },
+    } );
+  };
+
+  // ❌ Incorrect - overrides mutation option callbacks
+  const { mutate: saveSetting } = useMutation( {
+    ...saveSettingMutation(),
+    onSuccess: () => setShowSuccessMessage( true ), // Breaks cache updates!
+    onError: ( error ) => setError( error.message ),
+  } );
+  ```
+
 ### Typings
 
 TanStack Query's types are very fancy. The downside is they can be hard to get write when written by hand. That is why TanStack Query provides the `queryOptions` and `mutationOptions` utility functions as described above. At runtime these functions are a no-op. But by you using them your editor will give you code completion and TypeScript will be able to confirm they are well formed.
