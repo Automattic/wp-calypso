@@ -8055,13 +8055,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/history@npm:1.114.29":
-  version: 1.114.29
-  resolution: "@tanstack/history@npm:1.114.29"
-  checksum: b9f2bc9cee4747ffd9870885b48ded156ed5d208059b3608f6d7767bda764b0a40987d62b9ad9b9b6ba946139c528d7ef31b52db06be882aafda759db4ba94bb
-  languageName: node
-  linkType: hard
-
 "@tanstack/history@npm:1.161.4, @tanstack/history@npm:^1.133.28":
   version: 1.161.4
   resolution: "@tanstack/history@npm:1.161.4"
@@ -8137,24 +8130,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-router@npm:^1.114.34":
-  version: 1.114.34
-  resolution: "@tanstack/react-router@npm:1.114.34"
-  dependencies:
-    "@tanstack/history": "npm:1.114.29"
-    "@tanstack/react-store": "npm:^0.7.0"
-    "@tanstack/router-core": "npm:1.114.33"
-    jsesc: "npm:^3.1.0"
-    tiny-invariant: "npm:^1.3.3"
-    tiny-warning: "npm:^1.0.3"
-  peerDependencies:
-    react: ">=18.0.0 || >=19.0.0"
-    react-dom: ">=18.0.0 || >=19.0.0"
-  checksum: 2e8a9bafbd5ce29bf854f0c32c693ea6a6277944fa05ef4077aaa7cfb9a58954cbb6ed31e6a74dec34aefda3370dfe6e2f5b482e95e7bf414d802792df4a5621
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-router@npm:^1.120.5":
+"@tanstack/react-router@npm:^1.114.34, @tanstack/react-router@npm:^1.120.5":
   version: 1.162.8
   resolution: "@tanstack/react-router@npm:1.162.8"
   dependencies:
@@ -8171,19 +8147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-store@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@tanstack/react-store@npm:0.7.0"
-  dependencies:
-    "@tanstack/store": "npm:0.7.0"
-    use-sync-external-store: "npm:^1.4.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 7e971ae3c547d0d803133f07737e7cc7cf381e959b4fab3f55755b28c194688392f5b921d3d43b8c9c81bdc721ea8878c680d4ca28a1ccd59e8a64ab7bcfd0f8
-  languageName: node
-  linkType: hard
-
 "@tanstack/react-store@npm:^0.9.1":
   version: 0.9.1
   resolution: "@tanstack/react-store@npm:0.9.1"
@@ -8194,17 +8157,6 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 8d03641c8619c2c92b5f05ea6a0c6060fe3efcab6bc2fb0990351f083263ed78fd220df62a427728f11137cba1cc2d0ca80175893a52d62a2e7057a4396e484a
-  languageName: node
-  linkType: hard
-
-"@tanstack/router-core@npm:1.114.33":
-  version: 1.114.33
-  resolution: "@tanstack/router-core@npm:1.114.33"
-  dependencies:
-    "@tanstack/history": "npm:1.114.29"
-    "@tanstack/store": "npm:^0.7.0"
-    tiny-invariant: "npm:^1.3.3"
-  checksum: fd4ecf8e62d5999b5066ad658cc31678359563c9bbe5c945eea44feeb81787e437c8dfa7e64e17e55ae6eb57253848246da05af2ac10e62f93c8ad94aeaf2197
   languageName: node
   linkType: hard
 
@@ -8220,13 +8172,6 @@ __metadata:
     tiny-invariant: "npm:^1.3.3"
     tiny-warning: "npm:^1.0.3"
   checksum: 7f43f123e097ffa098a2b1965801c2003b621223a78c7c7ea8ba785eacb1779dbfaafb1bd11bcba8fb55002088e46811c6070f7ae4ec571f3c30a68781ba7ea9
-  languageName: node
-  linkType: hard
-
-"@tanstack/store@npm:0.7.0, @tanstack/store@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@tanstack/store@npm:0.7.0"
-  checksum: 17003f1eba25bb6e9e2557ffb5d9c63cac09aa46f57d670a917727665ccc0b72d8d421ea1c07451257554aa5d14dbfff46875e7ed6a81f133b0738065f3162df
   languageName: node
   linkType: hard
 
@@ -21932,7 +21877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsesc@npm:^3.0.2, jsesc@npm:^3.1.0":
+"jsesc@npm:^3.0.2":
   version: 3.1.0
   resolution: "jsesc@npm:3.1.0"
   bin:
