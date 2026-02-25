@@ -53,22 +53,22 @@ The AI agent invokes these operations through the wp-orchestrator agentic flow -
 
 ## Key Files
 
-| File | Purpose |
-| --- | --- |
-| `src/index.tsx` | Entry point (`initBlockNotes` function) |
-| `src/store/index.ts` | Redux store (in-process notes, session ID) |
-| `src/abilities/index.ts` | Ability registration & callback (get/reply) |
-| `src/abilities/utils.ts` | CRUD operations (getBlockNotes, replyToNote, convertEntityNoteFormat) |
-| `src/components/subscriptions/index.tsx` | Main orchestration: monitors notes, triggers agent |
-| `src/components/mention-autocomplete/index.tsx` | Placeholder text & @ai pill styling |
-| `src/components/thinking-indicator/index.tsx` | Shimmer loading indicator |
-| `src/agent-config.ts` | Agent configuration factory |
-| `src/hooks/use-agent-config.ts` | Hook for async agent config loading |
-| `src/utils/tool-provider.ts` | Tool provider (filters abilities for agent) |
-| `src/utils/content.ts` | @ai mention detection (hasAiMention, splitByAiMention) |
-| `src/utils/session.ts` | SHA-256 deterministic thread session IDs |
-| `src/utils/tracking.ts` | Analytics (block_note_* events) |
-| `src/utils/feature-flag.ts` | Feature flag check (window.blockNotesData.enabled) |
+| File                                            | Purpose                                                               |
+| ----------------------------------------------- | --------------------------------------------------------------------- |
+| `src/index.tsx`                                 | Entry point (`initBlockNotes` function)                               |
+| `src/store/index.ts`                            | Redux store (in-process notes, session ID)                            |
+| `src/abilities/index.ts`                        | Ability registration & callback (get/reply)                           |
+| `src/abilities/utils.ts`                        | CRUD operations (getBlockNotes, replyToNote, convertEntityNoteFormat) |
+| `src/components/subscriptions/index.tsx`        | Main orchestration: monitors notes, triggers agent                    |
+| `src/components/mention-autocomplete/index.tsx` | Placeholder text & @ai pill styling                                   |
+| `src/components/thinking-indicator/index.tsx`   | Shimmer loading indicator                                             |
+| `src/agent-config.ts`                           | Agent configuration factory                                           |
+| `src/hooks/use-agent-config.ts`                 | Hook for async agent config loading                                   |
+| `src/utils/tool-provider.ts`                    | Tool provider (filters abilities for agent)                           |
+| `src/utils/content.ts`                          | @ai mention detection (hasAiMention, splitByAiMention)                |
+| `src/utils/session.ts`                          | SHA-256 deterministic thread session IDs                              |
+| `src/utils/tracking.ts`                         | Analytics (block*note*\* events)                                      |
+| `src/utils/feature-flag.ts`                     | Feature flag check (window.blockNotesData.enabled)                    |
 
 ## File Organization
 
@@ -137,10 +137,10 @@ types/
 
 ### What agents can run autonomously
 
-| Test | Command | Needs sandbox? |
-| --- | --- | --- |
-| Unit tests | `yarn jest packages/block-notes --config packages/block-notes/jest.config.js` | No |
-| Type check | `yarn workspace @automattic/block-notes tsc --build --dry` | No |
+| Test       | Command                                                                       | Needs sandbox? |
+| ---------- | ----------------------------------------------------------------------------- | -------------- |
+| Unit tests | `yarn jest packages/block-notes --config packages/block-notes/jest.config.js` | No             |
+| Type check | `yarn workspace @automattic/block-notes tsc --build --dry`                    | No             |
 
 Always run both before creating a PR.
 
