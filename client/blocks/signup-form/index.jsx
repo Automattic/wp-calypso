@@ -100,6 +100,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		useConnectScreenActions: PropTypes.bool,
 		disableTosText: PropTypes.bool,
 		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 
@@ -786,6 +787,7 @@ class SignupForm extends Component {
 						onInputChange={ this.handleChangeEvent }
 						onCreateAccountError={ this.handleCreateAccountError }
 						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+						useConnectScreenActions={ this.props.useConnectScreenActions }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
@@ -811,6 +813,7 @@ class SignupForm extends Component {
 							onInputChange={ this.handleChangeEvent }
 							onCreateAccountError={ this.handleCreateAccountError }
 							onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+							useConnectScreenActions={ this.props.useConnectScreenActions }
 							{ ...formProps }
 						>
 							{ emailErrorMessage && (
