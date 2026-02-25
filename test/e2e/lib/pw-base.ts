@@ -33,7 +33,8 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	EditorPage,
-	EmailClient,
+	IEmailClient,
+	createEmailClient,
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
@@ -131,8 +132,9 @@ export const test = base.extend<
 		accountP2: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
+		 * Can be either Mailosaur (default) or Mailpit based on EMAIL_PROVIDER env var.
 		 */
-		clientEmail: EmailClient;
+		clientEmail: IEmailClient;
 		/**
 		 * Client for interacting with the WordPress.com REST API.
 		 */
@@ -392,7 +394,7 @@ export const test = base.extend<
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
-		const emailClient = new EmailClient();
+		const emailClient = createEmailClient();
 		await use( emailClient );
 	},
 	clientRestAPI: async ( { accountGivenByEnvironment }, use ) => {

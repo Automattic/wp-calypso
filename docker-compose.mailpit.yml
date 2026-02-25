@@ -1,0 +1,46 @@
+# Docker Compose configuration for Mailpit - Email testing service
+#
+# Usage:
+#   Start:  docker-compose -f docker-compose.mailpit.yml up -d
+#   Stop:   docker-compose -f docker-compose.mailpit.yml down
+#   Logs:   docker-compose -f docker-compose.mailpit.yml logs -f
+#
+# Access:
+#   Web UI: http://localhost:8025
+#   SMTP:   localhost:1025
+#
+# Run E2E tests with Mailpit:
+#   EMAIL_PROVIDER=mailpit yarn test:e2e
+
+version: '3.8'
+
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web UI and API
+      - "1025:1025"   # SMTP server
+    environment:
+      # Timezone configuration
+      TZ: UTC
+      # Maximum number of messages to store (default: 500)
+      MP_MAX_MESSAGES: 500
+      # Enable verbose logging (set to "true" for debugging)
+      MP_VERBOSE: "false"
+      # Database path for persistent storage
+      MP_DATABASE: /data/mailpit.db
+    volumes:
+      # Persist emails between container restarts
+      - mailpit-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8025/api/v1/info"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  mailpit-data:
+    name: calypso-mailpit-data
