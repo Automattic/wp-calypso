@@ -76,12 +76,10 @@ nock( 'https://public-api.wordpress.com:443' )
 
 **Tips:**
 
-- Always call `nock.cleanAll()` in `afterEach` to avoid leaking interceptors between tests.
 - Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
-- Capture the request body and assert with Jest (as below) rather than asserting inside
-  nock's body callback — Jest matchers produce clearer diffs on failure.
+- Capture the request body and assert with Jest (as below) rather than asserting inside nock's body callback — Jest matchers produce clearer diffs on failure.
 
 #### Asserting the request body
 
