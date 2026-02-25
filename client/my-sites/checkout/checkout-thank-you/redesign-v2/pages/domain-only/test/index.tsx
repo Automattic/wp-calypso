@@ -133,6 +133,14 @@ describe( 'DomainOnly', () => {
 				dashboardLink( `/emails/choose-email-solution/${ mockDomainPurchase.meta }` )
 			);
 		} );
+
+		it( 'renders the top text with the domain name', () => {
+			renderComponent();
+
+			expect(
+				screen.getByText( `Get a professional email like hello@${ mockDomainPurchase.meta }.` )
+			).toBeVisible();
+		} );
 	} );
 
 	describe( 'Attach to an existing site', () => {

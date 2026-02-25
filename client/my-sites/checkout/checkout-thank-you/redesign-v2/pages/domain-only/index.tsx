@@ -75,7 +75,11 @@ export default function DomainOnly( {
 				<OptionContent
 					illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
 					titleText={ translate( 'Add a mailbox' ) }
-					topText={ translate( 'Stand out with a professional email address.' ) }
+					topText={ translate( 'Get a professional email like hello@%(domain)s.', {
+						args: {
+							domain: domainPurchase.meta,
+						},
+					} ) }
 					href={
 						dashboardOptIn
 							? dashboardLink( `/emails/choose-email-solution/${ domainPurchase.meta }` )
