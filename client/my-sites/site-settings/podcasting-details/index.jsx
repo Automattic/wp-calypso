@@ -133,7 +133,14 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				}
 			}
 		},
-		[ disabled, isPodcastingEnabled, fields.podcasting_title, settings?.blogname, updateFields, submitForm ]
+		[
+			disabled,
+			isPodcastingEnabled,
+			fields.podcasting_title,
+			settings?.blogname,
+			updateFields,
+			submitForm,
+		]
 	);
 
 	const onCategorySelected = useCallback(
@@ -214,7 +221,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					label={ translate( 'Enable podcasting on this site' ) }
 				/>
-				{ isPodcastingEnabled && <PodcastFeedUrl categoryId={ podcastingCategoryId } /> }
 			</Card>
 
 			{ /* Upsell nudge for audio upload */ }
@@ -285,6 +291,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 								/>
 							) }
 						</FormFieldset>
+						<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 						{ isPodcastingEnabled && (
 							<Button className="podcasting-details__publish-button" href={ newPostUrl }>
 								{ translate( 'Create Episode' ) }
