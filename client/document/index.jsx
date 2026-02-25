@@ -253,7 +253,6 @@ class Document extends Component {
 						config( 'blackbox_api_key' ) && (
 							<script
 								nonce={ inlineScriptNonce }
-								async
 								defer
 								src={ config( 'blackbox_url' ) }
 								data-apikey={ config( 'blackbox_api_key' ) }
