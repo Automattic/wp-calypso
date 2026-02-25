@@ -191,6 +191,10 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			box-sizing: border-box;
 			height: calc( var( --masterbar-height ) + 1px );
 
+			.masterbar__item-wrapper .masterbar__item-my-sites {
+				border-top-left-radius: $main-border-radius;
+			}
+
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
 			}
@@ -207,6 +211,12 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			.masterbar__item.is-active {
 				cursor: pointer;
 			}
+
+		}
+
+		// Hide the outward border that protrudes into the agents manager sidebar
+		.is-global-sidebar-visible .masterbar__item.has-global-border::after {
+			display: none;
 		}
 
 		#content {
