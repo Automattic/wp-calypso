@@ -9,13 +9,15 @@ type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
  * Only plain-text agent messages (no `component`, `context`, or tool parts) qualify.
  */
 function getCopyableText( message: UIMessage ): string {
-	if ( ! message.content?.every( ( part ) => part.type === 'text' ) ) {
+	const hasNonTextParts = ! message.content?.every( ( part ) => part.type === 'text' );
+	if ( hasNonTextParts ) {
 		return '';
 	}
 
 	// Exclude tool messages (JSON text with a `tool_id` field).
+	const firstPartText = message.content[ 0 ]?.text ?? '';
 	try {
-		if ( JSON.parse( message.content[ 0 ]?.text ?? '' ).tool_id ) {
+		if ( JSON.parse( firstPartText ).tool_id ) {
 			return '';
 		}
 	} catch {
