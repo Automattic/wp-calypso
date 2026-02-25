@@ -4,7 +4,6 @@
  */
 import { updateBigSkyPlugin } from '@automattic/api-core';
 import { bigSkyPluginQuery, sitesQuery, siteQueryFilter } from '@automattic/api-queries';
-import { CompactCard } from '@automattic/components';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -21,7 +20,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import LegacySectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
@@ -29,8 +27,6 @@ import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
 
 import './style.scss';
-
-const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
 
 function getSiteDisplayName( site ) {
 	return site.name || site.URL?.replace( /^https?:\/\//, '' ) || String( site.ID );
@@ -40,9 +36,6 @@ export default function McpAiAssistant( { path } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const tanstackQueryClient = useQueryClient();
-	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isSquareCorners = variation === 'F' || variation === 'G';
-	const isLegacyStyle = variation === 'F';
 
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 
@@ -167,12 +160,10 @@ export default function McpAiAssistant( { path } ) {
 	let searchDescription;
 	if ( isGlobalOn ) {
 		searchDescription = translate( 'Search for eligible sites to disable the AI assistant.' );
-	} else if ( variation === 'F' || variation === 'G' ) {
+	} else {
 		searchDescription = translate(
 			'The WordPress.com AI assistant is disabled. Add it to individual sites here.'
 		);
-	} else {
-		searchDescription = translate( 'Search for a site to enable the AI assistant.' );
 	}
 	const listTitle = isGlobalOn ? translate( 'Restricted sites' ) : translate( 'Enabled sites' );
 	const listDescription = isGlobalOn
@@ -198,144 +189,68 @@ export default function McpAiAssistant( { path } ) {
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 				{ pageTitle }
 			</HeaderCake>
-			{ isLegacyStyle ? (
-				<>
-					<LegacySectionHeader label={ searchTitle }>
-						{ mutation.isPending && isAddingRef.current && (
-							<Spinner style={ { width: 16, height: 16, margin: 0 } } />
-						) }
-					</LegacySectionHeader>
-					<Card isRounded={ false }>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
-									{ searchDescription }
-								</p>
-								<div
-									style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
-								>
-									<ComboboxControl
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-										label={ translate( 'Search sites' ) }
-										hideLabelFromVision
-										value={ null }
-										onChange={ handleSiteSelect }
-										options={ siteOptions }
-										placeholder={ translate( 'Search for a site\u2026' ) }
-									/>
-								</div>
-							</VStack>
-						</CardBody>
-					</Card>
-
-					{ listedSites.length > 0 && (
-						<>
-							<LegacySectionHeader label={ listTitle } className="mcp__section-header" />
-							<CompactCard>
-								<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
-									{ listDescription }
-								</p>
-							</CompactCard>
-							{ listedSites.map( ( site ) => (
-								<CompactCard key={ site.id } className="mcp__site-row">
-									{ site.iconUrl ? (
-										<img
-											className="mcp__site-row-icon"
-											src={ site.iconUrl }
-											alt=""
-											width={ 36 }
-											height={ 36 }
-										/>
-									) : (
-										<span className="mcp__site-row-icon mcp__site-row-icon--fallback">
-											{ site.name.charAt( 0 ) }
-										</span>
-									) }
-									<div className="mcp__site-row-info">
-										{ site.name }
-										<small>{ site.domain }</small>
-									</div>
-									<Button
-										variant="secondary"
-										size="compact"
-										disabled={ mutation.isPending }
-										onClick={ () => handleRemoveSite( site.id ) }
-									>
-										{ translate( 'Remove' ) }
-									</Button>
-								</CompactCard>
-							) ) }
-						</>
-					) }
-				</>
-			) : (
-				<VStack spacing={ 6 }>
-					<Card
-						isRounded={ ! isSquareCorners }
-						style={ isSquareCorners ? { borderRadius: 0 } : undefined }
-					>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									level={ 3 }
-									title={ searchTitle }
-									description={ searchDescription }
-									actions={
-										mutation.isPending && isAddingRef.current ? (
-											<Spinner style={ { width: 16, height: 16, margin: 0 } } />
-										) : undefined
-									}
-								/>
-
-								<div
-									style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
-								>
-									<ComboboxControl
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-										label={ translate( 'Search sites' ) }
-										hideLabelFromVision
-										value={ null }
-										onChange={ handleSiteSelect }
-										options={ siteOptions }
-										placeholder={ translate( 'Search for a site\u2026' ) }
-									/>
-								</div>
-							</VStack>
-						</CardBody>
-					</Card>
-
-					{ listedSites.length > 0 && (
+			<VStack spacing={ 6 }>
+				<Card isRounded={ false } style={ { borderRadius: 0 } }>
+					<CardBody>
 						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
-							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-							<div className={ isSquareCorners ? 'mcp-square-corners' : undefined }>
-								<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
-								<ActionList>
-									{ listedSites.map( ( site ) => (
-										<ActionList.ActionItem
-											key={ site.id }
-											title={ site.name }
-											description={ site.domain }
-											actions={
-												<Button
-													variant="secondary"
-													size="compact"
-													disabled={ mutation.isPending }
-													onClick={ () => handleRemoveSite( site.id ) }
-												>
-													{ translate( 'Remove' ) }
-												</Button>
-											}
-										/>
-									) ) }
-								</ActionList>
+							<SectionHeader
+								level={ 3 }
+								title={ searchTitle }
+								description={ searchDescription }
+								actions={
+									mutation.isPending && isAddingRef.current ? (
+										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
+									) : undefined
+								}
+							/>
+
+							<div
+								style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
+							>
+								<ComboboxControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									label={ translate( 'Search sites' ) }
+									hideLabelFromVision
+									value={ null }
+									onChange={ handleSiteSelect }
+									options={ siteOptions }
+									placeholder={ translate( 'Search for a site\u2026' ) }
+								/>
 							</div>
 						</VStack>
-					) }
-				</VStack>
-			) }
+					</CardBody>
+				</Card>
+
+				{ listedSites.length > 0 && (
+					<VStack spacing={ 4 }>
+						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className="mcp-square-corners">
+							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
+							<ActionList>
+								{ listedSites.map( ( site ) => (
+									<ActionList.ActionItem
+										key={ site.id }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ translate( 'Remove' ) }
+											</Button>
+										}
+									/>
+								) ) }
+							</ActionList>
+						</div>
+					</VStack>
+				) }
+			</VStack>
 		</Main>
 	);
 }

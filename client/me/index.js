@@ -41,13 +41,12 @@ export default function () {
 		clientRender
 	);
 
-	// EXPLORE: temporarily pointing to mcpExplore (original: controller.mcp)
 	page(
 		'/me/mcp',
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
 		controller.sidebar,
-		controller.mcpExplore,
+		controller.mcp,
 		makeLayout,
 		clientRender
 	);
@@ -57,15 +56,6 @@ export default function () {
 		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
 		controller.sidebar,
 		controller.mcpSetup,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/me/mcp-tools',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/preferences/ai-and-mcp/tools' ),
-		controller.sidebar,
-		controller.mcpTools,
 		makeLayout,
 		clientRender
 	);

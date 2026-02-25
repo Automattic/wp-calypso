@@ -13,6 +13,23 @@
 		margin-top: 0;
 	}
 
+	// Dashboard summary-button-list styles not loaded in legacy Calypso
+	.dashboard-summary-button-list__children-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.dashboard-summary-button-list.has-density-medium {
+		.dashboard-summary-button-list__children-list-wrapper {
+			padding: 0;
+		}
+
+		.dashboard-summary-button-list__children-list-item:last-child > * {
+			border-bottom: none;
+		}
+	}
+
 	// Match WP Card borders to Calypso CompactCard borders
 	.components-card {
 		box-shadow: 0 0 0 1px var(--color-border-subtle);

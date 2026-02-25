@@ -1,15 +1,9 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ToggleControl,
-	PanelBody,
-	Panel,
-} from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { EXPLORATIONS_STORAGE_KEY } from '../../../app/explorations-helper';
 import { mcpToolsCategoryRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -52,15 +46,7 @@ export default function McpToolsCategory() {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
 
-	// Options C, D, E, F & G merge Write + Manage into a single "Write" page.
-	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isMergedWrite =
-		( variation === 'C' ||
-			variation === 'D' ||
-			variation === 'E' ||
-			variation === 'F' ||
-			variation === 'G' ) &&
-		categorySlug === 'write';
+	const isMergedWrite = categorySlug === 'write';
 
 	// Filter to tools matching this permission level
 	const tools = allTools.filter( ( [ , tool ] ) => {
@@ -162,7 +148,7 @@ export default function McpToolsCategory() {
 					<hr
 						key={ `divider-${ toolId }` }
 						style={ {
-							margin: '8px 0',
+							margin: 0,
 							border: 'none',
 							borderTop: '1px solid #e0e0e0',
 							width: '100%',
@@ -190,138 +176,10 @@ export default function McpToolsCategory() {
 		? __( 'Create, edit, and delete content, plugins, and settings.' )
 		: permissionLevel?.description ?? '';
 
-	// Options 3, 4 & 5 (Flat) link directly here, skipping the tools index page.
-	// Exclude the "MCP access" breadcrumb segment so the trail reads
-	// "Preferences / AI and MCP / [Read|Write|Manage]".
-	const isFlat =
-		variation === 'C' ||
-		variation === 'D' ||
-		variation === 'E' ||
-		variation === 'F' ||
-		variation === 'G';
-	const excludeHrefs = isFlat ? [ '/me/preferences/ai-and-mcp/tools' ] : undefined;
-	const breadcrumbLength = isFlat ? 3 : 4;
-
-	const isAccordion = variation === 'E';
-	const isToggleHeader = variation === 'F' || variation === 'G';
-	let isFirstCategory = true;
+	const excludeHrefs = [ '/me/preferences/ai-and-mcp/tools' ];
+	const breadcrumbLength = 3;
 
 	const renderCategoryContent = () => {
-		if ( isToggleHeader ) {
-			return (
-				<VStack spacing={ 8 }>
-					{ CATEGORY_ORDER.map( ( categoryName ) => {
-						const categoryTools = grouped[ categoryName ];
-						if ( ! categoryTools || categoryTools.length === 0 ) {
-							return null;
-						}
-
-						const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
-
-						return (
-							<Card key={ categoryName }>
-								<CardBody>
-									<SectionHeader
-										level={ 3 }
-										title={ categoryName }
-										actions={
-											<ToggleControl
-												__nextHasNoMarginBottom
-												checked={ allEnabled }
-												label={
-													<Text weight={ variation === 'G' ? 400 : 500 }>
-														{ __( 'Enable all' ) }
-													</Text>
-												}
-												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
-											/>
-										}
-									/>
-								</CardBody>
-								<hr style={ { margin: 0, border: 'none', borderTop: '1px solid #e0e0e0' } } />
-								<CardBody>
-									<VStack spacing={ 4 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
-								</CardBody>
-							</Card>
-						);
-					} ) }
-				</VStack>
-			);
-		}
-
-		if ( isAccordion ) {
-			return (
-				<Card>
-					<CardBody style={ { padding: 0 } }>
-						<Panel>
-							{ CATEGORY_ORDER.map( ( categoryName ) => {
-								const categoryTools = grouped[ categoryName ];
-								if ( ! categoryTools || categoryTools.length === 0 ) {
-									return null;
-								}
-
-								const enabledCount = categoryTools.filter( ( [ , tool ] ) => tool.enabled ).length;
-								const allEnabled = enabledCount === categoryTools.length;
-								const badge = sprintf(
-									/* translators: %1$d is enabled count, %2$d is total */
-									__( '%1$d/%2$d' ),
-									enabledCount,
-									categoryTools.length
-								);
-
-								// First category opens by default, rest closed.
-								const shouldOpen = isFirstCategory;
-								isFirstCategory = false;
-
-								const panelTitle = `${ categoryName }  —  ${ badge }`;
-
-								return (
-									<PanelBody key={ categoryName } title={ panelTitle } initialOpen={ shouldOpen }>
-										<VStack spacing={ 4 }>
-											<ToggleControl
-												__nextHasNoMarginBottom
-												checked={ allEnabled }
-												disabled={ mutation.isPending }
-												label={
-													<Text weight={ 500 }>
-														{ allEnabled
-															? sprintf(
-																	/* translators: %s is the category name */
-																	__( 'Disable all for %s' ),
-																	categoryName
-															  )
-															: sprintf(
-																	/* translators: %s is the category name */
-																	__( 'Enable all for %s' ),
-																	categoryName
-															  ) }
-													</Text>
-												}
-												onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
-											/>
-
-											<VStack spacing={ 4 }>
-												{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
-													<ToggleControl
-														key={ toolId }
-														__nextHasNoMarginBottom
-														checked={ tool.enabled }
-														label={ tool.title }
-														help={ tool.description }
-														onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-													/>
-												) ) }
-											</VStack>
-										</VStack>
-									</PanelBody>
-								);
-							} ) }
-						</Panel>
-					</CardBody>
-				</Card>
-			);
-		}
-
 		return (
 			<VStack spacing={ 8 }>
 				{ CATEGORY_ORDER.map( ( categoryName ) => {
@@ -335,38 +193,22 @@ export default function McpToolsCategory() {
 					return (
 						<Card key={ categoryName }>
 							<CardBody>
-								<VStack spacing={ 8 }>
-									<SectionHeader level={ 3 } title={ categoryName } />
-
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ allEnabled }
-										disabled={ mutation.isPending }
-										label={
-											<Text weight={ 500 }>
-												{ sprintf(
-													/* translators: %s is the category name, e.g. "Posts" */
-													__( 'Enable all for %s' ),
-													categoryName
-												) }
-											</Text>
-										}
-										onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
-									/>
-
-									<VStack spacing={ 3 }>
-										{ categoryTools.map( ( [ toolId, tool ]: [ string, McpAbility ] ) => (
-											<ToggleControl
-												key={ toolId }
-												__nextHasNoMarginBottom
-												checked={ tool.enabled }
-												label={ tool.title }
-												help={ tool.description }
-												onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-											/>
-										) ) }
-									</VStack>
-								</VStack>
+								<SectionHeader
+									level={ 3 }
+									title={ categoryName }
+									actions={
+										<ToggleControl
+											__nextHasNoMarginBottom
+											checked={ allEnabled }
+											label={ <Text weight={ 400 }>{ __( 'Enable all' ) }</Text> }
+											onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
+										/>
+									}
+								/>
+							</CardBody>
+							<hr style={ { margin: 0, border: 'none', borderTop: '1px solid #e0e0e0' } } />
+							<CardBody>
+								<VStack spacing={ 4 }>{ renderToolsWithDividers( categoryTools ) }</VStack>
 							</CardBody>
 						</Card>
 					);

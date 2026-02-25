@@ -3,7 +3,6 @@
  * Legacy port of: client/dashboard/me/mcp/sites/index.tsx
  */
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
-import { CompactCard } from '@automattic/components';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -19,7 +18,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import LegacySectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
@@ -28,8 +26,6 @@ import { SectionHeader } from '../../dashboard/components/section-header';
 import { getDisabledSiteIds } from './utils';
 
 import './style.scss';
-
-const EXPLORATIONS_STORAGE_KEY = 'mcp-explore-variation';
 
 function getSiteDisplayName( site ) {
 	return site.name || site.URL?.replace( /^https?:\/\//, '' ) || String( site.ID );
@@ -42,10 +38,6 @@ export default function McpSites( { path } ) {
 
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
-
-	const variation = localStorage.getItem( EXPLORATIONS_STORAGE_KEY );
-	const isSquareCorners = variation === 'F' || variation === 'G';
-	const isLegacyStyle = variation === 'F';
 
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 	const disabledSites = disabledSiteIds.map( ( siteId ) => {
@@ -131,143 +123,68 @@ export default function McpSites( { path } ) {
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 				{ translate( 'External AI access exceptions' ) }
 			</HeaderCake>
-			{ isLegacyStyle ? (
-				<>
-					<LegacySectionHeader label={ translate( 'Add an exception' ) }>
-						{ mutation.isPending && isAddingRef.current && (
-							<Spinner style={ { width: 16, height: 16, margin: 0 } } />
-						) }
-					</LegacySectionHeader>
-					<Card isRounded={ false }>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
-									{ translate( 'Search for sites to disable external AI access.' ) }
-								</p>
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ translate( 'Search sites' ) }
-									hideLabelFromVision
-									value={ null }
-									onChange={ handleSiteSelect }
-									options={ siteOptions }
-									placeholder={ translate( 'Search for a site\u2026' ) }
-								/>
-							</VStack>
-						</CardBody>
-					</Card>
-
-					{ disabledSites.length > 0 && (
-						<>
-							<LegacySectionHeader
-								label={ translate( 'Restricted sites' ) }
-								className="mcp__section-header"
-							/>
-							<CompactCard>
-								<p style={ { color: '#646970', margin: 0, fontSize: '14px' } }>
-									{ translate( 'These sites will not have MCP access.' ) }
-								</p>
-							</CompactCard>
-							{ disabledSites.map( ( site ) => (
-								<CompactCard key={ site.id } className="mcp__site-row">
-									{ site.iconUrl ? (
-										<img
-											className="mcp__site-row-icon"
-											src={ site.iconUrl }
-											alt=""
-											width={ 36 }
-											height={ 36 }
-										/>
-									) : (
-										<span className="mcp__site-row-icon mcp__site-row-icon--fallback">
-											{ site.name.charAt( 0 ) }
-										</span>
-									) }
-									<div className="mcp__site-row-info">
-										{ site.name }
-										<small>{ site.domain }</small>
-									</div>
-									<Button
-										variant="secondary"
-										size="compact"
-										disabled={ mutation.isPending }
-										onClick={ () => handleRemoveSite( site.id ) }
-									>
-										{ translate( 'Remove' ) }
-									</Button>
-								</CompactCard>
-							) ) }
-						</>
-					) }
-				</>
-			) : (
-				<VStack spacing={ 6 }>
-					<Card
-						isRounded={ ! isSquareCorners }
-						style={ isSquareCorners ? { borderRadius: 0 } : undefined }
-					>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									level={ 3 }
-									title={ translate( 'Add an exception' ) }
-									description={ translate( 'Search for sites to disable external AI access.' ) }
-									actions={
-										mutation.isPending && isAddingRef.current ? (
-											<Spinner style={ { width: 16, height: 16, margin: 0 } } />
-										) : undefined
-									}
-								/>
-
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ translate( 'Search sites' ) }
-									hideLabelFromVision
-									value={ null }
-									onChange={ handleSiteSelect }
-									options={ siteOptions }
-									placeholder={ translate( 'Search for a site\u2026' ) }
-								/>
-							</VStack>
-						</CardBody>
-					</Card>
-
-					{ disabledSites.length > 0 && (
+			<VStack spacing={ 6 }>
+				<Card isRounded={ false } style={ { borderRadius: 0 } }>
+					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								level={ 3 }
-								title={ translate( 'Restricted sites' ) }
-								description={ translate( 'These sites will not have MCP access.' ) }
+								title={ translate( 'Add an exception' ) }
+								description={ translate( 'Search for sites to disable external AI access.' ) }
+								actions={
+									mutation.isPending && isAddingRef.current ? (
+										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
+									) : undefined
+								}
 							/>
-							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-							<div className={ isSquareCorners ? 'mcp-square-corners' : undefined }>
-								<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
-								<ActionList>
-									{ disabledSites.map( ( site ) => (
-										<ActionList.ActionItem
-											key={ site.id }
-											title={ site.name }
-											description={ site.domain }
-											actions={
-												<Button
-													variant="secondary"
-													size="compact"
-													disabled={ mutation.isPending }
-													onClick={ () => handleRemoveSite( site.id ) }
-												>
-													{ translate( 'Remove' ) }
-												</Button>
-											}
-										/>
-									) ) }
-								</ActionList>
-							</div>
+
+							<ComboboxControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								label={ translate( 'Search sites' ) }
+								hideLabelFromVision
+								value={ null }
+								onChange={ handleSiteSelect }
+								options={ siteOptions }
+								placeholder={ translate( 'Search for a site\u2026' ) }
+							/>
 						</VStack>
-					) }
-				</VStack>
-			) }
+					</CardBody>
+				</Card>
+
+				{ disabledSites.length > 0 && (
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ translate( 'Restricted sites' ) }
+							description={ translate( 'These sites will not have MCP access.' ) }
+						/>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className="mcp-square-corners">
+							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
+							<ActionList>
+								{ disabledSites.map( ( site ) => (
+									<ActionList.ActionItem
+										key={ site.id }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ translate( 'Remove' ) }
+											</Button>
+										}
+									/>
+								) ) }
+							</ActionList>
+						</div>
+					</VStack>
+				) }
+			</VStack>
 		</Main>
 	);
 }

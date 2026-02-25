@@ -942,8 +942,7 @@ export const mcpIndexRoute = createRoute( {
 	getParentRoute: () => mcpRoute,
 	path: '/',
 } ).lazy( () =>
-	// EXPLORE: temporarily pointing to explore file (original: '../../me/mcp')
-	import( '../../me/mcp/index-explore' ).then( ( d ) =>
+	import( '../../me/mcp' ).then( ( d ) =>
 		createLazyRoute( 'mcp' )( {
 			component: d.default,
 		} )
@@ -982,17 +981,6 @@ export const mcpToolsRoute = createRoute( {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
 } );
-
-export const mcpToolsIndexRoute = createRoute( {
-	getParentRoute: () => mcpToolsRoute,
-	path: '/',
-} ).lazy( () =>
-	import( '../../me/mcp/tools' ).then( ( d ) =>
-		createLazyRoute( 'mcp-tools' )( {
-			component: d.default,
-		} )
-	)
-);
 
 export const mcpToolsCategoryRoute = createRoute( {
 	head: () => ( {
@@ -1073,7 +1061,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 						mcpRoute.addChildren( [
 							mcpIndexRoute,
 							mcpSetupRoute,
-							mcpToolsRoute.addChildren( [ mcpToolsIndexRoute, mcpToolsCategoryRoute ] ),
+							mcpToolsRoute.addChildren( [ mcpToolsCategoryRoute ] ),
 							mcpSitesRoute,
 							mcpAiAssistantRoute,
 						] ),

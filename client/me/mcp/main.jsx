@@ -1,14 +1,24 @@
-import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateBigSkyPlugin } from '@automattic/api-core';
 import {
-	Button,
+	bigSkyPluginQuery,
+	siteQueryFilter,
+	sitesQuery,
+	userSettingsQuery,
+	userSettingsMutation,
+} from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import SummaryButton from '@automattic/components/src/summary-button';
+import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	ToggleControl,
 	Card,
 	CardBody,
+	CardHeader,
+	Icon,
+	Spinner,
 } from '@wordpress/components';
+import { connection, notAllowed, seen, pencil } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,13 +31,22 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
-import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-primary-site/site-dropdown';
-import { getAccountMcpAbilities, getDisabledSiteIds, getSiteAccountToolsEnabled } from './utils';
+import { getPermissionLevel } from '../../dashboard/me/mcp/categories';
+import { getAccountMcpAbilities, getDisabledSiteIds } from './utils';
+
+// Big Sky star icon — paths from BigSkyLogo.CentralLogo (heartless variant)
+// without explicit fill attributes so CSS hover color changes work via `currentColor`.
+const bigSkyIcon = (
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+		<path d="m19.223 11.55-3.095-1.068a4.21 4.21 0 0 1-2.61-2.61L12.45 4.777c-.145-.426-.755-.426-.9 0l-1.068 3.095a4.21 4.21 0 0 1-2.61 2.61L4.777 11.55c-.426.145-.426.755 0 .9l3.095 1.068a4.21 4.21 0 0 1 2.61 2.61l1.068 3.095c.145.426.755.426.9 0l1.068-3.095a4.21 4.21 0 0 1 2.61-2.61l3.095-1.068c.426-.145.426-.755 0-.9Zm-3.613.68-1.547.533a2.105 2.105 0 0 0-1.306 1.305l-.533 1.548a.24.24 0 0 1-.453 0l-.534-1.548a2.105 2.105 0 0 0-1.305-1.305l-1.548-.534a.24.24 0 0 1 0-.453l1.548-.534a2.105 2.105 0 0 0 1.305-1.305l.534-1.547a.24.24 0 0 1 .453 0l.534 1.547c.21.615.695 1.095 1.305 1.305l1.547.534a.24.24 0 0 1 0 .453Z" />
+	</svg>
+);
 
 function McpComponent( { path } ) {
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
+	const tanstackQueryClient = useQueryClient();
+
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const {
 		data: userSettings,
@@ -35,70 +54,222 @@ function McpComponent( { path } ) {
 		error: userSettingsError,
 	} = useQuery( userSettingsQuery() );
 
-	// Site selector state for disabling MCP access on specific sites
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
-	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-	const disabledSites = disabledSiteIds.map( ( siteId ) => {
-		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
-		const name = site?.name || translate( 'Site ID: %(siteId)s', { args: { siteId } } );
-		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
-
-		return {
-			id: siteId,
-			name,
-			domain,
-		};
+	// Fetch BigSky plugin status for all sites (AI assistant card)
+	const bigSkyQueries = useQueries( {
+		queries: sites.map( ( site ) => ( {
+			...bigSkyPluginQuery( site.ID ),
+			enabled: sites.length > 0,
+		} ) ),
 	} );
+
+	// Compute AI assistant stats across all sites
+	const bigSkyAvailableSiteIds = [];
+	let bigSkyEnabledCount = 0;
+	let bigSkyDisabledCount = 0;
+	sites.forEach( ( site, index ) => {
+		const result = bigSkyQueries[ index ];
+		if ( result?.data && result.data.available ) {
+			bigSkyAvailableSiteIds.push( site.ID );
+			if ( result.data.enabled ) {
+				bigSkyEnabledCount++;
+			} else {
+				bigSkyDisabledCount++;
+			}
+		}
+	} );
+	const bigSkyGlobalEnabled = bigSkyEnabledCount > 0 && bigSkyEnabledCount >= bigSkyDisabledCount;
+
+	const bigSkyHasAnyData = bigSkyQueries.some( ( q ) => q.data !== undefined );
+	const bigSkyIsFetching = bigSkyQueries.some( ( q ) => q.isFetching );
+	const bigSkyIsInitialLoading = ! bigSkyHasAnyData && bigSkyIsFetching;
+
+	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 
 	// Reauth state
 	const [ reauthRequired, setReauthRequired ] = useState( false );
-
-	// Monitor reauth status
 	useEffect( () => {
 		const checkReauth = () => {
 			const reauth = twoStepAuthorization.isReauthRequired();
 			setReauthRequired( reauth );
 		};
-
 		twoStepAuthorization.on( 'change', checkReauth );
-		checkReauth(); // Initial check
-
+		checkReauth();
 		return () => twoStepAuthorization.off( 'change', checkReauth );
-	}, [] ); // Empty dependency array - only run once on mount
+	}, [] );
 
-	// Use the standard userSettingsMutation with simple auto-save
 	const mutation = useMutation( {
 		...userSettingsMutation(),
 		onSuccess: ( newData ) => {
-			// Update the cache with the new data from the API response
-			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
-			// Show success notification using Redux dispatch with unique ID to prevent stacking
-			dispatch( successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } ) );
+			tanstackQueryClient.setQueryData( userSettingsQuery().queryKey, newData );
+			reduxDispatch(
+				successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } )
+			);
 		},
-		// eslint-disable-next-line no-unused-vars
-		onError: ( error ) => {
-			// Show error notification using Redux dispatch with unique ID to prevent stacking
-			dispatch(
+		onError: () => {
+			reduxDispatch(
 				errorNotice( translate( 'Failed to save MCP settings.' ), { id: 'mcp-settings-error' } )
 			);
 		},
 	} );
 
-	// Handle error states only - allow loading to continue so reauth can show
+	// Bulk toggle AI assistant for all eligible sites
+	const bigSkyBulkMutation = useMutation( {
+		mutationFn: async ( { enable } ) => {
+			await Promise.all(
+				bigSkyAvailableSiteIds.map( ( siteId ) => updateBigSkyPlugin( siteId, { enable } ) )
+			);
+		},
+		onSuccess: () => {
+			bigSkyAvailableSiteIds.forEach( ( siteId ) => {
+				tanstackQueryClient.invalidateQueries( {
+					queryKey: bigSkyPluginQuery( siteId ).queryKey,
+				} );
+				tanstackQueryClient.invalidateQueries( siteQueryFilter( siteId ) );
+			} );
+			reduxDispatch(
+				successNotice( translate( 'AI assistant settings saved.' ), {
+					id: 'bigsky-settings-saved',
+				} )
+			);
+		},
+		onError: () => {
+			reduxDispatch(
+				errorNotice( translate( 'Failed to save AI assistant settings.' ), {
+					id: 'bigsky-settings-error',
+				} )
+			);
+		},
+	} );
+
 	if ( userSettingsError ) {
 		return null;
 	}
 
-	// Common layout wrapper
-	const renderLayout = ( children ) => (
+	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
+	const availableTools = Object.entries( mcpAbilities );
+	const hasTools = availableTools.length > 0;
+	const enabledToolsCount = Object.values( mcpAbilities ).filter( ( tool ) => tool.enabled ).length;
+	const anyToolsEnabled = enabledToolsCount > 0;
+
+	const handleToggleAll = ( enabled ) => {
+		const accountAbilities = {};
+		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
+			if ( enabled ) {
+				const level = getPermissionLevel( mcpAbilities[ toolId ] );
+				accountAbilities[ toolId ] = level === 'read';
+			} else {
+				accountAbilities[ toolId ] = false;
+			}
+		} );
+
+		// Also clear site exceptions when toggling
+		const mutationPayload = { mcp_abilities: { account: accountAbilities } };
+		if ( disabledSiteIds.length > 0 ) {
+			mutationPayload.mcp_abilities.sites = disabledSiteIds.map( ( siteId ) => ( {
+				blog_id: siteId,
+				account_tools_enabled: true,
+			} ) );
+		}
+		mutation.mutate( mutationPayload );
+	};
+
+	// Shared helper: compute badge text for a set of tools.
+	const getBadgeText = ( enabledCount, totalCount ) => {
+		if ( enabledCount === totalCount ) {
+			return translate( 'All enabled' );
+		}
+		if ( enabledCount === 0 ) {
+			return translate( 'Disabled' );
+		}
+		return translate( '%(enabledCount)d of %(totalCount)d enabled', {
+			args: { enabledCount, totalCount },
+		} );
+	};
+
+	// Shared helper: compute badge intent for a set of tools.
+	const getBadgeIntent = ( enabledCount, totalCount ) => {
+		if ( enabledCount === totalCount ) {
+			return 'success';
+		}
+		if ( enabledCount > 0 ) {
+			return 'info';
+		}
+		return 'default';
+	};
+
+	// Group tools by permission level, merging Write + Manage
+	const permissionGroups = {};
+	availableTools.forEach( ( [ toolId, tool ] ) => {
+		const level = getPermissionLevel( tool );
+		if ( ! permissionGroups[ level ] ) {
+			permissionGroups[ level ] = [];
+		}
+		permissionGroups[ level ].push( [ toolId, tool ] );
+	} );
+
+	const readTools = permissionGroups.read || [];
+	const writeTools = [ ...( permissionGroups.write || [] ), ...( permissionGroups.manage || [] ) ];
+
+	const badgesFor = ( tools ) => {
+		const count = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+		return [
+			{
+				text: getBadgeText( count, tools.length ),
+				intent: getBadgeIntent( count, tools.length ),
+			},
+		];
+	};
+
+	const sitesBadges = [
+		{
+			text:
+				disabledSiteIds.length === 0
+					? translate( 'No exceptions' )
+					: translate( '%(count)d exceptions', {
+							args: { count: disabledSiteIds.length },
+					  } ),
+			intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+		},
+	];
+
+	const aiAssistantSitesBadges = [
+		{
+			text:
+				bigSkyDisabledCount === 0
+					? translate( 'No exceptions' )
+					: translate( '%(count)d exceptions', {
+							args: { count: bigSkyDisabledCount },
+					  } ),
+			intent: bigSkyDisabledCount === 0 ? 'default' : 'warning',
+		},
+	];
+
+	const aiAssistantEnabledBadges = [
+		{
+			text:
+				bigSkyEnabledCount === 0
+					? translate( 'No sites' )
+					: translate( '%(count)d sites', {
+							args: { count: bigSkyEnabledCount },
+					  } ),
+			intent: bigSkyEnabledCount === 0 ? 'default' : 'info',
+		},
+	];
+
+	// Check if MCP settings feature is enabled
+	if ( ! config.isEnabled( 'mcp-settings' ) ) {
+		return null;
+	}
+
+	return (
 		<Main wideLayout className="mcp">
-			<PageViewTracker path={ path } title="MCP Account Settings" />
-			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
+			<PageViewTracker path={ path } title="AI and MCP" />
+			<DocumentHead title={ translate( 'AI and MCP' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'MCP Account Settings' ) }
+				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'Control how AI assistants interact with your WordPress.com account and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
@@ -107,269 +278,155 @@ function McpComponent( { path } ) {
 				) }
 			/>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-			{ ! isLoadingUserSettings && ! reauthRequired && children }
-		</Main>
-	);
-
-	// Get account-level tools from user settings using the new nested structure
-	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
-	const availableTools = Object.entries( mcpAbilities );
-	const hasTools = availableTools.length > 0;
-
-	// Check if any tools are enabled (for master toggle state)
-	const anyToolsEnabled =
-		hasTools && Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
-
-	const handleToolChange = ( toolId, enabled ) => {
-		// Create minimal payload with only the changed tool (just boolean)
-		const payload = {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
-				},
-			},
-		};
-		mutation.mutate( payload );
-	};
-
-	const handleMasterToggle = ( enabled ) => {
-		// Create payload with all tools set to the same state (just booleans)
-		const accountAbilities = {};
-		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			accountAbilities[ toolId ] = enabled;
-		} );
-
-		const payload = {
-			mcp_abilities: {
-				account: accountAbilities,
-			},
-		};
-		mutation.mutate( payload );
-	};
-
-	const handleSiteToggle = ( siteId, enabled ) => {
-		// Get current sites array from nested structure
-		const currentSites = userSettings?.mcp_abilities?.sites || [];
-
-		// Find existing site entry
-		const siteIndex = currentSites.findIndex( ( site ) => site.blog_id === parseInt( siteId ) );
-
-		let newSites;
-		if ( enabled ) {
-			// Enabling: remove from sites array (use defaults)
-			if ( siteIndex >= 0 ) {
-				// Remove the site entry entirely
-				newSites = currentSites.filter( ( site, index ) => index !== siteIndex );
-			} else {
-				// Site not in array, already using defaults
-				newSites = currentSites;
-			}
-		} else if ( siteIndex >= 0 ) {
-			// Disabling: update existing site entry
-			newSites = [ ...currentSites ];
-			newSites[ siteIndex ] = {
-				...newSites[ siteIndex ],
-				account_tools_enabled: false,
-			};
-		} else {
-			// Disabling: add new site entry with override
-			newSites = [
-				...currentSites,
-				{
-					blog_id: parseInt( siteId ),
-					account_tools_enabled: false,
-					abilities: {},
-				},
-			];
-		}
-
-		// For the API payload, we need to send the site being toggled as an array
-		// The API expects sites to be an array with blog_id fields
-		const sitesPayload = [];
-		if ( enabled ) {
-			// Enabling: send the site with account_tools_enabled: true
-			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
-				account_tools_enabled: true,
-			} );
-		} else {
-			// Disabling: send the site with account_tools_enabled: false
-			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
-				account_tools_enabled: false,
-			} );
-		}
-
-		// Only include sites in payload if there are any sites to send
-		// Don't include account object - only send the sites being changed
-		const payload = {
-			mcp_abilities: {
-				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
-			},
-		};
-		mutation.mutate( payload );
-	};
-
-	// Helper function to render tools section using ExtrasToggleCard pattern
-	const renderToolsSection = ( tools ) => {
-		if ( ! tools || tools.length === 0 ) {
-			return null;
-		}
-
-		return (
-			<Card isRounded={ false }>
-				<CardBody>
-					<VStack spacing={ 8 }>
-						<SectionHeader
-							level={ 3 }
-							title={ translate( 'Available MCP Tools' ) }
-							description={ translate( 'Choose which AI tools you want to use.' ) }
-						/>
-
-						{ /* Individual tool toggles */ }
-						<VStack>
-							{ tools.map( ( [ toolId, tool ] ) => (
-								<ToggleControl
-									key={ toolId }
-									__nextHasNoMarginBottom
-									checked={ tool.enabled }
-									disabled={ mutation.isPending }
-									label={ tool.title }
-									help={ tool.description }
-									onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-								/>
-							) ) }
-						</VStack>
-					</VStack>
-				</CardBody>
-			</Card>
-		);
-	};
-
-	const renderContent = () => {
-		// Use mcpAbilities directly since we're using auto-save
-		const accountToolsToShow = availableTools;
-
-		return (
-			<VStack spacing={ 8 }>
-				{ /* MCP Tool Access Master Toggle */ }
-				<Card isRounded={ false }>
-					<CardBody>
-						<VStack spacing={ 8 }>
-							<SectionHeader
-								level={ 3 }
-								title={ translate( 'MCP Tool Access' ) }
-								description={ translate(
-									'Control which MCP tools can access your WordPress.com account and sites.'
-								) }
-							/>
-
-							<div
+			{ ! isLoadingUserSettings && ! reauthRequired && (
+				<VStack spacing={ 6 }>
+					{ /* WordPress.com AI assistant */ }
+					<Card
+						isRounded={ false }
+						className="dashboard-summary-button-list has-density-medium"
+						style={ { position: 'relative', borderRadius: 0 } }
+					>
+						{ bigSkyIsInitialLoading && (
+							<Spinner
 								style={ {
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
+									width: 16,
+									height: 16,
+									margin: 0,
+									position: 'absolute',
+									top: 16,
+									right: 16,
 								} }
-							>
+							/>
+						) }
+						<CardHeader>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ translate( 'WordPress.com AI assistant' ) }
+									description={ translate(
+										'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ bigSkyGlobalEnabled }
+									disabled={
+										bigSkyIsInitialLoading ||
+										bigSkyBulkMutation.isPending ||
+										bigSkyAvailableSiteIds.length === 0
+									}
+									onChange={ ( checked ) => bigSkyBulkMutation.mutate( { enable: checked } ) }
+									label={ translate( 'Enable AI assistant' ) }
+								/>
+							</VStack>
+						</CardHeader>
+						{ ! bigSkyIsInitialLoading && (
+							<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+								<ul className="dashboard-summary-button-list__children-list">
+									<li className="dashboard-summary-button-list__children-list-item">
+										{ bigSkyGlobalEnabled ? (
+											<SummaryButton
+												href="/me/mcp-ai-assistant"
+												title={ translate( 'Site exceptions' ) }
+												decoration={ <Icon icon={ notAllowed } /> }
+												badges={ aiAssistantSitesBadges }
+												density="medium"
+											/>
+										) : (
+											<SummaryButton
+												href="/me/mcp-ai-assistant"
+												title={ translate( 'Add to specific sites' ) }
+												decoration={ <Icon icon={ bigSkyIcon } /> }
+												badges={ aiAssistantEnabledBadges }
+												density="medium"
+											/>
+										) }
+									</li>
+								</ul>
+							</CardBody>
+						) }
+					</Card>
+
+					{ /* External AI assistant access */ }
+					<Card
+						isRounded={ false }
+						className="dashboard-summary-button-list has-density-medium"
+						style={ { borderRadius: 0 } }
+					>
+						<CardHeader>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ translate( 'External AI assistant access' ) }
+									description={ translate(
+										'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+									) }
+								/>
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ anyToolsEnabled }
-									onChange={ handleMasterToggle }
-									label={
-										<Text weight="bold">
-											{ anyToolsEnabled
-												? translate( 'Disable MCP Tool Access' )
-												: translate( 'Enable MCP Tool Access' ) }
-										</Text>
-									}
+									onChange={ handleToggleAll }
+									label={ translate( 'Enable MCP access' ) }
 								/>
-								{ anyToolsEnabled && (
-									<Button variant="secondary" href="/me/mcp-setup">
-										{ translate( 'Configure MCP Client' ) }
-									</Button>
-								) }
-							</div>
-						</VStack>
-					</CardBody>
-				</Card>
-
-				{ /* Account Tools Sections */ }
-				{ hasTools && renderToolsSection( accountToolsToShow ) }
-
-				{ /* Site-Specific Settings */ }
-				{ hasTools && anyToolsEnabled && (
-					<Card isRounded={ false }>
-						<CardBody>
-							<VStack spacing={ 8 }>
-								<SectionHeader
-									level={ 3 }
-									title={ translate( 'Site-specific MCP settings' ) }
-									description={ translate(
-										'Choose a site to block all MCP tools for all users on that site. This overrides your account settings.'
-									) }
-								/>
-
-								<PreferencesLoginSiteDropdown
-									sites={ sites }
-									value={ selectedSiteId }
-									onChange={ setSelectedSiteId }
-									label={ translate( 'Select a site to disable MCP access' ) }
-									isLoading={ false }
-								/>
-
-								{ selectedSiteId && anyToolsEnabled && (
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId ) }
-										disabled={ mutation.isPending }
-										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
-										label={
-											<Text weight="bold">
-												{ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId )
-													? translate( 'Disable MCP access for this site' )
-													: translate( 'Enable MCP access for this site' ) }
-											</Text>
-										}
-									/>
-								) }
-								{ disabledSites.length > 0 && (
-									<VStack spacing={ 4 }>
-										<SectionHeader
-											level={ 3 }
-											title={ translate( 'Sites with disabled MCP access' ) }
-											description={ translate(
-												'Sites with disabled MCP access are not accessible to AI assistants.'
-											) }
-										/>
-										<VStack>
-											{ disabledSites.map( ( site ) => (
-												<ToggleControl
-													key={ site.id }
-													__nextHasNoMarginBottom
-													checked={ false }
-													disabled={ mutation.isPending }
-													onChange={ ( enabled ) => handleSiteToggle( site.id, enabled ) }
-													label={ site.name }
-													help={ site.domain }
-												/>
-											) ) }
-										</VStack>
-									</VStack>
-								) }
 							</VStack>
-						</CardBody>
+						</CardHeader>
+						{ hasTools && anyToolsEnabled && (
+							<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+								<ul className="dashboard-summary-button-list__children-list">
+									{ readTools.length > 0 && (
+										<li className="dashboard-summary-button-list__children-list-item">
+											<SummaryButton
+												key="read"
+												href="/me/mcp-tools/read"
+												title={ translate( 'Read' ) }
+												decoration={ <Icon icon={ seen } /> }
+												badges={ badgesFor( readTools ) }
+												density="medium"
+											/>
+										</li>
+									) }
+									{ writeTools.length > 0 && (
+										<li className="dashboard-summary-button-list__children-list-item">
+											<SummaryButton
+												key="write"
+												href="/me/mcp-tools/write"
+												title={ translate( 'Write' ) }
+												decoration={ <Icon icon={ pencil } /> }
+												badges={ badgesFor( writeTools ) }
+												density="medium"
+											/>
+										</li>
+									) }
+									<li className="dashboard-summary-button-list__children-list-item">
+										<SummaryButton
+											href="/me/mcp-sites"
+											title={ translate( 'Site exceptions' ) }
+											decoration={ <Icon icon={ notAllowed } /> }
+											badges={ sitesBadges }
+											density="medium"
+										/>
+									</li>
+								</ul>
+							</CardBody>
+						) }
 					</Card>
-				) }
-			</VStack>
-		);
-	};
 
-	// Check if MCP settings feature is enabled
-	if ( ! config.isEnabled( 'mcp-settings' ) ) {
-		return null;
-	}
-
-	return renderLayout( renderContent() );
+					{ /* Connect AI assistant */ }
+					{ hasTools && anyToolsEnabled && (
+						<SummaryButton
+							href="/me/mcp-setup"
+							title={ translate( 'Connect external AI assistant' ) }
+							description={ translate(
+								'Get instructions for connecting your external AI assistant.'
+							) }
+							decoration={ <Icon icon={ connection } /> }
+							style={ { borderRadius: 0 } }
+						/>
+					) }
+				</VStack>
+			) }
+		</Main>
+	);
 }
 
 export default McpComponent;
