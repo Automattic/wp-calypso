@@ -125,6 +125,30 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders support tool message data as plain text', () => {
+		const supportText = 'Here is some help for your domain question.';
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: 'big_sky__wordpress_com_support',
+						tool_call_id: 'call_123',
+						data: supportText,
+					} ),
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: supportText,
+		} );
+	} );
+
 	it( 'filters out unhandled tool messages', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( 'other_tool' ) ],
