@@ -8,7 +8,7 @@ interface BranchDisplayProps {
 
 export function BranchDisplay( { branchName, color = '#3b3b3b' }: BranchDisplayProps ) {
 	return (
-		<HStack spacing={ 1 } alignment="left" style={ { width: 'auto', color } }>
+		<HStack spacing={ 1 } alignment="left" expanded={ false } style={ { color } }>
 			<BranchIcon width={ 16 } height={ 16 } style={ { flexShrink: 0 } } />
 			<Text
 				as="code"

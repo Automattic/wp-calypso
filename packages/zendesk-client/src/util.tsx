@@ -4,7 +4,16 @@ import { __ } from '@wordpress/i18n';
 import { AgentticMessage, ZendeskMessage } from './types';
 
 export const isTestModeEnvironment = () => {
-	const envId = config( 'env_id' ) as string;
+	// `env_id` may not be set in all environments (e.g., Gutenberg plugin context).
+	// `config()` throws in development and returns `undefined` in production when the key is missing.
+	let envId: string | undefined;
+	try {
+		envId = config( 'env_id' );
+	} catch ( error ) {
+		// `env_id` not configured in this environment; fall through to `env` check below
+		// eslint-disable-next-line no-console
+		console.warn( '[isTestModeEnvironment] failed to read `env_id` from config', error );
+	}
 
 	// During SU sessions, we want to always target prod. See HAL-154.
 	if ( isInSupportSession() ) {
@@ -14,7 +23,7 @@ export const isTestModeEnvironment = () => {
 	// Test environments are identified by env_id ending with development, horizon, or stage
 	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
-		( suffix ) => envId === suffix || envId.endsWith( `-${ suffix }` )
+		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
 	);
 
 	if ( isTestEnvironment ) {
@@ -22,11 +31,16 @@ export const isTestModeEnvironment = () => {
 	}
 
 	// If env is production and it's not a test environment, treat it as production
-	if ( config( 'env' ) === 'production' ) {
-		return false;
+	let env: string | undefined;
+	try {
+		env = config( 'env' );
+	} catch ( error ) {
+		// `env` not configured in this environment
+		// eslint-disable-next-line no-console
+		console.warn( '[isTestModeEnvironment] failed to read `env` from config', error );
 	}
 
-	return true;
+	return env !== 'production';
 };
 
 export const getBadRatingReasons = () => {

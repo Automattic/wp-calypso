@@ -33,7 +33,6 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 
 ## Bugs
 
-- The need to pass `{ width: 'auto' }` to some HStack components to make them work like regular divs.
 - Importing SASS files bring unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 
 ## Hacks

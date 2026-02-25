@@ -136,7 +136,10 @@ function UpsellSwitch( props: Props ) {
 
 	if ( UI_STATE_LOADED !== uiState ) {
 		return (
-			<Main className={ clsx( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }>
+			<Main
+				className={ clsx( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }
+				wideLayout
+			>
 				<QueryComponent siteId={ siteId } />
 				{ /* render placeholder */ }
 				{ children }

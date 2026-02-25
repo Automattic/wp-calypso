@@ -1,31 +1,42 @@
-@import '@wordpress/base-styles/colors';
-@import '../../styles/mixins.scss';
-
 .agents-manager-feedback-input {
-	margin-top: 12px;
-	padding: 12px;
-	background: $white;
-	border: 1px solid rgba(0, 0, 0, 0.15);
-	border-radius: 4px;
+	margin-left: 12px;
+	margin-right: 12px;
+	margin-bottom: 24px;
 
-	.components-textarea-control {
-		margin-bottom: 12px;
-	}
+	&__inner {
+		margin-top: 12px;
+		padding: 12px;
+		background: var(--color-background);
+		border: 1px solid var(--color-muted);
+		border-radius: 4px;
 
-	.components-base-control__label {
-		font-size: 13px;
-		text-transform: none;
-	}
+		.components-textarea-control {
+			margin-bottom: 12px;
+		}
 
-	.components-textarea-control__input {
-		width: 100%;
-		resize: vertical;
+		.components-base-control__label {
+			font-size: 13px;
+			text-transform: none;
+			color: var(--color-muted-foreground);
+		}
+
+		.components-textarea-control__input {
+			width: 100%;
+			resize: vertical;
+			background: var(--color-popover-muted);
+			border-color: var(--color-muted);
+			color: var(--color-foreground);
+
+			&::placeholder {
+				color: var(--color-muted-foreground);
+			}
+		}
 	}
 
 	&__success {
 		padding: 12px;
-		background: #d5f2e3;
-		color: #00450c;
+		background: var(--color-success-background);
+		color: var(--color-success);
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -33,8 +44,8 @@
 
 	&__error {
 		padding: 12px;
-		background: #fef0f0;
-		color: $alert-red;
+		background: var(--color-error-background);
+		color: var(--color-error);
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -49,53 +60,29 @@
 			display: flex;
 			align-items: center;
 			gap: 4px;
-
-			.components-spinner {
-				margin: 0;
-				vertical-align: middle;
-			}
-		}
-	}
-}
-
-// Dark theme overrides for the docked chat
-@include docked-chat-without-modal {
-	.agents-manager-feedback-input {
-		background: $gray-900;
-		border-color: #545454;
-
-		.components-base-control__label {
-			color: $gray-400;
 		}
 
-		.components-textarea-control__input {
-			background: #2c2c2c;
-			border-color: #545454;
-			color: $gray-200;
+		.components-button.is-tertiary {
+			color: var(--color-muted-foreground);
 
-			&::placeholder {
-				color: #999;
+			&:hover {
+				color: var(--color-foreground);
 			}
 		}
 
-		&__actions {
-			.components-button.is-tertiary {
-				color: $gray-400;
+		.components-button.is-primary {
+			background: var(--color-primary);
+			color: var(--color-primary-foreground);
 
-				&:hover {
-					color: $white;
-				}
+			&:disabled {
+				background: var(--color-muted);
+				color: var(--color-muted-foreground);
 			}
+		}
 
-			.components-button.is-primary {
-				background: #3858e9;
-				color: $white;
-
-				&:disabled {
-					background: #2c2c2c;
-					color: #666;
-				}
-			}
+		// Fix spinner vertical alignment in the button
+		.agents-manager-feedback-input__spinner {
+			margin-top: 0;
 		}
 	}
 }
