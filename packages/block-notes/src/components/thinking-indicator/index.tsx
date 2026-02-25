@@ -34,7 +34,6 @@ function BlockNoteThinkingIndicator() {
 	/**
 	 * Apply thinking indicator to a last note of thread if @ai mention is present
 	 * Remove if not.
-	 *
 	 * @param threadContainer - The thread container element
 	 */
 	const applyThinkingIndicatorToThread = useCallback( ( threadContainer: Element ) => {

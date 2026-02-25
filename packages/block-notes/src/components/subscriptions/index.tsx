@@ -30,7 +30,6 @@ const DEFAULT_ERROR_MESSAGE = __(
 
 /**
  * Mark a note as processed by adding meta data
- *
  * @param {number}   noteId                 - The note ID to mark as processed
  * @param {Set}      processedNotesSet      - In-memory set of processed note IDs
  * @param {Function} editEntityRecord       - Function to edit entity record
@@ -66,7 +65,6 @@ const markNoteAsProcessed = async (
 /**
  * Handle stale notes by tracking failures, marking as processed, and replying with error.
  * Only replies to the latest note per thread to avoid spamming.
- *
  * @param {Object}   params                          - Parameters object
  * @param {Array}    params.notes                    - Array of stale note objects
  * @param {number}   params.postId                   - The current post ID
@@ -165,7 +163,6 @@ const handleStaleNotes = ( {
 
 /**
  * Check if a note is stale (older than NOTE_STALE_THRESHOLD_MS)
- *
  * @param {Object} note - The note object
  * @returns {boolean} True if note is stale, false if fresh or date_gmt is not present
  */
@@ -201,7 +198,6 @@ const isNoteStale = ( note: NoteEntity ): boolean => {
 
 /**
  * Check if a comment has been processed by the AI
- *
  * @param {Object} comment              - The comment object
  * @param {Set}    processedCommentsSet - In-memory set of processed comment IDs
  * @returns {boolean} True if already processed
@@ -228,7 +224,6 @@ const isNoteProcessed = ( comment: NoteEntity, processedCommentsSet: Set< number
 /**
  * Build a lookup map of note IDs to block objects
  * This is more efficient than searching recursively for each note
- *
  * @param {Object} registry - WordPress data registry
  * @returns {Object} Map of noteId -> block object
  */
@@ -256,7 +251,6 @@ const buildNoteToBlockMap = ( registry: any ): Record< number, any > => {
 
 /**
  * Extract readable content from a block based on its type
- *
  * @param {Object} block - The block object
  * @returns {string|null} Readable content or null
  */
@@ -296,7 +290,6 @@ const extractBlockContent = ( block: any ): string | null => {
 /**
  * Build a contextual message with block and post information for the AI
  * This provides the AI with context but leaves replying to the agentic flow
- *
  * @param {Object}      note        - The note object
  * @param {Object|null} block       - The associated block object (optional)
  * @param {Object}      currentPost - The current post object
@@ -406,7 +399,6 @@ Important Constraints:
 /**
  * Process AI note detected in data store
  * This function triggers the wp-orchestrator agent - the AI will handle replying via the ability
- *
  * @param {Object}             note                   - WordPress note object
  * @param {Function}           agentSubmit            - Function to submit message to wp-orchestrator agent
  * @param {Object}             noteToBlockMap         - Pre-built map of noteId -> block object
@@ -472,7 +464,6 @@ const processAiNote = async (
  * Monitors block notes for @ai mentions and triggers the agentic flow.
  * This component follows the pattern of EditorSubscriptions and integrates with
  * the WordPress data layer to watch for new notes in real-time.
- *
  * @param {Object} root0                  - Component props
  * @param {Object} root0.agentConfigState - Loaded agent configuration from wp-orchestrator
  */

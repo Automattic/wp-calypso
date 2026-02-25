@@ -2,7 +2,7 @@
  * Block Notes Agent Configuration
  *
  * Creates agent config specific to the Block Notes context.
- * Wraps the shared createAgentConfig with block-notes-specific metadata.
+ * Passes siteId/blogId to agent config for API authentication
  */
 
 import { createAgentConfig } from '@automattic/agents-manager/src/utils/agent-config';
@@ -13,10 +13,27 @@ export interface AgentConfigFactory {
 	createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
 }
 
+declare global {
+	interface Window {
+		_currentSiteId?: number;
+		Jetpack_Editor_Initial_State?: {
+			wpcomBlogId: string;
+		};
+	}
+}
+
+/**
+ * Get the current blog/site ID from WordPress.com runtime globals.
+ * @returns The site ID as a number, or null if not available.
+ */
+export function getBlogId(): number | null {
+	return (
+		window._currentSiteId || Number( window.Jetpack_Editor_Initial_State?.wpcomBlogId ) || null
+	);
+}
+
 /**
  * Create agent configuration for block notes context.
- * Wrapper around createAgentConfig that passes block-notes-specific context and tool provider.
- *
  * @param sessionId Session ID for the agent chat
  * @returns Promise resolving to complete UseAgentChatConfig
  */
@@ -25,6 +42,7 @@ export async function createBlockNotesAgentConfig(
 ): Promise< UseAgentChatConfig > {
 	return createAgentConfig( {
 		sessionId,
+		siteId: getBlogId() ?? undefined,
 		environment: 'calypso',
 		toolProvider: createToolProvider(),
 		contextProvider: {

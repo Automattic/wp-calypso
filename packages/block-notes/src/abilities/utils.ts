@@ -66,7 +66,6 @@ interface CurrentUser {
 
 /**
  * Convert note from entities API format to expected format
- *
  * @param note - Note object from entities API
  * @returns Note in expected format
  */
@@ -87,7 +86,6 @@ export const convertEntityNoteFormat = ( note: NoteEntity ): ConvertedNote => {
 
 /**
  * Get all notes for a specific block using noteId
- *
  * @param postId - The post ID
  * @param noteId - The note ID from the block's noteId attribute
  * @returns Promise that resolves to the notes data
@@ -132,7 +130,6 @@ export const getBlockNotes = async (
 
 /**
  * Create a block note in the database
- *
  * @param args            - Note creation arguments
  * @param args.postId
  * @param args.content
@@ -180,7 +177,6 @@ const createBlockNoteInDB = async ( {
 
 /**
  * Reply to an existing note
- *
  * @param postId     - The post ID
  * @param noteId     - Block note ID from the block's noteId attribute
  * @param content    - The reply content

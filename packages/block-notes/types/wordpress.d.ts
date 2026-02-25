@@ -7,7 +7,6 @@ declare module '@wordpress/block-editor' {
 // Global data injected by PHP
 interface BlockNotesData {
 	enabled: boolean;
-	siteId?: number;
 }
 
 interface Window {

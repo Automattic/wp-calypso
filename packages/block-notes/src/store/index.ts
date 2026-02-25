@@ -45,7 +45,6 @@ const initialState: BlockNotesState = {
 
 /**
  * Reducer
- *
  * @param state  - Current state
  * @param action - Action to handle
  * @returns New state

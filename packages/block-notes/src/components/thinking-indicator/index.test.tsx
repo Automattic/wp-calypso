@@ -69,7 +69,6 @@ describe( 'BlockNoteThinkingIndicator', () => {
 
 	/**
 	 * Helper function to create a thread with notes
-	 *
 	 * @param {number}   threadId  - The thread ID
 	 * @param {string[]} noteTexts - Array of note text content
 	 * @returns The thread container element

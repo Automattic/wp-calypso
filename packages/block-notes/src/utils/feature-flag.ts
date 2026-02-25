@@ -3,7 +3,6 @@
  *
  * This function returns true if the feature is enabled via
  * `window.blockNotesData.enabled`, set by the Block Notes PHP enqueue.
- *
  * @returns {boolean} Whether the block notes feature should be enabled
  */
 export function areBlockNotesEnabled(): boolean {

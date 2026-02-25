@@ -1,10 +1,11 @@
+import { getBlogId } from '../agent-config';
+
 /**
  * Generate a deterministic session ID for a block note thread using SHA-256 hash.
  *
  * This creates a hashed identifier that:
  * - Is deterministic and consistent across the thread
  * - Includes blogId, postId, and noteId for uniqueness across sites and threads
- *
  * @param {number | undefined} postId - The post ID containing the note thread
  * @param {number}             noteId - Root note ID
  * @returns {Promise<string | undefined>} A hashed session ID, or undefined if params are invalid or hashing fails
@@ -13,7 +14,7 @@ export async function getBlockNoteThreadSessionId(
 	postId: number | undefined,
 	noteId: number
 ): Promise< string | undefined > {
-	const blogId = window.blockNotesData?.siteId;
+	const blogId = getBlogId();
 	if ( ! blogId || ! postId || ! noteId ) {
 		window.console?.warn( 'Block Notes: Missing required parameters for session ID generation', {
 			blogId: !! blogId,

@@ -30,7 +30,6 @@ function BlockNoteMentionAutocomplete() {
 
 	/**
 	 * Attach placeholder to a textarea
-	 *
 	 * @param textarea - The textarea element to attach placeholder to
 	 */
 	const attachTextarea = useCallback( ( textarea: HTMLTextAreaElement ) => {

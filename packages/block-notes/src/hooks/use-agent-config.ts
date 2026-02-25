@@ -9,7 +9,6 @@ import type { UseAgentChatConfig } from '@automattic/agenttic-client';
  * - Loads agent config asynchronously from the provided config factory
  * - Manages session ID from the store
  * - Returns null while loading
- *
  * @param agentConfigFactory                   - Factory function to create agent config
  * @param agentConfigFactory.createAgentConfig - Function to create agent config given a session ID
  * @returns Loaded agent config or null if still loading
