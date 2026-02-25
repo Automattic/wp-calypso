@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
+import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/components/add-subscription-form/consts';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -28,12 +29,13 @@ const DiscoverStream = ( props ) => {
 		selectedTag: selectedTag,
 	};
 
-	const ContentComponent = <AddSubscriptionForm type={ selectedTab } />;
-	if ( ContentComponent ) {
+	if ( ADD_SUBSCRIPTION_CONFIGS[ selectedTab ] ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
-				<div className="reader__content">{ ContentComponent }</div>
+				<div className="reader__content">
+					<AddSubscriptionForm type={ selectedTab } />
+				</div>
 			</ReaderMain>
 		);
 	}
