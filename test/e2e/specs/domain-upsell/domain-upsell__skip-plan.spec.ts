@@ -22,7 +22,7 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 		} );
 
 		await test.step( 'And I search for a domain name', async function () {
-			await componentDomainSearch.search( `${ siteSlug }.com` );
+			await componentDomainSearch.search( helperData.getBlogName() );
 		} );
 
 		await test.step( 'And I choose the first suggestion and continue', async function () {
@@ -31,8 +31,9 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 			await componentDomainSearch.continue();
 		} );
 
-		await test.step( 'Then I am taken to the checkout page', async function () {
+		await test.step( 'Then the plan selection step is skipped', async function () {
 			await page.waitForURL( /checkout/ );
+			expect( page.url() ).not.toContain( '/plans' );
 		} );
 
 		await test.step( 'And I see the selected domain in the cart', async function () {
