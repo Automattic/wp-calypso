@@ -7,3 +7,9 @@ export const A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026 =
  * Users with a Pressable purchase (subscription start) after this date do not see the migration tagging option.
  */
 export const PRESSABLE_LAST_PURCHASE_CUTOFF_DATE = '2025-08-11';
+
+/**
+ * Pressable migration incentive promo start date.
+ * Users who purchased Pressable on or after this date are eligible for migration tagging.
+ */
+export const PRESSABLE_PROMO_START_DATE = '2026-02-11';

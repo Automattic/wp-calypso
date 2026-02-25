@@ -109,7 +109,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns canTagSitesForCommission false when start_date is after cutoff', () => {
+	it( 'returns canTagSitesForCommission false when start_date is in exclusion period (after cutoff, before promo)', () => {
 		const agency = mockActiveAgency( {
 			third_party: {
 				pressable: {
@@ -127,6 +127,92 @@ describe( 'useCanTagSitesForCommission', () => {
 
 		expect( result.current.canTagSitesForCommission ).toBe( false );
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
+	} );
+
+	it( 'returns canTagSitesForCommission false when start_date is in middle of exclusion period', () => {
+		const agency = mockActiveAgency( {
+			third_party: {
+				pressable: {
+					usage: { start_date: '2025-12-17', end_date: null },
+				},
+			},
+		} );
+		jest
+			.mocked( useSelector )
+			.mockImplementation( ( selector: ( s: unknown ) => unknown ) =>
+				selector( createState( agency ) )
+			);
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.canTagSitesForCommission ).toBe( false );
+		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
+	} );
+
+	it( 'returns canTagSitesForCommission false when start_date is day before promo start', () => {
+		const agency = mockActiveAgency( {
+			third_party: {
+				pressable: {
+					usage: { start_date: '2026-02-10', end_date: null },
+				},
+			},
+		} );
+		jest
+			.mocked( useSelector )
+			.mockImplementation( ( selector: ( s: unknown ) => unknown ) =>
+				selector( createState( agency ) )
+			);
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.canTagSitesForCommission ).toBe( false );
+		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
+	} );
+
+	it( 'returns canTagSitesForCommission true when start_date is on promo start date', () => {
+		const agency = mockActiveAgency( {
+			third_party: {
+				pressable: {
+					usage: { start_date: '2026-02-11', end_date: null },
+				},
+			},
+		} );
+		jest
+			.mocked( useSelector )
+			.mockImplementation( ( selector: ( s: unknown ) => unknown ) =>
+				selector( createState( agency ) )
+			);
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.canTagSitesForCommission ).toBe( true );
+		expect( result.current.migrationTags ).toEqual( [
+			A4A_MIGRATED_SITE_TAG,
+			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
+		] );
+	} );
+
+	it( 'returns canTagSitesForCommission true when start_date is after promo start date', () => {
+		const agency = mockActiveAgency( {
+			third_party: {
+				pressable: {
+					usage: { start_date: '2026-02-18T17:09:20+00:00', end_date: null },
+				},
+			},
+		} );
+		jest
+			.mocked( useSelector )
+			.mockImplementation( ( selector: ( s: unknown ) => unknown ) =>
+				selector( createState( agency ) )
+			);
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.canTagSitesForCommission ).toBe( true );
+		expect( result.current.migrationTags ).toEqual( [
+			A4A_MIGRATED_SITE_TAG,
+			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
+		] );
 	} );
 
 	it( 'returns canTagSitesForCommission true when start_date is empty string', () => {
