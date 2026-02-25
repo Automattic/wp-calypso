@@ -16,6 +16,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { __ } = useI18n();
 	const [ query ] = useSearchParams();
+	const readyForLaunch = query.has( 'playground' );
 
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
@@ -68,7 +69,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 							<Step.PrimaryButton
 								onClick={ launchSite }
 								onMouseEnter={ fetchIntent }
-								disabled={ isLaunching }
+								disabled={ isLaunching || ! readyForLaunch }
 							>
 								{ __( 'Launch on WordPress.com' ) }
 							</Step.PrimaryButton>
