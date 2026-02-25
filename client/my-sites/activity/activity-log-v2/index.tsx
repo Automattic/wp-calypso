@@ -120,7 +120,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			className={ clsx( 'activity-log-v2', {
 				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
-			wideLayout={ ! ( isJetpackCloud() || isA8CForAgencies() ) }
+			wideLayout={ ! isA8CForAgencies() }
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
