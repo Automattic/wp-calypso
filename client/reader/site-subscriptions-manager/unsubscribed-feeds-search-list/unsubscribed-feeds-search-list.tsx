@@ -4,6 +4,7 @@ import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
+import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 
 interface UnsubscribedFeedsSearchListProps {
@@ -32,6 +33,16 @@ const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ):
 					fetchPosition: railcar.fetch_position,
 					recBlogId: railcar.rec_blog_id,
 				} );
+			}
+
+			if ( feedItems.length === 1 ) {
+				return (
+					<FeedPreview
+						key={ `feed-preview-${ feed.blog_ID }-${ feed.feed_ID }` }
+						url={ feedItems[ 0 ]?.subscribe_URL }
+						source="manage_subscriptions_single_result_feed_preview"
+					/>
+				);
 			}
 
 			return (

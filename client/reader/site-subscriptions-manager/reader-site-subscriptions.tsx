@@ -75,7 +75,9 @@ const ReaderSiteSubscriptions = () => {
 
 			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults && (
 				<div className="site-subscriptions__search-recommendations-label">
-					{ translate( 'Here are some other sites that match your search.' ) }
+					{ filteredUnsubscribedFeedItems?.length === 1
+						? translate( 'Here is one result that matches your search.' )
+						: translate( 'Here are some other sites that match your search.' ) }
 				</div>
 			) }
 
