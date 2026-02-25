@@ -99,6 +99,10 @@ const domain: FlowV2< typeof initialize > = {
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
+		const ciabRedirect =
+			isCiab && site?.options?.admin_url
+				? `${ site.options.admin_url }admin.php?page=next-admin&p=%2Fwoocommerce%2Fonboarding`
+				: undefined;
 
 		const goToCheckout = ( siteSlug: string ) => {
 			// Check if cart contains only one domain product and it's a domain connection
@@ -111,7 +115,8 @@ const domain: FlowV2< typeof initialize > = {
 				domainCartItems && domainCartItems.length === 1 && isDomainTransfer( domainCartItems[ 0 ] );
 
 			// Use the redirect_to query param if provided, otherwise fall back to v2 domains
-			let destination = redirectTo || dashboardLink( `/sites/${ siteSlug }/domains` );
+			let destination =
+				redirectTo || ciabRedirect || dashboardLink( `/sites/${ siteSlug }/domains` );
 
 			// But send domain-only connects to domain-connection-setup.
 			if ( ! redirectTo && hasOnlyDomainConnection ) {
@@ -180,7 +185,7 @@ const domain: FlowV2< typeof initialize > = {
 					// replace the location to delete processing step from history.
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: redirectTo || defaultRedirect,
+							redirect_to: redirectTo || ciabRedirect || defaultRedirect,
 							signup: 0,
 							cancel_to: new URL(
 								addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
