@@ -18,6 +18,9 @@ function PrimaryMenu() {
 			{ supports.plugins && (
 				<ResponsiveMenu.Item to="/plugins/manage">{ __( 'Plugins' ) }</ResponsiveMenu.Item>
 			) }
+			<ResponsiveMenu.Item to="https://wordpress.com/stores">
+				{ __( 'Stores' ) }
+			</ResponsiveMenu.Item>
 			{ supports.themes && (
 				<ResponsiveMenu.Item
 					href={ wpcomLink( '/themes' ) }

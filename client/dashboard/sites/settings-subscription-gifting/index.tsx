@@ -20,7 +20,7 @@ import type { Field, FormField } from '@wordpress/dataviews';
 const fields: Field< SiteSettings >[] = [
 	{
 		id: 'wpcom_gifting_subscription',
-		label: __( 'Allow site visitors to gift your plan and domain renewal costs' ),
+		label: __( 'Allow site visitors to gift your plan and domain renewal costs.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (
@@ -66,8 +66,8 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				onSuccess: () => {
 					createSuccessNotice(
 						formData.wpcom_gifting_subscription
-							? __( 'Gift subscription enabled.' )
-							: __( 'Gift subscription disabled.' ),
+							? __( 'Gift subscription enabled' )
+							: __( 'Gift subscription disabled' ),
 						{ type: 'snackbar' }
 					);
 				},
