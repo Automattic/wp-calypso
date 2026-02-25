@@ -409,13 +409,22 @@ body.post-new-php.agents-manager-sidebar-container {
 			margin-top: 0;
 		}
 
-		.button-module_button:has( .agents-manager-feedback-icon ) {
+		// Message action buttons
+		.button-module_button:has( .agents-manager-message-action-icon ) {
 			width: 32px;
 			height: 32px;
 
-			.agents-manager-feedback-icon {
-				width: 30px;
-				height: 30px;
+			.agents-manager-message-action-icon {
+				fill: var( --color-muted-foreground );
+
+				&:not( .agents-manager-message-action-icon--copy ) {
+					width: 30px;
+					height: 30px;
+				}
+			}
+
+			&:hover:not( :disabled ) .agents-manager-message-action-icon {
+				fill: var( --color-foreground );
 			}
 		}
 

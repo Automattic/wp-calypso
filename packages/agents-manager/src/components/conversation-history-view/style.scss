@@ -79,7 +79,7 @@
 	}
 }
 
-// Docked layout overrides (padding adjustments for sidebar mode)
+// Docked chat styles override
 @include docked-chat-without-modal {
 	.agents-manager-conversation-history-view {
 		&__content {

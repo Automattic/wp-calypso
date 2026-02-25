@@ -20,13 +20,7 @@ import AgentsManager from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return (
-		<AgentsManager
-			currentRoute="/dashboard"
-			sectionName="dashboard"
-			site={ site }
-		/>
-	);
+	return <AgentsManager currentRoute="/dashboard" sectionName="dashboard" site={ site } />;
 }
 ```
 
@@ -81,18 +75,21 @@ See `src/hooks/use-setup-custom-actions/README.md` for details.
 
 ### AgentsManager Props
 
-| Prop           | Type                           | Description                                                        |
-| -------------- | ------------------------------ | ------------------------------------------------------------------ |
-| `sectionName`  | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').   |
-| `currentUser`  | `CurrentUser` (optional)       | The current user object (from `@automattic/data-stores`).          |
-| `site`         | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).         |
-| `currentRoute` | `string` (optional)            | The current route path.                                            |
-| `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                   |
+| Prop           | Type                           | Description                                                       |
+| -------------- | ------------------------------ | ----------------------------------------------------------------- |
+| `sectionName`  | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').  |
+| `currentUser`  | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`. |
+| `site`         | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).        |
+| `currentRoute` | `string` (optional)            | The current route path.                                           |
+| `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                  |
 
 ### Exported Hooks and Utilities
 
 ```tsx
-import { useShouldUseUnifiedAgent, getUseUnifiedExperienceFromInlineData } from '@automattic/agents-manager';
+import {
+	useShouldUseUnifiedAgent,
+	getUseUnifiedExperienceFromInlineData,
+} from '@automattic/agents-manager';
 
 function MyComponent() {
 	// Check if the unified agent experience is active

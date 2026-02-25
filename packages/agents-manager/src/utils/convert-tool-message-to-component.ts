@@ -111,7 +111,7 @@ export function convertToolMessagesToComponents( {
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		// eslint-disable-next-line no-console
-		console.warn( `Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }
