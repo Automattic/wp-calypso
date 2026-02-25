@@ -74,3 +74,24 @@ yarn reformat-files # Fix formatting with Prettier
   - Avoid mentioning people's names.
   - Do not link to wordpress.com URLs.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
+
+## Cursor Cloud specific instructions
+
+### Hosts file
+
+The entry `127.0.0.1 calypso.localhost` must exist in `/etc/hosts` for the dev server to work. The update script handles this automatically.
+
+### Running the dev server
+
+- `yarn start` builds both server and client bundles, then starts the Node.js Express server on port 3000. The first request triggers webpack dev middleware to compile client JS; this takes **3-5 minutes** on first load in the Cloud VM.
+- `yarn start-dashboard` limits the build to the Dashboard entry points only. This builds faster but does **not** include the login form UI or other Calypso sections (those routes return server-rendered HTML without client-side JS).
+- To run the server in the background: first run `yarn build`, then start `node build/server.js` as a background process. Set `NODE_OPTIONS='--max-old-space-size=8192'` to avoid OOM during webpack compilation.
+- No local database or backend is needed; all data comes from the remote WordPress.com REST API.
+
+### Linting individual files
+
+Use `npx eslint --ext .js,.jsx,.ts,.tsx <file>` and `npx stylelint <file>` to lint specific files. The full `yarn lint` command can take a long time on the entire codebase.
+
+### Running tests for specific directories
+
+Use `yarn test-client <path>` to run tests from a specific directory. Test files live in `test/` subdirectories alongside the source, e.g. `client/components/notice/test/index.js`.
