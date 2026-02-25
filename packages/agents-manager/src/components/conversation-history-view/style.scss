@@ -1,4 +1,3 @@
-@import '@wordpress/base-styles/colors';
 @import '../../styles/mixins.scss';
 
 .agents-manager-conversation-history-view {
@@ -26,6 +25,7 @@
 		justify-content: center;
 		padding: 32px 16px;
 		text-align: center;
+		color: var(--color-foreground);
 
 		p {
 			margin: 0;
@@ -56,8 +56,8 @@
 
 	&__new-chat-btn {
 		width: 100%;
-		background-color: #2d5af2;
-		color: $white;
+		background-color: var(--color-primary);
+		color: var(--color-primary-foreground);
 		border-radius: 4px;
 		padding: 12px;
 		font-size: 14px;
@@ -73,13 +73,13 @@
 		}
 
 		&:focus {
-			outline: 2px solid #2d5af2;
+			outline: 2px solid var(--color-primary);
 			outline-offset: 2px;
 		}
 	}
 }
 
-// Dark theme overrides for the docked chat
+// Docked layout overrides (padding adjustments for sidebar mode)
 @include docked-chat-without-modal {
 	.agents-manager-conversation-history-view {
 		&__content {
@@ -90,12 +90,6 @@
 
 		&__footer {
 			padding: 0;
-		}
-
-		&__loading,
-		&__error,
-		&__empty {
-			color: $white;
 		}
 	}
 }

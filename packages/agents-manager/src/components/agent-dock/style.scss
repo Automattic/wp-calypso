@@ -409,7 +409,18 @@ body.post-new-php.agents-manager-sidebar-container {
 			margin-top: 0;
 		}
 
+		.button-module_button:has( .agents-manager-feedback-icon ) {
+			width: 32px;
+			height: 32px;
+
+			.agents-manager-feedback-icon {
+				width: 30px;
+				height: 30px;
+			}
+		}
+
 		.big-sky-next-step-button {
+			width: fit-content;
 			margin-top: 20px;
 		}
 	}
@@ -594,8 +605,9 @@ body.post-new-php.agents-manager-sidebar-container {
 			}
 		}
 
-		.big-sky__item-picker__arrows,
-		.big-sky__completed-plan {
+		.big-sky__item-picker__arrows {
+			bottom: -40px;
+
 			.components-button {
 				color: $gray-700;
 
@@ -612,10 +624,6 @@ body.post-new-php.agents-manager-sidebar-container {
 					background-color: #484848;
 				}
 			}
-		}
-
-		.big-sky__item-picker__arrows {
-			bottom: -42px;
 		}
 
 		.big-sky__item-picker__pager {
