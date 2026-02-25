@@ -100,7 +100,7 @@ export default function DevToolsOverview() {
 								rel="noopener noreferrer"
 								onClick={ handleStudioClick }
 							>
-								{ translate( 'Download Studio' ) }
+								{ translate( 'Start building locally' ) }
 							</Button>
 						</div>
 					</PageSectionColumns.Column>
@@ -154,7 +154,7 @@ export default function DevToolsOverview() {
 								rel="noopener noreferrer"
 								onClick={ handleGithubClick }
 							>
-								{ translate( 'Connect a repository' ) }
+								{ translate( 'Automate your deploys' ) }
 							</Button>
 						</div>
 					</PageSectionColumns.Column>
@@ -204,7 +204,7 @@ export default function DevToolsOverview() {
 								rel="noopener noreferrer"
 								onClick={ handleTelexClick }
 							>
-								{ translate( 'Try Telex' ) }
+								{ translate( 'Create blocks in minutes' ) }
 							</Button>
 						</div>
 					</PageSectionColumns.Column>
