@@ -491,7 +491,12 @@ function BlockNoteSubscriptionsChat( {
 
 	const { currentPost, postType } = useSelect( ( select ) => {
 		return {
-			currentPost: select( editorStore ).getCurrentPost(),
+			currentPost: select( editorStore ).getCurrentPost() as
+				| {
+						id?: number;
+						title?: string | { rendered?: string; raw?: string };
+				  }
+				| undefined,
 			postType: select( editorStore ).getCurrentPostType(),
 		};
 	}, [] );
@@ -511,7 +516,7 @@ function BlockNoteSubscriptionsChat( {
 			// Only fetch notes by current user since they're the only one who can mention @wordpress
 			return {
 				currentUserId: userId,
-				blockNotes: select( coreStore ).getEntityRecords( 'root', 'comment', {
+				blockNotes: select( coreStore ).getEntityRecords< NoteEntity >( 'root', 'comment', {
 					post: currentPostId,
 					author: userId,
 					type: 'note',
@@ -557,7 +562,10 @@ function BlockNoteSubscriptionsChat( {
 		// Categorise notes addressed to AI that haven't been processed and aren't being processed
 		const { staleNotes, messagesAddressedToAi } = blockNotes.reduce(
 			( acc, note ) => {
-				const hasAiMentionInNote = hasAiMention( note.content?.rendered );
+				const hasAiMentionInNote = hasAiMention(
+					typeof note.content === 'string' ? note.content : note.content?.rendered
+				);
+
 				const isAlreadyProcessed = isNoteProcessed( note, processedNotesRef.current );
 				// Convert both to numbers for comparison to handle type mismatches
 				const isBeingProcessed =
@@ -585,7 +593,7 @@ function BlockNoteSubscriptionsChat( {
 		if ( staleNotes.length > 0 ) {
 			handleStaleNotes( {
 				notes: staleNotes,
-				postId: currentPost?.id,
+				postId: currentPostId,
 				processedNotesSet: processedNotesRef.current,
 				editEntityRecord,
 				saveEditedEntityRecord,

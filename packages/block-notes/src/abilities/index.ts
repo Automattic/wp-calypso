@@ -92,7 +92,7 @@ export async function registerBlockNotesAbility(): Promise< void > {
 				let postId: number | undefined;
 
 				try {
-					postId = select( editorStore ).getCurrentPostId();
+					postId = select( editorStore ).getCurrentPostId() ?? undefined;
 
 					// Validate postId
 					if ( ! postId ) {
