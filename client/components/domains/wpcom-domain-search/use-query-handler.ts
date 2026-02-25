@@ -38,7 +38,7 @@ export const useQueryHandler = ( {
 		}
 
 		// Prefer the site title over the site URL slug, as it's more meaningful for domain suggestions.
-		if ( currentSiteTitle ) {
+		if ( currentSiteTitle?.trim() ) {
 			return currentSiteTitle;
 		}
 

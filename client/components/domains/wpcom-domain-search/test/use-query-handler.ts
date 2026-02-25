@@ -70,6 +70,37 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBe( 'stored-domain' );
 	} );
 
+	it( 'should initialize with query from sessionStorage when available even if currentSiteTitle is present', () => {
+		sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+		const { result } = renderHook( () =>
+			useQueryHandler( {
+				currentSiteUrl: 'https://test-site.wordpress.com',
+				currentSiteTitle: 'My Amazing Site',
+			} )
+		);
+		expect( result.current.query ).toBe( 'stored-domain' );
+	} );
+
+	it( 'should fall back to URL slug when currentSiteTitle is empty', () => {
+		const { result } = renderHook( () =>
+			useQueryHandler( {
+				currentSiteUrl: 'https://test-site.wordpress.com',
+				currentSiteTitle: '',
+			} )
+		);
+		expect( result.current.query ).toBe( 'test-site' );
+	} );
+
+	it( 'should fall back to URL slug when currentSiteTitle is whitespace only', () => {
+		const { result } = renderHook( () =>
+			useQueryHandler( {
+				currentSiteUrl: 'https://test-site.wordpress.com',
+				currentSiteTitle: '   ',
+			} )
+		);
+		expect( result.current.query ).toBe( 'test-site' );
+	} );
+
 	it( 'should update query and sessionStorage when setQuery is called', () => {
 		const { result } = renderHook( () => useQueryHandler( {} ) );
 
