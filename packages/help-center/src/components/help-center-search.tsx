@@ -24,7 +24,7 @@ type HelpCenterSearchProps = {
 };
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser } = useHelpCenterContext();
+	const { sectionName, site, currentUser, product } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
@@ -44,12 +44,12 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		searchQuery || contextTerm || contextSearch,
 		locale,
 		currentRoute,
-		source
+		product
 	);
 
 	const isInitialLoading =
 		! searchQuery &&
-		( isLoadingSearchResults || ( ! disableChatSupport && isLoadingInteractions ) );
+		( isLoadingSearchResults || ( featureConfig.chat.enabled && isLoadingInteractions ) );
 
 	if ( isInitialLoading ) {
 		return (
