@@ -2,10 +2,11 @@
 
 ## Primary Objective
 
-Review the PR based on the following files:
+Review the PR based on the following documentation files as the guidelines:
 
-- @packages/api-core/README.md
-- @packages/api-queries/README.md
+- @AGENTS.md
+- @client/AGENTS.md
+- @client/dashboard/AGENTS.md
 - @client/dashboard/docs/data-library.md
 - @client/dashboard/docs/i18n.md
 - @client/dashboard/docs/links.md
@@ -14,6 +15,8 @@ Review the PR based on the following files:
 - @client/dashboard/docs/testing.md
 - @client/dashboard/docs/typography-and-copy.md
 - @client/dashboard/docs/ui-components.md
+- @packages/api-core/README.md
+- @packages/api-queries/README.md
 
 ## Method
 
@@ -28,5 +31,7 @@ Review the PR based on the following files:
 - Do NOT use checkboxes, todo lists, or progress indicators.
 - Only comment if there are issues worth addressing.
 - DO NOT comment on lines that are not related to the guidelines.
+- For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
+- For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
 
 Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
