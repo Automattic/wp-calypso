@@ -221,6 +221,13 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					disabled={ disabled }
 					label={ translate( 'Enable podcasting on this site' ) }
 				/>
+				{ isPodcastingEnabled && (
+					<FormSettingExplanation>
+						{ translate(
+							'Disable to stop publishing your podcast feed. You can always set it up again.'
+						) }
+					</FormSettingExplanation>
+				) }
 			</Card>
 
 			{ /* Upsell nudge for audio upload */ }
