@@ -21,3 +21,13 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		}
 	}
 }
+
+body.agents-manager-sidebar-container--sidebar-open.modal-open:not( .wp-admin ) {
+	overflow: hidden;
+
+	.is-section-subscribers #secondary {
+		position: fixed !important;
+		bottom: 16px !important;
+		top: 48px !important;
+	}
+}
