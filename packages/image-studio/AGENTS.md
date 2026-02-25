@@ -1,4 +1,4 @@
-# Image Studio - AGENTS.md
+# Image Studio
 
 ## Package Overview
 

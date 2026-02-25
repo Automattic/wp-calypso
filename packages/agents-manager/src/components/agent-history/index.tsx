@@ -2,6 +2,7 @@ import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -46,7 +47,7 @@ export default function AgentHistory( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
@@ -59,7 +60,6 @@ export default function AgentHistory( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
