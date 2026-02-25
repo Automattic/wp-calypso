@@ -22,7 +22,12 @@
 
 ## Packages
 
+- **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
+
+## Apps
+
+- **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
 
 ## Development
 
