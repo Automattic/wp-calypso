@@ -2,6 +2,7 @@ export type DomainSuggestionQueryVendor =
 	| 'variation2_front'
 	| 'variation4_front'
 	| 'variation8_front'
+	| 'ciab'
 	| 'newsletter'
 	| 'ecommerce'
 	| 'gravatar'
