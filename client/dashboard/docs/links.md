@@ -14,7 +14,7 @@
 <a href="/start">Create new site</a>
 ```
 
-- Every relative URL from the Classic WordPress.com/Calypso to the dashboard MUST use `dashboard()` function
+- Every relative URL from the Classic WordPress.com/Calypso to the dashboard MUST use `dashboardLink()` function
     - **Purpose**: Ensures proper environment configuration (dev vs production hostnames)
 - Every link to `/checkout` must have `redirect_to` and `cancel_to` query param
     - **Purpose**: Ensures correct behaviour when exiting the checkout screen
