@@ -18,9 +18,9 @@ const useLearnMenuItems = ( path: string ) => {
 					icon: category,
 					path: A4A_LEARN_LINK,
 					link: A4A_LEARN_RESOURCE_CENTER_LINK,
-					title: translate( 'Learn' ),
+					title: translate( 'Guides and articles' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resource center / Learn',
+						menu_item: 'Automattic for Agencies / Resource center / Guides and articles',
 					},
 				},
 				path
