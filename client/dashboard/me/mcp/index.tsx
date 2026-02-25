@@ -8,7 +8,6 @@ import {
 	__experimentalHStack as HStack,
 	FormTokenField,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import {
@@ -20,7 +19,6 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { Card, CardBody } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -442,13 +440,8 @@ function McpComponent() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'AI and MCP' ) }
-					description={ createInterpolateElement(
-						__(
-							'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. <learnMoreLink/>'
-						),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="mcp" />,
-						}
+					description={ __(
+						'Control how AI assistants interact with your WordPress.com account and sites.'
 					) }
 				/>
 			}

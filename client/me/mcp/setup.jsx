@@ -19,7 +19,6 @@ import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import LegacySectionHeader from 'calypso/components/section-header';
@@ -221,12 +220,7 @@ function McpSetupComponent( { path } ) {
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'Control how AI assistants interact with your WordPress.com account and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
-						},
-					}
+					'Control how AI assistants interact with your WordPress.com account and sites.'
 				) }
 			/>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />

@@ -32,7 +32,6 @@ import {
 	Icon,
 	Spinner,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { connection, lock, notAllowed, unseen, seen, pencil } from '@wordpress/icons';
 import { useState, useSyncExternalStore } from 'react';
@@ -47,7 +46,6 @@ import { EXPLORATIONS_STORAGE_KEY } from '../../app/explorations-helper';
 import { ActionList } from '../../components/action-list';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -1275,13 +1273,8 @@ function McpComponentExplore() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'AI and MCP' ) }
-					description={ createInterpolateElement(
-						__(
-							'Control how AI assistants interact with your WordPress.com account and sites. <learnMoreLink/>'
-						),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="mcp" />,
-						}
+					description={ __(
+						'Control how AI assistants interact with your WordPress.com account and sites.'
 					) }
 				/>
 			}
