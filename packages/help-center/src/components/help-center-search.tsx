@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { __ } from '@wordpress/i18n';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterSearch } from '../hooks';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
@@ -17,8 +17,8 @@ type HelpCenterSearchProps = {
 };
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser, hideMoreResources, disableChatSupport } =
-		useHelpCenterContext();
+	const { sectionName, site, currentUser } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
@@ -27,7 +27,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			{ ! disableChatSupport && (
+			{ featureConfig.home.recentConversations && (
 				<>
 					<HelpCenterRecentConversations />
 					<BlockedZendeskNotice />
@@ -51,7 +51,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				location="help-center"
 				currentRoute={ currentRoute }
 			/>
-			{ ! searchQuery && ! hideMoreResources && <HelpCenterMoreResources /> }
+			{ ! searchQuery && featureConfig.moreResources.visible && <HelpCenterMoreResources /> }
 		</div>
 	);
 };

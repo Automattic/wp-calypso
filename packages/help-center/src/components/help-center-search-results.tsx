@@ -206,7 +206,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site, product = 'wpcom' } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
@@ -233,7 +233,7 @@ function HelpSearchResults( {
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
 		currentRoute,
-		source
+		product
 	);
 
 	const searchResults = searchData ?? [];

@@ -7,7 +7,7 @@ import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
 import './help-center-chat.scss';
@@ -23,20 +23,20 @@ export function HelpCenterChat( {
 	const shouldUseWapuu = useShouldUseWapuu();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
-	const { currentUser, site, isCommerceGarden, newInteractionsBotSlug, newInteractionsBotVersion } =
+	const { currentUser, site, newInteractionsBotSlug, newInteractionsBotVersion } =
 		useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging(
 		!! currentUser?.ID
 	);
 	const { search } = useLocation();
-	const { data } = useSupportStatus( ! isCommerceGarden );
+	const { data } = useSupportStatus( ! featureConfig.chat.skipSupportStatus );
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
-	const commerceGardenFlowName = isCommerceGarden ? 'messaging_flow_commerce_in_a_box' : null;
-	const userFieldFlowName = commerceGardenFlowName || data?.eligibility?.user_field_flow_name;
+	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 

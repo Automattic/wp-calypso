@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -32,6 +33,8 @@ import {
 } from '../hoc/with-marketplace-type';
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { isPressableAddonProduct } from '../lib/hosting';
+import hasActiveReferralPressablePlanForClient from './lib/has-active-referral-pressable-plan';
 import NoticeSummary from './notice-summary';
 import type { ShoppingCartItem, TermPricingType } from '../types';
 interface Props {
@@ -73,8 +76,13 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	}, [] );
 
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
+	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
 
 	const hasCompletedForm = !! email && !! message;
+	const hasPressableAddonsInCheckout = useMemo(
+		() => checkoutItems.some( ( item ) => isPressableAddonProduct( item.slug ) ),
+		[ checkoutItems ]
+	);
 
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 
@@ -92,7 +100,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
 	const handleRequestPayment = useCallback(
-		( flowType: ReferralOrderFlowType ) => {
+		async ( flowType: ReferralOrderFlowType ) => {
 			if ( flowType === 'send' && ! hasCompletedForm ) {
 				return;
 			}
@@ -105,6 +113,41 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 				setValidationError( { email: translate( 'Please provide correct email address' ) } );
 				return;
 			}
+
+			if ( hasPressableAddonsInCheckout ) {
+				let referralsData = referrals;
+
+				if ( ! referralsData ) {
+					try {
+						const { data } = await refetchReferrals();
+						referralsData = data;
+					} catch {
+						dispatch(
+							errorNotice(
+								translate(
+									'We were unable to validate whether this client has an active Pressable plan. Please try again.'
+								)
+							)
+						);
+						return;
+					}
+				}
+
+				const hasClientActiveReferralPressablePlan = hasActiveReferralPressablePlanForClient(
+					referralsData,
+					email
+				);
+
+				if ( ! hasClientActiveReferralPressablePlan ) {
+					setValidationError( {
+						email: translate(
+							'This client does not have an active Pressable plan. An active Pressable plan is required to refer Pressable add-ons.'
+						),
+					} );
+					return;
+				}
+			}
+
 			dispatch(
 				recordTracksEvent(
 					flowType === 'send'
@@ -176,12 +219,16 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			dispatch,
 			email,
 			hasCompletedForm,
+			hasPressableAddonsInCheckout,
 			isFeedbackShown,
 			licenses,
 			message,
 			onClearCart,
 			productIds,
+			referrals,
+			refetchReferrals,
 			requestPayment,
+			termPricing,
 			translate,
 		]
 	);
