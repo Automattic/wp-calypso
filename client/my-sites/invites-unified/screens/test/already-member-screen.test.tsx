@@ -212,6 +212,26 @@ describe( 'AlreadyMemberScreen', () => {
 			expect( logo ).toHaveAttribute( 'src', 'https://example.com/woo-logo.png' );
 			expect( logo ).toHaveAttribute( 'alt', 'Woo' );
 		} );
+
+		test( 'does not show branding logo for non-CIAB sites', () => {
+			const store = createStore();
+
+			render(
+				<Provider store={ store }>
+					<AlreadyMemberScreen
+						blogDetails={ {
+							title: '',
+							domain: '',
+							URL: '',
+							is_garden_site: true,
+							garden: { partner: 'woo', name: 'enterprise' },
+						} }
+					/>
+				</Provider>
+			);
+
+			expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'switch account flow', () => {

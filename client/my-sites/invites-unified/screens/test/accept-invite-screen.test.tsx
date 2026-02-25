@@ -554,5 +554,29 @@ describe( 'AcceptInviteScreen', () => {
 			expect( logo ).toHaveAttribute( 'src', 'https://example.com/woo-logo.png' );
 			expect( logo ).toHaveAttribute( 'alt', 'Woo' );
 		} );
+
+		test( 'does not show logo for non-CIAB garden sites', () => {
+			const store = createStore();
+			const invite = createInvite( {
+				blog_details: {
+					title: 'Non CIAB Store',
+					domain: 'non-ciab.store',
+					URL: 'https://non-ciab.store',
+					is_garden_site: true,
+					garden: {
+						partner: 'woo',
+						name: 'enterprise',
+					},
+				},
+			} );
+
+			render(
+				<Provider store={ store }>
+					<AcceptInviteScreen invite={ invite } />
+				</Provider>
+			);
+
+			expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
