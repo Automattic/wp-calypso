@@ -106,7 +106,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const isAudioUploadEnabled =
 		plansDataLoaded && ( site?.options?.upgraded_filetypes_enabled || isJetpack );
 
-	const disabled = isRequestingSettings || isSavingSettings;
+	const disabled = isRequestingSettings || isSavingSettings || isCoverImageUploading;
 
 	const newPostUrl = `/post/${ siteSlug }`;
 
@@ -328,7 +328,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 								onRemove={ onCoverImageRemoved }
 								onSelect={ onCoverImageSelected }
 								onUploadStateChange={ setIsCoverImageUploading }
-								isDisabled={ disabled || isCoverImageUploading }
+								isDisabled={ disabled }
 							/>
 							<div className="podcasting-details__title-subtitle-wrapper">
 								{ renderTextField( {
