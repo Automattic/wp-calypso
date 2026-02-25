@@ -280,7 +280,7 @@ export default function WPCOMBusinessAT( {
 	// If features are not loaded yet, show loading state
 	if ( featuresNotLoaded ) {
 		return (
-			<Main className="wpcom-business-at">
+			<Main wideLayout className="wpcom-business-at">
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<DocumentHead title={ content.documentHeadTitle } />
 				<FormattedHeader
@@ -303,7 +303,7 @@ export default function WPCOMBusinessAT( {
 	}
 
 	return (
-		<Main className="wpcom-business-at">
+		<Main wideLayout className="wpcom-business-at">
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
 			<PageViewTracker path="/backup/:site" title="Business Plan Automated Transfer" />
