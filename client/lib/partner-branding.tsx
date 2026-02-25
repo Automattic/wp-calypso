@@ -75,7 +75,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		},
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
-		domains: [ 'my.woo.ai' ],
+		domains: [ 'my.woo.ai', 'my.localhost' ],
 	},
 };
 
