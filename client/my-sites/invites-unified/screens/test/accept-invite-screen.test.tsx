@@ -133,6 +133,12 @@ const mockWooBranding = {
 		width: 100,
 		height: 30,
 	},
+	compactLogo: {
+		src: 'https://example.com/woo-logo-compact.png',
+		alt: 'Woo compact',
+		width: 72,
+		height: 24,
+	},
 };
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
@@ -551,8 +557,8 @@ describe( 'AcceptInviteScreen', () => {
 			);
 
 			const logo = screen.getByRole( 'img' );
-			expect( logo ).toHaveAttribute( 'src', 'https://example.com/woo-logo.png' );
-			expect( logo ).toHaveAttribute( 'alt', 'Woo' );
+			expect( logo ).toHaveAttribute( 'src', 'https://example.com/woo-logo-compact.png' );
+			expect( logo ).toHaveAttribute( 'alt', 'Woo compact' );
 		} );
 
 		test( 'does not show logo for non-CIAB garden sites', () => {
