@@ -1,6 +1,7 @@
 import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { hasAiMention } from '../../utils/content';
 
 export const MAX_RETRIES = 5;
@@ -74,7 +75,7 @@ function BlockNoteThinkingIndicator() {
 		indicator.className = 'bigsky-thinking-indicator';
 		indicator.innerHTML = `
 				<img src="${ pluginUrl }/assets/big-sky.svg" width="14" height="14" alt="" />
-				<span class="bigsky-thinking-text">Thinking...</span>
+				<span class="bigsky-thinking-text">${ __( 'Thinking…', 'big-sky' ) }</span>
 			`;
 
 		lastNote.appendChild( indicator );

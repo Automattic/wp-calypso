@@ -1,11 +1,16 @@
 import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { hasAiMention, splitByAiMention } from '../../utils/content';
 
 export const MAX_RETRIES = 5;
 export const RETRY_DELAY_MS = 200;
-export const PLACEHOLDER_TEXT = 'Leave a note. Type @ai to use AI assistance.';
+export const PLACEHOLDER_TEXT = sprintf(
+	/* translators: %s is the @ai trigger keyword/mention — do not translate */
+	__( 'Leave a note. Type %s to use AI assistance.', 'big-sky' ),
+	'@ai'
+);
 
 /**
  * BlockNoteMentionAutocomplete Component

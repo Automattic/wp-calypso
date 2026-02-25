@@ -179,7 +179,7 @@ describe( 'BlockNoteThinkingIndicator', () => {
 					// Check for text
 					const textSpan = indicator.querySelector( `.${ INDICATOR_TEXT_CLASS }` );
 					expect( textSpan ).toBeInTheDocument();
-					expect( textSpan!.textContent ).toBe( 'Thinking...' );
+					expect( textSpan!.textContent ).toBe( 'Thinking…' );
 				} );
 			} );
 		} );

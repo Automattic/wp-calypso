@@ -4,6 +4,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useRegistry, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useEffect, useRef } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { convertEntityNoteFormat, replyToNote } from '../../abilities/utils';
 import { blockNotesAgentConfig } from '../../agent-config';
 import { useAgentConfig } from '../../hooks/use-agent-config';
@@ -21,6 +22,11 @@ import type { UseAgentChatConfig } from '@automattic/agenttic-client';
  * Maximum age in milliseconds for a note to be processed (1 minute)
  */
 const NOTE_STALE_THRESHOLD_MS = 60 * 1000;
+
+const DEFAULT_ERROR_MESSAGE = __(
+	'Unfortunately, there was an error processing your request. Please try again later.',
+	'big-sky'
+);
 
 /**
  * Mark a note as processed by adding meta data
@@ -130,7 +136,7 @@ const handleStaleNotes = ( {
 				await replyToNote(
 					note.note_post_ID,
 					rootNoteId,
-					'Unfortunately, there was an error processing your request. Please try again later.',
+					DEFAULT_ERROR_MESSAGE,
 					'AI [Experimental]'
 				);
 			}
@@ -446,12 +452,7 @@ const processAiNote = async (
 			errorType: 'agent_response_failed',
 			sessionId: threadSessionId,
 		} );
-		await replyToNote(
-			note.note_post_ID,
-			rootNoteId,
-			'Unfortunately, there was an error processing your request. Please try again later.',
-			'AI [Experimental]'
-		);
+		await replyToNote( note.note_post_ID, rootNoteId, DEFAULT_ERROR_MESSAGE, 'AI [Experimental]' );
 	} finally {
 		window.console?.info( `Block Notes: Marking note ID ${ note.note_ID } as processed.` );
 
