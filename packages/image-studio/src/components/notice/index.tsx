@@ -35,12 +35,8 @@ export function ImageStudioNotice() {
 
 	const { removeNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-	if ( ! notices || notices.length === 0 ) {
-		return null;
-	}
-
-	const warningNotices = notices.filter( ( n ) => n.type === 'warning' );
-	const snackbarNotices = notices.filter( ( n ) => n.type !== 'warning' );
+	const warningNotices = ( notices ?? [] ).filter( ( n ) => n.type === 'warning' );
+	const snackbarNotices = ( notices ?? [] ).filter( ( n ) => n.type !== 'warning' );
 
 	return (
 		<>

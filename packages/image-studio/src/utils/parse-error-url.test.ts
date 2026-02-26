@@ -146,6 +146,37 @@ describe( 'parseErrorUrl', () => {
 		} );
 	} );
 
+	describe( 'isPlansPageUrl detection', () => {
+		it( 'identifies /plans/ URL as plans page', () => {
+			const result = parseErrorUrl( 'Upgrade required https://wordpress.com/plans/example.com' );
+			expect( result.isPlansPageUrl ).toBe( true );
+		} );
+
+		it( 'returns false for Jetpack redirect URL', () => {
+			const result = parseErrorUrl(
+				'Upgrade required https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&site=example.com'
+			);
+			expect( result.isPlansPageUrl ).toBe( false );
+		} );
+
+		it( 'returns false for my-jetpack URL', () => {
+			const result = parseErrorUrl(
+				'Upgrade required https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
+			);
+			expect( result.isPlansPageUrl ).toBe( false );
+		} );
+
+		it( 'returns false for /upgrade URL', () => {
+			const result = parseErrorUrl( 'Upgrade required https://wordpress.com/upgrade' );
+			expect( result.isPlansPageUrl ).toBe( false );
+		} );
+
+		it( 'returns false for non-upgrade URLs', () => {
+			const result = parseErrorUrl( 'See https://example.com/help' );
+			expect( result.isPlansPageUrl ).toBe( false );
+		} );
+	} );
+
 	describe( 'edge cases', () => {
 		it( 'handles URL with fragment', () => {
 			const result = parseErrorUrl( 'See https://example.com/docs#section' );
