@@ -83,7 +83,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>
@@ -110,7 +110,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>
