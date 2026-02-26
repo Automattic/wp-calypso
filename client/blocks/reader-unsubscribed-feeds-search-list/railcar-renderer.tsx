@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 
 export const RailcarRenderer = ( {
 	feed,
-	customProps = {},
+	uiPosition,
 	children,
 }: {
 	feed: Reader.FeedItem;
-	customProps?: Record< string, string | number >;
+	uiPosition: number;
 	children: React.ReactNode;
 } ) => {
 	const railcar = feed.railcar;
@@ -18,14 +18,13 @@ export const RailcarRenderer = ( {
 			recordTrainTracksRender( {
 				railcarId: railcar.railcar,
 				uiAlgo: 'reader-subscriptions-search',
-				uiPosition: index ?? -1,
 				fetchAlgo: railcar.fetch_algo,
 				fetchPosition: railcar.fetch_position,
 				recBlogId: railcar.rec_blog_id,
-				...customProps,
+				uiPosition: uiPosition ?? -1,
 			} );
 		}
-	}, [ railcar, customProps ] );
+	}, [ railcar, uiPosition ] );
 
 	return children;
 };

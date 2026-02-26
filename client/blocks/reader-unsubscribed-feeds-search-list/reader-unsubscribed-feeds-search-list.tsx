@@ -66,9 +66,7 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 					<RailcarRenderer
 						key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 						feed={ feed }
-						customProps={ {
-							index: index ?? -1,
-						} }
+						uiPosition={ index }
 					>
 						<ReaderFeedItem
 							feed={ feed }
