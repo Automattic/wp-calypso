@@ -4,13 +4,14 @@ import {
 	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
+	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -101,6 +102,7 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 }: Props ) {
+	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -171,6 +173,7 @@ export default function AgentChat( {
 					<AgentUI.Notice />
 					{ imageUpload && (
 						<ImageUploader
+							ref={ imageUploaderRef }
 							images={ imageUpload.pendingImages }
 							uploadingImages={ imageUpload.uploadingImages }
 							onFilesSelected={ imageUpload.handleFilesSelected }
@@ -189,7 +192,7 @@ export default function AgentChat( {
 					) }
 
 					<SelectedBlock />
-					<AgentUI.Input />
+					<AgentUI.Input imageUploaderRef={ imageUpload ? imageUploaderRef : undefined } />
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
