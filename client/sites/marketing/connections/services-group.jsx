@@ -131,8 +131,8 @@ const SharingServicesGroup = ( {
 							);
 						}
 						{
-							/* Injecting the Fediverse above Twitter */
-							if ( service.ID === 'twitter' && type === 'publicize' ) {
+							/* Injecting the Fediverse above Google Photos */
+							if ( service.ID === 'google_photos' && type === 'other' ) {
 								return (
 									<Fragment key="fediverse">
 										<Components.fediverse />
