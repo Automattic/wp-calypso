@@ -97,8 +97,8 @@ class InviteAcceptLoggedOut extends Component {
 
 	getCiabConfig = () => {
 		const site = this.props.invite?.site;
-		const gardenName = site?.garden?.name || site?.garden_name;
-		const gardenPartner = site?.garden?.partner || site?.garden_partner;
+		const gardenName = site?.garden?.name;
+		const gardenPartner = site?.garden?.partner;
 
 		return getCiabConfigFromGarden( gardenPartner, gardenName );
 	};

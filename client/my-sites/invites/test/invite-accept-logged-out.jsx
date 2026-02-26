@@ -117,7 +117,7 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 		render(
 			<Provider store={ store }>
 				<InviteAcceptLoggedOut
-					invite={ buildInvite( { garden_name: 'commerce', garden_partner: 'woo' } ) }
+					invite={ buildInvite( { garden: { name: 'commerce', partner: 'woo' } } ) }
 				/>
 			</Provider>
 		);
@@ -135,7 +135,7 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 		render(
 			<Provider store={ store }>
 				<InviteAcceptLoggedOut
-					invite={ buildInvite( { garden_name: 'enterprise', garden_partner: 'woo' } ) }
+					invite={ buildInvite( { garden: { name: 'enterprise', partner: 'woo' } } ) }
 				/>
 			</Provider>
 		);
@@ -144,5 +144,19 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 		expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
 		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
 		expect( screen.getByTestId( 'body-section-css-class' ) ).toHaveTextContent( '' );
+	} );
+
+	test( 'falls back to WordPress logo when site.garden is missing', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut invite={ buildInvite() } />
+			</Provider>
+		);
+
+		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( undefined, undefined );
+		expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
+		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
 	} );
 } );
