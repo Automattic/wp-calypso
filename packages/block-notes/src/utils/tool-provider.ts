@@ -25,7 +25,7 @@ export async function initializeAbilities(): Promise< void > {
 export async function getFilteredAbilities(): Promise< Ability[] > {
 	await initializeAbilities();
 
-	const allAbilities = getAbilities();
+	const allAbilities = await getAbilities();
 	return allAbilities.filter(
 		( ability ) => ability?.name && ALLOWED_ABILITIES.includes( ability.name )
 	);

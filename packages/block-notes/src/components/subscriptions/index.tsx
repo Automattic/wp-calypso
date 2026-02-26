@@ -505,7 +505,7 @@ function BlockNoteSubscriptionsChat( {
 			}
 
 			// Get block notes from entities API with meta data
-			// Only fetch notes by current user since they're the only one who can mention @wordpress
+			// Only fetch notes by current user since they're the only one who can mention @ai
 			return {
 				currentUserId: userId,
 				blockNotes: select( coreStore ).getEntityRecords< NoteEntity >( 'root', 'comment', {
