@@ -442,24 +442,21 @@ describe( 'BlockNoteThinkingIndicator', () => {
 	} );
 
 	describe( 'Cleanup', () => {
-		it( 'clears attachedThreadsRef on unmount', () => {
-			const thread = createThread( 1, [ 'Note with @ai' ] );
-
+		it( 'does not process new threads after unmount', async () => {
 			const { unmount } = render( <BlockNoteThinkingIndicator /> );
-
-			// Wait for processing
-			waitFor( () => {
-				expect( thread.querySelector( `.${ INDICATOR_CLASS }` ) ).toBeInTheDocument();
-			} );
-
-			// Unmount should clear internal refs
 			unmount();
 
-			// Component should be fully cleaned up (no hanging refs)
-			expect( true ).toBe( true );
+			// Add a thread with @ai mention after unmount
+			const thread = createThread( 1, [ 'Note with @ai' ] );
+
+			// Allow any async work to settle
+			await act( async () => {} );
+
+			// Observer is disconnected — no indicator should be applied
+			expect( thread.querySelector( `.${ INDICATOR_CLASS }` ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'removes all indicators from DOM on unmount', async () => {
+		it( 'does not remove indicators from DOM on unmount', async () => {
 			const thread1 = createThread( 1, [ 'Thread 1 with @ai' ] );
 			const thread2 = createThread( 2, [ 'Thread 2 with @ai' ] );
 
@@ -473,10 +470,9 @@ describe( 'BlockNoteThinkingIndicator', () => {
 
 			unmount();
 
-			// Indicators remain in DOM (cleanup doesn't remove them)
-			// This is expected behavior - component only manages application, not removal on unmount
+			// Indicators remain in DOM after unmount — component only manages application, not removal
 			const allIndicators = document.querySelectorAll( `.${ INDICATOR_CLASS }` );
-			expect( allIndicators.length ).toBeGreaterThanOrEqual( 0 );
+			expect( allIndicators.length ).toBe( 2 );
 		} );
 	} );
 } );

@@ -23,8 +23,6 @@ export function useAgentConfig( agentConfigFactory: {
 
 	useEffect( () => {
 		let mounted = true;
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
-		let agentKey: string | null = null;
 
 		// Use session ID from the store
 		const currentSessionId = sessionId || 'wp-orchestrator-default';
@@ -34,7 +32,6 @@ export function useAgentConfig( agentConfigFactory: {
 			.then( ( loadedConfig ) => {
 				if ( mounted ) {
 					setAgentConfigState( loadedConfig );
-					agentKey = `${ loadedConfig.agentId }-${ currentSessionId }`;
 				}
 			} )
 			.catch( ( error ) => {
