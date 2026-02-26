@@ -1,5 +1,4 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
 
 .dev-tools-overview {
 	.hosting-dashboard-layout__body-wrapper {
@@ -10,15 +9,23 @@
 }
 
 .dev-tools-overview__intro {
-	@include body-large;
 	max-width: 650px;
-	padding: 32px 16px 0;
+	margin-inline: 16px;
 
 	@include break-medium {
-		padding: 32px 64px 0;
+		margin-inline: 64px;
+	}
+
+	+ .page-section-columns {
+		padding-block-start: 0;
 	}
 }
 
-.dev-tools-overview__description {
-	@include body-large;
+.dev-tools-overview .page-section-columns__heading {
+	flex-wrap: wrap;
+	margin-block-end: 16px;
+}
+
+.dev-tools-overview__tagline {
+	flex-basis: 100%;
 }
