@@ -172,7 +172,10 @@ export function ImageUploader( {
 
 	// Track drag state — scoped to dropZoneRef container when provided, otherwise window
 	useEffect( () => {
-		const listenTarget = dropZoneRef?.current || window;
+		const listenTarget = dropZoneRef ? dropZoneRef.current : window;
+		if ( ! listenTarget ) {
+			return;
+		}
 
 		const handleDragEnter = ( e: DragEvent ) => {
 			// Only track file drags, not element drags
