@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
-import AddNew from 'calypso/reader/new-subscription/components/add-new';
-import AddReddit from 'calypso/reader/new-subscription/components/add-reddit';
+import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
+import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/components/add-subscription-form/consts';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -12,8 +12,6 @@ import {
 	getDiscoverStreamTags,
 	RECOMMENDED_TAB,
 	buildDiscoverStreamKey,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
 	FRESHLY_PRESSED_TAB,
 } from './helper';
 
@@ -31,18 +29,12 @@ const DiscoverStream = ( props ) => {
 		selectedTag: selectedTag,
 	};
 
-	const TAB_COMPONENTS = {
-		[ ADD_NEW_TAB ]: AddNew,
-		[ REDDIT_TAB ]: AddReddit,
-	};
-
-	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
-	if ( ContentComponent ) {
+	if ( ADD_SUBSCRIPTION_CONFIGS[ selectedTab ] ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
 				<div className="reader__content">
-					<ContentComponent />
+					<AddSubscriptionForm type={ selectedTab } />
 				</div>
 			</ReaderMain>
 		);

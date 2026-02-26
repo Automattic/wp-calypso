@@ -13,8 +13,11 @@
 		border-block-end: 1px solid $studio-gray-5;
 		display: flex;
 		align-items: center;
-		height: 81px !important; // Override the height from the virtualized list
 		@extend %site-subscriptions-list-default-text;
+
+		&:not(.header) {
+			height: 81px !important; // Override the height from the virtualized list
+		}
 
 		* {
 			flex: 1;

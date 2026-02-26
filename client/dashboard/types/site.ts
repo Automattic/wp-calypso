@@ -12,4 +12,4 @@ export type SiteBlockingStatus =
 	| 'difm_lite_in_progress'
 	| null;
 
-export type SiteBadge = 'staging' | 'trial' | 'p2' | SiteBlockingStatus;
+export type SiteBadge = 'redirect' | 'staging' | 'trial' | 'p2' | SiteBlockingStatus;

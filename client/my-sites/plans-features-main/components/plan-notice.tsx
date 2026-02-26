@@ -62,7 +62,7 @@ function useResolveNoticeType(
 
 	if ( isNoticeDismissed || isInSignup ) {
 		return NO_NOTICE;
-	} else if ( ! canUserPurchasePlan ) {
+	} else if ( ! canUserPurchasePlan && currentPlan !== null ) {
 		return USER_CANNOT_PURCHASE_NOTICE;
 	} else if ( isCurrentPlanRetired ) {
 		return PLAN_RETIREMENT_NOTICE;

@@ -10,6 +10,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
+import { useSite } from '../../../hooks/use-site';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
@@ -31,6 +32,9 @@ const domainUpsell: Flow = {
 		const backTo = useQuery().get( 'back_to' );
 		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
+		const site = useSite();
+		const hasQualifyingPlan =
+			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
 		const { getDomainCartItem, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
@@ -47,6 +51,24 @@ const domainUpsell: Flow = {
 			launchpadScreenOption === 'skipped' || ! backTo ? `/home/${ siteSlug }` : backTo;
 
 		const submittedDomains = useRef( false );
+
+		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
+			if ( includePlan ) {
+				const planCartItem = getPlanCartItem();
+				if ( planCartItem ) {
+					await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+				}
+			}
+
+			const domainCartItem = getDomainCartItem();
+			if ( domainCartItem ) {
+				await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
+			}
+
+			return window.location.assign(
+				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
+			);
+		}
 
 		function goBack() {
 			if ( currentStep === STEPS.DOMAIN_SEARCH.slug ) {
@@ -92,6 +114,10 @@ const domainUpsell: Flow = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
+					if ( hasQualifyingPlan ) {
+						return addToCartAndRedirectToCheckout( { includePlan: false } );
+					}
+
 					return navigate( STEPS.PLANS.slug );
 				}
 				case STEPS.USE_MY_DOMAIN.slug: {
@@ -113,6 +139,10 @@ const domainUpsell: Flow = {
 
 					submittedDomains.current = true;
 
+					if ( hasQualifyingPlan ) {
+						return addToCartAndRedirectToCheckout( { includePlan: false } );
+					}
+
 					return navigate( STEPS.PLANS.slug );
 				}
 				case STEPS.PLANS.slug:
@@ -121,20 +151,7 @@ const domainUpsell: Flow = {
 					} );
 
 					if ( providedDependencies?.goToCheckout ) {
-						const planCartItem = getPlanCartItem();
-						const domainCartItem = getDomainCartItem();
-
-						if ( planCartItem ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-						}
-
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
-
-						return window.location.assign(
-							`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
-						);
+						return addToCartAndRedirectToCheckout();
 					}
 
 					return window.location.assign( returnUrl );

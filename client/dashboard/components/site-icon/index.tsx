@@ -10,6 +10,7 @@ import './style.scss';
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
 	const status = getSiteBlockingStatus( site );
 	const isMigration = status === 'migration_pending' || status === 'migration_started';
+	const isRedirect = site.options?.is_redirect;
 	const fallbackInitial = getSiteDisplayName( site ).charAt( 0 );
 	const dims = { width: size, height: size };
 	const ico = site.icon?.img || site.icon?.ico;
@@ -30,7 +31,7 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 		'is-small': size <= 16,
 	} );
 
-	if ( ico ) {
+	if ( ico && ! isRedirect ) {
 		return (
 			<img
 				className={ clsx( 'site-icon', className ) }
