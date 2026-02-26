@@ -14,7 +14,7 @@ function getCopyableText( message: UIMessage ): string {
 		return '';
 	}
 
-	// Handle tool messages (JSON text with a `tool_id` field).
+	// Exclude tool messages (JSON text with a `tool_id` field).
 	const firstPartText = message.content[ 0 ]?.text ?? '';
 	try {
 		const parsed = JSON.parse( firstPartText );
