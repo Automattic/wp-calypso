@@ -676,6 +676,7 @@ function createItemToAddToCart( {
 		product_slug: productSlug,
 		quantity,
 		extra: {
+			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',

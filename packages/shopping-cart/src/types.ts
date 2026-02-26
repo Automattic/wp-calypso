@@ -933,6 +933,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 
 	/**
+	 * Marks a product as having been added by the siteless domain-only flow.
+	 */
+	isDomainOnlySitelessCheckout?: boolean;
+
+	/**
 	 * Marks a product as having been added by the siteless `/checkout/unified` route.
 	 */
 	isUnifiedSitelessCheckout?: boolean;
