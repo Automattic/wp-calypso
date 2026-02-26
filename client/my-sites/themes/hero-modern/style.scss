@@ -2,15 +2,16 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .hero-modern {
-	background: linear-gradient( 135deg, var( --studio-blue-50 ) 0%, var( --studio-blue-20 ) 100% );
-
+	padding: 0;
 	.full-width-section__content {
+		background: linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
 		display: flex;
 		flex-direction: column;
 		padding: 48px 24px;
 		gap: 24px;
 
 		@media ( min-width: $break-small ) {
+			background: url(./illustration.svg) no-repeat right bottom, linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
 			flex-direction: row;
 			align-items: center;
 			padding: 64px 40px;
@@ -20,18 +21,19 @@
 
 .hero-modern__content {
 	flex: 1;
+	max-width: 700px;
 }
 
 .hero-modern__title {
 	font-family: $brand-serif;
-	font-size: rem( 40px );
+	font-size: rem(60px);
 	font-weight: 400;
-	line-height: 1.1;
+	line-height: 1;
 	margin: 0 0 16px;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-90);
 
 	@media ( min-width: $break-small ) {
-		font-size: rem( 50px );
+		font-size: rem(70px);
 	}
 }
 
@@ -39,16 +41,5 @@
 	font-size: $font-body-large;
 	line-height: 1.5;
 	margin-bottom: 24px;
-	color: var( --studio-gray-90 );
-	max-width: 500px;
-}
-
-.hero-modern__illustration {
-	display: none;
-
-	@media ( min-width: $break-small ) {
-		display: block;
-		flex: 0 0 40%;
-		min-height: 240px;
-	}
+	color: var(--studio-gray-90);
 }

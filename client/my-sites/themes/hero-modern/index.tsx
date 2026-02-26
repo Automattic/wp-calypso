@@ -35,7 +35,6 @@ const HeroModern = ( { searchQuery, onSearch, onSearchTracksEvent }: HeroModernP
 					/>
 				</div>
 			</div>
-			<div className="hero-modern__illustration" aria-hidden="true" />
 		</FullWidthSection>
 	);
 };
