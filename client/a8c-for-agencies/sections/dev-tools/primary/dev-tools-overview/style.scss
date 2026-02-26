@@ -19,30 +19,6 @@
 	}
 }
 
-.dev-tools-overview__heading {
-	display: inline-flex;
-	align-items: center;
-	gap: 12px;
-}
-
-.dev-tools-overview__content {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
 .dev-tools-overview__description {
 	@include body-large;
-
-	> div {
-		margin-block-end: 8px;
-
-		&:last-child {
-			margin-block-end: 0;
-		}
-	}
-}
-
-.dev-tools-overview__tagline {
-	font-weight: 600;
 }
