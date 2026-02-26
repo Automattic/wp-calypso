@@ -3,7 +3,6 @@ import {
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -41,23 +40,21 @@ export default function DevToolSection( {
 }: DevToolSectionProps ) {
 	return (
 		<PageSectionColumns
-			background={ hasBackground ? { color: 'var(--color-neutral-5)' } : undefined }
+			background={ hasBackground ? { color: 'var(--color-neutral-0)' } : undefined }
 		>
 			<PageSectionColumns.Column
 				heading={
-					<HStack className="dev-tools-overview__heading" alignment="center">
+					<>
 						{ name }
 						<Badge>{ badge }</Badge>
-					</HStack>
-				}
-			>
-				<VStack className="dev-tools-overview__content" spacing={ 4 }>
-					<VStack className="dev-tools-overview__description" spacing={ 2 }>
 						<Text className="dev-tools-overview__tagline" weight={ 600 }>
 							{ tagline }
 						</Text>
-						<Text>{ preventWidows( description ) }</Text>
-					</VStack>
+					</>
+				}
+			>
+				<VStack className="dev-tools-overview__content" spacing={ 4 }>
+					<Text size="body-large">{ preventWidows( description ) }</Text>
 					<SimpleList className="dev-tools-overview__list" items={ features } />
 					<Button
 						variant="primary"
