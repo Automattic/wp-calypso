@@ -83,7 +83,6 @@ class StripeUpiPaymentMethodState {
 		const fields: StripeUpiPaymentMethodKey[] = [
 			'customerName',
 			'address',
-			'streetNumber',
 			'city',
 			'state',
 			'postalCode',
@@ -208,7 +207,7 @@ function StripeUpiFields( { state }: { state: StripeUpiPaymentMethodState } ) {
 				label={ __( 'Address line 2' ) }
 				value={ streetNumber.value }
 				onChange={ ( value: string ) => state.change( 'streetNumber', value ) }
-				isError={ streetNumber.isTouched && streetNumber.value.length === 0 }
+				isError={ false }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
