@@ -22,10 +22,12 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	isSummerSpecial,
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
+	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -33,10 +35,12 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
+	useVar5Features?: boolean;
+	isExperimentVariant?: boolean;
+	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -47,10 +51,12 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -58,7 +64,12 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			isSummerSpecial,
+			useLongSetFeatures,
+			useLongSetStackedFeatures,
+			useShortSetStackedFeatures,
+			useVar5Features,
+			isExperimentVariant,
+			isVar1dVariant,
 		} );
 
 		return useMemo( () => {
@@ -73,38 +84,25 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: map variant flags to their feature methods
-				const experimentFeatureMethodMap = [
-					{
-						flag: useShortSetStackedFeatures,
-						method: 'getShortSetStackedSignupWpcomFeatures' as const,
-					},
-					{
-						flag: useLongSetStackedFeatures,
-						method: 'getLongSetStackedSignupWpcomFeatures' as const,
-					},
-					{ flag: useLongSetFeatures, method: 'getLongSetSignupWpcomFeatures' as const },
-				];
-
-				const experimentFeatureMethod =
-					experimentFeatureMethodMap.find( ( { flag } ) => flag )?.method ?? null;
-
-				// Use the experiment feature set if available, otherwise fall back to default
-				if ( experimentFeatureMethod && planConstantObj[ experimentFeatureMethod ]?.().length ) {
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj[ experimentFeatureMethod ]().slice(),
-						true // isExperimentVariant - use alternative copy for experiment
-					);
-				} else if (
-					// Check if there's a specific override for comparison
-					planConstantObj.get2023PlanComparisonFeatureOverride?.( {
-						isSummerSpecial,
-					} ).length
+				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
+				// when in an experiment variant. This ensures all features are displayed in the comparison grid
+				// regardless of which experiment variant (var1, var1d, var3, var4, var5) is active.
+				if (
+					isExperimentVariant &&
+					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PlanComparisonFeatureOverride( { isSummerSpecial } ).slice()
+						planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment().slice(),
+						isExperimentVariant
+					);
+				} else if (
+					// Check if there's a specific override for comparison
+					planConstantObj.get2023PlanComparisonFeatureOverride?.().length
+				) {
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonFeatureOverride().slice()
 					);
 				} else if ( 'plans-wordpress-hosting' === intent ) {
 					// Use visual split features for WordPress hosting intent
@@ -122,27 +120,42 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						// Fallback to default features
 						wpcomFeatures = getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupWpcomFeatures?.( { isSummerSpecial } ).slice()
+							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 						);
 					}
 				} else {
 					// Default case
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupWpcomFeatures?.( { isSummerSpecial } ).slice()
+						planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 					);
 				}
 
-				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()
-					.length
-					? getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
-					  )
-					: getPlanFeaturesObject(
-							allFeaturesList,
-							planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
-					  );
+				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
+				// when in an experiment variant for Jetpack features.
+				// Note: We check if the function exists, not if it returns a non-empty array, because an empty array
+				// is a valid return value (meaning "show no Jetpack features").
+				let jetpackFeatures;
+				if (
+					isExperimentVariant &&
+					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
+				) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice(),
+						isExperimentVariant
+					);
+				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
+					);
+				} else {
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.().slice()
+					);
+				}
 
 				const wpcomFeaturesTransformed: TransformedFeatureObject[] | null | undefined =
 					annualPlansOnlyFeatures
@@ -210,7 +223,9 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
-					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
+					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
+						isExperimentVariant,
+					} ),
 				};
 
 				previousPlan = planSlug;
@@ -223,10 +238,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			planFeaturesForGridPlans,
 			intent,
 			hasRedeemedDomainCredit,
-			isSummerSpecial,
-			useLongSetFeatures,
-			useLongSetStackedFeatures,
-			useShortSetStackedFeatures,
+			isExperimentVariant,
 		] );
 	};
 

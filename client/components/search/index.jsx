@@ -208,7 +208,7 @@ class Search extends Component {
 		setTimeout( () => this.searchInput && this.searchInput.focus(), 0 );
 	};
 
-	blur = () => this.searchInput.blur();
+	blur = () => this.searchInput?.blur();
 
 	clear = () => this.setState( { keyword: '' } );
 

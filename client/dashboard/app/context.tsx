@@ -1,31 +1,16 @@
 /* eslint-disable no-restricted-imports */
 import {
 	sitesQuery,
-	dashboardSiteListQuery,
+	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
 import type {
 	FetchSitesOptions,
-	FetchDashboardSiteListParams,
+	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
-
-export type SiteSettingsGeneralSupports = {
-	redirect: boolean;
-};
-
-export type SiteSettingsSupports = {
-	general: SiteSettingsGeneralSupports;
-	server: boolean;
-	security: boolean;
-	experimental: boolean;
-};
-
-export type SiteFeatureSupports = {
-	settings: SiteSettingsSupports | false;
-};
 
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
@@ -49,7 +34,7 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
-		sites: SiteFeatureSupports | false;
+		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
@@ -59,14 +44,15 @@ export type AppConfig = {
 		notifications: boolean;
 		me: MeSupports | false;
 		commandPalette: boolean;
+		domainOnlySites: boolean;
 	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
-		dashboardSiteListQuery: (
-			params?: FetchDashboardSiteListParams
-		) => ReturnType< typeof dashboardSiteListQuery >;
+		paginatedSitesQuery: (
+			fetchSiteOptions?: FetchPaginatedSitesOptions
+		) => ReturnType< typeof paginatedSitesQuery >;
 		dashboardSiteFiltersQuery: (
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
@@ -90,13 +76,14 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		notifications: false,
 		me: false,
 		commandPalette: false,
+		domainOnlySites: false,
 	},
 	optIn: false,
 	components: {},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteListQuery: ( fetchDashboardSiteListParams?: FetchDashboardSiteListParams ) =>
-			dashboardSiteListQuery( 'all', fetchDashboardSiteListParams ),
+		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
+			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 	},

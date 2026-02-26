@@ -1,7 +1,6 @@
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
-import { useSummerSpecialStatus } from './use-summer-special-status';
 import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
@@ -29,6 +28,9 @@ const useGridPlansForFeaturesGrid = ( {
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
+	useVar5Features,
+	isExperimentVariant,
+	isVar1dVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -49,10 +51,8 @@ const useGridPlansForFeaturesGrid = ( {
 		highlightLabelOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
+		isExperimentVariant,
 	} );
-
-	// Get summer special status early
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {
 		allFeaturesList,
@@ -62,10 +62,12 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	return useMemo( () => {

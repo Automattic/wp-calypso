@@ -22,6 +22,7 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js', // dynamic filename
+			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
 		},
 		optimization: {
@@ -47,8 +48,15 @@ function getIndividualConfig( options = {} ) {
 				requestToExternal( request ) {
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
-					// shortcuts the logic such that react-i18n will be bundled.
+					// shortcuts the logic such that the package will be bundled instead.
 					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+
+					// Bundle @wordpress/dataviews and @wordpress/ui instead of externalizing.
+					// These are only used by HelpCenterA4AContactForm which is lazy-loaded,
+					// so we don't want them listed as dependencies for the main entry point.
+					if ( request === '@wordpress/dataviews' || request === '@wordpress/ui' ) {
 						return null;
 					}
 				},
@@ -86,6 +94,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-customizer' } ),
 		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-logged-out' } ),
 		getIndividualConfig( {
 			env,
 			argv,

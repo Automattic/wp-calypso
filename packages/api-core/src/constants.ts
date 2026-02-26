@@ -13,7 +13,6 @@ export const DotcomPlans = {
 	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
-	JETPACK_FREE: 'jetpack_free',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
@@ -97,6 +96,14 @@ export const WooHostedPlans = {
 	WOO_HOSTED_PRO_PLAN_YEARLY: 'woo_hosted_pro_plan_yearly',
 } as const;
 
+export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
+export type JetpackPlanSlug = ( typeof JetpackPlans )[ keyof typeof JetpackPlans ];
+export type AkismetPlanSlug = ( typeof AkismetPlans )[ keyof typeof AkismetPlans ];
+export type WooHostedPlanSlug = ( typeof WooHostedPlans )[ keyof typeof WooHostedPlans ];
+
+// Any valid plan slug sold through Store.
+export type StorePlanSlug = DotcomPlanSlug | JetpackPlanSlug | AkismetPlanSlug | WooHostedPlanSlug;
+
 export const BusinessPlans = [
 	DotcomPlans.BUSINESS_MONTHLY,
 	DotcomPlans.BUSINESS,
@@ -119,11 +126,11 @@ export const TrialPlans = [
 	WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
 ];
 
-export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
-
 export const DotcomFeatures = {
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
+	BACKUPS_SELF_SERVE: 'backups-self-serve',
+	BIG_SKY: 'big-sky',
 	DOMAIN_MAPPING: 'domain-mapping',
 	INSTALL_PLUGINS: 'install-plugins',
 	SUBSCRIPTION_GIFTING: 'subscription-gifting',
@@ -136,6 +143,7 @@ export const DotcomFeatures = {
 	MONITORING: 'monitoring',
 	PERFORMANCE: 'performance',
 	SCAN: 'scan',
+	SCAN_SELF_SERVE: 'scan-self-serve',
 	SECURITY_SETTINGS: 'security-settings',
 	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
 	SFTP: 'sftp',
@@ -176,6 +184,8 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
 	BACKUPS: DotcomFeatures.BACKUPS,
+	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
+	BIG_SKY: DotcomFeatures.BIG_SKY,
 	CACHING: DotcomFeatures.ATOMIC,
 	DATABASE: DotcomFeatures.SFTP,
 	DEFENSIVE_MODE: DotcomFeatures.SFTP,
@@ -187,6 +197,7 @@ export const HostingFeatures = {
 	PHP: DotcomFeatures.SFTP,
 	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
 	SCAN: DotcomFeatures.SCAN,
+	SCAN_SELF_SERVE: DotcomFeatures.SCAN_SELF_SERVE,
 	SECURITY_SETTINGS: DotcomFeatures.SECURITY_SETTINGS,
 	SFTP: DotcomFeatures.SFTP,
 	SSH: DotcomFeatures.SSH,

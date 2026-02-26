@@ -3,61 +3,75 @@ import {
 	createOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
+import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
+import { LocalConversationListItem } from '../types';
+import { parseUTCTimestamp } from '../utils/conversation-history-formatters';
+import { normalizeZendeskConversations } from '../utils/zendesk';
+import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
-interface Options {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
-}
+export default function useConversationList() {
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, authProvider } = agentConfig!;
+	const urlSearchParams = new URLSearchParams( window.location.search );
+	const hasAgentParam = urlSearchParams.has( 'agent' );
+	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-interface Result {
-	conversations: ServerConversationListItem[];
-	isLoading: boolean;
-	isError: boolean;
-}
-
-export default function useConversationList( { agentId, authProvider }: Options ): Result {
-	const botId = createOdieBotId( agentId );
+	// Only fetch Zendesk conversations if the unified agent flag is enabled
+	const { conversations: zendeskConversations, isLoading: isLoadingZendeskConversations } =
+		useGetZendeskConversations( !! shouldUseUnifiedAgent );
 
 	const {
-		data: conversations,
-		isLoading,
-		isError,
-		error,
-	} = useQuery( {
+		data: orchestratorConversations,
+		isLoading: isLoadingOrchestratorConversations,
+		isError: isOrchestratorError,
+		error: orchestratorError,
+	} = useQuery< ServerConversationListItem[] >( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when `botId` changes
 		queryKey: [ 'agents-manager-conversation-list', botId ],
 		queryFn: async () => {
-			const result = await listConversationsFromServer( botId, {
-				apiBaseUrl: API_BASE_URL,
-				authProvider,
-			} );
-
-			// Sort by `last_message.created_at` descending (most recent first)
-			// Note: Dates are in MySQL format "2025-11-06 14:29:49"
-			const sorted = result.sort( ( a, b ) => {
-				const timeA = new Date( a.last_message?.created_at || 0 ).getTime();
-				const timeB = new Date( b.last_message?.created_at || 0 ).getTime();
-				return timeB - timeA;
-			} );
-
-			return sorted;
+			const result = await listConversationsFromServer(
+				botId,
+				{
+					apiBaseUrl: API_BASE_URL,
+					authProvider,
+				},
+				true
+			);
+			return result;
 		},
 		enabled: !! botId,
 	} );
 
 	useEffect( () => {
-		if ( error ) {
+		if ( orchestratorError ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useConversationList] Error loading conversation list:', error );
+			console.error( '[useConversationList] Error loading conversation list:', orchestratorError );
 		}
-	}, [ error ] );
+	}, [ orchestratorError ] );
+
+	const mergedConversations: LocalConversationListItem[] = useMemo(
+		() =>
+			[
+				...( orchestratorConversations ?? [] ),
+				...normalizeZendeskConversations( zendeskConversations ),
+			].sort( ( a, b ) => {
+				// Sort by `first_message.created_at` descending (most recent first)
+				return (
+					parseUTCTimestamp( b.first_message?.created_at ) -
+					parseUTCTimestamp( a.first_message?.created_at )
+				);
+			} ),
+		[ orchestratorConversations, zendeskConversations ]
+	);
 
 	return {
-		conversations: conversations || [],
-		isLoading,
-		isError,
+		conversations: mergedConversations,
+		isLoading: isLoadingZendeskConversations || isLoadingOrchestratorConversations,
+		isError: isOrchestratorError,
 	};
 }

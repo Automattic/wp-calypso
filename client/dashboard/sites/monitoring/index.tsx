@@ -7,8 +7,8 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
@@ -114,11 +114,7 @@ function SiteMonitoring() {
 	};
 
 	return (
-		<HostingFeatureGatedWithCallout
-			site={ site }
-			overlay={ <PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> } /> }
-			{ ...getMonitoringCalloutProps() }
-		>
+		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getMonitoringCalloutProps() }>
 			<PageLayout
 				header={
 					<PageHeader

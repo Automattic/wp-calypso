@@ -2,10 +2,11 @@ import { productsQuery, domainCanRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
 import { Notice } from '../../components/notice';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
@@ -58,6 +59,7 @@ export default function CreateSiteRedirect( {
 		window.location.href = addQueryArgs( wpcomLink( `/checkout/${ siteSlug }` ), {
 			cancel_to: backUrl,
 			redirect_to: backUrl,
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 

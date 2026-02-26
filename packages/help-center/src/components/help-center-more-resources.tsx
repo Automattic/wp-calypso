@@ -6,13 +6,14 @@ import { backup, chevronRight, external, Icon, rss, thumbsUp, video } from '@wor
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
 import { showHelpCenterFeedbackSurvey } from 'calypso/lib/analytics/survicate';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-more-resources.scss';
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const { sectionName, disableChatSupport, haveSurvicateEnabled } = useHelpCenterContext();
+	const { sectionName } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 	const navigate = useNavigate();
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
@@ -39,7 +40,7 @@ export const HelpCenterMoreResources = () => {
 				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul aria-labelledby="help-center-more-resources__resources">
-				{ ! disableChatSupport && (
+				{ featureConfig.moreResources.supportHistory && (
 					<li className="help-center-more-resources__resource-item help-center-link__item">
 						<div className="help-center-more-resources__resource-cell help-center-link__cell">
 							<button
@@ -57,7 +58,7 @@ export const HelpCenterMoreResources = () => {
 						</div>
 					</li>
 				) }
-				{ haveSurvicateEnabled &&
+				{ featureConfig.moreResources.feedback &&
 					typeof window._sva !== 'undefined' &&
 					window._sva?.invokeEvent && (
 						<li className="help-center-more-resources__resource-item help-center-link__item">
@@ -77,36 +78,40 @@ export const HelpCenterMoreResources = () => {
 							</div>
 						</li>
 					) }
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
-							rel="noreferrer"
-							target="_blank"
-							onClick={ () => trackLearnButtonClick( 'courses' ) }
-							className="help-center-more-resources__institution"
-						>
-							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/blog/category/product-features/' ) }
-							rel="noreferrer"
-							target="_blank"
-							className="help-center-more-resources__product-updates"
-							onClick={ () => trackMoreResourcesButtonClick( 'product-updates' ) }
-						>
-							<Icon icon={ rss } size={ 24 } />
-							<span>{ __( 'Product updates', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
+				{ featureConfig.moreResources.courses && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
+								rel="noreferrer"
+								target="_blank"
+								onClick={ () => trackLearnButtonClick( 'courses' ) }
+								className="help-center-more-resources__institution"
+							>
+								<Icon icon={ video } size={ 24 } />
+								<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
+								<Icon icon={ external } size={ 20 } />
+							</a>
+						</div>
+					</li>
+				) }
+				{ featureConfig.moreResources.productUpdates && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<a
+								href={ localizeUrl( 'https://wordpress.com/blog/category/product-features/' ) }
+								rel="noreferrer"
+								target="_blank"
+								className="help-center-more-resources__product-updates"
+								onClick={ () => trackMoreResourcesButtonClick( 'product-updates' ) }
+							>
+								<Icon icon={ rss } size={ 24 } />
+								<span>{ __( 'Product updates', __i18n_text_domain__ ) }</span>
+								<Icon icon={ external } size={ 20 } />
+							</a>
+						</div>
+					</li>
+				) }
 			</ul>
 		</div>
 	);

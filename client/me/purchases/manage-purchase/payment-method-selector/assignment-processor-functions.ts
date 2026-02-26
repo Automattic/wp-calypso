@@ -367,6 +367,39 @@ export async function assignPayPalProcessor(
 	}
 }
 
+export async function assignExistingPayPalPPCPProcessor(
+	purchase: Purchase | undefined,
+	reduxDispatch: CalypsoDispatch,
+	submitData: unknown
+): Promise< PaymentProcessorResponse > {
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
+	try {
+		if ( ! isValidExistingPayPalPPCPData( submitData ) ) {
+			throw new Error( 'PayPal data is missing stored details id' );
+		}
+		const { storedDetailsId } = submitData;
+		if ( ! purchase ) {
+			throw new Error( 'Cannot assign existing PayPal payment method without a purchase' );
+		}
+		const data = await wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId );
+		return makeSuccessResponse( data );
+	} catch ( error ) {
+		return makeErrorResponse( ( error as Error ).message );
+	}
+}
+
+function isValidExistingPayPalPPCPData( data: unknown ): data is ExistingPayPalPPCPSubmitData {
+	const existingPayPalData = data as ExistingPayPalPPCPSubmitData;
+	return !! existingPayPalData.storedDetailsId;
+}
+
+interface ExistingPayPalPPCPSubmitData {
+	storedDetailsId: string;
+	email: string;
+	paymentMethodToken: string;
+	paymentPartnerProcessorId: string;
+}
+
 function recordFormSubmitEvent( {
 	purchase,
 	useForAllSubscriptions,

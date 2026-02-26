@@ -23,6 +23,7 @@ import {
 	Icon,
 	details,
 	page as pageIcon,
+	verse,
 } from '@wordpress/icons';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -61,6 +62,11 @@ const isResultFromCourses = ( url: string ) => {
 	return coursesRegex.test( url );
 };
 
+const isResultFromBlog = ( url: string ) => {
+	const blogRegex: RegExp = /wordpress\.com\/blog|\.blog\.wordpress\.com/;
+	return blogRegex.test( url );
+};
+
 const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 	const { result, type, index, onLinkClickHandler, externalLinks } = props;
 	const { link, title, icon } = result;
@@ -87,6 +93,9 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		}
 		if ( isResultFromDeveloperWordpress( result.link ) ) {
 			return <Icon icon={ code } />;
+		}
+		if ( isResultFromBlog( result.link ) ) {
+			return <Icon icon={ verse } />;
 		}
 		return <LinkIcon />;
 	};
@@ -197,7 +206,7 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const { hasPurchases, sectionName, site, source } = useHelpCenterContext();
+	const { hasPurchases, sectionName, site, product = 'wpcom' } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
@@ -224,7 +233,7 @@ function HelpSearchResults( {
 		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
 		currentRoute,
-		source
+		product
 	);
 
 	const searchResults = searchData ?? [];

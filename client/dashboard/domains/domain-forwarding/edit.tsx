@@ -5,8 +5,8 @@ import {
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useRouter } from '@tanstack/react-router';
-import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';

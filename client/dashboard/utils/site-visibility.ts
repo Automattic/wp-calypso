@@ -21,8 +21,3 @@ export function getSiteVisibility( item: Site ): SiteVisibility {
 
 	return 'public';
 }
-
-export function getSiteVisibilityLabel( item: Site ) {
-	const visibilityLabels = getVisibilityLabels();
-	return visibilityLabels[ getSiteVisibility( item ) ];
-}

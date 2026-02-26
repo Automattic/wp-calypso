@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
@@ -74,5 +75,13 @@
 	&:hover {
 		background: none;
 		box-shadow: none;
+	}
+}
+
+.components-button.is-secondary.agency-tier__progress-card-cta-button {
+	width: 100%;
+
+	@include break-wide {
+		width: auto;
 	}
 }

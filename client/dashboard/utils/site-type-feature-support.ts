@@ -1,22 +1,29 @@
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
 import type { Site } from '@automattic/api-core';
 
+export type SiteTypeFeatureSupports = {
+	deployments: boolean;
+	performance: boolean;
+	monitoring: boolean;
+	logs: boolean;
+	backups: boolean;
+	scan: boolean;
+	domains: boolean;
+	emails: boolean;
+	settings: boolean;
+	settingsGeneral?: boolean;
+	settingsGeneralAITools?: boolean;
+	settingsGeneralRedirect?: boolean;
+	settingsServer?: boolean;
+	settingsSecurity?: boolean;
+	settingsExperimental?: boolean;
+};
+
 /**
  * Features that can be gated based on site type.
  * This determines route availability, not feature availability within routes.
  */
-export type SiteTypeFeature =
-	| 'deployments'
-	| 'performance'
-	| 'monitoring'
-	| 'logs'
-	| 'backups'
-	| 'scan'
-	| 'domains'
-	| 'emails'
-	| 'settings';
-
-export type SiteTypeFeatureSupports = Record< SiteTypeFeature, boolean >;
+export type SiteTypeFeature = keyof SiteTypeFeatureSupports;
 
 /**
  * Returns a complete map of which features are supported for a given site type.
@@ -51,6 +58,12 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			domains: true,
 			emails: true,
 			settings: true,
+			settingsGeneral: true,
+			settingsGeneralAITools: false,
+			settingsGeneralRedirect: true,
+			settingsServer: false,
+			settingsSecurity: false,
+			settingsExperimental: false,
 		};
 	}
 
@@ -64,6 +77,12 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		domains: true,
 		emails: true,
 		settings: true,
+		settingsGeneral: true,
+		settingsGeneralAITools: true,
+		settingsGeneralRedirect: true,
+		settingsServer: true,
+		settingsSecurity: true,
+		settingsExperimental: true,
 	};
 }
 
@@ -71,5 +90,5 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
  * Determines if a site type supports a specific feature.
  */
 export function siteTypeSupportsFeature( site: Site, feature: SiteTypeFeature ): boolean {
-	return getSiteTypeFeatureSupports( site )[ feature ];
+	return !! getSiteTypeFeatureSupports( site )[ feature ];
 }

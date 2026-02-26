@@ -1,37 +1,23 @@
-/**
- * ConversationHistoryView Component
- * Displays the list of past conversations with a "new chat" action
- */
-
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useConversationList from '../../hooks/use-conversation-list';
+import { LocalConversationListItem } from '../../types';
 import ConversationListItem from '../conversation-list-item';
 import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
-	onSelectConversation: ( sessionId: string ) => void;
+	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
 	onNewChat: () => void;
 }
 
-export default function ConversationHistoryView( {
-	agentId,
-	authProvider,
-	onSelectConversation,
-	onNewChat,
-}: Props ) {
+export default function ConversationHistoryView( { onSelectConversation, onNewChat }: Props ) {
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useConversationList( {
-		agentId,
-		authProvider,
-	} );
+	const { conversations, isLoading, isError } = useConversationList();
 
 	return (
 		<div className="agents-manager-conversation-history-view">
@@ -61,9 +47,9 @@ export default function ConversationHistoryView( {
 					<div className="agents-manager-conversation-history-view__list">
 						{ conversations.map( ( conversation ) => (
 							<ConversationListItem
-								key={ conversation.session_id }
+								key={ conversation.session_id ?? conversation.conversation_id }
 								conversation={ conversation }
-								onClick={ ( sessionId ) => onSelectConversationRef.current( sessionId ) }
+								onClick={ ( conversation ) => onSelectConversationRef.current( conversation ) }
 							/>
 						) ) }
 					</div>

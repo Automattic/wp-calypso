@@ -7,7 +7,9 @@ import {
 	Button,
 	Flex,
 	__experimentalHStack as HStack,
-	privateApis as componentsPrivateApis,
+	DropdownMenu,
+	MenuGroup,
+	MenuItem,
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
@@ -21,21 +23,14 @@ import {
 	bell,
 	backup,
 } from '@wordpress/icons';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
-export const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/edit-site'
-);
-
-const { Menu } = unlock( componentsPrivateApis );
 
 import './help-center-header.scss';
 
@@ -59,6 +54,8 @@ const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
+	const { currentUser } = useHelpCenterContext();
+	const isLoggedIn = !! currentUser?.ID;
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -85,50 +82,62 @@ const EllipsisMenu = () => {
 	};
 
 	return (
-		<Menu>
-			<Menu.TriggerButton
-				title={ __( 'Help Center Options', __i18n_text_domain__ ) }
-				render={ <Button icon={ moreVertical } /> }
-			/>
-			<Menu.Popover>
-				<Menu.Item
-					prefix={ <Icon icon={ lineSolid } width={ 20 } height={ 20 } /> }
-					onClick={ () => setIsMinimized( true ) }
-				>
-					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
-				</Menu.Item>
-				<Menu.Separator />
-				<Menu.Item
-					onClick={ clearChat }
-					prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
-				>
-					<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
-				</Menu.Item>
-				<Menu.Item
-					onClick={ handleViewChats }
-					prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
-				>
-					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
-				</Menu.Item>
-				<Menu.Separator />
-				<Menu.Item
-					onClick={ toggleSoundNotifications }
-					prefix={
-						areSoundNotificationsEnabled ? (
-							<MutedBellIcon />
-						) : (
-							<Icon icon={ bell } width={ 24 } height={ 24 } />
-						)
-					}
-				>
-					<Menu.ItemLabel>
-						{ areSoundNotificationsEnabled
-							? __( 'Turn off sound notifications', __i18n_text_domain__ )
-							: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
-					</Menu.ItemLabel>
-				</Menu.Item>
-			</Menu.Popover>
-		</Menu>
+		<DropdownMenu icon={ moreVertical } label={ __( 'Help Center Options', __i18n_text_domain__ ) }>
+			{ ( { onClose } ) => (
+				<>
+					<MenuGroup>
+						<MenuItem
+							icon={ lineSolid }
+							iconPosition="left"
+							onClick={ () => {
+								setIsMinimized( true );
+								onClose();
+							} }
+						>
+							{ __( 'Minimize', __i18n_text_domain__ ) }
+						</MenuItem>
+					</MenuGroup>
+					<MenuGroup>
+						<MenuItem
+							icon={ comment }
+							iconPosition="left"
+							onClick={ () => {
+								clearChat();
+								onClose();
+							} }
+						>
+							{ __( 'New chat', __i18n_text_domain__ ) }
+						</MenuItem>
+						<MenuItem
+							icon={ backup }
+							iconPosition="left"
+							onClick={ () => {
+								handleViewChats();
+								onClose();
+							} }
+						>
+							{ __( 'Support history', __i18n_text_domain__ ) }
+						</MenuItem>
+					</MenuGroup>
+					{ isLoggedIn && (
+						<MenuGroup>
+							<MenuItem
+								icon={ areSoundNotificationsEnabled ? <MutedBellIcon /> : bell }
+								iconPosition="left"
+								onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+									toggleSoundNotifications( e );
+									onClose();
+								} }
+							>
+								{ areSoundNotificationsEnabled
+									? __( 'Turn off sound notifications', __i18n_text_domain__ )
+									: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
+							</MenuItem>
+						</MenuGroup>
+					) }
+				</>
+			) }
+		</DropdownMenu>
 	);
 };
 
@@ -208,7 +217,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		};
 	}, [] );
 
-	const { disableChatSupport } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 
 	const classNames = clsx(
 		'help-center__container-header',
@@ -251,16 +260,15 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 			<Flex>
 				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
-				{ disableChatSupport ? (
+				{ featureConfig.header.ellipsisMenu ? (
+					<EllipsisMenu />
+				) : (
 					<Button
 						label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ lineSolid }
 						onClick={ () => setIsMinimized( true ) }
 					/>
-				) : (
-					// We only show the ellipsis menu if chat support is enabled
-					<EllipsisMenu />
 				) }
 
 				<Button

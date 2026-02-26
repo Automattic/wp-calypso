@@ -1,13 +1,10 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { type View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import deepmerge from 'deepmerge';
-import { useEffect } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useHelpCenter } from '../app/help-center';
@@ -16,26 +13,22 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { filterSortAndPaginate__ES, useSiteListQuery } from '../sites';
+import { useSiteListQuery } from '../sites';
 import {
 	SitesDataViews,
 	useActions,
 	useFields,
 	getDefaultView,
 	recordViewChanges,
-	useFields__ES,
 	sanitizeFields,
 } from '../sites/dataviews';
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
-import { SiteLink, SiteLink__ES } from '../sites/site-fields';
 import { wpcomLink } from '../utils/link';
-import type { DashboardSiteListSite, Site } from '@automattic/api-core';
 
 export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
@@ -44,7 +37,7 @@ export default function CIABSites() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const defaultView = getDefaultView( {
-		user,
+		siteCount: user.garden_site_count,
 		isAutomattician,
 		isRestoringAccount,
 	} );
@@ -56,11 +49,12 @@ export default function CIABSites() {
 		sanitizeFields,
 	} );
 
-	const { sites, sites__ES, isLoadingSites, isPlaceholderData, hasNoData, totalItems } =
-		useSiteListQuery( view, { isRestoringAccount, isAutomattician } );
+	const { sites, isLoadingSites, isPlaceholderData } = useSiteListQuery( view, {
+		isRestoringAccount,
+		isAutomattician,
+	} );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
-	const fields__ES = useFields__ES( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
 
 	const handleAddNewStore = () => {
@@ -71,12 +65,7 @@ export default function CIABSites() {
 	};
 
 	const handleViewChange = ( nextView: View ) => {
-		if ( nextView.type === 'list' ) {
-			return;
-		}
-
 		recordViewChanges( view, nextView, recordTracksEvent );
-
 		updateView( nextView );
 	};
 
@@ -97,28 +86,12 @@ export default function CIABSites() {
 		emptyDescription = __( 'Your search did not match any stores.' );
 	}
 
-	useEffect( () => {
-		if ( sites && ! isEnabled( 'dashboard/v2/es-site-list' ) ) {
-			sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ sites, queryClient ] );
-
 	const addNewStoreUrl = addQueryArgs( wpcomLink( '/setup/ai-site-builder-spec' ), {
 		source: 'ciab-sites-dashboard',
 		ref: 'new-site-popover',
 	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
-
-	const { data: filteredData__ES, paginationInfo: paginationInfo__ES } = filterSortAndPaginate__ES(
-		sites__ES ?? [],
-		view,
-		totalItems ?? 0
-	);
 
 	const emptyState = (
 		<DataViewsEmptyState
@@ -175,35 +148,17 @@ export default function CIABSites() {
 				}
 				notices={ <SitesNotices /> }
 			>
-				{ isEnabled( 'dashboard/v2/es-site-list' ) ? (
-					<SitesDataViews< DashboardSiteListSite >
-						getItemId={ ( item ) => '' + item.blog_id?.toString() + item.url?.value }
-						view={ view }
-						sites={ filteredData__ES }
-						fields={ fields__ES }
-						// TODO: actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						paginationInfo={ paginationInfo__ES }
-						renderItemLink={ ( { item, ...props } ) => <SiteLink__ES { ...props } site={ item } /> }
-						empty={ emptyState }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-					/>
-				) : (
-					<SitesDataViews< Site >
-						getItemId={ ( item ) => item.ID.toString() }
-						view={ view }
-						sites={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
-						paginationInfo={ paginationInfo }
-						renderItemLink={ ( { item, ...props } ) => <SiteLink { ...props } site={ item } /> }
-						empty={ emptyState }
-						onChangeView={ handleViewChange }
-						onResetView={ resetView }
-					/>
-				) }
+				<SitesDataViews
+					view={ view }
+					sites={ filteredData }
+					fields={ fields }
+					actions={ actions }
+					isLoading={ isLoadingSites || ( isPlaceholderData && sites?.length === 0 ) }
+					paginationInfo={ paginationInfo }
+					empty={ emptyState }
+					onChangeView={ handleViewChange }
+					onResetView={ resetView }
+				/>
 			</PageLayout>
 		</>
 	);

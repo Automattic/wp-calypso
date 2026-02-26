@@ -120,6 +120,16 @@ export function useProductDescription( productSlug: string ): {
 		let description = '';
 		const features = [];
 
+		if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
+			description = translate( 'Add additional storage capacity to your Pressable plan limit.' );
+		}
+
+		if ( productSlug.startsWith( 'pressable-addon-visits-' ) ) {
+			description = translate(
+				'Add additional monthly visits capacity to your Pressable plan limit.'
+			);
+		}
+
 		switch ( productSlug ) {
 			case 'jetpack-complete':
 				description = translate(
@@ -492,6 +502,18 @@ export function useProductDescription( productSlug: string ): {
 				description = translate(
 					'Craft stunning content, boost your subscriber base, and monetize your online presence.'
 				);
+				break;
+			case 'pressable-addon-sites-1':
+				description = translate( 'Add an additional site to your Pressable plan limit.' );
+				features.push( translate( 'Manage an additional site' ) );
+				break;
+			case 'pressable-addon-sites-5':
+				description = translate( 'Add an additional 5 sites to your Pressable plan limit.' );
+				features.push( translate( 'Manage up to 5 additional sites' ) );
+				break;
+			case 'pressable-addon-sites-10':
+				description = translate( 'Add an additional 10 sites to your Pressable plan limit.' );
+				features.push( translate( 'Manage up to 10 additional sites' ) );
 				break;
 		}
 

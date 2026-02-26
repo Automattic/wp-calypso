@@ -100,7 +100,9 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		useConnectScreenActions: PropTypes.bool,
 		disableTosText: PropTypes.bool,
+		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -785,6 +787,7 @@ class SignupForm extends Component {
 						onInputChange={ this.handleChangeEvent }
 						onCreateAccountError={ this.handleCreateAccountError }
 						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+						useConnectScreenActions={ this.props.useConnectScreenActions }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
@@ -810,6 +813,7 @@ class SignupForm extends Component {
 							onInputChange={ this.handleChangeEvent }
 							onCreateAccountError={ this.handleCreateAccountError }
 							onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+							useConnectScreenActions={ this.props.useConnectScreenActions }
 							{ ...formProps }
 						>
 							{ emailErrorMessage && (
@@ -823,6 +827,7 @@ class SignupForm extends Component {
 							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							compact
 							disableTosText
+							allowedSocialServices={ this.props.allowedSocialServices }
 						/>
 					</>
 				) }

@@ -1,5 +1,6 @@
 import {
 	isDomainTransfer,
+	isDomainRegistration,
 	isConciergeSession,
 	isAkismetFreeProduct,
 	PLAN_MONTHLY_PERIOD,
@@ -47,6 +48,7 @@ import {
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
+	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -174,7 +176,7 @@ export function PurchaseItemProduct( {
 		return null;
 	}
 
-	const productType = purchaseType( purchase );
+	const productType = isDomainRegistration( purchase ) ? null : purchaseType( purchase );
 
 	if ( showSite && site ) {
 		if ( productType && site.name && slug ) {
@@ -422,7 +424,11 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+	if (
+		isWithinIntroductoryOfferPeriod( purchase ) &&
+		isIntroductoryOfferFreeTrial( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	) {
 		if ( isRenewing( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
@@ -492,6 +498,10 @@ export function PurchaseItemStatus( {
 			);
 		}
 
+		if ( isInExpirationGracePeriod( purchase ) ) {
+			return <span className="purchase-item__is-error">{ translate( 'Pending renewal' ) }</span>;
+		}
+
 		if ( purchase.billPeriodDays ) {
 			const translateOptions = {
 				args: {
@@ -550,7 +560,11 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
+	if (
+		isExpiring( purchase ) &&
+		! isInExpirationGracePeriod( purchase ) &&
+		! isAkismetFreeProduct( purchase )
+	) {
 		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
 				expiry < moment().add( 7, 'days' )
@@ -581,7 +595,7 @@ export function PurchaseItemStatus( {
 		} );
 	}
 
-	if ( isExpired( purchase ) ) {
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 		if ( isConciergeSession( purchase ) ) {
 			return translate( 'Session used on %s', {
 				args: expiry.format( 'LL' ),

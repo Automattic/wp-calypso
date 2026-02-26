@@ -1,7 +1,8 @@
 // Main component exports
 export { default } from './components/agents-manager';
-export { default as UnifiedAIAgent } from './components/unified-ai-agent';
-export type { UnifiedAIAgentProps } from './components/unified-ai-agent';
+export type { AgentsManagerProps } from './components/agents-manager';
+export { default as HeadlessAgentInitializer } from './components/headless-agent-initializer';
+export type { HeadlessAgentInitializerProps } from './components/headless-agent-initializer';
 
 export { AGENTS_MANAGER_STORE } from './stores';
 
@@ -18,3 +19,10 @@ export type {
 	ContextEntry,
 	Suggestion,
 } from './types';
+
+export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+
+// Feedback exports
+export { default as useFeedback, submitFeedback, rateMessage } from './hooks/use-feedback';
+export type { UseFeedbackConfig, UseFeedbackReturn } from './hooks/use-feedback';
+export { default as FeedbackInput } from './components/feedback-input';

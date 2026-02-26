@@ -11,58 +11,10 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-	PUBLICIZE_SHARE,
-	PUBLICIZE_SHARE_SUCCESS,
-	PUBLICIZE_SHARE_FAILURE,
-	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/sharing/init';
-
-export function dismissShareConfirmation( siteId, postId ) {
-	return {
-		type: PUBLICIZE_SHARE_DISMISS,
-		siteId,
-		postId,
-	};
-}
-
-export function sharePost( siteId, postId, skippedConnections, message ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_SHARE,
-			siteId,
-			postId,
-			skippedConnections,
-			message,
-		} );
-
-		const body = {
-			skipped_connections: skippedConnections ?? [],
-			message,
-		};
-
-		wpcom.req
-			.post( {
-				path: `/sites/${ siteId }/posts/${ postId }/publicize`,
-				body,
-				apiNamespace: 'wpcom/v2',
-			} )
-			// Note: successes are recorded in data.results, errors are recorded in data.errors. There could be
-			// several errors and several successes.
-			.then( ( data ) => {
-				if ( ! data.results.length ) {
-					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
-				} else {
-					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
-				}
-			} )
-			.catch( () => {
-				dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId } );
-			} );
-	};
-}
 
 /**
  * Triggers a network request to fetch Publicize connections for the specified

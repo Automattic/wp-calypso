@@ -1,6 +1,7 @@
 import { siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Outlet, createRootRouteWithContext, createRoute } from '@tanstack/react-router';
+import { peekFirstLoad } from 'calypso/dashboard/app/performance-tracking';
 import { canManageSite } from 'calypso/dashboard/sites/features';
 import { getSiteDisplayName } from 'calypso/dashboard/utils/site-name';
 import { hasSiteTrialEnded } from 'calypso/dashboard/utils/site-trial';
@@ -11,7 +12,12 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
 /**
  * Define general routes
  */
-export const rootRoute = createRootRouteWithContext< RootRouterContext >()( { component: Root } );
+export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
+	component: Root,
+	beforeLoad: async ( { cause } ): Promise< { fullPageLoad: boolean } > => ( {
+		fullPageLoad: cause === 'enter' && peekFirstLoad(),
+	} ),
+} );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
 	getParentRoute: () => rootRoute,

@@ -9,7 +9,7 @@ import AppsComponent from 'calypso/me/get-apps';
 import McpComponent from 'calypso/me/mcp/main';
 import McpSetupComponent from 'calypso/me/mcp/setup';
 import SidebarComponent from 'calypso/me/sidebar';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 

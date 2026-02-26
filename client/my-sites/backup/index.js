@@ -13,6 +13,7 @@ import {
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoBackup,
+	showUpsellIfNoBackupRestoreFeature,
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
@@ -101,6 +102,7 @@ export default function () {
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
+		showUpsellIfNoBackupRestoreFeature,
 		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,

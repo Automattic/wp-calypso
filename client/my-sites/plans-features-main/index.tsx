@@ -15,8 +15,11 @@ import {
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForFeaturesGrid,
+	getWooHostedFeaturesGroupedForComparisonGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
+	isWooHostedPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -30,7 +33,6 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
-	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -48,7 +50,6 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -381,12 +382,16 @@ const PlansFeaturesMain = ( {
 
 	const {
 		isLoading: isLoadingDifferentiatorsExperiment,
-		isStacked,
-		isLongSet,
-		isShortSet,
 		showDifferentiatorHeader,
 		variant: differentiatorsVariant,
-	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup } );
+		useVar1Features,
+		useVar3Features,
+		useVar4Features,
+		useVar5Features,
+		isVar1dVariant,
+		isVar4Variant,
+		isExperimentVariant,
+	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -462,9 +467,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useLongSetFeatures: isLongSet && ! isStacked,
-		useLongSetStackedFeatures: isLongSet && isStacked,
-		useShortSetStackedFeatures: ! isLongSet && isStacked,
+		useLongSetFeatures: useVar4Features,
+		useLongSetStackedFeatures: useVar3Features,
+		useShortSetStackedFeatures: useVar1Features,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -488,9 +496,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useLongSetFeatures: isLongSet && ! isStacked,
-		useLongSetStackedFeatures: isLongSet && isStacked,
-		useShortSetStackedFeatures: ! isLongSet && isStacked,
+		useLongSetFeatures: useVar4Features,
+		useLongSetStackedFeatures: useVar3Features,
+		useShortSetStackedFeatures: useVar1Features,
+		useVar5Features,
+		isExperimentVariant,
+		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -729,34 +740,43 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
+	// Check to see if we have at least one Woo Hosted plan we're comparing.
+	const hasWooHostedFeatures = useMemo( () => {
+		return gridPlansForComparisonGrid?.some(
+			( { planSlug, isVisible } ) => isVisible && isWooHostedPlan( planSlug )
+		);
+	}, [ gridPlansForComparisonGrid ] );
 
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
-		? getWooExpressFeaturesGroupedForComparisonGrid()
-		: getPlanFeaturesGroupedForComparisonGrid();
+	// Determine feature groups for comparison grid
+	let featureGroupMapForComparisonGrid;
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForComparisonGrid = getWooHostedFeaturesGroupedForComparisonGrid();
+	} else if ( hasWooExpressFeatures ) {
+		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
+	} else {
+		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
+			isExperimentVariant,
+		} );
+	}
 
 	let featureGroupMapForFeaturesGrid;
-	if ( hasWooExpressFeatures ) {
+	if ( hasWooHostedFeatures ) {
+		featureGroupMapForFeaturesGrid = getWooHostedFeaturesGroupedForFeaturesGrid();
+	} else if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( isLongSet || isShortSet ) {
+	} else if ( useVar3Features || useVar4Features || useVar1Features || useVar5Features ) {
 		// Experiment: stacked variants should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
-		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()
 		);
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
 	}
 
 	const getComparisonGridToggleLabel = () => {
@@ -853,7 +873,6 @@ const PlansFeaturesMain = ( {
 						visiblePlans={ gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug ) }
 						siteId={ siteId }
 						isInSignup={ isInSignup }
-						showLegacyStorageFeature={ showLegacyStorageFeature }
 						intent={ intent }
 						{ ...( coupon &&
 							discountEndDate && {
@@ -902,7 +921,7 @@ const PlansFeaturesMain = ( {
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
 										className={ `plans-features-main__features-grid${
-											isLongSet || isShortSet ? ' is-plan-differentiators-experiment' : ''
+											isExperimentVariant ? ' is-plan-differentiators-experiment' : ''
 										}` }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
@@ -941,6 +960,9 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
+										isVar1dVariant={ isVar1dVariant }
+										isVar4Variant={ isVar4Variant }
+										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1005,6 +1027,7 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
+													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle
@@ -1020,15 +1043,6 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
-			{ config.isEnabled( 'summer-special-2025' ) &&
-				config.isEnabled( 'summer-special-2025-banner' ) && (
-					<AsyncLoad
-						require="calypso/blocks/summer-special-banner"
-						placeholder={ null }
-						visiblePlans={ gridPlansForFeaturesGrid }
-						isFixed
-					/>
-				) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);

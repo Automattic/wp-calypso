@@ -37,10 +37,6 @@ export function getFeed( state, feedId ) {
 	return state.reader.feeds.items[ feedId ];
 }
 
-export function getFeeds( state ) {
-	return state.reader.feeds.items;
-}
-
 export function getFeedByFeedUrl( state, feedUrl ) {
 	return find( state.reader.feeds.items, { feed_URL: feedUrl } );
 }

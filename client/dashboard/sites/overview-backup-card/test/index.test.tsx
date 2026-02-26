@@ -21,15 +21,11 @@ const mockSite: Site = {
 	ID: mockSiteId,
 	plan: {
 		features: {
-			active: [ HostingFeatures.BACKUPS ],
+			active: [ HostingFeatures.BACKUPS_SELF_SERVE ],
 		},
 	},
 	is_wpcom_atomic: true,
 } as Site;
-
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => mockSite,
-} ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
 	...jest.requireActual( '@wordpress/i18n' ),
@@ -39,10 +35,6 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 } ) );
-
-afterEach( () => {
-	jest.clearAllMocks();
-} );
 
 describe( 'BackupCard', () => {
 	test( 'shows "No backups yet" when there are no backups', async () => {

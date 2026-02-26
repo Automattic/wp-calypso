@@ -1,14 +1,17 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
 .agents-manager-chat-header {
 	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: end;
-	height: 56px;
-	padding: 4px 16px;
+	gap: 4px;
+	padding-bottom: 4px;
 
 	.agents-manager-chat-header__back-btn {
+		color: var(--color-foreground);
 		padding: 0;
-		padding-right: 4px;
 	}
 
 	&:has( .agents-manager-chat-header__title ) {
@@ -18,21 +21,27 @@
 	&__title {
 		font-size: 14px;
 		font-weight: 600;
-		color: #1f1f1f;
+		color: var(--color-foreground);
 		flex-grow: 1;
 	}
 
 	&__actions {
 		display: flex;
-		gap: 4px;
+		gap: 8px;
 		align-items: center;
+		padding-block: 2px;
 	}
 
 	&__more-options,
 	&__history-btn,
 	&__close-btn {
 		svg {
-			fill: #1f1f1f;
+			fill: var(--color-foreground);
 		}
+	}
+
+	&__close-btn svg {
+		width: 20px;
+		height: 20px;
 	}
 }

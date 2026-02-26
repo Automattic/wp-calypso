@@ -3,11 +3,11 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import { screen, waitFor, act } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
-import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
+import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 
 // Mock the initializeWordPressPlayground function

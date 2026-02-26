@@ -23,6 +23,21 @@ function getIndividualConfig( options = {} ) {
 			filename: '[name].min.js',
 			library: 'agentsManager',
 		},
+		module: {
+			...webpackConfig.module,
+			rules: [
+				...( webpackConfig.module?.rules || [] ),
+				// Handle image assets from image-studio package
+				{
+					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
+					include: /image-studio/,
+					type: 'asset/resource',
+					generator: {
+						filename: 'images/[name].[contenthash:8][ext]',
+					},
+				},
+			],
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
@@ -37,7 +52,7 @@ function getIndividualConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( './dist/chunks-map.json' ),
+				output: path.resolve( `./dist/chunks-map-${ name }.json` ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill,
@@ -46,8 +61,15 @@ function getIndividualConfig( options = {} ) {
 				requestToExternal( request ) {
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
-					// shortcuts the logic such that react-i18n will be bundled.
+					// shortcuts the logic such that the package will be bundled.
 					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+					// TODO: Remove this override when @wordpress/abilities ships with
+					// WordPress core (expected in WP 7.0).
+					// Bundle @wordpress/abilities into image-studio so it works on
+					// self-hosted sites where the package isn't registered as a script.
+					if ( name === 'image-studio' && request === '@wordpress/abilities' ) {
 						return null;
 					}
 				},
@@ -73,6 +95,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	return [
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
+		getIndividualConfig( { env, argv, name: 'image-studio' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 	];
 }
 

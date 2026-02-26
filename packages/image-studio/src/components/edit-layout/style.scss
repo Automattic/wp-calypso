@@ -1,0 +1,104 @@
+@import "../styles/variables";
+
+@keyframes image-studio-shimmer-diagonal {
+	0% {
+		transform: translateX(-100%) translateY(-100%);
+	}
+
+	100% {
+		transform: translateX(100%) translateY(100%);
+	}
+}
+
+.image-studio-edit-layout {
+	padding-left: $modal-padding;
+	padding-right: $modal-padding;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-height: 100px;
+	position: relative;
+	margin: auto;
+	.image-studio-modal--edit & {
+		flex: 0 1 auto;
+		max-height: calc(100vh - #{$footer-height + $header-height});
+	}
+
+	.image-studio-placeholder-image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		visibility: hidden;
+		object-fit: contain;
+	}
+
+	.image-studio-image-container {
+		position: absolute;
+		inset: 0;
+		line-height: 0;
+
+		&,
+		& > * {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: var(--canvas-fit, contain);
+		}
+	}
+
+	.image-studio-image {
+		object-fit: contain;
+		position: relative;
+		z-index: 0;
+	}
+
+	/* Processing effect - shimmer overlay on container */
+	.image-studio-image-processing {
+		overflow: hidden;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: -50%;
+			left: -50%;
+			width: 200%;
+			height: 200%;
+			background: repeating-linear-gradient(
+				135deg,
+				transparent 0%,
+				transparent 30%,
+				rgba(255, 255, 255, 0.45) 50%,
+				transparent 70%,
+				transparent 100%
+			);
+			animation: image-studio-shimmer-diagonal 3s infinite;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		&::after {
+			background: rgba(0, 0, 0, 0.15);
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			pointer-events: none;
+			border-radius: inherit;
+		}
+	}
+
+	.image-studio-agent-loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 16px;
+		color: #757575;
+		font-size: 14px;
+	}
+
+	.image-studio-no-image {
+		color: #666;
+		text-align: center;
+		padding: 20px;
+	}
+}

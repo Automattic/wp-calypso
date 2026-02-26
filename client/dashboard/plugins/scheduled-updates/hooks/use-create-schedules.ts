@@ -3,7 +3,7 @@ import {
 	siteJetpackMonitorSettingsCreateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { CRON_CHECK_INTERVAL } from '../constants';
 import { prepareTimestamp, runWithConcurrency } from '../helpers';

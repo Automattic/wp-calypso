@@ -2,21 +2,25 @@
 
 ## Primary Objective
 
-Review the dashboard code for quality, correctness, and best practices.
+Review the PR based on the following documentation files as the guidelines:
 
-## Project Guidelines
-
-Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
-
-## Scope
-
-- **React/TypeScript**: Component props/types, hook dependencies, state management, error handling.
-- **Performance**: Unnecessary re-renders, missing memoization, large bundle imports.
-- **Accessibility**: Missing ARIA labels, keyboard navigation, focus management.
-- **API usage**: Correct endpoint usage, error states, loading states.
+- @AGENTS.md
+- @client/AGENTS.md
+- @client/dashboard/AGENTS.md
+- @client/dashboard/docs/data-library.md
+- @client/dashboard/docs/i18n.md
+- @client/dashboard/docs/links.md
+- @client/dashboard/docs/package-imports.md
+- @client/dashboard/docs/router.md
+- @client/dashboard/docs/testing.md
+- @client/dashboard/docs/typography-and-copy.md
+- @client/dashboard/docs/ui-components.md
+- @packages/api-core/README.md
+- @packages/api-queries/README.md
 
 ## Method
 
+- Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
 - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
 - Provide fix suggestions in each comment.
 - Don't nitpick minor style issues unless they violate project guidelines.
@@ -27,3 +31,8 @@ Read `.cursor/rules/dashboard-rules.mdc` before reviewing.
 - Be concise.
 - Do NOT use checkboxes, todo lists, or progress indicators.
 - Only comment if there are issues worth addressing.
+- DO NOT comment on lines that are not related to the guidelines.
+- For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
+- For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
+
+Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.

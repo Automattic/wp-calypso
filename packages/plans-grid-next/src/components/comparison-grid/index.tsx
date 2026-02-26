@@ -3,8 +3,6 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	FEATURE_AI_WEBSITE_BUILDER,
-	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 } from '@automattic/calypso-products';
@@ -55,7 +53,6 @@ import './style.scss';
 
 // Plans Differentiators Experiment: treat feature variants (e.g., _LIMITED) as the same row
 const FEATURE_ALIASES: Record< string, string[] > = {
-	[ FEATURE_AI_WEBSITE_BUILDER ]: [ FEATURE_AI_WEBSITE_BUILDER_LIMITED ],
 	[ FEATURE_AI_WRITER_DESIGNER ]: [ FEATURE_AI_WRITER_DESIGNER_LIMITED ],
 };
 
@@ -75,10 +72,14 @@ const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
 
 const JetpackIconContainer = styled.div`
-	padding-inline-start: 6px;
+	padding-inline-start: 3px;
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
+`;
+
+const TitlePreventOrphans = styled.span`
+	white-space: nowrap;
 `;
 
 const Title = styled.div< { isHiddenInMobile?: boolean } >`
@@ -737,6 +738,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 
 const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	feature?: FeatureObject | TransformedFeatureObject;
+	featureGroupSlug: string;
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visibleGridPlans: GridPlan[];
@@ -750,6 +752,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
+	featureGroupSlug,
 	isHiddenInMobile,
 	allJetpackFeatures,
 	visibleGridPlans,
@@ -768,7 +771,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
-	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const tooltipId = `${ featureGroupSlug }-${ feature?.getSlug() }-comparison-grid`;
 	const title = feature?.getTitle?.();
 	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
@@ -811,27 +814,47 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle() }
-									{ footnote && (
-										<FeatureFootnote>
-											<sup>{ footnote }</sup>
-										</FeatureFootnote>
+									{ typeof title === 'string' ? (
+										<>
+											{ title.split( ' ' ).slice( 0, -1 ).join( ' ' ) }
+											{ title.includes( ' ' ) ? ' ' : null }
+											<TitlePreventOrphans>
+												{ title.split( ' ' ).slice( -1 ) }
+												{ footnote && (
+													<FeatureFootnote>
+														<sup>{ footnote }</sup>
+													</FeatureFootnote>
+												) }
+												{ allJetpackFeatures.has( feature.getSlug() ) ? (
+													<>
+														{ '\u00A0' }
+														<JetpackIconContainer>
+															<Plans2023Tooltip
+																text={ translate(
+																	'Security, performance, and growth tools—powered by Jetpack.'
+																) }
+																setActiveTooltipId={ setActiveTooltipId }
+																activeTooltipId={ activeTooltipId }
+																id={ `jp-${ tooltipId }` }
+															>
+																<JetpackLogo size={ 16 } />
+															</Plans2023Tooltip>
+														</JetpackIconContainer>
+													</>
+												) : null }
+											</TitlePreventOrphans>
+										</>
+									) : (
+										<>
+											{ feature.getTitle() }
+											{ footnote && (
+												<FeatureFootnote>
+													<sup>{ footnote }</sup>
+												</FeatureFootnote>
+											) }
+										</>
 									) }
 								</Plans2023Tooltip>
-								{ allJetpackFeatures.has( feature.getSlug() ) ? (
-									<JetpackIconContainer>
-										<Plans2023Tooltip
-											text={ translate(
-												'Security, performance, and growth tools—powered by Jetpack.'
-											) }
-											setActiveTooltipId={ setActiveTooltipId }
-											activeTooltipId={ activeTooltipId }
-											id={ `jp-${ tooltipId }` }
-										>
-											<JetpackLogo size={ 16 } />
-										</Plans2023Tooltip>
-									</JetpackIconContainer>
-								) : null }
 							</>
 						) }
 					</>
@@ -884,16 +907,18 @@ const FeatureGroup = ( {
 	};
 	plansLength: number;
 } ) => {
-	const { allFeaturesList } = usePlansGridContext();
+	const { allFeaturesList, isExperimentVariant } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
 	const features = featureGroup.getFeatures();
+
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
-		getPlanFeaturesObject( allFeaturesList, features )
+		getPlanFeaturesObject( allFeaturesList, features, isExperimentVariant )
 	);
+
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 	const allJetpackFeatures = useMemo( () => {
@@ -959,6 +984,7 @@ const FeatureGroup = ( {
 				<ComparisonGridFeatureGroupRow
 					key={ feature.getSlug() }
 					feature={ feature }
+					featureGroupSlug={ featureGroup.slug }
 					isHiddenInMobile={ isHiddenInMobile }
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
@@ -975,6 +1001,7 @@ const FeatureGroup = ( {
 			{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
 				<ComparisonGridFeatureGroupRow
 					key="feature-storage"
+					featureGroupSlug={ featureGroup.slug }
 					isHiddenInMobile={ isHiddenInMobile }
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
@@ -1182,6 +1209,7 @@ const WrappedComparisonGrid = ( {
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
+	isExperimentVariant,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -1234,6 +1262,7 @@ const WrappedComparisonGrid = ( {
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
+				isExperimentVariant={ isExperimentVariant }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

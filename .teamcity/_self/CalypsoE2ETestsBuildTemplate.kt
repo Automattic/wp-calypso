@@ -29,6 +29,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		text("CALYPSO_BASE_URL", "")
 		text("DASHBOARD_BASE_URL", "")
 		text("DOCKER_IMAGE_BUILD_NUMBER", "")
+		text("EXTRA_ENV_VARS", "")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "false")
 	}
 
@@ -176,6 +177,23 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
 		bashNodeScript {
+			name = "Set extra environment variables"
+			id = "set_extra_env_vars"
+			scriptContent = """
+				# Parse EXTRA_ENV_VARS param (comma-separated KEY=value pairs) and set as TeamCity env params
+				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
+					IFS=',' read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
+					for pair in "${'$'}{ENV_PAIRS[@]}"; do
+						KEY="${'$'}{pair%%=*}"
+						VALUE="${'$'}{pair#*=}"
+						echo "##teamcity[setParameter name='env.${'$'}KEY' value='${'$'}VALUE']"
+					done
+				fi
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
 			name = "Run e2e tests"
 			id = "run_tests"
 			scriptContent = """
@@ -226,11 +244,10 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
   	artifactRules = """
 		test/e2e/output => %PROJECT%/output
-		test/e2e/blob-report => blob-report
 	""".trimIndent()
   
   	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 30
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
 

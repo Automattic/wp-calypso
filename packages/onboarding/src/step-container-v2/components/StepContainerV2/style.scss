@@ -5,6 +5,9 @@
 	--step-container-v2-content-block-padding: 2rem;
 	--step-container-v2-content-inline-padding: 1rem;
 
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
+
 	@include break-small {
 		--step-container-v2-content-inline-padding: 3rem;
 	}

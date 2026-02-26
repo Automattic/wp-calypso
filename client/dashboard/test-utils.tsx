@@ -3,6 +3,16 @@ import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-r
 import { render as testingLibraryRender } from '@testing-library/react';
 import { Suspense } from 'react';
 import { type AnalyticsClient, AnalyticsProvider } from './app/analytics';
+import { AuthContext } from './app/auth';
+import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from './app/context';
+import type { User } from '@automattic/api-core';
+
+const defaultUser = {
+	ID: 1,
+	username: 'testuser',
+	email: 'test@example.com',
+	language: 'en',
+} as User;
 
 function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
@@ -25,12 +35,20 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 		queryClient: QueryClient;
 	};
 
-export function render( ui: React.ReactElement ): RenderResult {
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: { retry: false },
-		},
-	} );
+interface RenderOptions {
+	user?: User;
+	queryClient?: QueryClient;
+}
+
+export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
+	const { user = defaultUser, queryClient: providedClient } = options;
+	const queryClient =
+		providedClient ??
+		new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	const router = createTestRouter( ui );
 
 	const recordTracksEvent = jest.fn();
@@ -38,9 +56,13 @@ export function render( ui: React.ReactElement ): RenderResult {
 
 	const testingLibraryResult = testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<AnalyticsProvider client={ { recordTracksEvent, recordPageView } }>
-				<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
-			</AnalyticsProvider>
+			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+				<AnalyticsProvider client={ { recordTracksEvent, recordPageView } }>
+					<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+						<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
+					</AuthContext.Provider>
+				</AnalyticsProvider>
+			</AppProvider>
 		</QueryClientProvider>
 	);
 

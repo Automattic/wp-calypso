@@ -1,45 +1,40 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type UseAgentChatConfig,
-} from '@automattic/agenttic-client';
+import { getAgentManager } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
 } from '@automattic/agenttic-ui';
-import { useManagedOdieChat } from '@automattic/odie-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useMemo } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login } from '@wordpress/icons';
+import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
+import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
-import useConversation from '../../hooks/use-conversation';
+import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
+import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { LocalConversationListItem } from '../../types';
 import { setSessionId } from '../../utils/agent-session';
-import AgentChat from '../agent-chat';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
+import ZendeskChat from '../zendesk-chat';
 import type {
 	NavigationContinuationHook,
 	AbilitiesSetupHook,
+	GetChatComponent,
+	UseSuggestionsHook,
+	SiteBuildUtils,
+	ImageUploadHook,
 } from '../../utils/load-external-providers';
-import type { AgentsManagerSelect, HelpCenterSite } from '@automattic/data-stores';
+import type { AgentsManagerSelect } from '@automattic/data-stores';
+import './style.scss';
 
-interface AgentDockProps {
-	/** The selected site object. */
-	site?: HelpCenterSite | null;
-	/** The name of the current section (e.g., 'posts', 'pages'). */
-	sectionName: string;
-	/** Indicates if the user is eligible for chat. */
-	isEligibleForChat: boolean;
-	/** Agent configuration for the chat client. */
-	agentConfig: UseAgentChatConfig;
+interface Props {
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
 	/** Custom components for rendering markdown. */
@@ -50,89 +45,60 @@ interface AgentDockProps {
 	useNavigationContinuation?: NavigationContinuationHook;
 	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
 	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
+	useSuggestions?: UseSuggestionsHook;
+	/** Get a chat component by type for rendering in agent messages. */
+	getChatComponent?: GetChatComponent;
+	/** Utilities for site building flow (e.g., progress tracking, site preview). */
+	siteBuildUtils?: SiteBuildUtils;
+	/** Hook for handling image uploads within the agent chat. */
+	useImageUpload?: ImageUploadHook;
 }
 
 export default function AgentDock( {
-	agentConfig,
-	site,
-	sectionName,
-	isEligibleForChat,
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
 	useNavigationContinuation,
 	useAbilitiesSetup,
-}: AgentDockProps ) {
-	const [ isThinking, setIsThinking ] = useState( false );
-	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	getChatComponent,
+	useSuggestions,
+	siteBuildUtils,
+	useImageUpload,
+}: Props ) {
+	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
+
+	const [ isCompactMode, setIsCompactMode ] = useState( false );
+	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
+	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
+	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const {
-		hasLoaded: isStoreReady,
-		isOpen: isPersistedOpen = false,
-		isDocked: isPersistedDocked = false,
-	} = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
+		( select ) => {
+			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+			return store.getAgentsManagerState();
+		},
+		[]
+	);
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-	const sessionId = agentConfig.sessionId;
-	const agentId = agentConfig.agentId;
+	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
+	const agentId = agentConfig!.agentId;
 
-	const { isDocked, isDesktop, dock, undock, closeSidebar, createAgentPortal } =
+	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			isReady: isStoreReady,
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
-			onOpenSidebar: () => setIsOpen( true ),
+			onOpenSidebar: () => {
+				setIsOpen( true );
+				if ( pathname === '/history' ) {
+					navigate( '/' );
+				}
+			},
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
-
-	const {
-		addMessage,
-		messages,
-		suggestions,
-		isProcessing,
-		error,
-		loadMessages,
-		onSubmit,
-		abortCurrentRequest,
-		clearSuggestions,
-	} = useAgentChat( agentConfig );
-
-	const {
-		messages: odieMessages,
-		isProcessing: isOdieProcessing,
-		sendMessage: sendOdieMessage,
-	} = useManagedOdieChat();
-
-	const { isLoading: isLoadingConversation } = useConversation( {
-		agentId,
-		sessionId,
-		authProvider: agentConfig.authProvider,
-		onSuccess: ( messages, serverSessionId ) => {
-			// Update the UI with the loaded messages
-			loadMessages( messages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
-
-			// Sync local session ID with the server's
-			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId );
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
-	} );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		onSubmit,
-		sessionId,
-		agentId,
-	} );
 
 	// Handle WordPress admin bar integration
 	useAdminBarIntegration( {
@@ -142,128 +108,122 @@ export default function AgentDock( {
 		navigate,
 	} );
 
-	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
-	// The hook is stable as `AgentDock` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
-		addMessage,
-		clearSuggestions,
-		getAgentManager,
-		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...msgs.map( ( msg ) => msg.id ) ] )
-			);
-		},
+	useSetupCustomActions( {
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		setIsCompactMode,
+		setShouldRenderChat,
 	} );
 
-	const handleNewChat = () => {
-		navigate( '/' );
+	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
+
+	const handleNewChat = () => navigate( '/' );
+
+	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
+
+	const handleExpand = () => {
+		setIsOpen( true );
+		if ( pathname === '/history' ) {
+			navigate( '/' );
+		}
 	};
 
-	const handleSelectConversation = ( sessionId: string ) => {
-		abortCurrentRequest();
-		setSessionId( sessionId );
-		navigate( '/chat', { state: { sessionId } } );
+	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
+		if ( conversation.is_zendesk ) {
+			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
+		} else {
+			const sessionId = conversation.session_id || '';
+
+			handleAbort();
+			setSessionId( sessionId, agentId );
+			navigate( '/chat', { state: { sessionId } } );
+		}
 	};
 
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
-		const newChatMenuItem = {
-			icon: comment,
-			title: __( 'New chat', '__i18n_text_domain__' ),
-			isDisabled: pathname !== '/history' && ! messages.length,
-			onClick: handleNewChat,
-		};
-		const undockMenuItem = {
-			icon: login,
-			title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
-			onClick: () => {
-				undock();
-				setIsDocked( false );
+		return [
+			{
+				icon: comment,
+				title: __( 'New chat', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
+				onClick: handleNewChat,
 			},
-		};
-		const dockMenuItem = {
-			icon: drawerRight,
-			title: __( 'Move to sidebar', '__i18n_text_domain__' ),
-			onClick: () => {
-				dock();
-				setIsDocked( true );
+			shouldUseUnifiedAgent && {
+				icon: lifesaver,
+				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
+				onClick: () => {
+					handleAbort();
+					navigate( '/zendesk' );
+				},
 			},
-		};
-
-		const options: ChatHeaderOptions = [ newChatMenuItem ];
-
-		if ( isDocked ) {
-			options.push( undockMenuItem );
-		} else if ( isDesktop ) {
-			options.push( dockMenuItem );
-		}
-
-		return options;
+			isDocked && {
+				icon: login,
+				title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+				onClick: () => {
+					undock();
+					setIsDocked( false );
+				},
+			},
+			! isDocked &&
+				canDock && {
+					icon: drawerRight,
+					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					onClick: () => {
+						dock();
+						setIsDocked( true );
+					},
+				},
+		].filter( Boolean ) as ChatHeaderOptions;
 	};
 
-	// Filter out deleted messages and local tool running messages
-	const visibleMessages = useMemo(
-		() =>
-			messages.filter(
-				( message ) =>
-					! deletedMessageIds.has( message.id ) &&
-					! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
-			),
-		[ messages, deletedMessageIds ]
-	);
+	const chatHeaderOptions = getChatHeaderOptions();
 
-	const Chat = (
-		<AgentChat
-			messages={ visibleMessages }
-			suggestions={ suggestions }
-			emptyViewSuggestions={ suggestions.length ? suggestions : emptyViewSuggestions }
-			isProcessing={ isProcessing || isThinking }
-			error={ error }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
-			isLoadingConversation={ isLoadingConversation }
-			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
-		/>
-	);
-
-	const OdieChat = (
-		<AgentChat
-			messages={ odieMessages }
-			suggestions={ [] }
-			isProcessing={ isOdieProcessing }
-			error={ null }
-			onSubmit={ sendOdieMessage }
-			onAbort={ () => {} }
-			isLoadingConversation={ isLoadingConversation }
-			isDocked={ isDocked }
-			isOpen={ isPersistedOpen }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			markdownComponents={ markdownComponents }
-			markdownExtensions={ markdownExtensions }
+	const OrchestratorChatRoute = (
+		<OrchestratorChat
 			emptyViewSuggestions={ emptyViewSuggestions }
+			isDocked={ isDocked }
+			isOpen={ isPersistedOpen }
+			onClose={ handleClose }
+			onExpand={ handleExpand }
+			chatHeaderOptions={ chatHeaderOptions }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+			isCompactMode={ isCompactMode }
+			useNavigationContinuation={ useNavigationContinuation }
+			useAbilitiesSetup={ useAbilitiesSetup }
+			useSuggestions={ useSuggestions }
+			getChatComponent={ getChatComponent }
+			siteBuildUtils={ siteBuildUtils }
+			navigate={ navigate }
+			useImageUpload={ useImageUpload }
+			onMessagesCountChange={ setOrchestratorMsgCount }
 		/>
 	);
 
-	const History = (
-		<AgentHistory
-			agentId={ agentId }
-			authProvider={ agentConfig.authProvider }
-			chatHeaderOptions={ getChatHeaderOptions() }
+	const ZendeskChatRoute = (
+		<ZendeskChat
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			onSubmit={ onSubmit }
-			onAbort={ abortCurrentRequest }
-			onClose={ isDocked ? closeSidebar : () => setIsOpen( false ) }
-			onExpand={ () => setIsOpen( true ) }
+			onClose={ handleClose }
+			onExpand={ handleExpand }
+			chatHeaderOptions={ chatHeaderOptions }
+			markdownComponents={ markdownComponents }
+			markdownExtensions={ markdownExtensions }
+			onMessagesCountChange={ setZendeskMsgCount }
+		/>
+	);
+
+	const HistoryRoute = (
+		<AgentHistory
+			chatHeaderOptions={ chatHeaderOptions }
+			isDocked={ isDocked }
+			isOpen={ isPersistedOpen }
+			onAbort={ handleAbort }
+			onClose={ handleClose }
+			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
 			onNewChat={ handleNewChat }
 		/>
@@ -272,35 +232,38 @@ export default function AgentDock( {
 	const SupportGuideRoute = (
 		<SupportGuide
 			isEligibleForChat={ isEligibleForChat }
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
 			sectionName={ sectionName }
 			currentSiteDomain={ site?.domain }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
+			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
 
 	const SupportGuidesRoute = (
 		<SupportGuides
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			onClose={ closeSidebar }
+			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			chatHeaderOptions={ getChatHeaderOptions() }
-			isChatDocked={ isDocked }
+			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
 
-	return createAgentPortal(
-		// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-		<Routes>
-			<Route path="/odie" element={ OdieChat } />
-			<Route path="/chat" element={ Chat } />
-			<Route path="/post" element={ SupportGuideRoute } />
-			<Route path="/support-guides" element={ SupportGuidesRoute } />
-			<Route path="/history" element={ History } />
-			<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
-		</Routes>
+	return (
+		shouldRenderChat &&
+		createAgentPortal(
+			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+			<Routes>
+				<Route path="/chat" element={ OrchestratorChatRoute } />
+				<Route path="/post" element={ SupportGuideRoute } />
+				<Route path="/zendesk" element={ ZendeskChatRoute } />
+				<Route path="/support-guides" element={ SupportGuidesRoute } />
+				<Route path="/history" element={ HistoryRoute } />
+				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
+			</Routes>
+		)
 	);
 }

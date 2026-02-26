@@ -2,6 +2,7 @@
 export type CheckoutPaymentMethodSlug =
 	| 'card'
 	| 'existingCard'
+	| 'existingPayPalPPCP'
 	| 'paypal-express'
 	| 'paypal-js'
 	| 'free-purchase'

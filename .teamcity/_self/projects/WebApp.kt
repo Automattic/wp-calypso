@@ -27,7 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
-	buildType(PlaywrightTestDashboardPreReleaseMatrix)
+	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -40,6 +40,7 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
+        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
@@ -53,17 +54,23 @@ object BuildDockerImage : BuildType({
             qrEnv = "flags=oauth",
         ),
         EnvConfig(
-            label = "Jetpack Cloud live",
+            label = "Jetpack Cloud Live",
             envQuery = "&env=jetpack",
             qrEnv = "env=jetpack&flags=oauth",
         ),
         EnvConfig(
-            label = "Automattic for Agencies live",
+            label = "Automattic for Agencies Live",
             envQuery = "&env=a8c-for-agencies",
             qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
 		EnvConfig(
-			label = "Dashboard live",
+			label = "Dashboard Live (dotcom)",
+			envQuery = "&env=dashboard",
+			qrEnv = "env=dashboard&flags=oauth",
+		),
+		EnvConfig(
+			label = "Dashboard Live (CIAB)",
+			baseUrl = "https://calypso.live/ciab",
 			envQuery = "&env=dashboard",
 			qrEnv = "env=dashboard&flags=oauth",
 		)
@@ -74,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}">https://calypso.live?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
@@ -1033,17 +1040,6 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 			buildProbablyHanging = true
 		}
 	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:<default>
-			""".trimIndent()
-			triggerRules = """
-				-:**.md
-			""".trimIndent()
-		}
-	}
 })
 
 object PlaywrightTestDashboardPRMatrix : BuildType({
@@ -1099,59 +1095,12 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	}
 })
 
-object PlaywrightTestDashboardPreReleaseMatrix : BuildType({
-	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Dashboard_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "80904868-c163-4fec-817b-907611985c33"
-	name = "Dashboard Pre-Release E2E Tests"
-	description = "Runs Dashboard pre-release e2e tests using Playwright Test runner with build matrix"
 
-	params {
-		param("TEST_GROUP", "@dashboard-release")
-		param("CALYPSO_BASE_URL", "https://wordpress.com")
-		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	}
-
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile"),
-			))
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	triggers {
-		vcs {
-			branchFilter = """
-				+:<default>
-			""".trimIndent()
-			triggerRules = """
-				-:**.md
-			""".trimIndent()
-		}
-	}
-})
-
-object PreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+object JestPreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Jest_Pre_Release")
+	uuid = "f8e2a4b6-3c91-4d57-8e6f-2a1b9c0d5e7f"
+	name = "Pre-Release E2E Tests (Jest)"
+	description = "Runs Calypso pre-release legacy e2e tests using Jest runner with a build matrix"
 	artifactRules = """
 		logs => logs.tgz
 		screenshots => screenshots
@@ -1170,7 +1119,7 @@ object PreReleaseE2ETests : BuildType({
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("end.DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.ALLURE_RESULTS_PATH", "allure-results")
 	}
 
@@ -1290,6 +1239,55 @@ object PreReleaseE2ETests : BuildType({
 			compareTo = build {
 				buildRule = lastSuccessful()
 			}
+		}
+	}
+})
+
+object PreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Aggregator build that runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	dependencies {
+		snapshot(PlaywrightTestPreReleaseMatrix) {
+			onDependencyFailure = FailureAction.ADD_PROBLEM
+		}
+		snapshot(JestPreReleaseE2ETests) {
+			onDependencyFailure = FailureAction.ADD_PROBLEM
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
 		}
 	}
 })

@@ -1,0 +1,546 @@
+/**
+ * Image Studio Styles
+ *
+ * Styles for the Image Studio modal interface, including layout, toolbar,
+ * image display, and AI chat suggestions.
+ */
+
+@import "./styles/variables";
+@import "./styles/mixins";
+
+/* ==========================================================================
+   Modal Layout
+   ==========================================================================*/
+// Ensure the admin bar is hidden when the image studio is open
+body.js.is-image-studio-open {
+	overflow: hidden;
+
+	#wpadminbar {
+		z-index: $admin-bar-z-index !important;
+	}
+}
+
+// Ensure the image studio is above the big sky chrome
+.image-studio-overlay {
+	z-index: $admin-bar-z-index + 1;
+}
+
+// Ensure the confirmation dialog is above the image studio
+.image-studio-confirmation-dialog-overlay {
+	z-index: $admin-bar-z-index + 2;
+}
+
+// Exit overlay - appears above the modal during exit flow (save/discard/cleanup)
+.image-studio-exit-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: $admin-bar-z-index + 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.8);
+	backdrop-filter: blur(4px);
+}
+
+.image-studio-modal {
+	--wp-components-color-background: var(--Scales-Grays-gray-900, #1e1e1e);
+	--wp-components-color-foreground: #fff;
+	--image-studio-footer-height: 180px;
+	box-shadow: none;
+	background-color: var(--Scales-Grays-gray-900, #1e1e1e);
+	margin: 0;
+	width: 100vw;
+	height: 100vh;
+	max-width: 100vw;
+	max-height: 100vh;
+	border-radius: 0;
+	transition: background-color 1s ease;
+
+	// Reset modal component defaults
+	h1,
+	h2,
+	h3 {
+		color: #fff;
+	}
+
+	a {
+		color: $color-link;
+	}
+
+	&--generate &__content {
+		overflow: initial;
+	}
+
+	&__content {
+		position: relative;
+		overflow: hidden;
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+
+	&__sidebar {
+		position: relative;
+		top: 0;
+		right: 0;
+		height: 100%;
+		flex-shrink: 0;
+		overflow-y: auto;
+		width: auto;
+	}
+
+	&__sidebar-inner {
+		height: 100%;
+	}
+
+	&__notices {
+		position: fixed;
+		bottom: 32px;
+		left: 32px;
+		z-index: 1000;
+	}
+
+	.components-modal__content > div {
+		height: 100%;
+		width: 100%;
+		display: flex;
+	}
+	// Force white text for assistant messages only (not user bubbles)
+	.Message-module_message:not(.Message-module_user) {
+		color: #fff !important;
+	}
+
+	.Message-module_message:not(.Message-module_user) * {
+		color: #fff !important;
+	}
+
+	.Message-module_content:not(.Message-module_user *),
+	.Message-module_content:not(.Message-module_user *) * {
+		color: #fff !important;
+	}
+
+	.components-modal__content {
+		padding: 0;
+		height: 100%;
+		width: 100%;
+		background-image: radial-gradient(
+			ellipse 65% 100% at 50% 120%,
+			color-mix(
+					in srgb,
+					var(--ss-color-fg, rgba(0, 0, 0, 1)) 50%,
+					rgba(0, 0, 0, 0.5)
+				)
+				0 -20%,
+			transparent 110%
+		);
+	}
+
+	.Suggestions-module_container {
+		display: flex;
+	}
+
+	.loading-overlay-module_container {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+/* ==========================================================================
+   Utils
+   ========================================================================== */
+
+.image-studio-sr-only {
+	@include visually-hidden();
+}
+
+.image-studio-modal__input-toolbar {
+	display: flex;
+	gap: 8px;
+}
+
+.image-studio-badge {
+	padding: 2px 8px;
+	min-height: 24px;
+	border-radius: 2px;
+	max-width: 100%;
+	display: inline-block;
+	background-color: #1f2c70;
+	color: #9fadfb;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 20px;
+}
+
+/* ==========================================================================
+   Image Studio Chat - Match SidebarPortal Styling
+   ========================================================================== */
+
+.image-studio-agent.agenttic {
+	&.Chat-module_embedded {
+		height: 100%;
+	}
+
+	.ConversationView-module_container {
+		justify-content: end;
+	}
+
+	.Messages-module {
+		&_container {
+			mask-image: linear-gradient(
+				to bottom,
+				transparent 0,
+				transparent 0,
+				#000 20px
+			);
+			flex: initial;
+			padding-bottom: 1em;
+			position: relative;
+			padding-top: 1em;
+			padding-right: 1rem;
+			gap: 0;
+			scrollbar-width: thin;
+			scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+
+			> :first-child {
+				margin-top: auto;
+			}
+
+
+			// Webkit scrollbar
+			&::-webkit-scrollbar {
+				width: 8px;
+			}
+
+			&::-webkit-scrollbar-track {
+				background-color: transparent;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background-color: rgba(255, 255, 255, 0.5);
+				border-radius: 4px;
+
+				&:hover {
+					background-color: rgba(255, 255, 255, 0.7);
+				}
+			}
+		}
+	}
+
+	.Message-module_message {
+		color: #fff;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		padding-bottom: 0;
+
+		p {
+			font-size: inherit;
+			line-height: inherit;
+		}
+
+		ul {
+			list-style: disc;
+		}
+
+		& + .Thinking-module_container {
+			padding-top: 1em;
+		}
+	}
+
+	.Message-module_content {
+		width: 100%;
+		height: auto;
+	}
+
+	.Message-module_user {
+		padding: 0;
+
+		.Message-module_bubble {
+			background: #484848;
+
+			p {
+				color: #f0f0f0;
+				margin: 0;
+			}
+		}
+	}
+
+	.EmptyView-module {
+		&_container {
+			width: 100%;
+			align-items: flex-start;
+			padding: 0;
+		}
+
+		&_icon {
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: 12px;
+
+			svg {
+				width: 32px;
+				height: 32px;
+				color: #fff;
+			}
+		}
+
+		&_heading {
+			font-size: 0.875rem;
+			line-height: 1.6;
+			color: #fff;
+			padding: 0 12px;
+			margin-bottom: 48px !important;
+		}
+
+		&_help {
+			font-size: 0.875rem;
+			line-height: 1.6;
+			color: #fff;
+			padding: 0 12px;
+		}
+
+		&_suggestionsWrapper {
+			margin-top: 16px;
+		}
+
+		&_suggestionsWrapper .Suggestions-module_container {
+			flex-direction: column;
+			gap: 0;
+			padding: 0;
+
+			.button-module_button {
+				width: 100%;
+				height: unset;
+				justify-content: start;
+				border-radius: 0;
+				background-color: unset;
+				padding: 14px 16px;
+				color: #e0e0e0;
+				font-size: 13px;
+				line-height: 20px;
+				border: 1px solid #545454;
+
+				&:hover {
+					background-color: #2a2a2a;
+				}
+
+				&:focus-visible {
+					outline-offset: -3px;
+					outline-color: var(--wp-admin-theme-color);
+				}
+			}
+
+			> div + div .button-module_button {
+				margin-top: -1px;
+			}
+
+			> div:only-of-type .button-module_button {
+				border-radius: 8px;
+			}
+
+			> div:first-of-type:not(:only-of-type) .button-module_button {
+				border-radius: 8px 8px 0 0;
+			}
+
+			> div:last-of-type:not(:only-of-type) .button-module_button {
+				border-radius: 0 0 8px 8px;
+			}
+		}
+	}
+
+	.ChatFooter-module_container {
+		background-color: #2a2a2a;
+		padding: 4px 4px 4px 8px;
+		transition: margin-top 0.3s ease;
+		border-radius: var(--radius-lg, 8px);
+		border-color: transparent;
+		z-index: 100;
+
+		&:has(.Suggestions-module_container) {
+			margin-top: 42px;
+		}
+
+		// Generate mode only: when picker toolbar is present
+		&:has(.image-studio-input-toolbar-item) {
+			padding: 12px;
+			position: relative !important;
+
+			// Make ChatInput container not use flex positioning for the button
+			.ChatInput-module_container {
+				position: static !important;
+			}
+		}
+	}
+
+	// Suggestions styling - works for both inside and outside Footer
+	.Suggestions-module_container .button-module_outline {
+		color: #f0f0f0;
+		background-color: #484848;
+	}
+
+	.Textarea-module_textarea {
+		color: #e0e0e0;
+		font-size: 0.875rem;
+		line-height: 1.625;
+		box-shadow: none;
+		background-color: transparent;
+
+		&::placeholder {
+			color: #a0a0a0;
+		}
+	}
+
+	.ChatInput-module_button {
+		&:disabled {
+			background-color: #404040;
+			color: #757575;
+		}
+	}
+
+	.image-studio-suggestions-loading {
+		position: absolute;
+		transform: translateY(-100%);
+		top: -8px;
+	}
+}
+
+/* ==========================================================================
+  Toolbars (Style & Aspect Ratio)
+  ==========================================================================*/
+.image-studio-input-toolbar-item {
+	// Dark theme color overrides for big-sky
+	> div > button {
+		background-color: #484848;
+		color: #f0f0f0;
+
+		&:hover:not(:disabled) {
+			background-color: #555;
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+
+	// Dropdown customizations for image-studio
+	[role="dialog"] {
+		background-color: #3a3a3a;
+		border-color: transparent;
+		color: #e0e0e0;
+		bottom: auto;
+		width: 346px;
+		max-width: calc(100vw - #{$modal-padding});
+		max-height: clamp(200px, 412px, 50vh);
+		overflow-y: auto;
+
+		// Hide scrollbar but keep scroll functionality
+		scrollbar-width: none; // Firefox
+		-ms-overflow-style: none; // IE/Edge
+
+		&::-webkit-scrollbar {
+			display: none; // Chrome/Safari/Opera
+		}
+	}
+}
+
+// Style grid layout - 3 columns with circular images
+.image-studio-input-toolbar-dialog-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+	gap: 12px;
+}
+
+.image-studio-input-toolbar-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	font-family: inherit;
+	color: #e0e0e0;
+	background-color: transparent;
+	border: 2px solid transparent;
+	border-radius: 16px;
+	cursor: pointer;
+	transition:
+		border-color 0.15s ease,
+		background-color 0.15s ease;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.05);
+	}
+
+	&.is-selected {
+		border-color: rgba(255, 255, 255, 0.6);
+		background-color: rgba(255, 255, 255, 0.08);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	// Circular image wrapper
+	&__image-wrapper {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		overflow: hidden;
+		flex-shrink: 0;
+	}
+
+	// The preview image
+	&__image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		transform: scale(1) translateX(-3%);
+	}
+
+	// Aspect ratio card specific: icon wrapper
+	&__icon-wrapper {
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	&__icon {
+		width: 100%;
+		height: 100%;
+		color: #d0d0d0;
+	}
+
+	&.is-selected &__icon {
+		color: #fff;
+	}
+
+	// Style label below image
+	&__label {
+		font-size: 0.75rem;
+		font-weight: 400;
+		text-align: center;
+		line-height: 1.3;
+		color: #d0d0d0;
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	&.is-selected &__label {
+		color: #fff;
+	}
+}

@@ -529,23 +529,3 @@ export function getExtraJetpackReasons(
 		},
 	];
 }
-
-export function getReasonLabelByValue( value: string ) {
-	for ( const first of CANCELLATION_REASONS ) {
-		if ( first.value === value ) {
-			return first.label;
-		}
-
-		if ( ! first.selectOptions ) {
-			continue;
-		}
-
-		for ( const second of first.selectOptions ) {
-			if ( second.value === value ) {
-				return second.label;
-			}
-		}
-	}
-
-	return 'Unknown';
-}

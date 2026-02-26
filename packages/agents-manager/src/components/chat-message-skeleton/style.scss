@@ -1,12 +1,4 @@
-@keyframes skeleton-pulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.4;
-	}
-}
+@import '../../styles/animations.scss';
 
 .agents-manager-chat-message-skeleton {
 	display: flex;
@@ -40,12 +32,12 @@
 		gap: 8px;
 		padding: 12px 16px;
 		border-radius: 24px 24px 8px 24px;
-		background-color: #e8e8e8;
+		background-color: var(--color-muted);
 		width: 85%;
 	}
 
 	&__bubble &__line {
-		background-color: rgba( 0, 0, 0, 0.15 );
+		background-color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
 	}
 
 	// Assistant loose text (no bubble)
@@ -58,7 +50,7 @@
 
 	&__line {
 		height: 14px;
-		background-color: rgba( 0, 0, 0, 0.08 );
+		background-color: color-mix(in srgb, var(--color-foreground) 10%, transparent);
 		border-radius: 4px;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
 

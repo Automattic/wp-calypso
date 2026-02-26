@@ -337,6 +337,7 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
+				wideLayout
 				className={ clsx( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }

@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
@@ -35,6 +36,7 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
+import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
@@ -129,17 +131,10 @@ function SiteOverviewSecondaryCards( {
 } ) {
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
 	const showFlexUsageCard = site.is_wpcom_flex;
-
-	if ( isCommerceGarden( site ) ) {
-		return null;
-	}
+	const isCommerceGardenSite = isCommerceGarden( site );
 
 	return (
 		<>
-			<Divider
-				orientation="horizontal"
-				style={ { color: 'var(--dashboard-overview__divider-color)' } }
-			/>
 			<HStack
 				className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
 					'is-large': isLargeViewport,
@@ -147,17 +142,29 @@ function SiteOverviewSecondaryCards( {
 				spacing={ spacing }
 				alignment="flex-start"
 			>
-				<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
-				<VStack spacing={ spacing } justify="start">
-					{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
-					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
-						<>
-							<DIFMUpsellCard site={ site } />
-							<DomainsCard site={ site } />
-						</>
-					) }
-				</VStack>
+				{ isCommerceGardenSite ? (
+					<DomainsCard site={ site } />
+				) : (
+					<>
+						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						<VStack spacing={ spacing } justify="start">
+							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
+							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+								<>
+									<DIFMUpsellCard site={ site } />
+									<DomainsCard site={ site } />
+								</>
+							) }
+						</VStack>
+					</>
+				) }
 			</HStack>
+			{ /* Divider re-ordered by CSS to appear above the HStack */ }
+			<Divider
+				className="site-overview-divider"
+				orientation="horizontal"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
 		</>
 	);
 }
@@ -227,7 +234,14 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={ ! isDashboardBackport() && <OptInSurvey /> }
+			notices={
+				<>
+					{ !! site.__inaccessible_jetpack_error && (
+						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
+					) }
+					{ ! isDashboardBackport() && <OptInSurvey /> }
+				</>
+			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />
@@ -263,6 +277,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
+			<PerformanceTrackerStop id="dashboard-site-overview" siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

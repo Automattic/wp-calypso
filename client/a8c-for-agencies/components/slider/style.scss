@@ -43,7 +43,7 @@
 	}
 
 	@mixin slider-track-style {
-		background: var(--color-primary-40);
+		background: var(--color-primary-5);
 		height: 6px;
 		border-radius: 4px;
 	}
@@ -154,12 +154,31 @@
 	margin: 0;
 }
 
+.a4a-slider__input-fill-area {
+	min-height: 6px;
+	width: 0;
+	background-color: var(--color-primary-40);
+	position: absolute;
+	top: 22px;
+	border-radius: 4px 0 0 4px;
+	z-index: 2;
+	pointer-events: none;
+}
+
 .a4a-slider__input-disabled-area {
 	min-height: 6px;
 	width: 0;
-	background-color: var(--color-primary-0);
+	background: repeating-linear-gradient(
+		-45deg,
+		var(--color-neutral-10),
+		var(--color-neutral-10) 2px,
+		var(--color-neutral-0) 2px,
+		var(--color-neutral-0) 7px
+	);
 	position: absolute;
 	top: 22px;
 	left: -1px;
 	border-radius: 4px 0 0 4px;
+	z-index: 1;
+	pointer-events: none;
 }

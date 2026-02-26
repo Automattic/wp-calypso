@@ -11,7 +11,6 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
-import './style.scss';
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -27,7 +26,7 @@ interface Options {
 
 interface ReturnValue {
 	isDocked: boolean;
-	isDesktop: boolean;
+	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
 	openSidebar: () => void;
@@ -47,6 +46,7 @@ export default function useAgentLayoutManager( {
 	onUndock = () => {},
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
+	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const isDesktop = useMediaQuery( desktopMediaQuery );
 	const { height } = useWindowDimensions();
@@ -54,7 +54,8 @@ export default function useAgentLayoutManager( {
 	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
 
 	const hasEnoughHeight = height >= adminMenuHeight;
-	const shouldRenderSidebar = isDesktop && hasEnoughHeight && isDocked;
+	const canDock = isDesktop && hasEnoughHeight;
+	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
@@ -130,6 +131,10 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
+			if ( wasOpenRef.current ) {
+				container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
+			}
+
 			onDockRef.current();
 		} else {
 			container.classList.remove(
@@ -172,6 +177,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		wasOpenRef.current = true;
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
@@ -182,6 +188,7 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onCloseSidebarRef.current();
@@ -195,11 +202,11 @@ export default function useAgentLayoutManager( {
 		clearTimeout( openSidebarTimeoutRef.current );
 		setIsDocked( true );
 
-		if ( isDesktop ) {
+		if ( canDock ) {
 			// Wait for DOM update to complete before opening the sidebar
 			openSidebarTimeoutRef.current = setTimeout( handleOpenSidebar, 100 );
 		}
-	}, [ container, isReady, handleOpenSidebar, isDesktop ] );
+	}, [ container, isReady, handleOpenSidebar, canDock ] );
 
 	const undock = useCallback( () => {
 		if ( ! isReady || ! container ) {
@@ -238,7 +245,7 @@ export default function useAgentLayoutManager( {
 
 	return {
 		isDocked: !! shouldRenderSidebar,
-		isDesktop,
+		canDock,
 		dock,
 		undock,
 		openSidebar: handleOpenSidebar,

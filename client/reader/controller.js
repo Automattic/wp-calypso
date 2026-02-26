@@ -5,13 +5,13 @@ import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
-import { MobileHeader } from 'calypso/reader/components/mobile-header';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTrack } from 'calypso/reader/stats';
+import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { getLastPath, isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -25,6 +25,7 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
+import { isDiscoverV3Enabled } from './utils';
 
 const analyticsPageTitle = 'Reader';
 
@@ -41,10 +42,6 @@ export function sidebar( context, next ) {
 		);
 	}
 
-	next();
-}
-
-export function unmountSidebar( context, next ) {
 	next();
 }
 
@@ -101,6 +98,21 @@ export function following( context, next ) {
 	next();
 }
 
+export function loadNewSubscriptionPage( context, next ) {
+	if ( isDiscoverV3Enabled() ) {
+		const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
+		context.primary = (
+			<AsyncLoad require="calypso/reader/new-subscription" selectedTab={ selectedTab } />
+		);
+
+		trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
+	} else {
+		page.redirect( '/reader/subscriptions' );
+	}
+
+	next();
+}
+
 export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 		const url = context.params.feed_id;
@@ -149,7 +161,11 @@ export function feedLookup( context ) {
 }
 
 export const setBeforePrimary = ( context, next ) => {
-	context.beforePrimary = createElement( MobileHeader );
+	const state = context.store.getState();
+	const isMSDEnabledForReader = isReaderMSDEnabled( state );
+	context.beforePrimary = isMSDEnabledForReader ? (
+		<AsyncLoad require="calypso/reader/components/mobile-header" />
+	) : null;
 	next();
 };
 
@@ -323,7 +339,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
-	return next();
+	next();
 }
 
 export async function siteSubscription( context, next ) {
@@ -351,7 +367,7 @@ export async function siteSubscription( context, next ) {
 			transition={ context.query.transition === 'true' }
 		/>
 	);
-	return next();
+	next();
 }
 
 export async function commentSubscriptionsManager( context, next ) {
@@ -363,7 +379,7 @@ export async function commentSubscriptionsManager( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
 	);
-	return next();
+	next();
 }
 
 export async function pendingSubscriptionsManager( context, next ) {
@@ -375,7 +391,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
 	);
-	return next();
+	next();
 }
 
 /**

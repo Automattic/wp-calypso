@@ -1,9 +1,8 @@
 export const SECURITY_PRODUCT_SLUGS = [
-	'jetpack-backup',
+	'jetpack-backup-t1',
 	'jetpack-scan',
 	'jetpack-anti-spam',
 	'jetpack-monitor',
-	'jetpack-backup-storage',
 ];
 
 export const PERFORMANCE_PRODUCT_SLUGS = [
@@ -12,7 +11,7 @@ export const PERFORMANCE_PRODUCT_SLUGS = [
 	'jetpack-videopress',
 ];
 
-export const SOCIAL_PRODUCT_SLUGS = [ 'jetpack-social' ];
+export const SOCIAL_PRODUCT_SLUGS = [ 'jetpack-social-v1' ];
 
 export const GROWTH_PRODUCT_SLUGS = [ 'jetpack-creator', 'jetpack-ai', 'jetpack-stats' ];
 
@@ -89,3 +88,9 @@ export const STORE_MANAGEMENT_PRODUCT_SLUGS = [
 	'woocommerce-tax',
 	'woocommerce-woopayments',
 ];
+
+export const BACKUP_STORAGE_FAMILY_SLUG = 'jetpack-backup-storage';
+
+export const JETPACK_PACKS_FAMILY_SLUG = 'jetpack-packs';
+
+export const JETPACK_COMPLETE_PRODUCT_SLUG = 'jetpack-complete';

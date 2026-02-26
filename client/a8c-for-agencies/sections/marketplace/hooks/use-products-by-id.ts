@@ -11,14 +11,43 @@ export default function useProductsById( products: ReferralProduct[] | [], isEna
 	useEffect( () => {
 		if ( data ) {
 			if ( ! products ) {
-				return setReferredProducts( [] );
+				setReferredProducts( [] );
 			}
 			const allProducts = products
 				.map( ( p ) => {
-					return {
-						...data.find( ( product ) => product.product_id === p.product_id ),
-						quantity: 1,
-					};
+					let matchedProduct: ShoppingCartItem | undefined;
+					let matchedProductId: number | undefined;
+					let matchedAlternativeProductId: number | undefined;
+
+					const product = data.find( ( product ) => {
+						if ( product.monthly_product_id === p.product_id ) {
+							matchedProductId = product.monthly_product_id;
+							matchedAlternativeProductId = product.monthly_alternative_product_id;
+							return true;
+						}
+						if ( product.yearly_product_id === p.product_id ) {
+							matchedProductId = product.yearly_product_id;
+							matchedAlternativeProductId = product.yearly_alternative_product_id;
+							return true;
+						}
+						if ( product.product_id === p.product_id ) {
+							matchedProductId = product.product_id;
+							matchedAlternativeProductId = product.alternative_product_id;
+							return true;
+						}
+						return false;
+					} );
+
+					if ( product && matchedProductId !== undefined ) {
+						matchedProduct = {
+							...product,
+							product_id: matchedProductId,
+							alternative_product_id: matchedAlternativeProductId,
+							quantity: 1,
+						};
+					}
+
+					return matchedProduct;
 				} )
 				.filter( ( product ) => product ) as ShoppingCartItem[];
 

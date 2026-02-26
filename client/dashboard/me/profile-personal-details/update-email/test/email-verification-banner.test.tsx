@@ -47,18 +47,12 @@ const renderWithUserData = ( userData = mockUserSettings ) => {
 
 describe( 'EmailVerificationBanner', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		nock.cleanAll();
 		mockReplaceState.mockClear();
 
 		Object.defineProperty( window, 'location', {
 			value: { search: '', pathname: '/test' },
 			writable: true,
 		} );
-	} );
-
-	afterEach( () => {
-		nock.cleanAll();
 	} );
 
 	it( 'renders verification notice when email is pending', async () => {

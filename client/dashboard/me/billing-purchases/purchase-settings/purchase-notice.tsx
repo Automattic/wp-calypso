@@ -5,14 +5,18 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { getCurrentDashboard } from '../../../app/routing';
 import Notice from '../../../components/notice';
+import { getRelativeTimeString } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpired,
+	isFailedAutoRenewal,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
@@ -21,6 +25,8 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
+	isInExpirationGracePeriod,
+	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import {
 	OtherRenewablePurchasesNotice,
@@ -32,6 +38,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	const { refunded } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -82,7 +89,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
-		return <ExpiredRenewNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />;
+		return (
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
+		);
 	}
 
 	if ( purchase.partner_type ) {
@@ -110,7 +123,11 @@ function shouldShowExpiredRenewNotice(
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
-	if ( ! isExpired( currentPurchase ) ) {
+	if ( ! isExpired( currentPurchase ) && ! isInExpirationGracePeriod( currentPurchase ) ) {
+		return false;
+	}
+
+	if ( isAkismetFreeProduct( currentPurchase ) ) {
 		return false;
 	}
 
@@ -132,9 +149,11 @@ function shouldShowExpiredRenewNotice(
 function ExpiredRenewNotice( {
 	purchase,
 	purchaseAttachedTo,
+	refunded,
 }: {
 	purchase: Purchase;
 	purchaseAttachedTo: Purchase | undefined;
+	refunded?: boolean;
 } ) {
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
@@ -149,9 +168,35 @@ function ExpiredRenewNotice( {
 	const includedPurchase = purchase;
 
 	if ( purchase.is_renewable ) {
+		const noticeText = ( () => {
+			if ( refunded && isExpired( currentPurchase ) ) {
+				return __( 'Your refund has been processed and your purchase removed.' );
+			}
+			if ( isExpired( currentPurchase ) ) {
+				return __( 'This purchase has expired and is no longer in use.' );
+			}
+			if ( isFailedAutoRenewal( currentPurchase ) ) {
+				return __(
+					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
+				);
+			}
+			// Auto-renew OFF or not in grace period
+			const purchaseName = currentPurchase.is_domain
+				? currentPurchase.meta ?? ''
+				: currentPurchase.product_name;
+			const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
+			return sprintf(
+				// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
+				__(
+					'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.'
+				),
+				{ purchaseName, expiry }
+			);
+		} )();
+
 		return (
 			<Notice
-				variant="error"
+				variant={ refunded && isExpired( currentPurchase ) ? 'success' : 'error' }
 				actions={
 					shouldShowRenewNoticeAction( purchase ) ? (
 						<RenewNoticeAction
@@ -163,7 +208,7 @@ function ExpiredRenewNotice( {
 					) : undefined
 				}
 			>
-				{ __( 'This purchase has expired and is no longer in use.' ) }
+				{ noticeText }
 			</Notice>
 		);
 	}
@@ -247,9 +292,10 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = wpcomLink(
-				`/setup/woo-hosted-plans?siteSlug=${ purchase.site_slug ?? '' }`
-			);
+			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
+				siteSlug: purchase.site_slug ?? '',
+				dashboard: getCurrentDashboard(),
+			} );
 			return;
 		}
 
@@ -276,9 +322,10 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		return;
 	};
 
-	const daysToExpiry = isExpired( purchase )
-		? 0
-		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
+	const daysToExpiry =
+		isExpired( purchase ) || isInExpirationGracePeriod( purchase )
+			? 0
+			: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
 		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY

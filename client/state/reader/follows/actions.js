@@ -40,7 +40,7 @@ import 'calypso/state/reader/init';
 /**
  * Follow a feed URL.
  * @param   {string} feedUrl The feed URL.
- * @param   {?ReaderFollowItem} followInfo A subscription, optional.
+ * @param   {?Partial<ReaderFollowItem>} followInfo A subscription, optional.
  * @param   {?Object} recommendedSiteInfo A subscription, optional.
  * @returns {Object} The action.
  */

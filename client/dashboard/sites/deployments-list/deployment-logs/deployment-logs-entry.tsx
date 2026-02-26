@@ -86,7 +86,7 @@ export const DeploymentLogsEntry = ( {
 	return (
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
-				<Text style={ { color: '#FBFBFB' } } as="code">
+				<Text style={ { color: '#FBFBFB', whiteSpace: 'pre-wrap' } } as="code">
 					<Text style={ { color: '#B3AFAE' } }>
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
@@ -106,7 +106,7 @@ export const DeploymentLogsEntry = ( {
 					) }
 				</Text>
 				{ detailExpanded && (
-					<Text style={ { color: '#FBFBFB' } } as="code">
+					<Text style={ { color: '#FBFBFB', whiteSpace: 'pre-wrap' } } as="code">
 						{ getDetail() }
 					</Text>
 				) }

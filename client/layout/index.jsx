@@ -36,7 +36,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -261,19 +261,17 @@ class Layout extends Component {
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
-		const shouldEnableCommandPalette =
-			// There is a custom command palette in the "Switch site" page, so we disable it.
-			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
-
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
-					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
-				<AgentsManagerLoader sectionName={ this.props.sectionName } />
+				<AgentsManagerLoader
+					sectionName={ this.props.sectionName }
+					currentRoute={ this.props.currentRoute }
+				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }
@@ -356,9 +354,6 @@ class Layout extends Component {
 
 				{ ! this.props.isMSDEnabledForReader && (
 					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
-				) }
-				{ shouldEnableCommandPalette && (
-					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
 			</div>
 		);

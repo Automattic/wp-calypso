@@ -3,7 +3,9 @@
 	"env_id": "dashboard-production",
 	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"client_slug": "browser",
+	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
+	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai" ],
 	"i18n_default_locale_slug": "en",
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
@@ -12,9 +14,14 @@
 	"features": {
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
+		"ciab/custom-branding": false,
 		"cookie-banner": true,
+		"rum-tracking/logstash": true,
 		"dashboard/v2": false,
-		"domain-transfer-redesign": true
+		"domain-transfer-redesign": true,
+		"marketplace-redesign": true,
+		"mcp-settings": true,
+		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

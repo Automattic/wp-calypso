@@ -13,12 +13,6 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '../../../app/auth', () => ( {
-	useAuth: () => ( {
-		user: { id: 'test-user' },
-	} ),
-} ) );
-
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: jest.fn(),
 } ) );
@@ -88,7 +82,7 @@ const mockSite: Site = {
 	plan: {
 		expired: false,
 		features: {
-			active: [ HostingFeatures.BACKUPS ],
+			active: [ HostingFeatures.BACKUPS_SELF_SERVE ],
 		},
 	},
 	is_wpcom_atomic: true,
@@ -151,6 +145,9 @@ jest.mock( '../../../app/router/sites', () => ( {
 	siteRoute: {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},
+	siteBackupsRoute: {
+		useSearch: () => ( {} ),
+	},
 } ) );
 
 function renderBackupsListPage( {
@@ -183,20 +180,14 @@ function renderBackupsListPage( {
 			totalPages: 1,
 		} );
 
+	nock( API_BASE )
+		.persist()
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: {} } );
+
 	return render( <BackupsListPage /> );
 }
-
-afterEach( () => {
-	nock.cleanAll();
-	jest.clearAllMocks();
-} );
-
-beforeAll( () => {
-	nock.disableNetConnect();
-} );
-afterAll( () => {
-	nock.enableNetConnect();
-} );
 
 test.each( summaryTestCases )(
 	'renders the details section correctly for rewindId %s',

@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
-import Reddit from 'calypso/reader/discover/components/reddit';
+import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
+import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/components/add-subscription-form/consts';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -12,16 +12,14 @@ import {
 	getDiscoverStreamTags,
 	RECOMMENDED_TAB,
 	buildDiscoverStreamKey,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
-	getDefaultTab,
+	FRESHLY_PRESSED_TAB,
 } from './helper';
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab || getDefaultTab();
+	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;
@@ -31,18 +29,12 @@ const DiscoverStream = ( props ) => {
 		selectedTag: selectedTag,
 	};
 
-	const TAB_COMPONENTS = {
-		[ ADD_NEW_TAB ]: DiscoverAddNew,
-		[ REDDIT_TAB ]: Reddit,
-	};
-
-	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
-	if ( ContentComponent ) {
+	if ( ADD_SUBSCRIPTION_CONFIGS[ selectedTab ] ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
 				<div className="reader__content">
-					<ContentComponent />
+					<AddSubscriptionForm type={ selectedTab } />
 				</div>
 			</ReaderMain>
 		);

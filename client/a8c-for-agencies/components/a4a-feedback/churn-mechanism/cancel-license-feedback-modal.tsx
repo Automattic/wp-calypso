@@ -35,6 +35,7 @@ const CancelLicenseFeedbackModal = ( {
 	siteUrl,
 	isAtomicSite,
 	isClientLicense,
+	isChildLicense,
 }: {
 	onClose: () => void;
 	productName: string;
@@ -44,6 +45,7 @@ const CancelLicenseFeedbackModal = ( {
 	siteUrl?: string | null;
 	isAtomicSite?: boolean;
 	isClientLicense?: boolean;
+	isChildLicense?: boolean;
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -206,9 +208,22 @@ const CancelLicenseFeedbackModal = ( {
 	return (
 		<A4AModal
 			title={ translate( 'Are you sure you want to revoke this license?' ) }
-			subtile={ translate(
-				'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
-			) }
+			subtile={
+				<>
+					{ translate(
+						'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
+					) }
+					{ isChildLicense && (
+						<>
+							<br />
+							<br />
+							{ translate(
+								"When you revoke this license, we will add an unassigned replacement license to the bundle which can be assigned to a new site when you're ready."
+							) }
+						</>
+					) }
+				</>
+			}
 			onClose={ onClose }
 			showCloseButton={ false }
 			extraActions={

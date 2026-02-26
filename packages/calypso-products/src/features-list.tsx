@@ -8,12 +8,13 @@ import { MemoExoticComponent } from 'react';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
-	FEATURE_13GB_STORAGE,
-	FEATURE_200GB_STORAGE,
-	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
-	FEATURE_50GB_STORAGE,
+	FEATURE_3GB_STORAGE,
 	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_100GB_STORAGE,
+	FEATURE_200GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -124,7 +125,6 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
-	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -181,6 +181,7 @@ import {
 	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -206,6 +207,10 @@ import {
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 	FEATURE_EMAIL_MARKETING,
+	FEATURE_ADVANCED_JETPACK_FORMS,
+	FEATURE_WORDPRESS_STUDIO_SYNC,
+	FEATURE_EARLY_ONBOARDING_CALLS,
+	FEATURE_BASIC_FORMS,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
 	FEATURE_MARKETING_AUTOMATION,
@@ -338,6 +343,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
 	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
@@ -349,9 +355,43 @@ import {
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_GROUP_WORDADS,
+	FEATURE_WOO_HOSTED_PACKAGE,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
+	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+	FEATURE_WOO_HOSTED_PRO_MAILPOET,
+	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_CSV_IMPORTER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_BASIC_STORAGE,
+	FEATURE_WOO_HOSTED_PRO_STORAGE,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -525,14 +565,18 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'All premium themes' )
 				: i18n.translate( 'All premium themes' ),
-		getDescription: () => {
-			return i18n.translate( 'Switch between all of our premium design themes.' );
-		},
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Install any premium theme from the WordPress.com marketplace.' )
+				: i18n.translate( 'Switch between all of our premium design themes.' ),
 	},
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
-		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Install select premium themes from the WordPress.com marketplace.' )
+				: i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 	[ FEATURE_THEMES_PREMIUM_AND_STORE ]: {
 		getSlug: () => FEATURE_THEMES_PREMIUM_AND_STORE,
@@ -572,10 +616,14 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WP_SUBDOMAIN_SIGNUP ]: {
 		getSlug: () => FEATURE_WP_SUBDOMAIN_SIGNUP,
 		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
-		getDescription: () =>
-			i18n.translate(
-				'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Free sites use a name.wordpress.com subdomain. Upgrade to use a custom domain name.'
+				  )
+				: i18n.translate(
+						'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
+				  ),
 	},
 	[ FEATURE_ADVANCED_SEO_TOOLS ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_TOOLS,
@@ -583,10 +631,12 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'SEO optimization tools' )
 				: i18n.translate( 'Advanced SEO tools' ),
-		getDescription: () =>
-			i18n.translate(
-				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Rank well in search with built-in search engine optimization tools.' )
+				: i18n.translate(
+						'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
+				  ),
 	},
 
 	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
@@ -716,13 +766,17 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Video hosting with VideoPress (250GB video storage)' )
+				? i18n.translate( 'Use VideoPress with 250GB dedicated storage' )
 				: i18n.translate( 'VideoPress support' ),
-		getDescription: () =>
-			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats.'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Showcase your video beautifully with the high-quality, ad-free VideoPress player.'
+				  )
+				: i18n.translate(
+						'The easiest way to upload videos to your website and display them ' +
+							'using a fast, unbranded, customizable player with rich stats.'
+				  ),
 		getStoreSlug: () => 'videopress',
 	},
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
@@ -784,9 +838,12 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Payment buttons' )
+				? i18n.translate( 'Add payment buttons to your site' )
 				: i18n.translate( 'PayPal Payment Buttons' ),
-		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Collect payments and donations with PayPal and Stripe.' )
+				: i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {
 		getSlug: () => FEATURE_NO_BRANDING,
@@ -809,21 +866,19 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_UPLOAD_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS,
-		getTitle: () => i18n.translate( 'Install plugins' ),
-		getDescription: () =>
-			i18n.translate(
-				'Plugins extend the functionality of your site and ' +
-					'open up endless possibilities for presenting your content and interacting with visitors.'
-			),
-	},
-	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
-		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
-		getTitle: () => i18n.translate( 'Install plugins' ),
-		getDescription: () =>
-			i18n.translate(
-				'Plugins extend the functionality of your site and ' +
-					'open up endless possibilities for presenting your content and interacting with visitors.'
-			),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Extend your site with WordPress plugins' )
+				: i18n.translate( 'Install WordPress plugins' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Install any of over 60,000 plugins from the WordPress.com marketplace, or upload a plugin directly to your site.'
+				  )
+				: i18n.translate(
+						'Plugins extend the functionality of your site and ' +
+							'open up endless possibilities for presenting your content and interacting with visitors.'
+				  ),
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {
@@ -856,10 +911,14 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WP_SUBDOMAIN ]: {
 		getSlug: () => FEATURE_WP_SUBDOMAIN,
 		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
-		getDescription: () =>
-			i18n.translate(
-				'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Free sites use a name.wordpress.com subdomain. Upgrade to use a custom domain name.'
+				  )
+				: i18n.translate(
+						'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
+				  ),
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
@@ -876,8 +935,10 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_1GB_STORAGE,
 		getTitle: () => i18n.translate( '1GB' ),
 		getCompareTitle: () => i18n.translate( '1 GB' ),
-		getDescription: () =>
-			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( '1GB disk space for content and images. Upgrade for more storage.' )
+				: i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
@@ -909,6 +970,15 @@ const FEATURES_LIST: FeatureList = {
 		getCompareTitle: () => i18n.translate( '50 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+
+	// This is only available for Woo Hosted Plans
+	[ FEATURE_100GB_STORAGE ]: {
+		getSlug: () => FEATURE_100GB_STORAGE,
+		getTitle: () => i18n.translate( '100 GB' ),
+		getCompareTitle: () => i18n.translate( '100 GB' ),
+		getDescription: () =>
+			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
 
 	// TODO: Consider removing this because it is no longer standard on any plans
@@ -1644,9 +1714,16 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
-		getTitle: () => i18n.translate( 'Ad-free browsing experience for your visitors' ),
-		getDescription: () =>
-			i18n.translate( 'Unlock a clean, ad-free browsing experience for your visitors.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'No ads for visitors' )
+				: i18n.translate( 'Ad-free browsing experience for your visitors' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Free sites display WordPress.com ads to visitors. Upgrade to Personal to turn them off.'
+				  )
+				: i18n.translate( 'Unlock a clean, ad-free browsing experience for your visitors.' ),
 	},
 	[ FEATURE_COLLECT_PAYMENTS_NEWSLETTER ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
@@ -1825,10 +1902,12 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Spam, brute-force, DDoS protection and mitigation' )
+				? i18n.translate( 'Protection against spam and hacking attacks' )
 				: i18n.translate( 'Brute-force protection' ),
-		getDescription: () =>
-			i18n.translate( 'Stay protected from brute-force attacks on your account password.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Peace of mind with spam, brute-force, DDoS protection, and mitigation.' )
+				: i18n.translate( 'Stay protected from brute-force attacks on your account password.' ),
 	},
 	[ FEATURE_SMART_REDIRECTS ]: {
 		getSlug: () => FEATURE_SMART_REDIRECTS,
@@ -1863,19 +1942,29 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,
 		getTitle: () => i18n.translate( 'Extremely fast DNS with SSL' ),
-		getDescription: () =>
-			i18n.translate( 'Tap into fast, reliable domain management with secure SSL.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Fast, reliable domain management with secure SSL.' )
+				: i18n.translate( 'Tap into fast, reliable domain management with secure SSL.' ),
 	},
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Custom CSS' )
+				? i18n.translate( 'Customize your site with CSS' )
 				: i18n.translate( 'Customize fonts and colors sitewide' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Add CSS to customize your site’s design.' )
+				: i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
+	},
+	[ FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS ]: {
+		getSlug: () => FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
+		getTitle: () => i18n.translate( 'Customize fonts & colors sitewide' ),
 		getDescription: () =>
-			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
+			i18n.translate( "Take control of every font, color, and detail of your site's design." ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
@@ -1888,8 +1977,10 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WORDADS ]: {
 		getSlug: () => FEATURE_WORDADS,
 		getTitle: () => i18n.translate( 'Earn with WordAds' ),
-		getDescription: () =>
-			i18n.translate( 'Display ads and earn from premium networks via the WordAds program.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Display ads and earn income via the WordAds platform.' )
+				: i18n.translate( 'Display ads and earn from premium networks via the WordAds program.' ),
 		getFeatureGroup: () => FEATURE_GROUP_WORDADS,
 	},
 	[ FEATURE_PLUGINS_THEMES ]: {
@@ -1924,8 +2015,10 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
-		getDescription: () =>
-			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Reach as many visitors as you like, without extra fees or slowdowns.' )
+				: i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
 	[ FEATURE_BURST ]: {
 		getSlug: () => FEATURE_BURST,
@@ -1943,11 +2036,16 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Faster site loading from 28+ global locations' )
+				: i18n.translate( 'Global CDN with 28+ locations' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
-		getDescription: () =>
-			i18n.translate( 'Rely on ultra-fast site speeds, just about anywhere on earth.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Rely on ultra-fast site speeds with our global CDN.' )
+				: i18n.translate( 'Rely on ultra-fast site speeds, just about anywhere on earth.' ),
 	},
 	[ FEATURE_CPUS ]: {
 		getSlug: () => FEATURE_CPUS,
@@ -2000,8 +2098,12 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
 		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ),
-		getDescription: () =>
-			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Access your site via SSH and manage it with WP-CLI. Deploy from GitHub with a few clicks.'
+				  )
+				: i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
 	[ FEATURE_DEV_TOOLS_SSH ]: {
 		getSlug: () => FEATURE_DEV_TOOLS_SSH,
@@ -2019,7 +2121,12 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging site' ),
-		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Clone your production site for testing changes before taking them live.'
+				  )
+				: i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 
 	[ FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING ]: {
@@ -2072,8 +2179,44 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_EMAIL_MARKETING,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Email Marketing (powered by Mailpoet incl. 500 subscribers)' )
+				? i18n.translate( 'Email marketing automation' )
 				: i18n.translate( 'Email marketing built-in' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Create and automate beautiful emails to 500 subscribers right from your WordPress dashboard, with the MailPoet Business plan.'
+				  )
+				: '',
+	},
+	[ FEATURE_ADVANCED_JETPACK_FORMS ]: {
+		getSlug: () => FEATURE_ADVANCED_JETPACK_FORMS,
+		getTitle: () => i18n.translate( 'Advanced Jetpack Forms' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build powerful forms with advanced features like multi-step forms, file uploads, webhooks, and seamless integrations.'
+			),
+	},
+	[ FEATURE_WORDPRESS_STUDIO_SYNC ]: {
+		getSlug: () => FEATURE_WORDPRESS_STUDIO_SYNC,
+		getTitle: () => i18n.translate( 'WordPress Studio sync' ),
+		getDescription: () =>
+			i18n.translate(
+				'Sync a production or staging site with your local Studio site in either direction.'
+			),
+	},
+	[ FEATURE_EARLY_ONBOARDING_CALLS ]: {
+		getSlug: () => FEATURE_EARLY_ONBOARDING_CALLS,
+		getTitle: () => i18n.translate( 'One-on-one onboarding call' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Talk with a WordPress.com expert to set up your site.' )
+				: '',
+	},
+	[ FEATURE_BASIC_FORMS ]: {
+		getSlug: () => FEATURE_BASIC_FORMS,
+		getTitle: () => i18n.translate( 'Basic forms' ),
+		getDescription: () =>
+			i18n.translate( 'Use the Form block to add a contact form to your site.' ),
 	},
 	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
 		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
@@ -2082,9 +2225,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock emails' ),
-		getDescription: () =>
-			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Back-in-store notifications' )
+				: i18n.translate( 'Back in stock emails' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Automatically notify customers when your products are restocked.' )
+				: i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
 	[ FEATURE_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_MARKETING_AUTOMATION,
@@ -2319,10 +2467,12 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_REALTIME_BACKUPS_JP,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Real-time backups & one-click restores' )
+				? i18n.translate( 'Real-time backups and one-click restores' )
 				: i18n.translate( 'Real-time backups' ),
-		getDescription: () =>
-			i18n.translate( 'Count on multi-redundancy, real-time backups of all your data.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Protect against disaster with easy backups and restores.' )
+				: i18n.translate( 'Count on multi-redundancy, real-time backups of all your data.' ),
 	},
 	[ FEATURE_UPTIME_MONITOR_JP ]: {
 		getSlug: () => FEATURE_UPTIME_MONITOR_JP,
@@ -2358,8 +2508,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Performance optimization, monitoring, and activity logs' )
 				: i18n.translate( 'Site activity log' ),
-		getDescription: () =>
-			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'See everything that happens on your site.' )
+				: i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
@@ -2521,54 +2673,83 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Support 24/7' )
+				? i18n.translate( 'Free support' )
 				: i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Free support with faster response times' )
+				: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
-			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
+	},
+	[ FEATURE_FREE_FAST_SUPPORT ]: {
+		getSlug: () => FEATURE_FREE_FAST_SUPPORT,
+		getTitle: () => i18n.translate( 'Free support with faster response times' ),
+		getDescription: () =>
+			i18n.translate( 'Prompt support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( '24/7 free priority support from our expert team' )
+				? i18n.translate( 'Free 24/7 expert support with priority response times' )
 				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
-		getDescription: () =>
-			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Your support questions answered first by our expert, friendly Happiness team.'
+				  )
+				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_UPLOAD_VIDEO ]: {
 		getSlug: () => FEATURE_UPLOAD_VIDEO,
 		getTitle: () => i18n.translate( 'Upload videos' ),
-		getDescription: () =>
-			i18n.translate(
-				'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Host your videos on your own site.' )
+				: i18n.translate(
+						'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
+				  ),
 	},
 	// For the copy request dated 20250207 in pcNC1U-1vN-p2
 	[ FEATURE_STATS_BASIC_20250206 ]: {
 		getSlug: () => FEATURE_STATS_BASIC_20250206,
-		getTitle: () => i18n.translate( 'Stats' ),
-		getDescription: () =>
-			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant ? i18n.translate( 'Access to stats' ) : i18n.translate( 'Stats' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'See traffic history, peak traffic times, and filter by date.' )
+				: i18n.translate(
+						'Access full traffic history, filter by date, and see peak traffic times.'
+				  ),
 	},
 	[ FEATURE_STATS_ADVANCED_20250206 ]: {
 		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Premium stats & analytics' )
+				? i18n.translate( 'Premium stats and analytics' )
 				: i18n.translate( 'Premium stats' ),
-		getDescription: () =>
-			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Access all stats & analytics, including UTM tracking and device insights.'
+				  )
+				: i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
 	},
 	[ FEATURE_AI_ASSISTANT ]: {
 		getSlug: () => FEATURE_AI_ASSISTANT,
-		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools' )
+				: i18n.translate( 'AI Assistant' ),
 		getDescription: () =>
-			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
+			i18n.translate(
+				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+			),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2609,7 +2790,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Unlimited products' )
 				: i18n.translate( 'List unlimited products' ),
-		getDescription: () => '',
+		getDescription: () =>
+			i18n.translate(
+				'Grow your store as big as you want with the ability to add unlimited products and services.'
+			),
 	},
 	[ FEATURE_GIFT_CARDS ]: {
 		getSlug: () => FEATURE_GIFT_CARDS,
@@ -2720,6 +2904,178 @@ const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Woo Express Features */
 
+	/* START: Woo Hosted (CIAB) Features */
+	[ FEATURE_WOO_HOSTED_PACKAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PACKAGE,
+		getTitle: () =>
+			i18n.translate( 'All-in-one solution to create and manage your ecommerce store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_AI_BUILDER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AI_BUILDER,
+		getTitle: () => i18n.translate( 'AI-powered builder to help you design and set up your store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
+		getTitle: () => i18n.translate( 'Connected seamlessly to your PayPal account' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		getTitle: () =>
+			i18n.translate( 'Built-in email marketing and advertising tools to grow your business' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		getTitle: () => i18n.translate( 'Send up to 5,000 emails/month' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_MAILPOET ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		getTitle: () => i18n.translate( 'Send up to 250,000 emails/month' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		getTitle: () => i18n.translate( 'One store admin account' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_ADMIN_USERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		getTitle: () => i18n.translate( 'Unlimited store admin accounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+		getTitle: () => i18n.translate( 'Powerful commerce tools to start and grow your business' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_CSV_IMPORTER ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_CSV_IMPORTER,
+		getTitle: () => i18n.translate( 'Smart CSV importer to add products and services in bulk' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+		getTitle: () => i18n.translate( 'Free custom web address for one year' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+		getTitle: () => i18n.translate( 'Seamless and fast checkout' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
+		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
+	},
+	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+		getTitle: () => i18n.translate( 'List physical, downloadable, and affiliate products' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BOOKINGS,
+		getTitle: () => i18n.translate( 'Accept and manage bookings for services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_TEAM_BOOKINGS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+		getTitle: () => i18n.translate( 'Add team members and set their availability for bookings' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+		getTitle: () =>
+			i18n.translate( 'Offer upsells and cross-sells across all products and services' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_GIFT_CARDS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_GIFT_CARDS,
+		getTitle: () => i18n.translate( 'Sell digital gift cards with flexible amounts' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_MOBILE_APP,
+		getTitle: () => i18n.translate( 'Mobile app to run your store on the go' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Shipment tracking' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_USPS_UPS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_USPS_UPS,
+		getTitle: () => i18n.translate( 'USPS and UPS shipping' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ANALYTICS_REPORTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+		getTitle: () => i18n.translate( "Analytics and reports to monitor your store's performance" ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		getTitle: () => i18n.translate( '50 GB storage for product images and store data' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_STORAGE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_STORAGE,
+		getTitle: () => i18n.translate( '100GB storage for product images and store data' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SECURITY ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SECURITY,
+		getTitle: () => i18n.translate( 'Security tools to ensure your store and data are protected' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Up to 500 email subscribers' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Unlimited email subscribers' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+		getTitle: () => i18n.translate( 'Automated email marketing flows to build customer relations' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+		getTitle: () => i18n.translate( 'Abandoned cart emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+		getTitle: () => i18n.translate( 'Post-purchase emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_EMAIL_TEMPLATES ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+		getTitle: () =>
+			i18n.translate( 'Predesigned subscription forms and email marketing templates' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SEO_TOOLS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SEO_TOOLS,
+		getTitle: () => i18n.translate( 'SEO tools to help customers find your online store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_COUPONS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_COUPONS,
+		getTitle: () => i18n.translate( 'Create coupons to drive more sales' ),
+		getDescription: () => '',
+	},
+	/* END: Woo Hosted (CIAB) Features */
+
 	/* START: Sensei Features */
 	[ FEATURE_SENSEI_SUPPORT ]: {
 		getSlug: () => FEATURE_SENSEI_SUPPORT,
@@ -2790,25 +3146,57 @@ const FEATURES_LIST: FeatureList = {
 	// AI features for plan differentiators experiment
 	[ FEATURE_AI_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER,
-		getTitle: () => i18n.translate( 'AI Website Builder' ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Enhanced AI Website Builder' )
+				: i18n.translate( 'AI Website Builder' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Use the latest AI models in the AI website builder.' )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_AI_WEBSITE_BUILDER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Website Builder (limited)' ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI website builder (usage limits apply)' )
+				: i18n.translate( 'AI Website Builder (limited)' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
-		getTitle: () => i18n.translate( 'AI Writer & Designer' ),
-		getDescription: () =>
-			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and design capabilities' )
+				: i18n.translate( 'AI Writer & Designer' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Use AI to generate better content and manage your site — all without leaving WordPress.'
+				  )
+				: i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER_LIMITED,
-		getTitle: () => i18n.translate( 'AI Writer & Designer (limited)' ),
-		getDescription: () =>
-			i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+		getTitle: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'AI assistant and tools (usage limits apply)' )
+				: i18n.translate( 'AI Writer & Designer (limited)' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Limited AI support for writing, images, and site management.' )
+				: i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
+	},
+
+	// "Included in plan:" header for Free plan in stacked variants
+	[ FEATURE_INCLUDED_IN_PLAN ]: {
+		getSlug: () => FEATURE_INCLUDED_IN_PLAN,
+		getTitle: () => i18n.translate( 'Included in plan:' ),
 	},
 
 	// "Everything in X, plus:" features for stacked variants
@@ -2834,28 +3222,38 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Professional email Inbox free for 1 year' )
+				? i18n.translate( 'Free business email account for one year' )
 				: i18n.translate( 'Professional email Inbox free for 1 year' ),
-		getDescription: () =>
-			i18n.translate( 'Get a professional email address with your domain, free for one year.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate(
+						'Build and grow your online presence with a professional email address at your domain name, powered by Titan'
+				  )
+				: i18n.translate( 'Get a professional email address with your domain, free for one year.' ),
 	},
 	[ FEATURE_BLAZE_AD_CREDITS ]: {
 		getSlug: () => FEATURE_BLAZE_AD_CREDITS,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Blaze - Free ad credits ($200)' )
+				? i18n.translate( 'Free advertising credits worth $200' )
 				: i18n.translate( 'Blaze - Free ad credits ($200)' ),
-		getDescription: () =>
-			i18n.translate(
-				'Promote your content across millions of sites with $200 in free Blaze ad credits.'
-			),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Promote your content with Blaze ads.' )
+				: i18n.translate(
+						'Promote your content across millions of sites with $200 in free Blaze ad credits.'
+				  ),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
-		getDescription: () =>
-			i18n.translate( 'Grow your site without limits — unlimited content, users, and traffic.' ),
+		getDescription: ( params ) =>
+			params?.isExperimentVariant
+				? i18n.translate( 'Create and collaborate freely — no caps or restrictions.' )
+				: i18n.translate(
+						'Grow your site without limits — unlimited content, users, and traffic.'
+				  ),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,

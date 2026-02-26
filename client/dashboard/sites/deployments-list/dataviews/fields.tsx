@@ -78,7 +78,7 @@ export function useFields( {
 					return (
 						<VStack spacing={ 1 }>
 							<Text title={ commit_message }>{ commit_message }</Text>
-							<HStack spacing={ 3 } alignment="left" style={ { width: 'auto' } }>
+							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
@@ -91,7 +91,7 @@ export function useFields( {
 									</Text>
 								</ExternalLink>
 								<BranchDisplay branchName={ item.branch_name } />
-								<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto' } }>
+								<HStack spacing={ 1.5 } alignment="left" expanded={ false }>
 									<img
 										src={ author.avatar_url }
 										alt={ author.name }
@@ -103,7 +103,7 @@ export function useFields( {
 										{ author.name }
 									</Text>
 								</HStack>
-								{ item.is_active_deployment && <Badge>{ __( 'Latest deployment' ) }</Badge> }
+								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);
@@ -191,6 +191,6 @@ export function useFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, locale, siteSlug ]
+		[ repositoryOptions, userNameOptions, locale, siteSlug, repositoryFilter ]
 	);
 }

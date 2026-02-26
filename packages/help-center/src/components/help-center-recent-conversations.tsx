@@ -3,6 +3,7 @@ import { TimeSince } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -45,9 +46,15 @@ const HelpCenterRecentConversations: React.FC = () => {
 	).toISOString();
 
 	const chatLink = getChatLinkFromConversation( recentConversation );
+	const isUnread =
+		'participants' in recentConversation &&
+		( recentConversation.participants?.[ 0 ]?.unreadCount ?? 0 ) > 0;
 
 	return (
 		<SummaryButton
+			className={ clsx( {
+				'has-unread-conversation': isUnread,
+			} ) }
 			strapline={ __( 'Recent Conversation', __i18n_text_domain__ ) }
 			title={ lastMessage.text || '' }
 			description={

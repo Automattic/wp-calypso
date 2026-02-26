@@ -21,10 +21,6 @@ const renderWithUserData = ( userData = {} ) => {
 };
 
 describe( 'PreferencesLanguageForm', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Field visibility logic', () => {
 		it( 'renders basic interface elements', async () => {
 			renderWithUserData( {

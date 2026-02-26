@@ -46,10 +46,6 @@ jest.mock( '@automattic/api-core', () => ( {
 const mockValidateUsername = validateUsername as jest.MockedFunction< typeof validateUsername >;
 
 describe( 'Username Validation Utils', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'validateUsernameDebounced', () => {
 		it( 'is a debounced function that delegates parameters correctly', () => {
 			const setValidationResult = jest.fn();

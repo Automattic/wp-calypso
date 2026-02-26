@@ -4,7 +4,6 @@ import {
 	GROUP_JETPACK,
 	GROUP_P2,
 	GROUP_WPCOM,
-	JETPACK_RESET_PLANS,
 	PLAN_A4A_BUSINESS,
 	PLAN_A4A_BUSINESS_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -16,6 +15,10 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOO_HOSTED_FREE,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_BASIC_MONTHLY,
+	PLAN_WOO_HOSTED_PRO,
+	PLAN_WOO_HOSTED_PRO_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_CENTENNIALLY,
@@ -54,19 +57,12 @@ import {
 	resolveFeatureGroupsForComparisonGrid,
 	resolveFeatureGroupsForFeaturesGrid,
 	resolveWooExpressFeatureGroupsForComparisonGrid,
+	resolveWooHostedFeatureGroupsForFeaturesGrid,
+	resolveWooHostedFeatureGroupsForComparisonGrid,
 	resolveWordPressHostingFeatureGroupsForFeaturesGrid,
 } from './feature-group-plan-map';
 import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
-import {
-	getProductFromSlug,
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isJetpackBusiness,
-	isPro,
-	isVipPlan,
-} from '.';
 import type {
 	FeatureGroupMap,
 	FeatureList,
@@ -74,9 +70,6 @@ import type {
 	Plan,
 	PlanMatchesQuery,
 	PlanSlug,
-	Product,
-	WithCamelCaseSlug,
-	WithSnakeCaseSlug,
 	WPComPlan,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -85,27 +78,20 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
-} ) {
-	const { isSummerSpecial } = props || {};
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
 	return resolveFeatureGroupsForFeaturesGrid( {
 		showSimplifiedFeatures: true,
-		isSummerSpecial,
 	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
-	isSummerSpecial?: boolean;
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
+}
+
+export function getPlanFeaturesGroupedForComparisonGrid( props?: {
+	isExperimentVariant?: boolean;
 } ): Partial< FeatureGroupMap > {
-	const { isSummerSpecial } = props || {};
-	return resolveFeatureGroupsForFeaturesGrid( {
-		isSummerSpecial,
-	} );
-}
-
-export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForComparisonGrid();
+	return resolveFeatureGroupsForComparisonGrid( props );
 }
 
 export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
@@ -119,6 +105,14 @@ export function getWordPressHostingFeaturesGroupedForFeaturesGrid(): Partial< Fe
 
 export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
 	return resolveWooExpressFeatureGroupsForComparisonGrid();
+}
+
+export function getWooHostedFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForFeaturesGrid();
+}
+
+export function getWooHostedFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooHostedFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {
@@ -192,8 +186,12 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-woo-hosted-trial';
 	}
 
-	if ( isWooHostedPlan( planKey ) ) {
-		return 'is-woo-hosted-plan';
+	if ( isWooHostedBasicPlan( planKey ) ) {
+		return 'is-woo-hosted-basic-plan';
+	}
+
+	if ( isWooHostedProPlan( planKey ) ) {
+		return 'is-woo-hosted-pro-plan';
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
@@ -335,22 +333,6 @@ export function getYearlyPlanByMonthly( planSlug: string ): string {
 }
 
 /**
- * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
- * not a recognized or cannot be converted.
- */
-export function getBiennialPlan( planSlug: string ): string {
-	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
-}
-
-/**
- * Returns the triennial slug which corresponds to the provided slug or "" if the slug is
- * not recognized or cannot be converted.
- */
-export function getTriennialPlan( planSlug: string ): string {
-	return findFirstSimilarPlanKey( planSlug, { term: TERM_TRIENNIALLY } ) || '';
-}
-
-/**
  * Returns true if plan "types" match regardless of their interval.
  *
  * For example (fake plans):
@@ -428,6 +410,14 @@ export function isWooExpressPlan( planSlug: string ): boolean {
 
 export function isWooHostedFreePlan( planSlug: string ): boolean {
 	return [ PLAN_WOO_HOSTED_FREE, PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooHostedBasicPlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_BASIC, PLAN_WOO_HOSTED_BASIC_MONTHLY ].includes( planSlug );
+}
+
+export function isWooHostedProPlan( planSlug: string ): boolean {
+	return [ PLAN_WOO_HOSTED_PRO, PLAN_WOO_HOSTED_PRO_MONTHLY ].includes( planSlug );
 }
 
 export function isWooHostedPlan( planSlug: string ): boolean {
@@ -532,10 +522,6 @@ export function isJetpackPersonalPlan( planSlug: string ): boolean {
 
 export function isJetpackFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
-}
-
-export function isJetpackOfferResetPlan( planSlug: string ): boolean {
-	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isP2FreePlan( planSlug: string ): boolean {
@@ -681,21 +667,6 @@ export function getBillingMonthsForTerm( term: string ): number {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
-export function getBillingYearsForTerm( term: string ): number {
-	if ( term === TERM_MONTHLY ) {
-		return 0;
-	} else if ( term === TERM_ANNUALLY ) {
-		return 1;
-	} else if ( term === TERM_BIENNIALLY ) {
-		return 2;
-	} else if ( term === TERM_TRIENNIALLY ) {
-		return 3;
-	} else if ( term === TERM_CENTENNIALLY ) {
-		return 100;
-	}
-	throw new Error( `Unknown term: ${ term }` );
-}
-
 export function getBillingTermForMonths( term: number ): string {
 	if ( term === 1 ) {
 		return TERM_MONTHLY;
@@ -793,37 +764,6 @@ export function applyTestFiltersToPlansList(
 	return {
 		...filteredPlanConstantObj,
 		getPlanCompareFeatures: () => filteredPlanFeaturesConstantList,
-	};
-}
-
-export function applyTestFiltersToProductsList(
-	productName: string
-): Product & Pick< WPComPlan, 'getPlanCompareFeatures' > {
-	const product = getProductFromSlug( productName );
-	if ( typeof product === 'string' ) {
-		throw new Error( `Unknown product ${ productName } ` );
-	}
-	const filteredProductConstantObj = { ...product };
-
-	/* eslint-disable @typescript-eslint/no-empty-function */
-
-	// these becomes no-ops when we removed some of the abtest overrides, but
-	// we're leaving the code in place for future tests
-	const removeDisabledFeatures = () => {};
-
-	const updatePlanDescriptions = () => {};
-
-	const updatePlanFeatures = () => {};
-
-	/* eslint-enable */
-
-	removeDisabledFeatures();
-	updatePlanDescriptions();
-	updatePlanFeatures();
-
-	return {
-		...filteredProductConstantObj,
-		getPlanCompareFeatures: () => [],
 	};
 }
 
@@ -959,23 +899,6 @@ export const chooseDefaultCustomerType = ( {
 export const planHasJetpackSearch = ( planSlug: string ): boolean =>
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
-
-/**
- * Determines if a plan includes Jetpack Search Classic by checking available plans.
- */
-export function planHasJetpackClassicSearch(
-	plan: WithCamelCaseSlug | WithSnakeCaseSlug
-): boolean {
-	return (
-		plan &&
-		( isJetpackBusiness( plan ) ||
-			isBusiness( plan ) ||
-			isEnterprise( plan ) ||
-			isEcommerce( plan ) ||
-			isPro( plan ) ||
-			isVipPlan( plan ) )
-	);
-}
 
 export function getFeaturesList(): FeatureList {
 	return FEATURES_LIST;

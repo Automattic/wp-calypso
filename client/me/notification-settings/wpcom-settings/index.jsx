@@ -265,7 +265,7 @@ class WPCOMNotifications extends Component {
 
 				<NavigationHeader
 					navigationItems={ [] }
-					label={ this.props.translate( 'Notification Settings' ) }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />

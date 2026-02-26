@@ -25,6 +25,7 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
@@ -43,6 +44,7 @@ function UseMyDomain( props ) {
 		isSignupStep = false,
 		onConnect,
 		onTransfer,
+		dashboard,
 		selectedSite,
 		transferDomainUrl,
 		initialMode,
@@ -155,11 +157,12 @@ function UseMyDomain( props ) {
 			errorMessage: getAvailabilityErrorMessage( {
 				availabilityData: wpRegistrationCheckData,
 				domainName: filteredDomainName,
+				dashboard,
 				selectedSite,
 				registerNowAction,
 			} ),
 		};
-	}, [ filterDomainName, domainName, selectedSite, registerNowAction ] );
+	}, [ filterDomainName, domainName, selectedSite, registerNowAction, dashboard ] );
 
 	const getAvailability = useCallback( async () => {
 		const filteredDomainName = filterDomainName( domainName );
@@ -178,6 +181,7 @@ function UseMyDomain( props ) {
 			errorMessage: getAvailabilityErrorMessage( {
 				availabilityData,
 				domainName: filteredDomainName,
+				dashboard,
 				selectedSite,
 				registerNowAction,
 			} ),
@@ -188,6 +192,7 @@ function UseMyDomain( props ) {
 		getWpcomAvailabilityErrors,
 		selectedSite,
 		registerNowAction,
+		dashboard,
 	] );
 
 	const setTransferStepsAndLockStatus = useCallback(
@@ -497,6 +502,7 @@ UseMyDomain.propTypes = {
 };
 
 export default connect( ( state ) => ( {
+	dashboard: getDashboardFromQuery(),
 	selectedSite: getSelectedSite( state ),
 	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
 } ) )( UseMyDomain );

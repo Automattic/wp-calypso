@@ -59,16 +59,21 @@ export function getNormalizedPath( router: AnyRouter ) {
  * hoping to attach site info if it happens to be available. So I think checking
  * both caches represents a "best effort" attempt.
  */
-function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
+export function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
 	const site = queryClient.getQueryData< Site >( siteBySlugQuery( siteSlug ).queryKey );
 	if ( site ) {
 		return site;
 	}
 
-	const sitesQueries = queryClient.getQueriesData< Site[] >( { queryKey: sitesQueryKey } );
+	const sitesQueries = queryClient.getQueriesData< Site[] | { sites: Site[] } >( {
+		queryKey: sitesQueryKey,
+	} );
 	const sitesBySlug = new Map(
 		sitesQueries
-			.map( ( [ , sites ] ) => ( sites || [] ).map( ( site ) => [ site.slug, site ] ) )
+			.map( ( [ , data ] ) => {
+				const sites = Array.isArray( data ) ? data : data?.sites;
+				return ( sites || [] ).map( ( site ) => [ site.slug, site ] as const );
+			} )
 			.flat() as [ string, Site ][]
 	);
 

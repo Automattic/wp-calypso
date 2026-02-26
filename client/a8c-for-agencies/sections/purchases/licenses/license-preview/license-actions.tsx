@@ -87,6 +87,7 @@ export default function LicenseActions( {
 					siteUrl={ siteUrl }
 					productId={ productId }
 					isClientLicense={ isClientLicense }
+					isChildLicense={ isChildLicense }
 				/>
 			) }
 		</>

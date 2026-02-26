@@ -11,6 +11,7 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -111,6 +112,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 										{
 											cancel_to: backUrl,
 											redirect_to: backUrl,
+											dashboard: getCurrentDashboard(),
 										}
 									) }
 								/>

@@ -2,7 +2,7 @@ import { Badge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
 
