@@ -1,6 +1,25 @@
 import React from 'react';
+import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
 
-export const WpLoggedOutInviteLogo: React.FC = () => {
+interface WpLoggedOutInviteLogoProps {
+	ciabConfig?: CiabPartnerConfig | null;
+}
+
+export const WpLoggedOutInviteLogo: React.FC< WpLoggedOutInviteLogoProps > = ( { ciabConfig } ) => {
+	const logo = ciabConfig?.logo;
+
+	if ( logo?.src ) {
+		return (
+			<img
+				className="logged-out-wp-logo"
+				src={ logo.src }
+				alt={ logo.alt }
+				width={ logo.width }
+				height={ logo.height }
+			/>
+		);
+	}
+
 	return (
 		<svg
 			className="logged-out-wp-logo"

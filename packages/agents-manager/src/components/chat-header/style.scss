@@ -35,8 +35,15 @@
 	&__more-options,
 	&__history-btn,
 	&__close-btn {
-		svg {
-			fill: var(--color-foreground);
+		// Increase specificity to override .components-button svg { fill: currentColor }
+		// from @wordpress/components, which makes SVGs invisible in dark mode.
+		// Descendant selector handles DropdownMenu (class on wrapper div),
+		// compound selector handles Button (class directly on element).
+		&.components-button,
+		.components-button {
+			svg {
+				fill: var(--color-foreground);
+			}
 		}
 	}
 
