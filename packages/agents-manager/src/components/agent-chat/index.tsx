@@ -10,7 +10,7 @@ import {
 	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -102,6 +102,7 @@ export default function AgentChat( {
 	onCancelFeedback = () => {},
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -160,7 +161,7 @@ export default function AgentChat( {
 				)
 			}
 		>
-			<AgentUI.ConversationView>
+			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
@@ -185,6 +186,7 @@ export default function AgentChat( {
 							] }
 							showFileMetadata
 							allowDragToInsert={ false }
+							dropZoneRef={ conversationViewRef }
 						/>
 					) }
 
