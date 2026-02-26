@@ -49,7 +49,7 @@ export default function DevToolsContent() {
 
 			<DevToolSection
 				name={ __( 'WordPress Studio' ) }
-				badge={ __( 'Open Source' ) }
+				badge={ __( 'Open source' ) }
 				tagline={ __( 'Local development, simplified' ) }
 				description={ __(
 					'Build and test WordPress sites on your machine. No Docker, no MAMP, no configuration files. Just download, launch, and start building.'
@@ -100,7 +100,7 @@ export default function DevToolsContent() {
 
 			<DevToolSection
 				name={ __( 'WordPress Playground' ) }
-				badge={ __( 'Browser-Based' ) }
+				badge={ __( 'Browser-based' ) }
 				tagline={ __( 'Try it now, right in your browser' ) }
 				description={ __(
 					'Run WordPress entirely in your browser—no server, no install, no account. Experiment with themes, test code snippets, or learn new features. Close the tab when finished.'
@@ -125,7 +125,7 @@ export default function DevToolsContent() {
 
 			<DevToolSection
 				name={ __( 'Jurassic.ninja' ) }
-				badge={ __( 'Disposable Sites' ) }
+				badge={ __( 'Disposable sites' ) }
 				tagline={ __( 'Test anything without the cleanup' ) }
 				description={ __(
 					'Spin up a throwaway WordPress site in seconds. Reproduce bugs in a clean environment, demo features for clients, or test plugins risk-free—then close the tab and walk away.'
@@ -151,7 +151,7 @@ export default function DevToolsContent() {
 
 			<DevToolSection
 				name={ __( 'Telex' ) }
-				badge={ __( 'AI-Powered' ) }
+				badge={ __( 'AI-powered' ) }
 				tagline={ __( 'Describe it. Build it. Ship it.' ) }
 				description={ __(
 					'Create custom Gutenberg blocks using natural language. Upload a design, describe what you need, and get a production-ready WordPress block plugin.'

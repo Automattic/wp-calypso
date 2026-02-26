@@ -40,7 +40,9 @@ export default function DevToolSection( {
 	hasBackground = false,
 }: DevToolSectionProps ) {
 	return (
-		<PageSectionColumns background={ hasBackground ? { color: '#F1F1F2' } : undefined }>
+		<PageSectionColumns
+			background={ hasBackground ? { color: 'var(--color-neutral-5)' } : undefined }
+		>
 			<PageSectionColumns.Column
 				heading={
 					<HStack className="dev-tools-overview__heading" alignment="center">
