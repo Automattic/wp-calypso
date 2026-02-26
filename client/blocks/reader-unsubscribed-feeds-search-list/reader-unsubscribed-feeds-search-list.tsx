@@ -2,6 +2,7 @@ import './style.scss';
 import { recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
@@ -13,6 +14,7 @@ interface ReaderUnsubscribedFeedsSearchListProps {
 
 const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
 	const { feedItems, isLoading } = props;
+	const translate = useTranslate();
 
 	const feedItemComponents = useMemo( () => {
 		if ( ! feedItems?.length ) {
@@ -57,8 +59,15 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 	}
 
 	return (
-		<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
-			{ feedItemComponents }
+		<VStack spacing={ 4 }>
+			<div>
+				<h2 className="reader-unsubscribed-feeds-search-heading">
+					{ translate( 'Here are some other sites that match your search:' ) }
+				</h2>
+			</div>
+			<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
+				{ feedItemComponents }
+			</VStack>
 		</VStack>
 	);
 };

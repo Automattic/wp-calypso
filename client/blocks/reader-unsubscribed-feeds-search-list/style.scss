@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+
 .reader-unsubscribed-feeds-search-list-loader {
 	display: flex;
 	justify-content: center;
@@ -14,4 +17,12 @@
 			gap: unset !important;
 		}
 	}
+}
+
+.reader-unsubscribed-feeds-search-heading {
+	margin: 0;
+	color: $studio-gray-60;
+	font-size: $font-body-small;
+	font-family: "SF Pro Text", sans-serif;
+	line-height: $font-title-small;
 }

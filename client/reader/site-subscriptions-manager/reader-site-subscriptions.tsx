@@ -1,5 +1,5 @@
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useEffect } from 'react';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
@@ -16,7 +16,6 @@ import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
 const ReaderSiteSubscriptions = () => {
-	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const {
 		data: { subscriptions },
@@ -44,9 +43,7 @@ const ReaderSiteSubscriptions = () => {
 		}
 	);
 
-	const hasSomeSubscriptions = subscriptions.length > 0;
 	const hasSomeUnsubscribedSearchResults = ( filteredUnsubscribedFeedItems?.length ?? 0 ) > 0;
-
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
 
@@ -70,17 +67,10 @@ const ReaderSiteSubscriptions = () => {
 		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
 	return (
-		<>
+		<VStack>
 			<SiteSubscriptionsListActionsBar />
-
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 			{ ! searchTerm && <RecommendedSites /> }
-
-			{ hasSomeSubscriptions && hasSomeUnsubscribedSearchResults && (
-				<div className="site-subscriptions__search-recommendations-label">
-					{ translate( 'Here are some other sites that match your search.' ) }
-				</div>
-			) }
 
 			{ hasSomeUnsubscribedSearchResults && (
 				<UnsubscribedFeedsSearchList
@@ -88,7 +78,7 @@ const ReaderSiteSubscriptions = () => {
 					isLoading={ shouldShowUnsubcribedFeedsListLoader }
 				/>
 			) }
-		</>
+		</VStack>
 	);
 };
 
