@@ -36,6 +36,13 @@ export default function DomainOnly( {
 
 	const planUpgradeCreditsApplicable = useDomainToPlanCreditsApplicable( domainPurchase.blogId );
 
+	// translators: %(domain)s is a domain name, like example.com
+	const topTextCopy = translate( 'Create a professional email address on %(domain)s.', {
+		args: {
+			domain: domainPurchase.meta,
+		},
+	} );
+
 	return (
 		<div className="checkout-thank-you__domain-only-container">
 			<Step.CenteredColumnLayout
@@ -75,7 +82,7 @@ export default function DomainOnly( {
 				<OptionContent
 					illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
 					titleText={ translate( 'Add a mailbox' ) }
-					topText={ translate( 'Stand out with a professional email address.' ) }
+					topText={ topTextCopy }
 					href={
 						dashboardOptIn
 							? dashboardLink( `/emails/choose-email-solution/${ domainPurchase.meta }` )

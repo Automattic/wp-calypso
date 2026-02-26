@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
-.reader-add-substack {
+.reader-add-subscription {
 	padding: 0 10px;
 
 	strong {
@@ -9,7 +9,11 @@
 	}
 }
 
-.reader-add-substack__instructions {
+.reader-add-subscription__form-title {
+	margin-bottom: 10px;
+}
+
+.reader-add-subscription__instructions {
 	border: 1px solid #e2e2e2;
 	border-radius: 4px;
 	padding: 30px 15px;
@@ -20,20 +24,26 @@
 	}
 }
 
-.reader-add-substack__instructions-icon {
+.reader-add-subscription__instructions-icon {
 	display: flex;
 	justify-content: center;
 	margin-bottom: 30px;
 }
 
-.reader-add-substack__instructions-title {
+.reader-add-subscription__instructions-title {
 	margin: 20px 0 30px;
 	font-weight: 500;
 	font-size: $font-title-medium;
 }
 
-.reader-add-substack__instructions-list {
+.reader-add-subscription__instructions-list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
+}
+
+.reader-add-subscription__subscriptions-title {
+	font-size: $font-title-small;
+	font-weight: 500;
+	margin-bottom: 10px;
 }

@@ -17,7 +17,17 @@ function getCopyableText( message: UIMessage ): string {
 	// Exclude tool messages (JSON text with a `tool_id` field).
 	const firstPartText = message.content[ 0 ]?.text ?? '';
 	try {
-		if ( JSON.parse( firstPartText ).tool_id ) {
+		const parsed = JSON.parse( firstPartText );
+
+		if ( parsed.tool_id ) {
+			// Only the support tool has copyable text in `data`.
+			if (
+				parsed.tool_id === 'big_sky__wordpress_com_support' &&
+				typeof parsed.data === 'string'
+			) {
+				return parsed.data.trim();
+			}
+
 			return '';
 		}
 	} catch {

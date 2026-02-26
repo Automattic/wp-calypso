@@ -298,20 +298,24 @@ body.is-section-stepper.agents-manager-sidebar-container {
 	}
 }
 
-/* Calypso: Fix for the search categories fixed top position on the plugins marketplace page */
+/* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
 .agents-manager-sidebar-container--sidebar-open
 	.layout__secondary
-	~ .layout__primary
-	.plugins-browser--site-view
-	.search-categories.fixed-top {
-	top: calc( $admin-bar-height + $layout-spacing + 1px );
-	left: -174px;
-	padding-top: 11px;
-	max-width: 1028px;
-	border-bottom: 1px solid var( --color-neutral-5 );
+	~ .layout__primary {
+	.plugins-browser--site-view .search-categories.fixed-top {
+		top: calc( $admin-bar-height + $layout-spacing + 1px );
+		right: calc( $sidebar-width + 1px );
+		left: calc( var(--sidebar-width-max) + 17px );
 
-	&::after {
-		display: none;
+		&::after {
+			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
+		}
+	}
+
+	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
+		top: calc( $admin-bar-height + $layout-spacing + 1px );
+		left: calc( var(--sidebar-width-max) + 17px );
+		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
 	}
 }
 

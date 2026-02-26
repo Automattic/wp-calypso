@@ -82,4 +82,7 @@ export interface Site {
 	garden_name: string | null;
 	garden_partner: string | null;
 	garden_is_provisioned: boolean | null;
+
+	// Injected local properties
+	__inaccessible_jetpack_error?: Error;
 }

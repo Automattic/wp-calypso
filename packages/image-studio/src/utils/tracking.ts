@@ -65,7 +65,7 @@ function recordImageStudioEvent(
 	const entryPoint = getImageStudioEntryPoint();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
-		sessionId: getSessionId(),
+		sessionid: getSessionId(),
 	};
 
 	if ( entryPoint ) {

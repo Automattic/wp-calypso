@@ -10,6 +10,9 @@ export function getSiteBadge( site: Site ): SiteBadge {
 		return status;
 	}
 
+	if ( site.options?.is_redirect ) {
+		return 'redirect';
+	}
 	if ( site.is_wpcom_staging_site ) {
 		return 'staging';
 	}

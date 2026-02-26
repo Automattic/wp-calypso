@@ -36,6 +36,7 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
+import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
@@ -233,7 +234,14 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={ ! isDashboardBackport() && <OptInSurvey /> }
+			notices={
+				<>
+					{ !! site.__inaccessible_jetpack_error && (
+						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
+					) }
+					{ ! isDashboardBackport() && <OptInSurvey /> }
+				</>
+			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />

@@ -103,6 +103,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
+		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 	];
 }
 

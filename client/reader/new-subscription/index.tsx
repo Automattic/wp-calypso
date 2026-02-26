@@ -8,30 +8,20 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
-import AddNew from './components/add-new';
-import AddReddit from './components/add-reddit';
-import AddSubstack from './components/add-substack';
-import AddTumblr from './components/add-tumblr';
-import AddYouTube from './components/add-youtube';
+import AddSubscriptionForm from './components/add-subscription-form';
+import {
+	ADD_SUBSCRIPTION_CONFIGS,
+	SubscriptionType,
+} from './components/add-subscription-form/consts';
 
 interface Tab {
-	slug: string;
+	slug: SubscriptionType;
 	title: TranslateResult;
 	path: string;
 }
 
-enum Tabs {
-	ADD_NEW = 'add-new',
-	REDDIT = 'reddit',
-	YOUTUBE = 'youtube',
-	TUMBLR = 'tumblr',
-	SUBSTACK = 'substack',
-}
-
-export const NEW_SUBSCRIPTION_TABS: typeof Tabs = Tabs;
-
 interface ReaderNewSubscriptionPageProps {
-	selectedTab: Tabs;
+	selectedTab: SubscriptionType;
 }
 
 export default function ReaderNewSubscriptionPage(
@@ -40,48 +30,21 @@ export default function ReaderNewSubscriptionPage(
 	const { selectedTab } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const ADD_SUBSCRIPTION_TABS: Tab[] = Object.values( ADD_SUBSCRIPTION_CONFIGS ).map(
+		( config ): Tab => ( {
+			slug: config.slug,
+			title: config.title,
+			path: config.url,
+		} )
+	);
 
-	const pathPrefix: string = 'reader/new';
-	const NEW_SUBSCRIPTION_TABS: Tab[] = [
-		{
-			slug: Tabs.ADD_NEW,
-			title: translate( 'Add new' ),
-			path: `/${ pathPrefix }`,
-		},
-		{
-			slug: Tabs.REDDIT,
-			title: translate( 'Reddit' ),
-			path: `/${ pathPrefix }/reddit`,
-		},
-		{
-			slug: Tabs.YOUTUBE,
-			title: translate( 'YouTube' ),
-			path: `/${ pathPrefix }/youtube`,
-		},
-		{
-			slug: Tabs.TUMBLR,
-			title: translate( 'Tumblr' ),
-			path: `/${ pathPrefix }/tumblr`,
-		},
-		{
-			slug: Tabs.SUBSTACK,
-			title: translate( 'Substack' ),
-			path: `/${ pathPrefix }/substack`,
-		},
-	];
-	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
-		[ Tabs.ADD_NEW ]: <AddNew />,
-		[ Tabs.REDDIT ]: <AddReddit />,
-		[ Tabs.YOUTUBE ]: <AddYouTube />,
-		[ Tabs.TUMBLR ]: <AddTumblr />,
-		[ Tabs.SUBSTACK ]: <AddSubstack />,
-	};
-
-	function recordTabClick( tabSlug: string ): void {
+	function recordTabClick( selectedTab: string ): void {
 		recordAction( 'click_new_subscription_tab' );
 		recordGaEvent( 'Clicked New Subscription Tab' );
 		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_new_subscription_tab_clicked', { tabSlug } )
+			recordReaderTracksEvent( 'calypso_reader_new_subscription_tab_clicked', {
+				tab_slug: selectedTab,
+			} )
 		);
 	}
 
@@ -96,7 +59,7 @@ export default function ReaderNewSubscriptionPage(
 
 			<SectionNav className="new-subscription-navigation" variation="minimal" enforceTabsView>
 				<NavTabs>
-					{ NEW_SUBSCRIPTION_TABS.map(
+					{ ADD_SUBSCRIPTION_TABS.map(
 						( tab: Tab ): JSX.Element => (
 							<NavItem
 								key={ tab.slug }
@@ -111,7 +74,7 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			{ TAB_COMPONENTS[ selectedTab ] }
+			<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
 		</ReaderMain>
 	);
 }
