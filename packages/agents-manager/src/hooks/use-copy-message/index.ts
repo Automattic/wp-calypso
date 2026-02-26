@@ -20,7 +20,7 @@ function getCopyableText( message: UIMessage ): string {
 		const parsed = JSON.parse( firstPartText );
 
 		if ( parsed.tool_id ) {
-			// Allow copying the data from support tool messages.
+			// Only the support tool has copyable text in `data`.
 			if (
 				parsed.tool_id === 'big_sky__wordpress_com_support' &&
 				typeof parsed.data === 'string'
