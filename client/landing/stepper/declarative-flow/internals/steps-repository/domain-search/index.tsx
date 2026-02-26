@@ -258,17 +258,17 @@ const DomainSearchStep: StepType< {
 					return null;
 				}
 
-				return <FreeDomainForAYearPromo />;
+				return <FreeDomainForAYearPromo isCiab={ isCiab } />;
 			},
 			BeforeFullCartItems: () => {
 				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
-				return <FreeDomainForAYearPromo textOnly />;
+				return <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />;
 			},
 		};
-	}, [ isFirstDomainFreeForFirstYear ] );
+	}, [ isFirstDomainFreeForFirstYear, isCiab ] );
 
 	const headerText = useMemo( () => {
 		if ( isNewsletterFlow( flow ) ) {

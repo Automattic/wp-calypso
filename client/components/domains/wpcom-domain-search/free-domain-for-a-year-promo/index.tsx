@@ -12,7 +12,7 @@ import freeDomainForAYearPromoImage from './graphic.svg';
 
 import './style.scss';
 
-export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
+export const FreeDomainForAYearPromo = ( { textOnly = false, isCiab = false } ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const { __ } = useI18n();
@@ -20,21 +20,34 @@ export const FreeDomainForAYearPromo = ( { textOnly = false } ) => {
 	if ( textOnly ) {
 		return (
 			<Text>
-				{ __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
+				{ isCiab
+					? __(
+							'With your annual plan purchase, the first year of domain registration is on us! Discount automatically applied at checkout.'
+					  )
+					: __( 'Get your free domain when you check out and purchase any paid annual plan.' ) }
 			</Text>
 		);
 	}
 
 	const title = __( 'Claim your first domain—Free!' );
 
-	const subtitle = createInterpolateElement(
-		__(
-			"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
-		),
-		{
-			br: <br />,
-		}
-	);
+	const subtitle = isCiab
+		? createInterpolateElement(
+				__(
+					'With your annual plan purchase, the first year of domain registration is on us!<br />Discount automatically applied at checkout.'
+				),
+				{
+					br: <br />,
+				}
+		  )
+		: createInterpolateElement(
+				__(
+					"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
+				),
+				{
+					br: <br />,
+				}
+		  );
 
 	return (
 		<Card ref={ containerRef } size="small" className="free-domain-for-a-year-promo">
