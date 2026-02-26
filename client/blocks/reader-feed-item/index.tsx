@@ -26,7 +26,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import './style.scss';
 
-interface ReaderFeedItemProps {
+export interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.

@@ -8,14 +8,16 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 
 interface GetFeedResponse {
-	feeds: {
-		feed_ID: string;
-		subscribe_URL: string;
-		meta: object;
-	}[];
+	feeds: GetFeedItemResponse[];
 }
 
-interface FeedPreviewProps {
+export interface GetFeedItemResponse {
+	feed_ID: string;
+	subscribe_URL: string;
+	meta: object;
+}
+
+export interface FeedPreviewProps {
 	url: string;
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
