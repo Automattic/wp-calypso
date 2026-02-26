@@ -196,7 +196,7 @@ function ExpiredRenewNotice( {
 
 		return (
 			<Notice
-				variant={ refunded ? 'success' : 'error' }
+				variant={ refunded && isExpired( currentPurchase ) ? 'success' : 'error' }
 				actions={
 					shouldShowRenewNoticeAction( purchase ) ? (
 						<RenewNoticeAction
