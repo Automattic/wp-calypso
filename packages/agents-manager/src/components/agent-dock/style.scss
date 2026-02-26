@@ -240,6 +240,28 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	}
 }
 
+// Fix Calypso list styles
+body:is( [class*='is-group-'], [class*='is-section-'] ):not( .wp-admin ) {
+	.agents-manager-chat.agents-manager-chat--docked,
+	.agents-manager-chat.agents-manager-chat--undocked {
+		ul, ol {
+			padding-left: 0;
+		}
+
+		ul {
+			margin-left: 2em;
+		}
+
+		ol {
+			margin-left: 1em;
+		}
+
+		li > ul {
+			margin-top: 0.5em;
+		}
+	}
+}
+
 /* Calypso MSD */
 body.is-section-dashboard-dotcom.agents-manager-sidebar-container {
 	@include sidebar-base( '#wpcom .dashboard-root__layout' );
