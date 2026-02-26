@@ -20,6 +20,7 @@ Review the PR based on the following documentation files as the guidelines:
 
 ## Method
 
+- Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
 - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
 - Provide fix suggestions in each comment.
 - Don't nitpick minor style issues unless they violate project guidelines.
