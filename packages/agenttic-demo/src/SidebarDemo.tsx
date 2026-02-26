@@ -1,21 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider } from '@automattic/agenttic-client';
+import { useAgentChat } from '@automattic/agenttic-client';
+import { getClientContext, getClientTools } from '@automattic/agenttic-client/mocks';
+
+import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 import {
 	AgentUI,
 	createMessageRenderer,
 	EmptyView,
+	ImageUploader,
+	type ImageUploaderHandle,
+	type UploadedImage,
 } from '@automattic/agenttic-ui';
-import {
-	getClientContext,
-	getClientTools,
-} from '@automattic/agenttic-client/mocks';
-
-import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MessageTester from './MessageTester';
 
 const SidebarDemo: React.FC = () => {
-	const [ contextProvider ] = useState< ContextProvider >( () => ( {
+	const uploaderRef = useRef<ImageUploaderHandle>( null );
+	const [ uploadedImages, setUploadedImages ] = useState<UploadedImage[]>( [] );
+
+	const [ contextProvider ] = useState<ContextProvider>( () => ( {
 		getClientContext,
 	} ) );
 
@@ -89,6 +92,23 @@ const SidebarDemo: React.FC = () => {
 		},
 		[ onSubmit, clearSuggestions ]
 	);
+
+	const handleFilesSelected = useCallback( ( files: File[] ) => {
+		// Simulate upload by creating object URLs
+		const newImages: UploadedImage[] = files.map( ( file, index ) => ( {
+			id: `${ Date.now() }-${ index }`,
+			url: URL.createObjectURL( file ),
+			name: file.name,
+			mime_type: file.type,
+		} ) );
+		setUploadedImages( ( prev ) => [ ...prev, ...newImages ] );
+	}, [] );
+
+	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
+		setUploadedImages( ( prev ) => prev.filter( ( img ) => img.id !== image.id ) );
+		// Revoke the object URL to free memory
+		URL.revokeObjectURL( image.url );
+	}, [] );
 
 	return (
 		<>
@@ -219,7 +239,15 @@ const SidebarDemo: React.FC = () => {
 								<AgentUI.Messages />
 								<AgentUI.Footer>
 									<AgentUI.Notice />
-									<AgentUI.Input />
+									<ImageUploader
+										ref={ uploaderRef }
+										images={ uploadedImages }
+										onFilesSelected={ handleFilesSelected }
+										onRemoveImage={ handleRemoveImage }
+										acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
+										showFileMetadata={ true }
+									/>
+									<AgentUI.Input imageUploaderRef={ uploaderRef } />
 								</AgentUI.Footer>
 							</AgentUI.ConversationView>
 						</AgentUI.Container>

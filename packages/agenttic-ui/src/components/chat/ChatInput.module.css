@@ -24,6 +24,24 @@
     align-items: center;
 }
 
+.containerStacked {
+    flex-direction: column;
+    padding: var(--spacing-2);
+    gap: var(--spacing);
+}
+
+.containerStacked .actions {
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.containerStacked .actions .button {
+    min-width: var(--spacing-8);
+    min-height: var(--spacing-8);
+}
+
 .button {
     border-radius: var(--radius-full);
 }

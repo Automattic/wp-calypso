@@ -1,4 +1,12 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+	forwardRef,
+	memo,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAgentUIContext } from '../../context/AgentUIContext';
@@ -141,27 +149,37 @@ const ImagePreviewItem = memo(
 	}
 );
 
-export function ImageUploader( {
-	images = [],
-	uploadingImages = [],
-	onFilesSelected,
-	onBrowse,
-	onDrop,
-	onPaste,
-	onRemoveImage,
-	onImageDragStart,
-	onImageDragEnd,
-	acceptedFileTypes = [ 'image/jpeg', 'image/png' ],
-	maxFileSize,
-	maxFiles,
-	uploadingIndicator,
-	className = '',
-	showFileMetadata = true,
-	allowDragToInsert = true,
-	onError,
-	visible = true,
-	dropZoneRef,
-}: ImageUploaderProps ) {
+export interface ImageUploaderHandle {
+	openFileDialog: () => void;
+}
+
+export const ImageUploader = forwardRef<
+	ImageUploaderHandle,
+	ImageUploaderProps
+>( function ImageUploader(
+	{
+		images = [],
+		uploadingImages = [],
+		onFilesSelected,
+		onBrowse,
+		onDrop,
+		onPaste,
+		onRemoveImage,
+		onImageDragStart,
+		onImageDragEnd,
+		acceptedFileTypes = [ 'image/jpeg', 'image/png' ],
+		maxFileSize,
+		maxFiles,
+		uploadingIndicator,
+		className = '',
+		showFileMetadata = true,
+		allowDragToInsert = true,
+		onError,
+		visible = true,
+		dropZoneRef,
+	}: ImageUploaderProps,
+	ref: React.Ref< ImageUploaderHandle >
+) {
 	const { textareaRef } = useAgentUIContext();
 	const [ isDraggingOver, setIsDraggingOver ] = useState( false );
 	const [ isDraggingFile, setIsDraggingFile ] = useState( false );
@@ -170,6 +188,12 @@ export function ImageUploader( {
 	const fileInputRef = useRef< HTMLInputElement >( null );
 	const invalidMessageTimeoutRef = useRef< NodeJS.Timeout | null >( null );
 	const dragCounterRef = useRef( 0 );
+
+	useImperativeHandle( ref, () => ( {
+		openFileDialog: () => {
+			fileInputRef.current?.click();
+		},
+	} ) );
 
 	// Track global drag state to hide preview during drag
 	useEffect( () => {
@@ -594,4 +618,4 @@ export function ImageUploader( {
 			</div>
 		</div>
 	);
-}
+} );

@@ -44,6 +44,7 @@ interface ChatInputProps {
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
 	expandOnClick?: boolean;
+	layout?: 'inline' | 'stacked';
 }
 
 export function ChatInput( {
@@ -68,6 +69,7 @@ export function ChatInput( {
 	onMouseEnter,
 	onMouseLeave,
 	expandOnClick = false,
+	layout = 'inline',
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const { variant, floatingChatState, isInputOverLimit } =
@@ -209,7 +211,9 @@ export function ChatInput( {
 	return (
 		<div
 			data-slot="chat-input"
-			className={ styles.container }
+			className={ `${ styles.container }${
+				layout === 'stacked' ? ` ${ styles.containerStacked }` : ''
+			}` }
 			onMouseEnter={ onMouseEnter }
 			onMouseLeave={ onMouseLeave }
 		>
