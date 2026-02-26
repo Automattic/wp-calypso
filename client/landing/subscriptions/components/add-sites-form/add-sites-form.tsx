@@ -12,21 +12,27 @@ import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 
-export type AddSitesFormProps = {
+interface AddSitesFormProps {
 	placeholder?: string;
 	buttonText?: string;
 	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
-};
+	/**
+	 * Callback function to be called when the input value changes.
+	 * @param value - The new value of the input field.
+	 */
+	onChange?: ( value: string ) => void;
+}
 
-type SubscriptionError = {
+interface SubscriptionError {
 	error?: string;
 	message?: string;
-};
+}
 
 const AddSitesForm = ( {
+	onChange,
 	placeholder,
 	buttonText,
 	pathname,
@@ -73,6 +79,7 @@ const AddSitesForm = ( {
 		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
 		setInputValue( value );
 		validateInputValue( value, showErrorOnInvalidUrl );
+		onChange?.( value );
 	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
