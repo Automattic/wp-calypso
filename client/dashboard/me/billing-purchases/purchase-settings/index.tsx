@@ -283,7 +283,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					renewPurchase( purchase );
 				} }
 			>
-				{ __( 'Renew' ) }
+				{ _x(
+					'Renew',
+					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+				) }
 			</MenuItem>
 		),
 	].filter( Boolean );
