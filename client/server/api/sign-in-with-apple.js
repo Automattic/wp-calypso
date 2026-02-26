@@ -4,7 +4,7 @@ import qs from 'qs';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 
-const ALLOWED_ORIGINS = [ 'https://my.wordpress.com' ];
+export const ALLOWED_ORIGINS = [ 'https://my.wordpress.com', 'https://my.woo.ai' ];
 
 function loginEndpointData() {
 	return {
