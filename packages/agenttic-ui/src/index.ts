@@ -29,6 +29,7 @@ export { ImageUploader } from './components/chat/ImageUploader';
 export type {
 	UploadedImage,
 	UploadingImage,
+	ImageUploaderHandle,
 } from './components/chat/ImageUploader';
 export { ThinkingMessage } from './components/chat/ThinkingMessage';
 export { Messages } from './components/chat/Messages';
@@ -64,6 +65,7 @@ export { ChevronUpIcon } from './components/icons/ChevronUpIcon';
 export { ZoomIcon } from './components/icons/ZoomIcon';
 export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
 export { RegenerateIcon } from './components/icons/RegenerateIcon';
+export { PlusIcon } from './components/icons/PlusIcon';
 export { AltIcon } from './components/icons/AltIcon';
 export { BlurIcon } from './components/icons/BlurIcon';
 

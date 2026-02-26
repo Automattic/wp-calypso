@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import { type ActionButton, ChatInput } from '../chat/ChatInput';
+import type { ImageUploaderHandle } from '../chat/ImageUploader';
+import { PlusIcon } from '../icons/PlusIcon';
 
 export interface AgentUIInputProps {
 	className?: string;
@@ -8,6 +11,8 @@ export interface AgentUIInputProps {
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
 	onKeyDown?: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
+	layout?: 'inline' | 'stacked';
+	imageUploaderRef?: React.RefObject< ImageUploaderHandle >;
 }
 
 export function AgentUIInput( {
@@ -16,6 +21,8 @@ export function AgentUIInput( {
 	customActions,
 	actionOrder,
 	onKeyDown,
+	layout,
+	imageUploaderRef,
 }: AgentUIInputProps = {} ) {
 	const {
 		inputValue,
@@ -46,6 +53,27 @@ export function AgentUIInput( {
 		handleKeyDown( e );
 	};
 
+	// When imageUploaderRef is provided, prepend a "+" button to custom actions
+	const resolvedActions = useMemo( () => {
+		if ( ! imageUploaderRef ) {
+			return customActions;
+		}
+
+		const uploadAction: ActionButton = {
+			id: 'image-upload',
+			icon: <PlusIcon />,
+			onClick: () => imageUploaderRef.current?.openFileDialog(),
+			variant: 'ghost',
+			'aria-label': __( 'Upload image', 'a8c-agenttic' ),
+		};
+
+		return [ uploadAction, ...( customActions || [] ) ];
+	}, [ imageUploaderRef, customActions ] );
+
+	// Default to stacked layout when image uploader is connected
+	const resolvedLayout =
+		layout ?? ( imageUploaderRef ? 'stacked' : 'inline' );
+
 	return (
 		<ChatInput
 			value={ inputValue }
@@ -63,9 +91,10 @@ export function AgentUIInput( {
 			showExpandButton={ showExpandButton }
 			focusOnMount={ focusOnMount }
 			disabled={ disabled }
-			customActions={ customActions }
+			customActions={ resolvedActions }
 			actionOrder={ actionOrder }
 			className={ className }
+			layout={ resolvedLayout }
 		/>
 	);
 }
