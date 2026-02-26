@@ -73,10 +73,10 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 					<BlockControls group="default">
 						<ToolbarGroup>
 							<ToolbarButton
-								label={ __( 'Edit image with AI', 'big-sky' ) }
+								label={ __( 'Edit image with AI', __i18n_text_domain__ ) }
 								onClick={ handleEditClick }
 							>
-								{ __( 'Edit', 'big-sky' ) }
+								{ __( 'Edit', __i18n_text_domain__ ) }
 							</ToolbarButton>
 						</ToolbarGroup>
 					</BlockControls>

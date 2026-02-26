@@ -1,3 +1,4 @@
+import { queryClient } from '@automattic/api-queries';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -10,9 +11,10 @@ import {
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
@@ -51,8 +53,10 @@ import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
+import { DefaultSitesDataViews, P2SitesDataViews } from './sites-dataviews';
+import { useSiteStatusGroups } from './sites-dataviews/use-site-status-groups';
 import { getSitesPagination } from './sites-dataviews/utils';
+import type { SitePreviewPane } from './types';
 import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
@@ -72,7 +76,7 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	{ dataView: 'site-title', sortKey: 'alphabetically' },
+	{ dataView: 'name', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 	{ dataView: 'plan', sortKey: 'plan' },
@@ -206,17 +210,17 @@ const SitesDashboard = ( {
 		...( selectedSite
 			? {
 					type: 'list',
-					titleField: 'site-title',
+					titleField: 'name',
 					showTitle: true,
-					mediaField: 'icon',
+					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
 			  }
 			: {
 					type: 'table',
-					titleField: 'site-title',
+					titleField: 'name',
 					showTitle: true,
-					mediaField: 'icon',
+					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
 					layout: {
@@ -366,19 +370,15 @@ const SitesDashboard = ( {
 	const initialSiteFeatureRef = useRef( initialSiteFeature );
 	initialSiteFeatureRef.current = initialSiteFeature;
 
-	const sitePreviewPane = useMemo(
+	const sitePreviewPane: SitePreviewPane = useMemo(
 		() => ( {
-			getUrl: ( site: SiteExcerptData ) => {
+			getUrl: ( site ) => {
 				return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeatureRef.current ].replace(
 					':site',
 					site.slug
 				) }`;
 			},
-			open: (
-				site: SiteExcerptData,
-				source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-				openInNewTab?: boolean
-			) => {
+			open: ( site, source, openInNewTab ) => {
 				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
 					site_id: site.ID,
 					source,
@@ -423,6 +423,37 @@ const SitesDashboard = ( {
 
 	const dashboardTitle = siteType === 'p2' ? translate( 'P2s' ) : translate( 'Sites' );
 
+	const renderDataViews = () => {
+		if ( siteType !== DEFAULT_SITE_TYPE ) {
+			return (
+				<P2SitesDataViews
+					sites={ paginatedSites }
+					siteType={ siteType }
+					isLoading={ isLoading || ! initialSortApplied }
+					paginationInfo={ getSitesPagination( filteredSites, perPage ) }
+					dataViewsState={ dataViewsState }
+					setDataViewsState={ setDataViewsState }
+					sitePreviewPane={ sitePreviewPane }
+				/>
+			);
+		}
+
+		if ( selectedSite ) {
+			return (
+				<Suspense fallback={ null }>
+					<QueryClientProvider client={ queryClient }>
+						<DefaultSitesDataViews
+							selectedSiteId={ selectedSite.ID }
+							sitePreviewPane={ sitePreviewPane }
+						/>
+					</QueryClientProvider>
+				</Suspense>
+			);
+		}
+
+		return <AsyncLoad require="../v2/sites-list" placeholder={ null } />;
+	};
+
 	return (
 		<Layout
 			className={ clsx(
@@ -453,20 +484,7 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					{ ! selectedSite && siteType === DEFAULT_SITE_TYPE ? (
-						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
-					) : (
-						<DotcomSitesDataViews
-							sites={ paginatedSites }
-							siteType={ siteType }
-							isLoading={ isLoading || ! initialSortApplied }
-							paginationInfo={ getSitesPagination( filteredSites, perPage ) }
-							dataViewsState={ dataViewsState }
-							setDataViewsState={ setDataViewsState }
-							selectedItem={ selectedSite }
-							sitePreviewPane={ sitePreviewPane }
-						/>
-					) }
+					{ renderDataViews() }
 				</LayoutColumn>
 			) }
 

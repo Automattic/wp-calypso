@@ -8,22 +8,20 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
+import AddSubscriptionForm from './components/add-subscription-form';
+import {
+	ADD_SUBSCRIPTION_CONFIGS,
+	SubscriptionType,
+} from './components/add-subscription-form/consts';
 
 interface Tab {
-	slug: string;
+	slug: SubscriptionType;
 	title: TranslateResult;
 	path: string;
 }
 
-enum Tabs {
-	ADD_NEW = 'add-new',
-	REDDIT = 'reddit',
-}
-
-export const NEW_SUBSCRIPTION_TABS: typeof Tabs = Tabs;
-
 interface ReaderNewSubscriptionPageProps {
-	selectedTab: Tabs;
+	selectedTab: SubscriptionType;
 }
 
 export default function ReaderNewSubscriptionPage(
@@ -32,30 +30,21 @@ export default function ReaderNewSubscriptionPage(
 	const { selectedTab } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const ADD_SUBSCRIPTION_TABS: Tab[] = Object.values( ADD_SUBSCRIPTION_CONFIGS ).map(
+		( config ): Tab => ( {
+			slug: config.slug,
+			title: config.title,
+			path: config.url,
+		} )
+	);
 
-	const pathPrefix: string = 'reader/new';
-	const NEW_SUBSCRIPTION_TABS: Tab[] = [
-		{
-			slug: Tabs.ADD_NEW,
-			title: translate( 'Add new' ),
-			path: `/${ pathPrefix }`,
-		},
-		{
-			slug: Tabs.REDDIT,
-			title: translate( 'Reddit' ),
-			path: `/${ pathPrefix }/reddit`,
-		},
-	];
-	const TAB_COMPONENTS: Record< Tabs, JSX.Element > = {
-		[ Tabs.ADD_NEW ]: <p>Add new subscription</p>,
-		[ Tabs.REDDIT ]: <p>Add Reddit subscription</p>,
-	};
-
-	function recordTabClick( tabSlug: string ): void {
+	function recordTabClick( selectedTab: string ): void {
 		recordAction( 'click_new_subscription_tab' );
 		recordGaEvent( 'Clicked New Subscription Tab' );
 		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_new_subscription_tab_clicked', { tabSlug } )
+			recordReaderTracksEvent( 'calypso_reader_new_subscription_tab_clicked', {
+				tab_slug: selectedTab,
+			} )
 		);
 	}
 
@@ -70,7 +59,7 @@ export default function ReaderNewSubscriptionPage(
 
 			<SectionNav className="new-subscription-navigation" variation="minimal" enforceTabsView>
 				<NavTabs>
-					{ NEW_SUBSCRIPTION_TABS.map(
+					{ ADD_SUBSCRIPTION_TABS.map(
 						( tab: Tab ): JSX.Element => (
 							<NavItem
 								key={ tab.slug }
@@ -85,7 +74,7 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			{ TAB_COMPONENTS[ selectedTab ] }
+			<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
 		</ReaderMain>
 	);
 }

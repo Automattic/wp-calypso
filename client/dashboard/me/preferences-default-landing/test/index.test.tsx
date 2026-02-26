@@ -27,6 +27,7 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock(
 	'@automattic/api-queries',
 	() => ( {
+		startSiteCollisionListener: jest.fn( () => jest.fn() ),
 		rawUserPreferencesQuery: jest.fn( () => ( {
 			queryKey: [ 'me', 'preferences' ],
 			queryFn: jest.fn(),

@@ -1,0 +1,88 @@
+.agents-manager-feedback-input {
+	margin-left: 12px;
+	margin-right: 12px;
+	margin-bottom: 24px;
+
+	&__inner {
+		margin-top: 12px;
+		padding: 12px;
+		background: var(--color-background);
+		border: 1px solid var(--color-muted);
+		border-radius: 4px;
+
+		.components-textarea-control {
+			margin-bottom: 12px;
+		}
+
+		.components-base-control__label {
+			font-size: 13px;
+			text-transform: none;
+			color: var(--color-muted-foreground);
+		}
+
+		.components-textarea-control__input {
+			width: 100%;
+			resize: vertical;
+			background: var(--color-popover-muted);
+			border-color: var(--color-muted);
+			color: var(--color-foreground);
+
+			&::placeholder {
+				color: var(--color-muted-foreground);
+			}
+		}
+	}
+
+	&__success {
+		padding: 12px;
+		background: var(--color-success-background);
+		color: var(--color-success);
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
+
+	&__error {
+		padding: 12px;
+		background: var(--color-error-background);
+		color: var(--color-error);
+		border-radius: 4px;
+		text-align: center;
+		font-size: 14px;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+
+		.components-button {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.components-button.is-tertiary {
+			color: var(--color-muted-foreground);
+
+			&:hover {
+				color: var(--color-foreground);
+			}
+		}
+
+		.components-button.is-primary {
+			background: var(--color-primary);
+			color: var(--color-primary-foreground);
+
+			&:disabled {
+				background: var(--color-muted);
+				color: var(--color-muted-foreground);
+			}
+		}
+
+		// Fix spinner vertical alignment in the button
+		.agents-manager-feedback-input__spinner {
+			margin-top: 0;
+		}
+	}
+}

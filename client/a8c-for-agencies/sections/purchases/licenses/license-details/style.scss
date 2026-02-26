@@ -118,12 +118,14 @@
 
 	.license-details__subscription-row {
 		display: inline-flex;
+		margin-top: 16px;
 		align-items: center;
 		gap: 8px;
 	}
 
 	.license-details__subscription-badge {
 		margin: 0;
+		font-size: $font-size-x-small;
 	}
 
 	.license-details__subscription-label {

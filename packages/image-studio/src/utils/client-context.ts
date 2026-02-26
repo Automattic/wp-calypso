@@ -3,6 +3,7 @@
  *
  * Provides context about the current Image Studio state to the AI agent.
  */
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
 
@@ -22,12 +23,136 @@ export interface ImageStudioData {
 	metadata: ImageStudioMetadata;
 }
 
+export interface PageContentBlock {
+	name: string;
+	type?: 'header' | 'content' | 'footer';
+	clientId: string;
+	attributes?: Record< string, unknown >;
+	innerBlocks?: PageContentBlock[];
+}
+
 export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
 	environment: 'wp-admin';
 	imageStudio?: ImageStudioData;
+	currentPageContent?: PageContentBlock[];
+}
+
+const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
+
+/**
+ * Recursively process blocks to resolve template part inner blocks.
+ * Template part blocks don't include their innerBlocks by default;
+ * they must be fetched separately from the block editor store.
+ */
+function processTemplatePartBlocks(
+	blocks: any[],
+	getBlocks: ( clientId?: string ) => any[]
+): any[] {
+	return blocks.map( ( block: any ) => {
+		const processed = { ...block };
+
+		if ( block.name === 'core/template-part' || block.name === 'core/post-content' ) {
+			processed.innerBlocks = getBlocks( block.clientId );
+		}
+
+		if ( processed.innerBlocks?.length ) {
+			processed.innerBlocks = processTemplatePartBlocks( processed.innerBlocks, getBlocks );
+		}
+
+		return processed;
+	} );
+}
+
+/**
+ * Get the current page content from the block editor.
+ * Returns an array of blocks structured with header/content/footer types,
+ * matching the format expected by the backend page context processor.
+ *
+ * Uses raw WordPress client IDs (no compression).
+ */
+function getCurrentPageContent(): PageContentBlock[] | null {
+	try {
+		const blockEditorSelect = select( blockEditorStore ) as any;
+		if ( ! blockEditorSelect ) {
+			return null;
+		}
+
+		const { getBlocks, getBlocksByName, getBlock } = blockEditorSelect;
+
+		// Bail early if not in a block editor context (e.g. uploads.php).
+		// The store is registered globally but has no blocks outside the editor.
+		const rootBlocks = getBlocks();
+		if ( ! rootBlocks?.length ) {
+			return null;
+		}
+
+		// Find header and footer template parts
+		const templatePartBlockIds: string[] = getBlocksByName?.( 'core/template-part' ) || [];
+
+		let headerBlockId = templatePartBlockIds.find(
+			( blockId: string ) => getBlock( blockId )?.attributes?.slug === 'header-hero'
+		);
+		if ( ! headerBlockId ) {
+			headerBlockId = templatePartBlockIds.find(
+				( blockId: string ) => getBlock( blockId )?.attributes?.slug === 'header'
+			);
+		}
+		const footerBlockId = templatePartBlockIds.find(
+			( blockId: string ) => getBlock( blockId )?.attributes?.slug === 'footer'
+		);
+
+		// Filter content blocks (exclude known template parts)
+		const contentBlocks = rootBlocks.filter(
+			( b: any ) =>
+				b.name !== 'core/template-part' || ! TEMPLATE_PART_SLUGS.includes( b.attributes?.slug )
+		);
+
+		// Get inner blocks of header and footer
+		const headerBlocks = headerBlockId ? getBlocks( headerBlockId ) : [];
+		const footerBlocks = footerBlockId ? getBlocks( footerBlockId ) : [];
+
+		// Process all block collections to resolve template part inner blocks
+		const processedHeaderBlocks = processTemplatePartBlocks( headerBlocks, getBlocks );
+		const processedFooterBlocks = processTemplatePartBlocks( footerBlocks, getBlocks );
+		const processedContentBlocks = processTemplatePartBlocks( contentBlocks, getBlocks );
+
+		const allBlocks: PageContentBlock[] = [];
+
+		// Add header
+		if ( processedHeaderBlocks.length && headerBlockId ) {
+			allBlocks.push( {
+				name: 'core/template-part',
+				type: 'header',
+				clientId: headerBlockId,
+				attributes: { ...getBlock( headerBlockId )?.attributes },
+				innerBlocks: processedHeaderBlocks,
+			} );
+		}
+
+		// Add content
+		if ( processedContentBlocks.length ) {
+			allBlocks.push( ...processedContentBlocks );
+		}
+
+		// Add footer
+		if ( processedFooterBlocks.length && footerBlockId ) {
+			allBlocks.push( {
+				name: 'core/template-part',
+				type: 'footer',
+				clientId: footerBlockId,
+				attributes: { ...getBlock( footerBlockId )?.attributes },
+				innerBlocks: processedFooterBlocks,
+			} );
+		}
+
+		return allBlocks.length ? allBlocks : null;
+	} catch ( error ) {
+		window.console?.warn?.( '[Image Studio] Error getting page content:', error );
+		return null;
+	}
 }
 
 /**
@@ -99,6 +224,11 @@ export function getClientContext(): ImageStudioClientContext {
 
 	if ( imageStudio ) {
 		context.imageStudio = imageStudio;
+	}
+
+	const currentPageContent = getCurrentPageContent();
+	if ( currentPageContent ) {
+		context.currentPageContent = currentPageContent;
 	}
 
 	window.console?.log?.( '[Image Studio] Client context:', context );

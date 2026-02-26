@@ -4,22 +4,23 @@
 	align-items: center;
 	padding: 10px 0;
 	border: none;
-	border-top: 1px solid #464646;
-	border-bottom: 1px solid #464646;
+	border-top: 1px solid var(--color-muted);
+	border-bottom: 1px solid var(--color-muted);
 	margin-bottom: -1px;
 	width: 100%;
 	background: transparent;
 	text-align: left;
 	transition: background-color 0.2s ease;
 	cursor: pointer;
+	color: var(--color-foreground);
 
 	&:hover {
-		background-color: rgba( 0, 0, 0, 0.05 );
+		background-color: color-mix(in srgb, var(--color-foreground) 5%, transparent);
 	}
 
 	&:focus {
 		outline: none;
-		background-color: rgba( 0, 0, 0, 0.08 );
+		background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
 	}
 
 	&__text {

@@ -28,6 +28,7 @@ import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
 	assignExistingCardProcessor,
+	assignExistingPayPalPPCPProcessor,
 } from './assignment-processor-functions';
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
@@ -206,6 +207,8 @@ export default function PaymentMethodSelector( {
 					assignExistingCardProcessor( purchase, reduxDispatch, data ),
 				'existing-card-ebanx': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				'existing-paypal-ppcp': ( data: unknown ) =>
+					assignExistingPayPalPPCPProcessor( purchase, reduxDispatch, data ),
 				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{

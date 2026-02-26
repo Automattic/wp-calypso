@@ -23,6 +23,7 @@ import {
 	ResponseCart,
 	CartKey,
 } from '@automattic/shopping-cart';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -31,6 +32,9 @@ jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...( jest.requireActual( '@automattic/calypso-products' ) as object ),
 	redirectCheckoutToWpAdmin: jest.fn(),
+} ) );
+jest.mock( 'calypso/dashboard/app/routing', () => ( {
+	getDashboardFromQuery: jest.fn(),
 } ) );
 
 const samplePurchaseId = 12342424241;
@@ -68,6 +72,7 @@ describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
 		jest.mocked( isJetpackCloud ).mockReturnValue( false );
 		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( false );
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( undefined );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -928,6 +933,27 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: samplePurchaseId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?isGravatarDomain=1` );
+	} );
+
+	it( 'redirects to thank-you page with dashboard query param if present', () => {
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+		const cart = {
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					id: '123',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'no-site',
+			cart,
+			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=ciab` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {

@@ -1,4 +1,3 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
 .agent-manager-support-guides-wrapper {
@@ -69,7 +68,7 @@
 
 .agents-manager-chat--docked {
 	.agent-manager-support-guides-no-results {
-		color: #2f2f2f;
+		color: $gray-800;
 	}
 
 	.agent-manager-support-guides-wrapper {
@@ -77,13 +76,13 @@
 
 		.components-search-control {
 			.components-input-control__container {
-				background-color: #2f2f2f;
+				background-color: $gray-800;
 
 				.components-input-control__prefix {
 					color: #f2f2f2;
 				}
 				.components-input-control__input {
-					color: #fff;
+					color: $white;
 
 					&::placeholder {
 						color: #f2f2f2;
@@ -97,11 +96,11 @@
 			div[role='listitem'] {
 				.components-item {
 					&:hover {
-						background: #2f2f2f;
+						background: $gray-800;
 					}
 
 					a {
-						color: #fff;
+						color: $white;
 					}
 				}
 			}

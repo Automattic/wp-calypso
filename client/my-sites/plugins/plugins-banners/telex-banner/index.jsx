@@ -35,7 +35,7 @@ const TelexBanner = () => {
 				target="_blank"
 				onClick={ trackClick }
 			>
-				{ __( 'Experiment with Tele' ) }
+				{ __( 'Experiment with Telex' ) }
 			</Button>
 			<img
 				className="telex-banner__mobile-illustration"

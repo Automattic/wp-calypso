@@ -298,6 +298,11 @@ export const changePaymentMethodRoute = createRoute( {
 		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
 	},
+	validateSearch: ( search ): { redirect_to?: string } => {
+		return {
+			redirect_to: typeof search.redirect_to === 'string' ? search.redirect_to : undefined,
+		};
+	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings-change-payment-method' )( {

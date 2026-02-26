@@ -547,6 +547,7 @@ const wpcomAllowedOrigins = [
 	'https://jetpack.com',
 	'https://agencies.automattic.com',
 	'https://my.wordpress.com',
+	'https://my.woo.ai',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
 	'http://widgets.wp.com',
 	'https://widgets.wp.com',

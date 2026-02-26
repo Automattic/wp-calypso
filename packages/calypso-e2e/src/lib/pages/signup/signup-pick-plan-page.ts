@@ -32,24 +32,41 @@ export class SignupPickPlanPage {
 	}
 
 	/**
-	 * Captures the response from the site creation API endpoint.
+	 * Captures the response from the site creation API endpoint via route
+	 * interception to avoid the race where the page navigates away before
+	 * the response body can be read through CDP.
+	 *
+	 * @see test/e2e/docs-new/creating_reliable_tests.md
 	 * @returns {Promise<NewSiteResponse>}
 	 */
-	private async captureNewSiteResponse(): Promise< NewSiteResponse > {
-		const response = await this.page.waitForResponse( /.*\/sites\/new\?.*/, {
-			timeout: 60 * 1000,
+	private captureNewSiteResponse(): Promise< NewSiteResponse > {
+		return new Promise< NewSiteResponse >( ( resolve, reject ) => {
+			this.page.route(
+				/.*\/sites\/new\?.*/,
+				async ( route ) => {
+					try {
+						const response = await route.fetch();
+						const body = await response.body();
+						await route.fulfill( { response } );
+
+						const parsed = JSON.parse( body.toString() );
+						const siteDetails: NewSiteResponse = parsed.body;
+
+						if ( ! siteDetails.blog_details.blogid ) {
+							console.error( siteDetails );
+							reject( new Error( 'Failed to locate blog ID for the created site.' ) );
+							return;
+						}
+
+						siteDetails.blog_details.blogid = Number( siteDetails.blog_details.blogid );
+						resolve( siteDetails );
+					} catch ( error ) {
+						reject( error );
+					}
+				},
+				{ times: 1 }
+			);
 		} );
-
-		const responseJSON = await response.json();
-		const body: NewSiteResponse = responseJSON.body;
-
-		if ( ! body.blog_details.blogid ) {
-			console.error( body );
-			throw new Error( 'Failed to locate blog ID for the created site.' );
-		}
-
-		body.blog_details.blogid = Number( body.blog_details.blogid );
-		return body;
 	}
 
 	/**
@@ -68,13 +85,14 @@ export class SignupPickPlanPage {
 			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
 		}
 
-		const [ , , response ] = await Promise.all( [
+		const responsePromise = this.captureNewSiteResponse();
+
+		await Promise.all( [
 			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectPlan( name ),
-			this.captureNewSiteResponse(),
 		] );
 
-		return response;
+		return responsePromise;
 	}
 
 	/**
@@ -100,6 +118,29 @@ export class SignupPickPlanPage {
 		const actions = [
 			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
 			this.plansPage.selectPlan( name ),
+		];
+
+		await Promise.all( actions );
+	}
+
+	/**
+	 * Selects the Free plan escape hatch on the modal upsell.
+	 *
+	 * @param {Plans} planName Name of the plan.
+	 * @param {RegExp} redirectUrl Optional redirect URL to wait for.
+	 * @returns {Promise<void>}
+	 */
+	async selectEscapeHatchWithoutSiteCreation(
+		planName: Plans,
+		redirectUrl?: RegExp
+	): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+
+		redirectUrl ??= new RegExp( '.*checkout.*' );
+
+		const actions = [
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.plansPage.selectModalUpsellPlan( planName ),
 		];
 
 		await Promise.all( actions );

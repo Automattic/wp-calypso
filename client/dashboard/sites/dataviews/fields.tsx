@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
+import { Text } from '../../components/text';
 import TimeSince from '../../components/time-since';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
@@ -29,7 +30,13 @@ import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
-function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
+function getDefaultFields( {
+	viewType,
+	queries,
+}: {
+	viewType?: string;
+	queries: AppConfig[ 'queries' ];
+} ): Field< Site >[] {
 	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
@@ -45,12 +52,30 @@ function getDefaultFields( queries: AppConfig[ 'queries' ] ): Field< Site >[] {
 			label: __( 'URL' ),
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayUrl( item ),
-			render: ( { field, item } ) => <URL site={ item } value={ field.getValue( { item } ) } />,
+			render: ( { field, item } ) => {
+				const value = field.getValue( { item } );
+				if ( viewType === 'list' ) {
+					return (
+						<Text
+							variant="muted"
+							truncate
+							numberOfLines={ 1 }
+							style={ { marginInlineEnd: '24px' } }
+						>
+							{ value }
+						</Text>
+					);
+				}
+
+				return <URL site={ item } value={ value } />;
+			},
 		},
 		{
 			id: 'icon.ico',
 			label: __( 'Site icon' ),
-			render: ( { item } ) => <SiteIcon site={ item } />,
+			render: ( { item } ) => (
+				<SiteIcon site={ item } size={ viewType === 'list' ? 52 : undefined } />
+			),
 			enableSorting: false,
 		},
 		{
@@ -235,7 +260,7 @@ export function useFields( {
 	const { queries } = useAppContext();
 
 	return useMemo( () => {
-		const defaultFields = getDefaultFields( queries );
+		const defaultFields = getDefaultFields( { viewType, queries } );
 		return defaultFields.filter( ( field ) => {
 			if ( field.id === 'is_a8c' && ! isAutomattician ) {
 				return false;

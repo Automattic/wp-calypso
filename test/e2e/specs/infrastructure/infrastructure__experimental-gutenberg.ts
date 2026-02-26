@@ -20,17 +20,19 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 
 	let page: Page;
 	let editorPage: EditorPage;
+	let testAccount: TestAccount;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		editorPage = new EditorPage( page );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		const siteSlug = testAccount.getSiteURL( { protocol: false } );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it.each( [

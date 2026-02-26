@@ -19,7 +19,6 @@ Placeholders for asynchronous data fetching should be used judiciously. Some das
 
 See this post on loaders: p58i-kIo-p2
 
-
 ## DataViews and DataForm
 
 The dashboard relies heavily on two core components for data display and interaction:
@@ -33,7 +32,7 @@ Relying on CSS overrides and hacks should be avoided as much as possible.
 
 ## Card, CardBody, CardHeader, CardFooter, CardDivider, CardMedia
 
-Use the provided `Card` component (`client/dashboard/components/card`) instead of importing directly from `@wordpress/components`. 
+Use the provided `Card` component (`client/dashboard/components/card`) instead of importing directly from `@wordpress/components`.
 
 Our custom `Card` component serves as a wrapper around the WordPress Card to reduce padding on small screen and ensure consistent spacing.
 
@@ -43,6 +42,7 @@ In addition to the core components, the dashboard includes several reusable layo
 
 - **Page Layout**: The main container for every dashboard page.
 - **Menu** and **Responsive Menu**: Reusable components to render mobile-friendly navigation menus.
+- **DataViews**: A wrapper for core's DataViews, which supports view persistence.
 - **DataViews Card**: A card component for displaying data views.
 - **Overview Card**: Standard card for data display
 - **Header Bar**: A reusable header bar component for displaying a header bar (main and secondary headers).

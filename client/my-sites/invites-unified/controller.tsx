@@ -1,8 +1,18 @@
 import { type Context } from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
+import { isAlreadyMemberError } from './utils';
 import UnifiedInviteAccept from './index';
 import type { InviteBlogDetails } from './types';
+
+interface ApiError {
+	error: string;
+	message: string;
+	data?: {
+		garden_name?: string;
+		garden_partner?: string;
+	};
+}
 
 /**
  * Determine if unified invite flow should be used
@@ -30,9 +40,23 @@ function shouldUseUnifiedFlow( blogDetails?: InviteBlogDetails ): boolean {
 }
 
 /**
- * Middleware that checks if unified invite flow should be used
- * If unified should be used, renders the unified UI and sets a flag to skip legacy controller
- * Otherwise, calls next() to let the legacy acceptInvite controller run
+ * Build a minimal InviteBlogDetails from the error response's garden data.
+ */
+function getBlogDetailsFromError( apiError: ApiError ): InviteBlogDetails | undefined {
+	const { garden_name, garden_partner } = apiError.data || {};
+	if ( ! garden_name || ! garden_partner ) {
+		return undefined;
+	}
+
+	return {
+		is_garden_site: true,
+		garden: { name: garden_name, partner: garden_partner },
+	} as InviteBlogDetails;
+}
+
+/**
+ * Middleware that checks if unified invite flow should be used.
+ * Fetches invite data and delegates rendering to the unified component.
  */
 export async function maybeUseUnifiedInvite( context: Context, next: () => void ) {
 	const { site_id: siteId, invitation_key: inviteKey } = context.params;
@@ -54,8 +78,27 @@ export async function maybeUseUnifiedInvite( context: Context, next: () => void 
 		}
 
 		return next();
-	} catch {
-		// On error, fallback to legacy flow (it handles errors gracefully)
+	} catch ( error: unknown ) {
+		// Handle "already a member" errors in unified flow.
+		// The error response may include garden data we use to determine if the site is CIAB.
+		const apiError = error as ApiError;
+		if ( apiError.error && isAlreadyMemberError( apiError.error ) ) {
+			const blogDetails = getBlogDetailsFromError( apiError );
+
+			if ( shouldUseUnifiedFlow( blogDetails ) ) {
+				context.inviteError = {
+					error: apiError.error,
+					message: apiError.message,
+				};
+				context.inviteData = { blog_details: blogDetails };
+
+				renderUnifiedInvite( context );
+				context.useUnifiedInvite = true;
+				return next();
+			}
+		}
+
+		// On other errors, fallback to legacy flow (it handles errors gracefully)
 		return next();
 	}
 }
@@ -78,6 +121,7 @@ function renderUnifiedInvite( context: Context ) {
 			activationKey={ activationKey }
 			authKey={ authKey }
 			inviteData={ context.inviteData }
+			inviteError={ context.inviteError }
 		/>
 	);
 }

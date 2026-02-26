@@ -1,3 +1,5 @@
+declare const __i18n_text_domain__: string;
+
 // Type declarations for WordPress packages without types
 declare module '@wordpress/block-editor' {
 	export const BlockControls: any;

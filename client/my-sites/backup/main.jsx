@@ -81,6 +81,7 @@ const BackupPage = ( { queryDate } ) => {
 			} ) }
 		>
 			<Main
+				wideLayout
 				className={ clsx( {
 					is_jetpackcom: isJetpackCloud(),
 				} ) }

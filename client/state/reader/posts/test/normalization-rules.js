@@ -84,6 +84,22 @@ describe( 'normalization-rules', () => {
 		test( 'should classify an X_POST post', () => {
 			verifyClassification( { tags: { 'p2-xpost': true } }, [ DISPLAY_TYPES.X_POST ] );
 		} );
+
+		test( 'should not classify as GALLERY when post has a featured_image', () => {
+			verifyClassification(
+				{
+					featured_image: 'http://example.com/featured.jpg',
+					images: [
+						{ src: 'http://example.com/foo1.jpg', width: 800, height: 600 },
+						{ src: 'http://example.com/foo2.jpg', width: 1024, height: 768 },
+						{ src: 'http://example.com/foo3.jpg', width: 640, height: 480 },
+						{ src: 'http://example.com/foo4.jpg', width: 1024, height: 768 },
+						{ src: 'http://example.com/foo5.jpg', width: 1024, height: 768 },
+					],
+				},
+				[ DISPLAY_TYPES.UNCLASSIFIED ]
+			);
+		} );
 	} );
 
 	describe( 'isFeaturedImageInContent', () => {

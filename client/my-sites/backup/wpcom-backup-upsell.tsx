@@ -278,7 +278,7 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 			body = <BackupUpsellBody />;
 	}
 	return (
-		<Main className="backup__main backup__wpcom-upsell">
+		<Main wideLayout className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />

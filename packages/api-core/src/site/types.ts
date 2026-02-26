@@ -25,7 +25,6 @@ export interface SiteOptions {
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
-	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;

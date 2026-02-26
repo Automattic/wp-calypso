@@ -11,6 +11,7 @@ import {
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
+	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
@@ -99,7 +100,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					buttonProps={ {
 						href:
 							pressableOwnership === 'regular'
-								? 'https://my.pressable.com/agency/auth'
+								? EXTERNAL_PRESSABLE_AUTH_URL
 								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 						target: pressableOwnership === 'regular' ? '_blank' : undefined,
 					} }

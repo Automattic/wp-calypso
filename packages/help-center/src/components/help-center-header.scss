@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/variables';
-@import "@automattic/typography/styles/variables";
 @import "variables";
 
 /**
@@ -119,7 +118,7 @@
 
 		div {
 			margin-bottom: 2px;
-			font-size: 0.875rem;
+			font-size: $font-body-small;
 		}
 
 		&:not( :disabled) {

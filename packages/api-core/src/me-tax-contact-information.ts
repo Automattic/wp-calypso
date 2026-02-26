@@ -1,7 +1,7 @@
 import { wpcom } from './wpcom-fetcher';
 
 export interface ValidateTaxContactInfoParams {
-	contactInformation: {
+	contact_information: {
 		country_code?: string;
 		postal_code?: string;
 		address_1?: string;

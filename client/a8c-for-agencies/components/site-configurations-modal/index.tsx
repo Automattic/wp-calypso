@@ -1,8 +1,8 @@
 import { getDataCenterOptions } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl, Icon, Modal, Spinner } from '@wordpress/components';
+import { CheckboxControl, Icon, Modal, Spinner, Button } from '@wordpress/components';
 import { check, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import useCreateWPCOMDevSiteMutation, {
 	APIError,
 } from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getPHPVersions } from 'calypso/data/php-versions';
@@ -51,6 +52,8 @@ export default function SiteConfigurationsModal( {
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
+
+	const { showSupportGuide } = useHelpCenter();
 
 	const phpVersionsElements = phpVersions.map( ( version ) => {
 		if ( version.disabled ) {
@@ -219,11 +222,12 @@ export default function SiteConfigurationsModal( {
 				<FormField
 					label={ translate( 'PHP version' ) }
 					description={ translate(
-						'The PHP version can be changed after your site is created via {{a}}Web Server Settings{{/a}}.',
+						'The PHP version can be changed after your site is created via {{a}}Web Server Settings ↗{{/a}}.',
 						{
 							components: {
 								a: (
-									<a
+									<Button
+										variant="link"
 										target="_blank"
 										href="https://developer.wordpress.com/docs/developer-tools/web-server-settings/"
 										rel="noreferrer"
@@ -253,11 +257,12 @@ export default function SiteConfigurationsModal( {
 						{ isDevSite ? (
 							<label className="dev-sites-label">
 								{ translate(
-									'Clients can’t access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.',
+									'Clients can’t access the {{HcLink}}WordPress.com Help Center ↗{{/HcLink}} or {{HfLink}}hosting features ↗{{/HfLink}} on development sites. Once the site is launched, enable access in Site Settings.',
 									{
 										components: {
 											HcLink: (
-												<a
+												<Button
+													variant="link"
 													target="_blank"
 													href={ localizeUrl(
 														'https://wordpress.com/support/help-support-options/#how-to-contact-us'
@@ -266,7 +271,8 @@ export default function SiteConfigurationsModal( {
 												/>
 											),
 											HfLink: (
-												<a
+												<Button
+													variant="link"
 													target="_blank"
 													href={ localizeUrl(
 														'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
@@ -277,15 +283,16 @@ export default function SiteConfigurationsModal( {
 										},
 									}
 								) }{ ' ' }
-								{ translate( '{{a}}Learn more.{{/a}}', {
+								{ translate( '{{a}}Learn more{{/a}}', {
 									components: {
 										a: (
-											<a
-												target="_blank"
-												href={ localizeUrl(
-													'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
-												) }
-												rel="noopener noreferrer"
+											<Button
+												variant="link"
+												onClick={ () =>
+													showSupportGuide(
+														'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting'
+													)
+												}
 											/>
 										),
 									},
@@ -302,25 +309,27 @@ export default function SiteConfigurationsModal( {
 								/>
 								<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
 									{ translate(
-										'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+										'Allow clients to use the {{HcLink}}WordPress.com Help Center ↗{{/HcLink}} and {{HfLink}}hosting features ↗{{/HfLink}}.',
 										{
 											components: {
 												HcLink: (
-													<a
-														target="_blank"
+													<Button
+														variant="link"
 														href={ localizeUrl(
 															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
 														) }
 														rel="noreferrer"
+														target="_blank"
 													/>
 												),
 												HfLink: (
-													<a
-														target="_blank"
+													<Button
+														variant="link"
 														href={ localizeUrl(
 															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 														) }
 														rel="noreferrer"
+														target="_blank"
 													/>
 												),
 											},
@@ -333,9 +342,9 @@ export default function SiteConfigurationsModal( {
 				</FormField>
 				<div className="configure-your-site-modal-form__footer">
 					<Button
-						primary
+						variant="primary"
 						type="submit"
-						busy={ isSubmitting }
+						isBusy={ isSubmitting }
 						disabled={ ! siteName.isSiteNameReadyForUse }
 					>
 						{ translate( 'Create site' ) }

@@ -86,6 +86,8 @@ const DomainSearchStep: StepType< {
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
 
+	const isCiab = dashboard === 'ciab';
+
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
 	// eslint-disable-next-line no-nested-ternary
@@ -104,6 +106,7 @@ const DomainSearchStep: StepType< {
 				isSignup:
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
+				isCiab,
 				flowName: flow,
 			} ),
 			priceRules: {
@@ -127,7 +130,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, tldQuery, query ] );
+	}, [ flow, isCiab, tldQuery, query ] );
 
 	const { submit } = navigation;
 
@@ -310,7 +313,7 @@ const DomainSearchStep: StepType< {
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
-				isDomainFlow( flow ) ||
+				( isDomainFlow( flow ) && ! isCiab ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
 				isDomainAndPlanFlow( flow )
 			}
