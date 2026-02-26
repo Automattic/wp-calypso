@@ -138,7 +138,7 @@ describe( 'DomainOnly', () => {
 			renderComponent();
 
 			expect(
-				screen.getByText( `Get a professional email like hello@${ mockDomainPurchase.meta }.` )
+				screen.getByText( `Create a professional email address on ${ mockDomainPurchase.meta }.` )
 			).toBeVisible();
 		} );
 	} );
