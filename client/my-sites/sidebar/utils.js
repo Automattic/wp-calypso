@@ -86,7 +86,8 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		isA8CForAgencies() &&
 		( pathIncludes( currentPath, 'purchases', 1 ) ||
 			pathIncludes( currentPath, 'marketplace', 1 ) ||
-			pathIncludes( currentPath, 'client', 1 ) )
+			pathIncludes( currentPath, 'client', 1 ) ||
+			pathIncludes( currentPath, 'resources-and-tools', 1 ) )
 	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}

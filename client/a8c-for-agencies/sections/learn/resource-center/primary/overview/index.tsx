@@ -12,7 +12,7 @@ import LayoutHeader, {
 import ResourceCenterOverviewContent from '../../overview-content';
 
 export default function ResourceCenterOverview() {
-	const title = __( 'Guides and articles' );
+	const title = __( 'Learn' );
 	const { data, isLoading } = useFetchAgencyResources();
 
 	if ( isLoading ) {

@@ -1,11 +1,7 @@
 import { pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import {
-	A4A_DEV_TOOLS_LINK,
-	A4A_LEARN_LINK,
-	A4A_LEARN_RESOURCE_CENTER_LINK,
-} from '../lib/constants';
+import { A4A_DEV_TOOLS_LINK, A4A_LEARN_LINK, A4A_RESOURCES_LINK } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
 const useLearnMenuItems = ( path: string ) => {
@@ -16,11 +12,11 @@ const useLearnMenuItems = ( path: string ) => {
 			createItem(
 				{
 					icon: pages,
-					path: A4A_LEARN_LINK,
-					link: A4A_LEARN_RESOURCE_CENTER_LINK,
-					title: translate( 'Guides and articles' ),
+					path: A4A_RESOURCES_LINK,
+					link: A4A_LEARN_LINK,
+					title: translate( 'Learn' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Guides and articles',
+						menu_item: 'Automattic for Agencies / Resources and tools / Learn',
 					},
 				},
 				path
