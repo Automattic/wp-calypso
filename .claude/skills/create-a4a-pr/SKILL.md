@@ -11,10 +11,9 @@ When the user runs `/create-a4a-pr` or asks to create/open/raise a PR for A4A wo
 
 1. **Branch** — Create a new branch from the base (`trunk` or the one they specify). Use a descriptive name (e.g. `add/feature-name`, `fix/bug-name`).
 2. **Commit** — Stage and commit with a clear message. Use `A4A: ` prefix in the commit when it's A4A work.
-3. **Create PR** — `gh pr create` with base, title, body. Default base is `trunk` unless they said "on top of PR #…" (then use that PR's branch).
+3. **Create PR** — `gh pr create` with base, title, body. Default base is `trunk` unless they said "on top of PR #…" (then use that PR's branch). **Body must follow** `.github/PULL_REQUEST_TEMPLATE.md`: put "This PR is built on top of {pr-url}." at the very top when applicable; then "Part of #" or Fixes/Resolves with the Linear link; then fill Proposed Changes, Why are these changes being made?, Testing Instructions, and Pre-merge Checklist per the template.
 4. **Conventions** — Add reviewer `Automattic/a4a-genesis`, label `A8c Agencies`, assign to the branch author. Use `gh pr edit` if needed.
-5. **Body** — If built on another PR/branch: put `This PR is built on top of {pr-url}.` at the very top. If they gave a Linear link: add `Fixes` / `Resolves` / `Part of {link}` right after that.
-6. **Reply** — Paste the full PR URL so they can click it.
+5. **Reply** — Paste the full PR URL in the message so they can click it.
 
 ## Conventions summary
 
