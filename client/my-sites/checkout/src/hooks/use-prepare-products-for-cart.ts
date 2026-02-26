@@ -676,6 +676,7 @@ function createItemToAddToCart( {
 		product_slug: productSlug,
 		quantity,
 		extra: {
+			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,
