@@ -1,0 +1,56 @@
+---
+description: Conventions for A4A PR creation (titles, labels, reviewers, body)
+globs: client/a8c-for-agencies/**
+alwaysApply: false
+---
+
+# A4A PR Creation Conventions
+
+When helping contributors create or edit pull requests in this repository, follow these rules by default unless explicitly told otherwise.
+
+## When the user asks to open a PR
+
+Whenever the user asks to _create/open/raise_ a PR (for example: "create a PR", "open a PR", "raise a PR for this", "turn this into a PR"), do the following in order, then reply with the **full PR link** (e.g. `https://github.com/Automattic/wp-calypso/pull/12345`) pasted directly into the message so it's easy to click:
+
+1. **Create a new branch** from the appropriate base (e.g. `trunk` or the branch they specify). Use a descriptive branch name (e.g. `add/feature-name`, `fix/bug-name`).
+2. **Commit** the relevant changes (stage and commit with a clear message; use the `A4A: ` prefix in the commit message when it's A4A work).
+3. **Create the PR** with `gh pr create` (set base, title, body). If the user did not specify a base branch, use `trunk` unless context implies otherwise (e.g. "on top of PR #108931" → use that PR's branch as base).
+4. **Apply conventions**: add reviewer `Automattic/a4a-genesis`, label `A8c Agencies`, and if applicable add "built on top of …" and Linear link at the top of the body (via `gh pr edit` or in the initial body).
+5. **Assign** the PR to the author of the branch (the current user who asked to create the PR).
+6. **Reply** with the full PR URL so they can open it in one click.
+
+## Titles
+
+- For A4A-related PRs, always start titles with the prefix `A4A: `.
+- Example: `A4A: Add PR review workflow`.
+
+## Reviewers
+
+- Always add the GitHub team `Automattic/a4a-genesis` as a reviewer on new A4A PRs.
+
+## Labels
+
+- Always add the `A8c Agencies` label to new A4A PRs.
+
+## Stacked / Dependent PRs
+
+- When creating a PR that is **built on top of another PR or branch**, add a note at the very top of the PR body:
+  - `This PR is built on top of {pr-link-or-branch}.`
+- Use the full GitHub PR URL when available (for example, `https://github.com/Automattic/wp-calypso/pull/108931`).
+
+## Linear issue links
+
+- At the start of the PR body, always include one of the following, as specified by the user:
+  - `Fixes {linear-link}`
+  - `Resolves {linear-link}`
+  - `Part of {linear-link}`
+- Place this line immediately after any “built on top of …” line (if present).
+
+## Implementation Notes
+
+- When using the GitHub CLI, prefer:
+  - `gh pr create` to create the PR.
+  - `gh pr edit` to:
+    - Add reviewers (`--add-reviewer Automattic/a4a-genesis`).
+    - Add labels (`--add-label "A8c Agencies"`).
+    - Update the PR body to include the “built on top of …” and Linear link lines near the top.
