@@ -9,7 +9,9 @@ import SignupForm from 'calypso/blocks/signup-form';
 import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
@@ -85,7 +87,20 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	renderFormHeader = () => {
-		return <InviteFormHeaderLoggedOut site={ this.props.invite?.site } />;
+		return (
+			<InviteFormHeaderLoggedOut
+				site={ this.props.invite?.site }
+				ciabConfig={ this.getCiabConfig() }
+			/>
+		);
+	};
+
+	getCiabConfig = () => {
+		const site = this.props.invite?.site;
+		const gardenName = site?.garden?.name;
+		const gardenPartner = site?.garden?.partner;
+
+		return getCiabConfigFromGarden( gardenPartner, gardenName );
 	};
 
 	loginUser = () => {
@@ -161,8 +176,18 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	render() {
+		const ciabConfig = this.getCiabConfig();
+
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
-			return this.renderSignInLinkOnly();
+			return (
+				<>
+					<BodySectionCssClass
+						bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+					/>
+					<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+					{ this.renderSignInLinkOnly() }
+				</>
+			);
 		}
 
 		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
@@ -179,7 +204,10 @@ class InviteAcceptLoggedOut extends Component {
 
 		return (
 			<>
-				<WpLoggedOutInviteLogo />
+				<BodySectionCssClass
+					bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+				/>
+				<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm

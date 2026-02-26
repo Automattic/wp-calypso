@@ -46,7 +46,7 @@ export interface CiabPartnerConfig {
  *
  * To add a new partner:
  * 1. Add entry here with all config
- * 2. Add the translated ToS text in getSignupTosElement() below (required for i18n extraction)
+ * 2. Add the translated ToS text in getPartnerSignupTosElement() below (required for i18n extraction)
  * 3. Add feature flag to config/_shared.json and config/development.json
  * 4. Done! No other code changes needed.
  */
@@ -180,7 +180,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 			) : undefined;
 
 		// Build ToS element for signup
-		const signupTosElement = getSignupTosElement( ciabConfig, translate );
+		const signupTosElement = getPartnerSignupTosElement( ciabConfig, translate );
 
 		return {
 			hasCustomBranding,
@@ -195,7 +195,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
  * Get the signup ToS element for a partner.
  * Each partner's ToS text must be a string literal for i18n extraction.
  */
-function getSignupTosElement(
+export function getPartnerSignupTosElement(
 	ciabConfig: CiabPartnerConfig | null,
 	translate: ReturnType< typeof useTranslate >
 ): JSX.Element | undefined {

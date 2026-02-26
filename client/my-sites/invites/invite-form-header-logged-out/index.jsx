@@ -3,8 +3,9 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
+import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 
-function InviteFormHeaderLoggedOut( { site } ) {
+function InviteFormHeaderLoggedOut( { site, ciabConfig } ) {
 	const translate = useTranslate();
 	const siteName = site?.title || site?.domain || translate( 'this site' );
 	const siteUrl = site?.URL;
@@ -25,29 +26,31 @@ function InviteFormHeaderLoggedOut( { site } ) {
 		}
 	);
 
-	const description = createInterpolateElement(
-		translate(
-			'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
-		),
-		{
-			tosLink: (
-				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
+	const description =
+		getPartnerSignupTosElement( ciabConfig, translate ) ||
+		createInterpolateElement(
+			translate(
+				'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
 			),
-			privacyLink: (
-				<a
-					href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-		}
-	);
+			{
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				privacyLink: (
+					<a
+						href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+						onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			}
+		);
 
 	return (
 		<div className="invite-form-header invite-form-header--logged-out">
