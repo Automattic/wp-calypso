@@ -10,6 +10,10 @@ import DevToolSection from './dev-tool-section';
 
 import './style.scss';
 
+// TODO: Replace with actual images
+const playgroundImage = studioImage;
+const jurassicImage = studioImage;
+
 export default function DevToolsContent() {
 	const dispatch = useDispatch();
 
@@ -19,6 +23,14 @@ export default function DevToolsContent() {
 
 	const handleGithubClick = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_dev_tools_connect_repository_click' ) );
+	};
+
+	const handlePlaygroundClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_dev_tools_wp_playground_click' ) );
+	};
+
+	const handleJurassicClick = () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_dev_tools_jurassic_ninja_click' ) );
 	};
 
 	const handleTelexClick = () => {
@@ -82,6 +94,57 @@ export default function DevToolsContent() {
 				image={ {
 					src: githubImage,
 					alt: __( 'GitHub Deployments' ),
+				} }
+				hasBackground
+			/>
+
+			<DevToolSection
+				name={ __( 'WordPress Playground' ) }
+				badge={ __( 'Browser-Based' ) }
+				tagline={ __( 'Try it now, right in your browser' ) }
+				description={ __(
+					'Run WordPress entirely in your browser—no server, no install, no account. Experiment with themes, test code snippets, or learn new features. Close the tab when finished.'
+				) }
+				features={ [
+					__( 'Start experimenting in under 3 seconds' ),
+					__( 'Test themes and plugins without any setup' ),
+					__( 'Share environments via URL—fully reproducible' ),
+					__( 'Learn WordPress without installing anything' ),
+					__( 'Works offline once loaded' ),
+				] }
+				cta={ {
+					label: __( 'Launch a browser playground' ),
+					href: 'https://playground.wordpress.net/',
+					onClick: handlePlaygroundClick,
+				} }
+				image={ {
+					src: playgroundImage,
+					alt: __( 'WordPress Playground' ),
+				} }
+			/>
+
+			<DevToolSection
+				name={ __( 'Jurassic.ninja' ) }
+				badge={ __( 'Disposable Sites' ) }
+				tagline={ __( 'Test anything without the cleanup' ) }
+				description={ __(
+					'Spin up a throwaway WordPress site in seconds. Reproduce bugs in a clean environment, demo features for clients, or test plugins risk-free—then close the tab and walk away.'
+				) }
+				features={ [
+					__( 'Reproduce issues in an isolated environment' ),
+					__( 'Demo features without touching production' ),
+					__( 'Test plugins and themes before committing' ),
+					__( 'Share temporary links with clients or teammates' ),
+					__( 'Sites auto-expire—nothing to clean up' ),
+				] }
+				cta={ {
+					label: __( 'Spin up a test site' ),
+					href: 'https://jurassic.ninja/',
+					onClick: handleJurassicClick,
+				} }
+				image={ {
+					src: jurassicImage,
+					alt: __( 'Jurassic.ninja' ),
 				} }
 				hasBackground
 			/>
