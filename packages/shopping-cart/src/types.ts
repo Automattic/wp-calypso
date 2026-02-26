@@ -932,6 +932,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 */
 	purchaseId?: string;
 
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/unified` route.
+	 */
+	isUnifiedSitelessCheckout?: boolean;
+
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
