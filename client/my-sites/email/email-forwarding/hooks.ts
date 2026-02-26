@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import useRemoveEmailForwardMutation from 'calypso/data/emails/use-remove-email-forward-mutation';
 import useResendVerifyEmailForwardMutation from 'calypso/data/emails/use-resend-verify-email-forward-mutation';
+import useUpdateEmailForwardMutation from 'calypso/data/emails/use-update-email-forward-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Mailbox } from 'calypso/data/emails/types';
 
@@ -42,5 +43,28 @@ export function useResend( { mailbox }: { mailbox: Mailbox } ) {
 			resendVerificationEmail( { mailbox, destination, domain } );
 		},
 		[ resendVerificationEmail ]
+	);
+}
+
+export function useEdit( { mailbox }: { mailbox: Mailbox } ) {
+	const { mutateAsync: updateEmailForward } = useUpdateEmailForwardMutation( mailbox.domain );
+
+	return useCallback(
+		( mailboxName: string, domain: string, destination: string, newDestination: string ) => {
+			recordTracksEvent( 'calypso_email_management_email_forwarding_edit_click', {
+				destination,
+				new_destination: newDestination,
+				domain_name: domain,
+				mailbox: mailboxName,
+			} );
+
+			return updateEmailForward( {
+				mailbox: mailboxName,
+				destination,
+				newDestination,
+				domain,
+			} );
+		},
+		[ updateEmailForward ]
 	);
 }

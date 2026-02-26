@@ -35,3 +35,18 @@ export function deleteEmailForward(
 		) }/${ encodeURIComponent( destination ) }/delete`
 	);
 }
+
+export function updateEmailForward(
+	domainName: string,
+	mailbox: string,
+	destination: string,
+	newDestination: string
+): Promise< { updated: boolean; verified: boolean } > {
+	return wpcom.req.post(
+		`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent( mailbox ) }`,
+		{
+			destination,
+			new_destination: newDestination,
+		}
+	);
+}

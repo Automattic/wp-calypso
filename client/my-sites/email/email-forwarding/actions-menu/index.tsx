@@ -1,39 +1,77 @@
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Button,
 	DropdownMenu,
+	Modal,
+	TextControl,
 } from '@wordpress/components';
-import { rotateLeft, trash, moreVertical } from '@wordpress/icons';
+import { pencil, rotateLeft, trash, moreVertical } from '@wordpress/icons';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
-import { useResend, useRemove } from '../hooks';
+import { useEdit, useResend, useRemove } from '../hooks';
 import type { Mailbox } from '../../../../data/emails/types';
+
 import './style.scss';
 
 export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isRemoveOpen, setIsRemoveOpen ] = useState( false );
+	const [ isEditOpen, setIsEditOpen ] = useState( false );
 	const remove = useRemove( { mailbox } );
 	const resend = useResend( { mailbox } );
+	const edit = useEdit( { mailbox } );
 	const translate = useTranslate();
 
-	const handleConfirm = () => {
-		remove( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) );
-		setIsOpen( false );
+	const currentDestination = getEmailForwardAddress( mailbox );
+
+	const handleRemoveConfirm = () => {
+		remove( mailbox.mailbox, mailbox.domain, currentDestination );
+		setIsRemoveOpen( false );
 	};
 
-	const handleCancel = () => {
-		setIsOpen( false );
+	const handleRemoveCancel = () => {
+		setIsRemoveOpen( false );
 	};
+
+	const editControl = {
+		title: translate( 'Edit', {
+			comment: 'Edit email forward destination',
+		} ) as string,
+		icon: pencil,
+		onClick: () => setIsEditOpen( true ),
+	};
+
+	const removeControl = {
+		title: translate( 'Remove', {
+			comment: 'Remove email forward',
+		} ) as string,
+		icon: trash,
+		onClick: () => setIsRemoveOpen( true ),
+	};
+
+	const resendControl = {
+		title: translate( 'Resend', {
+			comment: 'Resend verification email',
+		} ) as string,
+		icon: rotateLeft,
+		onClick: () => resend( mailbox.mailbox, mailbox.domain, currentDestination ),
+	};
+
+	const controls = mailbox.warnings?.length
+		? [ editControl, resendControl, removeControl ]
+		: [ editControl, removeControl ];
 
 	return (
 		<>
 			<ConfirmDialog
-				isOpen={ isOpen }
-				onConfirm={ handleConfirm }
-				onCancel={ handleCancel }
+				isOpen={ isRemoveOpen }
+				onConfirm={ handleRemoveConfirm }
+				onCancel={ handleRemoveCancel }
 				cancelButtonText={ translate( 'Cancel' ) }
 				confirmButtonText={ translate( 'Remove' ) }
 			>
@@ -48,39 +86,102 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 					</Text>
 				</VStack>
 			</ConfirmDialog>
+			{ isEditOpen && (
+				<EditModal
+					mailbox={ mailbox }
+					currentDestination={ currentDestination }
+					onEdit={ edit }
+					onClose={ () => setIsEditOpen( false ) }
+				/>
+			) }
 			<DropdownMenu
 				icon={ moreVertical }
 				label={ translate( 'More options' ) }
-				controls={
-					mailbox.warnings?.length
-						? [
-								{
-									title: translate( 'Resend', {
-										comment: 'Resend verification email',
-									} ) as string,
-									icon: rotateLeft,
-									onClick: () =>
-										resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ),
-								},
-								{
-									title: translate( 'Remove', {
-										comment: 'Remove email forward',
-									} ) as string,
-									icon: trash,
-									onClick: () => setIsOpen( true ),
-								},
-						  ]
-						: [
-								{
-									title: translate( 'Remove', {
-										comment: 'Remove email forward',
-									} ) as string,
-									icon: trash,
-									onClick: () => setIsOpen( true ),
-								},
-						  ]
-				}
+				controls={ controls }
 			/>
 		</>
 	);
 };
+
+function EditModal( {
+	mailbox,
+	currentDestination,
+	onEdit,
+	onClose,
+}: {
+	mailbox: Mailbox;
+	currentDestination: string;
+	onEdit: (
+		mailbox: string,
+		domain: string,
+		destination: string,
+		newDestination: string
+	) => Promise< unknown >;
+	onClose: () => void;
+} ) {
+	const translate = useTranslate();
+	const [ newDestination, setNewDestination ] = useState( currentDestination );
+	const [ isSaving, setIsSaving ] = useState( false );
+
+	const isUnchanged = newDestination.trim() === currentDestination;
+	const isValid = emailValidator.validate( newDestination.trim() );
+
+	const handleSave = async () => {
+		setIsSaving( true );
+		try {
+			await onEdit( mailbox.mailbox, mailbox.domain, currentDestination, newDestination.trim() );
+			onClose();
+		} finally {
+			setIsSaving( false );
+		}
+	};
+
+	return (
+		<Modal title={ translate( 'Edit email forward' ) } onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				<Text>
+					{ translate( 'Edit the forwarding destination for %(emailAddress)s.', {
+						args: {
+							emailAddress: `${ mailbox.mailbox }@${ mailbox.domain }`,
+						},
+					} ) }
+				</Text>
+				<TextControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					label={ translate( 'Forward to' ) }
+					value={ newDestination }
+					onChange={ setNewDestination }
+					type="email"
+					disabled={ isSaving }
+					help={
+						! isUnchanged && newDestination.trim() && ! isValid
+							? translate( 'Please enter a valid email address.' )
+							: undefined
+					}
+				/>
+				<HStack justify="right">
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						onClick={ onClose }
+						disabled={ isSaving }
+						accessibleWhenDisabled
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ handleSave }
+						isBusy={ isSaving }
+						disabled={ isSaving || isUnchanged || ! isValid }
+						accessibleWhenDisabled
+					>
+						{ translate( 'Save' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</Modal>
+	);
+}
