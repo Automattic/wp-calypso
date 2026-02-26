@@ -256,6 +256,11 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
+	validateSearch: ( search ): { refunded: boolean } => {
+		return {
+			refunded: !! search.refunded,
+		};
+	},
 } );
 
 export const purchaseSettingsIndexRoute = createRoute( {
