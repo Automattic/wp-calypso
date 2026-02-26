@@ -77,7 +77,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const description = isWpcomFeed ? site?.description : feed?.description;
 	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
-	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
+	const feedUrl = feedId ? getFeedUrl( feedId ) : subscribeUrl;
 	const subscriptionId = feed?.subscription_id;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
@@ -232,7 +232,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	return (
 		<li className="reader-feed-item">
 			<HStack className="reader-feed-item__site-preview-h-stack" spacing={ 3 }>
-				{ ! isWpcomFeed ? (
+				{ ! feedId ? (
 					<ExternalLink
 						className="reader-feed-item__icon"
 						href={ feedUrl }
