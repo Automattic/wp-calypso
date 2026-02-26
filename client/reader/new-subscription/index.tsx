@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -5,6 +6,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getUrlQuerySearchTerm } from 'calypso/reader/utils';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderMain from '../components/reader-main';
@@ -14,6 +16,7 @@ import {
 	SubscriptionType,
 } from './components/add-subscription-form/add-subscription-form.consts';
 
+const { SiteSubscriptionsQueryPropsProvider } = SubscriptionManager;
 interface Tab {
 	slug: SubscriptionType;
 	title: TranslateResult;
@@ -74,7 +77,9 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
+			<SiteSubscriptionsQueryPropsProvider initialSearchTermState={ getUrlQuerySearchTerm }>
+				<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
+			</SiteSubscriptionsQueryPropsProvider>
 		</ReaderMain>
 	);
 }

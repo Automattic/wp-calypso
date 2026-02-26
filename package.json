@@ -432,5 +432,8 @@
 		"@react-spring/core@9.3.0": {
 			"built": false
 		}
+	},
+	"volta": {
+		"node": "22.22.0"
 	}
 }

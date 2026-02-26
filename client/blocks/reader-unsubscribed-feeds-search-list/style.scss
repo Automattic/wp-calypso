@@ -1,17 +1,31 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
 .reader-unsubscribed-feeds-search-list-loader {
 	display: flex;
 	justify-content: center;
 	margin-top: 30px;
 }
 
-.reader-unsubscribed-feeds-search-list {
-	margin: 0;
+.reader-unsubscribed-feeds-search {
+	.reader-unsubscribed-feeds-search__heading {
+		margin: 0 0 16px 0;
+		color: $studio-gray-60;
+		font-size: $font-body-small;
+		font-family: "SF Pro Text", sans-serif;
+		line-height: $font-title-small;
+	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		gap: unset !important;
+	.reader-unsubscribed-feeds-search-list {
+		margin: 0;
 
-		* {
+		@include breakpoint-deprecated("<660px") {
 			gap: unset !important;
+
+			* {
+				gap: unset !important;
+			}
 		}
 	}
 }

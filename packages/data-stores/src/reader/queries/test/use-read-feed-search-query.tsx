@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { when } from 'jest-when';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import useReadFeedSearchQuery, { FeedSort } from '../use-read-feed-search-query';
@@ -11,43 +12,60 @@ jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
 describe( 'useReadFeedSearchQuery', () => {
 	beforeEach( () => {
-		jest.mocked( wpcomRequest ).mockResolvedValue( {
-			algorithm: 'example_algorithm',
-			feeds: [],
-			next_page: 'example_next_page',
-			total: 0,
-		} );
+		jest.clearAllMocks();
 	} );
 
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should call wpcomRequest with correct parameters when query is defined', async () => {
-		const queryClient = new QueryClient();
-		const wrapper = ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
+	const wrapper = ( { children } ) => {
+		return <QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>;
+	};
 
+	it( 'returns the feeds results from the api call', async () => {
 		const query = 'example';
-		renderHook( () => useReadFeedSearchQuery( { query } ), { wrapper } );
 
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/read/feed',
-			apiVersion: '1.1',
-			method: 'GET',
-			query: `q=${ encodeURIComponent( query ) }&exclude_followed=false&sort=${ encodeURIComponent(
-				FeedSort.Relevance
-			) }`,
+		// Mock the wpcomRequest has an implementation issue which blocks the nock usage, so we use jest-when to mock the response
+		when( wpcomRequest )
+			.calledWith( {
+				path: '/read/feed',
+				apiVersion: '1.1',
+				method: 'GET',
+				query: `q=${ encodeURIComponent(
+					query
+				) }&exclude_followed=false&sort=${ encodeURIComponent( FeedSort.Relevance ) }`,
+			} )
+			.mockResolvedValue( {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						id: '1',
+						name: 'Example Feed',
+						URL: 'https://example.com',
+					},
+				],
+			} );
+
+		const { result } = renderHook( () => useReadFeedSearchQuery( { query } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => {
+			expect( result.current.data ).toEqual( {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						id: '1',
+						name: 'Example Feed',
+						URL: 'https://example.com',
+					},
+				],
+			} );
 		} );
 	} );
 
-	it( 'should not call wpcomRequest when query is undefined', () => {
-		const queryClient = new QueryClient();
-		const wrapper = ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
-
+	it( 'does not call wpcomRequest when query is undefined', () => {
 		renderHook( () => useReadFeedSearchQuery( {} ), { wrapper } );
 
 		expect( wpcomRequest ).not.toHaveBeenCalled();

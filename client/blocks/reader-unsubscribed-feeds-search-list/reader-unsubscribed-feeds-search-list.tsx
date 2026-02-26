@@ -1,25 +1,59 @@
-import './style.scss';
 import { recordTrainTracksRender } from '@automattic/calypso-analytics';
-import { Reader } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
+import './style.scss';
 
-interface ReaderUnsubscribedFeedsSearchListProps {
-	isLoading: boolean;
-	feedItems?: Reader.FeedItem[];
-}
+const { useSiteSubscriptionsQueryProps, useSiteSubscriptionsQuery, useSiteUnsubscribeMutation } =
+	SubscriptionManager;
 
-const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
-	const { feedItems, isLoading } = props;
+const ReaderUnsubscribedFeedsSearchList = () => {
+	const { searchTerm } = useSiteSubscriptionsQueryProps();
+	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
+	const translate = useTranslate();
+	const {
+		data: { subscriptions },
+		isSuccess: isFetchingSubscriptionsSuccess,
+	} = useSiteSubscriptionsQuery();
+
+	const showUnsubscribedFeedsList =
+		searchTerm !== '' && isFetchingSubscriptionsSuccess && ! isUnsubscribing;
+
+	const {
+		data: feedItems,
+		isFetching: isFetchingUnsubscribedFeeds,
+		isSuccess: isSuccessUnsubscribedFeeds,
+	} = Reader.useReadFeedSearchQuery(
+		{
+			excludeFollowed: true,
+			query: searchTerm,
+		},
+		{ enabled: showUnsubscribedFeedsList }
+	);
+
+
+	const hasNoFeedItems = isSuccessUnsubscribedFeeds && ! feedItems?.feeds?.length;
 
 	const feedItemComponents = useMemo( () => {
-		if ( ! feedItems?.length ) {
+		const filteredFeedItems = feedItems?.feeds?.filter( ( feedItem: Reader.FeedItem ): boolean => {
+			const isDuplicate = ( subscriptions ?? [] ).find(
+				( subscription ): boolean =>
+					! subscription.isDeleted &&
+					// For match either compare feed_ID or URL.
+					( subscription.feed_ID === feedItem.feed_ID || subscription.URL === feedItem.subscribe_URL )
+			);
+
+			return ! isDuplicate;
+		});
+
+		if ( ! filteredFeedItems?.length ) {
 			return [];
 		}
 
-		return feedItems?.map( ( feed, index ): JSX.Element => {
+		return filteredFeedItems?.map( ( feed, index ): JSX.Element => {
 			const railcar = feed.railcar;
 			if ( railcar ) {
 				// reader: railcar, ui_algo: following_manage, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
@@ -46,20 +80,30 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 				/>
 			);
 		} );
-	}, [ feedItems ] );
+	}, [ feedItems, subscriptions ] );
 
-	if ( isLoading ) {
-		return (
-			<div className="reader-unsubscribed-feeds-search-list-loader">
-				<Spinner />
-			</div>
-		);
+	if ( ! showUnsubscribedFeedsList || hasNoFeedItems ) {
+		return null;
 	}
 
 	return (
-		<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
-			{ feedItemComponents }
-		</VStack>
+		<div className="reader-unsubscribed-feeds-search">
+			<h2 className="reader-unsubscribed-feeds-search__heading">
+				{ translate( 'Sites related to your search' ) }
+			</h2>
+			{ isFetchingUnsubscribedFeeds && (
+				<div className="reader-unsubscribed-feeds-search-list-loader">
+					<Spinner />
+					<p>{ translate( 'Loading sites related to your search...' ) }</p>
+				</div>
+			) }
+
+   			{ ! isFetchingUnsubscribedFeeds && (
+				<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
+					{ feedItemComponents }
+				</VStack>
+			) }
+		</div>
 	);
 };
 

@@ -1,5 +1,5 @@
 import { Railcar } from '@automattic/calypso-analytics';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 
@@ -37,23 +37,18 @@ type FeedResponse = {
 	total: number;
 };
 
-const useReadFeedSearchQuery = ( {
-	query,
-	excludeFollowed = false,
-	sort = FeedSort.Relevance,
-}: ReadFeedSearchQueryProps ) => {
-	return useInfiniteQuery( {
-		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
-		queryFn: async ( { pageParam: pageParamQueryString } ) => {
-			if ( query === undefined ) {
+export const readFeedSearchQueryOptions = ( options: ReadFeedSearchQueryProps ) => {
+	return {
+		queryKey: [ 'read', 'feed', 'search', options.query, options.excludeFollowed, options.sort ],
+		queryFn: async () => {
+			if ( options.query === undefined ) {
 				return;
 			}
-
 			const urlQuery = buildQueryString( {
-				q: query,
-				exclude_followed: excludeFollowed,
-				sort,
-			} ).concat( pageParamQueryString ? `&${ pageParamQueryString }` : '' );
+				q: options.query,
+				exclude_followed: options.excludeFollowed,
+				sort: options.sort,
+			} );
 
 			return wpcomRequest< FeedResponse >( {
 				path: '/read/feed',
@@ -62,9 +57,39 @@ const useReadFeedSearchQuery = ( {
 				query: urlQuery,
 			} );
 		},
-		enabled: Boolean( query ),
-		initialPageParam: '',
-		getNextPageParam: ( lastPage ) => lastPage?.next_page,
+	};
+};
+
+const useReadFeedSearchQuery = (
+	options: ReadFeedSearchQueryProps,
+	queryOptions?: {
+		enabled?: boolean;
+	}
+) => {
+	const { query, excludeFollowed = false, sort = FeedSort.Relevance } = options;
+	const { enabled = Boolean( query ) } = queryOptions ?? {};
+
+	return useQuery( {
+		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
+		queryFn: async () => {
+			if ( query === undefined ) {
+				return;
+			}
+
+			const urlQuery = buildQueryString( {
+				q: query,
+				exclude_followed: excludeFollowed,
+				sort,
+			} );
+
+			return wpcomRequest< FeedResponse >( {
+				path: '/read/feed',
+				apiVersion: '1.1',
+				method: 'GET',
+				query: urlQuery,
+			} );
+		},
+		enabled,
 		refetchOnWindowFocus: false,
 	} );
 };

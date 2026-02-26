@@ -133,12 +133,15 @@ export function getSafeImageUrlForReader( url: string ): string {
 export const SEARCH_QUERY_PARAM: string = 's';
 
 export function getUrlQuerySearchTerm( pathname: string = '' ): string {
+	console.log('getUrlQuerySearchTerm', pathname);
 	// If a pathname is provided, make sure that we get search key only for the given page. Prevents situation where we get search key from a different page.
 	if ( pathname && location.pathname !== pathname ) {
+		console.log('return 1')
 		return '';
 	}
 
 	const queryArgs = getQueryArgs( window.location.href );
+	console.log('queryArgs', queryArgs);
 	return ( queryArgs[ SEARCH_QUERY_PARAM ] as string ) ?? '';
 }
 

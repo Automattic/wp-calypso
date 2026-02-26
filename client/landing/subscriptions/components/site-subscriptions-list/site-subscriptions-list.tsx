@@ -13,16 +13,10 @@ import SiteSubscriptionRow from './site-subscription-row';
 import './styles/site-subscriptions-list.scss';
 
 type SiteSubscriptionsListProps = {
-	emptyComponent?: React.ComponentType;
-	notFoundComponent?: React.ComponentType;
 	layout?: 'full' | 'compact';
 };
 
-const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
-	emptyComponent: EmptyComponent,
-	notFoundComponent: NotFoundComponent,
-	layout = 'full',
-} ) => {
+const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( { layout = 'full' } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
@@ -45,46 +39,11 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 		}
 	}, [ currentUserName, dispatch ] );
 
-	if ( error ) {
-		return (
-			<Notice type={ NoticeType.Error }>
-				{ translate(
-					'We had a small hiccup loading your subscriptions. Please try refreshing the page.'
-				) }
-			</Notice>
-		);
-	}
-
 	if ( isLoading ) {
 		return (
 			<div className="loading-container">
 				<Spinner />
 			</div>
-		);
-	}
-
-	if ( ! isLoading && ! totalCount ) {
-		if ( EmptyComponent ) {
-			return <EmptyComponent />;
-		}
-		return (
-			<Notice type={ NoticeType.Warning }>
-				{ translate( 'You are not subscribed to any sites.' ) }
-			</Notice>
-		);
-	}
-
-	if ( totalCount > 0 && subscriptions.length === 0 ) {
-		if ( NotFoundComponent ) {
-			return <NotFoundComponent />;
-		}
-		return (
-			<Notice type={ NoticeType.Warning }>
-				{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
-					components: { italic: <i /> },
-					args: searchTerm || filterOption,
-				} ) }
-			</Notice>
 		);
 	}
 
@@ -140,17 +99,42 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="actions-cell" role="columnheader" />
 			</HStack>
 
-			<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
-				{ ( { item, key, style, registerChild } ) => (
-					<SiteSubscriptionRow
-						{ ...item }
-						key={ `${ item.ID }-${ key }` }
-						style={ style }
-						forwardedRef={ registerChild }
-						layout={ layout }
-					/>
-				) }
-			</VirtualizedList>
+			{ error && (
+				<Notice type={ NoticeType.Error }>
+					{ translate(
+						'We had a small hiccup loading your subscriptions. Please try refreshing the page.'
+					) }
+				</Notice>
+			) }
+
+			{ ! isLoading && totalCount === 0 && (
+				<Notice type={ NoticeType.Warning }>
+					{ translate( 'You are not subscribed to any sites.' ) }
+				</Notice>
+			) }
+
+			{ totalCount > 0 && subscriptions.length === 0 && (
+				<Notice type={ NoticeType.Warning }>
+					{ translate( 'Sorry, no subscribed sites match {{italic}}%s.{{/italic}}', {
+						components: { italic: <i /> },
+						args: searchTerm || filterOption,
+					} ) }
+				</Notice>
+			) }
+
+			{ totalCount > 0 && subscriptions.length > 0 && (
+				<VirtualizedList< SiteSubscriptionsResponseItem > items={ filteredSubscriptions }>
+					{ ( { item, key, style, registerChild } ) => (
+						<SiteSubscriptionRow
+							{ ...item }
+							key={ `${ item.ID }-${ key }` }
+							style={ style }
+							forwardedRef={ registerChild }
+							layout={ layout }
+						/>
+					) }
+				</VirtualizedList>
+			) }
 		</div>
 	);
 };

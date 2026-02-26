@@ -1,7 +1,9 @@
 import './style.scss';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -9,11 +11,12 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import { getUrlQuerySearchTerm } from 'calypso/reader/utils';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './add-subscription-form.consts';
-
+const { SiteSubscriptionsQueryPropsProvider, useSiteSubscriptionsQueryProps } = SubscriptionManager;
 interface AddSubscriptionFormProps {
 	type: SubscriptionType;
 }
@@ -25,6 +28,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const isAddNewTab = props.type === 'add-new';
+	const { searchTerm } = useSiteSubscriptionsQueryProps();
 
 	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
 		setHasFeedPreview( hasPreview );
@@ -44,6 +48,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	}
 
 	const { slug, instructions: configInstructions } = config;
+	console.log({ hasFeedPreview });
 	return (
 		<div className="reader-add-subscription">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
@@ -101,11 +106,15 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						</div>
 					) : (
 						<>
-							<h2 className="reader-add-subscription__subscriptions-title">
-								{ translate( 'Your subscriptions' ) }
-							</h2>
-
-							<SiteSubscriptionsList layout="compact" />
+							{ searchTerm && ! hasFeedPreview && <UnsubscribedFeedsSearchList /> }
+							{ ! searchTerm && (
+								<>
+									<h2 className="reader-add-subscription__subscriptions-title">
+										{ translate( 'Your subscriptions' ) }
+									</h2>
+									<SiteSubscriptionsList layout="compact" />
+								</>
+							) }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>

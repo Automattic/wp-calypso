@@ -11,6 +11,7 @@ import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
+const { useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
 export type AddSitesFormProps = {
 	placeholder?: string;
@@ -40,6 +41,7 @@ const AddSitesForm = ( {
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
+	const { setSearchTerm } = useSiteSubscriptionsQueryProps();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const { mutate: subscribe, isPending: subscribing } =
@@ -71,6 +73,7 @@ const AddSitesForm = ( {
 
 	function onTextFieldChange( value: string, showErrorOnInvalidUrl: boolean = false ): void {
 		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
+		setSearchTerm( value );
 		setInputValue( value );
 		validateInputValue( value, showErrorOnInvalidUrl );
 	}
