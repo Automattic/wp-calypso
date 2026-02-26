@@ -47,3 +47,10 @@
 		border-left: 3px solid #4ab866;
 	}
 }
+
+// Warning notice styling (quota exceeded)
+.image-studio-modal__notices {
+	.components-notice.is-warning {
+		margin: 0 0 8px;
+	}
+}

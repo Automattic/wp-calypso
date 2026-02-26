@@ -8,6 +8,8 @@ export interface ParsedErrorUrl {
 	url: string | null;
 	/** Whether the URL points to an upgrade/plans page */
 	isUpgradeUrl: boolean;
+	/** Whether the URL points to a plans comparison page (vs checkout) */
+	isPlansPageUrl: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function parseErrorUrl( errorMessage: string ): ParsedErrorUrl {
 			content: message,
 			url: null,
 			isUpgradeUrl: false,
+			isPlansPageUrl: false,
 		};
 	}
 
@@ -42,9 +45,12 @@ export function parseErrorUrl( errorMessage: string ): ParsedErrorUrl {
 		url.includes( 'jetpack.com/redirect' ) ||
 		pathAndQuery.includes( 'my-jetpack' );
 
+	const isPlansPageUrl = pathAndQuery.includes( '/plans/' );
+
 	return {
 		content,
 		url,
 		isUpgradeUrl,
+		isPlansPageUrl,
 	};
 }

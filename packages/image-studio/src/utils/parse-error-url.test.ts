@@ -35,6 +35,7 @@ describe( 'parseErrorUrl', () => {
 				content: 'An error occurred.',
 				url: null,
 				isUpgradeUrl: false,
+				isPlansPageUrl: false,
 			} );
 		} );
 
@@ -44,6 +45,7 @@ describe( 'parseErrorUrl', () => {
 				content: '',
 				url: null,
 				isUpgradeUrl: false,
+				isPlansPageUrl: false,
 			} );
 		} );
 	} );
@@ -91,48 +93,56 @@ describe( 'parseErrorUrl', () => {
 	} );
 
 	describe( 'upgrade URL detection', () => {
-		it( 'identifies /plans/ URL as upgrade', () => {
+		it( 'identifies /plans/ URL as upgrade and plans page', () => {
 			const result = parseErrorUrl( 'Upgrade required https://wordpress.com/plans/example.com' );
 			expect( result.isUpgradeUrl ).toBe( true );
+			expect( result.isPlansPageUrl ).toBe( true );
 		} );
 
-		it( 'identifies /upgrade URL as upgrade', () => {
+		it( 'identifies /upgrade URL as upgrade but not plans page', () => {
 			const result = parseErrorUrl( 'Upgrade required https://wordpress.com/upgrade' );
 			expect( result.isUpgradeUrl ).toBe( true );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
-		it( 'identifies /upgrade/ with path as upgrade', () => {
+		it( 'identifies /upgrade/ with path as upgrade but not plans page', () => {
 			const result = parseErrorUrl( 'See https://example.com/upgrade/premium' );
 			expect( result.isUpgradeUrl ).toBe( true );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
-		it( 'identifies jetpack.com/redirect URL as upgrade', () => {
+		it( 'identifies jetpack.com/redirect URL as upgrade but not plans page', () => {
 			const result = parseErrorUrl(
 				'Upgrade required https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&site=example.com'
 			);
 			expect( result.isUpgradeUrl ).toBe( true );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
-		it( 'identifies my-jetpack URL as upgrade', () => {
+		it( 'identifies my-jetpack URL as upgrade but not plans page', () => {
 			const result = parseErrorUrl(
 				'Upgrade required https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai'
 			);
 			expect( result.isUpgradeUrl ).toBe( true );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
 		it( 'returns false for non-upgrade URLs', () => {
 			const result = parseErrorUrl( 'See https://example.com/help' );
 			expect( result.isUpgradeUrl ).toBe( false );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
 		it( 'returns false for URL with "plans" not in path', () => {
 			const result = parseErrorUrl( 'See https://example.com?plans=true' );
 			expect( result.isUpgradeUrl ).toBe( false );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 
 		it( 'returns false for URL with "upgrade" in domain', () => {
 			const result = parseErrorUrl( 'See https://upgrade.example.com' );
 			expect( result.isUpgradeUrl ).toBe( false );
+			expect( result.isPlansPageUrl ).toBe( false );
 		} );
 	} );
 

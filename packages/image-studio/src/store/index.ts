@@ -26,7 +26,7 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success';
+export type NoticeType = 'error' | 'success' | 'warning';
 export interface NoticeAction {
 	label: string;
 	url: string;
@@ -658,7 +658,7 @@ export interface ImageStudioActions {
 	setIsExitConfirmed: ( value: boolean ) => Promise< SetIsExitConfirmedAction >;
 	addNotice: (
 		content: string,
-		type: 'error' | 'success',
+		type: NoticeType,
 		noticeActions?: NoticeAction[]
 	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
