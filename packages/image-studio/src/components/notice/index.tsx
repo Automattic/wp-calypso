@@ -24,6 +24,9 @@ export function ImageStudioNotice() {
 				id: notice.id,
 				content: notice.content,
 				explicitDismiss: notice.type === 'error',
+				...( notice.actions?.length && {
+					actions: notice.actions,
+				} ),
 			} ) ) }
 			onRemove={ removeNotice }
 		/>
