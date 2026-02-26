@@ -36,7 +36,9 @@ function AnalyticsProviderWithClient( {
 
 	useEffect( () => {
 		if ( posthog ) {
-			import( '@automattic/posthog' ).then( ( { init } ) => init( posthog, user ) );
+			import( '@automattic/posthog' ).then( ( { init } ) =>
+				init( posthog, user ? { ID: user.ID } : undefined )
+			);
 		}
 	}, [ user, posthog ] );
 
