@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import freeDomainForAYearPromoCiabImage from './graphic-ciab.svg';
 import freeDomainForAYearPromoImage from './graphic.svg';
 
 import './style.scss';
@@ -55,7 +56,7 @@ export const FreeDomainForAYearPromo = ( { textOnly = false, isCiab = false } ) 
 				<HStack spacing={ 6 } alignment="left">
 					{ activeQuery === 'large' && (
 						<img
-							src={ freeDomainForAYearPromoImage }
+							src={ isCiab ? freeDomainForAYearPromoCiabImage : freeDomainForAYearPromoImage }
 							alt=""
 							aria-hidden="true"
 							className="free-domain-for-a-year-promo__image"
