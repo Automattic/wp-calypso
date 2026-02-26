@@ -29,7 +29,7 @@ function InaccessibleJetpackError( { error }: { error: Error } ) {
 					}
 				/>
 			}
-			notices={ <InaccessibleJetpackNotice variant="error" error={ error } /> }
+			notices={ <InaccessibleJetpackNotice error={ error } /> }
 		></PageLayout>
 	);
 }
