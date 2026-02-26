@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 const NotFoundSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const readFeedSearch = Reader.useUnsubscribedFeedsSearch();
+	const { data } = Reader.useReadFeedSearchQuery( {
+		query: searchTerm,
+		excludeFollowed: true,
+	} );
 
 	return (
 		<div className="not-found-site-subscriptions">
@@ -17,7 +20,7 @@ const NotFoundSiteSubscriptions = () => {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
 				  } ) }{ ' ' }
-			{ ( readFeedSearch?.feedItems.length ?? 0 ) > 0 &&
+			{ ( data?.feeds?.length ?? 0 ) > 0 &&
 				translate( 'Here are some other sites related to your search.' ) }
 		</div>
 	);

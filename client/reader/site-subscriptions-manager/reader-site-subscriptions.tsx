@@ -22,8 +22,11 @@ const ReaderSiteSubscriptions = () => {
 		data: { subscriptions },
 		isFetching,
 	} = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
-	const { feedItems: unsubscribedFeedItems, searchQueryResult } =
-		Reader.useUnsubscribedFeedsSearch() ?? {};
+	const { data, isFetching: isFetchingUnsubscribedFeeds } = Reader.useReadFeedSearchQuery( {
+		query: searchTerm,
+		excludeFollowed: true,
+	} );
+	const unsubscribedFeedItems = data?.feeds;
 	const { isPending: isUnsubscribing } = SubscriptionManager.useSiteUnsubscribeMutation();
 
 	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
@@ -63,7 +66,7 @@ const ReaderSiteSubscriptions = () => {
 
 	const shouldShowUnsubcribedFeedsListLoader =
 		isFetching || // If site subscriptions are still fetching.
-		( searchQueryResult?.isFetching ?? false ) || // If unsubscribed feeds are still fetching.
+		isFetchingUnsubscribedFeeds || // If unsubscribed feeds are still fetching.
 		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
 	return (
@@ -95,9 +98,7 @@ const ReaderSiteSubscriptionsWrapper = () => (
 			getUrlQuerySearchTerm // Take the `?s=` url query param and set is as initial search term state.
 		}
 	>
-		<Reader.UnsubscribedFeedsSearchProvider>
-			<ReaderSiteSubscriptions />
-		</Reader.UnsubscribedFeedsSearchProvider>
+		<ReaderSiteSubscriptions />
 	</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
 );
 

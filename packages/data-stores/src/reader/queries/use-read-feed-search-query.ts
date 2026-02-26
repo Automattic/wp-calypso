@@ -1,5 +1,5 @@
-import { Railcar } from '@automattic/calypso-analytics';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { Reader } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 
@@ -8,43 +8,31 @@ export enum FeedSort {
 	Relevance = 'relevance',
 }
 
-type ReadFeedSearchQueryProps = {
+type Options = {
 	query?: string;
 	excludeFollowed?: boolean;
 	sort?: FeedSort;
 };
 
-export type FeedItem = {
-	URL?: string;
-	blog_ID?: string;
-	feed_ID?: string;
-	meta: {
-		links?: {
-			feed?: string;
-			site?: string;
-		};
-	};
-	railcar?: Railcar;
-	subscribe_URL: string;
-	subscribers_count?: number;
-	title?: string;
-};
-
 type FeedResponse = {
 	algorithm: string;
-	feeds: FeedItem[];
+	feeds: Reader.FeedItem[];
 	next_page: string;
 	total: number;
 };
 
-const useReadFeedSearchQuery = ( {
-	query,
-	excludeFollowed = false,
-	sort = FeedSort.Relevance,
-}: ReadFeedSearchQueryProps ) => {
-	return useInfiniteQuery( {
+const useReadFeedSearchQuery = (
+	options: Options,
+	queryOptions?: {
+		enabled?: boolean;
+	}
+) => {
+	const { query, excludeFollowed = false, sort = FeedSort.Relevance } = options;
+	const { enabled = Boolean( query ) } = queryOptions ?? {};
+
+	return useQuery( {
 		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
-		queryFn: async ( { pageParam: pageParamQueryString } ) => {
+		queryFn: async () => {
 			if ( query === undefined ) {
 				return;
 			}
@@ -53,7 +41,7 @@ const useReadFeedSearchQuery = ( {
 				q: query,
 				exclude_followed: excludeFollowed,
 				sort,
-			} ).concat( pageParamQueryString ? `&${ pageParamQueryString }` : '' );
+			} );
 
 			return wpcomRequest< FeedResponse >( {
 				path: '/read/feed',
@@ -62,9 +50,7 @@ const useReadFeedSearchQuery = ( {
 				query: urlQuery,
 			} );
 		},
-		enabled: Boolean( query ),
-		initialPageParam: '',
-		getNextPageParam: ( lastPage ) => lastPage?.next_page,
+		enabled,
 		refetchOnWindowFocus: false,
 	} );
 };
