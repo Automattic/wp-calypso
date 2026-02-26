@@ -99,6 +99,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								trackScrollPage={ () => {} }
 								useCompactCards
 								suppressSiteNameLink
+								restoreScroll={ false }
 							/>
 						</div>
 					) : (
