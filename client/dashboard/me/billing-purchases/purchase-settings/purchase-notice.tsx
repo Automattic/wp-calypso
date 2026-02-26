@@ -38,6 +38,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	const { refunded } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -88,7 +89,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
-		return <ExpiredRenewNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />;
+		return (
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
+		);
 	}
 
 	if ( purchase.partner_type ) {
@@ -142,9 +149,11 @@ function shouldShowExpiredRenewNotice(
 function ExpiredRenewNotice( {
 	purchase,
 	purchaseAttachedTo,
+	refunded,
 }: {
 	purchase: Purchase;
 	purchaseAttachedTo: Purchase | undefined;
+	refunded?: boolean;
 } ) {
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
@@ -160,6 +169,9 @@ function ExpiredRenewNotice( {
 
 	if ( purchase.is_renewable ) {
 		const noticeText = ( () => {
+			if ( refunded && isExpired( currentPurchase ) ) {
+				return __( 'Your refund has been processed and your purchase removed.' );
+			}
 			if ( isExpired( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
@@ -184,7 +196,7 @@ function ExpiredRenewNotice( {
 
 		return (
 			<Notice
-				variant="error"
+				variant={ refunded && isExpired( currentPurchase ) ? 'success' : 'error' }
 				actions={
 					shouldShowRenewNoticeAction( purchase ) ? (
 						<RenewNoticeAction
