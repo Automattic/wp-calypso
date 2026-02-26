@@ -10,12 +10,12 @@ import {
 	useRecordSearchByUrlPerformed,
 } from 'calypso/landing/subscriptions/tracks';
 import { resemblesUrl } from 'calypso/lib/url';
-import { UnsubscribedFeedsSearchList } from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
+import UnsubscribedFeedsSearchList from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
 import { RecommendedSites } from '../recommended-sites';
 import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
-const ReaderSiteSubscriptions = () => {
+const ReaderSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const {
