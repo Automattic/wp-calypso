@@ -41,6 +41,7 @@ yarn test-client --testNamePattern="<TestName>"      # Run specific test
 ### Redux Selectors
 
 Stats data comes from `calypso/state/stats/*`:
+
 - `getSiteStatsNormalizedData()` — normalized stats data
 - `isRequestingSiteStatsForQuery()` — loading states
 - `hasSiteStatsQueryFailed()` — error states
@@ -48,8 +49,9 @@ Stats data comes from `calypso/state/stats/*`:
 ### Data Components
 
 The codebase uses a data component pattern where `Query*` components trigger Redux actions:
+
 ```tsx
-<QuerySiteStats siteId={siteId} statType="statsVisits" query={query} />
+<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ query } />
 ```
 
 This fetches data into Redux; use selectors to read it.
@@ -66,28 +68,20 @@ Place new stats modules in `features/modules/` using TypeScript. Follow existing
 
 ### Date/Timezone Handling
 
-Always use site-aware moments:
-```tsx
-import useMomentSiteZone from '../hooks/use-moment-site-zone';
-const moment = useMomentSiteZone();
-```
-
-Never use `moment()` directly for stats dates—sites have configured timezones that must be respected.
+Always use site-aware moments via `useMomentSiteZone()` hook. Never use `moment()` directly—sites have configured timezones that must be respected.
 
 ### Analytics
 
 Use the stats-specific analytics wrapper:
+
 ```tsx
 import { trackStatsAnalyticsEvent } from './utils';
-trackStatsAnalyticsEvent('stats_module_expanded', { module: 'referrers' });
+trackStatsAnalyticsEvent( 'stats_module_expanded', { module: 'referrers' } );
 ```
 
 ### Feature Gating
 
-Use the `useShouldGateStats()` hook to check if features should be gated behind a paywall:
-```tsx
-const shouldGate = useShouldGateStats('traffic');
-```
+Use `useShouldGateStats()` hook to check if features should be gated behind a paywall.
 
 ### Module Visibility
 
@@ -95,14 +89,7 @@ Module visibility toggles use localStorage via the `store` library. See `stats-m
 
 ### Hooks over HOCs
 
-Prefer hooks over `connect()` HOC for new code:
-```tsx
-// Preferred
-const siteId = useSelector(getSelectedSiteId);
-
-// Avoid for new code
-export default connect(mapStateToProps)(Component);
-```
+Prefer `useSelector()` hook over `connect()` HOC for new code.
 
 ## Common Pitfalls
 
@@ -113,6 +100,7 @@ The codebase has both legacy class components with `connect()` and modern functi
 ### Large Files
 
 Several files are quite large and complex:
+
 - `site.jsx` (~800 lines) — main site stats page
 - `controller.jsx` (~500 lines) — route controllers
 - `stats-module/index.jsx` — base module component
@@ -122,6 +110,7 @@ Consider the full context when making changes to these files.
 ### Date Complexity
 
 Stats dates are tricky:
+
 - Always use `useMomentSiteZone()` for site-aware dates
 - Period boundaries (week start, month end) depend on site settings
 - `moment.js` is used throughout; not yet migrated to date-fns
@@ -135,6 +124,7 @@ Stats dates are tricky:
 ### Redux Data Flow
 
 The `Query*` component pattern can be confusing:
+
 1. `QuerySiteStats` mounts and dispatches fetch action
 2. Redux middleware makes API call
 3. Data lands in Redux store
@@ -145,16 +135,17 @@ Data may not be immediately available after mounting `Query*` component.
 ## Integration with Odyssey Stats
 
 This code is shared with Odyssey Stats (`apps/odyssey-stats/`). When making changes:
+
 - Test both Calypso and Odyssey contexts
 - Be aware of API differences (WP.com vs Jetpack REST API)
 - Check for Odyssey-specific overrides in webpack config
 
 ## Key Hooks Reference
 
-| Hook | Purpose |
-|------|---------|
-| `useMomentSiteZone()` | Site-timezone-aware moment instance |
-| `useShouldGateStats()` | Check if feature requires upgrade |
-| `useStatsPurchases()` | Get user's stats-related purchases |
-| `useNoticeVisibilityQuery()` | Check notice dismissal state |
-| `useStatsNavigationHistory()` | Track navigation for back button |
+| Hook                          | Purpose                             |
+| ----------------------------- | ----------------------------------- |
+| `useMomentSiteZone()`         | Site-timezone-aware moment instance |
+| `useShouldGateStats()`        | Check if feature requires upgrade   |
+| `useStatsPurchases()`         | Get user's stats-related purchases  |
+| `useNoticeVisibilityQuery()`  | Check notice dismissal state        |
+| `useStatsNavigationHistory()` | Track navigation for back button    |
