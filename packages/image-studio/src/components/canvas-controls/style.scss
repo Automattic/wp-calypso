@@ -6,6 +6,7 @@
  */
 
  @import "../styles/variables";
+ @import "../styles/mixins";
 
 .canvas-controls {
 	z-index: 100;
@@ -56,44 +57,25 @@
 }
 
 .canvas-controls__feedback-popover {
-	background-color: #2a2a2a;
+	// FeedbackInput normally inherits theme variables from Agenttic.
+	// This popover renders outside that context, so we set them explicitly.
+	@include image-studio-theme-variables();
+	background-color: $color-background;
 	border: 1px solid $color-border;
 	border-radius: 4px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	padding: 12px;
 
 	.agents-manager-feedback-input {
-		background-color: #2a2a2a;
-		border: none;
 		width: 300px;
-		margin-top: 0;
-		padding: 12px;
-	}
 
-	.components-base-control__label {
-		color: $color-foreground;
-	}
-
-	.components-textarea-control__input {
-		background: #404040;
-		border-color: transparent;
-		color: $color-foreground;
-
-		&::placeholder {
-			color: $color-foreground;
+		&,
+		&__inner {
+			margin: 0;
+			padding: 0;
+			border: none;
+			background-color: transparent;
+			border-radius: 0;
 		}
-	}
-
-	.components-button.is-tertiary {
-		color: #ccc;
-
-		&:hover,
-		&:focus {
-			color: $color-foreground;
-		}
-	}
-
-	.components-button.is-primary:not(:disabled) {
-		background: var(--wp-components-color-accent, #3858e9);
-		color: $color-foreground;
 	}
 }
