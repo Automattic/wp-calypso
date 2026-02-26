@@ -58,7 +58,7 @@ export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview
 export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
 export const A4A_LEARN_LINK = '/learn';
 export const A4A_LEARN_RESOURCE_CENTER_LINK = `${ A4A_LEARN_LINK }/resource-center`;
-export const A4A_DEV_TOOLS_LINK = '/dev-tools';
+export const A4A_DEV_TOOLS_LINK = `${ A4A_LEARN_LINK }/dev-tools`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
