@@ -623,6 +623,7 @@ function setUpCSP( req, res, next ) {
 			'https://woocommerce.com', // WooCommerce marketplace
 			'localhost:8888',
 			'p.typekit.net',
+			'https://q.quora.com', //Quora tracking pixel image.
 		],
 		'frame-src': [
 			"'self'",
