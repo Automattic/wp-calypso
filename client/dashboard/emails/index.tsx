@@ -182,7 +182,7 @@ function Emails() {
 		>
 			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			{ renderContent() }
-			<PerformanceTrackerStop id="dashboard-email-list" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

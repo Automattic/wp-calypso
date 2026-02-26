@@ -200,7 +200,7 @@ function SitePerformance() {
 			) : (
 				<SitePerformanceContent site={ site } />
 			) }
-			<PerformanceTrackerStop id="dashboard-site-performance" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

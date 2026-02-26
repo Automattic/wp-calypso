@@ -197,7 +197,7 @@ export default function DomainDiagnostics() {
 			}
 		>
 			{ renderDiagnostics() }
-			<PerformanceTrackerStop id="dashboard-domain-diagnostics" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

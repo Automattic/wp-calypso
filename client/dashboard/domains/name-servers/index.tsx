@@ -104,7 +104,7 @@ export default function NameServers() {
 					/>
 				</CardBody>
 			</Card>
-			<PerformanceTrackerStop id="dashboard-domain-name-servers" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

@@ -304,7 +304,7 @@ export default function PluginsScheduledUpdates() {
 			>
 				{ __( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmModal>
-			<PerformanceTrackerStop id="dashboard-plugin-scheduled-updates" />
+			<PerformanceTrackerStop />
 		</>
 	);
 }

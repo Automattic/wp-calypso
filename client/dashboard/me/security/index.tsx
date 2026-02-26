@@ -37,7 +37,7 @@ function Security() {
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
 			</VStack>
-			<PerformanceTrackerStop id="dashboard-me-security" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

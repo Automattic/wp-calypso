@@ -146,7 +146,7 @@ export default function DomainOverview() {
 			{ snackbarBackButtonText && (
 				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 			) }
-			<PerformanceTrackerStop id="dashboard-domain-overview" />
+			<PerformanceTrackerStop />
 		</>
 	);
 }

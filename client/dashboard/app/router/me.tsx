@@ -42,7 +42,6 @@ import {
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
-import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -94,11 +93,6 @@ export const profileRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'profile',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-profile', { fullPageLoad } );
-		}
-	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -152,11 +146,6 @@ export const billingRoute = createRoute( {
 export const billingIndexRoute = createRoute( {
 	getParentRoute: () => billingRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-billing', { fullPageLoad } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
@@ -180,11 +169,6 @@ export const billingHistoryRoute = createRoute( {
 export const billingHistoryIndexRoute = createRoute( {
 	getParentRoute: () => billingHistoryRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-billing-history', { fullPageLoad } );
-		}
-	},
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
 	},
@@ -235,11 +219,6 @@ export const purchasesRoute = createRoute( {
 export const purchasesIndexRoute = createRoute( {
 	getParentRoute: () => purchasesRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-purchases', { fullPageLoad } );
-		}
-	},
 	loader: () => {
 		queryClient.prefetchQuery( userPurchasesQuery() );
 		queryClient.prefetchQuery( userTransferredPurchasesQuery() );
@@ -351,11 +330,6 @@ export const paymentMethodsRoute = createRoute( {
 export const paymentMethodsIndexRoute = createRoute( {
 	getParentRoute: () => paymentMethodsRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-payment-methods', { fullPageLoad } );
-		}
-	},
 	loader: () => {
 		queryClient.prefetchQuery(
 			userPaymentMethodsQuery( {
@@ -512,11 +486,6 @@ export const securityRoute = createRoute( {
 export const securityIndexRoute = createRoute( {
 	getParentRoute: () => securityRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-me-security', { fullPageLoad } );
-		}
-	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),

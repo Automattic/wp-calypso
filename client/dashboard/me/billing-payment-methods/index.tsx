@@ -245,7 +245,7 @@ export default function PaymentMethods() {
 					/>
 				) }
 			</div>
-			<PerformanceTrackerStop id="dashboard-me-payment-methods" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

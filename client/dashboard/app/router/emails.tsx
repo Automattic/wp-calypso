@@ -13,7 +13,6 @@ import { createLazyRoute, createRoute, redirect, Outlet } from '@tanstack/react-
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider } from '../../emails/types';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
-import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {
@@ -37,11 +36,6 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-email-list', { fullPageLoad } );
-		}
-	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),

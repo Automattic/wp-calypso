@@ -227,7 +227,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					) }
 				</CardBody>
 			</Card>
-			<PerformanceTrackerStop id="dashboard-site-logs" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

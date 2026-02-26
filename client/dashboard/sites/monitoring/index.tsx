@@ -142,7 +142,7 @@ function SiteMonitoring() {
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
 			</PageLayout>
-			<PerformanceTrackerStop id="dashboard-site-monitoring" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

@@ -6,7 +6,6 @@ import {
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -63,11 +62,6 @@ export const pluginsManageRoute = createRoute( {
 export const pluginsManageIndexRoute = createRoute( {
 	getParentRoute: () => pluginsManageRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-plugin-list', { fullPageLoad } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../plugins/manage' ).then( ( d ) =>
 		createLazyRoute( 'plugins-manage' )( {
@@ -100,11 +94,6 @@ export const pluginsScheduledUpdatesRoute = createRoute( {
 export const pluginsScheduledUpdatesIndexRoute = createRoute( {
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-plugin-scheduled-updates', { fullPageLoad } );
-		}
-	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates' ).then( ( d ) =>
 		createLazyRoute( 'plugins-scheduled-updates' )( {

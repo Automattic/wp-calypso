@@ -134,7 +134,7 @@ function DomainGlueRecords() {
 					}
 				/>
 			</DataViewsCard>
-			<PerformanceTrackerStop id="dashboard-domain-glue-records" />
+			<PerformanceTrackerStop />
 		</DomainGlueRecordsLayout>
 	);
 }

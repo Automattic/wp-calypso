@@ -252,7 +252,7 @@ export function BackupsListPage() {
 					) }
 				</>
 			) }
-			<PerformanceTrackerStop id="dashboard-site-backups" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

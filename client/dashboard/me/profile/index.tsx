@@ -26,7 +26,7 @@ export default function Profile() {
 			<PersonalDetailsSection />
 			<GravatarProfileSection />
 			<AccountDeletionSection />
-			<PerformanceTrackerStop id="dashboard-me-profile" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

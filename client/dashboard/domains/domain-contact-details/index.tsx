@@ -156,7 +156,7 @@ export default function DomainContactInfo() {
 				initialData={ initialData }
 				validate={ validateMutation.mutateAsync }
 			/>
-			<PerformanceTrackerStop id="dashboard-domain-contact-info" />
+			<PerformanceTrackerStop />
 		</DomainContactDetailsLayout>
 	);
 }

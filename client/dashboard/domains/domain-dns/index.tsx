@@ -394,7 +394,7 @@ export default function DomainDns() {
 					onCancel={ closeImportDialog }
 				/>
 			) }
-			<PerformanceTrackerStop id="dashboard-domain-dns" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

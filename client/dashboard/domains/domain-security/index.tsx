@@ -37,7 +37,7 @@ export default function DomainSecurity() {
 					<DnsSec domainName={ domainName } domain={ domain } />
 				</>
 			) }
-			<PerformanceTrackerStop id="dashboard-domain-security" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

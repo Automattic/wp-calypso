@@ -235,7 +235,7 @@ export default function DomainContactVerification() {
 					</VStack>
 				</CardBody>
 			</Card>
-			<PerformanceTrackerStop id="dashboard-domain-contact-verification" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

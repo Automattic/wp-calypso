@@ -87,7 +87,7 @@ export default function BillingHistory() {
 					/>
 				</DataViewsCard>
 			</div>
-			<PerformanceTrackerStop id="dashboard-me-billing-history" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

@@ -189,7 +189,7 @@ function DomainForwarding() {
 					empty={ <p>{ __( 'No forwarding rules found for this domain.' ) }</p> }
 				/>
 			</DataViewsCard>
-			<PerformanceTrackerStop id="dashboard-domain-forwarding" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

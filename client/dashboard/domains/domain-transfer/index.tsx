@@ -37,7 +37,7 @@ export default function DomainTransfer() {
 			) : (
 				<OutboundTransfer domain={ domain } />
 			) }
-			<PerformanceTrackerStop id="dashboard-domain-transfer" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

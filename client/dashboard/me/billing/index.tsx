@@ -69,7 +69,7 @@ function Billing() {
 					to={ taxDetailsRoute.to }
 				/>
 			</VStack>
-			<PerformanceTrackerStop id="dashboard-me-billing" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

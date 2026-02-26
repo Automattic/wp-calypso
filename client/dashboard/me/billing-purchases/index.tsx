@@ -104,7 +104,7 @@ export default function PurchasesList() {
 					/>
 				</DataViewsCard>
 			</div>
-			<PerformanceTrackerStop id="dashboard-me-purchases" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

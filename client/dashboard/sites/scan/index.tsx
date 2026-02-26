@@ -200,7 +200,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					/>
 				</Modal>
 			) }
-			<PerformanceTrackerStop id="dashboard-site-scan" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

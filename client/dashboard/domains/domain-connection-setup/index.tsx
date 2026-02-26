@@ -215,7 +215,7 @@ export default function DomainConnection() {
 					queryErrorDescription={ queryErrorDescription }
 				/>
 			) }
-			<PerformanceTrackerStop id="dashboard-domain-connection-setup" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

@@ -230,9 +230,7 @@ function DeploymentsList() {
 					/>
 				</Modal>
 			) }
-			{ ! isLoading && (
-				<PerformanceTrackerStop id="dashboard-site-deployments" siteSlug={ siteSlug } />
-			) }
+			{ ! isLoading && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
 		</PageLayout>
 	);
 }

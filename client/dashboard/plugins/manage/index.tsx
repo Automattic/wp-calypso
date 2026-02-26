@@ -153,7 +153,7 @@ export default function PluginsList() {
 						paginationInfo={ paginationInfo }
 					/>
 				) }
-				<PerformanceTrackerStop id="dashboard-plugin-list" />
+				<PerformanceTrackerStop />
 			</PageLayout>
 		);
 	}
@@ -181,7 +181,7 @@ export default function PluginsList() {
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 			</Grid>
-			<PerformanceTrackerStop id="dashboard-plugin-list" />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }
