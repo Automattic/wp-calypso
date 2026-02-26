@@ -231,6 +231,17 @@ export function checkout( context, next ) {
 		} );
 	}
 
+	/** @type {import('@automattic/wpcom-checkout').SitelessCheckoutType} */
+	const sitelessCheckoutType = ( () => {
+		if ( isJetpackCheckout ) {
+			return 'jetpack';
+		}
+		if ( isDomainOnlyFlow ) {
+			return 'domainonly';
+		}
+		return undefined;
+	} )();
+
 	context.primary = (
 		<>
 			<CheckoutDocumentTitle />
@@ -250,7 +261,7 @@ export function checkout( context, next ) {
 				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
 				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
 				// This is creating some mixed use cases for the sitelessCheckoutType prop
-				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
+				sitelessCheckoutType={ sitelessCheckoutType }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
