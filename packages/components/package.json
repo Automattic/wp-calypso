@@ -99,7 +99,7 @@
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
 		"postcss": "^8.5.3",
-		"storybook": "^8.6.14",
+		"storybook": "^8.6.17",
 		"typescript": "^5.9.3",
 		"webpack": "^5.99.8"
 	},
