@@ -15,6 +15,15 @@
 	"hostname": false,
 	"hostname_allowlist": false,
 	"hostname_overrides": false,
+	"all_calypso_hostnames": [
+		"calypso.localhost",
+		"wpcalypso.wordpress.com",
+		"horizon.wordpress.com",
+		"my.localhost",
+		"my.woo.localhost",
+		"my.wordpress.com",
+		"my.woo.ai"
+	],
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
