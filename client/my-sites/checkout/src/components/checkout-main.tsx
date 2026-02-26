@@ -188,9 +188,6 @@ export default function CheckoutMain( {
 		if ( sitelessCheckoutType && cartKey === 'no-user' ) {
 			return true;
 		}
-		if ( isLoggedOutCart || isNoSiteCart ) {
-			return true;
-		}
 		return false;
 	} )();
 
