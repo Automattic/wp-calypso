@@ -1,4 +1,4 @@
-import './feed-preview.styles.scss';
+import './styles.scss';
 import { Reader } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
 import { useState, useEffect, useMemo } from 'react';
