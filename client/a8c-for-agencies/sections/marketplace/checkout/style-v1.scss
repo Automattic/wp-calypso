@@ -12,6 +12,10 @@
 	flex-direction: column;
 	height: calc(100vh - 32px);
 	overflow: hidden;
+
+	@include break-large {
+		display: block;
+	}
 }
 
 .checkout .hosting-dashboard-layout__body,

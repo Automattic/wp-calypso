@@ -60,11 +60,22 @@ describe( 'Playground', () => {
 			const submit = jest.fn();
 
 			await act( async () => {
-				renderPlaygroundStep( { navigation: { submit } } );
+				renderPlaygroundStep(
+					{ navigation: { submit } },
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
 			} );
 
 			await userEvent.click( getLaunchButton() );
 			expect( submit ).toHaveBeenCalled();
+		} );
+
+		it( 'should keep launch button disabled when playground query parameter is missing', async () => {
+			await act( async () => {
+				renderPlaygroundStep();
+			} );
+
+			expect( getLaunchButton() ).toBeDisabled();
 		} );
 	} );
 
