@@ -13,6 +13,9 @@
 		},
 		"./index.css": "./dist/index.css"
 	},
+	"sideEffects": [
+		"*.css"
+	],
 	"files": [
 		"dist",
 		"README.md"
