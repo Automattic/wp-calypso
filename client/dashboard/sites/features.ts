@@ -70,7 +70,7 @@ export function canLeaveSite( site: Site ) {
 }
 
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
+	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {
