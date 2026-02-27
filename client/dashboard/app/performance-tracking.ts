@@ -34,14 +34,6 @@ function buildCollector( siteSlug?: string ): Collector {
 	};
 }
 
-function derivePerformanceRecordId( routeId: string ): string {
-	return routeId
-		.replace( /^\//g, '' )
-		.replace( /\/$/g, '' )
-		.replace( /\//g, '-' )
-		.replace( /\$/g, '' );
-}
-
 /**
  * Start performance tracking for a page.
  * Call this in a route's beforeLoad handler.
@@ -59,9 +51,8 @@ export function startPerformanceTracking( routeId: string ) {
 	if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 		return;
 	}
-	const id = derivePerformanceRecordId( routeId );
-	cancel( id );
-	start( id, { fullPageLoad: isFirstLoad } );
+	cancel( routeId );
+	start( routeId, { fullPageLoad: isFirstLoad } );
 }
 
 /**
@@ -70,7 +61,7 @@ export function startPerformanceTracking( routeId: string ) {
  */
 export function usePerformanceTrackerStop( siteSlug?: string ) {
 	const router = useRouter();
-	const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
+	const routeId = ( router.state.pendingMatches ?? router.state.matches ).at( -1 )?.routeId;
 
 	useLayoutEffect( () => {
 		if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
@@ -80,7 +71,7 @@ export function usePerformanceTrackerStop( siteSlug?: string ) {
 		// redirects (e.g. / → /sites) don't clear it before the final page renders.
 		isFirstLoad = false;
 		requestAnimationFrame( () => {
-			stop( derivePerformanceRecordId( routeId ), { collectors: [ buildCollector( siteSlug ) ] } );
+			stop( routeId, { collectors: [ buildCollector( siteSlug ) ] } );
 		} );
 	}, [ routeId, siteSlug ] );
 }

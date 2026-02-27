@@ -86,15 +86,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await pageDashboard.visit();
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for dashboard-site-list', async function () {
+		await test.step( 'Then a perf.nav event is sent for /sites', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === 'dashboard-site-list' ), {
+				.poll( () => events.find( ( e ) => e.id === '/sites' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "dashboard-site-list"',
+					message: 'Expected logstash request with id "/sites"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === 'dashboard-site-list' )!;
+			const event = events.find( ( e ) => e.id === '/sites' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 			expect( event.fullPage ).toBe( true );
 		} );
@@ -116,7 +116,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await pageDashboard.visit();
 			// Wait for the site list tracking to fire first
 			await expect
-				.poll( () => events.find( ( e ) => e.id === 'dashboard-site-list' ), {
+				.poll( () => events.find( ( e ) => e.id === '/sites' ), {
 					timeout: 15000,
 				} )
 				.toBeTruthy();
@@ -132,15 +132,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await page.waitForURL( /\/plugins\/manage/ );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for dashboard-plugin-list with fullPage false', async function () {
+		await test.step( 'Then a perf.nav event is sent for /plugins/manage/ with fullPage false', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === 'dashboard-plugin-list' ), {
+				.poll( () => events.find( ( e ) => e.id === '/plugins/manage/' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "dashboard-plugin-list"',
+					message: 'Expected logstash request with id "/plugins/manage/"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === 'dashboard-plugin-list' )!;
+			const event = events.find( ( e ) => e.id === '/plugins/manage/' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 			expect( event.fullPage ).toBe( false );
 		} );
@@ -161,15 +161,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await pageDashboard.visitPath( 'me/profile' );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for dashboard-me-profile', async function () {
+		await test.step( 'Then a perf.nav event is sent for /me/profile', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === 'dashboard-me-profile' ), {
+				.poll( () => events.find( ( e ) => e.id === '/me/profile' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "dashboard-me-profile"',
+					message: 'Expected logstash request with id "/me/profile"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === 'dashboard-me-profile' )!;
+			const event = events.find( ( e ) => e.id === '/me/profile' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 		} );
 	} );
@@ -189,15 +189,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await pageDashboard.visitPath( 'plugins/manage' );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for dashboard-plugin-list', async function () {
+		await test.step( 'Then a perf.nav event is sent for /plugins/manage/', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === 'dashboard-plugin-list' ), {
+				.poll( () => events.find( ( e ) => e.id === '/plugins/manage/' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "dashboard-plugin-list"',
+					message: 'Expected logstash request with id "/plugins/manage/"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === 'dashboard-plugin-list' )!;
+			const event = events.find( ( e ) => e.id === '/plugins/manage/' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 		} );
 	} );
