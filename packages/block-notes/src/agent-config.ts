@@ -13,15 +13,6 @@ export interface AgentConfigFactory {
 	createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
 }
 
-declare global {
-	interface Window {
-		_currentSiteId?: number;
-		Jetpack_Editor_Initial_State?: {
-			wpcomBlogId: string;
-		};
-	}
-}
-
 /**
  * Get the current blog/site ID from WordPress.com runtime globals.
  * @returns The site ID as a number, or null if not available.

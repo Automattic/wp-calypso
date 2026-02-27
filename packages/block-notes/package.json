@@ -15,12 +15,6 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
-		"./provider": {
-			"calypso:src": "./src/provider/index.ts",
-			"types": "./dist/types/provider/index.d.ts",
-			"import": "./dist/esm/provider/index.js",
-			"require": "./dist/cjs/provider/index.js"
-		},
 		"./src/*": {
 			"calypso:src": "./src/*"
 		}

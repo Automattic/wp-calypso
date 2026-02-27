@@ -19,7 +19,7 @@ export function useAgentConfig( agentConfigFactory: {
 	const [ agentConfigState, setAgentConfigState ] = useState< UseAgentChatConfig | null >( null );
 
 	// Get session ID from the store
-	const sessionId = useSelect( ( select ) => ( select( aiStore ) as any ).getSessionId(), [] );
+	const sessionId = useSelect( ( select ) => select( aiStore ).getSessionId(), [] );
 
 	useEffect( () => {
 		let mounted = true;

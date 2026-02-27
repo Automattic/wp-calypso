@@ -11,4 +11,8 @@ interface BlockNotesData {
 
 interface Window {
 	blockNotesData?: BlockNotesData;
+	_currentSiteId?: number;
+	Jetpack_Editor_Initial_State?: {
+		wpcomBlogId: string;
+	};
 }
