@@ -15,7 +15,7 @@ const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscripti
 	SubscriptionManager;
 const { useReadFeedSearchQuery } = Reader;
 
-const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ) => {
+export const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ) => {
 	const { title } = props;
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();

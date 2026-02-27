@@ -9,7 +9,7 @@ import nock from 'nock';
 import { ComponentProps } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
-import UnsubscribedFeedsSearchList from '../index';
+import { UnsubscribedFeedsSearchList } from '../index';
 
 // Mock recordTrainTracksRender
 const mockRecordTrainTracksRender = jest.fn();

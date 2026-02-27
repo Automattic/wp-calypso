@@ -10,7 +10,7 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
-import UnsubscribedFeedsSearchList from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
+import { UnsubscribedFeedsSearchList } from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
@@ -28,7 +28,10 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const isAddNewTab = props.type === 'add-new';
-	const { setSearchTerm } = useSiteSubscriptionsQueryProps();
+	const { setSearchTerm, searchTerm } = useSiteSubscriptionsQueryProps();
+	const hasSearchTerm = searchTerm && searchTerm.length > 0;
+	const shouldShowSubscriptionsList = ! hasSearchTerm && ! hasFeedPreview;
+	const shouldShowRelatedSitesList = hasSearchTerm && ! hasFeedPreview;
 
 	const handleChangeFeedPreview = useCallback(
 		( hasPreview: boolean ): void => {
@@ -117,12 +120,22 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						</div>
 					) : (
 						<>
-							<h2 className="reader-add-subscription__subscriptions-title">
-								{ translate( 'Your subscriptions' ) }
-							</h2>
-
-							<SiteSubscriptionsList layout="compact" />
-							<UnsubscribedFeedsSearchList />
+							{ shouldShowSubscriptionsList && (
+								<>
+									<h2 className="reader-add-subscription__subscriptions-title">
+										{ translate( 'Your subscriptions' ) }
+									</h2>
+									<SiteSubscriptionsList layout="compact" />
+								</>
+							) }
+							{ shouldShowRelatedSitesList && (
+								<>
+									<h2 className="reader-add-subscription__subscriptions-title">
+										{ translate( 'Related sites' ) }
+									</h2>
+									<UnsubscribedFeedsSearchList />
+								</>
+							) }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>
