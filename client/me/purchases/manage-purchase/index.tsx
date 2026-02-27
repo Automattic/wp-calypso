@@ -38,6 +38,9 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -479,14 +482,28 @@ class ManagePurchase extends Component<
 		if ( ! purchase ) {
 			return null;
 		}
-		const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
+
+		const plan = getPlan( purchase.productSlug );
+		const term = plan?.term;
+		let monthsInTerm = 12;
+		let renewLabel = translate( 'Renew annually' );
+
+		if ( term === TERM_BIENNIALLY ) {
+			monthsInTerm = 24;
+			renewLabel = translate( 'Renew every two years' );
+		} else if ( term === TERM_TRIENNIALLY ) {
+			monthsInTerm = 36;
+			renewLabel = translate( 'Renew every three years' );
+		}
+
+		const pricePerMonth = getRenewalPriceInSmallestUnit( purchase ) / monthsInTerm;
 		const savings = Math.floor(
-			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
+			( 100 * ( relatedMonthlyPlanPrice - pricePerMonth ) ) / relatedMonthlyPlanPrice
 		);
 
 		return this.renderRenewalNavItem(
 			<div>
-				{ translate( 'Renew annually' ) }
+				{ renewLabel }
 				<Badge className="manage-purchase__savings-badge" type="success">
 					{ translate( '%(savings)d%% cheaper than monthly', {
 						args: {
