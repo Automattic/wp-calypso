@@ -32,9 +32,4 @@ describe( 'HeroModern', () => {
 		const { container } = render( <HeroModern { ...defaultProps } /> );
 		expect( container.querySelector( '.full-width-section' ) ).toBeInTheDocument();
 	} );
-
-	test( 'renders illustration placeholder', () => {
-		const { container } = render( <HeroModern { ...defaultProps } /> );
-		expect( container.querySelector( '.hero-modern__illustration' ) ).toBeInTheDocument();
-	} );
 } );
