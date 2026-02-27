@@ -81,7 +81,7 @@ export function DeploymentLogsModalContent( {
 						<BranchDisplay branchName={ deployment.branch_name } />
 					</div>
 
-					<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
+					<HStack spacing={ 1.5 } alignment="left" expanded={ false } style={ { flexShrink: 0 } }>
 						<img
 							src={ author.avatar_url }
 							alt={ author.name }

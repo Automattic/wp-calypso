@@ -1,5 +1,6 @@
 import {
 	isDomainTransfer,
+	isDomainRegistration,
 	isConciergeSession,
 	isAkismetFreeProduct,
 	PLAN_MONTHLY_PERIOD,
@@ -175,7 +176,7 @@ export function PurchaseItemProduct( {
 		return null;
 	}
 
-	const productType = purchaseType( purchase );
+	const productType = isDomainRegistration( purchase ) ? null : purchaseType( purchase );
 
 	if ( showSite && site ) {
 		if ( productType && site.name && slug ) {

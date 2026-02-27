@@ -53,3 +53,22 @@
 	}
 }
 
+// Docked chat overrides
+.agents-manager-chat--docked .agenttic {
+	.agents-manager-selected-block {
+		color: $white;
+		border: 1px solid rgba( $white, 0.1 );
+		margin-top: 8px;
+
+		&__divider {
+			border-left: 1px solid rgba( $white, 0.1 );
+		}
+
+		&__remove {
+			&.components-button {
+				color: $white;
+			}
+		}
+	}
+}
+

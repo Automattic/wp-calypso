@@ -21,5 +21,5 @@ export default function AkismetIconExample() {
 ## Props
 
 - `className` : (string) Custom classname to be added to the SVG element in addition to the default "akismet-icon" class
-- `size`      : (number) The size of the icon (square)
-- `color`     : (string) Color of the icon
+- `size` : (number) The size of the icon (square)
+- `color` : (string) Color of the icon

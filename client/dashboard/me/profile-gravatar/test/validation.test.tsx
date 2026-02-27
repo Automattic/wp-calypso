@@ -4,22 +4,17 @@
 import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import { mockUserSettings } from '../../profile/__mocks__/user-settings';
 import GravatarProfileSection from '../index';
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	userSettingsQuery: jest.fn(),
-} ) );
-
 describe( 'GravatarProfileSection Form Validation', () => {
 	beforeEach( () => {
-		const { userSettingsQuery } = require( '@automattic/api-queries' );
-		userSettingsQuery.mockReturnValue( {
-			queryKey: [ 'me', 'settings' ],
-			queryFn: () => Promise.resolve( mockUserSettings ),
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/settings' )
+			.reply( 200, mockUserSettings );
 	} );
 
 	describe( 'Display Name Validation', () => {

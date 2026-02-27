@@ -34,12 +34,19 @@ import {
 	ToggleControl,
 	Notice,
 	ExternalLink,
+	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
+import {
+	moreVertical,
+	calendar,
+	currencyDollar,
+	commentAuthorAvatar,
+	layout,
+} from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -264,7 +271,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					upgradePurchase( upgradeUrl );
 				} }
 			>
-				{ __( 'Upgrade' ) }
+				{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 			</MenuItem>
 		),
 		canBeRenewed && (
@@ -276,7 +283,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					renewPurchase( purchase );
 				} }
 			>
-				{ __( 'Renew' ) }
+				{ _x(
+					'Renew',
+					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+				) }
 			</MenuItem>
 		),
 	].filter( Boolean );
@@ -314,7 +324,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Cancel' ) }
+						{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 					</Button>
 				}
 			/>
@@ -337,7 +347,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove' ) }
+						{ _x(
+							'Remove',
+							'Remove the cancelled or expired subscription from the list of active purchases.'
+						) }
 					</Button>
 				}
 			/>
@@ -371,7 +384,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade' ) }
+					{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 				</Button>
 			}
 		/>
@@ -430,7 +443,10 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 						renewPurchase( purchase );
 					} }
 				>
-					{ __( 'Renew' ) }
+					{ _x(
+						'Renew',
+						'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+					) }
 				</Button>
 			}
 		/>
@@ -990,8 +1006,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
+function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?: Site } ) {
 	if ( purchase.is_domain ) {
+		if ( site?.options?.is_domain_only ) {
+			return null;
+		}
+
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return (
 				<Text variant="muted">
@@ -1135,7 +1155,7 @@ export default function PurchaseSettings() {
 								<HStack justify="space-between">
 									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ __( 'Upgrade' ) }
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									<PageHeader.ActionMenu>
@@ -1153,7 +1173,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 
-					<PurchaseSecondSubtitle purchase={ purchase } />
+					<PurchaseSecondSubtitle purchase={ purchase } site={ site } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
@@ -1210,15 +1230,27 @@ export default function PurchaseSettings() {
 						} )() }
 					/>
 					<PurchasePriceCard purchase={ purchase } />
-					{ site && (
-						<OverviewCard
-							icon={ <SiteIcon site={ site } /> }
-							title={ __( 'Site' ) }
-							heading={ site.name }
-							description={ purchase.site_slug }
-							link={ `/sites/${ purchase.site_slug }` }
-						/>
-					) }
+					{ site &&
+						( site.options?.is_domain_only &&
+						purchase.is_domain &&
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ? (
+							<OverviewCard
+								icon={ <Icon icon={ layout } /> }
+								title={ __( 'Attach to a site' ) }
+								heading={ __( 'No site attached' ) }
+								description={ __( 'Attach this domain name to an existing site.' ) }
+								link={ `/domains/${ purchase.meta }/transfer/other-site` }
+								intent="upsell"
+							/>
+						) : (
+							<OverviewCard
+								icon={ <SiteIcon site={ site } /> }
+								title={ __( 'Site' ) }
+								heading={ site.name }
+								description={ purchase.site_slug }
+								link={ `/sites/${ purchase.site_slug }` }
+							/>
+						) ) }
 					<OverviewCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }

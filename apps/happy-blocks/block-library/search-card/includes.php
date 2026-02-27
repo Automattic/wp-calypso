@@ -8,7 +8,7 @@
  */
 
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
-$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages' )
+$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v2' )
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' ) );
 
 if ( ! function_exists( 'happy_blocks_get_search_card_asset' ) ) {

@@ -42,10 +42,10 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 
 export function PurchaseExpiryStatus( {
 	purchase,
-	isDisconnectedSite,
+	isSiteMissing,
 }: {
 	purchase: Purchase;
-	isDisconnectedSite?: boolean;
+	isSiteMissing?: boolean;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
@@ -74,7 +74,7 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if (
-		isDisconnectedSite &&
+		isSiteMissing &&
 		isTemporarySitePurchase( purchase ) &&
 		purchase.product_type === 'jetpack'
 	) {
@@ -96,11 +96,16 @@ export function PurchaseExpiryStatus( {
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if ( isSiteMissing && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType ) {
+	if (
+		isSiteMissing &&
+		! isA4APurchase &&
+		! isKnownTemporarySiteProductType &&
+		! purchase.is_domain
+	) {
 		return (
 			<span>
 				{ createInterpolateElement(

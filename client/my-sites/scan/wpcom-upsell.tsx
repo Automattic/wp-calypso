@@ -22,7 +22,7 @@ export default function WPCOMScanUpsellPage() {
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
-		<Main className="scan scan__wpcom-upsell">
+		<Main wideLayout className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 

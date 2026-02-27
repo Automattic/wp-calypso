@@ -1,6 +1,6 @@
 import {
 	WPCOM_FEATURES_REAL_TIME_BACKUPS,
-	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	FEATURE_REPUBLICIZE,
 	WPCOM_FEATURES_CLASSIC_SEARCH,
 } from '@automattic/calypso-products';
@@ -23,7 +23,7 @@ export default function useAtomicSiteHasEquivalentFeatureToPlugin( pluginSlug: s
 
 	const atomicFeaturesIncludedInPluginsMap = {
 		'jetpack-backup': WPCOM_FEATURES_REAL_TIME_BACKUPS,
-		'jetpack-protect': WPCOM_FEATURES_SCAN,
+		'jetpack-protect': WPCOM_FEATURES_SCAN_SELF_SERVE,
 		'jetpack-social': FEATURE_REPUBLICIZE,
 		'jetpack-search': WPCOM_FEATURES_CLASSIC_SEARCH,
 	};

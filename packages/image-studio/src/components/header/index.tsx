@@ -118,8 +118,8 @@ export const Header = ( {
 								'image-studio-sr-only': showTitle,
 							} ) }
 						>
-							{ __( 'Image Editor', 'big-sky' ) }{ ' ' }
-							<span className="image-studio-badge">{ __( 'Beta', 'big-sky' ) }</span>
+							{ __( 'Image Editor', __i18n_text_domain__ ) }{ ' ' }
+							<span className="image-studio-badge">{ __( 'Beta', __i18n_text_domain__ ) }</span>
 						</h2>
 					) }
 				</div>
@@ -134,14 +134,14 @@ export const Header = ( {
 								disabled={ ! hasPreviousImage || isAiProcessing || isSaving }
 								label={ sprintf(
 									/* translators: %s: modifier key (command or control) */
-									__( 'Previous image %s←', 'big-sky' ),
+									__( 'Previous image %s←', __i18n_text_domain__ ),
 									modKeySymbol
 								) }
 								showTooltip
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
-								{ config?.imageData?.filename || __( 'Untitled', 'big-sky' ) }
+								{ config?.imageData?.filename || __( 'Untitled', __i18n_text_domain__ ) }
 							</span>
 							<Button
 								variant="tertiary"
@@ -150,7 +150,7 @@ export const Header = ( {
 								disabled={ ! hasNextImage || isAiProcessing || isSaving }
 								label={ sprintf(
 									/* translators: %s: modifier key (command or control) */
-									__( 'Next image %s→', 'big-sky' ),
+									__( 'Next image %s→', __i18n_text_domain__ ),
 									modKeySymbol
 								) }
 								showTooltip
@@ -171,7 +171,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationUndo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Undo %sZ', 'big-sky' ),
+											__( 'Undo %sZ', __i18n_text_domain__ ),
 											modKeySymbol
 										) }
 										disabled={ ! hasPendingAnnotations }
@@ -182,7 +182,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationRedo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Redo ⇧%sZ', 'big-sky' ),
+											__( 'Redo ⇧%sZ', __i18n_text_domain__ ),
 											modKeySymbol
 										) }
 										disabled={ ! hasUndoneAnnotations }
@@ -195,7 +195,10 @@ export const Header = ( {
 										variant="tertiary"
 										icon={ external }
 										className="image-studio-classic-editor-link"
-										label={ __( 'Edit this image in the WordPress Media Library', 'big-sky' ) }
+										label={ __(
+											'Edit this image in the WordPress Media Library',
+											__i18n_text_domain__
+										) }
 										onClick={ async () => {
 											trackImageStudioToolClick( 'media_library' );
 											try {
@@ -204,7 +207,7 @@ export const Header = ( {
 												addNotice(
 													__(
 														'Failed to save changes. Please try again or use the Save button.',
-														'big-sky'
+														__i18n_text_domain__
 													),
 													'error'
 												);
@@ -216,14 +219,14 @@ export const Header = ( {
 										} }
 									>
 										<span className="image-studio-header__button-text">
-											{ __( 'Media Library', 'big-sky' ) }
+											{ __( 'Media Library', __i18n_text_domain__ ) }
 										</span>
 									</Button>
 								) }
 								<Button
 									variant="tertiary"
 									icon={ <Icon icon={ LassoIcon } /> }
-									label={ __( 'Select an area of the image to edit', 'big-sky' ) }
+									label={ __( 'Select an area of the image to edit', __i18n_text_domain__ ) }
 									onClick={ () => {
 										trackImageStudioToolClick( 'annotate' );
 										handleToolbarClick( ToolbarOption.Annotate );
@@ -232,7 +235,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.Annotate }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Select', 'big-sky' ) }
+										{ __( 'Select', __i18n_text_domain__ ) }
 									</span>
 								</Button>
 								<Button
@@ -241,7 +244,7 @@ export const Header = ( {
 										'image-studio-toolbar-alt-button': hasUpdatedMetadata,
 									} ) }
 									icon={ <Icon icon={ AltIcon } /> }
-									label={ __( 'View or edit information about the image', 'big-sky' ) }
+									label={ __( 'View or edit information about the image', __i18n_text_domain__ ) }
 									onClick={ () => {
 										// Track whether we're opening or closing
 										const isCurrentlyOpen = activeToolbarOption === ToolbarOption.AltText;
@@ -252,7 +255,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.AltText }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Image Info', 'big-sky' ) }
+										{ __( 'Image Info', __i18n_text_domain__ ) }
 									</span>
 								</Button>
 							</div>
@@ -261,14 +264,18 @@ export const Header = ( {
 								disabled={ ! isSaveable || isSaving }
 								isBusy={ isSaving }
 								onClick={ onSave }
-								label={ __( 'Save displayed image to Media Library', 'big-sky' ) }
-								text={ isSaving ? __( 'Saving…', 'big-sky' ) : __( 'Save', 'big-sky' ) }
+								label={ __( 'Save displayed image to Media Library', __i18n_text_domain__ ) }
+								text={
+									isSaving
+										? __( 'Saving…', __i18n_text_domain__ )
+										: __( 'Save', __i18n_text_domain__ )
+								}
 							/>
 						</Fragment>
 					) }
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close image editor', 'big-sky' ) }
+						label={ __( 'Close image editor', __i18n_text_domain__ ) }
 						onClick={ () => onClose() }
 						disabled={ isSaving }
 					/>

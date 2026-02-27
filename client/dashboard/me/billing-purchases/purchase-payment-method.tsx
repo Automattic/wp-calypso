@@ -10,11 +10,11 @@ import './style.scss';
 
 export function PurchasePaymentMethod( {
 	purchase,
-	isDisconnectedSite,
+	isSiteMissing,
 	showUpdateButton,
 }: {
 	purchase: Purchase;
-	isDisconnectedSite?: boolean;
+	isSiteMissing?: boolean;
 	showUpdateButton?: boolean;
 } ) {
 	const navigate = useNavigate();
@@ -34,7 +34,7 @@ export function PurchasePaymentMethod( {
 		isExpired( purchase ) ||
 		purchase.partner_name ||
 		isAkismetFreeProduct( purchase ) ||
-		isDisconnectedSite
+		( isSiteMissing && ! purchase.is_domain )
 	) {
 		return null;
 	}
@@ -83,7 +83,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>
@@ -110,7 +110,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>

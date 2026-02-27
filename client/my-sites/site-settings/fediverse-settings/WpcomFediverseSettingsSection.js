@@ -1,4 +1,4 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, isFreePlanProduct, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -21,10 +21,15 @@ import {
 
 const DomainUpsellCard = ( { siteId } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const linkUrl = getDomainAndPlanUpsellUrl( {
-		siteSlug: domain,
-		step: 'domains',
-	} );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const hasQualifyingPlan =
+		site?.plan && ! isFreePlanProduct( site.plan ) && site.plan.billing_period !== 'Monthly';
+	const linkUrl = hasQualifyingPlan
+		? `/domains/add/${ domain }`
+		: getDomainAndPlanUpsellUrl( {
+				siteSlug: domain,
+				step: 'domains',
+		  } );
 	const translate = useTranslate();
 	const recordClick = () => {
 		const domainRegExp = new RegExp( `/${ domain }$` );

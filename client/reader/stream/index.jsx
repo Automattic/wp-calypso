@@ -79,6 +79,7 @@ class ReaderStream extends Component {
 		onUpdatesShown: PropTypes.func,
 		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
+		restoreScroll: PropTypes.bool,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
@@ -101,6 +102,7 @@ class ReaderStream extends Component {
 		isDiscoverStream: false,
 		isMain: true,
 		onUpdatesShown: noop,
+		restoreScroll: true,
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
@@ -188,7 +190,11 @@ class ReaderStream extends Component {
 	};
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
+		if (
+			this.props.selectedPostKey &&
+			window.history.scrollRestoration !== 'manual' &&
+			this.props.restoreScroll
+		) {
 			this.scrollToSelectedPost( false );
 		}
 	};
@@ -239,8 +245,10 @@ class ReaderStream extends Component {
 				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
 			}
 			this.mountTimeout = setTimeout( () => {
-				this.scrollToSelectedPost( false );
-				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.props.restoreScroll ) {
+					this.scrollToSelectedPost( false );
+					this.focusSelectedPost( this.props.selectedPostKey );
+				}
 				if ( this.overlayRef.current ) {
 					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
 				}
@@ -661,10 +669,26 @@ class ReaderStream extends Component {
 		let baseClassnames = clsx( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
+		const sidebarContentFn = this.props.streamSidebar;
+
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent?.();
-			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
-				body = <EmptyContent />;
+			let emptyBody = this.props.emptyContent?.();
+			if ( ! emptyBody && this.props.showDefaultEmptyContentIfMissing ) {
+				emptyBody = <EmptyContent />;
+			}
+
+			// In wide display with a sidebar, render the two-column layout so the sidebar
+			// (with follow button, subscriber count, tags) remains visible for empty feeds.
+			if ( wideDisplay && sidebarContentFn && streamType !== 'search' ) {
+				body = (
+					<div className="stream__two-column">
+						<div className="reader__content">{ emptyBody }</div>
+						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+					</div>
+				);
+				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+			} else {
+				body = emptyBody;
 			}
 			showingStream = false;
 		} else {
@@ -683,10 +707,9 @@ class ReaderStream extends Component {
 					className="stream__list"
 					context={ this.state.listContext }
 					selectedItem={ selectedPostKey }
+					restoreScroll={ this.props.restoreScroll }
 				/>
 			);
-
-			const sidebarContentFn = this.props.streamSidebar;
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {

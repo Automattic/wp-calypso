@@ -2,13 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-jest.mock( '../lib/resolve-remote-blueprint-standalone', () => ( {
-	resolveRemoteBlueprint: jest.fn(),
-	ZipFilesystem: jest.fn(),
-} ) );
-
 import { getBlueprint, getBlueprintID, getBlueprintLabelForTracking } from '../lib/blueprint';
-import { resolveRemoteBlueprint } from '../lib/resolve-remote-blueprint-standalone';
 
 const DEFAULT_BLUEPRINT = {
 	preferredVersions: {
@@ -65,34 +59,17 @@ const REMOTE_BLUEPRINT = {
 	steps: [],
 };
 
-/**
- * Creates a mock BlueprintBundle (ReadableFilesystemBackend) that returns
- * the given blueprint JSON when reading /blueprint.json.
- */
-function createMockBlueprintBundle( blueprintJson ) {
-	return {
-		read: jest.fn().mockImplementation( ( path ) => {
-			if ( path === '/blueprint.json' ) {
-				const encoded = new TextEncoder().encode( JSON.stringify( blueprintJson ) );
-				return Promise.resolve( {
-					arrayBuffer: () => Promise.resolve( encoded.buffer ),
-				} );
-			}
-			return Promise.reject( new Error( `File not found: ${ path }` ) );
-		} ),
-	};
+function setLocationHref( href: string ) {
+	Object.defineProperty( window, 'location', {
+		value: { href },
+		writable: true,
+	} );
 }
 
 describe( 'getBlueprint', () => {
-	let consoleWarnSpy: jest.SpyInstance;
-
 	beforeEach( () => {
 		jest.restoreAllMocks();
-		consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
-	} );
-
-	afterEach( () => {
-		consoleWarnSpy.mockRestore();
+		setLocationHref( 'https://example.com/' );
 	} );
 
 	it( 'returns default blueprint if WordPress is installed', async () => {
@@ -107,11 +84,7 @@ describe( 'getBlueprint', () => {
 	} );
 
 	it( 'returns pre-defined blueprint when its name is specified', async () => {
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: ( param ) => ( param === 'blueprint' ? 'woocommerce' : null ),
-			},
-		} ) );
+		setLocationHref( 'https://example.com/?blueprint=woocommerce' );
 
 		const blueprint = await getBlueprint( false, '8.1' );
 		expect( blueprint ).toEqual( WOOCOMMERCE_PREDEFINED_BLUEPRINT );
@@ -212,36 +185,37 @@ describe( 'getBlueprint', () => {
 			},
 		},
 	] )(
-		'returns blueprint after resolving from blueprint-url GET param $testName',
+		'returns blueprint after fetching from blueprint-url GET param $testName',
 		( { mockResponse } ) => {
-			it( 'resolves and returns the expected blueprint', async () => {
-				// Mock URL to return blueprint-url parameter
-				jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-					searchParams: {
-						get: ( param ) =>
-							param === 'blueprint-url' ? 'https://example.com/blueprint.json' : null,
-						has: ( param ) => param === 'blueprint-url',
-					},
-				} ) );
+			it( 'fetches and returns the expected blueprint', async () => {
+				setLocationHref( 'https://example.com/?blueprint-url=https://example.com/blueprint.json' );
 
-				// Mock resolveRemoteBlueprint to return a BlueprintBundle
-				// that serves the mockResponse as /blueprint.json
-				resolveRemoteBlueprint.mockResolvedValue( createMockBlueprintBundle( mockResponse ) );
+				// Mock the fetch function with a proper arrayBuffer() response
+				jest.spyOn( global, 'fetch' ).mockResolvedValue( {
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					arrayBuffer: async () => {
+						const encoder = new TextEncoder();
+						return encoder.encode( JSON.stringify( mockResponse ) ).buffer;
+					},
+				} as unknown as Response );
 
 				const blueprint = await getBlueprint( false, '8.4' );
 
-				// Verify resolveRemoteBlueprint was called with the right URL
-				expect( resolveRemoteBlueprint ).toHaveBeenCalledWith(
-					'https://example.com/blueprint.json'
-				);
+				// Verify fetch was called with the right URL
+				expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/blueprint.json', {
+					credentials: 'omit',
+				} );
 				expect( blueprint ).toEqual( REMOTE_BLUEPRINT );
-				expect( consoleWarnSpy ).toHaveBeenCalledTimes( 1 );
-				expect( consoleWarnSpy ).toHaveBeenCalledWith(
-					'Loading blueprint from https://example.com/blueprint.json but please migrate to blueprint library (https://blueprintlibrary.wordpress.com)'
-				);
 			} );
 		}
 	);
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+		setLocationHref( 'https://example.com/' );
+	} );
 } );
 
 describe( 'getBlueprintID', () => {

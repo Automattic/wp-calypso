@@ -80,4 +80,4 @@ export interface StoredPaymentMethodTaxLocation {
 	is_for_business?: boolean | undefined;
 }
 
-export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
+export type PaymentMethodRequestType = 'card' | 'agreement' | 'vault-token' | 'all';

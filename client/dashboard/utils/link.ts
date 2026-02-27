@@ -10,7 +10,7 @@ export function dashboardOrigins(): string[] {
 		'http://my.localhost:3000',
 		'https://my.wordpress.com',
 		'http://my.woo.localhost:3000',
-		'https://my.woo.com',
+		'https://my.woo.ai',
 	];
 }
 

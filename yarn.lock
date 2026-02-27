@@ -296,11 +296,17 @@ __metadata:
   resolution: "@automattic/agents-manager-app@workspace:apps/agents-manager"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/image-studio": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@wordpress/components": "npm:^28.23.0"
+    "@wordpress/compose": "npm:^7.23.0"
+    "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/i18n": "npm:^6.13.0"
     "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     webpack: "npm:^5.99.8"
@@ -319,8 +325,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.41"
-    "@automattic/agenttic-ui": "npm:^0.1.41"
+    "@automattic/agenttic-client": "npm:^0.1.46"
+    "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -342,18 +348,16 @@ __metadata:
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.34, @automattic/agenttic-client@npm:^0.1.41":
-  version: 0.1.41
-  resolution: "@automattic/agenttic-client@npm:0.1.41"
+"@automattic/agenttic-client@npm:^0.1.46":
+  version: 0.1.46
+  resolution: "@automattic/agenttic-client@npm:0.1.46"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -367,13 +371,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 0c22fdb818a2c1737398fa97a2578a2f04e58a0246b4c0dd8765202eac5ea088d6ad70eb1458a5bda982c5de7a4859b73ca5b4d9fa4b4912fd3bafe61430cd4d
+  checksum: 8276da7e546e51e83651b161e688b7d19f9fa4a1d9171ad8093899ae480e095991134a255509defaea83571ffb1769838dd661929462980dbd3419881fa3e718
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.34, @automattic/agenttic-ui@npm:^0.1.41":
-  version: 0.1.41
-  resolution: "@automattic/agenttic-ui@npm:0.1.41"
+"@automattic/agenttic-ui@npm:^0.1.46":
+  version: 0.1.46
+  resolution: "@automattic/agenttic-ui@npm:0.1.46"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -399,7 +403,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 34005e0f2bbf206054a06271e6857e2c4e69be699a169d4af973dfe7d2fbcd9346fac81bf16d33e1e4c9a5c53133b732cc16c6c6b757a77e56a50d7b6c8f34f3
+  checksum: 87b975cf03a4f02e9327f791c204d8dd8588fb147cf9ebe8b10ec61f1d45a3a22cc4a9b5b5670964f0188e59d2affabe7deee47427523a6b8740dc407774f773
   languageName: node
   linkType: hard
 
@@ -484,7 +488,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
@@ -801,7 +805,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@wordpress/data": "npm:^10.23.0"
@@ -1009,7 +1013,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/typography": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -1109,7 +1113,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": "npm:^1.5.0"
@@ -1566,8 +1570,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.34"
-    "@automattic/agenttic-ui": "npm:^0.1.34"
+    "@automattic/agents-manager": "workspace:^"
+    "@automattic/agenttic-client": "npm:^0.1.46"
+    "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1781,7 +1786,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
@@ -1842,14 +1847,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "@automattic/number-formatters@npm:1.0.15"
+"@automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15, @automattic/number-formatters@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@automattic/number-formatters@npm:1.1.0"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: 033aee63dbb320d3ab6e34eec73453bf434911123371501014027fed5251793bedf96047d7158ef326cfc35fe75175dbe48a6c53f2343ec91004d43c007ea022
+  checksum: 277a5dd990141795cf11efcad0a0a5e072c92cb91915f6ce3cc0d834527744bf518977da0ea48566480da845e901d28969783236ed1ebd582265aec714b5a1a8
   languageName: node
   linkType: hard
 
@@ -1900,7 +1905,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.41"
+    "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -2033,7 +2038,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -2576,7 +2581,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/js-utils": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@fnando/cnpj": "npm:2.0.0"
@@ -14816,7 +14821,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.41"
+    "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -21470,7 +21475,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
@@ -37789,7 +37794,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.41"
+    "@automattic/agenttic-ui": "npm:^0.1.46"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
@@ -37811,7 +37816,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
-    "@automattic/number-formatters": "npm:^1.0.1"
+    "@automattic/number-formatters": "npm:^1.1.0"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"

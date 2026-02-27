@@ -93,3 +93,21 @@ export async function fetchPaginatedSites(
 		}
 	);
 }
+
+export async function fetchJetpackSiteUrls(): Promise< string[] > {
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/sites',
+			apiVersion: '1.2',
+		},
+		{
+			fields: [ 'jetpack', 'URL' ],
+			site_visibility: 'all',
+			include_domain_only: false,
+			filters: 'jetpack',
+		}
+	);
+	return ( sites as Pick< Site, 'jetpack' | 'URL' >[] )
+		.filter( ( site ) => site.jetpack )
+		.map( ( site ) => site.URL );
+}

@@ -1,28 +1,3 @@
-# CLAUDE.md
+@AGENTS.md
 
-## Repository layout
-
-- client/ — main application clients, deployed as single-page React apps.
-- packages/ — shared libraries across clients.
-- apps/ — standalone mini-apps, deployed separately.
-
-## Clients
-
-- **Calypso** — the classic WordPress.com hosting dashboard, sharing data using Redux and split via Webpack section chunks.
-  - client/my-sites — per-site management; deprecated in favor of the Dashboard client
-  - client/landing/stepper — onboarding/signup flows (site creation, domain purchase, migration wizards)
-  - client/reader — WordPress.com Reader: feed streams, discover, conversations, likes, lists, following management
-  - Shared infra: client/components, client/state, client/lib, client/layout
-- **Jetpack Cloud** (client/jetpack-cloud) — reuses Calypso shared infra (client/state, client/components).
-- **A8C for Agencies** (client/a8c-for-agencies) — reuses Calypso shared infra.
-- **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router).
-
-## Development
-
-- `yarn install`
-- `yarn start` to start the dev server.
-- `yarn start-dashboard` to start the dev server for the Dashboard client only.
-
-## Creating PRs
-
-Follow the rules in @.claude/rules/pr.md for the best practices in creating PRs.
+- CRITICAL: Preserve existing curly quotes and apostrophes (“” ‘’) exactly as they appear in the source. Do NOT replace them with unicode escape sequences (\u2019, etc.) or straight ASCII equivalents (', "). To do that, when editing strings that contain a mix of straight quote delimiters and curly quotes/apostrophes inside, avoid including the string delimiters in the old_string/new_string of the Edit tool. Instead, match on a unique inner substring that doesn't include the delimiters. This prevents the Edit tool from inadvertently converting straight quote delimiters to curly quotes or vice versa.

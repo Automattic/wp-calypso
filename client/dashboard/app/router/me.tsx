@@ -256,6 +256,10 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
+	validateSearch: ( search ): { refunded?: true } => {
+		const isRefunded = search.refunded === true || search.refunded === 'true';
+		return isRefunded ? { refunded: true } : {};
+	},
 } );
 
 export const purchaseSettingsIndexRoute = createRoute( {
@@ -297,6 +301,11 @@ export const changePaymentMethodRoute = createRoute( {
 	loader: () => {
 		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	},
+	validateSearch: ( search ): { redirect_to?: string } => {
+		return {
+			redirect_to: typeof search.redirect_to === 'string' ? search.redirect_to : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>

@@ -77,7 +77,6 @@ export function createCreditCardMethod( {
 	currency,
 	store,
 	shouldUseEbanx,
-	shouldUseVgs,
 	shouldShowTaxFields,
 	submitButtonContent,
 	allowUseForAllSubscriptions,
@@ -86,7 +85,6 @@ export function createCreditCardMethod( {
 	currency: string | null;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
-	shouldUseVgs?: boolean;
 	shouldShowTaxFields?: boolean;
 	submitButtonContent: ReactNode;
 	allowUseForAllSubscriptions?: boolean;
@@ -110,7 +108,6 @@ export function createCreditCardMethod( {
 			<CreditCardPayButton
 				store={ store }
 				shouldUseEbanx={ shouldUseEbanx }
-				shouldUseVgs={ shouldUseVgs }
 				submitButtonContent={ submitButtonContent }
 			/>
 		),

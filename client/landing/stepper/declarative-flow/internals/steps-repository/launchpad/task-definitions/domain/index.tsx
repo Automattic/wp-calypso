@@ -10,6 +10,9 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const { site, checklistStatuses, siteSlug } = context;
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
+	const hasPaidNonMonthlyPlan =
+		site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
+
 	const getDestionationUrl = () => {
 		if ( ! siteSlug ) {
 			return '';
@@ -23,6 +26,21 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 			} );
 		}
 
+		// Users with a paid non-monthly plan already have a qualifying plan
+		// and don't need the combined domain-and-plan upsell flow.
+		if ( hasPaidNonMonthlyPlan ) {
+			return checklistStatuses?.domain_upsell_deferred === true
+				? `/domains/manage/${ siteSlug }`
+				: `/domains/add/${ siteSlug }`;
+		}
+
+		// Monthly plans don't include a free domain, so monthly plan users still
+		// need the domain-and-plan flow to upgrade their plan.
+		const isMonthlyPlan = site?.plan?.billing_period === 'Monthly' && ! site?.plan?.is_free;
+		const effectiveDomainUpsellCompleted = isMonthlyPlan
+			? checklistStatuses?.domain_upsell_deferred === true
+			: domainUpsellCompleted;
+
 		const backUrl = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
 
 		const purchaseDomainUrl = getDomainAndPlanUpsellUrl( {
@@ -31,7 +49,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 			suggestion: site?.name,
 		} );
 
-		return domainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;
+		return effectiveDomainUpsellCompleted ? `/domains/manage/${ siteSlug }` : purchaseDomainUrl;
 	};
 
 	return {
@@ -39,7 +57,9 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 		completed: domainUpsellCompleted,
 		calypso_path: getDestionationUrl(),
 		badge_text:
-			domainUpsellCompleted || isStartWritingFlow( flow ) ? '' : translate( 'Upgrade plan' ),
+			domainUpsellCompleted || isStartWritingFlow( flow ) || hasPaidNonMonthlyPlan
+				? ''
+				: translate( 'Upgrade plan' ),
 		useCalypsoPath: true,
 	};
 };

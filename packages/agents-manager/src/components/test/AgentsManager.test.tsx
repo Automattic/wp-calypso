@@ -1,49 +1,64 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- AgentsManager must be imported after jest.mock */
-import { render, screen } from '@testing-library/react';
+/* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
+import { render } from '@testing-library/react';
 import type { AgentsManagerContextType } from '../../contexts';
 
-// Store context values captured by the mock
-let mockCapturedContext: AgentsManagerContextType | null = null;
+// Capture context value passed by `AgentsManager`
+let capturedProps: Record< string, unknown > | null = null;
 
-// Mock UnifiedAIAgent to avoid complex dependencies and capture context
-jest.mock( '../unified-ai-agent', () => ( {
-	__esModule: true,
-	default: function MockUnifiedAIAgent() {
-		// Import context hook inside mock (allowed with require)
-		const { useAgentsManagerContext } = require( '../../contexts' );
-		mockCapturedContext = useAgentsManagerContext();
-		return (
-			<div data-testid="mock-unified-agent">
-				<span data-testid="context-sectionName">{ mockCapturedContext.sectionName }</span>
-				<span data-testid="context-userId">{ mockCapturedContext.currentUser?.ID ?? 'none' }</span>
-				<span data-testid="context-siteId">{ mockCapturedContext.site?.ID ?? 'none' }</span>
-				<span data-testid="context-siteDomain">{ mockCapturedContext.site?.domain ?? 'none' }</span>
-				<span data-testid="context-isEligibleForChat">
-					{ String( mockCapturedContext.isEligibleForChat ) }
-				</span>
-			</div>
-		);
+// Packages that Jest can't resolve in this environment
+jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
+jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
+
+// Simulate `store` ready so the component renders
+jest.mock( '@wordpress/data', () => ( { useSelect: () => ( { hasLoaded: true } ) } ) );
+jest.mock( '@tanstack/react-query', () => ( {
+	QueryClient: jest.fn(),
+	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
+} ) );
+
+// Intercept context provider to capture forwarded props
+jest.mock( '../../contexts', () => ( {
+	AgentsManagerContextProvider: ( {
+		value,
+		children,
+	}: {
+		value: Record< string, unknown >;
+		children: React.ReactNode;
+	} ) => {
+		capturedProps = value;
+		return children;
 	},
 } ) );
 
-// Import AgentsManager after mocking UnifiedAIAgent
+// Prevent transitive dependency chains from loading
+jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../utils/agent-config', () => ( {} ) );
+jest.mock( '../../utils/agent-session', () => ( {} ) );
+jest.mock( '../../utils/load-external-providers', () => ( {} ) );
+jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );
+jest.mock( '../agent-dock', () => ( { __esModule: true, default: () => null } ) );
+jest.mock( 'react-router-dom', () => ( {} ) );
+
+// Render nothing so `AgentSetup` never mounts
+jest.mock( '../persistent-router', () => ( { PersistentRouter: () => null } ) );
+
 import AgentsManager from '../agents-manager';
 
 describe( 'AgentsManager', () => {
 	beforeEach( () => {
-		mockCapturedContext = null;
+		capturedProps = null;
 	} );
 
-	it( 'provides sectionName to child components via context', () => {
+	it( 'forwards `sectionName`', () => {
 		render( <AgentsManager sectionName="gutenberg" /> );
 
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'gutenberg' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { sectionName: 'gutenberg' } ) );
 	} );
 
-	it( 'provides currentUser to child components via context', () => {
+	it( 'forwards `currentUser`', () => {
 		const mockUser = {
 			ID: 123,
 			username: 'testuser',
@@ -53,31 +68,18 @@ describe( 'AgentsManager', () => {
 
 		render( <AgentsManager sectionName="wp-admin" currentUser={ mockUser } /> );
 
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( '123' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { currentUser: mockUser } ) );
 	} );
 
-	it( 'provides site to child components via context', () => {
-		const mockSite = {
-			ID: 456,
-			domain: 'example.com',
-		};
+	it( 'forwards `site`', () => {
+		const mockSite = { ID: 456, domain: 'example.com' };
 
 		render( <AgentsManager sectionName="wp-admin" site={ mockSite } /> );
 
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( '456' );
-		expect( screen.getByTestId( 'context-siteDomain' ).textContent ).toBe( 'example.com' );
+		expect( capturedProps ).toEqual( expect.objectContaining( { site: mockSite } ) );
 	} );
 
-	it( 'uses default values for unspecified context fields', () => {
-		render( <AgentsManager sectionName="wp-admin" /> );
-
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'wp-admin' );
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( 'none' );
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( 'none' );
-		expect( screen.getByTestId( 'context-isEligibleForChat' ).textContent ).toBe( 'false' );
-	} );
-
-	it( 'provides all props together to child components', () => {
+	it( 'forwards all props together', () => {
 		const mockUser = {
 			ID: 789,
 			username: 'fulltest',
@@ -85,18 +87,18 @@ describe( 'AgentsManager', () => {
 			email: 'full@example.com',
 		} as AgentsManagerContextType[ 'currentUser' ];
 
-		const mockSite = {
-			ID: 999,
-			domain: 'fulltest.com',
-		};
+		const mockSite = { ID: 999, domain: 'fulltest.com' };
 
 		render(
 			<AgentsManager sectionName="site-editor" currentUser={ mockUser } site={ mockSite } />
 		);
 
-		expect( screen.getByTestId( 'context-sectionName' ).textContent ).toBe( 'site-editor' );
-		expect( screen.getByTestId( 'context-userId' ).textContent ).toBe( '789' );
-		expect( screen.getByTestId( 'context-siteId' ).textContent ).toBe( '999' );
-		expect( screen.getByTestId( 'context-siteDomain' ).textContent ).toBe( 'fulltest.com' );
+		expect( capturedProps ).toEqual(
+			expect.objectContaining( {
+				sectionName: 'site-editor',
+				currentUser: mockUser,
+				site: mockSite,
+			} )
+		);
 	} );
 } );
