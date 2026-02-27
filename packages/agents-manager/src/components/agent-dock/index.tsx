@@ -109,6 +109,7 @@ export default function AgentDock( {
 	} );
 
 	useSetupCustomActions( {
+		canDock,
 		dock,
 		undock,
 		openSidebar,
