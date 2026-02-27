@@ -88,6 +88,9 @@ function ContentConfirmDisconnect( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( formData.domain !== site.slug ) {
+			return;
+		}
 
 		recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_disconnect_click' );
 
