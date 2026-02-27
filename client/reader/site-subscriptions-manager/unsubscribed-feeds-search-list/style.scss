@@ -17,6 +17,10 @@
 			gap: unset !important;
 		}
 	}
+
+	.feed-preview__stream .main {
+		max-width: initial;
+	}
 }
 
 .reader-unsubscribed-feeds-search-heading {

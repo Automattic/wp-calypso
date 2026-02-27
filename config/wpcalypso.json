@@ -161,6 +161,7 @@
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
+		"themes/showcase-modern": false,
 		"themes/subscription-purchases": false,
 		"themes/universal-header": true,
 		"plugins/universal-header": true,

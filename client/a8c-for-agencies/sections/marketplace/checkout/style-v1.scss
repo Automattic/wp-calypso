@@ -7,13 +7,22 @@
 	background: var( --color-sidebar-menu-selected-background );
 }
 
+.checkout.hosting-dashboard-layout {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 32px);
+	overflow: hidden;
+}
+
 .checkout .hosting-dashboard-layout__body,
 .checkout .hosting-dashboard-layout__body-wrapper {
 	border-radius: 8px;
 }
 
 .checkout .hosting-dashboard-layout__container {
-	height: 100%;
+	height: auto;
+	flex: 1;
+	min-height: 0;
 }
 
 .checkout .hosting-dashboard-layout__body {

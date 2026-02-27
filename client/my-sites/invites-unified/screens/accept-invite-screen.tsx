@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
@@ -170,12 +170,15 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 		avatarUrl: user?.avatar_URL,
 	};
 
-	const trackingProps = {
-		role: roleName,
-		garden_name: gardenName,
-		garden_partner: gardenPartner,
-		unified: true,
-	};
+	const trackingProps = useMemo(
+		() => ( {
+			role: roleName,
+			garden_name: gardenName,
+			garden_partner: gardenPartner,
+			unified: true,
+		} ),
+		[ roleName, gardenName, gardenPartner ]
+	);
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -229,13 +232,9 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 	const description = getRoleDescription( roleName, siteDomain, translate );
 
 	// Build logo element for TopBar
-	const topBarLogo = branding?.logo?.src ? (
-		<img
-			src={ branding.logo.src }
-			alt={ branding.logo.alt }
-			width={ branding.logo.width }
-			height={ branding.logo.height }
-		/>
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
+		<img { ...topBarLogoConfig } alt={ topBarLogoConfig.alt } />
 	) : undefined;
 
 	const heading = <Step.Heading text={ title } subText={ description } />;

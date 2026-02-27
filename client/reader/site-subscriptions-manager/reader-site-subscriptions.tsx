@@ -1,7 +1,6 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useEffect } from 'react';
-import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
 import {
 	SiteSubscriptionsList,
 	SiteSubscriptionsListActionsBar,
@@ -11,11 +10,12 @@ import {
 	useRecordSearchByUrlPerformed,
 } from 'calypso/landing/subscriptions/tracks';
 import { resemblesUrl } from 'calypso/lib/url';
+import UnsubscribedFeedsSearchList from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
 import { RecommendedSites } from '../recommended-sites';
 import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
 
-const ReaderSiteSubscriptions = () => {
+const ReaderSiteSubscriptions = (): JSX.Element => {
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
@@ -38,7 +38,6 @@ const ReaderSiteSubscriptions = () => {
 			<SiteSubscriptionsListActionsBar />
 			<SiteSubscriptionsList notFoundComponent={ NotFoundSiteSubscriptions } />
 			{ ! searchTerm && <RecommendedSites /> }
-
 			<UnsubscribedFeedsSearchList />
 		</VStack>
 	);

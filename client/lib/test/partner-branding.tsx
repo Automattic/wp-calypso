@@ -1,7 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { getCiabConfig, getPartnerAllowedSocialServices, CIAB_PARTNERS } from '../partner-branding';
+import {
+	CIAB_PARTNERS,
+	getCiabConfig,
+	getCiabConfigFromGarden,
+	getPartnerAllowedSocialServices,
+	getPartnerSignupTosElement,
+} from '../partner-branding';
+import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
 jest.mock( '@automattic/calypso-config', () => {
@@ -62,6 +69,36 @@ describe( 'partner-branding', () => {
 			const services = getPartnerAllowedSocialServices( undefined );
 
 			expect( services ).toBeNull();
+		} );
+	} );
+
+	describe( 'getCiabConfigFromGarden', () => {
+		test( 'returns woo config for commerce garden partner mapping', () => {
+			const config = getCiabConfigFromGarden( 'woo', 'commerce' );
+
+			expect( config ).toEqual( CIAB_PARTNERS.woo );
+		} );
+
+		test( 'returns null for unsupported garden mapping', () => {
+			const config = getCiabConfigFromGarden( 'woo', 'unknown' );
+
+			expect( config ).toBeNull();
+		} );
+	} );
+
+	describe( 'getPartnerSignupTosElement', () => {
+		const mockTranslate = ( ( original: string ) => original ) as ReturnType< typeof useTranslate >;
+
+		test( 'returns a ToS element for supported partners', () => {
+			const tosElement = getPartnerSignupTosElement( CIAB_PARTNERS.woo, mockTranslate );
+
+			expect( tosElement ).toBeDefined();
+		} );
+
+		test( 'returns undefined when no partner config is provided', () => {
+			const tosElement = getPartnerSignupTosElement( null, mockTranslate );
+
+			expect( tosElement ).toBeUndefined();
 		} );
 	} );
 

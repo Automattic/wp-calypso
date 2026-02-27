@@ -1,4 +1,4 @@
-import './feed-preview.styles.scss';
+import './styles.scss';
 import { Reader } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
 import { useState, useEffect, useMemo } from 'react';
@@ -8,11 +8,13 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 
 interface GetFeedResponse {
-	feeds: {
-		feed_ID: string;
-		subscribe_URL: string;
-		meta: object;
-	}[];
+	feeds: GetFeedItemResponse[];
+}
+
+export interface GetFeedItemResponse {
+	feed_ID: string;
+	subscribe_URL: string;
+	meta: object;
 }
 
 interface FeedPreviewProps {
@@ -99,6 +101,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								trackScrollPage={ () => {} }
 								useCompactCards
 								suppressSiteNameLink
+								restoreScroll={ false }
 							/>
 						</div>
 					) : (

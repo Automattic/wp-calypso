@@ -1,7 +1,7 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { SectionHeader } from '../../../components/section-header';
@@ -83,7 +83,7 @@ export default function DomainRemovalConfirmationStep( {
 					onClick={ onCancel }
 					disabled={ isLoading }
 				>
-					{ __( 'Cancel' ) }
+					{ _x( 'Cancel', 'Deny this change and return to the previous screen' ) }
 				</Button>
 				<Button
 					__next40pxDefaultSize

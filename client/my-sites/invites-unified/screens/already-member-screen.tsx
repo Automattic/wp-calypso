@@ -61,12 +61,13 @@ export function AlreadyMemberScreen( { blogDetails }: AlreadyMemberScreenProps )
 		? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name )
 		: null;
 
-	const topBarLogo = branding?.logo?.src ? (
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
 		<img
-			src={ branding.logo.src }
-			alt={ branding.logo.alt }
-			width={ branding.logo.width }
-			height={ branding.logo.height }
+			src={ topBarLogoConfig.src }
+			alt={ topBarLogoConfig.alt }
+			width={ topBarLogoConfig.width }
+			height={ topBarLogoConfig.height }
 		/>
 	) : undefined;
 
