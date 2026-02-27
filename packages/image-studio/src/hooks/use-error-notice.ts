@@ -26,23 +26,16 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 		const { content, url, isUpgradeUrl, isPlansPageUrl } = parseErrorUrl( errorMessage );
 
 		if ( url && isUpgradeUrl ) {
-			// Show upgrade notices as persistent warning notices with new copy
-			addNotice(
-				__(
-					"You've reached your free AI limit. Unlock more generations with a paid plan.",
-					__i18n_text_domain__
-				),
-				'warning',
-				[
-					{
-						label: isPlansPageUrl
-							? __( 'See plans', __i18n_text_domain__ )
-							: __( 'Upgrade plan', __i18n_text_domain__ ),
-						url,
-						openInNewTab: true,
-					},
-				]
-			);
+			// Show upgrade notices as persistent warning notices
+			addNotice( content, 'warning', [
+				{
+					label: isPlansPageUrl
+						? __( 'See plans', __i18n_text_domain__ )
+						: __( 'Upgrade plan', __i18n_text_domain__ ),
+					url,
+					openInNewTab: true,
+				},
+			] );
 		} else if ( url ) {
 			// Non-upgrade URLs show as error snackbar with Learn more link
 			addNotice( content, 'error', [

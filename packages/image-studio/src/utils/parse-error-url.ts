@@ -38,11 +38,12 @@ export function parseErrorUrl( errorMessage: string ): ParsedErrorUrl {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 	const pathStart = urlWithoutProtocol.indexOf( '/' );
 	const pathAndQuery = pathStart >= 0 ? urlWithoutProtocol.slice( pathStart ) : '';
+	const hostname = pathStart >= 0 ? urlWithoutProtocol.slice( 0, pathStart ) : urlWithoutProtocol;
 
 	const isUpgradeUrl =
 		pathAndQuery.includes( '/plans/' ) ||
 		pathAndQuery.startsWith( '/upgrade' ) ||
-		url.includes( 'jetpack.com/redirect' ) ||
+		( hostname === 'jetpack.com' && pathAndQuery.startsWith( '/redirect' ) ) ||
 		pathAndQuery.includes( 'my-jetpack' );
 
 	const isPlansPageUrl = pathAndQuery.includes( '/plans/' );

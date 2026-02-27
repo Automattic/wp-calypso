@@ -144,6 +144,12 @@ describe( 'parseErrorUrl', () => {
 			expect( result.isUpgradeUrl ).toBe( false );
 			expect( result.isPlansPageUrl ).toBe( false );
 		} );
+
+		it( 'returns false for URL with "jetpack.com/redirect" in path but different hostname', () => {
+			const result = parseErrorUrl( 'See https://evil.com/jetpack.com/redirect' );
+			expect( result.isUpgradeUrl ).toBe( false );
+			expect( result.isPlansPageUrl ).toBe( false );
+		} );
 	} );
 
 	describe( 'isPlansPageUrl detection', () => {

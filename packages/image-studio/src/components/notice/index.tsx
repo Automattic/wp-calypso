@@ -14,6 +14,7 @@ function WarningNotice( { notice }: { notice: NoticeType } ) {
 	return (
 		<Notice
 			status="warning"
+			// Intentionally non-dismissible: upgrade prompts should persist until user takes action
 			isDismissible={ false }
 			actions={
 				notice.actions?.map( ( action ) => ( {

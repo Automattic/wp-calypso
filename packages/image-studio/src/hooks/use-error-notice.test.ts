@@ -105,17 +105,13 @@ describe( 'useErrorNotice', () => {
 				useErrorNotice( 'Upgrade required https://wordpress.com/plans/example.com', mockAddNotice )
 			);
 
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
-				'warning',
-				[
-					{
-						label: 'See plans',
-						url: 'https://wordpress.com/plans/example.com',
-						openInNewTab: true,
-					},
-				]
-			);
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Upgrade required', 'warning', [
+				{
+					label: 'See plans',
+					url: 'https://wordpress.com/plans/example.com',
+					openInNewTab: true,
+				},
+			] );
 		} );
 
 		it( 'shows warning notice with "Upgrade plan" for /upgrade URL', () => {
@@ -123,17 +119,13 @@ describe( 'useErrorNotice', () => {
 				useErrorNotice( 'Upgrade required https://wordpress.com/upgrade/premium', mockAddNotice )
 			);
 
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
-				'warning',
-				[
-					{
-						label: 'Upgrade plan',
-						url: 'https://wordpress.com/upgrade/premium',
-						openInNewTab: true,
-					},
-				]
-			);
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Upgrade required', 'warning', [
+				{
+					label: 'Upgrade plan',
+					url: 'https://wordpress.com/upgrade/premium',
+					openInNewTab: true,
+				},
+			] );
 		} );
 
 		it( 'shows warning notice with "Upgrade plan" for jetpack.com/redirect URL', () => {
@@ -144,17 +136,13 @@ describe( 'useErrorNotice', () => {
 				)
 			);
 
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
-				'warning',
-				[
-					{
-						label: 'Upgrade plan',
-						url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-						openInNewTab: true,
-					},
-				]
-			);
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Limit reached', 'warning', [
+				{
+					label: 'Upgrade plan',
+					url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
+					openInNewTab: true,
+				},
+			] );
 		} );
 
 		it( 'shows warning notice with "Upgrade plan" for my-jetpack URL', () => {
@@ -165,17 +153,13 @@ describe( 'useErrorNotice', () => {
 				)
 			);
 
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
-				'warning',
-				[
-					{
-						label: 'Upgrade plan',
-						url: 'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
-						openInNewTab: true,
-					},
-				]
-			);
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Please upgrade', 'warning', [
+				{
+					label: 'Upgrade plan',
+					url: 'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+					openInNewTab: true,
+				},
+			] );
 		} );
 
 		it( 'handles real-world streaming error with upgrade URL', () => {
@@ -187,7 +171,7 @@ describe( 'useErrorNotice', () => {
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
+				'Congratulations on exploring Image Studio and reaching the free requests limit! Upgrade now to keep using it.',
 				'warning',
 				[
 					{
@@ -207,17 +191,13 @@ describe( 'useErrorNotice', () => {
 			);
 			renderHook( () => useErrorNotice( error, mockAddNotice ) );
 
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				"You've reached your free AI limit. Unlock more generations with a paid plan.",
-				'warning',
-				[
-					{
-						label: 'See plans',
-						url: 'https://wordpress.com/plans/example.com',
-						openInNewTab: true,
-					},
-				]
-			);
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Quota exceeded. Upgrade at', 'warning', [
+				{
+					label: 'See plans',
+					url: 'https://wordpress.com/plans/example.com',
+					openInNewTab: true,
+				},
+			] );
 		} );
 
 		it( 'handles object with message property', () => {
