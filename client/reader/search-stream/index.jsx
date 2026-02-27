@@ -126,11 +126,6 @@ class SearchStream extends React.Component {
 		const toggleGroupControlClasses = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
-		// Hide posts and sites if the only result has no feed ID. This can happen when searching
-		// for a specific site to add a rss to your feed. Originally added in
-		// https://github.com/Automattic/wp-calypso/pull/78555.
-		const hidePostsAndSites =
-			this.state.feeds && this.state.feeds?.length === 1 && ! this.state.feeds[ 0 ].feed_ID;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -213,17 +208,14 @@ class SearchStream extends React.Component {
 							trackTagsPageLinkClick={ this.trackTagsPageLinkClick }
 						/>
 					) }
-					{ ! hidePostsAndSites && (
-						<SearchStreamHeader
-							selected={ searchType }
-							onSelection={ this.handleSearchTypeSelection }
-							wideDisplay={ wideDisplay }
-							isLoggedIn={ isLoggedIn }
-						/>
-					) }
+					<SearchStreamHeader
+						selected={ searchType }
+						onSelection={ this.handleSearchTypeSelection }
+						wideDisplay={ wideDisplay }
+						isLoggedIn={ isLoggedIn }
+					/>
 				</div>
-				{ /* { isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> } */ }
-				{ ! hidePostsAndSites && wideDisplay && (
+				{ wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
@@ -245,7 +237,7 @@ class SearchStream extends React.Component {
 						</div>
 					</div>
 				) }
-				{ ! hidePostsAndSites && ! wideDisplay && (
+				{ ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
 						{ ( searchType === SEARCH_TYPES.POSTS && (
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
