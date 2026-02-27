@@ -188,7 +188,11 @@ function ContentConfirmDisconnect( {
 export default function ContentInfo( { site, onClose }: ContentInfoProps ) {
 	const { data: hasActivePurchases, isLoading } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
-		select: ( purchases ) => purchases.some( ( purchase ) => purchase.is_jetpack_plan_or_product ),
+		select: ( purchases ) =>
+			purchases.some(
+				( purchase ) =>
+					purchase.is_jetpack_plan_or_product && purchase.subscription_status === 'active'
+			),
 	} );
 
 	if ( isLoading ) {
