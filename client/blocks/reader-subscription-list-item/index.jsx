@@ -55,7 +55,7 @@ function ReaderSubscriptionListItem( {
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-	const streamUrl = getStreamUrl( feedId, siteId );
+	let streamUrl = feedId && siteId ? getStreamUrl( feedId, siteId ) : null;
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
@@ -147,6 +147,7 @@ function ReaderSubscriptionListItem( {
 	} else if ( isPotentialFeedUrl( feedUrl ) ) {
 		siteTitle ||= formatUrlForDisplay( feedUrl );
 		siteUrl ||= feedUrl;
+		streamUrl ||= feedUrl;
 	}
 
 	return (
