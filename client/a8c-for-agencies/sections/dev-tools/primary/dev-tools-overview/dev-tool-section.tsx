@@ -1,6 +1,8 @@
 import { Badge } from '@automattic/ui';
 import {
 	Button,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -45,9 +47,11 @@ export default function DevToolSection( {
 			<PageSectionColumns.Column
 				heading={
 					<>
-						{ name }
-						<Badge>{ badge }</Badge>
-						<Text className="dev-tools-overview__tagline" weight={ 600 }>
+						<HStack alignment="left">
+							<Heading level={ 3 }>{ name }</Heading>
+							<Badge>{ badge }</Badge>
+						</HStack>
+						<Text className="dev-tools-overview__tagline" weight={ 500 }>
 							{ tagline }
 						</Text>
 					</>
