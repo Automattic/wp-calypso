@@ -64,6 +64,7 @@
 .message ul {
     margin-bottom: var(--spacing-3);
     padding-left: var(--spacing-6);
+    margin-left: 0;
 }
 
 .message ul {
