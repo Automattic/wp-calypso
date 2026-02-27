@@ -33,7 +33,7 @@ const useAddSitesModalNotices = () => {
 					translate( 'There was an error when trying to subscribe to %s.', {
 						args: [ url ],
 						comment: 'URL of the site that the user tried to subscribe to.',
-					} )
+					} ) + ( error instanceof Error && error.cause ? ` (${ error.cause })` : '' )
 				)
 			);
 		},

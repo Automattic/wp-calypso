@@ -144,7 +144,7 @@ const AddSitesForm = ( {
 				<Button
 					variant="primary"
 					className="button subscriptions-add-sites__save-button"
-					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					disabled={ ! inputValue || ! isValidInput || subscribing }
 					isBusy={ isSubmitting }
 					type="submit"
 					__next40pxDefaultSize
