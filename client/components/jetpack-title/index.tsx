@@ -7,7 +7,7 @@ type JetpackTitleProps = {
 };
 
 const JetpackTitle = ( { title }: JetpackTitleProps ) => (
-	<HStack alignment="center" spacing={ 2 }>
+	<HStack alignment="center" justify="start" spacing={ 2 }>
 		{ ! isJetpackCloud() && <JetpackLogo size={ 20 } /> }
 		<span>{ title }</span>
 	</HStack>

@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -253,7 +254,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				<>
 					<NavigationHeader
 						navigationItems={ [] }
-						title={ translate( 'Monetize' ) }
+						title={ <JetpackTitle title={ translate( 'Monetize' ) } /> }
 						subtitle={ translate(
 							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
