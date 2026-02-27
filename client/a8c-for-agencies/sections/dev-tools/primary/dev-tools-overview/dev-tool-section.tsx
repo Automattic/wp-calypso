@@ -60,13 +60,7 @@ export default function DevToolSection( {
 				<VStack className="dev-tools-overview__content" spacing={ 4 }>
 					<Text size="body-large">{ preventWidows( description ) }</Text>
 					<SimpleList className="dev-tools-overview__list" items={ features } />
-					<Button
-						variant="primary"
-						href={ cta.href }
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={ cta.onClick }
-					>
+					<Button variant="primary" href={ cta.href } target="_blank" onClick={ cta.onClick }>
 						{ cta.label }
 					</Button>
 				</VStack>
