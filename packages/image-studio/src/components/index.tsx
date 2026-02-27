@@ -149,9 +149,13 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	// Disable stop button during upload phase to prevent orphan images
-	const isStopDisabled =
-		( agentChatProps as any ).currentPhase === 'uploading' || isAnnotationSaving;
+	// Detect upload phase from progress message since useAgentChat doesn't expose currentPhase.
+	// The server sends a progress message containing "Uploading" during the upload phase.
+	const isUploadPhase =
+		agentChatProps.progressMessage?.toLowerCase().includes( 'uploading' ) ?? false;
+
+	// Disable input during upload phase or annotation saving to prevent orphan images
+	const isStopDisabled = isUploadPhase || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
