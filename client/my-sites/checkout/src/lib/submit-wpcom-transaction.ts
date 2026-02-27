@@ -25,16 +25,7 @@ export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	const isUserLessCheckout =
-		payload.cart.products.some( ( product ) => {
-			return (
-				product.extra.isJetpackCheckout ||
-				product.extra.isAkismetSitelessCheckout ||
-				product.extra.isA4ASitelessCheckout
-			);
-		} ) && payload.cart.cart_key === 'no-user';
-
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || isUserLessCheckout ) {
+	if ( transactionOptions.createUserAndSiteBeforeTransaction ) {
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
