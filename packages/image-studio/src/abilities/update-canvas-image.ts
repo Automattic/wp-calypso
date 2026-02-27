@@ -8,6 +8,7 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
@@ -34,6 +35,13 @@ const ABILITY_NAME = 'image-studio/update-canvas-image';
 // Track if ability has been registered to avoid duplicate registration
 let isRegistered = false;
 
+interface LowCreditsNotice {
+	type: 'low_credits_warning';
+	message: string;
+	requests_remaining?: number;
+	upgrade_url?: string | null;
+}
+
 interface UpdateCanvasImageAbilityInput {
 	attachmentId?: string | number | null;
 	url?: string | null;
@@ -43,6 +51,7 @@ interface UpdateCanvasImageAbilityInput {
 		description?: string | null;
 		alt_text?: string | null;
 	};
+	notice?: LowCreditsNotice | null;
 }
 
 /**
@@ -124,8 +133,13 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 
 				const url = input?.url || '';
 
-				const { updateImageStudioCanvas, setDraftIds, setHasUpdatedMetadata, setCanvasMetadata } =
-					dispatch( imageStudioStore ) as ImageStudioActions;
+				const {
+					updateImageStudioCanvas,
+					setDraftIds,
+					setHasUpdatedMetadata,
+					setCanvasMetadata,
+					addNotice,
+				} = dispatch( imageStudioStore ) as ImageStudioActions;
 
 				const canvasMetadata = select( imageStudioStore ).getCanvasMetadata() || {};
 
@@ -240,6 +254,25 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 						attachmentId,
 						isAnnotated: false,
 					} );
+
+					// Show low credits warning if present in input
+					if ( input?.notice?.type === 'low_credits_warning' ) {
+						const notice = input.notice;
+						addNotice(
+							notice.message,
+							'warning',
+							notice.upgrade_url
+								? [
+										{
+											label: __( 'Upgrade', __i18n_text_domain__ ),
+											url: notice.upgrade_url,
+											openInNewTab: true,
+										},
+								  ]
+								: undefined,
+							true // dismissible
+						);
+					}
 				} catch ( error ) {
 					// Track the error
 					trackImageStudioError( {

@@ -38,6 +38,7 @@ export interface Notice {
 	content: string;
 	type: NoticeType;
 	actions?: NoticeAction[];
+	dismissible?: boolean;
 }
 
 export enum ImageStudioEntryPoint {
@@ -663,7 +664,8 @@ export interface ImageStudioActions {
 	addNotice: (
 		content: string,
 		type: NoticeType,
-		noticeActions?: NoticeAction[]
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
 	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
@@ -811,7 +813,12 @@ const actions = {
 		};
 	},
 
-	addNotice( content: string, type: NoticeType, noticeActions?: NoticeAction[] ): AddNoticeAction {
+	addNotice(
+		content: string,
+		type: NoticeType,
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
+	): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
 			payload: {
@@ -819,6 +826,8 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
+				// Warnings are non-dismissible by default (quota exceeded), unless explicitly set
+				dismissible: dismissible ?? type !== 'warning',
 				...( noticeActions?.length && {
 					actions: noticeActions,
 				} ),
