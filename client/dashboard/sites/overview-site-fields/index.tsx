@@ -3,12 +3,13 @@ import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { MetadataList, MetadataItem } from '../../components/metadata-list';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '@automattic/api-core';
@@ -44,29 +45,37 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const url = getSiteFormattedUrl( site );
+	const url = site.URL;
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
 
-	const fields: React.ReactElement[] = [
-		<MetadataItem key="url">
-			<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-				{ getSiteDisplayUrl( site ) }
-			</ExternalLink>
-		</MetadataItem>,
-	];
+	const fields: React.ReactElement[] = [];
 
 	if ( hasSiteRedirect ) {
 		fields.push(
 			<MetadataItem key="redirect">
 				<Text variant="muted">
-					{ sprintf(
-						/* translators: %s: the URL this site is redirected to, e.g.: http://example.com */
-						__( 'Redirects to %s' ),
-						site.URL
+					{ createInterpolateElement(
+						/* translators: link: the URL this site is redirected to, e.g.: http://example.com */
+						__( 'Redirects to <link />' ),
+						{
+							link: (
+								<ExternalLink href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
+									{ getSiteDisplayUrl( site ) }
+								</ExternalLink>
+							),
+						}
 					) }
 				</Text>
+			</MetadataItem>
+		);
+	} else {
+		fields.push(
+			<MetadataItem key="url">
+				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+					{ getSiteDisplayUrl( site ) }
+				</ExternalLink>
 			</MetadataItem>
 		);
 	}

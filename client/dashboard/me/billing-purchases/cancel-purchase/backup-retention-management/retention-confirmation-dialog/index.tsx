@@ -1,5 +1,5 @@
 import { Button, Spinner, Modal } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { ButtonStack } from '../../../../../components/button-stack';
 
 const BACKUP_RETENTION_UPDATE_REQUEST = {
@@ -41,7 +41,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 					</p>
 					<ButtonStack justify="flex-start">
 						<Button __next40pxDefaultSize variant="tertiary" key="cancel" onClick={ onClose }>
-							{ __( 'Cancel' ) }
+							{ _x( 'Cancel', 'Deny this change and return to the previous screen' ) }
 						</Button>
 						<Button
 							__next40pxDefaultSize

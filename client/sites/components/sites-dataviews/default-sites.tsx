@@ -1,8 +1,6 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { getQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
 import { useBasePersistentView } from 'calypso/dashboard/app/hooks/use-persistent-view';
@@ -80,9 +78,11 @@ export default function DefaultSitesDataViews( {
 		updateView( { ...nextView, type: view.type, fields: view.fields } as View );
 	};
 
-	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
-		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
-		: filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
+	);
 
 	const onSelectionChange = useCallback(
 		( selectedSiteIds: string[] ) => {
