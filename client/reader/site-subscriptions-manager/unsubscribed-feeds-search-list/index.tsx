@@ -1,6 +1,7 @@
 import './style.scss';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
@@ -18,18 +19,25 @@ const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ) 
 	const { title } = props;
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
+	const translate = useTranslate();
 
 	const {
 		data: { subscriptions },
 		isFetching: isFetchingSubscriptions,
 	} = useSiteSubscriptionsQuery();
 
-	const { data, isFetching: isFetchingUnsubscribedFeeds } = useReadFeedSearchQuery( {
+	const {
+		data,
+		isFetching: isFetchingUnsubscribedFeeds,
+		error: searchError,
+	} = useReadFeedSearchQuery( {
 		query: searchTerm,
 		excludeFollowed: true,
 	} );
 
 	const unsubscribedFeedItems = data?.feeds;
+	const noFeedsFound =
+		( unsubscribedFeedItems?.length === 0 && ! isFetchingUnsubscribedFeeds ) || searchError;
 
 	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
 	const filteredUnsubscribedFeedItems = ( unsubscribedFeedItems ?? [] ).filter(
@@ -53,6 +61,14 @@ const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ) 
 				url={ feed.subscribe_URL }
 				source="manage_subscriptions_single_result_feed_preview"
 			/>
+		);
+	}
+
+	if ( noFeedsFound ) {
+		return (
+			<div className="reader-unsubscribed-feeds-search-list-no-feeds-found">
+				{ translate( "Sorry, we couldn't find any sites related to your search." ) }
+			</div>
 		);
 	}
 
