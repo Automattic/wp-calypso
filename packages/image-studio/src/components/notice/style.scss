@@ -51,6 +51,7 @@
 // Warning notice styling (quota exceeded)
 .image-studio-modal__notices {
 	.components-notice.is-warning {
+		max-width: 400px;
 		margin: 0 0 8px;
 	}
 }
