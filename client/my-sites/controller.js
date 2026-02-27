@@ -315,6 +315,11 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		return false;
+	}
+
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
