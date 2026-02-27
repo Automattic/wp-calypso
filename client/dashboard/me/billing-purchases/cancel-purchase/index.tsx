@@ -887,6 +887,7 @@ export default function CancelPurchase() {
 						navigate( {
 							to: purchaseSettingsRoute.fullPath,
 							params: { purchaseId: purchase.ID },
+							search: { refunded: true },
 						} );
 					},
 					onError: ( error: Error ) => {

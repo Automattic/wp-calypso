@@ -39,7 +39,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import {
 	moreVertical,
 	calendar,
@@ -271,7 +271,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					upgradePurchase( upgradeUrl );
 				} }
 			>
-				{ __( 'Upgrade' ) }
+				{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 			</MenuItem>
 		),
 		canBeRenewed && (
@@ -283,7 +283,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					renewPurchase( purchase );
 				} }
 			>
-				{ __( 'Renew' ) }
+				{ _x(
+					'Renew',
+					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+				) }
 			</MenuItem>
 		),
 	].filter( Boolean );
@@ -321,7 +324,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Cancel' ) }
+						{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 					</Button>
 				}
 			/>
@@ -344,7 +347,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove' ) }
+						{ _x(
+							'Remove',
+							'Remove the cancelled or expired subscription from the list of active purchases.'
+						) }
 					</Button>
 				}
 			/>
@@ -378,7 +384,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade' ) }
+					{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 				</Button>
 			}
 		/>
@@ -437,7 +443,10 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 						renewPurchase( purchase );
 					} }
 				>
-					{ __( 'Renew' ) }
+					{ _x(
+						'Renew',
+						'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+					) }
 				</Button>
 			}
 		/>
@@ -1146,7 +1155,7 @@ export default function PurchaseSettings() {
 								<HStack justify="space-between">
 									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ __( 'Upgrade' ) }
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									<PageHeader.ActionMenu>
