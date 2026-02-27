@@ -1,6 +1,6 @@
 import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import './style.scss';
 
@@ -67,9 +67,8 @@ export default function A4ASlider( {
 	const fillEndPosition = sliderSectionWidth * displayValue - valueOffset;
 	const fillAreaWidth = `${ Math.max( 0, fillEndPosition - disabledEndPosition + 1 ) }px`;
 
-	useEffect( () => {
-		onChange?.( options[ Math.max( value, normalizeMinimum ) ] );
-	}, [ normalizeMinimum, onChange, options, value ] );
+	// NOTE: Removed auto-select useEffect that was causing render loops
+	// The minimum is still enforced visually via displayValue and in onSliderChange
 
 	return (
 		<div className={ clsx( 'a4a-slider', className ) }>
