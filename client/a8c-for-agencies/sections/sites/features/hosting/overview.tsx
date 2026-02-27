@@ -79,19 +79,6 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 								</div>
 							</div>
 						) }
-
-						<div className="hosting__content-row">
-							<div className="hosting__content-label">PHP version</div>
-							<div className="hosting__content-value">
-								{ site.php_version ? site.php_version : translate( 'Unknown' ) }
-							</div>
-						</div>
-						<div className="hosting__content-row">
-							<div className="hosting__content-label">WordPress version</div>
-							<div className="hosting__content-value">
-								{ site.wordpress_version ? site.wordpress_version : translate( 'Unknown' ) }
-							</div>
-						</div>
 						<div></div>
 					</div>
 				</div>
