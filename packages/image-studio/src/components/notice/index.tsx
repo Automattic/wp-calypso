@@ -19,7 +19,12 @@ function WarningNotice( { notice }: { notice: NoticeType } ) {
 			actions={
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
-					onClick: () => window.open( action.url, '_blank' ),
+					onClick: () => {
+						const newWindow = window.open( action.url, '_blank' );
+						if ( newWindow ) {
+							newWindow.opener = null;
+						}
+					},
 				} ) ) ?? []
 			}
 		>
@@ -53,7 +58,15 @@ export function ImageStudioNotice() {
 						content: notice.content,
 						explicitDismiss: notice.type === 'error',
 						...( notice.actions?.length && {
-							actions: notice.actions,
+							actions: notice.actions.map( ( action ) => ( {
+								label: action.label,
+								onClick: () => {
+									const newWindow = window.open( action.url, '_blank' );
+									if ( newWindow ) {
+										newWindow.opener = null;
+									}
+								},
+							} ) ),
 						} ),
 					} ) ) }
 					onRemove={ removeNotice }
