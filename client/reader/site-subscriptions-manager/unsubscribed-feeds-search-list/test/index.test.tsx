@@ -59,15 +59,13 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		it( 'shows Spinner when isLoading is true', () => {
 			render( <UnsubscribedFeedsSearchList isLoading feedItems={ [] } /> );
 
-			const loader = document.querySelector( '.reader-unsubscribed-feeds-search-list-loader' );
-			expect( loader ).toBeVisible();
+			expect( screen.getByRole( 'status' ) ).toBeVisible();
 		} );
 
 		it( 'does not show Spinner when isLoading is false', () => {
 			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ [] } /> );
 
-			const loader = document.querySelector( '.reader-unsubscribed-feeds-search-list-loader' );
-			expect( loader ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

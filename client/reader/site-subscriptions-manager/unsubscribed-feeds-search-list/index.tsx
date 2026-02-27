@@ -61,7 +61,7 @@ const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ):
 
 	if ( isLoading ) {
 		return (
-			<div className="reader-unsubscribed-feeds-search-list-loader">
+			<div className="reader-unsubscribed-feeds-search-list-loader" role="status" aria-busy="true">
 				<Spinner />
 			</div>
 		);
