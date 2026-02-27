@@ -20,7 +20,7 @@ const shouldShowFollowButton = () => {
 		return false;
 	}
 
-	return path[ 1 ] !== 'discover';
+	return path[ 1 ] === 'discover';
 };
 
 const CompactPost = ( props ) => {
