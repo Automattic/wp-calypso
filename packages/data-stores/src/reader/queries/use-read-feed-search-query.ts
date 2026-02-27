@@ -1,7 +1,7 @@
 import { Reader } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
-import { buildQueryString } from '@wordpress/url';
-import wpcomRequest from 'wpcom-proxy-request';
+import { addQueryArgs } from '@wordpress/url';
+import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 
 export enum FeedSort {
 	LastUpdated = 'last_updated',
@@ -30,24 +30,23 @@ const useReadFeedSearchQuery = (
 	const { query, excludeFollowed = false, sort = FeedSort.Relevance } = options;
 	const { enabled = Boolean( query ) } = queryOptions ?? {};
 
-	return useQuery( {
+	return useQuery< FeedResponse >( {
 		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
 		queryFn: async () => {
 			if ( query === undefined ) {
 				return;
 			}
 
-			const urlQuery = buildQueryString( {
+			const urlQuery = {
 				q: query,
 				exclude_followed: excludeFollowed,
 				sort,
-			} );
+			};
 
-			return wpcomRequest< FeedResponse >( {
-				path: '/read/feed',
+			return wpcom.req.get( {
+				path: addQueryArgs( '/read/feed', urlQuery ),
 				apiVersion: '1.1',
 				method: 'GET',
-				query: urlQuery,
 			} );
 		},
 		enabled,
