@@ -9,6 +9,7 @@ interface Props {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	canDock: boolean;
 	setIsCompactMode: ( isCompact: boolean ) => void;
 	setShouldRenderChat: ( shouldRender: boolean ) => void;
 }
@@ -18,6 +19,7 @@ export default function useSetupCustomActions( {
 	undock,
 	openSidebar,
 	closeSidebar,
+	canDock,
 	setIsCompactMode,
 	setShouldRenderChat,
 }: Props ) {
@@ -35,19 +37,19 @@ export default function useSetupCustomActions( {
 				return;
 			}
 
-			if ( isDocked && shouldOpen ) {
+			if ( ! isDocked || ! canDock ) {
+				return setIsOpen( shouldOpen );
+			}
+
+			if ( shouldOpen ) {
 				openSidebar();
-				return;
 			}
 
-			if ( isDocked && ! shouldOpen ) {
+			if ( ! shouldOpen ) {
 				closeSidebar();
-				return;
 			}
-
-			setIsOpen( shouldOpen );
 		},
-		[ closeSidebar, isDocked, openSidebar, setIsOpen ]
+		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen ]
 	);
 
 	const setChatDocked = useCallback(
