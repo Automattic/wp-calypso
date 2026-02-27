@@ -1,6 +1,6 @@
 /**
  * Unit tests for block-notes-session utilities
- * Tests cover parameter validation and error handling
+ * Tests cover session ID parameter validation
  */
 
 import { getBlockNoteThreadSessionId } from './session';
@@ -15,23 +15,18 @@ describe( 'getBlockNoteThreadSessionId', () => {
 	const TEST_SITE_ID = 789;
 
 	beforeEach( () => {
-		// Default: valid siteId
-		window.blockNotesData = { enabled: true, siteId: TEST_SITE_ID };
+		// Default: valid blogId via window._currentSiteId (read by getBlogId())
+		window._currentSiteId = TEST_SITE_ID;
 	} );
 
 	afterEach( () => {
-		delete ( window as any ).blockNotesData;
+		delete window._currentSiteId;
+		delete window.Jetpack_Editor_Initial_State;
 	} );
 
 	describe( 'Parameter validation', () => {
-		it( 'should return undefined when blockNotesData is not set', async () => {
-			delete ( window as any ).blockNotesData;
-			const result = await getBlockNoteThreadSessionId( TEST_POST_ID, TEST_NOTE_ID );
-			expect( result ).toBeUndefined();
-		} );
-
-		it( 'should return undefined when siteId is missing', async () => {
-			window.blockNotesData = { enabled: true };
+		it( 'should return undefined when blogId is not set', async () => {
+			delete window._currentSiteId;
 			const result = await getBlockNoteThreadSessionId( TEST_POST_ID, TEST_NOTE_ID );
 			expect( result ).toBeUndefined();
 		} );
