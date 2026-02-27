@@ -916,6 +916,15 @@ export interface ResponseCartGiftDetails {
 	receiver_blog_url?: string;
 }
 
+export type SitelessCheckoutType =
+	| 'domainonly'
+	| 'jetpack'
+	| 'akismet'
+	| 'marketplace'
+	| 'a4a'
+	| 'unified'
+	| undefined;
+
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
  * `RequestCart` (in `RequestCartProduct`).
@@ -931,6 +940,18 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * and we might find the wrong one.
 	 */
 	purchaseId?: string;
+
+	sitelessCheckoutType?: SitelessCheckoutType;
+
+	/**
+	 * Marks a product as having been added by the siteless domain-only flow.
+	 */
+	isDomainOnlySitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/unified` route.
+	 */
+	isUnifiedSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;

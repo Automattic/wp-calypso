@@ -158,9 +158,8 @@ export function checkout( context, next ) {
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 	// TODO: The only thing that we really need to check for here is whether or not the user is logged out.
 	// A siteless Jetpack purchase (logged in or out) will be handled by checkoutJetpackSiteless
-	// Additionally, the isJetpackCheckout variable would be more aptly named isJetpackSitelessCheckout
 	// isContextJetpackSitelessCheckout is really checking for whether this is a logged-out purchase, but this is uncelar at first
-	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
+	const isJetpackCheckoutLoggedOut = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	const isGiftPurchase = context.pathname.includes( '/gift/' );
@@ -176,7 +175,7 @@ export function checkout( context, next ) {
 		if ( isDisallowedForSitePicker ) {
 			return true;
 		}
-		if ( isJetpackCheckout ) {
+		if ( isJetpackCheckoutLoggedOut ) {
 			return true;
 		}
 		if ( isGiftPurchase ) {
@@ -211,16 +210,47 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	const isLoggedOutCart =
-		isJetpackCheckout ||
-		( isLoggedOut &&
-			( context.pathname.includes( '/checkout/no-site' ) ||
-				context.pathname.includes( '/gift/' ) ) );
-	const isNoSiteCart =
-		isJetpackCheckout ||
-		( ! isLoggedOut &&
+	// TODO: This variable is really unclear. It misleads all the components
+	// under here by being called `isLoggedOutCart` when in fact there are many
+	// logged-out carts this does not cover, like unified checkout.
+	const isLoggedOutCart = ( () => {
+		if ( isJetpackCheckoutLoggedOut ) {
+			return true;
+		}
+		if ( ! isLoggedOut ) {
+			return false;
+		}
+		if ( context.pathname.includes( '/checkout/no-site' ) ) {
+			return true;
+		}
+		if ( context.pathname.includes( '/gift/' ) ) {
+			return true;
+		}
+		return false;
+	} )();
+
+	// TODO: This variable is really unclear. Its name suggests that it's true
+	// for siteless carts, but there's lots of siteless carts these conditions
+	// don't cover, like unified checkout or Akismet checkout or A4A. All this
+	// covers is if this is logged-out Jetpack checkout or if this is a
+	// siteless cart with the `no-user` query param which is pretty rare.
+	//
+	// Therea are only two places that set `cart=no-user`:
+	// - PayPal: when createUserAndSiteBeforeTransaction is true — i.e., logged-out flows that need to register a user/site during checkout
+	// - Login redirect from /checkout/no-site: to preserve cart state across login for the onboarding registrationless (stepper) flow
+	const isNoSiteCart = ( () => {
+		if ( isJetpackCheckoutLoggedOut ) {
+			return true;
+		}
+		if (
+			isLoggedOut &&
 			context.pathname.includes( '/checkout/no-site' ) &&
-			'no-user' === context.query.cart );
+			context.query.cart === 'no-user'
+		) {
+			return true;
+		}
+		return false;
+	} )();
 
 	// Tracks if checkout page was unloaded before purchase completion,
 	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
@@ -230,6 +260,17 @@ export function checkout( context, next ) {
 			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
 		} );
 	}
+
+	/** @type {import('@automattic/shopping-cart').SitelessCheckoutType} */
+	const sitelessCheckoutType = ( () => {
+		if ( isJetpackCheckoutLoggedOut ) {
+			return 'jetpack';
+		}
+		if ( isDomainOnlyFlow ) {
+			return 'domainonly';
+		}
+		return undefined;
+	} )();
 
 	context.primary = (
 		<>
@@ -247,10 +288,10 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
-				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
+				// TODO: in theory, isJetpackCheckoutLoggedOut should always be false here if it is indicating whether this is a siteless Jetpack purchase
 				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
 				// This is creating some mixed use cases for the sitelessCheckoutType prop
-				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
+				sitelessCheckoutType={ sitelessCheckoutType }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }

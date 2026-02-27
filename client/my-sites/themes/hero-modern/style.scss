@@ -1,0 +1,76 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.hero-modern {
+	padding: 0;
+	background: linear-gradient(135deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
+
+	.full-width-section__content {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		max-width: 1220px;
+		padding: 48px 24px;
+
+		@media (min-width: $break-small) {
+			background: url(./illustration.svg) no-repeat right clamp(-500px, 70vw - 900px, 0px) bottom;
+			padding: 64px 40px;
+		}
+		@media (min-width: $break-xlarge) {
+			//background-position: right bottom;
+			padding: 64px 40px;
+		}
+
+		@media (min-width: $break-wide) {
+			background-position: right bottom;
+		}
+	}
+}
+
+.hero-modern__content {
+	flex: 1;
+	max-width: 700px;
+}
+
+.hero-modern__title {
+	color: var(--studio-gray-90);
+	font-family: $brand-serif;
+	font-size: rem(60px);
+	font-weight: 400;
+	line-height: 1;
+	margin: 0 0 8px 0;
+
+	@media ( min-width: $break-small ) {
+		font-size: rem(70px);
+	}
+}
+
+.hero-modern__description {
+	color: var(--studio-gray-90);
+	font-size: $font-body-large;
+	line-height: 1.5;
+	margin: 0;
+}
+
+.hero-modern__search {
+	margin-top: 16px;
+
+	.search-themes-card {
+		max-width: 500px;
+	}
+
+	.components-input-base {
+		border-radius: 4px;
+		height: 55px;
+
+		.components-input-control__container {
+			input.components-input-control__input {
+				font-size: $font-body;
+			}
+			.components-input-control__backdrop {
+				border-color: var(--studio-gray-5);
+				border-radius: 4px;
+			}
+		}
+	}
+}

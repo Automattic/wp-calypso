@@ -31,6 +31,7 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
+		"@automattic/block-notes": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
