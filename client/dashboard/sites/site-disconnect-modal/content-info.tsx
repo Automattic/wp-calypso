@@ -5,6 +5,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
+	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site } from '@automattic/api-core';
@@ -25,41 +27,48 @@ interface ContentInfoProps {
 }
 
 type DisconnectFormData = {
-	confirmed: boolean;
+	domain: string;
 };
 
 function PurchasesWarning( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const managePurchasesButtonProps = {
-		__next40pxDefaultSize: true,
-		text: __( 'Manage purchases' ),
-		variant: 'secondary' as const,
-		onClick: () => {
-			recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_manage_purchases_click' );
-		},
-	};
-
 	return (
-		<VStack spacing={ 4 }>
-			<Text as="p">
-				{ __(
-					'You have active subscriptions associated with this site. Before disconnecting, you may want to cancel or move them to another site.'
+		<Notice variant="warning" density="medium">
+			<Text>
+				{ createInterpolateElement(
+					__(
+						'You have active subscriptions associated with this site. Before disconnecting, consider <link>managing your purchases</link>.'
+					),
+					{
+						link: isDashboardBackport() ? (
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							<Button
+								variant="link"
+								href={ `/purchases/subscriptions/${ site.slug }` }
+								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_site_disconnect_modal_manage_purchases_click'
+									);
+								} }
+							/>
+						) : (
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							<RouterLinkButton
+								variant="link"
+								to={ purchasesRoute.fullPath }
+								search={ { site: site.ID } }
+								onClick={ () => {
+									recordTracksEvent(
+										'calypso_dashboard_site_disconnect_modal_manage_purchases_click'
+									);
+								} }
+							/>
+						),
+					}
 				) }
 			</Text>
-			{ isDashboardBackport() ? (
-				<Button
-					{ ...managePurchasesButtonProps }
-					href={ `/purchases/subscriptions/${ site.slug }` }
-				/>
-			) : (
-				<RouterLinkButton
-					{ ...managePurchasesButtonProps }
-					to={ purchasesRoute.fullPath }
-					search={ { site: site.ID } }
-				/>
-			) }
-		</VStack>
+		</Notice>
 	);
 }
 
@@ -74,16 +83,11 @@ function ContentConfirmDisconnect( {
 	const mutation = useMutation( siteJetpackDisconnectMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState< DisconnectFormData >( {
-		confirmed: false,
+		domain: '',
 	} );
-
-	const isConfirmed = formData.confirmed;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! isConfirmed ) {
-			return;
-		}
 
 		recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_disconnect_click' );
 
@@ -123,29 +127,39 @@ function ContentConfirmDisconnect( {
 				<Text as="p">
 					{ createInterpolateElement(
 						/* translators: <siteDomain />: site domain */
-						__( 'Are you sure you want to disconnect <siteDomain />?' ),
+						__(
+							'Disconnecting <siteDomain /> will remove the Jetpack connection between this site and WordPress.com. You will lose access to Jetpack features like <link>backups, security, and stats</link>.'
+						),
 						{
 							siteDomain: <strong>{ site.slug }</strong>,
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							link: (
+								<ExternalLink href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/" />
+							),
 						}
-					) }
-				</Text>
-				<Text as="p">
-					{ __(
-						'Disconnecting will remove the Jetpack connection between this site and WordPress.com. You will lose access to Jetpack features like backups, security, and stats.'
 					) }
 				</Text>
 				<DataForm< DisconnectFormData >
 					data={ formData }
 					fields={ [
 						{
-							id: 'confirmed',
-							label: __( 'I understand the consequences of disconnecting' ),
-							Edit: 'checkbox',
+							id: 'domain',
+							label: __( 'Type the site domain to confirm' ),
+							type: 'text' as const,
+							description: sprintf(
+								/* translators: %s: site domain */
+								__( 'The site domain is: %s' ),
+								site.slug
+							),
 						},
 					] }
-					form={ { layout: { type: 'regular' as const }, fields: [ 'confirmed' ] } }
+					form={ { layout: { type: 'regular' as const }, fields: [ 'domain' ] } }
 					onChange={ ( edits: Partial< DisconnectFormData > ) => {
-						setFormData( ( data ) => ( { ...data, ...edits } ) );
+						setFormData( ( data ) => ( {
+							...data,
+							...edits,
+							domain: edits.domain?.trim() ?? data.domain,
+						} ) );
 					} }
 				/>
 				<ButtonStack justify="flex-end" expanded={ false }>
@@ -157,7 +171,7 @@ function ContentConfirmDisconnect( {
 						variant="primary"
 						type="submit"
 						isDestructive
-						disabled={ ! isConfirmed }
+						disabled={ formData.domain !== site.slug }
 						isBusy={ mutation.isPending }
 					>
 						{ __( 'Disconnect site' ) }
