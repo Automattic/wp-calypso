@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import { AgentUIHeader } from './AgentUIHeader';
 import { AgentUIMessages } from './AgentUIMessages';
@@ -11,11 +11,17 @@ export interface AgentUIConversationViewProps {
 	className?: string;
 }
 
-export function AgentUIConversationView( {
-	showHeader = true,
-	children,
-	className,
-}: AgentUIConversationViewProps = {} ) {
+export const AgentUIConversationView = forwardRef<
+	HTMLDivElement,
+	AgentUIConversationViewProps
+>( function AgentUIConversationView(
+	{
+		showHeader = true,
+		children,
+		className,
+	}: AgentUIConversationViewProps = {},
+	ref
+) {
 	const { onClose } = useAgentUIContext();
 
 	// Listen for escape key to close the chat
@@ -45,6 +51,7 @@ export function AgentUIConversationView( {
 
 		return (
 			<div
+				ref={ ref }
 				data-slot="conversation-view"
 				className={ `${ styles.container }${
 					hasHeader ? ` ${ styles.withHeader }` : ''
@@ -58,6 +65,7 @@ export function AgentUIConversationView( {
 	// Default composition - matches current ConversationView
 	return (
 		<div
+			ref={ ref }
 			data-slot="conversation-view"
 			className={ `${ styles.container }${
 				showHeader ? ` ${ styles.withHeader }` : ''
@@ -68,4 +76,6 @@ export function AgentUIConversationView( {
 			<AgentUIFooter />
 		</div>
 	);
-}
+} );
+
+AgentUIConversationView.displayName = 'AgentUIConversationView';
