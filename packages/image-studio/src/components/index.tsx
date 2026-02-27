@@ -188,7 +188,7 @@ function ImageStudioAgentChat( {
 					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
-						<StylePicker disabled={ isProcessing } />
+						<StylePicker disabled={ isProcessing } mode={ mode } />
 					</div>
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
