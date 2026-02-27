@@ -30,6 +30,16 @@ export function extractNewContentFromMessage( message: Message ): Message {
 				return true;
 			}
 
+			// INCLUDE escalations to human support
+			if (
+				'flags' in part.data &&
+				part.data.flags &&
+				typeof part.data.flags === 'object' &&
+				'forward_to_human_support' in part.data.flags
+			) {
+				return true;
+			}
+
 			// INCLUDE tool results (have toolCallId + result)
 			if ( 'toolCallId' in part.data && 'result' in part.data ) {
 				return true;
