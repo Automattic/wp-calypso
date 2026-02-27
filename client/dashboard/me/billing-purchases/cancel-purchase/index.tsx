@@ -34,6 +34,7 @@ import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -275,6 +276,7 @@ function getAllSurveySteps( {
 export default function CancelPurchase() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
 		questionOneOrder: [],
 		initialized: false,
@@ -636,6 +638,12 @@ export default function CancelPurchase() {
 	};
 
 	const onCancellationComplete = () => {
+		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+			cancellation_flow: flowType,
+			product_slug: purchase.product_slug,
+			is_atomic: site?.is_wpcom_atomic ?? false,
+			user_lang: locale,
+		} );
 		setState( ( state ) => ( {
 			...state,
 			surveyShown: true,
@@ -667,6 +675,12 @@ export default function CancelPurchase() {
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
+			recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+				cancellation_flow: flowType,
+				product_slug: purchase.product_slug,
+				is_atomic: site?.is_wpcom_atomic ?? false,
+				user_lang: locale,
+			} );
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,

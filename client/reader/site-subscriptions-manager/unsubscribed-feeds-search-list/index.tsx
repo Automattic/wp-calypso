@@ -4,14 +4,15 @@ import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
+import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 
-interface ReaderUnsubscribedFeedsSearchListProps {
+interface UnsubscribedFeedsSearchListProps {
 	isLoading: boolean;
 	feedItems?: Reader.FeedItem[];
 }
 
-const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
+const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ): JSX.Element => {
 	const { feedItems, isLoading } = props;
 
 	const feedItemComponents = useMemo( () => {
@@ -34,6 +35,16 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 				} );
 			}
 
+			if ( feedItems.length === 1 ) {
+				return (
+					<FeedPreview
+						key={ `feed-preview-${ feed.blog_ID }-${ feed.feed_ID }` }
+						url={ feedItems[ 0 ]?.subscribe_URL }
+						source="manage_subscriptions_single_result_feed_preview"
+					/>
+				);
+			}
+
 			return (
 				<ReaderFeedItem
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
@@ -50,7 +61,7 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 
 	if ( isLoading ) {
 		return (
-			<div className="reader-unsubscribed-feeds-search-list-loader">
+			<div className="reader-unsubscribed-feeds-search-list-loader" role="status" aria-busy="true">
 				<Spinner />
 			</div>
 		);
@@ -63,4 +74,4 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 	);
 };
 
-export default ReaderUnsubscribedFeedsSearchList;
+export default UnsubscribedFeedsSearchList;

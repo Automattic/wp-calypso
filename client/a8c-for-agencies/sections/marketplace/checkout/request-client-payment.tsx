@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { customLink, Icon, send, warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -49,6 +50,7 @@ type ValidationState = {
 function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isMobile = useBreakpoint( '<660px' );
 
 	const user = useSelector( getCurrentUser );
 
@@ -289,7 +291,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					busy={ isPending }
 				>
 					<Icon icon={ send } />
-					{ translate( 'Send to Client' ) }
+					{ isMobile ? translate( 'Send' ) : translate( 'Send to Client' ) }
 					{ isUserUnverified && <Icon icon={ warning } /> }
 				</Button>
 
@@ -302,7 +304,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					busy={ isPending }
 				>
 					<Icon icon={ customLink } />
-					{ translate( 'Copy referral link' ) }
+					{ isMobile ? translate( 'Copy link' ) : translate( 'Copy referral link' ) }
 				</Button>
 
 				<Tooltip
