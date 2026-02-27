@@ -59,7 +59,13 @@ describe( '<SiteDisconnectModal>', () => {
 	} );
 
 	test( 'shows purchase warning when site has Jetpack purchases', async () => {
-		mockPurchases( [ { ID: 1, is_jetpack_plan_or_product: true } ] );
+		mockPurchases( [
+			{
+				ID: 1,
+				is_jetpack_plan_or_product: true,
+				subscription_status: 'active',
+			},
+		] );
 		renderModal();
 
 		expect(
