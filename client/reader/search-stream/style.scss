@@ -462,66 +462,6 @@ div.is-section-reader:not(.is-logged-in) {
 	}
 }
 
-.search-stream__url-follow {
-	border-bottom: 1px solid var(--color-neutral-0);
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	padding: 13px 0 10px;
-	position: relative;
-	z-index: z-index("root", ".following-manage__url-follow");
-
-	p {
-		color: var(--color-neutral-60);
-		font-size: $font-body-small;
-		margin: 5px 0;
-
-		.gridicon {
-			vertical-align: text-bottom;
-		}
-
-		strong {
-			padding-left: 5px;
-			color: var(--color-neutral-70);
-		}
-	}
-
-	.follow-button {
-		.gridicon {
-			fill: var(--color-primary);
-		}
-
-		.follow-button__label {
-			color: var(--color-link);
-			text-decoration: underline;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				display: inline;
-			}
-		}
-
-		&:hover {
-			svg.reader-follow-feed path {
-				fill: var(--color-link);
-			}
-
-			.follow-button__label {
-				color: var(--color-link);
-			}
-		}
-
-		&.is-following {
-			.gridicon {
-				fill: var(--color-success);
-			}
-
-			.follow-button__label {
-				color: var(--color-success);
-			}
-		}
-	}
-}
-
 .search-stream__site-results-none {
 	color: var(--color-neutral-50);
 	margin-top: 1em;

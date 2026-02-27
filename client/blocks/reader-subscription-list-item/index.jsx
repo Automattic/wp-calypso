@@ -125,23 +125,17 @@ function ReaderSubscriptionListItem( {
 		onItemClick();
 	};
 
-	/**
-	 * Check if the query looks like a feed URL
-	 */
 	const isPotentialFeedUrl = ( urlToVerify ) => {
 		if ( ! resemblesUrl( urlToVerify ) ) {
 			return false;
 		}
 
-		let parsedUrl;
 		try {
-			parsedUrl = new URL( urlToVerify );
+			const parsedUrl = new URL( urlToVerify );
 			return commonExtensions.some( ( ext ) => parsedUrl.toString().includes( ext ) );
 		} catch {
-			// Do nothing.
+			return false;
 		}
-
-		return false;
 	};
 
 	if ( hasSiteError ) {

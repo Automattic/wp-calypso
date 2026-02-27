@@ -19,7 +19,6 @@ import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -185,7 +184,6 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					<SearchFollowButton query={ query } feeds={ this.state.feeds } />
 					{ query && (
 						<div className={ toggleGroupControlClasses }>
 							<ToggleGroupControl
