@@ -4,8 +4,9 @@
 
 import { Reader } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
-import { ReaderFeedItemProps } from 'calypso/blocks/reader-feed-item';
-import { FeedPreviewProps } from 'calypso/landing/subscriptions/components/feed-preview';
+import { ComponentProps } from 'react';
+import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
+import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import UnsubscribedFeedsSearchList from '../index';
 
 // Mock recordTrainTracksRender
@@ -17,14 +18,14 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 // Mock FeedPreview component
 jest.mock( 'calypso/landing/subscriptions/components/feed-preview', () => {
-	return jest.fn( ( { url, source }: FeedPreviewProps ) => (
+	return jest.fn( ( { url, source }: ComponentProps< typeof FeedPreview > ) => (
 		<div data-testid="mock-feed-preview" data-url={ url } data-source={ source } />
 	) );
 } );
 
 // Mock ReaderFeedItem component
 jest.mock( 'calypso/blocks/reader-feed-item', () => {
-	return jest.fn( ( { feed, source }: ReaderFeedItemProps ) => (
+	return jest.fn( ( { feed, source }: ComponentProps< typeof ReaderFeedItem > ) => (
 		<div
 			data-testid="mock-reader-feed-item"
 			data-feed-id={ feed.feed_ID }

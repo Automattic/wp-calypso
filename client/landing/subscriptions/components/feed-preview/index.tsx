@@ -17,7 +17,7 @@ export interface GetFeedItemResponse {
 	meta: object;
 }
 
-export interface FeedPreviewProps {
+interface FeedPreviewProps {
 	url: string;
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
