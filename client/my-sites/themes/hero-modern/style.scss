@@ -1,26 +1,38 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
+$hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
+
+.is-section-themes.is-theme-showcase-modern.has-no-sidebar {
+	.masterbar-menu .masterbar {
+		background: transparent;
+		border-bottom-color: transparent;
+		height: 56px;
+		position: relative;
+	}
+
+	.cta-btn-nav {
+		color: var(--studio-gray-100) !important;
+		background: inherit !important;
+		border: 1px solid var(--studio-gray-100);
+	}
+}
+
+
 .hero-modern {
-	padding: 0;
-	background: linear-gradient(135deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
+	margin-top: -$hero-modern-navbar-height;
+	padding: $hero-modern-navbar-height 0 0;
+	background: linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
 
 	.full-width-section__content {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
 		max-width: 1220px;
 		padding: 48px 24px;
 
 		@media (min-width: $break-small) {
 			background: url(./illustration.svg) no-repeat right clamp(-500px, 70vw - 900px, 0px) bottom;
-			padding: 64px 40px;
+			padding-top: 100px;
+			padding-bottom: 64px;
 		}
-		@media (min-width: $break-xlarge) {
-			//background-position: right bottom;
-			padding: 64px 40px;
-		}
-
 		@media (min-width: $break-wide) {
 			background-position: right bottom;
 		}
