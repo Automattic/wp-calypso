@@ -16,7 +16,7 @@ export type SiteTypeFeatureSupports = {
 	settingsGeneralRedirect?: boolean;
 	settingsServer?: boolean;
 	settingsSecurity?: boolean;
-	settingsDotcomSiteVisibility?: boolean;
+	settingsGeneralDotcomSiteVisibility?: boolean;
 	settingsExperimental?: boolean;
 };
 
@@ -62,7 +62,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			settingsGeneral: true,
 			settingsGeneralAITools: false,
 			settingsGeneralRedirect: true,
-			settingsDotcomSiteVisibility: false,
+			settingsGeneralDotcomSiteVisibility: false,
 			settingsServer: false,
 			settingsSecurity: false,
 			settingsExperimental: false,
@@ -82,7 +82,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		settingsGeneral: true,
 		settingsGeneralAITools: true,
 		settingsGeneralRedirect: true,
-		settingsDotcomSiteVisibility: true,
+		settingsGeneralDotcomSiteVisibility: true,
 		settingsServer: true,
 		settingsSecurity: true,
 		settingsExperimental: true,

@@ -599,7 +599,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsDotcomSiteVisibility' },
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralDotcomSiteVisibility' },
 	head: () => ( {
 		meta: [
 			{

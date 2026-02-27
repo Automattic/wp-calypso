@@ -51,7 +51,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
-						{ siteTypeSupports.settingsDotcomSiteVisibility ? (
+						{ siteTypeSupports.settingsGeneralDotcomSiteVisibility ? (
 							<SiteVisibilitySettingsSummary site={ site } />
 						) : null }
 						{ isEnabled( 'wordpress-ai-tools' ) && siteTypeSupports.settingsGeneralAITools ? (

@@ -13,7 +13,7 @@ export default function SiteVisibilitySettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	if ( ! siteTypeSupportsFeature( site, 'settingsDotcomSiteVisibility' ) ) {
+	if ( ! siteTypeSupportsFeature( site, 'settingsGeneralDotcomSiteVisibility' ) ) {
 		return null;
 	}
 
