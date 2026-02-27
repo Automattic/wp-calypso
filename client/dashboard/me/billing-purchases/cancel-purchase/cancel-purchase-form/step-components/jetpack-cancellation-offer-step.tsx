@@ -50,7 +50,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 		let renewalCopy;
 
 		switch ( purchase.bill_period_days ) {
-			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
 				offerHeadline = sprintf(
 					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					__( 'Get %(discount)d%% off %(name)s for your next %(periods)d two-year renewals' ),
@@ -84,7 +84,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					);
 				}
 				break;
-			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
 				offerHeadline = sprintf(
 					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					__( 'Get %(discount)d%% off %(name)s for the next %(periods)d years' ),
