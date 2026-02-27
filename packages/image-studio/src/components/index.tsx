@@ -14,6 +14,7 @@ import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
 import { useDraftCleanup } from '../hooks/use-draft-cleanup';
+import { useErrorNotice } from '../hooks/use-error-notice';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
 import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
@@ -136,16 +137,7 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
-	useEffect( () => {
-		if ( ! agentError ) {
-			return;
-		}
-		const errorMessage =
-			( agentError as unknown as Error )?.message ||
-			String( agentError ) ||
-			__( 'An error occurred while generating content.', __i18n_text_domain__ );
-		addNotice( errorMessage, 'error' );
-	}, [ agentError, addNotice ] );
+	useErrorNotice( agentError, addNotice );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 

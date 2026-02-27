@@ -26,11 +26,17 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success';
+export type NoticeType = 'error' | 'success' | 'warning';
+export interface NoticeAction {
+	label: string;
+	url: string;
+	openInNewTab?: boolean;
+}
 export interface Notice {
 	id: string;
 	content: string;
 	type: NoticeType;
+	actions?: NoticeAction[];
 }
 
 export enum ImageStudioEntryPoint {
@@ -650,7 +656,11 @@ export interface ImageStudioActions {
 	) => Promise< SetLastSavedAttachmentIdAction >;
 	addSavedAttachmentId: ( attachmentId: number ) => Promise< AddSavedAttachmentIdAction >;
 	setIsExitConfirmed: ( value: boolean ) => Promise< SetIsExitConfirmedAction >;
-	addNotice: ( content: string, type: 'error' | 'success' ) => Promise< AddNoticeAction >;
+	addNotice: (
+		content: string,
+		type: NoticeType,
+		noticeActions?: NoticeAction[]
+	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
 		attachmentIds: number[],
@@ -797,7 +807,7 @@ const actions = {
 		};
 	},
 
-	addNotice( content: string, type: NoticeType ): AddNoticeAction {
+	addNotice( content: string, type: NoticeType, noticeActions?: NoticeAction[] ): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
 			payload: {
@@ -805,6 +815,9 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
+				...( noticeActions?.length && {
+					actions: noticeActions,
+				} ),
 			},
 		};
 	},
