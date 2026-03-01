@@ -111,4 +111,34 @@ describe( 'useKeyedPersistence', () => {
 		expect( stored.tab1 ).toBe( '20' ); // serialized as doubled
 		expect( result.current[ 0 ] ).toBe( 10 ); // but state is correct
 	} );
+
+	it( 'provides synchronous getter for any key', () => {
+		// Pre-populate storage with values for multiple keys
+		sessionStorage.setItem(
+			STORAGE_KEY_PREFIX + 'test',
+			JSON.stringify( { tab1: 'value1', tab2: 'value2' } )
+		);
+
+		const { result } = renderHook( () =>
+			useKeyedPersistence( {
+				storageKey: 'test',
+				currentKey: 'tab1',
+				defaultValue: 'default',
+			} )
+		);
+
+		const getValueForKey = result.current[ 2 ];
+
+		// Can read current key's value synchronously
+		expect( getValueForKey( 'tab1' ) ).toBe( 'value1' );
+
+		// Can read other key's value synchronously without changing currentKey
+		expect( getValueForKey( 'tab2' ) ).toBe( 'value2' );
+
+		// Returns default for missing keys
+		expect( getValueForKey( 'tab3' ) ).toBe( 'default' );
+
+		// State value still reflects currentKey
+		expect( result.current[ 0 ] ).toBe( 'value1' );
+	} );
 } );

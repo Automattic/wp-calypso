@@ -14,6 +14,11 @@ type KeyedPersistenceOptions< T > = {
  * Hook for persisting values per-key (e.g., per-tab) using sessionStorage.
  * When the currentKey changes, the hook returns the stored value for that key.
  * Values are cleared when the browser session ends.
+ *
+ * Returns: [value, setValue, getValueForKey]
+ * - value: The current value for currentKey
+ * - setValue: Setter that persists to sessionStorage
+ * - getValueForKey: Synchronous getter for any key (useful in effects)
  */
 export default function useKeyedPersistence< T >( {
 	storageKey,
@@ -21,7 +26,7 @@ export default function useKeyedPersistence< T >( {
 	defaultValue,
 	serialize = ( v ) => String( v ),
 	deserialize = ( v ) => v as unknown as T,
-}: KeyedPersistenceOptions< T > ): [ T, ( value: T ) => void ] {
+}: KeyedPersistenceOptions< T > ): [ T, ( value: T ) => void, ( key: string ) => T ] {
 	const fullStorageKey = STORAGE_KEY_PREFIX + storageKey;
 	const isInitialMount = useRef( true );
 
@@ -88,5 +93,5 @@ export default function useKeyedPersistence< T >( {
 		[ currentKey, readMap, writeMap, serialize ]
 	);
 
-	return [ value, setPersistedValue ];
+	return [ value, setPersistedValue, getValueForKey ];
 }

@@ -94,7 +94,7 @@ export default function PressablePlanSection( {
 	} );
 
 	// Persist the selected plan slug per-tab
-	const [ persistedPlanSlug, setPersistedPlanSlug ] = useKeyedPersistence< string | null >( {
+	const [ , setPersistedPlanSlug, getPersistedPlanSlug ] = useKeyedPersistence< string | null >( {
 		storageKey: 'pressable-plan',
 		currentKey: selectedTab,
 		defaultValue: null,
@@ -136,7 +136,6 @@ export default function PressablePlanSection( {
 
 	// Track initialization to prevent effects from fighting each other
 	const isInitialized = useRef( false );
-	const skipNextTabChange = useRef( false );
 
 	// Restore plan for current tab when tab changes or on init
 	useEffect( () => {
@@ -144,9 +143,10 @@ export default function PressablePlanSection( {
 			return;
 		}
 
-		// Try to restore persisted plan for current tab
-		if ( persistedPlanSlug ) {
-			const persistedPlan = pressablePlans.find( ( p ) => p.slug === persistedPlanSlug );
+		// Read persisted plan synchronously to avoid race condition on tab switch
+		const persistedSlug = getPersistedPlanSlug( selectedTab );
+		if ( persistedSlug ) {
+			const persistedPlan = pressablePlans.find( ( p ) => p.slug === persistedSlug );
 			if ( persistedPlan ) {
 				setSelectedPlan( persistedPlan );
 				return;
@@ -183,7 +183,7 @@ export default function PressablePlanSection( {
 	}, [
 		pressablePlans,
 		selectedTab,
-		persistedPlanSlug,
+		getPersistedPlanSlug,
 		setPersistedPlanSlug,
 		isReferralMode,
 		existingPlan,
@@ -193,12 +193,6 @@ export default function PressablePlanSection( {
 	// Handle tab changes - just persist the tab, don't reset the plan
 	const handleTabChange = useCallback(
 		( tab: string ) => {
-			// Skip if this is from programmatic init (restoring persisted state)
-			if ( skipNextTabChange.current ) {
-				skipNextTabChange.current = false;
-				return;
-			}
-
 			setSelectedTab( tab );
 		},
 		[ setSelectedTab ]
