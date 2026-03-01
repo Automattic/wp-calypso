@@ -109,6 +109,15 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 	} = useAgentChat( agentConfig! );
 
+	// Save agenttic checkpoint ID cookie when the last message is from the user.
+	useEffect( () => {
+		const lastMessage = messages[ messages.length - 1 ];
+		if ( lastMessage?.role === 'user' ) {
+			const checkpoint = `chat-${ String( performance.now() ).replace( '.', '' ) }`;
+			document.cookie = `agenttic_checkpoint_id=${ checkpoint }; path=/`;
+		}
+	}, [ messages ] );
+
 	// Notify parent when message count changes
 	useEffect( () => {
 		onMessagesCountChange( messages.length );
