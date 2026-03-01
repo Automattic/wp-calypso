@@ -1,4 +1,4 @@
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
 	__unstableAnimatePresence as AnimatePresence,
@@ -25,7 +25,7 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
-import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
+import { ImageStudioMode, type ImageStudioProps, ToolbarOption, type AgentMessage } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
@@ -48,7 +48,7 @@ function ImageStudioAgentChat( {
 	mode,
 	onChatSubmit,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
@@ -160,6 +160,7 @@ function ImageStudioAgentChat( {
 	return (
 		<AgentUI.Container
 			{ ...agentUiProps }
+			// AgentMessage uses structural typing - allows additional properties from agenttic-ui
 			messages={ displayMessages as any }
 			variant="embedded"
 			placeholder={ placeholder }
@@ -195,7 +196,7 @@ const ImageStudioAgentUIComponent = ( {
 	onChatSubmit,
 	mode,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;

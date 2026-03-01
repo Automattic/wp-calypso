@@ -1,4 +1,4 @@
-import { getAgentManager } from '@automattic/agenttic-client';
+import { getAgentManager, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import { getSessionId } from '../utils/session';
 
@@ -16,11 +16,11 @@ import { getSessionId } from '../utils/session';
  */
 export function useAgentConfig(
 	agentConfigFactory: {
-		createAgentConfig: ( sessionId: string ) => Promise< any >;
+		createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
 	},
 	modalOpenKey?: number
-) {
-	const [ agentConfigState, setAgentConfigState ] = useState< any >( null );
+): UseAgentChatConfig | null {
+	const [ agentConfigState, setAgentConfigState ] = useState< UseAgentChatConfig | null >( null );
 
 	const sessionId = getSessionId();
 	const sessionKey = useMemo( () => sessionId || 'image-studio-default', [ sessionId ] );
