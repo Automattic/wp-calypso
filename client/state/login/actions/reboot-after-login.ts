@@ -13,8 +13,19 @@ export const rebootAfterLogin =
 			} )
 		);
 
-		// Redirects to / if no redirect url is available
-		const url = getRedirectToSanitized( getState() ) || '/';
+		// Redirects to / if no redirect url is available.
+		// Also redirect to / if the sanitized redirect points back to the login
+		// page — a successful login should never send the user back to /log-in,
+		// and doing so creates an infinite loop for passwordless accounts.
+		let url = getRedirectToSanitized( getState() ) || '/';
+		try {
+			const parsed = new URL( url, window.location.origin );
+			if ( parsed.pathname.startsWith( '/log-in' ) ) {
+				url = '/';
+			}
+		} catch {
+			// If URL parsing fails, use the original url
+		}
 
 		// user ID is persisted in localstorage
 		// therefore we need to reset it before we redirect, otherwise we'll get
