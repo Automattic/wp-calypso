@@ -13,12 +13,27 @@ AI-powered image editing/generation for WordPress. Two modes: **Edit** and **Gen
 
 ## Conventions (Non-Obvious)
 
-- **Hooks over components**: Feature logic goes in `src/hooks/`. Components should be thin renderers.
+- **Prefer hooks over components** for feature logic. Keep components as thin renderers. Simple prop transformations are fine in components.
 - **Tracking prefix**: All analytics events auto-prefixed with `jetpack_big_sky_`. Use `recordEvent()` from `src/utils/tracking.ts`.
-- **Styling**: Dark theme SCSS. Tokens in `src/components/styles/_variables.scss`. Background: `#1e1e1e`, foreground: `#fff`.
-- **Components**: Use `@wordpress/components` (Button, Modal, etc.) over custom primitives.
-- **i18n**: All user-facing strings via `__()` or `_n()` from `@wordpress/i18n`.
+- **Styling**: Use design tokens from `src/components/styles/_variables.scss`.
+- **Prefer `@wordpress/components`** for standard UI (Button, Modal) over custom primitives, except for highly custom interactions (annotation canvas).
 - **Types**: Shared types in `src/types/index.ts`. Use enums for fixed option sets.
+
+## Error Handling
+
+- **Notices**: Use store `setError()` action + `use-image-studio-message-display.ts` hook to display user-facing errors.
+- **Console logging**: Log errors to console for debugging. Store error state in `src/store/index.ts`.
+- **API failures**: Hooks should handle failed API calls gracefully and dispatch error actions to store.
+
+## Entry Points
+
+Image Studio has multiple entry points defined in `ImageStudioEntryPoint` enum (`src/types/index.ts`). Each affects modal behavior and feature availability. See `src/index.tsx:openImageStudioModal()` for initialization logic per entry point.
+
+## Debugging Cross-Bundle
+
+- **Store inspection**: Image Studio runs in a separate bundle. Inspect store state via browser console when debugging.
+- **Symptom**: Buttons render but modal doesn't open → check if store bridge is working.
+- **Symptom**: Save dispatches but editor doesn't update → verify extension filter registrations in `src/extensions/`.
 
 ## Build & Test
 
@@ -31,7 +46,7 @@ yarn lint        # ESLint
 yarn typecheck   # Type check (dry run)
 ```
 
-**Always run `yarn build && yarn test && yarn lint && yarn typecheck` after changes.** All tests must pass, lint must have zero errors, and typecheck must pass before submitting. Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
+**Always run full validation** (`yarn build && yarn test && yarn lint && yarn typecheck`) before submitting. All must pass with zero errors. Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
 ## UI Testing
 
@@ -53,4 +68,6 @@ After completing any task in this package, evaluate this file:
 - If you made a mistake this file should have caught, add the missing guidance above and bump the rating up.
 - If something here is wrong or stale, fix it and bump the rating down.
 
-**Rating: 6/10** | **Last updated**: 2026-02-23
+**Rating: 7/10** | **Last updated**: 2026-03-01
+
+**7/10 justification**: Added error handling patterns, entry point behavior guidance, cross-bundle debugging tips, and contextual qualifiers to conventions. Trimmed over-specified styling/i18n details.
