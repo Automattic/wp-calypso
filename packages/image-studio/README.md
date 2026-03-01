@@ -70,24 +70,23 @@ export {
 
 ### Commands
 
+All commands run from the package directory (`packages/image-studio/`):
+
 ```bash
-# Build the package (ESM + CJS)
-yarn build
+yarn build       # Build the package (ESM + CJS)
+yarn test        # Run unit tests (155 tests, ~2s)
+yarn lint        # ESLint
+yarn lint:fix    # ESLint with auto-fix
+yarn typecheck   # TypeScript type check (dry run)
+yarn watch       # Watch for changes
+yarn clean       # Clean build output
+```
 
-# Watch for changes
-yarn watch
+Or from the repo root:
 
-# Clean build output
-yarn clean
-
-# Lint
-yarn lint
-
-# Unit tests (from repo root)
-yarn jest packages/image-studio --config packages/image-studio/jest.config.js
-
-# Type check
-yarn workspace @automattic/image-studio tsc --build --dry
+```bash
+yarn workspace @automattic/image-studio build
+yarn test-packages packages/image-studio
 ```
 
 Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.

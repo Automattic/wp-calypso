@@ -20,17 +20,18 @@ AI-powered image editing/generation for WordPress. Two modes: **Edit** and **Gen
 - **i18n**: All user-facing strings via `__()` or `_n()` from `@wordpress/i18n`.
 - **Types**: Shared types in `src/types/index.ts`. Use enums for fixed option sets.
 
-## Testing Commands
+## Build & Test
+
+All commands work from `packages/image-studio/`:
 
 ```bash
-# Unit tests (run from repo root)
-yarn jest packages/image-studio --config packages/image-studio/jest.config.js
-
-# Type check
-yarn workspace @automattic/image-studio tsc --build --dry
+yarn build       # TypeScript compile (ESM + CJS)
+yarn test        # Unit tests (~155 tests, ~2s)
+yarn lint        # ESLint
+yarn typecheck   # Type check (dry run)
 ```
 
-Run both before creating a PR. Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
+**Always run `yarn build && yarn test` after changes.** Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
 ## UI Testing
 
