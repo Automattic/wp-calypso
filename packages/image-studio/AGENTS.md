@@ -26,12 +26,12 @@ All commands work from `packages/image-studio/`:
 
 ```bash
 yarn build       # TypeScript compile (ESM + CJS)
-yarn test        # Unit tests (~155 tests, ~2s)
+yarn test        # Unit tests
 yarn lint        # ESLint
 yarn typecheck   # Type check (dry run)
 ```
 
-**Always run `yarn build && yarn test` after changes.** Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
+**Always run `yarn build && yarn test && yarn lint && yarn typecheck` after changes.** All tests must pass, lint must have zero errors, and typecheck must pass before submitting. Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
 ## UI Testing
 
