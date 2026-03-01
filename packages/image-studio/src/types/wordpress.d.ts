@@ -16,7 +16,7 @@ export interface CoreDataDispatch {
 		record: Record< string, unknown >,
 		options?: {
 			isAutosave?: boolean;
-			__unstableFetch?: Function;
+			__unstableFetch?: ( ...args: unknown[] ) => Promise< unknown >;
 			throwOnError?: boolean;
 		}
 	) => Promise< unknown >;
@@ -27,7 +27,7 @@ export interface CoreDataDispatch {
 		recordId: number | string,
 		query?: Record< string, unknown > | null,
 		options?: {
-			__unstableFetch?: Function;
+			__unstableFetch?: ( ...args: unknown[] ) => Promise< unknown >;
 			throwOnError?: boolean;
 			force?: boolean;
 		}

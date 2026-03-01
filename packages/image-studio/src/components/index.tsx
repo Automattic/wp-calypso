@@ -25,7 +25,7 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
-import { ImageStudioMode, type ImageStudioProps, ToolbarOption, type AgentMessage } from '../types';
+import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
@@ -160,7 +160,6 @@ function ImageStudioAgentChat( {
 	return (
 		<AgentUI.Container
 			{ ...agentUiProps }
-			// AgentMessage uses structural typing - allows additional properties from agenttic-ui
 			messages={ displayMessages as any }
 			variant="embedded"
 			placeholder={ placeholder }
