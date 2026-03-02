@@ -1,5 +1,6 @@
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
+export type { SitelessCheckoutType } from '@automattic/shopping-cart';
 
 type PurchaseSiteId = number;
 
@@ -659,14 +660,6 @@ export interface CountryListItemWithVat extends CountryListItemBase {
 	tax_country_codes: string[];
 }
 export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
-
-export type SitelessCheckoutType =
-	| 'jetpack'
-	| 'akismet'
-	| 'marketplace'
-	| 'a4a'
-	| 'unified'
-	| undefined;
 
 /**
  * Copied these types from Redux to avoid needing to import the whole package.

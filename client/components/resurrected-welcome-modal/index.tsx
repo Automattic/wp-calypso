@@ -1,15 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { BigSkyLogo } from '@automattic/components';
 import { Button, Icon, Modal } from '@wordpress/components';
-import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useResurrectedFreeUserEligibility } from 'calypso/lib/resurrected-users';
-import {
-	WELCOME_BACK_VARIATIONS,
-	type WelcomeBackVariation,
-} from 'calypso/lib/resurrected-users/constants';
+
 import './style.scss';
 
 const SESSION_STORAGE_KEY = 'wpcom_resurrected_welcome_modal_dismissed';
@@ -17,7 +13,6 @@ const SESSION_STORAGE_KEY = 'wpcom_resurrected_welcome_modal_dismissed';
 type TranslateFn = ReturnType< typeof useTranslate >;
 
 type CtaVariant = 'primary' | 'secondary' | 'tertiary';
-type CtaIcon = 'big-sky';
 
 type CtaConfig = {
 	id: string;
@@ -25,7 +20,6 @@ type CtaConfig = {
 	href?: string;
 	isDismissOnly?: boolean;
 	variant?: CtaVariant;
-	icon?: CtaIcon;
 };
 
 type VariationConfig = {
@@ -34,97 +28,29 @@ type VariationConfig = {
 	ctas: CtaConfig[];
 };
 
-const CTA_TARGETS = {
-	AI: '/setup/ai-site-builder',
-	MANUAL: '/setup/onboarding',
-} as const;
+const ONBOARDING_URL = '/setup/onboarding';
 
-const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig > > = {
-	[ WELCOME_BACK_VARIATIONS.AI_ONLY ]: {
-		getTitle: ( translate ) => translate( 'Try our new AI website builder' ),
-		getDescription: ( translate ) =>
-			translate( 'Create a fully designed, content-ready WordPress website in no time.' ),
-		ctas: [
-			{
-				id: 'ai-only',
-				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
-				href: CTA_TARGETS.AI,
-				variant: 'primary',
-				icon: 'big-sky',
-			},
-		],
-	},
-	[ WELCOME_BACK_VARIATIONS.MANUAL ]: {
-		getTitle: ( translate ) => translate( 'Welcome back!' ),
-		getDescription: ( translate ) =>
-			translate(
-				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins.'
-			),
-		ctas: [
-			{
-				id: 'manual-new',
-				getLabel: ( translate ) => translate( 'Create a new site' ),
-				href: CTA_TARGETS.MANUAL,
-				variant: 'primary',
-			},
-			{
-				id: 'manual-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left off' ),
-				isDismissOnly: true,
-				variant: 'tertiary',
-			},
-		],
-	},
-	[ WELCOME_BACK_VARIATIONS.AI_ONBOARDING ]: {
-		getTitle: ( translate ) => translate( 'Welcome back!' ),
-		getDescription: ( translate ) =>
-			translate(
-				'Ready to explore our latest upgrades? Check out our AI website builder, new themes and plugins.'
-			),
-		ctas: [
-			{
-				id: 'ai-builder',
-				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
-				href: CTA_TARGETS.AI,
-				variant: 'primary',
-				icon: 'big-sky',
-			},
-			{
-				id: 'ai-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left off' ),
-				isDismissOnly: true,
-				variant: 'tertiary',
-			},
-		],
-	},
-	[ WELCOME_BACK_VARIATIONS.ALL_OPTIONS ]: {
-		getTitle: ( translate ) => translate( 'Welcome back!' ),
-		getDescription: ( translate ) =>
-			translate(
-				'Ready to explore our latest upgrades? Check out our AI website builder, new themes and plugins.'
-			),
-		ctas: [
-			{
-				id: 'all-ai',
-				getLabel: ( translate ) => translate( 'Create a new site with AI' ),
-				href: CTA_TARGETS.AI,
-				icon: 'big-sky',
-				variant: 'primary',
-			},
-			{
-				id: 'all-manual',
-				getLabel: ( translate ) => translate( 'Start with a blank site' ),
-				href: CTA_TARGETS.MANUAL,
-				variant: 'secondary',
-			},
-			{
-				id: 'all-continue',
-				getLabel: ( translate ) => translate( 'Continue where I left off' ),
-				isDismissOnly: true,
-				variant: 'tertiary',
-			},
-		],
-	},
+// Rolled-out variation: MANUAL only.
+const MANUAL_VARIATION_CONFIG: VariationConfig = {
+	getTitle: ( translate ) => translate( 'Welcome back!' ),
+	getDescription: ( translate ) =>
+		translate(
+			'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins.'
+		),
+	ctas: [
+		{
+			id: 'manual-new',
+			getLabel: ( translate ) => translate( 'Create a new site' ),
+			href: ONBOARDING_URL,
+			variant: 'primary',
+		},
+		{
+			id: 'manual-continue',
+			getLabel: ( translate ) => translate( 'Continue where I left off' ),
+			isDismissOnly: true,
+			variant: 'tertiary',
+		},
+	],
 };
 
 const getInitialDismissState = () => {
@@ -152,26 +78,19 @@ export const ResurrectedWelcomeModalGate = ( {
 	const [ hasTrackedImpression, setHasTrackedImpression ] = useState( false );
 	const previousVisibilityRef = useRef( false );
 
-	const variationName = eligibility.variationName as WelcomeBackVariation | null;
-	const variationConfig = useMemo(
-		() => ( variationName ? VARIATION_CONTENT[ variationName ] : undefined ),
-		[ variationName ]
-	);
+	const variationName = eligibility.variationName;
+	const variationConfig = variationName ? MANUAL_VARIATION_CONFIG : undefined;
 	const variationClassName = variationName
 		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
 		: null;
-	const hasDarkHero =
-		variationName === WELCOME_BACK_VARIATIONS.MANUAL ||
-		variationName === WELCOME_BACK_VARIATIONS.AI_ONBOARDING ||
-		variationName === WELCOME_BACK_VARIATIONS.ALL_OPTIONS;
+	const hasDarkHero = true; // MANUAL variation uses dark hero
 
 	const shouldDisplay =
 		! eligibility.isLoading &&
 		eligibility.isEligible &&
 		! hasDismissedForSession &&
 		! isSuppressed &&
-		!! variationConfig &&
-		variationName !== WELCOME_BACK_VARIATIONS.CONTROL;
+		!! variationConfig;
 
 	useEffect( () => {
 		if ( eligibility.isForcedVariation ) {
@@ -271,17 +190,6 @@ export const ResurrectedWelcomeModalGate = ( {
 					<div className="resurrected-welcome-modal__actions">
 						{ variationConfig.ctas.map( ( cta ) => {
 							const variant = cta.variant ?? 'primary';
-							const icon =
-								cta.icon === 'big-sky' ? (
-									<span
-										key="icon"
-										className="resurrected-welcome-modal__cta-icon"
-										aria-hidden="true"
-									>
-										<BigSkyLogo.CentralLogo size={ 18 } fill="currentColor" />
-									</span>
-								) : null;
-
 							return (
 								<Button
 									key={ cta.id }
@@ -294,7 +202,6 @@ export const ResurrectedWelcomeModalGate = ( {
 									) }
 								>
 									<span className="resurrected-welcome-modal__cta-label">
-										{ icon }
 										{ cta.getLabel( translate ) }
 									</span>
 								</Button>

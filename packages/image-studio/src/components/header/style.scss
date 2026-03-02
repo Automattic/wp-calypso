@@ -158,6 +158,7 @@
 		text-overflow: ellipsis;
 		text-align: center;
 		pointer-events: none;
+		padding: 0 8px;
 
 		@media ($breakpoint-medium-down) {
 			font-size: 12px;

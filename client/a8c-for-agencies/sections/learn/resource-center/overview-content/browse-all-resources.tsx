@@ -107,7 +107,7 @@ export default function BrowseAllResources( {
 		<>
 			<Spacer marginBottom={ 2 }>
 				<Heading level={ 2 } weight={ 500 } size={ 20 }>
-					{ __( 'Browse all resources' ) }
+					{ __( 'Browse all' ) }
 				</Heading>
 			</Spacer>
 			<DataViews< ResourceItem >
