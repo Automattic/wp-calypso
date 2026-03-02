@@ -142,9 +142,10 @@ function ReaderSubscriptionListItem( {
 		return null;
 	}
 
-	if ( ! site && ! feed && ! isPotentialFeedUrl( feedUrl ) ) {
+	const isFeedUrl = isPotentialFeedUrl( feedUrl );
+	if ( ! site && ! feed && ! isFeedUrl ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
-	} else if ( isPotentialFeedUrl( feedUrl ) ) {
+	} else if ( isFeedUrl ) {
 		siteTitle ||= formatUrlForDisplay( feedUrl );
 		siteUrl ||= feedUrl;
 		streamUrl ||= feedUrl;
