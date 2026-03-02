@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
@@ -115,7 +114,6 @@ export default function useProductAndPlans( {
 	productSearchQuery,
 }: Props ) {
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
-	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
 
 	const addedPlanAndProducts = useSelector( ( state ) =>
 		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
@@ -140,19 +138,15 @@ export default function useProductAndPlans( {
 			);
 		}
 
-		// Hide Pressable add-ons behind feature flag across marketplace products UI.
-		if ( ! isPressableAddonsEnabled ) {
-			const pressableAddonProductIds = new Set(
-				filterProductsAndPlansByType(
-					PRODUCT_TYPE_PRESSABLE_ADDON,
-					filteredProductsAndBundles
-				).map( ( product ) => product.product_id )
-			);
+		const pressableAddonProductIds = new Set(
+			filterProductsAndPlansByType( PRODUCT_TYPE_PRESSABLE_ADDON, filteredProductsAndBundles ).map(
+				( product ) => product.product_id
+			)
+		);
 
-			filteredProductsAndBundles = filteredProductsAndBundles.filter(
-				( product ) => ! pressableAddonProductIds.has( product.product_id )
-			);
-		}
+		filteredProductsAndBundles = filteredProductsAndBundles.filter(
+			( product ) => ! pressableAddonProductIds.has( product.product_id )
+		);
 
 		// Filter products & plan that are already assigned to a site
 		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
@@ -201,6 +195,5 @@ export default function useProductAndPlans( {
 		selectedSite,
 		addedPlanAndProducts,
 		isLoadingProducts,
-		isPressableAddonsEnabled,
 	] );
 }
