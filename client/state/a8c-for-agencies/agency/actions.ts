@@ -34,7 +34,7 @@ export function updateAgencyReferralsLogo( logoUrl: string ): AgencyThunkAction 
 		}
 		dispatch( {
 			type: JETPACK_CURRENT_AGENCY_UPDATE,
-			activeAgency: { ...agency, agency_referrals_logo: logoUrl },
+			activeAgency: { ...agency, referrals_logo: logoUrl },
 		} );
 	};
 }

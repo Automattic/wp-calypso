@@ -25,7 +25,7 @@ export default function ReferralLogo( { onChange }: Props ) {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
 	const profileLogoUrl = agency?.profile?.company_details?.logo_url || null;
-	const agencyReferralsLogoUrl = agency?.agency_referrals_logo || null;
+	const agencyReferralsLogoUrl = agency?.referrals_logo || null;
 	const hasProfileLogo = !! profileLogoUrl;
 	const hasAgencyReferralsLogo = !! agencyReferralsLogoUrl;
 
