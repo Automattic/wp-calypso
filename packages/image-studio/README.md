@@ -114,7 +114,8 @@ Deployed as part of the `agents-manager` bundle to `widgets.wp.com`. PHP in `jet
 
 ## Related
 
-- [AGENTS.md](AGENTS.md) — Critical patterns, conventions, and pitfalls for AI agents
+- [AGENTS.md](AGENTS.md) — Critical patterns, conventions, and pitfalls for AI agents (read this first for any code change)
+- [UI Test Skill](.agents/skills/ui-testing/SKILL.md) — Comprehensive UI test cases for Playwright
 - [@automattic/agents-manager](../agents-manager/README.md) — Parent integration package
 
 ## License
