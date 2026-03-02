@@ -32,7 +32,7 @@ export interface LogoFileUploadProps {
  * Reusable logo file upload using FormFileUpload.
  * Validates format (JPG, PNG), dimensions (800x320), and size (max 5 MB) on the client.
  */
-export function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
+function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 	const translate = useTranslate();
 	const [ error, setError ] = useState< LogoFileValidationError | 'dimensions' | null >( null );
 	const maxLogoSizeMb = Math.floor( A4A_LOGO_MAX_FILE_SIZE_BYTES / ( 1024 * 1024 ) );
@@ -115,7 +115,11 @@ export function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProp
 							aria-label={ displayUrl ? translate( 'Replace logo' ) : translate( 'Select logo' ) }
 						>
 							{ displayUrl ? (
-								<img src={ displayUrl } alt="" className="logo-file-upload-preview" />
+								<img
+									src={ displayUrl }
+									alt={ translate( 'Logo preview' ) }
+									className="logo-file-upload-preview"
+								/>
 							) : (
 								<Icon icon={ upload } className="logo-file-upload-icon" />
 							) }
