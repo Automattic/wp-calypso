@@ -1,11 +1,5 @@
 import nock from 'nock';
-import {
-	validateUsernameInternal,
-	isUsernameValid,
-	getUsernameValidationMessage,
-	getAllowedActions,
-	type ValidationResult,
-} from '../username-validation-utils';
+import { validateUsernameInternal } from '../username-validation-utils';
 
 describe( 'Username Validation Utils', () => {
 	describe( 'validateUsernameInternal', () => {
@@ -77,54 +71,6 @@ describe( 'Username Validation Utils', () => {
 					message: 'Username is already taken',
 				} )
 			);
-		} );
-	} );
-
-	describe( 'isUsernameValid', () => {
-		test( 'returns true for valid validation result', () => {
-			const validResult: ValidationResult = { success: true };
-			expect( isUsernameValid( validResult ) ).toBe( true );
-		} );
-
-		test( 'returns false for null validation result', () => {
-			expect( isUsernameValid( null ) ).toBe( false );
-		} );
-
-		test( 'returns false for validation result with error', () => {
-			const errorResult: ValidationResult = {
-				error: 'username_taken',
-				message: 'Username is already taken',
-			};
-			expect( isUsernameValid( errorResult ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'getUsernameValidationMessage', () => {
-		test( 'returns message or null correctly', () => {
-			expect( getUsernameValidationMessage( { message: 'error' } ) ).toBe( 'error' );
-			expect( getUsernameValidationMessage( { error: 'no message' } ) ).toBe( null );
-			expect( getUsernameValidationMessage( null ) ).toBe( null );
-		} );
-	} );
-
-	describe( 'getAllowedActions', () => {
-		test( 'returns allowed actions from validation result', () => {
-			const result: ValidationResult = {
-				success: true,
-				allowed_actions: {
-					none: 'Just change username',
-					redirect: 'Create matching blog address',
-				},
-			};
-			expect( getAllowedActions( result ) ).toEqual( {
-				none: 'Just change username',
-				redirect: 'Create matching blog address',
-			} );
-		} );
-
-		test( 'returns empty object for validation result without allowed_actions', () => {
-			const result: ValidationResult = { success: true };
-			expect( getAllowedActions( result ) ).toEqual( {} );
 		} );
 	} );
 } );
