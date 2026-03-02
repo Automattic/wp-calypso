@@ -1,4 +1,4 @@
-@import "../styles/variables";
+@import '../styles/variables';
 
 .image-studio-notice {
 	position: relative;
@@ -13,10 +13,49 @@
 	&-error {
 		background-color: #f4a2a2;
 		border-left: 3px solid #cc1818;
+
+		.components-snackbar__content {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			align-items: start;
+		}
+
+		.components-snackbar__action {
+			grid-column: 1;
+			grid-row: 2;
+			margin-left: 0;
+			margin-top: 4px;
+			color: var( --wp-admin-theme-color, #0069b0 );
+			text-decoration: underline;
+			font-weight: 400;
+
+			&:hover {
+				color: var( --wp-admin-theme-color-darker-10, #004c82 );
+				text-decoration: none;
+			}
+		}
+
+		.components-snackbar__dismiss-button {
+			grid-column: 2;
+			grid-row: 1;
+			align-self: start;
+		}
 	}
 
 	&-success {
 		background-color: #eff9f1;
 		border-left: 3px solid #4ab866;
+	}
+}
+
+// Warning notice styling (quota exceeded)
+.image-studio-modal__notices {
+	.components-notice.is-warning {
+		max-width: 400px;
+		margin: 0 0 8px;
+
+		.components-notice__action.components-button {
+			margin-left: 0;
+		}
 	}
 }

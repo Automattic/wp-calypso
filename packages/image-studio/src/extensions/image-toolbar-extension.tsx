@@ -34,7 +34,17 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			);
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
+					if ( image === null ) {
+						setAttributes( {
+							url: undefined,
+							id: undefined,
+							alt: '',
+							title: '',
+							caption: '',
+						} );
+						return;
+					}
 					if ( image?.id ) {
 						setAttributes( {
 							url: image.url,
@@ -76,7 +86,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 								label={ __( 'Edit image with AI', __i18n_text_domain__ ) }
 								onClick={ handleEditClick }
 							>
-								{ __( 'Edit', __i18n_text_domain__ ) }
+								{ __( 'Edit with AI', __i18n_text_domain__ ) }
 							</ToolbarButton>
 						</ToolbarGroup>
 					</BlockControls>
