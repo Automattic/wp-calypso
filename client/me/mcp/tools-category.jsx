@@ -217,7 +217,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
-					const sectionPending = categoryTools.some( ( [ toolId ] ) =>
+					const sectionPending = categoryTools.every( ( [ toolId ] ) =>
 						pendingToolIds.has( toolId )
 					);
 
