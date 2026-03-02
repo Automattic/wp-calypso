@@ -27,12 +27,6 @@ import {
 
 const NON_OBJECTS = [ null, undefined, 0, '', false, 42, 'string', true, Symbol(), [] ];
 
-function expectRejectsNonObjects( guard: ( obj: unknown ) => boolean ) {
-	for ( const value of NON_OBJECTS ) {
-		expect( guard( value ) ).toBe( false );
-	}
-}
-
 // ── Fixtures ────────────────────────────────────────────────────────
 
 const validMediaAttachment = {
@@ -101,8 +95,8 @@ const validJobState = {
 // ── isMediaAttachment ───────────────────────────────────────────────
 
 describe( 'isMediaAttachment', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isMediaAttachment );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isMediaAttachment( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid attachment', () => {
@@ -149,8 +143,8 @@ describe( 'isMediaAttachment', () => {
 // ── isAttachmentRecord ──────────────────────────────────────────────
 
 describe( 'isAttachmentRecord', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isAttachmentRecord );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isAttachmentRecord( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid record', () => {
@@ -180,8 +174,8 @@ describe( 'isAttachmentRecord', () => {
 // ── isWPBlock ───────────────────────────────────────────────────────
 
 describe( 'isWPBlock', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isWPBlock );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isWPBlock( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid block', () => {
@@ -210,8 +204,8 @@ describe( 'isWPBlock', () => {
 // ── isBlockEditProps ────────────────────────────────────────────────
 
 describe( 'isBlockEditProps', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isBlockEditProps );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isBlockEditProps( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid props', () => {
@@ -247,8 +241,8 @@ describe( 'isBlockEditProps', () => {
 // ── isCoreDataDispatch ──────────────────────────────────────────────
 
 describe( 'isCoreDataDispatch', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isCoreDataDispatch );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isCoreDataDispatch( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid dispatch', () => {
@@ -302,8 +296,8 @@ describe( 'isCoreDataDispatch', () => {
 // ── isBlockEditorDispatch ───────────────────────────────────────────
 
 describe( 'isBlockEditorDispatch', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isBlockEditorDispatch );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isBlockEditorDispatch( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid dispatch', () => {
@@ -376,8 +370,8 @@ describe( 'isFile', () => {
 // ── isErrorPayload ──────────────────────────────────────────────────
 
 describe( 'isErrorPayload', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isErrorPayload );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isErrorPayload( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid error payload', () => {
@@ -413,8 +407,8 @@ describe( 'isErrorPayload', () => {
 // ── isGenerationSuccess ─────────────────────────────────────────────
 
 describe( 'isGenerationSuccess', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isGenerationSuccess );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isGenerationSuccess( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid success', () => {
@@ -454,8 +448,8 @@ describe( 'isGenerationSuccess', () => {
 // ── isGenerationError ───────────────────────────────────────────────
 
 describe( 'isGenerationError', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isGenerationError );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isGenerationError( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid error', () => {
@@ -495,8 +489,8 @@ describe( 'isGenerationResult', () => {
 // ── isImageGenerationRequest ────────────────────────────────────────
 
 describe( 'isImageGenerationRequest', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isImageGenerationRequest );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isImageGenerationRequest( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid request', () => {
@@ -533,8 +527,8 @@ describe( 'isImageGenerationRequest', () => {
 // ── isImageEditRequest ──────────────────────────────────────────────
 
 describe( 'isImageEditRequest', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isImageEditRequest );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isImageEditRequest( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid request', () => {
@@ -570,16 +564,16 @@ describe( 'isGenerationRequest', () => {
 		expect( isGenerationRequest( { type: 'unknown', sessionId: 'x', prompt: 'y' } ) ).toBe( false );
 	} );
 
-	it( 'rejects non-objects', () => {
-		expect( isGenerationRequest( null ) ).toBe( false );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isGenerationRequest( value ) ).toBe( false );
 	} );
 } );
 
 // ── isJobState ──────────────────────────────────────────────────────
 
 describe( 'isJobState', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isJobState );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isJobState( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid job state', () => {
@@ -621,8 +615,8 @@ describe( 'isJobState', () => {
 // ── OperationState guards ───────────────────────────────────────────
 
 describe( 'isIdleOperationState', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isIdleOperationState );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isIdleOperationState( value ) ).toBe( false );
 	} );
 
 	it( 'accepts idle', () => {
@@ -637,8 +631,8 @@ describe( 'isIdleOperationState', () => {
 } );
 
 describe( 'isProcessingOperationState', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isProcessingOperationState );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isProcessingOperationState( value ) ).toBe( false );
 	} );
 
 	it( 'accepts processing', () => {
@@ -657,8 +651,8 @@ describe( 'isProcessingOperationState', () => {
 } );
 
 describe( 'isSuccessOperationState', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isSuccessOperationState );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isSuccessOperationState( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid success state', () => {
@@ -705,8 +699,8 @@ describe( 'isSuccessOperationState', () => {
 } );
 
 describe( 'isErrorOperationState', () => {
-	it( 'rejects non-objects', () => {
-		expectRejectsNonObjects( isErrorOperationState );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isErrorOperationState( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid error state', () => {
@@ -742,8 +736,7 @@ describe( 'isOperationState', () => {
 		expect( isOperationState( { status: 'cancelled' } ) ).toBe( false );
 	} );
 
-	it( 'rejects non-objects', () => {
-		expect( isOperationState( null ) ).toBe( false );
-		expect( isOperationState( 'idle' ) ).toBe( false );
+	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+		expect( isOperationState( value ) ).toBe( false );
 	} );
 } );
