@@ -1,0 +1,34 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/variables';
+
+.filter-bar-modern {
+	align-items: center;
+	display: flex;
+	gap: 16px;
+	margin: 0 auto;
+	max-width: 1220px;
+	padding: 16px 24px;
+
+	@media ( min-width: $break-wide ) {
+		padding: 16px 0;
+	}
+
+	.category-pill-navigation {
+		flex: 1;
+		min-width: 0;
+	}
+
+	// Override pill shape to be rounded (pill-shaped) per design specs
+	.category-pill-navigation__button {
+		text-decoration: none;
+	}
+}
+
+.filter-bar-modern__tier-select {
+	flex-shrink: 0;
+	min-width: 160px;
+
+	.components-custom-select-control__item.is-selected {
+		background-color: var( --wp-components-color-gray-300, #ddd );
+	}
+}

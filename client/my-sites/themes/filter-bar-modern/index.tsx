@@ -1,0 +1,102 @@
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
+import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
+import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
+
+import './style.scss';
+
+interface Category {
+	key: string;
+	text: string;
+}
+
+interface Tier {
+	key: string;
+	name: string;
+}
+
+interface FilterBarModernProps {
+	categories: Category[];
+	selectedCategory: string;
+	onCategorySelect: ( category: Category ) => void;
+	tiers: Tier[];
+	selectedTier: string;
+	onTierSelect: ( attrs: { selectedItem: Tier } ) => void;
+	showTierFilter?: boolean;
+}
+
+const FilterBarModern = ( {
+	categories,
+	selectedCategory,
+	onCategorySelect,
+	tiers,
+	selectedTier,
+	onTierSelect,
+	showTierFilter = true,
+}: FilterBarModernProps ) => {
+	const translate = useTranslate();
+
+	const pillCategories = useMemo(
+		() =>
+			categories.map( ( category ) => ( {
+				id: category.key,
+				label: category.text,
+				link: '#',
+			} ) ),
+		[ categories ]
+	);
+
+	const handleCategorySelect = useCallback(
+		( selectedId: string ) => {
+			const category = categories.find( ( c ) => c.key === selectedId );
+			if ( category ) {
+				onCategorySelect( category );
+			}
+		},
+		[ categories, onCategorySelect ]
+	);
+
+	const tierOptions = useMemo(
+		() =>
+			tiers.map( ( tier ) => ( {
+				...tier,
+				className: tier.key === selectedTier ? 'is-selected' : '',
+			} ) ),
+		[ tiers, selectedTier ]
+	);
+
+	const tierValue = useMemo( () => {
+		const selectedTierObj = tiers.find( ( t ) => t.key === selectedTier );
+		return {
+			key: selectedTier,
+			name: String(
+				translate( 'View: %s', {
+					args: selectedTierObj?.name ?? '',
+				} )
+			),
+		};
+	}, [ tiers, selectedTier, translate ] );
+
+	return (
+		<div className="filter-bar-modern">
+			<CategoryPillNavigation
+				categories={ pillCategories }
+				selectedCategoryId={ selectedCategory }
+				onSelect={ handleCategorySelect }
+			/>
+			{ showTierFilter && (
+				<CustomSelectWrapper
+					className="filter-bar-modern__tier-select"
+					label={ translate( 'View' ) }
+					hideLabelFromVision={ false }
+					__next40pxDefaultSize
+					options={ tierOptions }
+					value={ tierValue }
+					onChange={ onTierSelect }
+				/>
+			) }
+		</div>
+	);
+};
+
+export default FilterBarModern;
