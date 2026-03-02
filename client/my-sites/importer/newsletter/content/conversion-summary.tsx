@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { video, verse, page, file, Icon, audio, gallery, post, code, help } from '@wordpress/icons';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
@@ -30,6 +30,7 @@ interface ConversionSummaryProps {
 			attachmentsNumber?: number;
 			unsupportedFileTypes?: UnsupportedFilesType;
 			postErrors?: PostErrorsType;
+			failedImagesCount?: number;
 		};
 	};
 }
@@ -81,6 +82,72 @@ const UnsupportedFilesMessage = ( {
 					}
 				) }
 			</p>
+		</div>
+	);
+};
+
+const FailedImagesMessage = ( { count }: { count: number } ) => {
+	if ( count <= 0 ) {
+		return null;
+	}
+
+	return (
+		<div className="conversion-summary__failed-images">
+			<p>
+				{ sprintf(
+					/* translators: %d is the number of images that could not be imported */
+					_n(
+						'%d image could not be imported because Substack did not include it in the export. To add it to your post:',
+						'%d images could not be imported because Substack did not include them in the export. To add them to your posts:',
+						count
+					),
+					count
+				) }
+			</p>
+			<ol>
+				<li>
+					{ __( 'Open the original post on Substack.' ) }
+				</li>
+				<li>
+					{ __( 'Right-click each missing image and save it to your computer.' ) }
+				</li>
+				<li>
+					{ createInterpolateElement(
+						__(
+							'Upload the saved images to your <supportLink>Media Library</supportLink>.'
+						),
+						{
+							supportLink: (
+								<InlineSupportLink
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/media/'
+									) }
+									showIcon={ false }
+									supportPostId={ 853 }
+								/>
+							),
+						}
+					) }
+				</li>
+				<li>
+					{ createInterpolateElement(
+						__(
+							'Insert them into the affected posts using the <supportLink>Image block</supportLink>.'
+						),
+						{
+							supportLink: (
+								<InlineSupportLink
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/wordpress-editor/blocks/image-block/'
+									) }
+									showIcon={ false }
+									supportPostId={ 148672 }
+								/>
+							),
+						}
+					) }
+				</li>
+			</ol>
 		</div>
 	);
 };
@@ -232,11 +299,13 @@ const ConversionSummary = ( {
 	const attachments = importerStatus?.customData?.attachmentsNumber || 0;
 	const unsupportedFiles = importerStatus?.customData?.unsupportedFileTypes || {};
 	const postErrors = importerStatus?.customData?.postErrors || {};
+	const failedImagesCount = importerStatus?.customData?.failedImagesCount || 0;
 
 	const hasUnsupportedFiles = Object.keys( unsupportedFiles ).length > 0;
 	const hasPostErrors = Object.keys( postErrors ).length > 0;
+	const hasFailedImages = failedImagesCount > 0;
 
-	const hasIssues = hasUnsupportedFiles || hasPostErrors;
+	const hasIssues = hasUnsupportedFiles || hasPostErrors || hasFailedImages;
 
 	return (
 		<div className="importer__conversion-summary-pane">
@@ -265,6 +334,9 @@ const ConversionSummary = ( {
 					<hr />
 					<div className="conversion-summary__issues">
 						<h2>{ __( 'Items that need your attention' ) }</h2>
+						{ hasFailedImages && (
+							<FailedImagesMessage count={ failedImagesCount } />
+						) }
 						{ hasUnsupportedFiles && (
 							<UnsupportedFilesMessage unsupportedFileTypes={ unsupportedFiles } />
 						) }

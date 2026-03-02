@@ -207,7 +207,8 @@
 	}
 
 	.conversion-summary__post-errors,
-	.conversion-summary__unsupported-files {
+	.conversion-summary__unsupported-files,
+	.conversion-summary__failed-images {
 		p {
 			margin-bottom: 0.825em;
 
@@ -231,6 +232,15 @@
 			.post-errors__item-icon {
 				flex-shrink: 0;
 			}
+		}
+	}
+
+	.conversion-summary__failed-images ol {
+		margin-top: 0.5em;
+		padding-inline-start: 1.5em;
+
+		li {
+			margin-bottom: 0.25em;
 		}
 	}
 
