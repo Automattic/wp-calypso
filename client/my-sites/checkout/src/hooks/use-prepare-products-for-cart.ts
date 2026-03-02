@@ -133,12 +133,23 @@ export default function usePrepareProductsForCart( {
 		addHandler,
 		isGiftPurchase,
 	} );
+	useAddRenewalBySubscriptionId( {
+		originalPurchaseId,
+		dispatch,
+		addHandler,
+	} );
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading;
+
+	// For siteless checkout, we usually want to leave the products in the URL
+	// because the cart is not persisted, so if checkout reloads we need to
+	// recreate the cart from the URL again.
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
+			addHandler === 'doNotAdd' ||
+			addHandler === 'addRenewalBySubscriptionId' ||
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
 			sitelessCheckoutType === 'marketplace' ||
@@ -193,6 +204,7 @@ function preparedProductsReducer(
 type AddHandler =
 	| 'addProductFromSlug'
 	| 'addRenewalItems'
+	| 'addRenewalBySubscriptionId'
 	| 'doNotAdd'
 	| 'addFromLocalStorage'
 	| 'addProductFromBillingIntent';
@@ -250,6 +262,14 @@ function chooseAddHandler( {
 	 */
 	if ( ! isGiftPurchase && isLoggedOutCart ) {
 		return 'addFromLocalStorage';
+	}
+
+	// If we have a subscription ID but no product alias, add the renewal using
+	// only the subscription ID. The backend will look up product info from the
+	// subscription. This must come before the isNoSiteCart check so that
+	// subscription-ID-only renewals are not sent to localStorage.
+	if ( originalPurchaseId && ! productAliasFromUrl ) {
+		return 'addRenewalBySubscriptionId';
 	}
 
 	if ( isNoSiteCart ) {
@@ -434,6 +454,49 @@ function useAddRenewalItems( {
 	] );
 }
 
+/**
+ * When a URL provides only a subscription ID (no product slug), create a
+ * renewal cart item using just the subscription ID. The backend will derive
+ * the product info (product_id, meta) from the subscription record.
+ */
+function useAddRenewalBySubscriptionId( {
+	originalPurchaseId,
+	dispatch,
+	addHandler,
+}: {
+	originalPurchaseId: string | number | null | undefined;
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( addHandler !== 'addRenewalBySubscriptionId' ) {
+			return;
+		}
+		if ( ! originalPurchaseId ) {
+			dispatch( {
+				type: 'RENEWALS_ADD_ERROR',
+				message: String(
+					translate( 'A subscription ID is required to add a renewal to the cart.', {
+						textOnly: true,
+					} )
+				),
+			} );
+			return;
+		}
+		const cartItem = createRequestCartProduct( {
+			product_slug: '',
+			extra: {
+				purchaseId: String( originalPurchaseId ),
+				purchaseType: 'renewal',
+			},
+		} );
+		debug( 'preparing renewal from subscription ID', originalPurchaseId );
+		dispatch( { type: 'RENEWALS_ADD', products: [ cartItem ] } );
+	}, [ addHandler, dispatch, originalPurchaseId, translate ] );
+}
+
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
@@ -529,6 +592,7 @@ function useAddProductFromSlug( {
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		hostingIntent,
 		source,
 	] );
 }

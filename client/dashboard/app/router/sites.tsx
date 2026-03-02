@@ -52,7 +52,6 @@ import {
 	canManageSite,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
-	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
 import {
@@ -600,7 +599,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralDotcomSiteVisibility' },
 	head: () => ( {
 		meta: [
 			{
@@ -616,7 +615,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! canViewSiteVisibilitySettings( site ) ) {
+		if ( site.is_wpcom_flex ) {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},

@@ -347,6 +347,14 @@ export type RequestCartTaxData = null | {
  * exist at all (although there will likely be a message if the item failed to
  * be added).
  *
+ * Most cart items require either a `product_slug` or `product_id` to identify
+ * the product. The one exception is a renewal requested by subscription ID
+ * only: in that case `product_slug` may be omitted and the server will look up
+ * the product from the subscription record. To request such a renewal, use
+ * `RequestCartProductRenewalBySubscriptionId` (a member of this union) and set
+ * `extra.purchaseId` to the subscription ID with `extra.purchaseType` set to
+ * `'renewal'`.
+ *
  * See `createRequestCartProduct()` and `createRequestCartProducts()` in this
  * package for a convenient way to create a `RequestCartProduct`.
  *
