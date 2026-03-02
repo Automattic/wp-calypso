@@ -1,5 +1,5 @@
 /**
- * Hook for cleaning up draft images
+ * Hook for cleaning up temporary images (drafts and annotations)
  *
  * Exports:
  * - cleanupOnExit: Main cleanup for exit flows
@@ -7,15 +7,15 @@
  *
  * Cleanup rules (applies to all exit paths):
  * - Keep: originalAttachmentId + all savedAttachmentIds
- * - Delete: all other session drafts
+ * - Delete: all other session images (draftIds + annotatedAttachmentIds)
  *
  * GENERATION FLOW (no originalAttachmentId):
- * - If never saved: delete ALL drafts
- * - If saved at least once: keep all savedAttachmentIds, delete other drafts
+ * - If never saved: delete ALL temporary images
+ * - If saved at least once: keep all savedAttachmentIds, delete others
  *
  * EDIT FLOW (originalAttachmentId is set):
- * - If never saved: keep only originalAttachmentId, delete all drafts
- * - If saved at least once: keep originalAttachmentId + all savedAttachmentIds, delete other drafts
+ * - If never saved: keep only originalAttachmentId, delete all temporary images
+ * - If saved at least once: keep originalAttachmentId + all savedAttachmentIds, delete others
  *
  * INVARIANT: originalAttachmentId and all savedAttachmentIds are NEVER deleted
  */
@@ -68,7 +68,7 @@ export const useDraftCleanup = () => {
 	};
 
 	/**
-	 * Delete draft images with state management.
+	 * Delete draft and annotated images with state management.
 	 *
 	 * NOTE: This function intentionally reads from the data store at call time
 	 * (instead of relying on React selector closures) so that it always uses
@@ -80,22 +80,27 @@ export const useDraftCleanup = () => {
 		async ( idsToKeep: number[] ) => {
 			const selectors = select( imageStudioStore ) as any;
 			const currentDraftIds: number[] = selectors.getDraftIds() || [];
+			const annotatedAttachmentIds: number[] = selectors.getAnnotatedAttachmentIds() || [];
 
-			// Calculate what to delete
-			const draftsToDelete = currentDraftIds.filter( ( id: number ) => ! idsToKeep.includes( id ) );
+			// Combine drafts and annotated images (both are temporary and should be cleaned up)
+			// Use Set to avoid duplicates
+			const allTemporaryIds = [ ...new Set( [ ...currentDraftIds, ...annotatedAttachmentIds ] ) ];
+
+			// Calculate what to delete (exclude saved/original images)
+			const idsToDelete = allTemporaryIds.filter( ( id: number ) => ! idsToKeep.includes( id ) );
 
 			// Clear draftIds first to prevent beforeunload dialog
 			// Always clear even if nothing to delete (important for save flow)
 			setDraftIds( [] );
 
-			if ( draftsToDelete.length === 0 ) {
+			if ( idsToDelete.length === 0 ) {
 				return;
 			}
 
 			try {
-				// Delete all drafts in parallel
+				// Delete all temporary images (drafts + annotations) in parallel
 				const results = await Promise.allSettled(
-					draftsToDelete.map( ( id ) =>
+					idsToDelete.map( ( id ) =>
 						deleteEntityRecord( 'postType', 'attachment', id, {
 							force: true,
 						} )
@@ -151,7 +156,8 @@ export const useDraftCleanup = () => {
 
 	/**
 	 * Main cleanup function - called ONLY on exit
-	 * Preserves originalAttachmentId + all savedAttachmentIds, deletes all other drafts
+	 * Preserves originalAttachmentId + all savedAttachmentIds, deletes all other temporary images
+	 * (drafts and annotated images)
 	 */
 	const cleanupOnExit = useCallback( async () => {
 		// Always read the latest identifiers from the store to avoid using

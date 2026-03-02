@@ -24,7 +24,7 @@ export interface ImageStudioProps {
 	/** Handle discard logic (restore original, clear checkpoint) */
 	onDiscard: () => Promise< void > | void;
 	/** Exit modal (cleanup, close) */
-	onExit: () => Promise< void > | void;
+	onExit: ( hasChanges: boolean ) => Promise< void > | void;
 	/** Navigate to Media Library editor (save, cleanup, navigate) */
 	onClassicMediaEditorNavigation?: ( url: string ) => Promise< void >;
 	/** Navigate to previous image in media library */

@@ -7,7 +7,7 @@ import { ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 
 interface HandleImageSelectionOptions {
-	image: ImageData;
+	image: ImageData | null;
 	onSelect: ( image: any ) => void;
 	multiple: boolean;
 }
@@ -23,7 +23,7 @@ interface BlockContext {
  * Handles image selection by fetching the full attachment record,
  * transforming it to block editor format, and calling onSelect.
  * @param options          - The image selection options
- * @param options.image    - The image data from Image Studio
+ * @param options.image    - The image data from Image Studio, or null if the image was deleted
  * @param options.onSelect - Callback to execute with the transformed attachment
  * @param options.multiple - Whether multiple images are expected
  */
@@ -32,6 +32,11 @@ export function handleImageSelection( {
 	onSelect,
 	multiple,
 }: HandleImageSelectionOptions ): void {
+	// null is passed when the image was deleted - this is intentional, not an error
+	if ( image === null ) {
+		return;
+	}
+
 	if ( ! image?.id ) {
 		// TODO: Show an error message to the user.
 		window.console?.error?.( '[Image Studio] Image data is missing an ID.' );
@@ -71,7 +76,19 @@ export function openImageStudioForBlock(
 	const { clientId } = imageBlock;
 	const attachmentId = imageBlock.attributes?.id;
 
-	const handleClose = ( image: ImageData ) => {
+	const handleClose = ( image: ImageData | null ) => {
+		if ( image === null ) {
+			// Image was deleted - clear the block's image reference
+			( dispatch( blockEditorStore ) as any ).updateBlockAttributes( clientId, {
+				url: undefined,
+				id: undefined,
+				alt: '',
+				title: '',
+				caption: '',
+			} );
+			return;
+		}
+
 		if ( image?.id ) {
 			( dispatch( blockEditorStore ) as any ).updateBlockAttributes( clientId, {
 				url: image.url,

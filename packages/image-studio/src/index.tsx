@@ -1,4 +1,6 @@
-import apiFetch from '@wordpress/api-fetch';
+/**
+ * WordPress dependencies
+ */
 import { store as coreStore } from '@wordpress/core-data';
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
@@ -92,93 +94,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 			originalAttachmentId,
 			attachmentId,
 			hasUnsavedChanges,
-			isMediaLibraryContext,
 		} );
 
 	useEffect( () => {
-		/**
-		 * Gets attachment ID from a link's href query params.
-		 * @param link
-		 */
-		const getAttachmentIdFromImagePostLink = ( link: HTMLAnchorElement ): number | null => {
-			// Only handle links to post.php
-			const href = link.getAttribute( 'href' );
-			if ( ! href || ! href.includes( 'post.php' ) ) {
-				return null;
-			}
-
-			const queryString = href.includes( '?' ) ? href.split( '?' )[ 1 ] : '';
-			const urlParams = new URLSearchParams( queryString );
-			const idString = urlParams.get( 'post' );
-
-			return idString ? parseInt( idString, 10 ) : null;
-		};
-
-		/**
-		 * Gets MIME type for an attachment using REST API.
-		 * @param id - The attachment ID to get the MIME type for.
-		 * @returns The MIME type of the attachment or null if not found.
-		 */
-		const getAttachmentMimeType = async ( id: number ): Promise< string | null > => {
-			try {
-				const fetched = await apiFetch< { mime_type?: string } >( {
-					path: `/wp/v2/media/${ id }`,
-				} );
-				return fetched?.mime_type ?? null;
-			} catch {
-				window.console?.error?.(
-					'[BIG-SKY] failed to get mime type for attachment using REST API'
-				);
-			}
-
-			return null;
-		};
-
-		/**
-		 * Overrides link clicks that should open Image Studio.
-		 * Prevents default immediately, then checks MIME type and navigates if unsupported.
-		 * The link is only overridden if it is a link to a post.php page.
-		 * @param link               - The link element to check.
-		 * @param event              - The mouse event to prevent.
-		 * @param supportedMimeTypes - The supported MIME types.
-		 * @returns True if the link was overridden, false otherwise.
-		 */
-		const handleImagePostLinkClick = async (
-			link: HTMLAnchorElement,
-			event: MouseEvent,
-			supportedMimeTypes: readonly string[]
-		): Promise< boolean > => {
-			const id = getAttachmentIdFromImagePostLink( link );
-			if ( ! id ) {
-				return false;
-			}
-
-			// Prevent default immediately to avoid navigation during async check
-			event.preventDefault();
-			event.stopPropagation();
-
-			const mimeType = await getAttachmentMimeType( id );
-
-			// If MIME type is supported, open Image Studio
-			if ( mimeType && supportedMimeTypes.includes( mimeType ) ) {
-				trackImageStudioOpened( {
-					mode: ImageStudioMode.Edit,
-					attachmentId: id,
-					entryPoint: ImageStudioEntryPoint.MediaLibrary,
-				} );
-				openImageStudio( id, undefined, ImageStudioEntryPoint.MediaLibrary );
-				return true;
-			}
-
-			// MIME type not supported, navigate to the original link
-			const href = link.getAttribute( 'href' );
-			if ( href ) {
-				window.location.href = href;
-			}
-
-			return false;
-		};
-
 		const handleImageStudioClick = async ( event: MouseEvent ) => {
 			const target = event.target as HTMLElement;
 			const button = target.closest( '.big-sky-image-studio-link' );
@@ -214,22 +132,6 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 			if ( ! isMediaLibraryPage ) {
 				return;
-			}
-
-			// Override thumbnail/title link in media library list view (has-media-icon)
-			const link = target.closest( '.has-media-icon a' );
-			if ( link instanceof HTMLAnchorElement ) {
-				if ( await handleImagePostLinkClick( link, event, supportedMimeTypes ) ) {
-					return;
-				}
-			}
-
-			// Override "Edit" link in row actions (.row-actions .edit a)
-			const editRowAction = target.closest( '.row-actions .edit a' );
-			if ( editRowAction instanceof HTMLAnchorElement ) {
-				if ( await handleImagePostLinkClick( editRowAction, event, supportedMimeTypes ) ) {
-					return;
-				}
 			}
 
 			// Override thumbnail clicks in media library grid view to open Image Studio (images only)
@@ -360,30 +262,24 @@ function ImageStudioIntegration(): JSX.Element | null {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
-		const url = new URL( window.location.href );
-		const param = parseInt( url.searchParams.get( 'item' ) ?? '0', 10 );
+		const hash = window.location.hash;
+		let param = 0;
+
+		if ( hash ) {
+			const hashParams = new URLSearchParams( hash.substring( 1 ) );
+			param = parseInt( hashParams.get( 'ai-image-editor' ) ?? '0', 10 );
+		}
 
 		if ( ! param ) {
 			return;
 		}
 
-		// If 'item' param is present, we remove it immediately so that the legacy modal is closed.
-		// It will be re-added later as part of the image-studio modal opening.
-		url.searchParams.delete( 'item' );
-		window.history.replaceState( {}, '', url.toString() );
-
-		// We are doing the timeout because the legacy modal is closed immediately
-		// when the 'item' param is removed.
-		const timeout = setTimeout( () => {
-			openImageStudio( param, undefined, ImageStudioEntryPoint.MediaLibrary );
-			trackImageStudioOpened( {
-				mode: ImageStudioMode.Edit,
-				attachmentId: param,
-				entryPoint: ImageStudioEntryPoint.MediaLibrary,
-			} );
-		}, 1000 );
-
-		return () => clearTimeout( timeout );
+		openImageStudio( param, undefined, ImageStudioEntryPoint.MediaLibrary );
+		trackImageStudioOpened( {
+			mode: ImageStudioMode.Edit,
+			attachmentId: param,
+			entryPoint: ImageStudioEntryPoint.MediaLibrary,
+		} );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Sync URL with open state
@@ -396,9 +292,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 		const url = new URL( window.location.href );
 
 		if ( isOpen && attachmentId ) {
-			url.searchParams.set( 'item', attachmentId.toString() );
+			url.hash = `ai-image-editor=${ attachmentId.toString() }`;
 		} else {
-			url.searchParams.delete( 'item' );
+			url.hash = '';
 		}
 
 		window.history.replaceState( {}, '', url );
@@ -511,10 +407,10 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 				// Reload the page if on upload.php to show updated images
 				if ( window.location.pathname.includes( 'upload.php' ) ) {
-					// Clear the item param from URL before reload to prevent
+					// Clear the ai-image-editor hash from URL before reload to prevent
 					// reopening Image Studio with a potentially deleted attachment ID
 					const url = new URL( window.location.href );
-					url.searchParams.delete( 'item' );
+					url.hash = '';
 					window.history.replaceState( {}, '', url.toString() );
 					window.location.reload();
 					return; // Don't close the modal yet, page will reload
