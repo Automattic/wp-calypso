@@ -138,14 +138,12 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 
 export const createSiteWithCart = async (
 	flowName: string,
-	userIsLoggedIn: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
-	domainCartItems: MinimalRequestCartProduct[],
 	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
@@ -157,7 +155,6 @@ export const createSiteWithCart = async (
 	specId?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -248,13 +245,6 @@ export const createSiteWithCart = async (
 
 	if ( isTailoredSignupFlow( flowName ) || HUNDRED_YEAR_PLAN_FLOW === flowName ) {
 		await setupSiteAfterCreation( { siteId, flowName } );
-	}
-
-	if ( domainCartItems.length ) {
-		if ( isFreeThemePreselected ) {
-			await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		}
-		await addProductsToCart( siteSlug, flowName, domainCartItems );
 	}
 
 	return providedDependencies;

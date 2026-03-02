@@ -14,6 +14,7 @@ import {
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
+	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -191,9 +192,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
 
+			if ( theme ) {
+				await setThemeOnSite( slug, theme );
+			}
+
 			const manageFlowCartItems = [
 				...( planCartItem ? [ planCartItem ] : [] ),
 				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
 			];
 			if ( manageFlowCartItems.length && slug ) {
 				await addProductsToCart( slug, flow, manageFlowCartItems );
@@ -258,7 +264,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
 			flow,
-			true,
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
@@ -268,7 +273,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			'#113AF5',
 			useThemeHeadstart,
 			username,
-			mergedDomainCartItems,
 			partnerBundle,
 			siteUrl,
 			domainItem,
@@ -280,12 +284,30 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			urlQueryParams.get( 'spec_id' )
 		);
 
+		if ( ! site ) {
+			throw new Error( 'Failed to create site' );
+		}
+
+		if ( theme ) {
+			await setThemeOnSite( site.siteSlug, theme );
+		}
+
+		const additionalCartItems = [
+			...( planCartItem ? [ planCartItem ] : [] ),
+			...( productCartItems ?? [] ),
+			...mergedDomainCartItems,
+		];
+
+		if ( additionalCartItems.length ) {
+			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+		}
+
 		// Poll for garden provisioning status if this is a garden site
-		if ( gardenName && site?.siteId ) {
+		if ( gardenName ) {
 			await pollForGardenProvisioning( site.siteId );
 		}
 
-		if ( isEntrepreneurFlow( flow ) && site ) {
+		if ( isEntrepreneurFlow( flow ) ) {
 			await addEcommerceTrial( { siteId: site.siteId } );
 
 			return {
@@ -296,17 +318,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const additionalCartItems = [
-			...( planCartItem ? [ planCartItem ] : [] ),
-			...( productCartItems ?? [] ),
-		];
-		if ( additionalCartItems.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
-		}
-
 		return {
-			siteId: site?.siteId,
-			siteSlug: site?.siteSlug,
+			siteId: site.siteId,
+			siteSlug: site.siteSlug,
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
 			platform,
