@@ -34,7 +34,7 @@ export default function VisibilityCardCiab( { site }: { site: Site } ) {
 			link={ link }
 			icon={ published }
 			heading={ __( 'Live' ) }
-			description={ __( 'Your site is visible to everyone.' ) }
+			description={ __( 'Your store is visible to everyone.' ) }
 			intent="success"
 		/>
 	);
