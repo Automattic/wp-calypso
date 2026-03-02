@@ -341,6 +341,7 @@ export default function DomainDns() {
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>
+				{ ! isLoading && <PerformanceTrackerStop /> }
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
 						{ __( 'No DNS records found for this domain.' ) }
@@ -394,7 +395,6 @@ export default function DomainDns() {
 					onCancel={ closeImportDialog }
 				/>
 			) }
-			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }
