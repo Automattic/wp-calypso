@@ -130,6 +130,6 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 				</VStack>
 			);
 		},
-		isEligible: ( item: Email ) => item.type === 'forwarding' && !! ( item?.forwardingTo ?? false ),
+		isEligible: ( item: Email ) => item.type === 'forwarding' && !! item.forwardingTo,
 	};
 };
