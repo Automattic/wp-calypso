@@ -7,6 +7,8 @@ import {
 	inlineStart,
 	pageVisibilityStart,
 	pageVisibilityStop,
+	webVitalsStart,
+	webVitalsStop,
 	blockingResources,
 } from './collectors';
 import type { Collector, Report, ReportData, ReportPayload } from './types';
@@ -50,8 +52,13 @@ export class ReportImpl implements Report {
 		];
 
 		if ( isInitial ) {
-			this.startCollectors = [ fullPageStart, ...commonStartCollectors ];
-			this.stopCollectors = [ performanceTiming, blockingResources, ...commonStopCollectors ];
+			this.startCollectors = [ fullPageStart, webVitalsStart, ...commonStartCollectors ];
+			this.stopCollectors = [
+				webVitalsStop,
+				performanceTiming,
+				blockingResources,
+				...commonStopCollectors,
+			];
 		} else {
 			this.startCollectors = [ inlineStart, ...commonStartCollectors ];
 			this.stopCollectors = [ ...commonStopCollectors ];

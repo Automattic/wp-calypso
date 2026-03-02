@@ -8,4 +8,5 @@ export {
 	collectorStart as pageVisibilityStart,
 	collectorStop as pageVisibilityStop,
 } from './page-visibility';
+export { collectorStart as webVitalsStart, collectorStop as webVitalsStop } from './web-vitals';
 export { collector as blockingResources } from './blocking-resources';
