@@ -66,4 +66,3 @@ export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from '
 export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
 
 export * from './types';
-export type { FeedItem } from './queries';

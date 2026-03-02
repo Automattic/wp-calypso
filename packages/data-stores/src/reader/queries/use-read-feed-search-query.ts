@@ -1,25 +1,25 @@
-import { Reader } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
+import type { FeedItem } from '../types';
 
 export enum FeedSort {
 	LastUpdated = 'last_updated',
 	Relevance = 'relevance',
 }
 
-type Options = {
+interface Options {
 	query?: string;
 	excludeFollowed?: boolean;
 	sort?: FeedSort;
-};
+}
 
-type FeedResponse = {
+interface FeedResponse {
 	algorithm: string;
-	feeds: Reader.FeedItem[];
+	feeds: FeedItem[];
 	next_page: string;
 	total: number;
-};
+}
 
 const useReadFeedSearchQuery = (
 	options: Options,
