@@ -7,7 +7,6 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
-import ReactDOM from 'react-dom';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAgentUIContext } from '../../context/AgentUIContext';
 import styles from './ImageUploader.module.css';
@@ -62,7 +61,7 @@ export interface ImageUploaderProps {
 	// Visibility
 	visible?: boolean;
 
-	// Drop zone expansion, ref to container for expanded drop zone overlay
+	// Scopes drag detection to this container and makes it a drop target
 	dropZoneRef?: React.RefObject< HTMLElement >;
 }
 
@@ -195,9 +194,14 @@ export const ImageUploader = forwardRef<
 		},
 	} ) );
 
-	// Track global drag state to hide preview during drag
+	// Track drag state — scoped to dropZoneRef container when provided, otherwise window
 	useEffect( () => {
-		const handleWindowDragEnter = ( e: DragEvent ) => {
+		const listenTarget = dropZoneRef ? dropZoneRef.current : window;
+		if ( ! listenTarget ) {
+			return;
+		}
+
+		const handleDragEnter = ( e: DragEvent ) => {
 			// Only track file drags, not element drags
 			if ( e.dataTransfer?.types?.includes( 'Files' ) ) {
 				dragCounterRef.current += 1;
@@ -205,7 +209,7 @@ export const ImageUploader = forwardRef<
 			}
 		};
 
-		const handleWindowDragLeave = ( e: DragEvent ) => {
+		const handleDragLeave = ( e: DragEvent ) => {
 			dragCounterRef.current -= 1;
 			// Reset if counter reaches 0 OR if leaving the window entirely
 			// (relatedTarget is null when drag leaves the document)
@@ -215,21 +219,33 @@ export const ImageUploader = forwardRef<
 			}
 		};
 
-		const handleWindowDrop = () => {
+		const handleDrop = () => {
 			dragCounterRef.current = 0;
 			setIsDraggingFile( false );
 		};
 
-		window.addEventListener( 'dragenter', handleWindowDragEnter );
-		window.addEventListener( 'dragleave', handleWindowDragLeave );
-		window.addEventListener( 'drop', handleWindowDrop );
+		listenTarget.addEventListener(
+			'dragenter',
+			handleDragEnter as EventListener
+		);
+		listenTarget.addEventListener(
+			'dragleave',
+			handleDragLeave as EventListener
+		);
+		listenTarget.addEventListener( 'drop', handleDrop );
 
 		return () => {
-			window.removeEventListener( 'dragenter', handleWindowDragEnter );
-			window.removeEventListener( 'dragleave', handleWindowDragLeave );
-			window.removeEventListener( 'drop', handleWindowDrop );
+			listenTarget.removeEventListener(
+				'dragenter',
+				handleDragEnter as EventListener
+			);
+			listenTarget.removeEventListener(
+				'dragleave',
+				handleDragLeave as EventListener
+			);
+			listenTarget.removeEventListener( 'drop', handleDrop );
 		};
-	}, [] );
+	}, [ dropZoneRef ] );
 
 	// Cleanup timeout on unmount
 	useEffect( () => {
@@ -323,6 +339,41 @@ export const ImageUploader = forwardRef<
 	useEffect( () => {
 		handleFilesRef.current = handleFiles;
 	}, [ handleFiles ] );
+
+	// When dropZoneRef is provided, make the full container a drop target
+	useEffect( () => {
+		const container = dropZoneRef?.current;
+		if ( ! container ) {
+			return;
+		}
+
+		const handleContainerDragOver = ( e: DragEvent ) => {
+			e.preventDefault(); // Required to allow drop
+		};
+
+		const handleContainerDrop = ( e: DragEvent ) => {
+			e.preventDefault();
+			dragCounterRef.current = 0;
+			setIsDraggingFile( false );
+			setIsDraggingOver( false );
+
+			if ( e.dataTransfer?.files ) {
+				handleFilesRef.current( e.dataTransfer.files );
+				onDrop?.( Array.from( e.dataTransfer.files ) );
+			}
+		};
+
+		container.addEventListener( 'dragover', handleContainerDragOver );
+		container.addEventListener( 'drop', handleContainerDrop );
+
+		return () => {
+			container.removeEventListener(
+				'dragover',
+				handleContainerDragOver
+			);
+			container.removeEventListener( 'drop', handleContainerDrop );
+		};
+	}, [ dropZoneRef, onDrop ] );
 
 	// Handle clipboard paste events
 	useEffect( () => {
@@ -474,26 +525,6 @@ export const ImageUploader = forwardRef<
 			.join( ' or ' )
 	);
 
-	// Expanded drop overlay for portal rendering
-	const expandedDropOverlay = showDropMessage && dropZoneRef?.current && (
-		<div
-			className={ `${ styles.expandedDropOverlay } ${
-				isDraggingOver ? styles.draggingOver : ''
-			}` }
-			onDragOver={ handleDragOver }
-			onDragLeave={ handleDragLeave }
-			onDrop={ handleDrop }
-		>
-			<p>
-				<strong>
-					{ __( 'Drop files here to use', 'a8c-agenttic' ) }
-				</strong>
-				<br />
-				{ maxFileSize && fileSizeMessage }
-			</p>
-		</div>
-	);
-
 	return (
 		<div
 			className={ `${ styles.container } ${
@@ -501,13 +532,6 @@ export const ImageUploader = forwardRef<
 			} ${ className }` }
 			data-slot="image-uploader"
 		>
-			{ /* Render expanded drop overlay via portal when dropZoneRef is provided */ }
-			{ expandedDropOverlay &&
-				dropZoneRef?.current &&
-				ReactDOM.createPortal(
-					expandedDropOverlay,
-					dropZoneRef.current
-				) }
 			<div
 				className={ `${ styles.uploader } ${
 					isUploading ? styles.uploading : ''
@@ -542,8 +566,7 @@ export const ImageUploader = forwardRef<
 									'a8c-agenttic'
 								) }
 							>
-								{ /* Show inline drop message only when no dropZoneRef */ }
-								{ showDropMessage && ! dropZoneRef?.current && (
+								{ showDropMessage && (
 									<div className={ styles.draggingMessage }>
 										<p>
 											<strong>
