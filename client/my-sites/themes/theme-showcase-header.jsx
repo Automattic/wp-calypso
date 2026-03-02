@@ -40,7 +40,7 @@ export default function ThemeShowcaseHeader( {
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
-	const isModern = useIsThemeShowcaseModernEnabled();
+	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInHeader =
 		isEnabled( 'themes/universal-header' ) && dashboardOptIn ? selectedSiteId : isLoggedIn;
@@ -122,7 +122,7 @@ export default function ThemeShowcaseHeader( {
 			);
 		}
 
-		if ( isModern ) {
+		if ( isThemeShowcaseModern ) {
 			return (
 				<HeroModern
 					searchQuery={ search || '' }

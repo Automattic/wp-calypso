@@ -602,7 +602,7 @@ class ThemeShowcase extends Component {
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-		const isModernShowcase = config.isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
+		const isThemeShowcaseModern = config.isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
 		const staticFilters = this.getStaticFilters();
 
 		// Update the filters to accommodate updates/translations from the API.
@@ -696,7 +696,7 @@ class ThemeShowcase extends Component {
 							>
 								<div className="theme__search-container">
 									<div className="theme__search">
-										{ ! isModernShowcase && (
+										{ ! isThemeShowcaseModern && (
 											<div className="theme__search-input">
 												<SearchThemes
 													query={
