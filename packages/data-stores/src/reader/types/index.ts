@@ -217,7 +217,7 @@ export interface FeedItem {
 	last_update: string;
 	marked_for_refresh: boolean;
 	meta: {
-		links: {
+		links?: {
 			self: string;
 			[ key: string ]: string;
 		};

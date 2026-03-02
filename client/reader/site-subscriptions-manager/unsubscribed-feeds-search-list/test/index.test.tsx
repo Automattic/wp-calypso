@@ -37,7 +37,7 @@ jest.mock( 'calypso/blocks/reader-feed-item', () => {
 	) );
 } );
 
-const createMockFeedItem = ( overrides = {} ): Reader.FeedItem => ( {
+const createMockFeedItem = ( overrides = {} ): Partial< Reader.FeedItem > => ( {
 	feed_ID: '123',
 	blog_ID: '456',
 	subscribe_URL: 'https://example.com/feed',
