@@ -3,8 +3,6 @@ export { useFlowProgress } from './flow-progress/use-flow-progress';
 export { default as ActionButtons, BackButton, NextButton } from './action-buttons';
 export {
 	createSiteWithCart,
-	addPlanToCart,
-	processItemCart,
 	getNewSiteParams,
 	addProductsToCart,
 	replaceProductsInCart,

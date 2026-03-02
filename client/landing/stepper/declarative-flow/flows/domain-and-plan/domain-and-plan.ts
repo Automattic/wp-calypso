@@ -4,7 +4,7 @@ import {
 	updateLaunchpadSettings,
 	useLaunchpad,
 } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
+import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
@@ -35,9 +35,9 @@ const domainUpsell: Flow = {
 		const site = useSite();
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
-		const { getDomainCartItem, getPlanCartItem } = useSelect(
+		const { getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
-				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
 				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
 			} ),
 			[]
@@ -53,17 +53,13 @@ const domainUpsell: Flow = {
 		const submittedDomains = useRef( false );
 
 		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
-			if ( includePlan ) {
-				const planCartItem = getPlanCartItem();
-				if ( planCartItem ) {
-					await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-				}
-			}
+			const planCartItem = getPlanCartItem();
+			const domainCartItems = getDomainCartItems();
 
-			const domainCartItem = getDomainCartItem();
-			if ( domainCartItem ) {
-				await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-			}
+			await addProductsToCart( siteSlug, flowName, [
+				...( includePlan && planCartItem ? [ planCartItem ] : [] ),
+				...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+			] );
 
 			return window.location.assign(
 				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
