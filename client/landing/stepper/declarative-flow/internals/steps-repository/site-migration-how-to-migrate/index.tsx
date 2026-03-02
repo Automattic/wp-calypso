@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { ChecklistCard } from '../../components/checklist-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -26,8 +25,6 @@ const SiteMigrationHowToMigrate: StepType< {
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
-
-	usePresalesChat( 'wpcom' );
 
 	const checklistItems = useMemo(
 		() => [
