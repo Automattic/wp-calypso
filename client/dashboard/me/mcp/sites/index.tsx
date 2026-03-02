@@ -1,11 +1,6 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ComboboxControl,
-	Button,
-	Spinner,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useRef } from 'react';
 import { getDisabledSiteIds } from '../../../../me/mcp/utils';
@@ -17,6 +12,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { getSiteDisplayName } from '../../../utils/site-name';
+import SiteCombobox from '../site-combobox';
 import type { Site } from '@automattic/api-core';
 
 export default function McpSites() {
@@ -114,15 +110,13 @@ export default function McpSites() {
 								}
 							/>
 
-							<ComboboxControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								label={ __( 'Search sites' ) }
-								hideLabelFromVision
-								value={ null }
-								onChange={ handleSiteSelect }
+							<SiteCombobox
+								sites={ sites }
 								options={ siteOptions }
+								onChange={ handleSiteSelect }
 								placeholder={ __( 'Search for a site\u2026' ) }
+								label={ __( 'Search sites' ) }
+								disabled={ mutation.isPending }
 							/>
 						</VStack>
 					</CardBody>

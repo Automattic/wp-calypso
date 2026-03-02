@@ -1,10 +1,9 @@
-import { updateBigSkyPlugin } from '@automattic/api-core';
+import { updateBigSkyPlugin, updateUserSettings } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	queryClient,
 	siteQueryFilter,
 	userSettingsQuery,
-	userSettingsMutation,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQueries, useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
@@ -16,6 +15,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { connection, notAllowed, seen, pencil } from '@wordpress/icons';
+import { useRef } from 'react';
 import { getAccountMcpAbilities, getDisabledSiteIds } from '../../../me/mcp/utils';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
@@ -88,8 +88,61 @@ function McpComponent() {
 
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 
+	// Bulk MCP toggle: sends tool updates in sequential chunks with a short
+	// delay between them. The API does a read-modify-write internally, so
+	// concurrent writes to the same user settings record cause conflicts.
+	// Sequential chunks with delays ensure each write propagates before the
+	// next one reads.
+	const TOOLS_CHUNK_SIZE = 20;
+	const toggleAllRef = useRef( false );
 	const mutation = useMutation( {
-		...userSettingsMutation(),
+		mutationFn: async ( payload: {
+			account: Record< string, boolean >;
+			sites?: Array< { blog_id: number; account_tools_enabled: boolean } >;
+		} ) => {
+			const { account, sites } = payload;
+			const entries = Object.entries( account );
+
+			for ( let i = 0; i < entries.length; i += TOOLS_CHUNK_SIZE ) {
+				const chunk = Object.fromEntries( entries.slice( i, i + TOOLS_CHUNK_SIZE ) );
+				const chunkPayload: any = { mcp_abilities: { account: chunk } };
+				// Include sites payload in the last chunk
+				if ( i + TOOLS_CHUNK_SIZE >= entries.length && sites?.length ) {
+					chunkPayload.mcp_abilities.sites = sites;
+				}
+				await updateUserSettings( chunkPayload );
+				// Short delay between chunks for server propagation
+				if ( i + TOOLS_CHUNK_SIZE < entries.length ) {
+					await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+				}
+			}
+		},
+		onSuccess: ( _data, payload ) => {
+			// Batch-update the cache based on intent so the UI updates in one render.
+			queryClient.setQueryData( userSettingsQuery().queryKey, ( oldData: any ) => {
+				if ( ! oldData?.mcp_abilities?.account ) {
+					return oldData;
+				}
+				const newAccount = { ...oldData.mcp_abilities.account };
+				for ( const [ key, enabled ] of Object.entries( payload.account ) ) {
+					if ( key in newAccount ) {
+						newAccount[ key ] = { ...newAccount[ key ], enabled };
+					}
+				}
+				return {
+					...oldData,
+					mcp_abilities: {
+						...oldData.mcp_abilities,
+						account: newAccount,
+					},
+				};
+			} );
+			// Invalidate for background server sync.
+			queryClient.invalidateQueries( { queryKey: userSettingsQuery().queryKey } );
+		},
+		onSettled: () => {
+			toggleAllRef.current = false;
+		},
 		meta: {
 			snackbar: {
 				success: __( 'MCP settings saved.' ),
@@ -105,9 +158,20 @@ function McpComponent() {
 				bigSkyAvailableSiteIds.map( ( siteId ) => updateBigSkyPlugin( siteId, { enable } ) )
 			);
 		},
-		onSuccess: () => {
+		onSuccess: ( _data, { enable } ) => {
+			// Batch-update all caches at once so counts change in a single render.
 			bigSkyAvailableSiteIds.forEach( ( siteId ) => {
-				queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
+				queryClient.setQueryData(
+					bigSkyPluginQuery( siteId ).queryKey,
+					( old: Record< string, unknown > | undefined ) =>
+						old ? { ...old, enabled: enable } : old
+				);
+			} );
+			// Invalidate for background server sync.
+			bigSkyAvailableSiteIds.forEach( ( siteId ) => {
+				queryClient.invalidateQueries( {
+					queryKey: bigSkyPluginQuery( siteId ).queryKey,
+				} );
 				queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			} );
 		},
@@ -126,26 +190,44 @@ function McpComponent() {
 	const anyToolsEnabled = enabledToolsCount > 0;
 
 	const handleToggleAll = ( enabled: boolean ) => {
+		if ( toggleAllRef.current ) {
+			return;
+		}
+		toggleAllRef.current = true;
+
+		// Only send tools that need to change state — reduces payload and
+		// number of API calls needed.
 		const accountAbilities: Record< string, boolean > = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
+			const tool = mcpAbilities[ toolId ];
 			if ( enabled ) {
-				// When enabling: only turn on read tools, keep write/manage off.
-				const level = getPermissionLevel( mcpAbilities[ toolId ] );
-				accountAbilities[ toolId ] = level === 'read';
-			} else {
+				// When enabling: read tools ON, write/manage OFF.
+				const level = getPermissionLevel( tool );
+				const shouldEnable = level === 'read';
+				if ( tool.enabled !== shouldEnable ) {
+					accountAbilities[ toolId ] = shouldEnable;
+				}
+			} else if ( tool.enabled ) {
+				// When disabling: only disable currently-enabled tools.
 				accountAbilities[ toolId ] = false;
 			}
 		} );
 
-		// Also clear site exceptions when toggling
-		const mutationPayload: any = { mcp_abilities: { account: accountAbilities } };
-		if ( disabledSiteIds.length > 0 ) {
-			mutationPayload.mcp_abilities.sites = disabledSiteIds.map( ( siteId: number ) => ( {
-				blog_id: siteId,
-				account_tools_enabled: true,
-			} ) );
+		if ( Object.keys( accountAbilities ).length === 0 ) {
+			toggleAllRef.current = false;
+			return;
 		}
-		mutation.mutate( mutationPayload );
+
+		mutation.mutate( {
+			account: accountAbilities,
+			sites:
+				disabledSiteIds.length > 0
+					? disabledSiteIds.map( ( siteId: number ) => ( {
+							blog_id: siteId,
+							account_tools_enabled: true,
+					  } ) )
+					: undefined,
+		} );
 	};
 
 	// Shared helper: compute badge text for a set of tools.
@@ -262,7 +344,7 @@ function McpComponent() {
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
 			<VStack spacing={ 6 }>
-				{ /* WordPress.com AI assistant */ }
+				{ /* WordPress AI assistant */ }
 				<Card
 					className="dashboard-summary-button-list has-density-medium"
 					style={ { position: 'relative' } }
@@ -282,7 +364,7 @@ function McpComponent() {
 					<CardHeader>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'WordPress.com AI assistant' ) }
+							title={ __( 'WordPress AI assistant' ) }
 							description={ __(
 								'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
 							) }
@@ -302,7 +384,12 @@ function McpComponent() {
 						/>
 					</CardHeader>
 					{ ! bigSkyIsInitialLoading && (
-						<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+						<CardBody
+							className="dashboard-summary-button-list__children-list-wrapper"
+							style={
+								bigSkyBulkMutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined
+							}
+						>
 							<ul className="dashboard-summary-button-list__children-list">
 								<li className="dashboard-summary-button-list__children-list-item">
 									{ bigSkyGlobalEnabled ? (
@@ -341,6 +428,7 @@ function McpComponent() {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ anyToolsEnabled }
+									disabled={ mutation.isPending }
 									onChange={ handleToggleAll }
 									label={ __( 'Enable MCP access' ) }
 								/>
@@ -348,7 +436,10 @@ function McpComponent() {
 						/>
 					</CardHeader>
 					{ hasTools && anyToolsEnabled && (
-						<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+						<CardBody
+							className="dashboard-summary-button-list__children-list-wrapper"
+							style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
+						>
 							<ul className="dashboard-summary-button-list__children-list">
 								{ readTools.length > 0 && (
 									<li className="dashboard-summary-button-list__children-list-item">
@@ -390,12 +481,14 @@ function McpComponent() {
 
 				{ /* Connect AI assistant — only shown when MCP access is on */ }
 				{ hasTools && anyToolsEnabled && (
-					<RouterLinkSummaryButton
-						to="/me/preferences/ai-and-mcp/setup"
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ connection } /> }
-					/>
+					<div style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }>
+						<RouterLinkSummaryButton
+							to="/me/preferences/ai-and-mcp/setup"
+							title={ __( 'Connect external AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } /> }
+						/>
+					</div>
 				) }
 			</VStack>
 		</PageLayout>

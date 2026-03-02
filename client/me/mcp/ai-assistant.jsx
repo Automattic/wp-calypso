@@ -5,12 +5,7 @@
 import { updateBigSkyPlugin } from '@automattic/api-core';
 import { bigSkyPluginQuery, sitesQuery, siteQueryFilter } from '@automattic/api-queries';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ComboboxControl,
-	Button,
-	Spinner,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
@@ -24,6 +19,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
 import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
+import SiteCombobox from '../../dashboard/me/mcp/site-combobox';
 
 import './style.scss';
 
@@ -51,21 +47,39 @@ export default function McpAiAssistant( { path } ) {
 
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, enable } ) => updateBigSkyPlugin( siteId, { enable } ),
-		onSuccess: ( _data, { siteId } ) => {
-			tanstackQueryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
-			tanstackQueryClient.invalidateQueries( siteQueryFilter( siteId ) );
+		onMutate: async ( { siteId, enable } ) => {
+			await tanstackQueryClient.cancelQueries( {
+				queryKey: bigSkyPluginQuery( siteId ).queryKey,
+			} );
+			const previousData = tanstackQueryClient.getQueryData( bigSkyPluginQuery( siteId ).queryKey );
+			tanstackQueryClient.setQueryData( bigSkyPluginQuery( siteId ).queryKey, ( old ) =>
+				old ? { ...old, enabled: enable } : old
+			);
+			return { previousData, siteId };
+		},
+		onSuccess: () => {
 			reduxDispatch(
 				successNotice( translate( 'AI assistant settings saved.' ), {
 					id: 'bigsky-settings-saved',
 				} )
 			);
 		},
-		onError: () => {
+		onError: ( _err, _vars, context ) => {
+			if ( context?.previousData !== undefined ) {
+				tanstackQueryClient.setQueryData(
+					bigSkyPluginQuery( context.siteId ).queryKey,
+					context.previousData
+				);
+			}
 			reduxDispatch(
 				errorNotice( translate( 'Failed to save AI assistant settings.' ), {
 					id: 'bigsky-settings-error',
 				} )
 			);
+		},
+		onSettled: ( _data, _err, { siteId } ) => {
+			tanstackQueryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
+			tanstackQueryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
 	} );
 
@@ -161,7 +175,7 @@ export default function McpAiAssistant( { path } ) {
 		searchDescription = translate( 'Search for eligible sites to disable the AI assistant.' );
 	} else {
 		searchDescription = translate(
-			'The WordPress.com AI assistant is disabled. Add it to individual sites here.'
+			'The WordPress AI assistant is disabled. Add it to individual sites here.'
 		);
 	}
 	const listTitle = isGlobalOn ? translate( 'Restricted sites' ) : translate( 'Enabled sites' );
@@ -198,20 +212,14 @@ export default function McpAiAssistant( { path } ) {
 								}
 							/>
 
-							<div
-								style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
-							>
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ translate( 'Search sites' ) }
-									hideLabelFromVision
-									value={ null }
-									onChange={ handleSiteSelect }
-									options={ siteOptions }
-									placeholder={ translate( 'Search for a site\u2026' ) }
-								/>
-							</div>
+							<SiteCombobox
+								sites={ sites }
+								options={ siteOptions }
+								onChange={ handleSiteSelect }
+								placeholder={ translate( 'Search for a site\u2026' ) }
+								label={ translate( 'Search sites' ) }
+								disabled={ mutation.isPending }
+							/>
 						</VStack>
 					</CardBody>
 				</Card>

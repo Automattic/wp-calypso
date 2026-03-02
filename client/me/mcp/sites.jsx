@@ -4,12 +4,7 @@
  */
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ComboboxControl,
-	Button,
-	Spinner,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -22,6 +17,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
 import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
+import SiteCombobox from '../../dashboard/me/mcp/site-combobox';
 import { getDisabledSiteIds } from './utils';
 
 import './style.scss';
@@ -132,15 +128,13 @@ export default function McpSites( { path } ) {
 								}
 							/>
 
-							<ComboboxControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								label={ translate( 'Search sites' ) }
-								hideLabelFromVision
-								value={ null }
-								onChange={ handleSiteSelect }
+							<SiteCombobox
+								sites={ sites }
 								options={ siteOptions }
+								onChange={ handleSiteSelect }
 								placeholder={ translate( 'Search for a site\u2026' ) }
+								label={ translate( 'Search sites' ) }
+								disabled={ mutation.isPending }
 							/>
 						</VStack>
 					</CardBody>

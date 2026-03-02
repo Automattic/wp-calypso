@@ -1,12 +1,7 @@
 import { updateBigSkyPlugin } from '@automattic/api-core';
 import { bigSkyPluginQuery, queryClient, siteQueryFilter } from '@automattic/api-queries';
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	ComboboxControl,
-	Button,
-	Spinner,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useRef } from 'react';
@@ -20,6 +15,7 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import { getSiteDisplayName } from '../../../utils/site-name';
+import SiteCombobox from '../site-combobox';
 import type { Site } from '@automattic/api-core';
 
 interface SiteEntry {
@@ -52,7 +48,27 @@ export default function McpAiAssistant() {
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, enable }: { siteId: number; enable: boolean } ) =>
 			updateBigSkyPlugin( siteId, { enable } ),
-		onSuccess: ( _data, { siteId } ) => {
+		onMutate: async ( { siteId, enable } ) => {
+			await queryClient.cancelQueries( {
+				queryKey: bigSkyPluginQuery( siteId ).queryKey,
+			} );
+			const previousData = queryClient.getQueryData( bigSkyPluginQuery( siteId ).queryKey );
+			queryClient.setQueryData(
+				bigSkyPluginQuery( siteId ).queryKey,
+				( old: Record< string, unknown > | undefined ) =>
+					old ? { ...old, enabled: enable } : old
+			);
+			return { previousData, siteId };
+		},
+		onError: ( _err, _vars, context ) => {
+			if ( context?.previousData !== undefined ) {
+				queryClient.setQueryData(
+					bigSkyPluginQuery( context.siteId ).queryKey,
+					context.previousData
+				);
+			}
+		},
+		onSettled: ( _data, _err, { siteId } ) => {
 			queryClient.invalidateQueries( { queryKey: bigSkyPluginQuery( siteId ).queryKey } );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
@@ -161,9 +177,9 @@ export default function McpAiAssistant() {
 		: __( 'Add AI assistant to sites' );
 	const pageDescription = isGlobalOn
 		? __(
-				'The WordPress.com AI assistant is enabled on all your paid sites. Add exceptions for specific sites here.'
+				'The WordPress AI assistant is enabled on all your paid sites. Add exceptions for specific sites here.'
 		  )
-		: __( 'The WordPress.com AI assistant is disabled. Add it to individual sites here.' );
+		: __( 'The WordPress AI assistant is disabled. Add it to individual sites here.' );
 	const searchTitle = isGlobalOn ? __( 'Add an exception' ) : __( 'Add a site' );
 	const searchDescription = isGlobalOn
 		? __( 'Search for eligible sites to disable the AI assistant.' )
@@ -199,20 +215,14 @@ export default function McpAiAssistant() {
 								}
 							/>
 
-							<div
-								style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
-							>
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ __( 'Search sites' ) }
-									hideLabelFromVision
-									value={ null }
-									onChange={ handleSiteSelect }
-									options={ siteOptions }
-									placeholder={ __( 'Search for a site\u2026' ) }
-								/>
-							</div>
+							<SiteCombobox
+								sites={ sites }
+								options={ siteOptions }
+								onChange={ handleSiteSelect }
+								placeholder={ __( 'Search for a site\u2026' ) }
+								label={ __( 'Search sites' ) }
+								disabled={ mutation.isPending }
+							/>
 						</VStack>
 					</CardBody>
 				</Card>
