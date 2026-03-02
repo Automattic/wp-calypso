@@ -2117,6 +2117,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/posthog@workspace:packages/posthog"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     posthog-js: "npm:^1.348.0"
     tslib: "npm:^2.8.1"
