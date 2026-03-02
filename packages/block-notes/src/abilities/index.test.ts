@@ -34,6 +34,7 @@ jest.mock( '@wordpress/editor', () => ( {
 
 jest.mock( '@wordpress/abilities', () => ( {
 	registerAbility: jest.fn(),
+	registerAbilityCategory: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/core-data', () => ( {
@@ -55,12 +56,10 @@ describe( 'Block Notes Ability', () => {
 	const TEST_REPLY_TEXT = 'This is a test reply';
 
 	let mockCallback: BlockNotesCallback;
-	let consoleInfoSpy: jest.SpyInstance;
 	let consoleErrorSpy: jest.SpyInstance;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		consoleInfoSpy = jest.spyOn( console, 'info' ).mockImplementation( () => {} );
 		consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		// Setup default mock return value for getCurrentPostId
@@ -94,9 +93,6 @@ describe( 'Block Notes Ability', () => {
 					} ),
 					callback: expect.any( Function ),
 				} )
-			);
-			expect( consoleInfoSpy ).toHaveBeenCalledWith(
-				'Block Notes: Ability registered successfully'
 			);
 		} );
 
