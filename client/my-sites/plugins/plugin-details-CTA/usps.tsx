@@ -12,7 +12,6 @@ import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import { useIsPluginAvailableOnAllPlans } from 'calypso/my-sites/plugins/use-is-plugin-available-on-all-plans';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import usePreinstalledPremiumPlugin from 'calypso/my-sites/plugins/use-preinstalled-premium-plugin';
 import { useSelector } from 'calypso/state';
@@ -132,14 +131,9 @@ export const PlanUSPS: React.FC< Props > = ( {
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( pluginSlug );
 
-	const pluginAvailableOnAllPlansFromHook = useIsPluginAvailableOnAllPlans();
-
-	// Only apply the new flow for free plugins that require upgrade
+	// Plugins are available on all paid plans for free (non-marketplace, non-premium-preinstalled) plugins
 	const isPluginAvailableOnAllPlans =
-		! isMarketplaceProduct &&
-		! isPreinstalledPremiumPlugin &&
-		shouldUpgrade &&
-		pluginAvailableOnAllPlansFromHook;
+		! isMarketplaceProduct && ! isPreinstalledPremiumPlugin && shouldUpgrade;
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
