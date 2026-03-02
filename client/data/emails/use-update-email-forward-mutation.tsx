@@ -7,6 +7,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
 import type { AlterDestinationParams, EmailAccountEmail } from './types';
+import type { UpdateEmailForwardResponse } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
 type UpdateEmailForwardParams = AlterDestinationParams & {
@@ -28,7 +29,7 @@ const MUTATION_KEY = 'updateEmailForward';
 export default function useUpdateEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, UpdateEmailForwardParams, Context >,
+		UseMutationOptions< UpdateEmailForwardResponse, unknown, UpdateEmailForwardParams, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -135,7 +136,7 @@ export default function useUpdateEmailForwardMutation(
 		);
 	};
 
-	return useMutation< any, unknown, UpdateEmailForwardParams, Context >( {
+	return useMutation< UpdateEmailForwardResponse, unknown, UpdateEmailForwardParams, Context >( {
 		mutationFn: ( { mailbox, destination, newDestination } ) => {
 			return wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent( mailbox ) }`,
