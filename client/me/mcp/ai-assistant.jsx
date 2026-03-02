@@ -19,6 +19,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
 import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
+import SiteIcon from '../../dashboard/components/site-icon';
 import SiteCombobox from '../../dashboard/me/mcp/site-combobox';
 
 import './style.scss';
@@ -129,9 +130,8 @@ export default function McpAiAssistant( { path } ) {
 		searchPool.length > 0
 			? searchPool.map( ( site ) => ( {
 					value: String( site.id ),
-					label: site.available
-						? site.name
-						: `${ site.name } (${ translate( 'Upgrade to add assistant' ) })`,
+					label: site.name,
+					...( ! site.available && { badge: translate( 'Upgrade required' ) } ),
 			  } ) )
 			: [ { value: '', label: translate( 'No eligible sites.' ) } ];
 
@@ -231,23 +231,29 @@ export default function McpAiAssistant( { path } ) {
 						<div className="mcp-square-corners">
 							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
 							<ActionList>
-								{ listedSites.map( ( site ) => (
-									<ActionList.ActionItem
-										key={ site.id }
-										title={ site.name }
-										description={ site.domain }
-										actions={
-											<Button
-												variant="secondary"
-												size="compact"
-												disabled={ mutation.isPending }
-												onClick={ () => handleRemoveSite( site.id ) }
-											>
-												{ translate( 'Remove' ) }
-											</Button>
-										}
-									/>
-								) ) }
+								{ listedSites.map( ( site ) => {
+									const fullSite = sites.find( ( s ) => s.ID === site.id );
+									return (
+										<ActionList.ActionItem
+											key={ site.id }
+											decoration={
+												fullSite ? <SiteIcon site={ fullSite } size={ 32 } /> : undefined
+											}
+											title={ site.name }
+											description={ site.domain }
+											actions={
+												<Button
+													variant="secondary"
+													size="compact"
+													disabled={ mutation.isPending }
+													onClick={ () => handleRemoveSite( site.id ) }
+												>
+													{ translate( 'Remove' ) }
+												</Button>
+											}
+										/>
+									);
+								} ) }
 							</ActionList>
 						</div>
 					</VStack>

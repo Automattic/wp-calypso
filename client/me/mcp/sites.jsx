@@ -17,6 +17,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { ActionList } from '../../dashboard/components/action-list';
 import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
+import SiteIcon from '../../dashboard/components/site-icon';
 import SiteCombobox from '../../dashboard/me/mcp/site-combobox';
 import { getDisabledSiteIds } from './utils';
 
@@ -151,23 +152,29 @@ export default function McpSites( { path } ) {
 						<div className="mcp-square-corners">
 							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
 							<ActionList>
-								{ disabledSites.map( ( site ) => (
-									<ActionList.ActionItem
-										key={ site.id }
-										title={ site.name }
-										description={ site.domain }
-										actions={
-											<Button
-												variant="secondary"
-												size="compact"
-												disabled={ mutation.isPending }
-												onClick={ () => handleRemoveSite( site.id ) }
-											>
-												{ translate( 'Remove' ) }
-											</Button>
-										}
-									/>
-								) ) }
+								{ disabledSites.map( ( site ) => {
+									const fullSite = sites.find( ( s ) => s.ID === site.id );
+									return (
+										<ActionList.ActionItem
+											key={ site.id }
+											decoration={
+												fullSite ? <SiteIcon site={ fullSite } size={ 32 } /> : undefined
+											}
+											title={ site.name }
+											description={ site.domain }
+											actions={
+												<Button
+													variant="secondary"
+													size="compact"
+													disabled={ mutation.isPending }
+													onClick={ () => handleRemoveSite( site.id ) }
+												>
+													{ translate( 'Remove' ) }
+												</Button>
+											}
+										/>
+									);
+								} ) }
 							</ActionList>
 						</div>
 					</VStack>

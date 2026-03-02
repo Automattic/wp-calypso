@@ -95,29 +95,16 @@ function McpComponent( { path } ) {
 		return () => twoStepAuthorization.off( 'change', checkReauth );
 	}, [] );
 
-	// Bulk MCP toggle: sends tool updates in sequential chunks with a short
-	// delay between them. The API does a read-modify-write internally, so
-	// concurrent writes to the same user settings record cause conflicts.
-	const TOOLS_CHUNK_SIZE = 20;
+	// Bulk MCP toggle: sends all tool updates in a single API call.
 	const toggleAllRef = useRef( false );
 	const mutation = useMutation( {
 		mutationFn: async ( payload ) => {
 			const { account, sites: sitesPayload } = payload;
-			const entries = Object.entries( account );
-
-			for ( let i = 0; i < entries.length; i += TOOLS_CHUNK_SIZE ) {
-				const chunk = Object.fromEntries( entries.slice( i, i + TOOLS_CHUNK_SIZE ) );
-				const chunkPayload = { mcp_abilities: { account: chunk } };
-				// Include sites payload in the last chunk
-				if ( i + TOOLS_CHUNK_SIZE >= entries.length && sitesPayload?.length ) {
-					chunkPayload.mcp_abilities.sites = sitesPayload;
-				}
-				await updateUserSettings( chunkPayload );
-				// Short delay between chunks for server propagation
-				if ( i + TOOLS_CHUNK_SIZE < entries.length ) {
-					await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
-				}
+			const apiPayload = { mcp_abilities: { account } };
+			if ( sitesPayload?.length ) {
+				apiPayload.mcp_abilities.sites = sitesPayload;
 			}
+			await updateUserSettings( apiPayload );
 		},
 		onSuccess: ( _data, payload ) => {
 			// Batch-update the cache based on intent so the UI updates in one render.

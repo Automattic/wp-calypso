@@ -13,6 +13,7 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import SiteIcon from '../../../components/site-icon';
 import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import SiteCombobox from '../site-combobox';
@@ -130,9 +131,8 @@ export default function McpAiAssistant() {
 		searchPool.length > 0
 			? searchPool.map( ( site ) => ( {
 					value: String( site.id ),
-					label: site.available
-						? site.name
-						: `${ site.name } (${ __( 'Upgrade to add assistant' ) })`,
+					label: site.name,
+					...( ! site.available && { badge: __( 'Upgrade required' ) } ),
 			  } ) )
 			: [ { value: '', label: __( 'No eligible sites.' ) } ];
 
@@ -231,23 +231,27 @@ export default function McpAiAssistant() {
 					<VStack spacing={ 4 }>
 						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
 						<ActionList>
-							{ listedSites.map( ( site ) => (
-								<ActionList.ActionItem
-									key={ site.id }
-									title={ site.name }
-									description={ site.domain }
-									actions={
-										<Button
-											variant="secondary"
-											size="compact"
-											disabled={ mutation.isPending }
-											onClick={ () => handleRemoveSite( site.id ) }
-										>
-											{ __( 'Remove' ) }
-										</Button>
-									}
-								/>
-							) ) }
+							{ listedSites.map( ( site ) => {
+								const fullSite = sites.find( ( s ) => s.ID === site.id );
+								return (
+									<ActionList.ActionItem
+										key={ site.id }
+										decoration={ fullSite ? <SiteIcon site={ fullSite } size={ 32 } /> : undefined }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ __( 'Remove' ) }
+											</Button>
+										}
+									/>
+								);
+							} ) }
 						</ActionList>
 					</VStack>
 				) }

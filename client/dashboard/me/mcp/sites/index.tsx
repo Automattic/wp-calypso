@@ -11,6 +11,7 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import SiteCombobox from '../site-combobox';
 import type { Site } from '@automattic/api-core';
@@ -130,23 +131,27 @@ export default function McpSites() {
 							description={ __( 'These sites will not have MCP access.' ) }
 						/>
 						<ActionList>
-							{ disabledSites.map( ( site ) => (
-								<ActionList.ActionItem
-									key={ site.id }
-									title={ site.name }
-									description={ site.domain }
-									actions={
-										<Button
-											variant="secondary"
-											size="compact"
-											disabled={ mutation.isPending }
-											onClick={ () => handleRemoveSite( site.id ) }
-										>
-											{ __( 'Remove' ) }
-										</Button>
-									}
-								/>
-							) ) }
+							{ disabledSites.map( ( site ) => {
+								const fullSite = sites.find( ( s ) => s.ID === site.id );
+								return (
+									<ActionList.ActionItem
+										key={ site.id }
+										decoration={ fullSite ? <SiteIcon site={ fullSite } size={ 32 } /> : undefined }
+										title={ site.name }
+										description={ site.domain }
+										actions={
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleRemoveSite( site.id ) }
+											>
+												{ __( 'Remove' ) }
+											</Button>
+										}
+									/>
+								);
+							} ) }
 						</ActionList>
 					</VStack>
 				) }
