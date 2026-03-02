@@ -1,9 +1,65 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FilterBarModern from '../index';
+
+// Mock InView to control sticky state in tests
+let mockInViewOnChange: ( inView: boolean ) => void;
+jest.mock( 'react-intersection-observer', () => ( {
+	InView: ( {
+		children,
+		onChange,
+	}: {
+		children: React.ReactNode;
+		onChange: ( inView: boolean ) => void;
+	} ) => {
+		mockInViewOnChange = onChange;
+		return <div data-testid="inview-sentinel">{ children }</div>;
+	},
+} ) );
+
+// Mock Search component
+jest.mock( 'calypso/components/search', () => {
+	const SearchMock = ( {
+		onSearch,
+		onSearchOpen,
+		onSearchClose,
+		placeholder,
+		isOpen,
+	}: {
+		onSearch: ( query: string ) => void;
+		onSearchOpen: () => void;
+		onSearchClose: () => void;
+		placeholder: string;
+		isOpen: boolean;
+		pinned?: boolean;
+		initialValue?: string;
+		searchMode?: string;
+	} ) => (
+		<div data-testid="search">
+			<input
+				type="text"
+				placeholder={ placeholder }
+				onChange={ ( e ) => onSearch( e.target.value ) }
+				data-is-open={ isOpen }
+			/>
+			<button data-testid="search-open" onClick={ onSearchOpen }>
+				Open
+			</button>
+			<button data-testid="search-close" onClick={ onSearchClose }>
+				Close
+			</button>
+		</div>
+	);
+	SearchMock.displayName = 'Search';
+	return {
+		__esModule: true,
+		default: SearchMock,
+		SEARCH_MODE_ON_ENTER: 'on-enter',
+	};
+} );
 
 // Mock CategoryPillNavigation to avoid its internal dependencies (LocalizedLink, Redux, etc.)
 const mockOnSelect = jest.fn();
@@ -132,6 +188,57 @@ describe( 'FilterBarModern', () => {
 		await user.selectOptions( screen.getByRole( 'combobox' ), 'free' );
 		expect( defaultProps.onTierSelect ).toHaveBeenCalledWith( {
 			selectedItem: expect.objectContaining( { key: 'free', name: 'Free' } ),
+		} );
+	} );
+
+	describe( 'search', () => {
+		const propsWithSearch = {
+			...defaultProps,
+			searchQuery: 'hello',
+			onSearch: jest.fn(),
+		};
+
+		test( 'does not render search when not sticky', () => {
+			render( <FilterBarModern { ...propsWithSearch } /> );
+			expect( screen.queryByTestId( 'search' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'renders search when sticky and onSearch is provided', () => {
+			render( <FilterBarModern { ...propsWithSearch } /> );
+			// Simulate scrolling past the sentinel (inView = false → sticky)
+			act( () => mockInViewOnChange( false ) );
+			expect( screen.getByTestId( 'search' ) ).toBeVisible();
+		} );
+
+		test( 'does not render search when sticky but onSearch is not provided', () => {
+			render( <FilterBarModern { ...defaultProps } /> );
+			act( () => mockInViewOnChange( false ) );
+			expect( screen.queryByTestId( 'search' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'search opens and closes', async () => {
+			const user = userEvent.setup();
+			render( <FilterBarModern { ...propsWithSearch } /> );
+			act( () => mockInViewOnChange( false ) );
+
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'data-is-open', 'false' );
+
+			await user.click( screen.getByTestId( 'search-open' ) );
+			expect( input ).toHaveAttribute( 'data-is-open', 'true' );
+
+			await user.click( screen.getByTestId( 'search-close' ) );
+			expect( input ).toHaveAttribute( 'data-is-open', 'false' );
+		} );
+
+		test( 'calls onSearch when typing', async () => {
+			const user = userEvent.setup();
+			render( <FilterBarModern { ...propsWithSearch } /> );
+			act( () => mockInViewOnChange( false ) );
+
+			const input = screen.getByRole( 'textbox' );
+			await user.type( input, 'blog' );
+			expect( propsWithSearch.onSearch ).toHaveBeenCalled();
 		} );
 	} );
 } );
