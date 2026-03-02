@@ -8,7 +8,7 @@
  * 4. Error handling
  */
 
-import { registerAbility } from '@wordpress/abilities';
+import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import * as tracking from '../utils/tracking';
 import * as utils from './utils';
 import { ABILITY_NAME, type BlockNotesCallback, registerBlockNotesAbility } from './index';
@@ -80,6 +80,10 @@ describe( 'Block Notes Ability', () => {
 		it( 'should register ability successfully on first call', async () => {
 			await registerBlockNotesAbility();
 
+			expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', {
+				label: 'Big Sky',
+				description: 'Big Sky abilities for WordPress',
+			} );
 			expect( registerAbility ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					name: ABILITY_NAME,
@@ -107,6 +111,13 @@ describe( 'Block Notes Ability', () => {
 
 			// Call count should remain the same
 			expect( secondCallCount ).toBe( firstCallCount );
+
+			// registerAbilityCategory should not be called again on second registration
+			const categoryCallsAfterFirst = ( registerAbilityCategory as jest.Mock ).mock.calls.length;
+			await registerBlockNotesAbility();
+			expect( ( registerAbilityCategory as jest.Mock ).mock.calls.length ).toBe(
+				categoryCallsAfterFirst
+			);
 		} );
 	} );
 

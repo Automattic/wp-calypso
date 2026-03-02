@@ -40,7 +40,7 @@ export async function registerBlockNotesAbility(): Promise< void > {
 	}
 	try {
 		try {
-			registerAbilityCategory( 'big-sky', {
+			await registerAbilityCategory( 'big-sky', {
 				label: 'Big Sky',
 				description: 'Big Sky abilities for WordPress',
 			} );
