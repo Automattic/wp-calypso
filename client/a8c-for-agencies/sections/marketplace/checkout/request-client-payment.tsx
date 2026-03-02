@@ -8,7 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
@@ -20,6 +20,7 @@ import {
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
+import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-utils';
 import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -27,7 +28,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateAgencyReferralsLogo } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	getActiveAgencyId,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -42,6 +46,7 @@ import useShoppingCart from '../hooks/use-shopping-cart';
 import { isPressableAddonProduct } from '../lib/hosting';
 import hasActiveReferralPressablePlanForClient from './lib/has-active-referral-pressable-plan';
 import NoticeSummary from './notice-summary';
+import ReferralEmailPreviewModal from './referral-email-preview-modal';
 import ReferralLogo from './referral-logo';
 import type { ReferralLogoChoice } from './referral-logo';
 import type { ShoppingCartItem, TermPricingType } from '../types';
@@ -60,19 +65,30 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const isMobile = useBreakpoint( '<660px' );
 
 	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
+	const profileLogoUrl = agency?.profile?.company_details?.logo_url || null;
 
 	const isUserUnverified = ! user?.email_verified;
 
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ isPreviewOpen, setIsPreviewOpen ] = useState( false );
 	const [ isUploadingLogo, setIsUploadingLogo ] = useState( false );
+	const [ previewLogoUrl, setPreviewLogoUrl ] = useState< string | null >( null );
+	const [ pendingPreviewOpen, setPendingPreviewOpen ] = useState( false );
 	const [ referralLogo, setReferralLogo ] = useState< ReferralLogoChoice >( {
 		option: 'different',
 		logoUrl: null,
 		file: null,
 	} );
-
+	// Open preview modal once logo URL is ready
+	useEffect( () => {
+		if ( pendingPreviewOpen ) {
+			setIsPreviewOpen( true );
+			setPendingPreviewOpen( false );
+		}
+	}, [ pendingPreviewOpen, previewLogoUrl ] );
 	// Track the last uploaded file to avoid re-uploading the same file
 	const [ lastUploadedFile, setLastUploadedFile ] = useState< {
 		name: string;
@@ -456,7 +472,31 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						) }
 					</Tooltip>
 				</div>
+				{ isCobrandedCheckoutEnabled && (
+					<Button
+						variant="link"
+						onClick={ async () => {
+							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
+							setPreviewLogoUrl( logoUrlForPreview );
+							setPendingPreviewOpen( true );
+						} }
+					>
+						{ translate( 'Preview referral email' ) }
+					</Button>
+				) }
 			</VStack>
+
+			<ReferralEmailPreviewModal
+				isOpen={ isPreviewOpen }
+				onClose={ () => {
+					setIsPreviewOpen( false );
+					setPreviewLogoUrl( null );
+				} }
+				clientMessage={ message }
+				checkoutItems={ checkoutItems }
+				termPricing={ termPricing }
+				logoUrl={ previewLogoUrl }
+			/>
 		</>
 	);
 }
