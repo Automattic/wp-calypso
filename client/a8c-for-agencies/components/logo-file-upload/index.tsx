@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import {
@@ -30,7 +31,7 @@ export interface LogoFileUploadProps {
 
 /**
  * Reusable logo file upload using FormFileUpload.
- * Validates format (JPG, PNG), dimensions (800x320), and size (max 5 MB) on the client.
+ * Validates format (JPG, PNG), dimensions (800x320), and size (max 10 MB) on the client.
  */
 function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 	const translate = useTranslate();
@@ -110,7 +111,10 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 					<HStack spacing={ 5 } alignment="top">
 						<Button
 							variant="tertiary"
-							className="logo-file-upload-placeholder"
+							className={ clsx(
+								'logo-file-upload-placeholder',
+								displayUrl && 'logo-file-upload-placeholder--has-image'
+							) }
 							onClick={ openFileDialog }
 							aria-label={ displayUrl ? translate( 'Replace logo' ) : translate( 'Select logo' ) }
 						>
