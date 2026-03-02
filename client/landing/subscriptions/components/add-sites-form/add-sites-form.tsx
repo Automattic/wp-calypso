@@ -21,11 +21,6 @@ export type AddSitesFormProps = {
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
 };
 
-type SubscriptionError = {
-	error?: string;
-	message?: string;
-};
-
 const AddSitesForm = ( {
 	placeholder,
 	buttonText,
@@ -99,7 +94,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
