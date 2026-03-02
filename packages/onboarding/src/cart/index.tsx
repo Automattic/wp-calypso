@@ -136,7 +136,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 	return newSiteParams;
 };
 
-export const createSiteWithCart = async (
+export const createSite = async (
 	flowName: string,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,

@@ -4,7 +4,7 @@ import {
 	ENTREPRENEUR_FLOW,
 	StepContainer,
 	addProductsToCart,
-	createSiteWithCart,
+	createSite,
 	isCopySiteFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
@@ -188,11 +188,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
-	async function createSite() {
+	async function createSiteAction() {
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
 
-			if ( theme ) {
+			if ( theme && slug ) {
 				await setThemeOnSite( slug, theme );
 			}
 
@@ -262,7 +262,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
-		const site = await createSiteWithCart(
+		const site = await createSite(
 			flow,
 			theme,
 			siteVisibility,
@@ -329,7 +329,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 	useEffect( () => {
 		if ( submit ) {
-			setPendingAction( createSite );
+			setPendingAction( createSiteAction );
 			submit();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
