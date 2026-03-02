@@ -32,15 +32,17 @@ describe( '<GravatarProfileSection>', () => {
 		render( <GravatarProfileSection /> );
 		await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
 
-		expect( screen.getByLabelText( 'Display name' ) ).toHaveValue( 'John Doe' );
-		expect( screen.getByLabelText( 'Web address' ) ).toHaveValue( 'https://example.com' );
-		expect( screen.getByLabelText( 'About me' ) ).toHaveValue( 'Hello world' );
+		expect( screen.getByRole( 'textbox', { name: 'Display name' } ) ).toHaveValue( 'John Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Web address' } ) ).toHaveValue(
+			'https://example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'About me' } ) ).toHaveValue( 'Hello world' );
 
-		const displayNameInput = screen.getByLabelText( 'Display name' );
+		const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
 		await user.clear( displayNameInput );
 		await user.type( displayNameInput, 'Jane Smith' );
 
-		const descriptionInput = screen.getByLabelText( 'About me' );
+		const descriptionInput = screen.getByRole( 'textbox', { name: 'About me' } );
 		await user.clear( descriptionInput );
 		await user.type( descriptionInput, 'Updated bio' );
 
@@ -75,7 +77,7 @@ describe( '<GravatarProfileSection>', () => {
 			render( <GravatarProfileSection /> );
 			await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
 
-			const displayNameInput = screen.getByLabelText( 'Display name' );
+			const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
 			await user.clear( displayNameInput );
 			await user.type( displayNameInput, 'a'.repeat( 251 ) );
 			await user.tab();
@@ -93,7 +95,7 @@ describe( '<GravatarProfileSection>', () => {
 			render( <GravatarProfileSection /> );
 			await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
 
-			const urlInput = screen.getByLabelText( 'Web address' );
+			const urlInput = screen.getByRole( 'textbox', { name: 'Web address' } );
 			await user.clear( urlInput );
 			await user.type( urlInput, 'not-a-url' );
 			await user.tab();

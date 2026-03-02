@@ -50,25 +50,27 @@ describe( '<PersonalDetailsSection>', () => {
 		render( <PersonalDetailsSection /> );
 		await screen.findByRole( 'heading', { name: 'Personal details' } );
 
-		expect( screen.getByLabelText( 'First name' ) ).toHaveValue( 'John' );
-		expect( screen.getByLabelText( 'Last name' ) ).toHaveValue( 'Doe' );
-		expect( screen.getByLabelText( 'Username' ) ).toHaveValue( 'johndoe' );
-		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( 'john@example.com' );
-		expect( screen.getByLabelText( 'I am a developer' ) ).not.toBeChecked();
+		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
+		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
+			'john@example.com'
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'I am a developer' } ) ).not.toBeChecked();
 
-		const firstNameInput = screen.getByLabelText( 'First name' );
+		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
 		await user.clear( firstNameInput );
 		await user.type( firstNameInput, 'Jane' );
 
-		const lastNameInput = screen.getByLabelText( 'Last name' );
+		const lastNameInput = screen.getByRole( 'textbox', { name: 'Last name' } );
 		await user.clear( lastNameInput );
 		await user.type( lastNameInput, 'Smith' );
 
-		const emailInput = screen.getByLabelText( 'Email address' );
+		const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
 		await user.clear( emailInput );
 		await user.type( emailInput, 'jane@example.com' );
 
-		const devCheckbox = screen.getByLabelText( 'I am a developer' );
+		const devCheckbox = screen.getByRole( 'checkbox', { name: 'I am a developer' } );
 		await user.click( devCheckbox );
 
 		const scope = nock( 'https://public-api.wordpress.com' )
@@ -106,7 +108,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Username' ) ).toBeDisabled();
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
 			} );
 			expect( screen.getByText( 'Automatticians cannot change their username.' ) ).toBeVisible();
 		} );
@@ -118,7 +120,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Username' ) ).toBeDisabled();
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
 			} );
 			expect(
 				screen.getByText( 'Username can be changed once your email address is verified.' )
@@ -134,14 +136,14 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Username' ) ).toHaveValue( 'johndoe' );
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
 			} );
 
-			const usernameInput = screen.getByLabelText( 'Username' );
+			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
-			const confirmInput = await screen.findByLabelText( 'Confirm new username' );
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
 			await user.type( confirmInput, 'newusername' );
 
 			// Wait for debounced validation to complete
@@ -182,7 +184,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Email address' ) ).toBeDisabled();
+				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeDisabled();
 			} );
 			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
 		} );
@@ -226,10 +228,10 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Email address' ) ).toBeVisible();
+				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeVisible();
 			} );
 
-			const emailInput = screen.getByLabelText( 'Email address' );
+			const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'invalid-email' );
 

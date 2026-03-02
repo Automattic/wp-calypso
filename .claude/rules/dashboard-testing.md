@@ -24,9 +24,8 @@ CRITICAL: consult these reference examples:
 
 - Assert on what the user sees on the screen.
 - Query by accessible role using e.g. `screen.findByRole()`, `screen.getByRole()`,  `screen.queryByRole()`, and `within()`.
-- For form fields, `getByLabelText()` is also acceptable — it directly tests the label-input association.
 - Never query by test ID, CSS class, or DOM structure.
-- If an element isn't reachable by role or label, fix the component's accessibility instead.
+- If an element isn't reachable by role, fix the component's accessibility instead.
 - Prefer simple, readable assertions over complex logic.
 
 ## Mocking
