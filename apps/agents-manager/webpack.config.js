@@ -36,6 +36,15 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
+				// Handle image assets from block-notes package
+				{
+					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
+					include: /block-notes/,
+					type: 'asset/resource',
+					generator: {
+						filename: 'images/[name].[contenthash:8][ext]',
+					},
+				},
 			],
 		},
 		optimization: {
