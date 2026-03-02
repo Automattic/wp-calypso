@@ -2,15 +2,14 @@
 @import '@automattic/typography/styles/variables';
 
 .filter-bar-modern {
-	align-items: center;
-	display: flex;
+	background-color: var( --studio-white );
 	gap: 16px;
-	margin: 0 auto;
-	max-width: 1220px;
-	padding: 16px 24px;
+	position: sticky;
+	top: 0;
+	z-index: 3;
 
-	@media ( min-width: $break-wide ) {
-		padding: 16px 0;
+	&.is-sticky {
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08); // Same as pattern-library
 	}
 
 	.category-pill-navigation {
@@ -18,17 +17,32 @@
 		min-width: 0;
 	}
 
-	// Override pill shape to be rounded (pill-shaped) per design specs
 	.category-pill-navigation__button {
 		text-decoration: none;
 	}
 }
 
+.filter-bar-modern__content {
+	align-items: center;
+	display: flex;
+	margin: 0 auto;
+	max-width: 1220px;
+	padding: 40px 24px 16px 24px; // Top padding adjusted +24px to accommodate the external tier label
+
+	@media ( min-width: $break-wide ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+
 .filter-bar-modern__tier-select {
 	flex-shrink: 0;
-	min-width: 160px;
+	margin-top: -24px; // Accommodate the external label
+	min-width: 120px;
 
 	.components-custom-select-control__item.is-selected {
-		background-color: var( --wp-components-color-gray-300, #ddd );
+		background-color: var( --studio-gray-80 );
+		color: var( --studio-white );
 	}
 }

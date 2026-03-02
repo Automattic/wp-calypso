@@ -1,5 +1,7 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { InView } from 'react-intersection-observer';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
 
@@ -35,6 +37,7 @@ const FilterBarModern = ( {
 	showTierFilter = true,
 }: FilterBarModernProps ) => {
 	const translate = useTranslate();
+	const [ isSticky, setIsSticky ] = useState( false );
 
 	const pillCategories = useMemo(
 		() =>
@@ -78,24 +81,36 @@ const FilterBarModern = ( {
 	}, [ tiers, selectedTier, translate ] );
 
 	return (
-		<div className="filter-bar-modern">
-			<CategoryPillNavigation
-				categories={ pillCategories }
-				selectedCategoryId={ selectedCategory }
-				onSelect={ handleCategorySelect }
-			/>
-			{ showTierFilter && (
-				<CustomSelectWrapper
-					className="filter-bar-modern__tier-select"
-					label={ translate( 'View' ) }
-					hideLabelFromVision={ false }
-					__next40pxDefaultSize
-					options={ tierOptions }
-					value={ tierValue }
-					onChange={ onTierSelect }
-				/>
-			) }
-		</div>
+		<>
+			<InView
+				rootMargin="-1px 0px 0px 0px"
+				threshold={ 1 }
+				fallbackInView
+				onChange={ ( inView ) => setIsSticky( ! inView ) }
+			>
+				<div className="filter-bar-modern__sentinel" />
+			</InView>
+			<div className={ clsx( 'filter-bar-modern', { 'is-sticky': isSticky } ) }>
+				<div className="filter-bar-modern__content">
+					<CategoryPillNavigation
+						categories={ pillCategories }
+						selectedCategoryId={ selectedCategory }
+						onSelect={ handleCategorySelect }
+					/>
+					{ showTierFilter && (
+						<CustomSelectWrapper
+							className="filter-bar-modern__tier-select"
+							label={ translate( 'View' ) }
+							hideLabelFromVision={ false }
+							__next40pxDefaultSize
+							options={ tierOptions }
+							value={ tierValue }
+							onChange={ onTierSelect }
+						/>
+					) }
+				</div>
+			</div>
+		</>
 	);
 };
 
