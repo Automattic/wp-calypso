@@ -116,6 +116,7 @@ const FilterBarModern = ( {
 						categories={ pillCategories }
 						selectedCategoryId={ selectedCategory }
 						onSelect={ handleCategorySelect }
+						disableMobileCollapse
 					/>
 					{ showTierFilter && (
 						<CustomSelectWrapper
