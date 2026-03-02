@@ -39,7 +39,7 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	imageStudio?: ImageStudioData;
 	currentPageContent?: PageContentBlock[];
 	constructorArguments?: {
-		skipStorage?: boolean;
+		skip_storage?: boolean;
 	};
 }
 

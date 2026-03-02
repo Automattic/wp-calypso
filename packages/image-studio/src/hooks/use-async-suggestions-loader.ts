@@ -112,7 +112,7 @@ Output valid JSON only, nothing else.`;
 		const loadSuggestions = async () => {
 			try {
 				const config = await createDefaultAgentConfig( crypto.randomUUID() );
-				// Apply skipStorage only for this suggestions interaction (do not persist to storage).
+				// Apply skip_storage only for this suggestions interaction (do not persist to storage).
 				const baseContextProvider = config.contextProvider;
 				if ( baseContextProvider ) {
 					config.contextProvider = {
@@ -120,7 +120,7 @@ Output valid JSON only, nothing else.`;
 							...( typeof baseContextProvider.getClientContext === 'function'
 								? baseContextProvider.getClientContext()
 								: {} ),
-							constructorArguments: { skipStorage: true },
+							constructorArguments: { skip_storage: true },
 						} ),
 					};
 				}
