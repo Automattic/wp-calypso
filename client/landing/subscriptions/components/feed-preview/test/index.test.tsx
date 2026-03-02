@@ -36,7 +36,7 @@ jest.mock( 'calypso/blocks/reader-feed-item', () => {
 	) );
 } );
 
-const mockFeed: Reader.FeedItem = {
+const mockFeed: Partial< Reader.FeedItem > = {
 	feed_ID: '123',
 	subscribe_URL: 'https://example.com/feed',
 	meta: {},
