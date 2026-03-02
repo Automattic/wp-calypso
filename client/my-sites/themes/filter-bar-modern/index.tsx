@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
+import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
 
 import './style.scss';
@@ -25,6 +26,8 @@ interface FilterBarModernProps {
 	selectedTier: string;
 	onTierSelect: ( attrs: { selectedItem: Tier } ) => void;
 	showTierFilter?: boolean;
+	searchQuery?: string;
+	onSearch?: ( query: string ) => void;
 }
 
 const FilterBarModern = ( {
@@ -35,9 +38,12 @@ const FilterBarModern = ( {
 	selectedTier,
 	onTierSelect,
 	showTierFilter = true,
+	searchQuery = '',
+	onSearch,
 }: FilterBarModernProps ) => {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
+	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
 
 	const pillCategories = useMemo(
 		() =>
@@ -92,6 +98,20 @@ const FilterBarModern = ( {
 			</InView>
 			<div className={ clsx( 'filter-bar-modern', { 'is-sticky': isSticky } ) }>
 				<div className="filter-bar-modern__content">
+					{ isSticky && onSearch && (
+						<div className="filter-bar-modern__search">
+							<Search
+								pinned
+								isOpen={ isSearchOpen }
+								onSearchOpen={ () => setIsSearchOpen( true ) }
+								onSearchClose={ () => setIsSearchOpen( false ) }
+								initialValue={ searchQuery }
+								onSearch={ onSearch }
+								placeholder={ translate( 'Search themes…' ) }
+								searchMode={ SEARCH_MODE_ON_ENTER }
+							/>
+						</div>
+					) }
 					<CategoryPillNavigation
 						categories={ pillCategories }
 						selectedCategoryId={ selectedCategory }
