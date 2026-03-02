@@ -1,4 +1,8 @@
-import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Modal,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useReferralEmailPreview from './hooks/use-referral-email-preview';
@@ -35,6 +39,11 @@ const PREVIEW_IFRAME_CSS = `
 
 	td.container {
 		margin: 0 !important;
+	}
+
+	a {
+		pointer-events: none;
+		cursor: default;
 	}
 `;
 
@@ -146,14 +155,17 @@ export default function ReferralEmailPreviewModal( {
 					} }
 				>
 					{ isLoading && (
-						<div style={ { padding: '40px', textAlign: 'center' } }>
+						<Text as="div" style={ { padding: '40px', textAlign: 'center' } }>
 							{ translate( 'Loading preview' ) }
-						</div>
+						</Text>
 					) }
 					{ error && (
-						<div style={ { padding: '40px', textAlign: 'center', color: 'var(--color-error)' } }>
+						<Text
+							as="div"
+							style={ { padding: '40px', textAlign: 'center', color: 'var(--color-error)' } }
+						>
 							{ translate( 'Failed to load email preview. Please try again.' ) }
-						</div>
+						</Text>
 					) }
 					{ previewSrcDoc && (
 						<iframe

@@ -8,7 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
@@ -76,19 +76,12 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const [ isPreviewOpen, setIsPreviewOpen ] = useState( false );
 	const [ isUploadingLogo, setIsUploadingLogo ] = useState( false );
 	const [ previewLogoUrl, setPreviewLogoUrl ] = useState< string | null >( null );
-	const [ pendingPreviewOpen, setPendingPreviewOpen ] = useState( false );
 	const [ referralLogo, setReferralLogo ] = useState< ReferralLogoChoice >( {
 		option: 'different',
 		logoUrl: null,
 		file: null,
 	} );
-	// Open preview modal once logo URL is ready
-	useEffect( () => {
-		if ( pendingPreviewOpen ) {
-			setIsPreviewOpen( true );
-			setPendingPreviewOpen( false );
-		}
-	}, [ pendingPreviewOpen, previewLogoUrl ] );
+
 	// Track the last uploaded file to avoid re-uploading the same file
 	const [ lastUploadedFile, setLastUploadedFile ] = useState< {
 		name: string;
@@ -478,7 +471,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						onClick={ async () => {
 							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
 							setPreviewLogoUrl( logoUrlForPreview );
-							setPendingPreviewOpen( true );
+							setIsPreviewOpen( true );
 						} }
 					>
 						{ translate( 'Preview referral email' ) }
