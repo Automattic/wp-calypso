@@ -28,7 +28,6 @@
 	margin: 0 auto;
 	max-width: 1220px;
 	padding: 40px 24px 16px 24px; // Top padding adjusted +24px to accommodate the external tier label
-	overflow-x: auto;
 
 	@media ( min-width: $break-wide ) {
 		padding-left: 0;
