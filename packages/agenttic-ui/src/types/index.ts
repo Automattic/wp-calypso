@@ -15,10 +15,11 @@ export interface Message {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'component' | 'context';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	archived: boolean;

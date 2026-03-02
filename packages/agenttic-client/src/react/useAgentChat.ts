@@ -66,10 +66,11 @@ export interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'component' | 'context';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	archived: boolean;
@@ -172,6 +173,18 @@ const transformClientMessageToUI = (
 					type: 'component' as const,
 					component: data.component,
 					componentProps: data.componentProps,
+				};
+			}
+			// Preserve data parts with forward_to_human_support flag (and similar flags)
+			// so consumers can check for them programmatically
+			if (
+				data.flags &&
+				typeof data.flags === 'object' &&
+				'forward_to_human_support' in data.flags
+			) {
+				return {
+					type: 'data' as const,
+					data,
 				};
 			}
 			// For other data parts, convert to text
