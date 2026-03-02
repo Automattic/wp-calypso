@@ -22,13 +22,20 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			// Get supported MIME types
 			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 
-			// Fetch the attachment MIME type from the media store
-			const media = useSelect(
+			// Fetch the attachment from the media store
+			const { media, hasResolved } = useSelect(
 				( select ) => {
 					if ( ! attributes?.id ) {
-						return null;
+						return { media: null, hasResolved: true };
 					}
-					return select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id );
+					return {
+						media: select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id ),
+						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
+							'postType',
+							'attachment',
+							attributes.id,
+						] ),
+					};
 				},
 				[ attributes?.id ]
 			);
@@ -74,6 +81,12 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			// Check if image MIME type is supported
 			const imageMimeType = media?.mime_type;
 			if ( imageMimeType && ! supportedMimeTypes.includes( imageMimeType ) ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			// Don't show button if the attachment doesn't match the displayed image
+			// (e.g., image block pasted from another site with a stale ID)
+			if ( hasResolved && attributes?.url && ( ! media || media?.source_url !== attributes.url ) ) {
 				return <BlockEdit { ...props } />;
 			}
 
