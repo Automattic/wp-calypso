@@ -137,7 +137,7 @@ export function useDeletePermanently( {
 		const targetAttachmentId = attachmentIdRef.current;
 
 		if ( ! targetAttachmentId ) {
-			addNoticeRef.current( __( 'Cannot delete - no image found', 'big-sky' ), 'error' );
+			addNoticeRef.current( __( 'Cannot delete - no image found', __i18n_text_domain__ ), 'error' );
 			isDeletingRef.current = false;
 			setIsExiting( false );
 			return;
@@ -184,7 +184,10 @@ export function useDeletePermanently( {
 			// and page reload on upload.php so the deleted image is removed from the grid
 			onExitRef.current( true );
 		} catch ( error ) {
-			addNoticeRef.current( __( 'Failed to delete image. Please try again.', 'big-sky' ), 'error' );
+			addNoticeRef.current(
+				__( 'Failed to delete image. Please try again.', __i18n_text_domain__ ),
+				'error'
+			);
 
 			trackImageStudioError( {
 				mode,

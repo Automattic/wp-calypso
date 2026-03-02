@@ -58,7 +58,7 @@ export function ImageStudioAltTextSidebar( {
 
 	let deletePermanentlyDisabledTooltip: string | undefined;
 	if ( ! canDeletePermanently ) {
-		deletePermanentlyDisabledTooltip = __( 'Save or discard your changes', 'big-sky' );
+		deletePermanentlyDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
 	}
 
 	const attachmentId = useSelect(
@@ -149,26 +149,28 @@ export function ImageStudioAltTextSidebar( {
 						variant="link"
 						isDestructive
 						disabled={ ! canDeletePermanently }
-						label={ deletePermanentlyDisabledTooltip || __( 'Delete permanently', 'big-sky' ) }
+						label={
+							deletePermanentlyDisabledTooltip || __( 'Delete permanently', __i18n_text_domain__ )
+						}
 						showTooltip
 						accessibleWhenDisabled={ !! deletePermanentlyDisabledTooltip }
 						onClick={ () => setIsDeleteDialogOpen( true ) }
 					>
-						{ __( 'Delete permanently', 'big-sky' ) }
+						{ __( 'Delete permanently', __i18n_text_domain__ ) }
 					</Button>
 					{ isDeleteDialogOpen && (
 						<ConfirmationDialog
 							isOpen={ isDeleteDialogOpen }
 							onClose={ () => setIsDeleteDialogOpen( false ) }
-							title={ __( 'Delete this item', 'big-sky' ) }
+							title={ __( 'Delete this item', __i18n_text_domain__ ) }
 							actions={ [
 								{
-									text: __( 'Cancel', 'big-sky' ),
+									text: __( 'Cancel', __i18n_text_domain__ ),
 									onClick: () => setIsDeleteDialogOpen( false ),
 									variant: 'secondary',
 								},
 								{
-									text: __( 'Delete permanently', 'big-sky' ),
+									text: __( 'Delete permanently', __i18n_text_domain__ ),
 									onClick: async () => {
 										// Close dialog first to prevent interaction during deletion
 										// The exit overlay will appear once deletion starts
@@ -184,7 +186,7 @@ export function ImageStudioAltTextSidebar( {
 						>
 							{ __(
 								'You are about to permanently delete this item from your site. This action cannot be undone.',
-								'big-sky'
+								__i18n_text_domain__
 							) }
 						</ConfirmationDialog>
 					) }
