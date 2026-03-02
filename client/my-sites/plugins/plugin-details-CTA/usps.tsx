@@ -132,9 +132,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( pluginSlug );
 
-	const pluginAvailableOnAllPlansFromHook = useIsPluginAvailableOnAllPlans( {
-		siteId: selectedSite?.ID,
-	} );
+	const pluginAvailableOnAllPlansFromHook = useIsPluginAvailableOnAllPlans();
 
 	// Only apply the new flow for free plugins that require upgrade
 	const isPluginAvailableOnAllPlans =
@@ -164,51 +162,40 @@ export const PlanUSPS: React.FC< Props > = ( {
 		return null;
 	}
 
+	const allPlansPlanText = isPluginAvailableOnAllPlans
+		? translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+				args: {
+					cost: lowestPlanDisplayCost as string,
+					periodicity: monthlyLabel,
+				},
+		  } )
+		: null;
+
 	let planText;
 	switch ( requiredPlan ) {
 		case PLAN_PERSONAL:
 		case PLAN_PERSONAL_MONTHLY:
-			if ( isPluginAvailableOnAllPlans ) {
-				planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+			planText =
+				allPlansPlanText ??
+				translate( 'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):', {
 					args: {
-						cost: lowestPlanDisplayCost as string,
-						periodicity: monthlyLabel,
+						personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
+						cost: planDisplayCost as string,
+						periodicity: periodicityLabel,
 					},
 				} );
-			} else {
-				planText = translate(
-					'Included in the %(personalPlanName)s plan (%(cost)s/%(periodicity)s):',
-					{
-						args: {
-							personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() as string,
-							cost: planDisplayCost as string,
-							periodicity: periodicityLabel,
-						},
-					}
-				);
-			}
 			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
-			if ( isPluginAvailableOnAllPlans ) {
-				planText = translate( 'Included on all paid plans (starting at %(cost)s/%(periodicity)s)', {
+			planText =
+				allPlansPlanText ??
+				translate( 'Included in the %(businessPlanName)s plan (%(cost)s/%(periodicity)s):', {
 					args: {
-						cost: lowestPlanDisplayCost as string,
-						periodicity: monthlyLabel,
+						businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() as string,
+						cost: planDisplayCost as string,
+						periodicity: periodicityLabel,
 					},
 				} );
-			} else {
-				planText = translate(
-					'Included in the %(businessPlanName)s plan (%(cost)s/%(periodicity)s):',
-					{
-						args: {
-							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() as string,
-							cost: planDisplayCost as string,
-							periodicity: periodicityLabel,
-						},
-					}
-				);
-			}
 			break;
 		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
 			planText = translate( 'Included in ecommerce plans:' );

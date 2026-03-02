@@ -548,9 +548,7 @@ function FreePrice( { shouldUpgrade } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
-		siteId: selectedSite?.ID,
-	} );
+	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans();
 
 	return (
 		<>

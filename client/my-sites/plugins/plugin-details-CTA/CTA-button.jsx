@@ -70,10 +70,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
 		! isJetpackSelfHosted;
 
-	// Check if plugins are available on all plans for this site
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( {
-		siteId: selectedSite?.ID,
-	} );
+	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans();
 
 	// Keep me updated
 	const userId = useSelector( getCurrentUserId );
@@ -325,7 +322,7 @@ function onClickInstallPlugin( {
 			return page(
 				`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
 					installPluginURL
-				) }#step2`
+				) }`
 			);
 		}
 		// Original flow: Direct checkout with specific plan and redirect

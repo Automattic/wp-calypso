@@ -243,7 +243,7 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
-	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans( { isInSignup, siteId } );
+	const isPluginAvailableOnAllPlans = useIsPluginAvailableOnAllPlans();
 
 	const [ isRenewalPricingExperimentLoading, renewalPricingVariation ] =
 		useRenewalPricingExperiment( flowName );
@@ -780,13 +780,9 @@ const PlansFeaturesMain = ( {
 			Object.entries( featureGroups ).reverse()
 		);
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial: isPluginAvailableOnAllPlans,
-		} );
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial: isPluginAvailableOnAllPlans,
-		} );
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
 	}
 
 	const getComparisonGridToggleLabel = () => {
