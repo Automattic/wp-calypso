@@ -1,4 +1,5 @@
 import { EmailDeliveryFrequency } from '../constants';
+import type { Railcar } from '@automattic/calypso-analytics';
 
 export type EmailFormatType = 'html' | 'text';
 
@@ -224,6 +225,7 @@ export interface FeedItem {
 	name: string;
 	next_refresh_time: string | null;
 	organization_id: number;
+	railcar?: Railcar;
 	subscribe_URL: string;
 	subscribers_count: number;
 	unseen_count: number;
