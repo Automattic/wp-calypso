@@ -4,11 +4,11 @@ AI-powered image editing/generation for WordPress. Two modes: **Edit** and **Gen
 
 ## File Guide (Read the Right File)
 
-| File | Purpose | When to read |
-|------|---------|--------------|
-| **AGENTS.md** (this file) | Critical patterns, pitfalls, conventions | Always read first for any code change |
-| [README.md](README.md) | Architecture, project structure, build/test/dev commands | When you need to understand how it works or run commands |
-| [.agents/skills/ui-testing/SKILL.md](.agents/skills/ui-testing/SKILL.md) | Comprehensive UI test cases | Only when running UI tests |
+| File                                                                     | Purpose                                                  | When to read                                             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------- | -------------------------------------------------------- |
+| **AGENTS.md** (this file)                                                | Critical patterns, pitfalls, conventions                 | Always read first for any code change                    |
+| [README.md](README.md)                                                   | Architecture, project structure, build/test/dev commands | When you need to understand how it works or run commands |
+| [.agents/skills/ui-testing/SKILL.md](.agents/skills/ui-testing/SKILL.md) | Comprehensive UI test cases                              | Only when running UI tests                               |
 
 ## Critical Patterns (Don't Break These)
 
@@ -31,11 +31,11 @@ Changes to `update-canvas-image` affect the **AI agent contract** — this is ho
 
 Three HOCs that inject Image Studio into the block editor via `addFilter`. These run in the **block editor bundle**, not Image Studio's bundle.
 
-| File | What it does | Filter hook |
-|------|-------------|-------------|
-| `generate-button-extension.tsx` | "Generate Image" button in Image block placeholder | `editor.MediaPlaceholder` |
-| `image-toolbar-extension.tsx` | "Edit with AI" toolbar button on selected Image blocks | `editor.BlockEdit` |
-| `external-media-source-extension.tsx` | Image Studio as external media source | `editor.MediaPlaceholder` |
+| File                                  | What it does                                           | Filter hook               |
+| ------------------------------------- | ------------------------------------------------------ | ------------------------- |
+| `generate-button-extension.tsx`       | "Generate Image" button in Image block placeholder     | `editor.MediaPlaceholder` |
+| `image-toolbar-extension.tsx`         | "Edit with AI" toolbar button on selected Image blocks | `editor.BlockEdit`        |
+| `external-media-source-extension.tsx` | Image Studio as external media source                  | `editor.MediaPlaceholder` |
 
 - The `utils.ts` helper converts Image Studio's `ImageData` to the shape `onSelect` expects.
 - `any` types in these files are due to WordPress filter HOC signatures — no upstream types exist. If adding new extensions, follow the same pattern.
@@ -100,6 +100,7 @@ yarn build && yarn test && yarn lint && yarn typecheck  # Full validation (run b
 Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
 **Coverage gaps to be aware of** (test manually if modifying):
+
 - `utils/tracking.ts` — 31% statements
 - `abilities/update-canvas-image.ts` — 0%
 - `utils/client-context.ts` — 0%
