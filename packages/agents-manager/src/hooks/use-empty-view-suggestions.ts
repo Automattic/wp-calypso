@@ -1,6 +1,6 @@
 import { type Suggestion } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
@@ -67,31 +67,29 @@ export function useEmptyViewSuggestions( {
 		[ hasBigSkySuggestions ]
 	);
 
-	// Compute empty view suggestions once when store is ready
-	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
+	// Read current URL so suggestions re-evaluate after SPA navigation.
+	// The provider's getEmptyViewSuggestions() reads window.location at call
+	// time to return context-specific suggestions (e.g. onboarding vs dashboard).
+	// Including locationSearch in useMemo deps ensures we recompute when the
+	// component re-renders after navigation (e.g. user starts a new chat).
+	const locationSearch = window.location.search;
 
-	useEffect( () => {
-		if ( ! loadedProviders || ! isCoreStoreReady || emptyViewSuggestions !== null ) {
-			return;
+	const emptyViewSuggestions = useMemo( () => {
+		if ( ! loadedProviders || ! isCoreStoreReady ) {
+			return null;
 		}
 
 		if ( ! hasBigSkySuggestions ) {
-			// No Big Sky suggestions provider, use defaults immediately
-			setEmptyViewSuggestions( defaultSuggestions );
-		} else {
-			// Big Sky provides suggestions and store is ready - get filtered suggestions
-			const suggestions = loadedProviders.getEmptyViewSuggestions?.();
-			if ( suggestions && suggestions.length > 0 ) {
-				setEmptyViewSuggestions( suggestions );
-			}
+			return defaultSuggestions;
 		}
-	}, [
-		loadedProviders,
-		isCoreStoreReady,
-		hasBigSkySuggestions,
-		defaultSuggestions,
-		emptyViewSuggestions,
-	] );
+
+		const suggestions = loadedProviders.getEmptyViewSuggestions?.();
+		if ( suggestions && suggestions.length > 0 ) {
+			return suggestions;
+		}
+		return null;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ loadedProviders, isCoreStoreReady, hasBigSkySuggestions, defaultSuggestions, locationSearch ] );
 
 	return emptyViewSuggestions;
 }
