@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, __experimentalHStack as HStack, FormToggle } from '@wordpress/components';
 import { closeSmall, Icon, trash, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
@@ -74,6 +74,38 @@ type SiteRowProps = Reader.SiteSubscriptionsResponseItem & {
 	forwardedRef?: React.Ref< HTMLDivElement >;
 };
 
+/**
+ * Keeps returning true while a mutation is pending and until the tracked data value changes
+ * afterward, bridging the gap between the mutation completing and the refetched data arriving.
+ */
+const useSettlingState = ( isPending: boolean, trackedValue: string ): boolean => {
+	const [ isSettling, setIsSettling ] = useState( false );
+	const valueAtStart = useRef( trackedValue );
+
+	useEffect( () => {
+		if ( isPending ) {
+			valueAtStart.current = trackedValue;
+			setIsSettling( true );
+		}
+	}, [ isPending, trackedValue ] );
+
+	useEffect( () => {
+		if ( isSettling && ! isPending && trackedValue !== valueAtStart.current ) {
+			setIsSettling( false );
+		}
+	}, [ isSettling, isPending, trackedValue ] );
+
+	// Fallback: clear settling if the data doesn't change (e.g. server value matches optimistic).
+	useEffect( () => {
+		if ( isSettling && ! isPending ) {
+			const timer = setTimeout( () => setIsSettling( false ), 1500 );
+			return () => clearTimeout( timer );
+		}
+	}, [ isSettling, isPending ] );
+
+	return isPending || isSettling;
+};
+
 const scrollToFirstRow = () => {
 	const firstRow = document.querySelector( '.site-subscriptions-list li.site-subscription-row' );
 
@@ -138,6 +170,12 @@ const SiteSubscriptionRow = ( {
 	const { mutate: unsubscribe, isPending: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
+
+	const deliveryMethodsKey = JSON.stringify( delivery_methods );
+	const isUpdatingFrequency = useSettlingState(
+		updatingFrequency || updatingEmailMeNewPosts,
+		deliveryMethodsKey
+	);
 
 	// Tracks events recording
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -354,36 +392,44 @@ const SiteSubscriptionRow = ( {
 			</div>
 			{ isLoggedIn && ! isCompactLayout && (
 				<span className="new-posts-cell" role="cell">
-					<SelectedNewPostDeliveryMethods
-						isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
-						isNotifyMeOfNewPostsSelected={ !! delivery_methods.notification?.send_posts }
-					/>
+					{ updatingNotifyMeOfNewPosts || updatingEmailMeNewPosts ? (
+						translate( 'Updating…' )
+					) : (
+						<SelectedNewPostDeliveryMethods
+							isEmailMeNewPostsSelected={ !! delivery_methods.email?.send_posts }
+							isNotifyMeOfNewPostsSelected={ !! delivery_methods.notification?.send_posts }
+						/>
+					) }
 				</span>
 			) }
 			{ isLoggedIn && ! isCompactLayout && (
 				<div className="new-comments-cell" role="cell">
-					<InfoPopover
-						position="top"
-						icon={
-							! delivery_methods.email?.send_comments ? (
-								<Icon icon={ closeSmall } />
-							) : (
-								<Icon icon={ check } />
-							)
-						}
-						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
-						showOnHover
-					>
-						{ delivery_methods.email?.send_comments
-							? translate( 'You will receive email notifications for new comments on this site.' )
-							: translate(
-									"You won't receive email notifications for new comments on this site."
-							  ) }
-					</InfoPopover>
+					{ updatingEmailMeNewComments ? (
+						translate( 'Updating…' )
+					) : (
+						<InfoPopover
+							position="top"
+							icon={
+								! delivery_methods.email?.send_comments ? (
+									<Icon icon={ closeSmall } />
+								) : (
+									<Icon icon={ check } />
+								)
+							}
+							className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
+							showOnHover
+						>
+							{ delivery_methods.email?.send_comments
+								? translate( 'You will receive email notifications for new comments on this site.' )
+								: translate(
+										"You won't receive email notifications for new comments on this site."
+								  ) }
+						</InfoPopover>
+					) }
 				</div>
 			) }
 			<span className="email-frequency-cell" role="cell">
-				{ deliveryFrequencyLabel }
+				{ isUpdatingFrequency ? translate( 'Updating…' ) : deliveryFrequencyLabel }
 			</span>
 			{ isLoggedIn && ! isCompactLayout && (
 				<div className="recommend-cell" role="cell">
