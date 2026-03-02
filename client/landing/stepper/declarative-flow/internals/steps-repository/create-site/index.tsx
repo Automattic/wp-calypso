@@ -201,7 +201,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...( productCartItems ?? [] ),
 				...mergedDomainCartItems,
 			];
-			if ( manageFlowCartItems.length && slug ) {
+			if ( manageFlowCartItems.length > 0 && slug ) {
 				await addProductsToCart( slug, flow, manageFlowCartItems );
 			}
 
@@ -298,7 +298,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			...mergedDomainCartItems,
 		];
 
-		if ( additionalCartItems.length ) {
+		if ( additionalCartItems.length > 0 ) {
 			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
 		}
 

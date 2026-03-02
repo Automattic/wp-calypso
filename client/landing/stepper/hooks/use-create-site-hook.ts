@@ -85,10 +85,14 @@ export const createSite = async ( {
 		goToCheckout: Boolean( planCartItems?.length ),
 	};
 
-	await addProductsToCart( siteSlug, flowName, [
+	const cartItems = [
 		...( planCartItems && planCartItems.length > 0 ? planCartItems : [] ),
 		...domainCartItems,
-	] );
+	];
+
+	if ( cartItems.length > 0 ) {
+		await addProductsToCart( siteSlug, flowName, cartItems );
+	}
 
 	return siteDetails;
 };
@@ -127,12 +131,17 @@ export const useCreateSite = () => {
 				if ( theme ) {
 					await setThemeOnSite( createdSite.siteSlug, theme );
 				}
-				// If the site already exists, we need to fill the cart with the domain and plan items.
-				// Because the user may have changed their mind about the domain or plan.
-				await addProductsToCart( createdSite.siteSlug, flowName, [
+
+				const cartItems = [
 					...( planCartItems && planCartItems.length > 0 ? planCartItems : [] ),
 					...mergedDomainCartItems,
-				] );
+				];
+
+				// If the site already exists, we need to fill the cart with the domain and plan items.
+				// Because the user may have changed their mind about the domain or plan.
+				if ( cartItems.length > 0 ) {
+					await addProductsToCart( createdSite.siteSlug, flowName, cartItems );
+				}
 				return createdSite;
 			}
 			return createSite( {

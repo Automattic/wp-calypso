@@ -56,10 +56,14 @@ const domainUpsell: Flow = {
 			const planCartItem = getPlanCartItem();
 			const domainCartItems = getDomainCartItems();
 
-			await addProductsToCart( siteSlug, flowName, [
+			const cartItems = [
 				...( includePlan && planCartItem ? [ planCartItem ] : [] ),
 				...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
-			] );
+			];
+
+			if ( cartItems.length > 0 ) {
+				await addProductsToCart( siteSlug, flowName, cartItems );
+			}
 
 			return window.location.assign(
 				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
