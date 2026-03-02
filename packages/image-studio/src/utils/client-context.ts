@@ -38,6 +38,9 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	environment: 'wp-admin';
 	imageStudio?: ImageStudioData;
 	currentPageContent?: PageContentBlock[];
+	constructorArguments?: {
+		skip_storage?: boolean;
+	};
 }
 
 const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
