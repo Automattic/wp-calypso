@@ -1,8 +1,16 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
+.new-subscription-navigation .section-nav-tabs__list {
+	overflow: auto;
+
+	@include break-small {
+		overflow: hidden;
+	}
+}
+
 .reader-add-subscription {
-	padding: 0 10px;
+	padding: 10px 0;
 
 	strong {
 		font-weight: 700;
