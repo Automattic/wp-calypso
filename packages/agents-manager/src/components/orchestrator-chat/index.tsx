@@ -267,6 +267,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			sessionId,
 		} );
 
 		return currentMessages;
@@ -277,6 +278,7 @@ export default function OrchestratorChat( {
 		messages,
 		siteBuildUtils,
 		thinkingMessage,
+		sessionId,
 	] );
 
 	// Determine which suggestions to show following Big Sky's logic:

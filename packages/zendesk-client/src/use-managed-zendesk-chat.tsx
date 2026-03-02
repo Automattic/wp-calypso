@@ -145,6 +145,7 @@ const playNotificationSound = () => {
 export const useManagedZendeskChat = () => {
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
+	const startedFromChatId = state?.startedFromChatId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -211,7 +212,7 @@ export const useManagedZendeskChat = () => {
 				metadata: {
 					createdAt: Date.now(),
 					started_from: 'chat',
-					chat_session_id: 'b4c25634-fc63-4f46-a3b7-0128b17fbd4c',
+					chat_session_id: startedFromChatId,
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
@@ -219,7 +220,7 @@ export const useManagedZendeskChat = () => {
 				Smooch.loadConversation( conversation.id );
 			} );
 		}
-	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render ] );
+	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render, startedFromChatId ] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
