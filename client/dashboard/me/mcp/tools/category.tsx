@@ -2,6 +2,7 @@ import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { mcpToolsCategoryRoute } from '../../../app/router/me';
@@ -43,6 +44,10 @@ export default function McpToolsCategory() {
 		},
 	} );
 
+	// Track which tool IDs have a pending mutation so we can disable only
+	// the affected toggles instead of the entire page.
+	const [ pendingToolIds, setPendingToolIds ] = useState< Set< string > >( new Set() );
+
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools: Array< [ string, McpAbility ] > = Object.entries( mcpAbilities );
 
@@ -58,18 +63,41 @@ export default function McpToolsCategory() {
 	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
-		mutation.mutate( { mcp_abilities: { account: { [ toolId ]: enabled } } } as any );
+		setPendingToolIds( ( prev ) => new Set( prev ).add( toolId ) );
+		mutation.mutate( { mcp_abilities: { account: { [ toolId ]: enabled } } } as any, {
+			onSettled: () => {
+				setPendingToolIds( ( prev ) => {
+					const next = new Set( prev );
+					next.delete( toolId );
+					return next;
+				} );
+			},
+		} );
 	};
 
 	const handleSectionToggleAll = (
 		sectionTools: Array< [ string, McpAbility ] >,
 		enabled: boolean
 	) => {
+		const toolIds = sectionTools.map( ( [ toolId ] ) => toolId );
+		setPendingToolIds( ( prev ) => {
+			const next = new Set( prev );
+			toolIds.forEach( ( id ) => next.add( id ) );
+			return next;
+		} );
 		const account: Record< string, boolean > = {};
 		sectionTools.forEach( ( [ toolId ] ) => {
 			account[ toolId ] = enabled;
 		} );
-		mutation.mutate( { mcp_abilities: { account } } as any );
+		mutation.mutate( { mcp_abilities: { account } } as any, {
+			onSettled: () => {
+				setPendingToolIds( ( prev ) => {
+					const next = new Set( prev );
+					toolIds.forEach( ( id ) => next.delete( id ) );
+					return next;
+				} );
+			},
+		} );
 	};
 
 	// Group filtered tools by functional category
@@ -162,6 +190,7 @@ export default function McpToolsCategory() {
 					key={ toolId }
 					__nextHasNoMarginBottom
 					checked={ tool.enabled }
+					disabled={ pendingToolIds.has( toolId ) }
 					label={ tool.title }
 					help={ tool.description }
 					onChange={ ( checked: boolean ) => handleToolChange( toolId, checked ) }
@@ -189,6 +218,9 @@ export default function McpToolsCategory() {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+					const sectionPending = categoryTools.some( ( [ toolId ] ) =>
+						pendingToolIds.has( toolId )
+					);
 
 					return (
 						<Card key={ categoryName }>
@@ -200,6 +232,7 @@ export default function McpToolsCategory() {
 										<ToggleControl
 											__nextHasNoMarginBottom
 											checked={ allEnabled }
+											disabled={ sectionPending }
 											label={ <Text weight={ 400 }>{ __( 'Enable all' ) }</Text> }
 											onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 										/>

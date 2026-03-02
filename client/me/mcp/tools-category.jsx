@@ -12,6 +12,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -55,6 +56,10 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 		},
 	} );
 
+	// Track which tool IDs have a pending mutation so we can disable only
+	// the affected toggles instead of the entire page.
+	const [ pendingToolIds, setPendingToolIds ] = useState( () => new Set() );
+
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const allTools = Object.entries( mcpAbilities );
 
@@ -71,15 +76,44 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 	} );
 
 	const handleToolChange = ( toolId, enabled ) => {
-		mutation.mutate( { mcp_abilities: { account: { [ toolId ]: enabled } } } );
+		setPendingToolIds( ( prev ) => new Set( prev ).add( toolId ) );
+		mutation.mutate(
+			{ mcp_abilities: { account: { [ toolId ]: enabled } } },
+			{
+				onSettled: () => {
+					setPendingToolIds( ( prev ) => {
+						const next = new Set( prev );
+						next.delete( toolId );
+						return next;
+					} );
+				},
+			}
+		);
 	};
 
 	const handleSectionToggleAll = ( sectionTools, enabled ) => {
+		const toolIds = sectionTools.map( ( [ toolId ] ) => toolId );
+		setPendingToolIds( ( prev ) => {
+			const next = new Set( prev );
+			toolIds.forEach( ( id ) => next.add( id ) );
+			return next;
+		} );
 		const account = {};
 		sectionTools.forEach( ( [ toolId ] ) => {
 			account[ toolId ] = enabled;
 		} );
-		mutation.mutate( { mcp_abilities: { account } } );
+		mutation.mutate(
+			{ mcp_abilities: { account } },
+			{
+				onSettled: () => {
+					setPendingToolIds( ( prev ) => {
+						const next = new Set( prev );
+						toolIds.forEach( ( id ) => next.delete( id ) );
+						return next;
+					} );
+				},
+			}
+		);
 	};
 
 	// Group filtered tools by functional category
@@ -154,6 +188,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 					key={ toolId }
 					__nextHasNoMarginBottom
 					checked={ tool.enabled }
+					disabled={ pendingToolIds.has( toolId ) }
 					label={ tool.title }
 					help={ tool.description }
 					onChange={ ( checked ) => handleToolChange( toolId, checked ) }
@@ -182,6 +217,9 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+					const sectionPending = categoryTools.some( ( [ toolId ] ) =>
+						pendingToolIds.has( toolId )
+					);
 
 					return (
 						<Card key={ categoryName } isRounded={ false } style={ { borderRadius: 0 } }>
@@ -193,6 +231,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 										<ToggleControl
 											__nextHasNoMarginBottom
 											checked={ allEnabled }
+											disabled={ sectionPending }
 											label={ <Text weight={ 400 }>{ translate( 'Enable all' ) }</Text> }
 											onChange={ ( checked ) => handleSectionToggleAll( categoryTools, checked ) }
 										/>
@@ -224,7 +263,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'Control how AI assistants interact with your WordPress.com account and sites.'
+					'Control how AI agents interact with your WordPress.com account and sites.'
 				) }
 			/>
 			<HeaderCake backText={ translate( 'Back' ) } backHref={ backHref }>

@@ -337,7 +337,7 @@ function McpComponent() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Control how AI assistants interact with your WordPress.com account and sites.'
+						'Control how AI agents interact with your WordPress.com account and sites.'
 					) }
 				/>
 			}
@@ -415,14 +415,14 @@ function McpComponent() {
 					) }
 				</Card>
 
-				{ /* External AI assistant access — toggle + MCP access sub-items */ }
+				{ /* External AI agent access — toggle + MCP access sub-items */ }
 				<Card className="dashboard-summary-button-list has-density-medium">
 					<CardHeader>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'External AI assistant access' ) }
+							title={ __( 'External AI agent access' ) }
 							description={ __(
-								'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+								'Allow external AI agents to access your WordPress.com account and sites via MCP.'
 							) }
 							actions={
 								<ToggleControl
@@ -479,13 +479,13 @@ function McpComponent() {
 					) }
 				</Card>
 
-				{ /* Connect AI assistant — only shown when MCP access is on */ }
+				{ /* Connect AI agent — only shown when MCP access is on */ }
 				{ hasTools && anyToolsEnabled && (
 					<div style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }>
 						<RouterLinkSummaryButton
 							to="/me/preferences/ai-and-mcp/setup"
-							title={ __( 'Connect external AI assistant' ) }
-							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							title={ __( 'Connect external AI agent' ) }
+							description={ __( 'Get instructions for connecting your external AI agent.' ) }
 							decoration={ <Icon icon={ connection } /> }
 						/>
 					</div>

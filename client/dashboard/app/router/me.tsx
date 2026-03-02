@@ -953,7 +953,7 @@ export const mcpSetupRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Connect AI assistant' ),
+				title: __( 'Connect AI agent' ),
 			},
 		],
 	} ),

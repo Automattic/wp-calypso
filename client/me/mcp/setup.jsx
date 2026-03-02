@@ -213,7 +213,7 @@ function McpSetupComponent( { path } ) {
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'Control how AI assistants interact with your WordPress.com account and sites.'
+					'Control how AI agents interact with your WordPress.com account and sites.'
 				) }
 			/>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
@@ -359,7 +359,7 @@ function McpSetupComponent( { path } ) {
 	return renderLayout(
 		<>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
-				{ translate( 'Connect AI assistant' ) }
+				{ translate( 'Connect AI agent' ) }
 			</HeaderCake>
 			<VStack spacing={ 6 }>
 				{ /* Card 1: Client picker */ }
@@ -368,7 +368,7 @@ function McpSetupComponent( { path } ) {
 						<SelectControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ translate( 'Choose your AI assistant' ) }
+							label={ translate( 'Choose your AI agent' ) }
 							value={ selectedMcpClient }
 							options={ mcpClientOptions }
 							onChange={ setSelectedMcpClient }

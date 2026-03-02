@@ -37,7 +37,7 @@ export default function McpSummary() {
 		<RouterLinkSummaryButton
 			to="/me/preferences/ai-and-mcp"
 			title={ __( 'AI and MCP' ) }
-			description={ __( 'Configure how AI assistants access your WordPress.com data.' ) }
+			description={ __( 'Configure how AI agents access your WordPress.com data.' ) }
 			decoration={ <Icon icon={ bigSkyIcon } /> }
 			badges={ badges }
 		/>

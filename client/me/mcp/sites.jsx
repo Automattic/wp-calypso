@@ -107,7 +107,7 @@ export default function McpSites( { path } ) {
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'Control how AI assistants interact with your WordPress.com account and sites.'
+					'Control how AI agents interact with your WordPress.com account and sites.'
 				) }
 			/>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">

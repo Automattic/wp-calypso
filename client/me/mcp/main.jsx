@@ -338,7 +338,7 @@ function McpComponent( { path } ) {
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
 				subtitle={ translate(
-					'Control how AI assistants interact with your WordPress.com account and sites.'
+					'Control how AI agents interact with your WordPress.com account and sites.'
 				) }
 			/>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
@@ -416,7 +416,7 @@ function McpComponent( { path } ) {
 						) }
 					</Card>
 
-					{ /* External AI assistant access */ }
+					{ /* External AI agent access */ }
 					<Card
 						isRounded={ false }
 						className="dashboard-summary-button-list has-density-medium"
@@ -426,9 +426,9 @@ function McpComponent( { path } ) {
 							<VStack spacing={ 4 }>
 								<SectionHeader
 									level={ 3 }
-									title={ translate( 'External AI assistant access' ) }
+									title={ translate( 'External AI agent access' ) }
 									description={ translate(
-										'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+										'Allow external AI agents to access your WordPress.com account and sites via MCP.'
 									) }
 								/>
 								<ToggleControl
@@ -484,14 +484,14 @@ function McpComponent( { path } ) {
 						) }
 					</Card>
 
-					{ /* Connect AI assistant */ }
+					{ /* Connect AI agent */ }
 					{ hasTools && anyToolsEnabled && (
 						<div style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }>
 							<SummaryButton
 								href="/me/mcp-setup"
-								title={ translate( 'Connect external AI assistant' ) }
+								title={ translate( 'Connect external AI agent' ) }
 								description={ translate(
-									'Get instructions for connecting your external AI assistant.'
+									'Get instructions for connecting your external AI agent.'
 								) }
 								decoration={ <Icon icon={ connection } /> }
 								style={ { borderRadius: 0 } }

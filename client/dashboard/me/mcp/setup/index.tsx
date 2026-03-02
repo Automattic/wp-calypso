@@ -139,8 +139,8 @@ function McpSetupComponent() {
 				size="small"
 				header={
 					<PageHeader
-						title={ __( 'Connect AI assistant' ) }
-						description={ __( 'Get instructions for connecting your AI assistant.' ) }
+						title={ __( 'Connect AI agent' ) }
+						description={ __( 'Get instructions for connecting your AI agent.' ) }
 						prefix={ <Breadcrumbs length={ 3 } /> }
 					/>
 				}
@@ -271,8 +271,8 @@ function McpSetupComponent() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Connect AI assistant' ) }
-					description={ __( 'Get instructions for connecting your AI assistant.' ) }
+					title={ __( 'Connect AI agent' ) }
+					description={ __( 'Get instructions for connecting your AI agent.' ) }
 					prefix={ <Breadcrumbs length={ 3 } /> }
 				/>
 			}
@@ -285,7 +285,7 @@ function McpSetupComponent() {
 						<SelectControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Choose your AI assistant' ) }
+							label={ __( 'Choose your AI agent' ) }
 							value={ selectedMcpClient }
 							options={ mcpClientOptions }
 							onChange={ setSelectedMcpClient }
