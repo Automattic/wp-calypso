@@ -243,6 +243,8 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
+	const localSessionId = sessionId || getStoredSessionId( agentId );
+
 	const visibleMessages = useMemo( () => {
 		let currentMessages = messages;
 
@@ -267,7 +269,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
-			sessionId,
+			sessionId: localSessionId,
 		} );
 
 		return currentMessages;
@@ -278,7 +280,7 @@ export default function OrchestratorChat( {
 		messages,
 		siteBuildUtils,
 		thinkingMessage,
-		sessionId,
+		localSessionId,
 	] );
 
 	// Determine which suggestions to show following Big Sky's logic:
