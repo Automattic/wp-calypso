@@ -326,8 +326,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.48"
-    "@automattic/agenttic-ui": "npm:^0.1.48"
+    "@automattic/agenttic-client": "npm:^0.1.49"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -376,7 +376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-client@npm:^0.1.48":
+"@automattic/agenttic-client@npm:^0.1.49":
   version: 0.1.49
   resolution: "@automattic/agenttic-client@npm:0.1.49"
   dependencies:
@@ -396,7 +396,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.48":
+"@automattic/agenttic-ui@npm:^0.1.49":
   version: 0.1.49
   resolution: "@automattic/agenttic-ui@npm:0.1.49"
   dependencies:
@@ -1622,8 +1622,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.48"
-    "@automattic/agenttic-ui": "npm:^0.1.48"
+    "@automattic/agenttic-client": "npm:^0.1.49"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1956,7 +1956,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.48"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -14872,7 +14872,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.48"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -37845,7 +37845,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.48"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
