@@ -1,3 +1,4 @@
+import { getTrackingPrefs } from '@automattic/calypso-analytics';
 import posthog from 'posthog-js';
 
 let initialized = false;
@@ -19,6 +20,11 @@ export function reset() {
 
 export function init( apiKey: string, user?: PostHogUser ) {
 	if ( initialized || ! apiKey ) {
+		return;
+	}
+
+	const { buckets } = getTrackingPrefs();
+	if ( ! buckets.analytics ) {
 		return;
 	}
 
