@@ -42,7 +42,6 @@ function PurchasesWarning( { site }: { site: Site } ) {
 					),
 					{
 						link: isDashboardBackport() ? (
-							// @ts-expect-error children prop is injected by createInterpolateElement
 							<Button
 								variant="link"
 								href={ `/purchases/subscriptions/${ site.slug }` }
@@ -53,7 +52,6 @@ function PurchasesWarning( { site }: { site: Site } ) {
 								} }
 							/>
 						) : (
-							// @ts-expect-error children prop is injected by createInterpolateElement
 							<RouterLinkButton
 								variant="link"
 								to={ purchasesRoute.fullPath }
@@ -135,8 +133,8 @@ function ContentConfirmDisconnect( {
 						),
 						{
 							siteDomain: <strong>{ site.slug }</strong>,
-							// @ts-expect-error children prop is injected by createInterpolateElement
 							link: (
+								// @ts-expect-error children prop is injected by createInterpolateElement
 								<ExternalLink href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/" />
 							),
 						}

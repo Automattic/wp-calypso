@@ -122,7 +122,7 @@ export function useActions(): Action< Site >[] {
 		{
 			id: 'disconnect',
 			label: __( 'Disconnect site' ),
-			isEligible: ( item: Site ) => canDisconnectSite( item ),
+			isEligible: ( item: Site ) => !! canDisconnectSite( item ),
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
 					<SiteDisconnectContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
