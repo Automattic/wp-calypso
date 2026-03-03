@@ -109,9 +109,6 @@ describe( 'useReadFeedSearchQuery', () => {
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 
-		// Ensure no mock request are available.
-		nock.cleanAll();
-
 		const { result } = renderHook( () => useReadFeedSearchQuery( { query: undefined } ), {
 			wrapper,
 		} );

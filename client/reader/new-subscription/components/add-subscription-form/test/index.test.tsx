@@ -105,11 +105,7 @@ describe( 'AddSubscriptionForm', () => {
 		} );
 
 		it( 'does not show the related sites list when there is no search term', () => {
-			renderWithProvider(
-				<SiteSubscriptionsQueryPropsProvider initialSearchTermState="">
-					<AddSubscriptionForm type="add-new" />
-				</SiteSubscriptionsQueryPropsProvider>
-			);
+			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 			expect( screen.queryByText( 'Related sites' ) ).not.toBeInTheDocument();
 			expect( screen.queryByTestId( 'unsubscribed-feeds-search-list' ) ).not.toBeInTheDocument();
 		} );
