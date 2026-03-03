@@ -375,8 +375,8 @@ function StepButtons( {
 				<Button
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
-					onClick={ onSubmit }
-					variant="primary"
+					onClick={ closeDialog }
+					variant="secondary"
 				>
 					{ __( 'No, thanks' ) }
 				</Button>

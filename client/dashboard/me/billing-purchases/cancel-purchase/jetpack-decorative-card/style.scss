@@ -23,12 +23,11 @@
 		display: block;
 		position: absolute;
 		top: 24px;
-		left: 24px;
+		inset-inline-start: 24px;
 	}
 
 	&__body {
 		padding: 2rem;
-		// background: var( --studio-white );
 		display: flex;
 		justify-content: center;
 	}
