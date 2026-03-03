@@ -24,7 +24,7 @@ export function init( apiKey: string, user?: PostHogUser ) {
 	}
 
 	const { buckets } = getTrackingPrefs();
-	if ( ! buckets.analytics ) {
+	if ( ! buckets.advertising ) {
 		return;
 	}
 
