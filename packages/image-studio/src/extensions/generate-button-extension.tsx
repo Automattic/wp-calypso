@@ -33,7 +33,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			const { openImageStudio } = dispatch( imageStudioStore );
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
 					handleImageSelection( {
 						image,
 						onSelect,

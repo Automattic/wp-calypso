@@ -185,6 +185,7 @@ interface TrackImageStudioErrorOptions {
 		| 'preparation_failed'
 		| 'draft_cleanup_failed'
 		| 'draft_cleanup_permission_denied'
+		| 'delete_permanently_failed'
 		| 'other';
 	attachmentId?: number;
 }
@@ -510,4 +511,69 @@ export function trackImageStudioFileNavigated( {
 		attachment_id: attachmentId,
 		direction,
 	} );
+}
+
+interface TrackImageStudioStyleSelectedOptions {
+	style: string;
+	mode: ImageStudioMode;
+}
+
+/**
+ * Tracks when a user selects a style in Image Studio
+ *
+ * @param {Object} options       - Tracking options
+ * @param {string} options.style - The selected style value
+ * @param {string} options.mode  - 'edit' or 'generate'
+ */
+export function trackImageStudioStyleSelected( {
+	style,
+	mode,
+}: TrackImageStudioStyleSelectedOptions ): void {
+	recordImageStudioEvent( 'image_studio_style_selected', {
+		style,
+		mode,
+	} );
+}
+
+interface TrackImageStudioAspectRatioSelectedOptions {
+	aspectRatio: string;
+	mode: ImageStudioMode;
+}
+
+/**
+ * Tracks when a user selects an aspect ratio in Image Studio
+ *
+ * @param {Object} options             - Tracking options
+ * @param {string} options.aspectRatio - The selected aspect ratio value
+ * @param {string} options.mode        - 'edit' or 'generate'
+ */
+export function trackImageStudioAspectRatioSelected( {
+	aspectRatio,
+	mode,
+}: TrackImageStudioAspectRatioSelectedOptions ): void {
+	recordImageStudioEvent( 'image_studio_aspect_ratio_selected', {
+		aspect_ratio: aspectRatio,
+		mode,
+	} );
+}
+
+/**
+ * Tracks when an image is permanently deleted from Image Studio
+ *
+ * @param {Object} options                - Tracking options
+ * @param {number} [options.attachmentId] - Attachment ID of the deleted image
+ * @param {string} options.mode           - 'edit' or 'generate'
+ */
+export function trackImageStudioImageDeletedPermanently( {
+	attachmentId,
+	mode,
+}: {
+	attachmentId?: number;
+	mode: string;
+} ): void {
+	const properties: Record< string, number | string > = { mode };
+	if ( attachmentId ) {
+		properties.attachment_id = attachmentId;
+	}
+	recordImageStudioEvent( 'image_studio_file_deleted_permanently', properties );
 }
