@@ -288,10 +288,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			throw new Error( 'Failed to create site' );
 		}
 
-		if ( theme ) {
-			await setThemeOnSite( site.siteSlug, theme );
-		}
-
 		const additionalCartItems = [
 			...( planCartItem ? [ planCartItem ] : [] ),
 			...( productCartItems ?? [] ),
