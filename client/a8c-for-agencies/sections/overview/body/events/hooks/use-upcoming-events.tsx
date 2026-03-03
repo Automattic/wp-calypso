@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
