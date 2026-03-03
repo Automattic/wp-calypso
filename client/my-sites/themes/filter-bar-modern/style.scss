@@ -1,0 +1,100 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/variables';
+
+.filter-bar-modern {
+	background-color: var( --studio-white );
+	gap: 16px;
+	position: sticky;
+	top: 0;
+	z-index: 3;
+
+	&.is-sticky {
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08); // Same as pattern-library
+	}
+
+	.category-pill-navigation {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.category-pill-navigation__button {
+		text-decoration: none;
+	}
+}
+
+.filter-bar-modern__content {
+	align-items: center;
+	display: flex;
+	margin: 0 auto;
+	max-width: 1220px;
+	padding: 40px 24px 16px 24px; // Top padding adjusted +24px to accommodate the external tier label
+
+	@media ( min-width: $break-wide ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+
+.filter-bar-modern__search {
+	flex-shrink: 0;
+
+	.search {
+		margin-bottom: 0;
+		height: 42px;
+		border: 1px solid #f2f2f2;
+		border-radius: 4px;
+
+		input {
+			@media ( min-width: $break-small ) {
+				font-size: rem( 13px );
+			}
+		}
+
+		.search__icon-navigation {
+			border-radius: 4px;
+		}
+	}
+	.search:not(.is-open) {
+		width: 42px;
+
+		.search__icon-navigation {
+			background: #f2f2f2;
+
+			svg {
+				width: 42px;
+			}
+		}
+	}
+	.search.is-open {
+		border: 1px solid var( --studio-gray-10 );
+	}
+}
+
+.filter-bar-modern__tier-select {
+	flex-shrink: 0;
+	margin-left: 16px;
+	margin-top: -24px; // Accommodate the external label
+	min-width: 120px;
+
+	@media ( min-width: $break-mobile ) {
+		margin-left: 0;
+	}
+
+	.components-input-control__container {
+		border-radius: 4px;
+	}
+
+	button {
+		height: 44px;
+	}
+
+	.components-custom-select-control__item.is-selected {
+		background-color: var( --studio-gray-80 );
+		color: var( --studio-white );
+	}
+
+	.components-input-base .components-input-control__container .components-input-control__backdrop {
+		border: 1px solid var( --studio-gray-10 );
+	}
+}

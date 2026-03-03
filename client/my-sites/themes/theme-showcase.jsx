@@ -602,6 +602,7 @@ class ThemeShowcase extends Component {
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
+		const isThemeShowcaseModern = config.isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
 		const staticFilters = this.getStaticFilters();
 
 		// Update the filters to accommodate updates/translations from the API.
@@ -658,6 +659,9 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
+					search={ search }
+					onSearch={ this.doSearch }
+					onSearchTracksEvent={ this.recordSearchThemesTracksEvent }
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
@@ -692,13 +696,17 @@ class ThemeShowcase extends Component {
 							>
 								<div className="theme__search-container">
 									<div className="theme__search">
-										<div className="theme__search-input">
-											<SearchThemes
-												query={ isLoggedIn ? filterString + search : featureStringFilter + search }
-												onSearch={ this.doSearch }
-												recordTracksEvent={ this.recordSearchThemesTracksEvent }
-											/>
-										</div>
+										{ ! isThemeShowcaseModern && (
+											<div className="theme__search-input">
+												<SearchThemes
+													query={
+														isLoggedIn ? filterString + search : featureStringFilter + search
+													}
+													onSearch={ this.doSearch }
+													recordTracksEvent={ this.recordSearchThemesTracksEvent }
+												/>
+											</div>
+										) }
 										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 											<CustomSelectWrapper
 												className="theme__tier-select"

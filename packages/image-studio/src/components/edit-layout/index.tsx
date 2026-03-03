@@ -42,13 +42,20 @@ export const EditLayout = ( {
 
 	// Track the last loaded image URL for the placeholder
 	const [ placeholderUrl, setPlaceholderUrl ] = useState< string | null >( null );
+	// Tracks whether enter animation has started (exit animation completed)
+	const [ exitTransitionComplete, setExitTransitionComplete ] = useState( false );
 
 	const prevAttachmentId = useRef< typeof attachmentId >( null );
+
+	const isAnnotatedImage = isCurrentAttachmentAnnotated || isAnnotationSaving;
+
+	// Use attachmentId as key for non-annotated images to trigger cross fade between images
+	// Use stable imageKey for annotated images to prevent fade during annotation flow
+	const effectiveImageKey = isAnnotatedImage ? imageKey : attachmentId;
 
 	useEffect( () => {
 		// Only update the image key when the attachmentId changes, skipping annotated images
 		const hasAttachmentChanged = !! attachmentId && prevAttachmentId.current !== attachmentId;
-		const isAnnotatedImage = isCurrentAttachmentAnnotated || isAnnotationSaving;
 
 		if ( hasAttachmentChanged && ! isAnnotatedImage ) {
 			setImageKey( attachmentId );
@@ -58,18 +65,23 @@ export const EditLayout = ( {
 		prevAttachmentId.current = attachmentId;
 	}, [ attachmentId, isCurrentAttachmentAnnotated, isAnnotationSaving ] );
 
-	// Set placeholder on initial load
+	// Reset when image key changes (new transition begins)
 	useEffect( () => {
-		if ( isRenderedImageLoaded && imageUrl && ! placeholderUrl ) {
+		setExitTransitionComplete( false );
+	}, [ effectiveImageKey ] );
+
+	// Update placeholder when url is available and:
+	// - Initial load or
+	// - Exit animation has completed
+	useEffect( () => {
+		if ( ! imageUrl ) {
+			return;
+		}
+
+		if ( ! placeholderUrl || exitTransitionComplete ) {
 			setPlaceholderUrl( imageUrl );
 		}
-	}, [ isRenderedImageLoaded, imageUrl, placeholderUrl ] );
-
-	const isAnnotatedImage = isCurrentAttachmentAnnotated || isAnnotationSaving;
-
-	// Use attachmentId as key for non-annotated images to trigger cross fade between images
-	// Use stable imageKey for annotated images to prevent fade during annotation flow
-	const effectiveImageKey = isAnnotatedImage ? imageKey : attachmentId;
+	}, [ imageUrl, placeholderUrl, exitTransitionComplete ] );
 
 	// For annotated images, never show loading so that the transition from blob -> uploaded annotation is seamless
 	const shouldShowLoading = ! isAnnotatedImage && ! isRenderedImageLoaded;
@@ -97,7 +109,7 @@ export const EditLayout = ( {
 						className="image-studio-placeholder-image"
 					/>
 				) }
-				<AnimatePresence mode="wait" onExitComplete={ () => setPlaceholderUrl( imageUrl ?? null ) }>
+				<AnimatePresence mode="wait" onExitComplete={ () => setExitTransitionComplete( true ) }>
 					<motion.div
 						key={ effectiveImageKey }
 						className={ cn( 'image-studio-image-container', {

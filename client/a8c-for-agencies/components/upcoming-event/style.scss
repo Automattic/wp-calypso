@@ -119,10 +119,6 @@
 		width: 100%;
 	}
 
-	.a4a-event__extra-content {
-		@include body-small;
-	}
-
 	@include break-large {
 		flex-direction: row;
 		justify-content: flex-start;

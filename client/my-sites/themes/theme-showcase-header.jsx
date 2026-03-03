@@ -8,6 +8,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import HeroModern from './hero-modern';
+import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
 import InstallThemeButton from './install-theme-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
@@ -22,6 +24,9 @@ export default function ThemeShowcaseHeader( {
 	filter,
 	tier,
 	vertical,
+	search,
+	onSearch,
+	onSearchTracksEvent,
 	isCollectionView = false,
 	noIndex = false,
 	isSiteECommerceFreeTrial = false,
@@ -35,6 +40,7 @@ export default function ThemeShowcaseHeader( {
 	const title = useThemeShowcaseTitle( { filter, tier, vertical } );
 	const skipTitleFormatting = shouldSkipTitleFormatting( { filter, tier } );
 	const loggedOutSeoContent = useThemeShowcaseLoggedOutSeoContent( filter, tier );
+	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInHeader =
 		isEnabled( 'themes/universal-header' ) && dashboardOptIn ? selectedSiteId : isLoggedIn;
@@ -92,14 +98,9 @@ export default function ThemeShowcaseHeader( {
 		);
 	}
 
-	return (
-		<>
-			<DocumentHead
-				title={ documentHeadTitle }
-				meta={ metas }
-				skipTitleFormatting={ skipTitleFormatting }
-			/>
-			{ shouldUseLoggedInHeader ? (
+	const renderHeader = () => {
+		if ( shouldUseLoggedInHeader ) {
+			return (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader
 						compactBreadcrumb={ false }
@@ -118,14 +119,37 @@ export default function ThemeShowcaseHeader( {
 						{ showInstallThemeButton && <InstallThemeButton /> }
 					</NavigationHeader>
 				</div>
-			) : (
-				<div className="themes__header-logged-out">
-					<div className="themes__page-heading">
-						<h1>{ preventWidows( themesHeaderTitle ) }</h1>
-						<p className="page-sub-header">{ preventWidows( themesHeaderDescription ) }</p>
-					</div>
+			);
+		}
+
+		if ( isThemeShowcaseModern ) {
+			return (
+				<HeroModern
+					searchQuery={ search || '' }
+					onSearch={ onSearch }
+					onSearchTracksEvent={ onSearchTracksEvent }
+				/>
+			);
+		}
+
+		return (
+			<div className="themes__header-logged-out">
+				<div className="themes__page-heading">
+					<h1>{ preventWidows( themesHeaderTitle ) }</h1>
+					<p className="page-sub-header">{ preventWidows( themesHeaderDescription ) }</p>
 				</div>
-			) }
+			</div>
+		);
+	};
+
+	return (
+		<>
+			<DocumentHead
+				title={ documentHeadTitle }
+				meta={ metas }
+				skipTitleFormatting={ skipTitleFormatting }
+			/>
+			{ renderHeader() }
 		</>
 	);
 }

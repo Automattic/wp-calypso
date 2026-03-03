@@ -14,7 +14,7 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 	return (
 		<Stream
 			streamKey={ `user:${ user.ID }` }
-			className="is-user-profile"
+			className="user-profile-posts no-padding"
 			listName={ translate( 'User Posts' ) }
 			showFollowButton={ false }
 			showSiteNameOnCards

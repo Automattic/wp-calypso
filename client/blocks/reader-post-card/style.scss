@@ -484,10 +484,6 @@
 	margin-bottom: 8px;
 	gap: 8px;
 	flex-wrap: wrap;
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-	}
 }
 
 .reader-post-card__tag {

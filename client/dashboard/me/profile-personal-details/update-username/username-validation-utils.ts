@@ -8,7 +8,7 @@ const USERNAME_MIN_LENGTH = 4;
 
 export type ValidationResult = UsernameValidationResult;
 
-async function validateUsernameInternal(
+export async function validateUsernameInternal(
 	username: string,
 	currentUsername: string,
 	setValidationResult: ( result: ValidationResult | null ) => void

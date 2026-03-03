@@ -79,6 +79,7 @@ class ReaderStream extends Component {
 		onUpdatesShown: PropTypes.func,
 		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
+		restoreScroll: PropTypes.bool,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
@@ -92,6 +93,7 @@ class ReaderStream extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
 		isLoggedIn: PropTypes.bool,
+		wideLayout: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,12 +103,14 @@ class ReaderStream extends Component {
 		isDiscoverStream: false,
 		isMain: true,
 		onUpdatesShown: noop,
+		restoreScroll: true,
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 		isLoggedIn: false,
+		wideLayout: false,
 	};
 
 	state = {
@@ -188,7 +192,11 @@ class ReaderStream extends Component {
 	};
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
+		if (
+			this.props.selectedPostKey &&
+			window.history.scrollRestoration !== 'manual' &&
+			this.props.restoreScroll
+		) {
 			this.scrollToSelectedPost( false );
 		}
 	};
@@ -239,8 +247,10 @@ class ReaderStream extends Component {
 				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
 			}
 			this.mountTimeout = setTimeout( () => {
-				this.scrollToSelectedPost( false );
-				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.props.restoreScroll ) {
+					this.scrollToSelectedPost( false );
+					this.focusSelectedPost( this.props.selectedPostKey );
+				}
 				if ( this.overlayRef.current ) {
 					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
 				}
@@ -678,7 +688,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = emptyBody;
 			}
@@ -699,6 +709,7 @@ class ReaderStream extends Component {
 					className="stream__list"
 					context={ this.state.listContext }
 					selectedItem={ selectedPostKey }
+					restoreScroll={ this.props.restoreScroll }
 				/>
 			);
 
@@ -721,7 +732,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = (
 					<>
@@ -783,7 +794,7 @@ class ReaderStream extends Component {
 		}
 
 		return (
-			<TopLevel className={ baseClassnames }>
+			<TopLevel className={ baseClassnames } wideLayout={ this.props.wideLayout }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />

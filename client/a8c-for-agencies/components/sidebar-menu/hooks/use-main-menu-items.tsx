@@ -13,7 +13,7 @@ import {
 	plugins,
 	chartBar,
 	box,
-	pages,
+	shortcode,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -41,7 +41,7 @@ import {
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
-	A4A_LEARN_RESOURCE_CENTER_LINK,
+	A4A_RESOURCES_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
@@ -113,12 +113,12 @@ const useMainMenuItems = ( path: string ) => {
 			...( isSectionNameEnabled( 'a8c-for-agencies-learn' )
 				? [
 						{
-							icon: pages,
-							path: A4A_LEARN_LINK,
-							link: A4A_LEARN_RESOURCE_CENTER_LINK,
-							title: translate( 'Learn' ),
+							icon: shortcode,
+							path: A4A_RESOURCES_LINK,
+							link: A4A_LEARN_LINK,
+							title: translate( 'Resources and tools' ),
 							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Learn',
+								menu_item: 'Automattic for Agencies / Resources and tools',
 							},
 							withChevron: true,
 						},

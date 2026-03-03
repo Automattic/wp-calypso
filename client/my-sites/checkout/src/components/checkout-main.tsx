@@ -147,15 +147,52 @@ export default function CheckoutMain( {
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
-	const isSiteless =
-		sitelessCheckoutType === 'jetpack' ||
-		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace' ||
-		sitelessCheckoutType === 'a4a';
+	const cartKey = useCartKey();
+
+	/**
+	 * The definition of what makes "siteless checkout" varies considerably.
+	 *
+	 * All subscriptions must be assigned to a user and a site before or during
+	 * their purchase, but which site is used and when that site is created
+	 * differentiates the flows.
+	 *
+	 * If `sitelessCheckoutType` is set, then this checkout is siteless, which
+	 * also means that the shopping cart has no `blog_id` set. However,
+	 * sometimes a `blog_id` will be set automatically on the server by the
+	 * shopping cart (for example, if the cart item is a renewal and the site
+	 * has not already been provided in the checkout URL).
+	 *
+	 * Unified siteless checkout (siteless checkout for wpcom products) creates
+	 * one site per purchase. Jetpack siteless checkout and Domain-only flows
+	 * have a holding site created during the transactions endpoint, one per
+	 * purchase (although the created sites are flagged in special ways).
+	 *
+	 * The same is true for Akismet, A4A, and Marketplace siteless checkout but
+	 * for these we only create one holding site per user and that is re-used
+	 * for additional purchases.
+	 *
+	 * Gift purchases (renewals for another user's subscription) are also
+	 * siteless in the sense that no `blog_id` is set when they are in the
+	 * cart, but they are renewing a subscription on an existing site.
+	 *
+	 * Logged-out siteless checkout flows include a temporary userless and
+	 * siteless cart but then create a user just in time before the transaction
+	 * is submitted, and therefore their carts always have a user by the time
+	 * they are processed. Sometimes a site is also created when the user is
+	 * created (this happens if createUserAndSiteBeforeTransaction is true AND
+	 * newSiteParams is set in the createAccount helper) in which case the
+	 * transaction is also submitted with a `blog_id` and no site is created
+	 * during the transaction itself.
+	 */
+	const createUserAndSiteBeforeTransaction = ( () => {
+		if ( sitelessCheckoutType && cartKey === 'no-user' ) {
+			return true;
+		}
+		return false;
+	} )();
+
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
-	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -226,7 +263,6 @@ export default function CheckoutMain( {
 		hostingIntent,
 	} );
 
-	const cartKey = useCartKey();
 	const {
 		applyCoupon,
 		replaceProductInCart,
@@ -242,8 +278,12 @@ export default function CheckoutMain( {
 	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
 		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
-	// For site-less checkouts, get the blog ID from the cart response
-	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+	// For siteless checkouts, possibly get the blog ID from the cart response
+	// in cases where the server has assigned it automatically. If so, we
+	// override the blog ID set in the checkout URL (if any).
+	const updatedSiteId = sitelessCheckoutType
+		? parseInt( String( responseCart.blog_id ), 10 )
+		: siteId;
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -854,7 +894,10 @@ export default function CheckoutMain( {
 						countriesList={ countriesList }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={
-							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+							<PrePurchaseNotices
+								siteId={ updatedSiteId }
+								shouldQueryUserPurchases={ Boolean( sitelessCheckoutType ) }
+							/>
 						}
 						isLoggedOutCart={ !! isLoggedOutCart }
 						onPageLoadError={ onPageLoadError }

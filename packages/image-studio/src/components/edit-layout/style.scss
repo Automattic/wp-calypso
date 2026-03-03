@@ -33,9 +33,8 @@
 	}
 
 	.image-studio-image-container {
-		position: absolute;
-		inset: 0;
 		line-height: 0;
+		position: relative;
 
 		&,
 		& > * {
