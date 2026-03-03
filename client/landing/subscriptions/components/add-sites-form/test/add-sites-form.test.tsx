@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -94,42 +94,46 @@ describe( 'AddSitesForm', () => {
 		expect( addButton ).toBeDisabled();
 	} );
 
-	test( 'disables the Add site button immediately when typing invalid URL', () => {
+	it( 'disables the Add site button immediately when typing invalid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
 		const input = screen.getByRole( 'textbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
-		fireEvent.change( input, { target: { value: 'not-a-valid-url' } } );
+		await userEvent.type( input, 'not-a-valid-url' );
 
 		expect( addButton ).toBeDisabled();
 	} );
 
-	test( 'enables the Add site button immediately when typing valid URL', () => {
+	it( 'enables the Add site button immediately when typing valid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
 		const input = screen.getByRole( 'textbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
-		fireEvent.change( input, { target: { value: 'https://example.com' } } );
+		await userEvent.type( input, 'https://example.com' );
 
 		expect( addButton ).toBeEnabled();
 	} );
 
-	test( 'disables the Add site button when input is empty', () => {
+	it( 'disables the Add site button when input is empty', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		expect( addButton ).toBeDisabled();
 	} );
 
-	test( 'disables button when transitioning from valid to invalid URL', () => {
+	it( 'disables button when transitioning from valid to invalid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
 		const input = screen.getByRole( 'textbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
-		fireEvent.change( input, { target: { value: 'https://example.com' } } );
+		await userEvent.type( input, 'https://example.com' );
 		expect( addButton ).toBeEnabled();
 
-		fireEvent.change( input, { target: { value: 'invalid' } } );
-		expect( addButton ).toBeDisabled();
+		input.focus();
+		// Delete the last 3 characters of the input value. https://example.com -> https://example
+		await userEvent.keyboard( '{Backspace>3}' );
+		await waitFor( () => {
+			expect( addButton ).toBeDisabled();
+		} );
 	} );
 } );
