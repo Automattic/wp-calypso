@@ -326,8 +326,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.46"
-    "@automattic/agenttic-ui": "npm:^0.1.46"
+    "@automattic/agenttic-client": "npm:^0.1.49"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -356,9 +356,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.44, @automattic/agenttic-client@npm:^0.1.46":
-  version: 0.1.46
-  resolution: "@automattic/agenttic-client@npm:0.1.46"
+"@automattic/agenttic-client@npm:^0.1.44, @automattic/agenttic-client@npm:^0.1.49":
+  version: 0.1.49
+  resolution: "@automattic/agenttic-client@npm:0.1.49"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -372,13 +372,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 8276da7e546e51e83651b161e688b7d19f9fa4a1d9171ad8093899ae480e095991134a255509defaea83571ffb1769838dd661929462980dbd3419881fa3e718
+  checksum: 5c23307b250453fe781bfe493497d9a0f94eea02ea640b42e7fa55cb1327352dad92c49030553c6fb1276aee7a009c971035c246eb710e488e87a709e57abacf
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.46":
-  version: 0.1.46
-  resolution: "@automattic/agenttic-ui@npm:0.1.46"
+"@automattic/agenttic-ui@npm:^0.1.49":
+  version: 0.1.49
+  resolution: "@automattic/agenttic-ui@npm:0.1.49"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -404,7 +404,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 87b975cf03a4f02e9327f791c204d8dd8588fb147cf9ebe8b10ec61f1d45a3a22cc4a9b5b5670964f0188e59d2affabe7deee47427523a6b8740dc407774f773
+  checksum: cd05efcab8f9daf2e5b1fe144091be516ea31bbcbaff3dc0e511112e8922780653da0c33a5d0a2d177a114c80ec8a815ca0775c8eda0d81adef3bd0b7d8ea748
   languageName: node
   linkType: hard
 
@@ -1602,8 +1602,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.46"
-    "@automattic/agenttic-ui": "npm:^0.1.46"
+    "@automattic/agenttic-client": "npm:^0.1.49"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1936,7 +1936,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.46"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -14852,7 +14852,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.46"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -37825,7 +37825,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.46"
+    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
