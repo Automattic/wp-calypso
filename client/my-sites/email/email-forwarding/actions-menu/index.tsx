@@ -113,12 +113,12 @@ function EditModal( {
 }: {
 	mailbox: Mailbox;
 	currentDestination: string;
-	onEdit: (
-		mailbox: string,
-		domain: string,
-		destination: string,
-		newDestination: string
-	) => Promise< unknown >;
+	onEdit: ( params: {
+		mailbox: string;
+		domain: string;
+		destination: string;
+		newDestination: string;
+	} ) => Promise< unknown >;
 	isPending: boolean;
 	onClose: () => void;
 } ) {
@@ -129,7 +129,12 @@ function EditModal( {
 	const isValid = emailValidator.validate( newDestination.trim() );
 
 	const handleSave = async () => {
-		await onEdit( mailbox.mailbox, mailbox.domain, currentDestination, newDestination.trim() );
+		await onEdit( {
+			mailbox: mailbox.mailbox,
+			domain: mailbox.domain,
+			destination: currentDestination,
+			newDestination: newDestination.trim(),
+		} );
 		onClose();
 	};
 

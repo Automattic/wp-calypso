@@ -52,20 +52,20 @@ export function useEdit( { mailbox }: { mailbox: Mailbox } ) {
 	);
 
 	const edit = useCallback(
-		( mailboxName: string, domain: string, destination: string, newDestination: string ) => {
+		( params: {
+			mailbox: string;
+			domain: string;
+			destination: string;
+			newDestination: string;
+		} ) => {
 			recordTracksEvent( 'calypso_email_management_email_forwarding_edit_click', {
-				destination,
-				new_destination: newDestination,
-				domain_name: domain,
-				mailbox: mailboxName,
+				destination: params.destination,
+				new_destination: params.newDestination,
+				domain_name: params.domain,
+				mailbox: params.mailbox,
 			} );
 
-			return updateEmailForward( {
-				mailbox: mailboxName,
-				destination,
-				newDestination,
-				domain,
-			} );
+			return updateEmailForward( params );
 		},
 		[ updateEmailForward ]
 	);
