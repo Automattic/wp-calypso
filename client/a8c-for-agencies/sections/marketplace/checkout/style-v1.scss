@@ -445,27 +445,27 @@
 }
 
 .referral-email-preview-modal {
-    .components-modal__content {
-        background-color: var( --a4a-brand-blue-80 );
-    }
+	.components-modal__content {
+		background-color: var( --a4a-brand-blue-80 );
+	}
 
-    .shopping-cart__menu-list-item-price-interval {
-        display: block;
-    }
+	.shopping-cart__menu-list-item-price-interval {
+		display: block;
+	}
 }
 
 .referral-email-preview-modal-body {
-    overflow-y: auto;
+	overflow-y: auto;
 }
 
 .referral-email-preview {
-    padding: 24px;
+	padding: 24px;
 
-    @include break-medium {
-        padding: 56px;
-    }
+	@include break-medium {
+		padding: 56px;
+	}
 
-    .product-info__text-content {
-        display: flex;
-    }
+	.product-info__text-content {
+		display: flex;
+	}
 }

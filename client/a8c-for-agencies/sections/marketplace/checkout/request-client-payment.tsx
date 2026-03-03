@@ -92,8 +92,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 
 	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
 
-	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
-
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
 	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
