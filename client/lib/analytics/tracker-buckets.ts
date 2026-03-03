@@ -65,9 +65,9 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	reddit: Bucket.ADVERTISING,
 	linkedin: Bucket.ADVERTISING,
 	tiktok: Bucket.ADVERTISING,
-	quora: Bucket.ADVERTISING,
 
 	// Disabled trackers:
+	quora: null,
 	quantcast: null,
 	gemini: null,
 	experian: null,
