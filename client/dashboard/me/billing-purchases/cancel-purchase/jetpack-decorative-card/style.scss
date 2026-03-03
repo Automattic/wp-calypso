@@ -5,30 +5,29 @@
 	overflow: hidden;
 	box-shadow: 0 0 40px #a7aaad;
 	margin: 0 auto;
-	margin-bottom: 3rem;
+	margin-block-end: 3rem;
+}
 
-	&__header {
-		height: 160px;
-		position: relative;
-		width: 100%;
-	}
+.jetpack-decorative-card__header {
+	height: 160px;
+	position: relative;
+	width: 100%;
+}
 
-	&__header-image {
-		display: block;
-		object-fit: cover;
-		max-width: 100%;
-	}
+.jetpack-decorative-card__header-image {
+	display: block;
+	object-fit: cover;
+	max-width: 100%;
+}
 
-	&__header-icon {
-		display: block;
-		position: absolute;
-		top: 24px;
-		inset-inline-start: 24px;
-	}
+.jetpack-decorative-card__header-icon {
+	display: block;
+	position: absolute;
+	inset-block-start: 24px;
+}
 
-	&__body {
-		padding: 2rem;
-		display: flex;
-		justify-content: center;
-	}
+.jetpack-decorative-card__body {
+	padding: 2rem;
+	display: flex;
+	justify-content: center;
 }

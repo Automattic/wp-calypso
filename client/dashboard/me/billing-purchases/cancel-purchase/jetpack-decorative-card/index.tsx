@@ -3,11 +3,11 @@ import decorativeCardBackground from 'calypso/assets/images/jetpack/decorative-c
 import decorativeCardIcon from 'calypso/assets/images/jetpack/decorative-card-icon.svg';
 import type { FC } from 'react';
 
+import './style.scss';
+
 interface Props {
 	iconPath: string;
 }
-
-import './style.scss';
 
 const JetpackDecorativeCard: FC< Props > = ( props ) => {
 	const { iconPath } = props;

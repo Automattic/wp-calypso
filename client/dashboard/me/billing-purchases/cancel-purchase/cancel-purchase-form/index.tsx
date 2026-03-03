@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -295,8 +296,10 @@ function StepButtons( {
 	solution,
 	surveyStep,
 	allSteps,
+	navigate,
 }: {
 	canGoNext: boolean;
+	navigate: () => void;
 } & CancelPurchaseFormProps ) {
 	const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -318,7 +321,7 @@ function StepButtons( {
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
 					onClick={ () => {
-						window.location.href = purchasesRoute.to;
+						navigate( { to: purchasesRoute.to } );
 					} }
 					variant="primary"
 				>
@@ -486,6 +489,7 @@ function getSurveyTitle( surveyStep: string, isAkismet: boolean ) {
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
+	const navigate = useNavigate();
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
@@ -494,7 +498,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 					level={ 3 }
 				/>
 				<SurveyContent { ...props } />
-				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
+				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } navigate={ navigate } />
 			</VStack>
 		)
 	);

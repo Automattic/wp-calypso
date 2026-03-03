@@ -221,7 +221,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					} }
 					variant="primary"
 				>
-					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+					{ isApplyingOffer ? __( 'Getting discount' ) : __( 'Get discount' ) }
 				</Button>
 			</div>
 		</>
