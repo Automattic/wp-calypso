@@ -167,6 +167,19 @@ export function isStaticFilter( currentFilter ) {
 	return Object.values( STATIC_FILTERS ).includes( currentFilter );
 }
 
+/**
+ * @param {Object} params
+ * @param {string} [params.category] Theme category slug, omitted from URL if it matches the default static filter.
+ * @param {string} [params.vertical] Vertical slug segment.
+ * @param {string} [params.tier] Pricing tier slug (e.g. "free", "premium"). Omitted when "all".
+ * @param {string} [params.filter] Additional filter segment appended as `/filter/{value}`.
+ * @param {string} [params.siteSlug] Site slug appended at the end of the URL.
+ * @param {string} [params.search] Search query string appended as a query parameter.
+ * @param {string} [params.locale] Locale code used to localize the resulting path.
+ * @param {boolean} [params.isLoggedIn] Whether the user is logged in, affects path localization.
+ * @param {boolean} [params.isCollectionView] Whether to include the `/collection` segment.
+ * @returns {string} The constructed theme showcase URL.
+ */
 export function constructThemeShowcaseUrl( {
 	category,
 	vertical,

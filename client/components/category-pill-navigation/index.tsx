@@ -22,6 +22,7 @@ type CategoryPillNavigationProps = {
 		id: string;
 		label?: string;
 		link: string;
+		icon?: React.ReactElement< typeof Icon >;
 	}[];
 	selectedCategoryId: string;
 	onSelect?: ( selectedId: string ) => void;
@@ -182,6 +183,7 @@ export const CategoryPillNavigation = ( {
 								'is-active': category.id === selectedCategoryId,
 							} ) }
 						>
+							{ category.icon }
 							{ category.label }
 						</LocalizedLink>
 					) ) }
