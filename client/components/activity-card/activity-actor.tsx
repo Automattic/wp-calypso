@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -24,6 +25,8 @@ const ActivityActor: FunctionComponent< Props > = ( {
 	actorName,
 	actorRole,
 	actorType,
+	actorIsMcpAgent,
+	actorMcpClient,
 	withoutInfo,
 	size = SIZE_M,
 } ) => {
@@ -92,6 +95,13 @@ const ActivityActor: FunctionComponent< Props > = ( {
 		);
 	}
 
+	let mcpIndicator = null;
+	if ( actorIsMcpAgent ) {
+		mcpIndicator = actorMcpClient
+			? sprintf( translate( 'via %s (MCP)' ), actorMcpClient )
+			: translate( 'via MCP' );
+	}
+
 	return (
 		<div className="activity-card__actor">
 			<Gravatar user={ { avatar_URL: actorAvatarUrl, display_name: actorName } } size={ size } />
@@ -99,6 +109,7 @@ const ActivityActor: FunctionComponent< Props > = ( {
 				<div className="activity-card__actor-info">
 					<div className="activity-card__actor-name">{ actorName }</div>
 					{ actorRole && <div className="activity-card__actor-role">{ actorRole }</div> }
+					{ mcpIndicator && <div className="activity-card__actor-mcp">{ mcpIndicator }</div> }
 				</div>
 			) }
 		</div>
