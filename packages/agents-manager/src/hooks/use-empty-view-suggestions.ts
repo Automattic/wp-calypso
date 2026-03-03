@@ -70,9 +70,9 @@ export function useEmptyViewSuggestions( {
 	// Read current URL so suggestions re-evaluate after SPA navigation.
 	// The provider's getEmptyViewSuggestions() reads window.location at call
 	// time to return context-specific suggestions (e.g. onboarding vs dashboard).
-	// Including locationSearch in useMemo deps ensures we recompute when the
+	// Including locationKey in useMemo deps ensures we recompute when the
 	// component re-renders after navigation (e.g. user starts a new chat).
-	const locationSearch = window.location.search;
+	const locationKey = window.location.pathname + window.location.search;
 
 	const emptyViewSuggestions = useMemo( () => {
 		if ( ! loadedProviders || ! isCoreStoreReady ) {
@@ -88,8 +88,10 @@ export function useEmptyViewSuggestions( {
 			return suggestions;
 		}
 		return null;
+		// locationKey is intentionally included as a recomputation trigger;
+		// getEmptyViewSuggestions() reads window.location internally.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ loadedProviders, isCoreStoreReady, hasBigSkySuggestions, defaultSuggestions, locationSearch ] );
+	}, [ loadedProviders, isCoreStoreReady, hasBigSkySuggestions, defaultSuggestions, locationKey ] );
 
 	return emptyViewSuggestions;
 }
