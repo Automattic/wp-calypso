@@ -27,13 +27,13 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 
 ### Mocking Network Requests
 
-Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com:443`.
+Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
 
 ```tsx
 import nock from 'nock';
-
-afterEach( () => nock.cleanAll() );
 ```
+
+Note: `nock.cleanAll()` is already called globally after each test, so you don't need `afterEach( () => nock.cleanAll() )` in your test files.
 
 **URL path rules:**
 
@@ -43,7 +43,7 @@ afterEach( () => nock.cleanAll() );
 **Intercepting a query (GET):**
 
 ```tsx
-nock( 'https://public-api.wordpress.com:443' )
+nock( 'https://public-api.wordpress.com' )
   .get( `/wpcom/v2/sites/${ siteId }/hosting/error-logs` )
   .query( true ) // match any query string
   .reply( 200, { data: { logs: [], total_results: 0, scroll_id: null } } );
@@ -52,7 +52,7 @@ nock( 'https://public-api.wordpress.com:443' )
 **Intercepting a mutation (POST):**
 
 ```tsx
-const scope = nock( 'https://public-api.wordpress.com:443' )
+const scope = nock( 'https://public-api.wordpress.com' )
   .post( '/rest/v1.1/me/preferences', ( body ) => {
     // optionally inspect the request body
     return true;
@@ -69,7 +69,7 @@ expect( scope.isDone() ).toBe( true );
 DELETE, so use `.delete()` not `.post()`:
 
 ```tsx
-nock( 'https://public-api.wordpress.com:443' )
+nock( 'https://public-api.wordpress.com' )
   .delete( `/wpcom/v2/sites/${ productionSiteId }/staging-site/${ stagingSiteId }` )
   .reply( 200, {} );
 ```
@@ -79,31 +79,31 @@ nock( 'https://public-api.wordpress.com:443' )
 - Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
-- Capture the request body and assert with Jest (as below) rather than asserting inside nock's body callback — Jest matchers produce clearer diffs on failure.
 
 #### Asserting the request body
 
-Capture the body in a variable via nock's callback, then assert with Jest matchers.
-This gives more readable test failures than validating inside nock's callback directly.
+Assert the request body inside nock's body callback using Jest matchers, then use
+`scope.isDone()` to verify the request was actually made.
 
 ```tsx
-let requestBody: SomeType | undefined;
-nock( 'https://public-api.wordpress.com:443' )
+const scope = nock( 'https://public-api.wordpress.com' )
   .post( '/rest/v1.1/me/preferences', ( body ) => {
-    requestBody = body;
-    return true; // always match — assert separately below
+    expect( body ).toEqual(
+      expect.objectContaining( {
+        my_key: 'strict string check',
+        some_string: expect.any( String ),
+        pi: expect.closeTo( 3.14 ),
+      } )
+    );
+    return true;
   } )
   .reply( 200, { calypso_preferences: {} } );
 
 // …trigger the mutation…
 
-expect( requestBody ).toEqual(
-  expect.objectContaining( {
-    my_key: 'strict string check',
-	some_string: expect.any( String ),
-	pi: expect.closeTo( 3.14 ),
-  } )
-);
+await waitFor( () => {
+  expect( scope.isDone() ).toBe( true );
+} );
 ```
 
 ### Mocking Query Cache Data

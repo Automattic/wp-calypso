@@ -22,6 +22,7 @@ jest.mock( '@wordpress/data', () => ( {
 		if ( storeName === 'image-studio' ) {
 			return {
 				getDraftIds: () => mockSelectorState.draftIds,
+				getAnnotatedAttachmentIds: () => mockSelectorState.annotatedAttachmentIds || [],
 				getOriginalAttachmentId: () => mockSelectorState.originalAttachmentId,
 				getSavedAttachmentIds: () => mockSelectorState.savedAttachmentIds || [],
 				getImageStudioAttachmentId: () => mockSelectorState.imageStudioAttachmentId,
@@ -75,6 +76,7 @@ describe( 'useDraftCleanup – cleanupOnExit', () => {
 		jest.clearAllMocks();
 		mockSelectorState = {
 			draftIds: [],
+			annotatedAttachmentIds: [],
 			originalAttachmentId: null,
 			savedAttachmentIds: [],
 			imageStudioAttachmentId: null,
