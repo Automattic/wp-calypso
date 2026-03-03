@@ -407,3 +407,27 @@
 		justify-content: center;
 	}
 }
+
+.checkout__logo-section {
+	.checkout__profile-logo-preview {
+		width: 134px;
+		height: 134px;
+		border: 1px solid var( --color-neutral-20 );
+		border-radius: 4px;
+		background: var( --color-neutral-0 );
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+	}
+
+	.checkout__profile-logo-preview img {
+		max-width: 132px;
+		max-height: 132px;
+		object-fit: contain;
+	}
+
+	.components-radio-control__input[type='radio']:checked {
+		background-color: var( --color-primary-50 );
+	}
+}
