@@ -8,15 +8,15 @@ This hook registers a set of actions on `window.__agentsManagerActions` so that 
 
 Once the hook is mounted, `window.__agentsManagerActions` provides:
 
-| Method                | Signature                                                  | Description                                                                                      |
-| --------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `getChatState`        | `() => Promise<{ isOpen, isDocked, floatingPosition }>`    | Returns the current chat state. Waits for the store to load before resolving.                    |
-| `setChatOpen`         | `(isOpen: boolean) => void`                                | Opens or closes the chat.                                                                        |
-| `setChatDocked`       | `(isDocked: boolean) => void`                              | Docks or undocks the chat.                                                                       |
-| `setChatEnabled`      | `(isEnabled: boolean) => void`                             | Enables or disables chat rendering.                                                              |
-| `setChatCompactMode`  | `(isCompact: boolean) => void`                             | Toggles compact mode (undocked only).                                                            |
-| `setChatDesktopMediaQuery` | `(query: string) => void`                                 | Sets the media query used to determine whether the chat can dock into the sidebar.               |
-| `chatNavigate`        | `NavigateFunction`                                         | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
+| Method                       | Signature                                                  | Description                                                                                      |
+| ---------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `getChatState`               | `() => Promise<{ isOpen, isDocked, floatingPosition }>`    | Returns the current chat state. Waits for the store to load before resolving.                    |
+| `setChatOpen`                | `(isOpen: boolean) => void`                                | Opens or closes the chat.                                                                        |
+| `setChatDocked`              | `(isDocked: boolean) => void`                              | Docks or undocks the chat.                                                                       |
+| `setChatEnabled`             | `(isEnabled: boolean) => void`                             | Enables or disables chat rendering.                                                              |
+| `setChatCompactMode`         | `(isCompact: boolean) => void`                             | Toggles compact mode (undocked only).                                                            |
+| `setChatDesktopMediaQuery`   | `(query: string) => void`                                  | Sets the media query used to determine whether the chat can dock into the sidebar.               |
+| `chatNavigate`               | `NavigateFunction`                                         | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
 
 ### Initial values
 
