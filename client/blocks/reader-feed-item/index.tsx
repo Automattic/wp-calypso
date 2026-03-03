@@ -32,7 +32,9 @@ interface ReaderFeedItemProps {
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
-	railcarExtra?: Partial< Parameters< typeof recordTrainTracksRender >[ 0 ] >;
+	railcarExtra?: {
+		uiPosition: number;
+	};
 }
 
 /**
@@ -49,7 +51,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		source,
 		shouldHideOnSubscribedState,
 		onChangeSubscribe,
-		railcarExtra = {},
+		railcarExtra,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -232,7 +234,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 				fetchAlgo: railcar.fetch_algo,
 				fetchPosition: railcar.fetch_position,
 				recBlogId: railcar.rec_blog_id,
-				...railcarExtra,
+				uiPosition: railcarExtra?.uiPosition ?? -1,
 			} );
 		}
 	}, [ railcar, railcarExtra ] );
