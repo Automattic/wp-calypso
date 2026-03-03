@@ -15,7 +15,18 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `setChatDocked`       | `(isDocked: boolean) => void`                              | Docks or undocks the chat.                                                                       |
 | `setChatEnabled`      | `(isEnabled: boolean) => void`                             | Enables or disables chat rendering.                                                              |
 | `setChatCompactMode`  | `(isCompact: boolean) => void`                             | Toggles compact mode (undocked only).                                                            |
+| `setChatDesktopMediaQuery` | `(query: string) => void`                                 | Sets the media query used to determine whether the chat can dock into the sidebar.               |
 | `chatNavigate`        | `NavigateFunction`                                         | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
+
+### Initial values
+
+Properties can be pre-set on `window.__agentsManagerActions` **before** the hook mounts to control initial state:
+
+| Property              | Type                  | Default     | Description                                  |
+| --------------------- | --------------------- | ----------- | -------------------------------------------- |
+| `isCompactMode`       | `boolean`             | `false`     | Initial compact mode state.                  |
+| `isChatEnabled`       | `boolean`             | `true`      | Initial chat rendering state.                |
+| `desktopMediaQuery`   | `string`              | `undefined` | Initial media query for sidebar docking.     |
 
 ## Examples
 
@@ -41,4 +52,15 @@ window.__agentsManagerActions.setChatCompactMode( true );
 
 // Disable chat rendering
 window.__agentsManagerActions.setChatEnabled( false );
+
+// Set desktop media query
+window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
+
+// Pre-set initial values before mount
+window.__agentsManagerActions = {
+	...window.__agentsManagerActions,
+	isCompactMode: true,
+	isChatEnabled: false,
+	desktopMediaQuery: '(min-width: 1200px)',
+};
 ```
