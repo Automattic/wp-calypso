@@ -688,7 +688,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = emptyBody;
 			}
@@ -732,7 +732,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = (
 					<>
