@@ -183,7 +183,7 @@ function ContentConfirmDisconnect( {
 	);
 }
 
-export default function ContentInfo( { site, onClose }: ContentInfoProps ) {
+export default function JetpackSiteDisconnect( { site, onClose }: ContentInfoProps ) {
 	const { data: hasActivePurchases, isLoading } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) =>

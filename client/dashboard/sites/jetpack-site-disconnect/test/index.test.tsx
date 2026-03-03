@@ -6,7 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import ContentInfo from '../index';
+import JetpackSiteDisconnect from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {
@@ -33,9 +33,9 @@ function mockDisconnect() {
 }
 
 const renderContent = ( onClose = jest.fn() ) =>
-	render( <ContentInfo site={ site } onClose={ onClose } /> );
+	render( <JetpackSiteDisconnect site={ site } onClose={ onClose } /> );
 
-describe( '<ContentInfo> (disconnect)', () => {
+describe( '<JetpackSiteDisconnect>', () => {
 	test( 'disconnect button is disabled until the correct domain is typed', async () => {
 		const user = userEvent.setup();
 		mockPurchases();
