@@ -116,7 +116,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
 	const isDifferentLogoWithoutUpload =
-		referralLogo.option === 'different' && ! referralLogo.file && ! referralLogo.logoUrl;
+		isCobrandedCheckoutEnabled &&
+		referralLogo.option === 'different' &&
+		! referralLogo.file &&
+		! referralLogo.logoUrl;
 	const hasPressableAddonsInCheckout = useMemo(
 		() => checkoutItems.some( ( item ) => isPressableAddonProduct( item.slug ) ),
 		[ checkoutItems ]
@@ -136,6 +139,80 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	);
 
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
+
+	const buildLogoPayload = useCallback( async (): Promise<
+		{ type: 'profile' | 'custom' | 'none'; url?: string } | undefined | 'error'
+	> => {
+		if ( ! isCobrandedCheckoutEnabled ) {
+			return undefined;
+		}
+
+		let logo: { type: 'profile' | 'custom' | 'none'; url?: string } | undefined;
+
+		if ( referralLogo.option === 'profile' ) {
+			logo = { type: 'profile' };
+		} else if ( referralLogo.option === 'different' ) {
+			let logoUrl: string | undefined;
+			if ( referralLogo.file ) {
+				const fileSignature = {
+					name: referralLogo.file.name,
+					size: referralLogo.file.size,
+					lastModified: referralLogo.file.lastModified,
+				};
+
+				if (
+					lastUploadedFile &&
+					lastUploadedFile.name === fileSignature.name &&
+					lastUploadedFile.size === fileSignature.size &&
+					lastUploadedFile.lastModified === fileSignature.lastModified
+				) {
+					logoUrl = lastUploadedFile.logoUrl;
+				} else {
+					setIsUploadingLogo( true );
+					try {
+						const result = await uploadLogo( agencyId, referralLogo.file );
+						if ( result?.logo_url ) {
+							logoUrl = result.logo_url;
+							setLastUploadedFile( {
+								...fileSignature,
+								logoUrl: result.logo_url,
+							} );
+						}
+					} catch ( error ) {
+						dispatch(
+							errorNotice(
+								( error as { message?: string } )?.message ??
+									translate( 'Failed to upload logo. Please try again.' )
+							)
+						);
+						return 'error';
+					} finally {
+						setIsUploadingLogo( false );
+					}
+				}
+			} else if ( referralLogo.logoUrl ) {
+				logoUrl = referralLogo.logoUrl;
+			}
+
+			if ( logoUrl ) {
+				logo = { type: 'custom', url: logoUrl };
+			}
+		} else if ( referralLogo.option === 'none' || referralLogo.option === null ) {
+			logo = { type: 'none' };
+		}
+
+		return logo;
+	}, [
+		agencyId,
+		dispatch,
+		isCobrandedCheckoutEnabled,
+		lastUploadedFile,
+		referralLogo.file,
+		referralLogo.logoUrl,
+		referralLogo.option,
+		translate,
+		uploadLogo,
+	] );
 
 	const handleRequestPayment = useCallback(
 		async ( flowType: ReferralOrderFlowType ) => {
@@ -197,66 +274,13 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 				)
 			);
 
-			// Build logo object based on user selection
-			let logo: { type: 'profile' | 'custom' | 'none'; url?: string } | undefined;
+			const logoResult = await buildLogoPayload();
 
-			if ( referralLogo.option === 'profile' ) {
-				logo = { type: 'profile' };
-			} else if ( referralLogo.option === 'different' ) {
-				let logoUrl: string | undefined;
-				if ( referralLogo.file ) {
-					// Check if this file was already uploaded
-					const fileSignature = {
-						name: referralLogo.file.name,
-						size: referralLogo.file.size,
-						lastModified: referralLogo.file.lastModified,
-					};
-
-					if (
-						lastUploadedFile &&
-						lastUploadedFile.name === fileSignature.name &&
-						lastUploadedFile.size === fileSignature.size &&
-						lastUploadedFile.lastModified === fileSignature.lastModified
-					) {
-						// Reuse the previously uploaded logo URL
-						logoUrl = lastUploadedFile.logoUrl;
-					} else {
-						// Upload the new/changed file
-						setIsUploadingLogo( true );
-						try {
-							const result = await uploadLogo( agencyId, referralLogo.file );
-							if ( result?.logo_url ) {
-								logoUrl = result.logo_url;
-								// Cache the uploaded file info
-								setLastUploadedFile( {
-									...fileSignature,
-									logoUrl: result.logo_url,
-								} );
-							}
-						} catch ( error ) {
-							dispatch(
-								errorNotice(
-									( error as { message?: string } )?.message ??
-										translate( 'Failed to upload logo. Please try again.' )
-								)
-							);
-							return;
-						} finally {
-							setIsUploadingLogo( false );
-						}
-					}
-				} else if ( referralLogo.logoUrl ) {
-					// Using agency referrals logo (no file to upload).
-					logoUrl = referralLogo.logoUrl;
-				}
-
-				if ( logoUrl ) {
-					logo = { type: 'custom', url: logoUrl };
-				}
-			} else if ( referralLogo.option === 'none' || referralLogo.option === null ) {
-				// No logo selected (either explicitly 'none' or null/undefined)
-				logo = { type: 'none' };
+			if ( logoResult === 'error' ) {
+				return;
 			}
+
+			const logo = logoResult;
 
 			requestPayment(
 				{
@@ -320,26 +344,21 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			);
 		},
 		[
-			agencyId,
-			dispatch,
-			email,
 			hasCompletedForm,
+			email,
 			hasPressableAddonsInCheckout,
-			isFeedbackShown,
-			lastUploadedFile,
-			licenses,
+			dispatch,
+			termPricing,
+			buildLogoPayload,
+			requestPayment,
 			message,
-			onClearCart,
 			productIds,
+			licenses,
+			translate,
 			referrals,
 			refetchReferrals,
-			referralLogo.file,
-			referralLogo.logoUrl,
-			referralLogo.option,
-			requestPayment,
-			termPricing,
-			translate,
-			uploadLogo,
+			isFeedbackShown,
+			onClearCart,
 		]
 	);
 

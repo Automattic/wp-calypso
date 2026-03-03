@@ -114,7 +114,7 @@ export default function ReferralLogo( { onChange }: Props ) {
 						<Spacer marginTop={ 3 } />
 						<LogoFileUpload
 							displayUrl={ logoPreviewUrl ?? agencyReferralsLogoUrl }
-							onFileSelect={ ( file ) => setSelectedLogoFile( file ) }
+							onFileSelect={ setSelectedLogoFile }
 						/>
 					</>
 				) }
