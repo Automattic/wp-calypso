@@ -1,6 +1,6 @@
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { availableLanguages } from '../lib/available-languages';
-import { AgencyDetails, AgencyDirectoryApplication } from '../types';
+import { AgencyDetails, AgencyDirectoryApplication, LeadMatchingDetails } from '../types';
 
 export function mapApplicationFormData( agency: Agency | null ): AgencyDirectoryApplication | null {
 	if ( ! agency?.profile?.partner_directory_application ) {
@@ -57,5 +57,38 @@ export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails
 		products: agency.profile.listing_details.products,
 		languagesSpoken: languages,
 		budgetLowerRange: agency.profile.budget_details.budget_lower_range,
+	};
+}
+
+export function mapLeadMatchingFormData( agency: Agency | null ): LeadMatchingDetails | null {
+	if ( ! agency?.profile?.lead_matching_details ) {
+		return null;
+	}
+
+	const details = agency.profile.lead_matching_details;
+
+	return {
+		regions: details.regions ?? [],
+		supportsGlobal: details.supports_global ?? false,
+		languages: details.languages ?? [],
+		businessTypes: details.business_types ?? [],
+		otherBusinessType: details.other_business_type ?? '',
+		idealBusinessTypes: details.ideal_business_types ?? [],
+		otherIdealBusinessType: details.other_ideal_business_type ?? '',
+		companySizes: details.company_sizes ?? [],
+		hostingEnvironments: details.hosting_environments ?? [],
+		supportsHostingRecommendation: details.supports_hosting_recommendation ?? false,
+		migrationPlatforms: details.migration_platforms ?? [],
+		storeComplexities: details.store_complexities ?? [],
+		projectTypes: details.project_types ?? [],
+		supportsQuickHelp: details.supports_quick_help ?? false,
+		serviceLevels: details.service_levels ?? [],
+		budgetLevels: details.budget_levels ?? [],
+		minimumBudget: details.minimum_budget ?? '',
+		timingPreferences: details.timing_preferences ?? [],
+		supportsHardDeadlines: details.supports_hard_deadlines ?? false,
+		decisionProcesses: details.decision_processes ?? [],
+		ongoingRelationships: details.ongoing_relationships ?? [],
+		requiresMaintenance: details.requires_maintenance ?? false,
 	};
 }

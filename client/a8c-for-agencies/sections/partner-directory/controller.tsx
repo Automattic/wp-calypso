@@ -8,21 +8,25 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
 import PartnerDirectory from './partner-directory';
 
 export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
+
 	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
 		( { status } ) => status === 'approved'
 	);
 
 	const validSections = [
 		PARTNER_DIRECTORY_DASHBOARD_SLUG,
-		// Agency details is hidden if the agency has no directories approved
+		// Agency details - only if agency has directory approval
 		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] : [] ),
 		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+		// Lead matching - always allow for now (TODO: add approval check before shipping)
+		PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 	];
 
 	const selectedSection = context.params.section ?? PARTNER_DIRECTORY_DASHBOARD_SLUG;

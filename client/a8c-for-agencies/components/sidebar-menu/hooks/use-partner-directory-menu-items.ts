@@ -1,4 +1,4 @@
-import { category, cog } from '@wordpress/icons';
+import { category, cog, people } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -7,6 +7,7 @@ import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -40,7 +41,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 				},
 				path
 			),
-			// Only show the Agency details menu item if the agency has at least one directory approved
+			// Agency details - only show if agency has at least one directory approved
 			...( hasDirectoryApproval
 				? [
 						createItem(
@@ -61,6 +62,22 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 						),
 				  ]
 				: [] ),
+			// Lead matching - always show for now (TODO: add approval check before shipping)
+			createItem(
+				{
+					icon: people,
+					path: A4A_PARTNER_DIRECTORY_LINK,
+					link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+					title: translate( 'Lead matching' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
+					},
+					isSelected: isSelected( path, [
+						`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+					] ),
+				},
+				path
+			),
 		];
 	}, [ hasDirectoryApproval, path, translate ] );
 	return menuItems;
