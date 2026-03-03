@@ -2,6 +2,7 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
+import { purchasesRoute } from '../../../../app/router/me';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
@@ -316,7 +317,9 @@ function StepButtons( {
 				<Button
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
-					onClick={ onSubmit }
+					onClick={ () => {
+						window.location.href = purchasesRoute.to;
+					} }
 					variant="primary"
 				>
 					{ __( 'Back to my purchases' ) }
