@@ -6,16 +6,11 @@ import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 
-interface UnsubscribedFeedsSearchListProps {
-	title?: React.ReactNode;
-}
-
 const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
 	SubscriptionManager;
 const { useReadFeedSearchQuery } = Reader;
 
-export const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListProps ) => {
-	const { title } = props;
+export const UnsubscribedFeedsSearchList = () => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
@@ -86,7 +81,6 @@ export const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListP
 
 	return (
 		<VStack spacing={ 4 }>
-			{ title }
 			<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
 				{ filteredUnsubscribedFeedItems?.map( ( feed, index ) => (
 					<ReaderFeedItem
