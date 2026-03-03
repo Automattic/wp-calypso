@@ -52,15 +52,15 @@ const FilterBarModern = ( {
 			categories.map( ( category ) => ( {
 				id: category.key,
 				label: category.text,
-				// @ts-expect-error constructThemeShowcaseUrl is untyped JS
 				link: constructThemeShowcaseUrl( {
 					tier: selectedTier,
 					category: category.key,
 					search: searchQuery,
 					isLoggedIn: false,
 				} ),
-				icon:
-					category.key === DEFAULT_STATIC_FILTER ? <Icon icon={ starEmpty } size={ 26 } /> : null,
+				...( category.key === DEFAULT_STATIC_FILTER && {
+					icon: <Icon icon={ starEmpty } size={ 26 } />,
+				} ),
 			} ) ),
 		[ categories, searchQuery, selectedTier ]
 	);
