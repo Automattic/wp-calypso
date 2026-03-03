@@ -110,13 +110,21 @@ export function extractTextFromMessage( message: Message ): string {
 }
 
 /**
- * Extract progress message from a message's parts
- * Returns the summary from the first progress part found
+ * Extracted progress data from a message's progress parts
+ */
+export interface ExtractedProgress {
+	summary: string;
+	phase?: string;
+}
+
+/**
+ * Extract progress data from a message's parts
+ * Returns the summary and phase from the first progress part found
  * @param message
  */
 export function extractProgressFromMessage(
 	message: Message
-): string | undefined {
+): ExtractedProgress | undefined {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
 		return undefined;
 	}
@@ -134,7 +142,14 @@ export function extractProgressFromMessage(
 		return false;
 	} ) as ProgressDataPart | undefined;
 
-	return progressPart ? progressPart.data.summary : undefined;
+	if ( ! progressPart ) {
+		return undefined;
+	}
+
+	return {
+		summary: progressPart.data.summary,
+		phase: progressPart.data.phase,
+	};
 }
 
 /**

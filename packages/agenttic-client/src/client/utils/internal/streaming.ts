@@ -198,6 +198,8 @@ export async function* parseSSEStream(
 							role: 'agent',
 							parts: [],
 						};
+						const progress =
+							extractProgressFromMessage( statusMessage );
 						const update: TaskUpdate = {
 							id: event.result.id,
 							sessionId: event.result.sessionId,
@@ -207,8 +209,8 @@ export async function* parseSSEStream(
 								event.result.status.state === 'failed' ||
 								event.result.status.state === 'canceled',
 							text: extractTextFromMessage( statusMessage ),
-							progressMessage:
-								extractProgressFromMessage( statusMessage ),
+							progressMessage: progress?.summary,
+							progressPhase: progress?.phase,
 						};
 
 						yield update;
@@ -223,6 +225,8 @@ export async function* parseSSEStream(
 								role: 'agent',
 								parts: [],
 							};
+							const progress =
+								extractProgressFromMessage( statusMessage );
 							const update: TaskUpdate = {
 								id: event.result.id,
 								sessionId: event.result.sessionId,
@@ -232,8 +236,8 @@ export async function* parseSSEStream(
 									event.result.status.state === 'failed' ||
 									event.result.status.state === 'canceled',
 								text: extractTextFromMessage( statusMessage ),
-								progressMessage:
-									extractProgressFromMessage( statusMessage ),
+								progressMessage: progress?.summary,
+								progressPhase: progress?.phase,
 							};
 							yield update;
 						}
