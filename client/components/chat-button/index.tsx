@@ -9,10 +9,9 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import type { MessagingGroup } from '@automattic/zendesk-client';
 import type { FC } from 'react';
 
-type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
+type ChatIntent = 'SUPPORT' | 'PRECANCELLATION';
 
 type Props = {
 	chatIntent?: ChatIntent;
@@ -30,17 +29,6 @@ type Props = {
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
-	switch ( chatIntent ) {
-		case 'PRESALES':
-			return 'wpcom_presales';
-
-		case 'PRECANCELLATION':
-		case 'SUPPORT':
-		default:
-			return 'wpcom_messaging';
-	}
-}
 const ChatButton: FC< Props > = ( {
 	chatIntent = 'SUPPORT',
 	children,
@@ -54,11 +42,9 @@ const ChatButton: FC< Props > = ( {
 	section = '',
 } ) => {
 	const { __ } = useI18n();
-	const { hasActiveChats, isEligibleForChat, isPrecancellationChatOpen, isPresalesChatOpen } =
-		useChatStatus();
-	const messagingGroup = getMessagingGroupForIntent( chatIntent );
+	const { hasActiveChats, isEligibleForChat, isPrecancellationChatOpen } = useChatStatus();
 	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
-		messagingGroup,
+		'wpcom_messaging',
 		isEligibleForChat
 	);
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
@@ -71,12 +57,6 @@ const ChatButton: FC< Props > = ( {
 		}
 
 		switch ( chatIntent ) {
-			case 'PRESALES':
-				if ( ! isPresalesChatOpen ) {
-					return false;
-				}
-				break;
-
 			case 'PRECANCELLATION':
 				if ( ! isPrecancellationChatOpen ) {
 					return false;
