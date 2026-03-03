@@ -69,7 +69,7 @@ describe( '<JetpackSiteDisconnect>', () => {
 		renderContent();
 
 		expect(
-			await screen.findByText( /You have active subscriptions associated with this site/ )
+			await screen.findByText( /active Jetpack subscription that will continue to be billed/ )
 		).toBeVisible();
 	} );
 
@@ -78,7 +78,7 @@ describe( '<JetpackSiteDisconnect>', () => {
 		renderContent();
 
 		await screen.findByRole( 'button', { name: 'Disconnect site' } );
-		expect( screen.queryByText( /You have active subscriptions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /active Jetpack subscription/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'calls the disconnect endpoint and shows success notice', async () => {
