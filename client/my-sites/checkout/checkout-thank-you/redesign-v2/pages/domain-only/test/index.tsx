@@ -71,24 +71,23 @@ function renderComponent( { currency = 'USD' }: { currency?: string } = {} ) {
 }
 
 describe( 'DomainOnly', () => {
-	beforeAll( () => {
+	beforeEach( () => {
 		// Suppress the console for navigation errors, which are not implemented by JSDom
 		const consoleError = console.error;
+
 		jest.spyOn( console, 'error' ).mockImplementation( ( message ) => {
 			if ( ! message.toString().includes( 'Not implemented: navigation' ) ) {
 				consoleError( message );
 			}
 		} );
-	} );
 
-	afterAll( () => {
-		jest.spyOn( console, 'error' ).mockRestore();
-	} );
-
-	beforeEach( () => {
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+	} );
+
+	afterEach( () => {
+		jest.spyOn( console, 'error' ).mockRestore();
 	} );
 
 	describe( 'Start a new site', () => {
