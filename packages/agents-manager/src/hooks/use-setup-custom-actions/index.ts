@@ -9,8 +9,10 @@ interface Props {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	canDock: boolean;
 	setIsCompactMode: ( isCompact: boolean ) => void;
 	setShouldRenderChat: ( shouldRender: boolean ) => void;
+	setDesktopMediaQuery: ( query: string ) => void;
 }
 
 export default function useSetupCustomActions( {
@@ -18,8 +20,10 @@ export default function useSetupCustomActions( {
 	undock,
 	openSidebar,
 	closeSidebar,
+	canDock,
 	setIsCompactMode,
 	setShouldRenderChat,
+	setDesktopMediaQuery,
 }: Props ) {
 	const { hasLoaded, isOpen, isDocked, floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -35,19 +39,19 @@ export default function useSetupCustomActions( {
 				return;
 			}
 
-			if ( isDocked && shouldOpen ) {
+			if ( ! isDocked || ! canDock ) {
+				return setIsOpen( shouldOpen );
+			}
+
+			if ( shouldOpen ) {
 				openSidebar();
-				return;
 			}
 
-			if ( isDocked && ! shouldOpen ) {
+			if ( ! shouldOpen ) {
 				closeSidebar();
-				return;
 			}
-
-			setIsOpen( shouldOpen );
 		},
-		[ closeSidebar, isDocked, openSidebar, setIsOpen ]
+		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen ]
 	);
 
 	const setChatDocked = useCallback(
@@ -89,6 +93,17 @@ export default function useSetupCustomActions( {
 		[ setShouldRenderChat ]
 	);
 
+	const setChatDesktopMediaQuery = useCallback(
+		( query: string ) => {
+			if ( typeof query !== 'string' ) {
+				return;
+			}
+
+			setDesktopMediaQuery( query );
+		},
+		[ setDesktopMediaQuery ]
+	);
+
 	useEffect( () => {
 		const state = {
 			isOpen: !! isOpen,
@@ -103,6 +118,7 @@ export default function useSetupCustomActions( {
 		}
 
 		window.__agentsManagerActions = {
+			...window.__agentsManagerActions,
 			// Declared inline to capture the fresh `state` from this effect.
 			getChatState: () => {
 				if ( hasLoaded ) {
@@ -116,6 +132,7 @@ export default function useSetupCustomActions( {
 			setChatDocked,
 			setChatEnabled,
 			setChatCompactMode,
+			setChatDesktopMediaQuery,
 			chatNavigate: navigate,
 		};
 
@@ -131,6 +148,7 @@ export default function useSetupCustomActions( {
 		setChatDocked,
 		setChatEnabled,
 		setChatCompactMode,
+		setChatDesktopMediaQuery,
 		navigate,
 	] );
 }
