@@ -10,6 +10,7 @@ import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import { isGravPoweredOAuth2Client, isStudioAppOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -107,6 +108,7 @@ class MagicLogin extends Component {
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 		isWooJPC: PropTypes.bool,
+		ciabConfig: PropTypes.object,
 	};
 
 	state = {
@@ -221,7 +223,13 @@ class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
-		const { translate } = this.props;
+		const { ciabConfig, translate } = this.props;
+		const partnerTosElement = getPartnerSignupTosElement( ciabConfig, translate );
+
+		if ( partnerTosElement ) {
+			return partnerTosElement;
+		}
+
 		const options = {
 			components: {
 				tosLink: (
@@ -252,7 +260,7 @@ class MagicLogin extends Component {
 			),
 		} );
 
-		return <p className="magic-login__tos wp-login__one-login-layout-tos">{ tosText }</p>;
+		return tosText;
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {
@@ -343,7 +351,15 @@ const getMagicLoginInitialHeaders = ( props, translate ) => {
 		return getCheckYourEmailHeaders( translate, { emailAddress } );
 	}
 
-	return getEmailLinkHeaders( translate );
+	const headingOverride = props.ciabConfig
+		? translate( 'Log in to %(partnerName)s', {
+				args: {
+					partnerName: props.ciabConfig.displayName,
+				},
+		  } )
+		: undefined;
+
+	return getEmailLinkHeaders( translate, { headingOverride } );
 };
 
 const MagicLoginWithContext = ( props ) => {
@@ -357,27 +373,35 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
-const mapState = ( state ) => ( {
-	locale: getCurrentLocaleSlug( state ),
-	query: getCurrentQueryArguments( state ),
-	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-	emailRequested: isMagicLoginEmailRequested( state ),
-	emailRequestError: getMagicLoginRequestEmailError( state ),
-	isJetpackLogin: getCurrentRoute( state )?.startsWith( '/log-in/jetpack/link' ),
-	oauth2Client: getCurrentOAuth2Client( state ),
-	userEmail:
-		getLastCheckedUsernameOrEmail( state ) ||
-		getCurrentQueryArguments( state ).email_address ||
-		getInitialQueryArguments( state ).email_address,
-	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-	redirectToSanitized: getRedirectToSanitized( state ),
-	redirectToOriginal: getRedirectToOriginal( state ),
-	isFromJetpackOnboarding:
-		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
-		'jetpack-onboarding',
-	isWooJPC: isWooJPCFlow( state ),
-	publicToken: getMagicLoginPublicToken( state ),
-} );
+const mapState = ( state ) => {
+	const currentRoute = getCurrentRoute( state );
+	const currentQuery = getCurrentQueryArguments( state );
+	const initialQuery = getInitialQueryArguments( state );
+	const redirectToOriginal = getRedirectToOriginal( state );
+
+	return {
+		locale: getCurrentLocaleSlug( state ),
+		query: currentQuery,
+		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
+		emailRequested: isMagicLoginEmailRequested( state ),
+		emailRequestError: getMagicLoginRequestEmailError( state ),
+		isJetpackLogin: currentRoute?.startsWith( '/log-in/jetpack/link' ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		userEmail:
+			getLastCheckedUsernameOrEmail( state ) ||
+			currentQuery.email_address ||
+			initialQuery.email_address,
+		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		redirectToSanitized: getRedirectToSanitized( state ),
+		redirectToOriginal,
+		isFromJetpackOnboarding:
+			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
+			'jetpack-onboarding',
+		isWooJPC: isWooJPCFlow( state ),
+		publicToken: getMagicLoginPublicToken( state ),
+		ciabConfig: getCiabConfig( currentQuery.from || initialQuery.from ),
+	};
+};
 
 const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
