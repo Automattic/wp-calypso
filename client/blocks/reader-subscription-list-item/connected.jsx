@@ -26,6 +26,7 @@ class ConnectedSubscriptionListItem extends Component {
 		disableSuggestedFollows: PropTypes.bool,
 		onItemClick: PropTypes.func,
 		isSelected: PropTypes.bool,
+		url: PropTypes.string,
 	};
 
 	static defaultProps = {
