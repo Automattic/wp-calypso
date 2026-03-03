@@ -7,6 +7,8 @@ interface Props {
 	iconPath: string;
 }
 
+import './style.scss';
+
 const JetpackDecorativeCard: FC< Props > = ( props ) => {
 	const { iconPath } = props;
 
@@ -17,7 +19,7 @@ const JetpackDecorativeCard: FC< Props > = ( props ) => {
 				<img
 					alt=""
 					src={ decorativeCardBackground }
-					className="jetpack-decorative-card__header-background"
+					className="jetpack-decorative-card__header-image"
 				/>
 				<img alt="" className="jetpack-decorative-card__header-icon" src={ decorativeCardIcon } />
 			</div>

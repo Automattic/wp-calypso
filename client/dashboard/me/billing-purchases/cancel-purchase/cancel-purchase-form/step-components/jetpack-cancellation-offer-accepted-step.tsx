@@ -1,7 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import cloudIcon from 'calypso/assets/images/jetpack/cloud-icon.svg';
 import AkismetIcon from '../../../../../components/akismet-icon';
-import { PageHeader } from '../../../../../components/page-header';
 import JetpackDecorativeCard from '../../jetpack-decorative-card';
 import type { FC } from 'react';
 
@@ -26,14 +25,16 @@ const JetpackCancellationOfferAcceptedStep: FC< Props > = ( props ) => {
 			) : (
 				<JetpackDecorativeCard iconPath={ cloudIcon } />
 			) }
-			<PageHeader
-				title={
+			<div className="jetpack-cancellation-offer-accepted__thank-you">
+				{
 					/* Translators: %(brand)s is either Jetpack or Akismet */
 					sprintf( __( 'Thanks for sticking with %(brand)s!' ), {
 						brand: isAkismet ? 'Akismet' : 'Jetpack',
 					} )
 				}
-				description={ sprintf(
+			</div>
+			<div className="jetpack-cancellation-offer-accepted__text">
+				{ sprintf(
 					/* Translators: %(headline)s is already translated text; %(percentDiscount)d%% should be a percentage like 15% or 20% */
 					__(
 						'%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
@@ -44,7 +45,7 @@ const JetpackCancellationOfferAcceptedStep: FC< Props > = ( props ) => {
 						productName,
 					}
 				) }
-			/>
+			</div>
 		</>
 	);
 };

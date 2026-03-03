@@ -131,6 +131,10 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
+	isApplyingOffer,
+	offerApplyError,
+	isSubmitting,
+	onClickAcceptForCancellationOffer,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -257,6 +261,10 @@ function SurveyContent( {
 				onGetCancellationOffer={ onGetCancellationOffer }
 				percentDiscount={ offerDiscountBasedFromPurchasePrice }
 				purchase={ purchase }
+				isApplyingOffer={ isApplyingOffer }
+				isSubmitting={ isSubmitting }
+				offerApplyError={ offerApplyError }
+				onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 			/>
 		);
 	}
@@ -281,10 +289,7 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
-	isApplyingOffer,
 	isSubmitting,
-	offerApplyError,
-	onClickAcceptForCancellationOffer,
 	onSubmit,
 	solution,
 	surveyStep,
@@ -303,6 +308,21 @@ function StepButtons( {
 
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
+	}
+
+	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
+		return (
+			<ButtonStack justify="flex-end">
+				<Button
+					disabled={ ! canGoNext || disableButtons }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+				>
+					{ __( 'Back to my purchases' ) }
+				</Button>
+			</ButtonStack>
+		);
 	}
 
 	if ( ! isLastStep ) {
@@ -351,7 +371,7 @@ function StepButtons( {
 
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return (
-			<ButtonStack justify="flex-start">
+			<ButtonStack justify="flex-end">
 				<Button
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
@@ -359,17 +379,6 @@ function StepButtons( {
 					variant="primary"
 				>
 					{ __( 'No, thanks' ) }
-				</Button>
-				<Button
-					className="jetpack-cancellation-offer__accept-cta"
-					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
-					isBusy={ isApplyingOffer ?? false }
-					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
-					} }
-					variant="primary"
-				>
-					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
 				</Button>
 			</ButtonStack>
 		);
@@ -451,7 +460,21 @@ function canGoToNextStep( {
 	return ! disableButtons && ! isSubmitting;
 }
 
-function getSurveyTitle( surveyStep: string ) {
+function getSurveyTitle( surveyStep: string, isAkismet: boolean ) {
+	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
+		return sprintf(
+			/* Translators: %(brand)s is either Akismet or Jetpack */
+			__(
+				'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
+			),
+			{
+				brand: isAkismet ? 'Akismet' : 'Jetpack',
+			}
+		);
+	}
+	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
+		return '';
+	}
 	if ( surveyStep === UPSELL_STEP ) {
 		return __( 'Here is an idea' );
 	}
@@ -463,7 +486,10 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader title={ getSurveyTitle( props.surveyStep ?? '' ) } level={ 3 } />
+				<SectionHeader
+					title={ getSurveyTitle( props.surveyStep ?? '', props.isAkismet ) }
+					level={ 3 }
+				/>
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>

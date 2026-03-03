@@ -1325,7 +1325,14 @@ export default function CancelPurchase() {
 			size="small"
 			header={
 				<PageHeader
-					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+					title={
+						<CancelHeaderTitle
+							flowType={ flowType }
+							purchase={ purchase }
+							surveyStep={ state.surveyStep }
+							isAkismet={ isAkismet }
+						/>
+					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
 				/>
 			}

@@ -2,12 +2,12 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import AkismetLogo from '../../../../../components/akismet-logo';
 import InlineSupportLink from '../../../../../components/inline-support-link';
-import { PageHeader } from '../../../../../components/page-header';
 import type { Purchase, CancellationOffer } from '@automattic/api-core';
 import type { FC } from 'react';
 
@@ -20,10 +20,22 @@ interface Props {
 	percentDiscount: number;
 	onGetCancellationOffer: () => void;
 	isAkismet?: boolean;
+	isApplyingOffer: boolean;
+	isSubmitting: boolean;
+	offerApplyError?: Error | null;
+	onClickAcceptForCancellationOffer?: () => void;
 }
 
 const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
-	const { offer, purchase, percentDiscount, isAkismet } = props;
+	const {
+		offer,
+		purchase,
+		percentDiscount,
+		isAkismet,
+		isApplyingOffer,
+		offerApplyError,
+		onClickAcceptForCancellationOffer,
+	} = props;
 	const { offerHeadline, renewalCopy } = useMemo( () => {
 		const periods = offer.discounted_periods;
 		const renewalPrice = formatCurrency( offer.raw_price, offer.currency_code );
@@ -158,26 +170,13 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 
 	return (
 		<>
-			<PageHeader
-				title={ __( 'Thanks for your feedback' ) }
-				description={ sprintf(
-					/* Translators: %(brand)s is either Akismet or Jetpack */
-					__(
-						'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
-					),
-					{
-						brand: isAkismet ? 'Akismet' : 'Jetpack',
-					}
-				) }
-			/>
-
 			<div className="jetpack-cancellation-offer__card">
 				{ isAkismet ? (
 					<AkismetLogo className="jetpack-cancellation-offer__logo" size={ { height: 36 } } />
 				) : (
 					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				) }
-				<p className="jetpack-cancellation-offer__headline">{ offerHeadline }</p>
+				<div className="jetpack-cancellation-offer__headline">{ offerHeadline }</div>
 				<p>
 					{ createInterpolateElement(
 						sprintf(
@@ -213,6 +212,17 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						}
 					) }
 				</p>
+				<Button
+					className="jetpack-cancellation-offer__accept-cta"
+					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
+					isBusy={ isApplyingOffer ?? false }
+					onClick={ () => {
+						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+					} }
+					variant="primary"
+				>
+					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+				</Button>
 			</div>
 		</>
 	);
