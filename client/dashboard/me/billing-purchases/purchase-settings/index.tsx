@@ -92,6 +92,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -181,7 +182,8 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.is_upgradable &&
 			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase )
+			! isJetpackTemporarySitePurchase( purchase ) &&
+			! isA4ABillingDragonPurchase( purchase )
 	);
 }
 
@@ -393,7 +395,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! isExpired( purchase ) ) {
+	if ( ! isExpired( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
 		return null;
 	}
 	return (
@@ -523,7 +525,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+export function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
