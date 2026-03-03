@@ -12,7 +12,7 @@ import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { Agency, ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useDetailsForm from '../agency-details/hooks/use-details-form';
@@ -123,7 +123,7 @@ const createMockApprovedAgency = (): Agency => ( {
 		status: 'early_access',
 	},
 	influenced_revenue: 10000,
-	approval_status: 'approved',
+	approval_status: ApprovalStatus.APPROVED,
 	created_at: '2024-01-01T00:00:00Z',
 } );
 

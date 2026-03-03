@@ -17,7 +17,7 @@ import {
 	isFetchingAgency,
 	hasFetchedAgency,
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { Agency, ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import AgencyDetailsForm from './agency-details';
 import AgencyExpertise from './agency-expertise';
 import {
@@ -127,7 +127,7 @@ const createMockApprovedAgency = (): Agency => ( {
 		status: 'early_access',
 	},
 	influenced_revenue: 10000,
-	approval_status: 'approved',
+	approval_status: ApprovalStatus.APPROVED,
 	created_at: '2024-01-01T00:00:00Z',
 } );
 

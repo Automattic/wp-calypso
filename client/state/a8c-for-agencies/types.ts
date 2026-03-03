@@ -86,6 +86,30 @@ export interface Agency {
 			feedback_url: string;
 			is_published?: boolean;
 		};
+		lead_matching_details?: {
+			regions: string[];
+			supports_global: boolean;
+			languages: string[];
+			business_types: string[];
+			other_business_type: string;
+			ideal_business_types: string[];
+			other_ideal_business_type: string;
+			company_sizes: string[];
+			hosting_environments: string[];
+			supports_hosting_recommendation: boolean;
+			migration_platforms: string[];
+			store_complexities: string[];
+			project_types: string[];
+			supports_quick_help: boolean;
+			service_levels: string[];
+			budget_levels: string[];
+			minimum_budget: string;
+			timing_preferences: string[];
+			supports_hard_deadlines: boolean;
+			decision_processes: string[];
+			ongoing_relationships: string[];
+			requires_maintenance: boolean;
+		};
 	};
 	partner_directory: {
 		allowed: boolean;

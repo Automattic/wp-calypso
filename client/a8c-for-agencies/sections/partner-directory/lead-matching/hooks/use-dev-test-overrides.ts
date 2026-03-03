@@ -91,7 +91,7 @@ const getTestFormData = ( completedCount: number ): LeadMatchingDetails => {
 
 	for ( let i = 0; i < Math.min( completedCount, fieldsToFill.length ); i++ ) {
 		const field = fieldsToFill[ i ];
-		( base as Record< string, unknown > )[ field ] = testValues[ field ];
+		( base as unknown as Record< string, unknown > )[ field ] = testValues[ field ];
 	}
 
 	return base;

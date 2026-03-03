@@ -281,14 +281,16 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						{ eligibilityState === 'in-progress' && (
 							<Stat
 								density="high"
-								strapline={ getProgressStrapline() }
-								metric={ translate( '%(completed)d of %(total)d', {
-									args: {
-										completed: completionStatus.completed,
-										total: completionStatus.total,
-									},
-								} ) }
-								description={ translate( 'sections complete' ) }
+								strapline={ getProgressStrapline() as string }
+								metric={ String(
+									translate( '%(completed)d of %(total)d', {
+										args: {
+											completed: completionStatus.completed,
+											total: completionStatus.total,
+										},
+									} )
+								) }
+								description={ translate( 'sections complete' ) as string }
 								progressValue={ ( completionStatus.completed / completionStatus.total ) * 100 }
 							/>
 						) }
