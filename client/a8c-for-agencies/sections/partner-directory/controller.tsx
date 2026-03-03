@@ -25,7 +25,9 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 		// Agency details - only if agency has directory approval
 		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] : [] ),
 		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
-		// Lead matching - always allow for now (TODO: add approval check before shipping)
+		// TODO: Lead matching is currently accessible to all agencies but should be gated
+		// to only select pilot agencies before public launch. Add a feature flag or
+		// agency-level permission check (e.g., agency.lead_matching_enabled) here.
 		PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 	];
 
