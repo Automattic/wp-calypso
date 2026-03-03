@@ -42,7 +42,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 .hero-modern__content {
 	flex: 1;
 	max-width: 700px;
-	padding-left: 24px;
+	padding: 0 24px;
 
 	@media ( min-width: $break-wide ) {
 		padding-left: 0;
