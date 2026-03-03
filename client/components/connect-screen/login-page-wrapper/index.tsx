@@ -29,6 +29,11 @@ function buildSecureRel( target?: string, rel?: string ): string | undefined {
 		return rel;
 	}
 
+	// Junior-dev note:
+	// Opening links in a new tab gives that new page a handle back to this window
+	// (`window.opener`) unless we explicitly prevent it. A malicious page could use
+	// that handle to navigate our tab to a phishing URL (tabnabbing).
+	// We always add both values so every _blank link is safe by default.
 	const relValues = new Set( ( rel ?? '' ).split( ' ' ).filter( Boolean ) );
 	relValues.add( 'noopener' );
 	relValues.add( 'noreferrer' );
