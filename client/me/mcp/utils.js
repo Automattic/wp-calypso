@@ -72,6 +72,74 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 	return true;
 }
 
+// localStorage key for prototype: persists per-site MCP overrides that the
+// API doesn't store (account_tools_enabled=true is the default and gets stripped).
+const MCP_ENABLED_SITES_KEY = 'mcp_enabled_site_ids';
+
+/**
+ * Get site IDs where MCP access is explicitly enabled at the site level
+ * (used when account-level MCP is off, to find per-site overrides)
+ * Falls back to localStorage for prototype purposes.
+ * @param {Object} userSettings - The user settings object
+ * @returns {number[]} Site IDs with account tools explicitly enabled
+ */
+export function getEnabledSiteIds( userSettings ) {
+	// Check API data first
+	const sites = userSettings?.sites || userSettings?.mcp_abilities?.sites || [];
+	const apiEnabled = sites
+		.filter( ( site ) => site.account_tools_enabled === true )
+		.map( ( site ) => site.blog_id );
+
+	// Merge with localStorage (prototype fallback)
+	let localEnabled = [];
+	try {
+		const stored = localStorage.getItem( MCP_ENABLED_SITES_KEY );
+		localEnabled = stored ? JSON.parse( stored ) : [];
+	} catch {}
+
+	return [ ...new Set( [ ...apiEnabled, ...localEnabled ] ) ];
+}
+
+/**
+ * Add a site ID to the localStorage-backed enabled list (prototype).
+ * @param {number} siteId
+ */
+export function addLocalEnabledSiteId( siteId ) {
+	try {
+		const stored = localStorage.getItem( MCP_ENABLED_SITES_KEY );
+		const current = stored ? JSON.parse( stored ) : [];
+		if ( ! current.includes( siteId ) ) {
+			current.push( siteId );
+			localStorage.setItem( MCP_ENABLED_SITES_KEY, JSON.stringify( current ) );
+		}
+	} catch {}
+}
+
+/**
+ * Clear all localStorage-backed enabled site IDs (prototype).
+ * Called when MCP is toggled on globally — individual overrides are no longer needed.
+ */
+export function clearLocalEnabledSiteIds() {
+	try {
+		localStorage.removeItem( MCP_ENABLED_SITES_KEY );
+	} catch {}
+}
+
+/**
+ * Remove a site ID from the localStorage-backed enabled list (prototype).
+ * @param {number} siteId
+ */
+export function removeLocalEnabledSiteId( siteId ) {
+	try {
+		const stored = localStorage.getItem( MCP_ENABLED_SITES_KEY );
+		const current = stored ? JSON.parse( stored ) : [];
+		localStorage.setItem(
+			MCP_ENABLED_SITES_KEY,
+			JSON.stringify( current.filter( ( id ) => id !== siteId ) )
+		);
+	} catch {}
+}
+
 /**
  * Get site IDs where MCP access is disabled at the site level
  * @param {Object} userSettings - The user settings object

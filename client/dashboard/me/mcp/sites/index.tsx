@@ -2,8 +2,14 @@ import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useRef } from 'react';
-import { getDisabledSiteIds } from '../../../../me/mcp/utils';
+import { useRef, useReducer } from 'react';
+import {
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	hasEnabledAccountTools,
+	addLocalEnabledSiteId,
+	removeLocalEnabledSiteId,
+} from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
 import { ActionList } from '../../../components/action-list';
@@ -24,13 +30,28 @@ export default function McpSites() {
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
+	const isGlobalOn = hasEnabledAccountTools( userSettings || {} );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-	const disabledSites = disabledSiteIds.map( ( siteId ) => {
-		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
-		const name = site ? getSiteDisplayName( site ) : `Site ID: ${ siteId }`;
-		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
-		return { id: siteId, name, domain };
-	} );
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+
+	const mapSiteIds = ( siteIds: number[] ) =>
+		siteIds.map( ( siteId ) => {
+			const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
+			const name = site ? getSiteDisplayName( site ) : `Site ID: ${ siteId }`;
+			const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
+			return { id: siteId, name, domain };
+		} );
+
+	const disabledSites = mapSiteIds( disabledSiteIds );
+	const enabledSites = mapSiteIds( enabledSiteIds );
+
+	// In "global on" mode: list disabled sites (exceptions). Search pool = non-disabled sites.
+	// In "global off" mode: list enabled sites (added). Search pool = non-enabled sites.
+	const listedSites = isGlobalOn ? disabledSites : enabledSites;
+	const excludedSiteIds = isGlobalOn ? disabledSiteIds : enabledSiteIds;
+
+	// Force re-render after localStorage writes (prototype).
+	const [ , forceUpdate ] = useReducer( ( x: number ) => x + 1, 0 );
 
 	// Track whether the last mutation was an "add" action (for spinner placement)
 	const isAddingRef = useRef( false );
@@ -45,9 +66,9 @@ export default function McpSites() {
 		},
 	} );
 
-	// ComboboxControl options — exclude already-excepted sites.
+	// ComboboxControl options — exclude already-listed sites.
 	const siteOptions = sites
-		.filter( ( site ) => ! disabledSiteIds.includes( site.ID ) )
+		.filter( ( site ) => ! excludedSiteIds.includes( site.ID ) )
 		.map( ( site ) => ( {
 			value: String( site.ID ),
 			label: getSiteDisplayName( site ),
@@ -65,23 +86,53 @@ export default function McpSites() {
 		if ( document.activeElement instanceof HTMLElement ) {
 			document.activeElement.blur();
 		}
-		// Immediately restrict this site.
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, account_tools_enabled: false } ],
-			},
-		} as any );
+		if ( isGlobalOn ) {
+			// Global on → disable (add exception) via API.
+			mutation.mutate( {
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, account_tools_enabled: false } ],
+				},
+			} as any );
+		} else {
+			// Global off → persist in localStorage (prototype).
+			addLocalEnabledSiteId( siteId );
+			forceUpdate();
+		}
 	};
 
 	const handleRemoveSite = ( siteId: number ) => {
 		isAddingRef.current = false;
-		// Re-enable AI access for this site.
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, account_tools_enabled: true } ],
-			},
-		} as any );
+		if ( isGlobalOn ) {
+			// Global on → re-enable (remove exception) via API.
+			mutation.mutate( {
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, account_tools_enabled: true } ],
+				},
+			} as any );
+		} else {
+			// Global off → remove from localStorage (prototype).
+			removeLocalEnabledSiteId( siteId );
+			forceUpdate();
+		}
 	};
+
+	// Page copy depends on mode
+	const pageTitle = isGlobalOn
+		? __( 'External AI access exceptions' )
+		: __( 'Add MCP to specific sites' );
+	const pageDescription = isGlobalOn
+		? __(
+				'External AI access is enabled on all your sites. Add exceptions for specific sites here.'
+		  )
+		: __( 'MCP access is disabled at the account level. Add it to individual sites here.' );
+	const searchTitle = isGlobalOn ? __( 'Add an exception' ) : __( 'Add a site' );
+	const searchDescription = isGlobalOn
+		? __( 'Search for sites to disable external AI access.' )
+		: __( 'Search for a site to enable MCP access.' );
+	const listTitle = isGlobalOn ? __( 'Restricted sites' ) : __( 'Enabled sites' );
+	const listDescription = isGlobalOn
+		? __( 'These sites will not have MCP access.' )
+		: __( 'These sites have MCP access enabled.' );
 
 	return (
 		<PageLayout
@@ -89,10 +140,8 @@ export default function McpSites() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'External AI access exceptions' ) }
-					description={ __(
-						'External AI access is enabled on all your sites. Add exceptions for specific sites here.'
-					) }
+					title={ pageTitle }
+					description={ pageDescription }
 				/>
 			}
 		>
@@ -102,8 +151,8 @@ export default function McpSites() {
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								level={ 3 }
-								title={ __( 'Add an exception' ) }
-								description={ __( 'Search for sites to disable external AI access.' ) }
+								title={ searchTitle }
+								description={ searchDescription }
 								actions={
 									mutation.isPending && isAddingRef.current ? (
 										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
@@ -123,16 +172,13 @@ export default function McpSites() {
 					</CardBody>
 				</Card>
 
-				{ disabledSites.length > 0 && (
+				{ listedSites.length > 0 && (
 					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Restricted sites' ) }
-							description={ __( 'These sites will not have MCP access.' ) }
-						/>
+						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
 						<ActionList>
-							{ disabledSites.map( ( site ) => {
+							{ listedSites.map( ( site ) => {
 								const fullSite = sites.find( ( s ) => s.ID === site.id );
+								const adminUrl = fullSite?.options?.admin_url;
 								return (
 									<ActionList.ActionItem
 										key={ site.id }
@@ -140,14 +186,27 @@ export default function McpSites() {
 										title={ site.name }
 										description={ site.domain }
 										actions={
-											<Button
-												variant="secondary"
-												size="compact"
-												disabled={ mutation.isPending }
-												onClick={ () => handleRemoveSite( site.id ) }
-											>
-												{ __( 'Remove' ) }
-											</Button>
+											<>
+												{ ! isGlobalOn && adminUrl && (
+													<Button
+														variant="tertiary"
+														size="compact"
+														href={ `${ adminUrl }admin.php?page=my-jetpack#/jetpack-ai` }
+														target="_blank"
+														rel="noreferrer noopener"
+													>
+														{ __( 'Manage' ) }
+													</Button>
+												) }
+												<Button
+													variant="secondary"
+													size="compact"
+													disabled={ mutation.isPending }
+													onClick={ () => handleRemoveSite( site.id ) }
+												>
+													{ __( 'Remove' ) }
+												</Button>
+											</>
 										}
 									/>
 								);

@@ -30,7 +30,12 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { getPermissionLevel } from '../../dashboard/me/mcp/categories';
-import { getAccountMcpAbilities, getDisabledSiteIds } from './utils';
+import {
+	getAccountMcpAbilities,
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	clearLocalEnabledSiteIds,
+} from './utils';
 
 // Big Sky star icon — paths from BigSkyLogo.CentralLogo (heartless variant)
 // without explicit fill attributes so CSS hover color changes work via `currentColor`.
@@ -82,6 +87,7 @@ function McpComponent( { path } ) {
 	const bigSkyIsInitialLoading = ! bigSkyHasAnyData && bigSkyIsFetching;
 
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
 
 	// Reauth state
 	const [ reauthRequired, setReauthRequired ] = useState( false );
@@ -193,6 +199,12 @@ function McpComponent( { path } ) {
 			return;
 		}
 		toggleAllRef.current = true;
+
+		// When enabling globally, clear any per-site localStorage overrides
+		// since MCP is now on for all sites.
+		if ( enabled ) {
+			clearLocalEnabledSiteIds();
+		}
 
 		// Only send tools that need to change state — reduces payload and
 		// number of API calls needed.
@@ -309,6 +321,18 @@ function McpComponent( { path } ) {
 							args: { count: bigSkyEnabledCount },
 					  } ),
 			intent: bigSkyEnabledCount === 0 ? 'default' : 'info',
+		},
+	];
+
+	const mcpEnabledSitesBadges = [
+		{
+			text:
+				enabledSiteIds.length === 0
+					? translate( 'No sites' )
+					: translate( '%(count)d sites', {
+							args: { count: enabledSiteIds.length },
+					  } ),
+			intent: enabledSiteIds.length === 0 ? 'default' : 'info',
 		},
 	];
 
@@ -463,6 +487,24 @@ function McpComponent( { path } ) {
 											title={ translate( 'Site exceptions' ) }
 											decoration={ <Icon icon={ notAllowed } /> }
 											badges={ sitesBadges }
+											density="medium"
+										/>
+									</li>
+								</ul>
+							</CardBody>
+						) }
+						{ hasTools && ! anyToolsEnabled && (
+							<CardBody
+								className="dashboard-summary-button-list__children-list-wrapper"
+								style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
+							>
+								<ul className="dashboard-summary-button-list__children-list">
+									<li className="dashboard-summary-button-list__children-list-item">
+										<SummaryButton
+											href="/me/mcp-sites"
+											title={ translate( 'Add to specific sites' ) }
+											decoration={ <Icon icon={ connection } /> }
+											badges={ mcpEnabledSitesBadges }
 											density="medium"
 										/>
 									</li>

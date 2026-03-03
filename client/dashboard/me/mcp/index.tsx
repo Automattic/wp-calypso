@@ -16,7 +16,12 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { connection, notAllowed, seen, pencil } from '@wordpress/icons';
 import { useRef } from 'react';
-import { getAccountMcpAbilities, getDisabledSiteIds } from '../../../me/mcp/utils';
+import {
+	getAccountMcpAbilities,
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	clearLocalEnabledSiteIds,
+} from '../../../me/mcp/utils';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { Card, CardBody, CardHeader } from '../../components/card';
@@ -87,6 +92,7 @@ function McpComponent() {
 	const bigSkyIsInitialLoading = ! bigSkyHasAnyData && bigSkyIsFetching;
 
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
 
 	// Bulk MCP toggle: sends all tool updates in a single API call.
 	const toggleAllRef = useRef( false );
@@ -179,6 +185,12 @@ function McpComponent() {
 			return;
 		}
 		toggleAllRef.current = true;
+
+		// When enabling globally, clear any per-site localStorage overrides
+		// since MCP is now on for all sites.
+		if ( enabled ) {
+			clearLocalEnabledSiteIds();
+		}
 
 		// Only send tools that need to change state — reduces payload and
 		// number of API calls needed.
@@ -279,6 +291,20 @@ function McpComponent() {
 							disabledSiteIds.length
 					  ),
 			intent: disabledSiteIds.length === 0 ? 'default' : 'warning',
+		},
+	];
+
+	const mcpEnabledSitesBadges: SummaryButtonBadgeProps[] = [
+		{
+			text:
+				enabledSiteIds.length === 0
+					? __( 'No sites' )
+					: sprintf(
+							/* translators: %d is number of sites with MCP enabled */
+							__( '%d sites' ),
+							enabledSiteIds.length
+					  ),
+			intent: enabledSiteIds.length === 0 ? 'default' : 'info',
 		},
 	];
 
@@ -456,6 +482,24 @@ function McpComponent() {
 										title={ __( 'Site exceptions' ) }
 										decoration={ <Icon icon={ notAllowed } /> }
 										badges={ sitesBadges }
+										density="medium"
+									/>
+								</li>
+							</ul>
+						</CardBody>
+					) }
+					{ hasTools && ! anyToolsEnabled && (
+						<CardBody
+							className="dashboard-summary-button-list__children-list-wrapper"
+							style={ mutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined }
+						>
+							<ul className="dashboard-summary-button-list__children-list">
+								<li className="dashboard-summary-button-list__children-list-item">
+									<RouterLinkSummaryButton
+										to="/me/preferences/ai-and-mcp/sites"
+										title={ __( 'Add to specific sites' ) }
+										decoration={ <Icon icon={ connection } /> }
+										badges={ mcpEnabledSitesBadges }
 										density="medium"
 									/>
 								</li>

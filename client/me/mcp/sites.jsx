@@ -6,7 +6,7 @@ import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useRef, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -19,7 +19,13 @@ import { Card, CardBody } from '../../dashboard/components/card';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import SiteIcon from '../../dashboard/components/site-icon';
 import SiteCombobox from '../../dashboard/me/mcp/site-combobox';
-import { getDisabledSiteIds } from './utils';
+import {
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	hasEnabledAccountTools,
+	addLocalEnabledSiteId,
+	removeLocalEnabledSiteId,
+} from './utils';
 
 import './style.scss';
 
@@ -35,14 +41,29 @@ export default function McpSites( { path } ) {
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
 
+	const isGlobalOn = hasEnabledAccountTools( userSettings || {} );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-	const disabledSites = disabledSiteIds.map( ( siteId ) => {
-		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
-		const name = site ? getSiteDisplayName( site ) : `Site ID: ${ siteId }`;
-		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
-		const iconUrl = site?.icon?.img || site?.icon?.ico || null;
-		return { id: siteId, name, domain, iconUrl };
-	} );
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+
+	const mapSiteIds = ( siteIds ) =>
+		siteIds.map( ( siteId ) => {
+			const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
+			const name = site ? getSiteDisplayName( site ) : `Site ID: ${ siteId }`;
+			const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
+			const iconUrl = site?.icon?.img || site?.icon?.ico || null;
+			return { id: siteId, name, domain, iconUrl };
+		} );
+
+	const disabledSites = mapSiteIds( disabledSiteIds );
+	const enabledSites = mapSiteIds( enabledSiteIds );
+
+	// In "global on" mode: list disabled sites (exceptions). Search pool = non-disabled sites.
+	// In "global off" mode: list enabled sites (added). Search pool = non-enabled sites.
+	const listedSites = isGlobalOn ? disabledSites : enabledSites;
+	const excludedSiteIds = isGlobalOn ? disabledSiteIds : enabledSiteIds;
+
+	// Force re-render after localStorage writes (prototype).
+	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 
 	// Track whether the last mutation was an "add" action (for spinner placement)
 	const isAddingRef = useRef( false );
@@ -64,9 +85,9 @@ export default function McpSites( { path } ) {
 		},
 	} );
 
-	// ComboboxControl options — exclude already-excepted sites.
+	// ComboboxControl options — exclude already-listed sites.
 	const siteOptions = sites
-		.filter( ( site ) => ! disabledSiteIds.includes( site.ID ) )
+		.filter( ( site ) => ! excludedSiteIds.includes( site.ID ) )
 		.map( ( site ) => ( {
 			value: String( site.ID ),
 			label: getSiteDisplayName( site ),
@@ -84,26 +105,53 @@ export default function McpSites( { path } ) {
 		if ( document.activeElement ) {
 			document.activeElement.blur();
 		}
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, account_tools_enabled: false } ],
-			},
-		} );
+		if ( isGlobalOn ) {
+			// Global on → disable (add exception) via API.
+			mutation.mutate( {
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, account_tools_enabled: false } ],
+				},
+			} );
+		} else {
+			// Global off → persist in localStorage (prototype).
+			addLocalEnabledSiteId( siteId );
+			forceUpdate();
+		}
 	};
 
 	const handleRemoveSite = ( siteId ) => {
 		isAddingRef.current = false;
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, account_tools_enabled: true } ],
-			},
-		} );
+		if ( isGlobalOn ) {
+			// Global on → re-enable (remove exception) via API.
+			mutation.mutate( {
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, account_tools_enabled: true } ],
+				},
+			} );
+		} else {
+			// Global off → remove from localStorage (prototype).
+			removeLocalEnabledSiteId( siteId );
+			forceUpdate();
+		}
 	};
+
+	// Page copy depends on mode
+	const pageTitle = isGlobalOn
+		? translate( 'External AI access exceptions' )
+		: translate( 'Add MCP to specific sites' );
+	const searchTitle = isGlobalOn ? translate( 'Add an exception' ) : translate( 'Add a site' );
+	const searchDescription = isGlobalOn
+		? translate( 'Search for sites to disable external AI access.' )
+		: translate( 'Search for a site to enable MCP access.' );
+	const listTitle = isGlobalOn ? translate( 'Restricted sites' ) : translate( 'Enabled sites' );
+	const listDescription = isGlobalOn
+		? translate( 'These sites will not have MCP access.' )
+		: translate( 'These sites have MCP access enabled.' );
 
 	return (
 		<Main wideLayout className="mcp-sites">
 			<PageViewTracker path={ path } title="MCP Sites" />
-			<DocumentHead title={ translate( 'External AI access exceptions' ) } />
+			<DocumentHead title={ pageTitle } />
 			<NavigationHeader
 				navigationItems={ [] }
 				title={ translate( 'AI and MCP' ) }
@@ -112,7 +160,7 @@ export default function McpSites( { path } ) {
 				) }
 			/>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
-				{ translate( 'External AI access exceptions' ) }
+				{ pageTitle }
 			</HeaderCake>
 			<VStack spacing={ 6 }>
 				<Card isRounded={ false } style={ { borderRadius: 0 } }>
@@ -120,8 +168,8 @@ export default function McpSites( { path } ) {
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								level={ 3 }
-								title={ translate( 'Add an exception' ) }
-								description={ translate( 'Search for sites to disable external AI access.' ) }
+								title={ searchTitle }
+								description={ searchDescription }
 								actions={
 									mutation.isPending && isAddingRef.current ? (
 										<Spinner style={ { width: 16, height: 16, margin: 0 } } />
@@ -141,19 +189,16 @@ export default function McpSites( { path } ) {
 					</CardBody>
 				</Card>
 
-				{ disabledSites.length > 0 && (
+				{ listedSites.length > 0 && (
 					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ translate( 'Restricted sites' ) }
-							description={ translate( 'These sites will not have MCP access.' ) }
-						/>
+						<SectionHeader level={ 3 } title={ listTitle } description={ listDescription } />
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="mcp-square-corners">
 							<style>{ '.mcp-square-corners .action-list { border-radius: 0; }' }</style>
 							<ActionList>
-								{ disabledSites.map( ( site ) => {
+								{ listedSites.map( ( site ) => {
 									const fullSite = sites.find( ( s ) => s.ID === site.id );
+									const adminUrl = fullSite?.options?.admin_url;
 									return (
 										<ActionList.ActionItem
 											key={ site.id }
@@ -163,14 +208,27 @@ export default function McpSites( { path } ) {
 											title={ site.name }
 											description={ site.domain }
 											actions={
-												<Button
-													variant="secondary"
-													size="compact"
-													disabled={ mutation.isPending }
-													onClick={ () => handleRemoveSite( site.id ) }
-												>
-													{ translate( 'Remove' ) }
-												</Button>
+												<>
+													{ ! isGlobalOn && adminUrl && (
+														<Button
+															variant="tertiary"
+															size="compact"
+															href={ `${ adminUrl }admin.php?page=my-jetpack#/jetpack-ai` }
+															target="_blank"
+															rel="noreferrer noopener"
+														>
+															{ translate( 'Manage' ) }
+														</Button>
+													) }
+													<Button
+														variant="secondary"
+														size="compact"
+														disabled={ mutation.isPending }
+														onClick={ () => handleRemoveSite( site.id ) }
+													>
+														{ translate( 'Remove' ) }
+													</Button>
+												</>
 											}
 										/>
 									);
