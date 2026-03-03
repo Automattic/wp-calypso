@@ -16,7 +16,6 @@ import {
 	siteDefensiveModeSettingsQuery,
 	siteDifmWebsiteContentQuery,
 	siteDomainsQuery,
-	domainsQuery,
 	siteJetpackModulesQuery,
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
@@ -608,12 +607,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
-	loader: async ( { params: { siteSlug } } ) => {
+	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),

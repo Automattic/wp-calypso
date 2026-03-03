@@ -1,5 +1,4 @@
 import { Domain, DomainSubtype, DomainSummary } from '@automattic/api-core';
-import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -15,6 +14,7 @@ import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useAppContext } from '../../app/context';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,9 +24,10 @@ import AddNewDomain from '../components/add-new-domain';
 import './styles.css';
 
 export default function ChooseDomain() {
+	const { queries } = useAppContext();
 	const router = useRouter();
 
-	const { data: allDomains, isLoading: isLoading } = useQuery( domainsQuery() );
+	const { data: allDomains, isLoading: isLoading } = useQuery( queries.domainsQuery() );
 	const eligibleDomains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
