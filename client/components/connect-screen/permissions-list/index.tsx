@@ -27,6 +27,14 @@ export interface PermissionsListProps {
 	getIconForPermission?: ( name: string ) => IconType | undefined;
 }
 
+function getSecureBlankRel( rel?: string ): string {
+	const relValues = new Set( ( rel ?? '' ).split( ' ' ).filter( Boolean ) );
+	relValues.add( 'noopener' );
+	relValues.add( 'noreferrer' );
+
+	return Array.from( relValues ).join( ' ' );
+}
+
 /**
  * Expandable permissions list with optional icons
  * @example
@@ -128,6 +136,7 @@ export function PermissionsList( {
 					variant="link"
 					href={ learnMoreUrl }
 					target="_blank"
+					rel={ getSecureBlankRel() }
 					className="connect-screen-permissions-list__learn-more"
 				>
 					{ learnMoreText }

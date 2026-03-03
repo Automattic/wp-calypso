@@ -24,6 +24,18 @@ export interface LoginPageWrapperLink {
 	target?: string;
 }
 
+function buildSecureRel( target?: string, rel?: string ): string | undefined {
+	if ( target !== '_blank' ) {
+		return rel;
+	}
+
+	const relValues = new Set( ( rel ?? '' ).split( ' ' ).filter( Boolean ) );
+	relValues.add( 'noopener' );
+	relValues.add( 'noreferrer' );
+
+	return Array.from( relValues ).join( ' ' );
+}
+
 export interface LoginPageWrapperBranding {
 	logo?: string | ReactNode;
 	logoAlt?: string;
@@ -205,6 +217,9 @@ export function LoginPageWrapper( {
 		branding?.topBarLogoHeight
 	);
 
+	const primaryNavRel = buildSecureRel( primaryNavLink?.target, primaryNavLink?.rel );
+	const secondaryNavRel = buildSecureRel( secondaryNavLink?.target, secondaryNavLink?.rel );
+
 	const renderedTermsNotice =
 		termsNotice ??
 		createInterpolateElement(
@@ -292,7 +307,7 @@ export function LoginPageWrapper( {
 									href={ addRedirectToQuery( secondaryNavLink.href, redirectTo ) }
 									onClick={ secondaryNavLink.onClick }
 									target={ secondaryNavLink.target }
-									rel={ secondaryNavLink.rel }
+									rel={ secondaryNavRel }
 								>
 									{ secondaryNavLink.label }
 								</a>
@@ -303,7 +318,7 @@ export function LoginPageWrapper( {
 									href={ addRedirectToQuery( primaryNavLink.href, redirectTo ) }
 									onClick={ primaryNavLink.onClick }
 									target={ primaryNavLink.target }
-									rel={ primaryNavLink.rel }
+									rel={ primaryNavRel }
 								>
 									{ primaryNavLink.label }
 								</a>
