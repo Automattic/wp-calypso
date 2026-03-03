@@ -10,11 +10,11 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { purchaseSettingsRoute } from '../../app/router/me';
+import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
@@ -30,42 +30,58 @@ type DisconnectFormData = {
 	domain: string;
 };
 
-function PurchasesWarning( { site, purchaseId }: { site: Site; purchaseId: number } ) {
+function PurchasesWarning( {
+	site,
+	activePurchaseIds,
+}: {
+	site: Site;
+	activePurchaseIds: number[];
+} ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasSinglePurchase = activePurchaseIds.length === 1;
+
+	const onLinkClick = () => {
+		recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_manage_purchases_click' );
+	};
+
+	const message = _n(
+		'This site has an active Jetpack subscription that will continue to be billed after disconnecting. <link>Manage subscription</link>.',
+		'This site has active Jetpack subscriptions that will continue to be billed after disconnecting. <link>Manage subscriptions</link>.',
+		activePurchaseIds.length
+	);
+
+	let link;
+	if ( hasSinglePurchase ) {
+		link = isDashboardBackport() ? (
+			<Button
+				variant="link"
+				href={ `/me/purchases/${ site.slug }/${ activePurchaseIds[ 0 ] }` }
+				onClick={ onLinkClick }
+			/>
+		) : (
+			<RouterLinkButton
+				variant="link"
+				to={ purchaseSettingsRoute.fullPath }
+				params={ { purchaseId: String( activePurchaseIds[ 0 ] ) } }
+				onClick={ onLinkClick }
+			/>
+		);
+	} else {
+		link = isDashboardBackport() ? (
+			<Button variant="link" href="/me/purchases" onClick={ onLinkClick } />
+		) : (
+			<RouterLinkButton
+				variant="link"
+				to={ purchasesRoute.fullPath }
+				search={ { site: site.ID } }
+				onClick={ onLinkClick }
+			/>
+		);
+	}
 
 	return (
 		<Notice variant="warning" density="medium">
-			<Text>
-				{ createInterpolateElement(
-					__(
-						'This site has an active Jetpack subscription that will continue to be billed after disconnecting. <link>Manage subscription</link>.'
-					),
-					{
-						link: isDashboardBackport() ? (
-							<Button
-								variant="link"
-								href={ `/me/purchases/${ site.slug }/${ purchaseId }` }
-								onClick={ () => {
-									recordTracksEvent(
-										'calypso_dashboard_site_disconnect_modal_manage_purchases_click'
-									);
-								} }
-							/>
-						) : (
-							<RouterLinkButton
-								variant="link"
-								to={ purchaseSettingsRoute.fullPath }
-								params={ { purchaseId: String( purchaseId ) } }
-								onClick={ () => {
-									recordTracksEvent(
-										'calypso_dashboard_site_disconnect_modal_manage_purchases_click'
-									);
-								} }
-							/>
-						),
-					}
-				) }
-			</Text>
+			<Text>{ createInterpolateElement( message, { link } ) }</Text>
 		</Notice>
 	);
 }
@@ -73,8 +89,8 @@ function PurchasesWarning( { site, purchaseId }: { site: Site; purchaseId: numbe
 function ContentConfirmDisconnect( {
 	site,
 	onClose,
-	activePurchaseId,
-}: ContentInfoProps & { activePurchaseId?: number } ) {
+	activePurchaseIds,
+}: ContentInfoProps & { activePurchaseIds: number[] } ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -124,7 +140,9 @@ function ContentConfirmDisconnect( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 6 }>
-				{ activePurchaseId && <PurchasesWarning site={ site } purchaseId={ activePurchaseId } /> }
+				{ activePurchaseIds.length > 0 && (
+					<PurchasesWarning site={ site } activePurchaseIds={ activePurchaseIds } />
+				) }
 				<Text as="p">
 					{ createInterpolateElement(
 						/* translators: <siteDomain />: site domain */
@@ -184,13 +202,15 @@ function ContentConfirmDisconnect( {
 }
 
 export default function JetpackSiteDisconnect( { site, onClose }: ContentInfoProps ) {
-	const { data: activePurchaseId, isLoading } = useQuery( {
+	const { data: activePurchaseIds, isLoading } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) =>
-			purchases.find(
-				( purchase ) =>
-					purchase.is_jetpack_plan_or_product && purchase.subscription_status === 'active'
-			)?.ID,
+			purchases
+				.filter(
+					( purchase ) =>
+						purchase.is_jetpack_plan_or_product && purchase.subscription_status === 'active'
+				)
+				.map( ( purchase ) => purchase.ID ),
 	} );
 
 	if ( isLoading ) {
@@ -201,7 +221,7 @@ export default function JetpackSiteDisconnect( { site, onClose }: ContentInfoPro
 		<ContentConfirmDisconnect
 			site={ site }
 			onClose={ onClose }
-			activePurchaseId={ activePurchaseId }
+			activePurchaseIds={ activePurchaseIds ?? [] }
 		/>
 	);
 }
