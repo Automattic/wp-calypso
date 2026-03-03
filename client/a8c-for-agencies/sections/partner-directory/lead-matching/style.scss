@@ -20,6 +20,10 @@
 	transition: box-shadow 0.15s ease-out;
 	background: var(--color-surface);
 
+	&.is-stuck {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+	}
+
 	.components-card__body {
 		width: 100%;
 	}

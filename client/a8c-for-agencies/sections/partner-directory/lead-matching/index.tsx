@@ -81,11 +81,13 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					cardRef.current.style.top = `${ containerRect.top }px`;
 					cardRef.current.style.left = `${ placeholderRect.left }px`;
 					cardRef.current.style.width = `${ placeholderRect.width }px`;
+					cardRef.current.classList.add( 'is-stuck' );
 				} else {
 					cardRef.current.style.position = '';
 					cardRef.current.style.top = '';
 					cardRef.current.style.left = '';
 					cardRef.current.style.width = '';
+					cardRef.current.classList.remove( 'is-stuck' );
 				}
 			} else if ( shouldStick ) {
 				// Update position while stuck (in case of resize)
