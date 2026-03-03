@@ -138,16 +138,6 @@ export default function useProductAndPlans( {
 			);
 		}
 
-		const pressableAddonProductIds = new Set(
-			filterProductsAndPlansByType( PRODUCT_TYPE_PRESSABLE_ADDON, filteredProductsAndBundles ).map(
-				( product ) => product.product_id
-			)
-		);
-
-		filteredProductsAndBundles = filteredProductsAndBundles.filter(
-			( product ) => ! pressableAddonProductIds.has( product.product_id )
-		);
-
 		// Filter products & plan that are already assigned to a site
 		if ( selectedSite && addedPlanAndProducts && filteredProductsAndBundles ) {
 			filteredProductsAndBundles = filteredProductsAndBundles.filter(
