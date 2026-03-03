@@ -145,6 +145,9 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
+	isThemeShowcaseModern = () =>
+		config.isEnabled( 'themes/showcase-modern' ) && ! this.props.isLoggedIn;
+
 	getStaticFilters() {
 		const { translate } = this.props;
 		return {
@@ -217,11 +220,16 @@ class ThemeShowcase extends Component {
 			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
 				return availableTiers;
 			}
+
+			const label = this.isThemeShowcaseModern()
+				? THEME_TIERS[ tier ].labelModern || THEME_TIERS[ tier ].label
+				: THEME_TIERS[ tier ].label;
+
 			return [
 				...availableTiers,
 				{
 					key: tier,
-					name: THEME_TIERS[ tier ].label,
+					name: label,
 				},
 			];
 		}, [] );
@@ -603,7 +611,6 @@ class ThemeShowcase extends Component {
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-		const isThemeShowcaseModern = config.isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
 		const staticFilters = this.getStaticFilters();
 
 		// Update the filters to accommodate updates/translations from the API.
@@ -690,7 +697,7 @@ class ThemeShowcase extends Component {
 									/>
 								</InView>
 							) }
-							{ isThemeShowcaseModern ? (
+							{ this.isThemeShowcaseModern() ? (
 								<FilterBarModern
 									categories={ Object.values( tabFilters ) }
 									selectedCategory={ this.getSelectedTabFilter().key }
