@@ -408,7 +408,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) || purchase.meta === 'is-a4a' ) {
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -578,7 +578,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) || purchase.meta === 'is-a4a' ) {
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
 			return null;
 		}
 
