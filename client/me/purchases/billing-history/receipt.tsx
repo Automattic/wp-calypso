@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -296,7 +297,15 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 					{
 						components: {
 							noPrint: <span className="receipt__no-print" />,
-							vatDetailsLink: <a href={ vatDetailsPath } />,
+							vatDetailsLink: (
+								<a
+									href={
+										config( 'env_id' ).includes( 'jetpack-cloud' )
+											? 'https://wordpress.com/me/purchases/vat-details'
+											: vatDetailsPath
+									}
+								/>
+							),
 							emailReceiptLink: (
 								<Button
 									plain
