@@ -2,6 +2,8 @@
 
 ## General
 
+Use US English spelling (e.g. "customize" not "customise", "color" not "colour").
+
 End sentences with a period. Even short ones. Button and form labels do not end in periods, and neither do headings.
 
 Use curly quotes and apostrophes.

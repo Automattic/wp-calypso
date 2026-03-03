@@ -5,7 +5,6 @@
 	.user-profile-header {
 		max-width: 768px;
 		margin: 0 auto;
-		padding: 0 16px;
 		overflow: hidden;
 
 		&::after {
@@ -17,7 +16,7 @@
 			padding: 0 0 24px;
 			align-items: center;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@media only screen and ( max-width: 1300px ) {
 				padding-top: 20px;
 			}
 		}
@@ -122,12 +121,6 @@
 					width: 40px;
 				}
 			}
-		}
-
-		.section-nav {
-			box-shadow: none;
-			border-bottom: 1px solid var( --color-border-subtle );
-			height: auto !important;
 		}
 
 		.section-nav-tab__link {

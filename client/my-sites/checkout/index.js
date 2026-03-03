@@ -17,6 +17,7 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
+	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -353,6 +354,19 @@ export default function () {
 		redirectLoggedOut,
 		siteSelection,
 		upsellRedirect,
+		makeLayout,
+		clientRender
+	);
+
+	// A renewal using only a subscription ID. The backend derives the product
+	// and site info from the subscription record. Must be registered before the
+	// generic two-segment /checkout/:product/:domainOrProduct route so "renew"
+	// is not treated as a product slug.
+	page(
+		'/checkout/renew/:subscriptionId',
+		redirectLoggedOut,
+		noSite,
+		checkoutRenewalBySubscriptionId,
 		makeLayout,
 		clientRender
 	);

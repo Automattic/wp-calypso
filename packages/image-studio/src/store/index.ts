@@ -26,11 +26,17 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success';
+export type NoticeType = 'error' | 'success' | 'warning';
+export interface NoticeAction {
+	label: string;
+	url: string;
+	openInNewTab?: boolean;
+}
 export interface Notice {
 	id: string;
 	content: string;
 	type: NoticeType;
+	actions?: NoticeAction[];
 }
 
 export enum ImageStudioEntryPoint {
@@ -244,7 +250,7 @@ type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
 
-type ImageStudioCloseCallback = ( image: ImageData ) => Promise< void > | void;
+type ImageStudioCloseCallback = ( image: ImageData | null ) => Promise< void > | void;
 
 type ImageStudioAction =
 	| OpenImageStudioAction
@@ -650,7 +656,11 @@ export interface ImageStudioActions {
 	) => Promise< SetLastSavedAttachmentIdAction >;
 	addSavedAttachmentId: ( attachmentId: number ) => Promise< AddSavedAttachmentIdAction >;
 	setIsExitConfirmed: ( value: boolean ) => Promise< SetIsExitConfirmedAction >;
-	addNotice: ( content: string, type: 'error' | 'success' ) => Promise< AddNoticeAction >;
+	addNotice: (
+		content: string,
+		type: NoticeType,
+		noticeActions?: NoticeAction[]
+	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
 		attachmentIds: number[],
@@ -797,7 +807,7 @@ const actions = {
 		};
 	},
 
-	addNotice( content: string, type: NoticeType ): AddNoticeAction {
+	addNotice( content: string, type: NoticeType, noticeActions?: NoticeAction[] ): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
 			payload: {
@@ -805,6 +815,9 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
+				...( noticeActions?.length && {
+					actions: noticeActions,
+				} ),
 			},
 		};
 	},
@@ -996,18 +1009,19 @@ const selectors = {
 			return false;
 		}
 
-		// If user hasn't explicitly saved yet (no checkpoint)
-		if ( state.lastSavedAttachmentId === null ) {
-			// When editing existing image: compare current with original
-			if ( state.originalAttachmentId !== null ) {
-				return state.imageStudioAttachmentId !== state.originalAttachmentId;
-			}
-			// When generating from scratch: any generated image is unsaved
-			return true;
+		// If the current image is the original, no unsaved changes (it's already in the library)
+		if ( state.imageStudioAttachmentId === state.originalAttachmentId ) {
+			return false;
 		}
 
-		// User has saved at least once: compare current with last checkpoint
-		return state.imageStudioAttachmentId !== state.lastSavedAttachmentId;
+		// If the current image has been explicitly saved, no unsaved changes
+		// This handles navigation between saved revisions correctly
+		if ( state.savedAttachmentIds.includes( state.imageStudioAttachmentId ) ) {
+			return false;
+		}
+
+		// Everything else is unsaved (drafts, newly generated images not yet saved)
+		return true;
 	},
 
 	getIsExitConfirmed( state: ImageStudioState ): boolean {

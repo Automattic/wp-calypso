@@ -843,7 +843,11 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-learn',
-		paths: [ '/learn', '/learn/resource-center' ],
+		paths: [
+			'/resources-and-tools',
+			'/resources-and-tools/learn',
+			'/resources-and-tools/dev-tools',
+		],
 		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',
 	},

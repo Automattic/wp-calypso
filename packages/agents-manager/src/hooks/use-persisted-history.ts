@@ -1,10 +1,9 @@
 import { AgentsManagerSelect } from '@automattic/data-stores';
-import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useLayoutEffect } from '@wordpress/element';
 import { Action, Location } from 'history';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AGENTS_MANAGER_STORE } from '../stores';
+import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
 
 export interface HistoryEvent {
 	action: Action;
@@ -14,7 +13,7 @@ export interface HistoryEvent {
 /**
  * This is a custom implementation of the MemoryHistory class from the history package.
  * It is used to persist the navigation history of the agents manager.
- * It persists the history to the server using user preferences.
+ * It persists the history to the server via `persistAgentsManagerState`.
  */
 class MemoryHistory {
 	private entries: Location[] = [];
@@ -119,27 +118,9 @@ class MemoryHistory {
 		const event = { action, location: this.location };
 		this.listeners.forEach( ( listener ) => listener( event ) );
 
-		if ( canAccessWpcomApis() ) {
-			wpcomRequest( {
-				path: '/agents-manager/state',
-				apiNamespace: 'wpcom/v2',
-				method: 'POST',
-				body: {
-					state: {
-						agents_manager_router_history: { entries: this.entries, index: this.index },
-					},
-				},
-			} ).catch( () => {} );
-		} else {
-			apiFetch( {
-				global: true,
-				path: '/agents-manager/open-state',
-				method: 'PUT',
-				data: {
-					agents_manager_router_history: { entries: this.entries, index: this.index },
-				},
-			} as Parameters< typeof apiFetch >[ 0 ] ).catch( () => {} );
-		}
+		persistAgentsManagerState( {
+			agents_manager_router_history: { entries: this.entries, index: this.index },
+		} );
 	}
 }
 

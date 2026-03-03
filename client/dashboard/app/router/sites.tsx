@@ -52,10 +52,8 @@ import {
 	canManageSite,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
-	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -88,25 +86,11 @@ export const sitesRoute = createRoute( {
 			startPerformanceTracking( 'dashboard-site-list', { fullPageLoad } );
 		}
 	},
-	loader: async ( { context } ) => {
-		const tasks: Promise< unknown >[] = [];
-
-		tasks.push( queryClient.ensureQueryData( isAutomatticianQuery() ) );
-		tasks.push( queryClient.ensureQueryData( rawUserPreferencesQuery() ) );
-
-		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-			tasks.push(
-				queryClient.ensureQueryData(
-					context.config.queries.sitesQuery( {
-						source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
-						site_visibility: 'visible',
-						include_a8c_owned: false,
-					} )
-				)
-			);
-		}
-
-		await Promise.all( tasks );
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } );
 
@@ -615,7 +599,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralDotcomSiteVisibility' },
 	head: () => ( {
 		meta: [
 			{
@@ -631,7 +615,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! canViewSiteVisibilitySettings( site ) ) {
+		if ( site.is_wpcom_flex ) {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},

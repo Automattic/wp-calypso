@@ -12,9 +12,12 @@ import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
+import { useDeletePermanently } from '../hooks/use-delete-permanently';
 import { useDraftCleanup } from '../hooks/use-draft-cleanup';
+import { useErrorNotice } from '../hooks/use-error-notice';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
+import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
 import { useImageUrl } from '../hooks/use-image-url';
@@ -22,14 +25,8 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
-import {
-	type ImageStudioConfig,
-	ImageStudioMode,
-	type ImageStudioProps,
-	ToolbarOption,
-} from '../types';
-import { defaultAgentConfigFactory, type AgentConfigFactory } from '../utils/agent-config';
-import { getSessionId } from '../utils/session';
+import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
+import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
@@ -83,8 +80,8 @@ function ImageStudioAgentChat( {
 
 	const placeholder =
 		mode === ImageStudioMode.Edit
-			? __( 'Describe what you want to add, remove, or replace…', 'big-sky' )
-			: __( 'Describe your image', 'big-sky' );
+			? __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ )
+			: __( 'Describe your image', __i18n_text_domain__ );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
 		useImageStudioSuggestions( {
@@ -110,7 +107,7 @@ function ImageStudioAgentChat( {
 					attachmentId,
 				} );
 
-				addNotice( __( 'Failed to send message.', 'big-sky' ), 'error' );
+				addNotice( __( 'Failed to send message.', __i18n_text_domain__ ), 'error' );
 
 				// Abort if onChatSubmit errors
 				return;
@@ -140,24 +137,21 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
-	useEffect( () => {
-		if ( ! agentError ) {
-			return;
-		}
-		const errorMessage =
-			( agentError as unknown as Error )?.message ||
-			String( agentError ) ||
-			__( 'An error occurred while generating content.', 'big-sky' );
-		addNotice( errorMessage, 'error' );
-	}, [ agentError, addNotice ] );
+	useErrorNotice( agentError, addNotice );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	const handleStop = isAnnotationSaving ? undefined : agentChatProps.abortCurrentRequest;
+	// Detect upload phase from progress message since useAgentChat doesn't expose currentPhase.
+	// The server sends a progress message containing "Uploading" during the upload phase.
+	const isUploadPhase =
+		agentChatProps.progressMessage?.toLowerCase().includes( 'uploading' ) ?? false;
+
+	// Disable input during upload phase or annotation saving to prevent orphan images
+	const isStopDisabled = isUploadPhase || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
-			<ThinkingMessage content={ __( 'Generating suggestions…', 'big-sky' ) } />
+			<ThinkingMessage content={ __( 'Generating suggestions…', __i18n_text_domain__ ) } />
 		</div>
 	) : (
 		<AgentUI.Suggestions />
@@ -171,7 +165,7 @@ function ImageStudioAgentChat( {
 			placeholder={ placeholder }
 			className="image-studio-agent agenttic"
 			onSubmit={ handleSubmit }
-			onStop={ handleStop }
+			onStop={ agentChatProps.abortCurrentRequest }
 			isProcessing={ isProcessing }
 			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
 			inputValue={ inputValue }
@@ -183,10 +177,10 @@ function ImageStudioAgentChat( {
 				<AgentUI.Footer>
 					{ suggestionsComponent }
 					<AgentUI.Notice />
-					<AgentUI.Input />
+					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
-						<StylePicker disabled={ isProcessing } />
+						<StylePicker disabled={ isProcessing } mode={ mode } />
 					</div>
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
@@ -195,31 +189,22 @@ function ImageStudioAgentChat( {
 }
 
 const ImageStudioAgentUIComponent = ( {
-	config,
+	agentConfig,
+	attachmentId,
 	modalOpenKey,
 	onChatSubmit,
 	mode,
-	agentConfigFactory = defaultAgentConfigFactory,
 }: {
-	config: ImageStudioConfig;
+	agentConfig: any;
+	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
-	agentConfigFactory?: AgentConfigFactory;
 } ) => {
-	const attachmentId = config?.attachmentId;
-	const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
-
-	if ( ! agentConfigState ) {
-		return (
-			<div className="image-studio-agent-loading">{ __( 'Loading AI assistant…', 'big-sky' ) }</div>
-		);
-	}
-
 	return (
 		<ImageStudioAgentChat
 			key={ `agentchat-${ modalOpenKey || 'default' }` }
-			agentConfig={ agentConfigState }
+			agentConfig={ agentConfig }
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
@@ -279,9 +264,6 @@ const ImageStudioContent = withInstanceId(
 
 		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-		// Get session ID (persistent across sessions)
-		const sessionId = getSessionId();
-
 		const {
 			handleAnnotationDone,
 			hasAnnotations,
@@ -292,11 +274,19 @@ const ImageStudioContent = withInstanceId(
 			originalImageUrl,
 		} );
 
+		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
+
 		const [ isPromptSent, setIsPromptSent ] = useState( false );
 		const [ activeToolbarOption, setActiveToolbarOption ] = useState< ToolbarOption | null >(
 			null
 		);
 		const [ isSaving, setIsSaving ] = useState( false );
+		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
+			authProvider: agentConfigState?.authProvider,
+			sessionId: agentConfigState?.sessionId,
+			displayImageUrl,
+			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
+		} );
 
 		// Track the last modal key to detect when modal reopens
 		const lastModalOpenKey = useRef< number | undefined >();
@@ -352,13 +342,12 @@ const ImageStudioContent = withInstanceId(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ activeToolbarOption ] );
 
-		// Wrapped save handler that shows success message
-		const handleSaveWithNotification = useCallback( async () => {
+		// Wrapped save handler that shows a success notification
+		const handleSave = useCallback( async () => {
 			setIsSaving( true );
 			try {
 				await onSave();
-				// Show success message via notice system
-				addNotice( __( 'Image saved to Media Library', 'big-sky' ), 'success' );
+				addNotice( __( 'Image saved to Media Library', __i18n_text_domain__ ), 'success' );
 			} finally {
 				setIsSaving( false );
 			}
@@ -368,7 +357,9 @@ const ImageStudioContent = withInstanceId(
 		const isMediumUp = useMediaQuery( '(min-width: 768px)' );
 
 		const imageAltText =
-			config?.imageData?.alt || config?.imageData?.title || __( 'Image being edited', 'big-sky' );
+			config?.imageData?.alt ||
+			config?.imageData?.title ||
+			__( 'Image being edited', __i18n_text_domain__ );
 
 		const imageUrl = useImageUrl( originalImageUrl );
 		const finalDisplayUrl = displayImageUrl || imageUrl;
@@ -380,8 +371,8 @@ const ImageStudioContent = withInstanceId(
 		const isSaveEnabled = ! isAiProcessing && hasUnsavedChanges;
 
 		const handleSaveShortcut = useCallback( () => {
-			onSave();
-		}, [ onSave ] );
+			handleSave();
+		}, [ handleSave ] );
 
 		useSaveShortcut( handleSaveShortcut, isSaveEnabled );
 		useBeforeUnload();
@@ -389,6 +380,7 @@ const ImageStudioContent = withInstanceId(
 		const {
 			isConfirmDialogOpen,
 			isExiting,
+			setIsExiting,
 			handleRequestClose,
 			handleConfirmSave,
 			handleConfirmDiscard,
@@ -403,6 +395,12 @@ const ImageStudioContent = withInstanceId(
 		const { deleteDraftsExcept } = useDraftCleanup();
 		const { handleRevertToOriginal, canRevert } = useRevertToOriginal( {
 			deleteDraftsExcept,
+		} );
+
+		// Delete permanently functionality
+		const { handleDeletePermanently, canDeletePermanently } = useDeletePermanently( {
+			onExit,
+			setIsExiting,
 		} );
 
 		const mode: ImageStudioMode = memoizedConfig?.attachmentId
@@ -456,12 +454,13 @@ const ImageStudioContent = withInstanceId(
 			<CanvasControls
 				imageUrl={ finalDisplayUrl }
 				attachmentId={ attachmentId }
-				sessionId={ sessionId }
 				mode={ mode }
 				showFeedbackButtons={ showFeedbackButtons }
 				showImageActionsMenu={ showImageActionsMenu }
-				onSave={ handleSaveWithNotification }
+				onSave={ handleSave }
 				onRevertToOriginal={ handleRevertToOriginal }
+				onFeedback={ handleFeedback }
+				onSubmitFeedbackText={ handleSubmitFeedbackText }
 			/>
 		) : null;
 
@@ -473,7 +472,7 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={ __( 'Image Studio', 'big-sky' ) }
+					aria-label={ __( 'Image Studio', __i18n_text_domain__ ) }
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -481,7 +480,7 @@ const ImageStudioContent = withInstanceId(
 							mode={ mode }
 							isSaveable={ ! isAiProcessing && hasUnsavedChanges }
 							isSaving={ isSaving }
-							onSave={ handleSaveWithNotification }
+							onSave={ handleSave }
 							setActiveToolbarOption={ setActiveToolbarOption }
 							activeToolbarOption={ activeToolbarOption }
 							onAnnotationUndo={ handleAnnotationUndo }
@@ -518,13 +517,19 @@ const ImageStudioContent = withInstanceId(
 
 						<Footer
 							chatComponent={
-								<ImageStudioAgentUI
-									config={ memoizedConfig }
-									modalOpenKey={ modalOpenKey }
-									onChatSubmit={ handleChatSubmit }
-									mode={ mode }
-									agentConfigFactory={ agentConfigFactory }
-								/>
+								agentConfigState ? (
+									<ImageStudioAgentUI
+										agentConfig={ agentConfigState }
+										attachmentId={ attachmentId ?? undefined }
+										modalOpenKey={ modalOpenKey }
+										onChatSubmit={ handleChatSubmit }
+										mode={ mode }
+									/>
+								) : (
+									<div className="image-studio-agent-loading">
+										{ __( 'Loading AI assistant…', 'big-sky' ) }
+									</div>
+								)
 							}
 						></Footer>
 					</div>
@@ -540,7 +545,11 @@ const ImageStudioContent = withInstanceId(
 									exit={ { width: 0 } }
 									className="image-studio-modal__sidebar-inner"
 								>
-									<ImageStudioAltTextSidebar onClose={ () => setActiveToolbarOption( null ) } />
+									<ImageStudioAltTextSidebar
+										onClose={ () => setActiveToolbarOption( null ) }
+										onDeletePermanently={ handleDeletePermanently }
+										canDeletePermanently={ canDeletePermanently }
+									/>
 								</motion.div>
 							) }
 						</AnimatePresence>
@@ -559,23 +568,23 @@ const ImageStudioContent = withInstanceId(
 				{ isConfirmDialogOpen && (
 					<ConfirmationDialog
 						isOpen={ isConfirmDialogOpen }
-						title={ __( 'Unsaved changes', 'big-sky' ) }
+						title={ __( 'Unsaved changes', __i18n_text_domain__ ) }
 						actions={ [
 							{
-								text: __( 'Discard', 'big-sky' ),
+								text: __( 'Discard', __i18n_text_domain__ ),
 								onClick: handleConfirmDiscard,
 								variant: 'secondary',
 								isDestructive: true,
 							},
 							{
-								text: __( 'Save', 'big-sky' ),
+								text: __( 'Save', __i18n_text_domain__ ),
 								onClick: handleConfirmSave,
 								variant: 'primary',
 							},
 						] }
 						onClose={ handleConfirmCancel }
 					>
-						{ __( 'Do you want to save this image?', 'big-sky' ) }
+						{ __( 'Do you want to save this image?', __i18n_text_domain__ ) }
 					</ConfirmationDialog>
 				) }
 			</>

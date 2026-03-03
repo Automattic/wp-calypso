@@ -1,184 +1,52 @@
 # @automattic/image-studio
 
-AI-powered image editing and generation for WordPress. Provides a full-screen editor experience for generating new images and editing existing ones using AI.
+AI-powered image editing and generation for WordPress. Two modes: **Edit** (modify existing images) and **Generate** (create new images via AI).
 
-## Installation
+Part of the `wp-calypso` monorepo. Bundled inside `@automattic/agents-manager` and served from `widgets.wp.com`.
 
-```bash
-yarn add @automattic/image-studio
-```
-
-## Usage
-
-### Basic Integration
-
-Initialize Image Studio on a WordPress admin page:
-
-```tsx
-import { initImageStudioIntegration, registerBlockEditorFilters } from '@automattic/image-studio';
-
-// Initialize when DOM is ready
-if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', initImageStudioIntegration );
-} else {
-	initImageStudioIntegration();
-}
-
-// Register block editor integrations (toolbar buttons, etc.)
-registerBlockEditorFilters();
-```
-
-### Provider Integration (Agents Manager)
-
-For use with `@automattic/agents-manager`, import the provider exports:
-
-```tsx
-import { toolProvider, contextProvider } from '@automattic/image-studio/provider';
-
-// These can be registered with the agents manager
-```
-
-### Using the Store
-
-Image Studio exposes a WordPress data store for state management:
-
-```tsx
-import { useDispatch, useSelect } from '@wordpress/data';
-
-function MyComponent() {
-	const { setImageStudioOpen } = useDispatch( 'image-studio' );
-	const isOpen = useSelect( ( select ) => select( 'image-studio' ).getIsImageStudioOpen() );
-
-	return <button onClick={ () => setImageStudioOpen( true ) }>Open Image Studio</button>;
-}
-```
-
-## Testing
-
-### Unit Tests
-
-Run the unit tests with Jest:
-
-```bash
-# From wp-calypso root
-yarn workspace @automattic/image-studio test
-
-# Or from the package directory
-cd packages/image-studio
-yarn test
-```
-
-Test files are located alongside their source files with `.test.ts` or `.test.tsx` extensions.
-
-### Manual Testing
-
-**Step 1 — Build the package:**
-
-```bash
-yarn workspace @automattic/image-studio build
-```
-
-**Step 2 — Test on a WordPress site:**
-
-- Navigate to Media Library: `/wp-admin/upload.php?flags=image-studio-calypso`
-- Click on any image to open Image Studio in Edit mode
-- Or click "Generate" to create new images
-
-**Step 3 — Test in Block Editor:**
-
-- Open the post/page editor
-- Add an Image block
-- Select the image and look for the Image Studio toolbar button
-
-### E2E Testing
-
-For end-to-end testing with Playwright:
-
-```bash
-# From wp-calypso root
-yarn workspace @automattic/calypso-e2e test --grep "image-studio"
-```
-
-## Deployment
-
-### Development Build
-
-```bash
-# Build the package
-yarn workspace @automattic/image-studio build
-
-# Watch for changes during development
-yarn workspace @automattic/image-studio watch
-```
-
-### Production Deployment
-
-Image Studio is deployed as part of the `agents-manager` bundle to `widgets.wp.com`:
-
-**Build agents-manager app:**
-
-```bash
-yarn workspace @automattic/agents-manager build
-```
-
-**The bundle is deployed to:**
-
-- `https://widgets.wp.com/agents-manager/image-studio.min.js`
-- `https://widgets.wp.com/agents-manager/image-studio.css`
-
-**PHP enqueues the scripts** in `jetpack-mu-wpcom` when on an Image Studio screen:
-
-- Media Library (`upload.php`)
-- Block Editor (when editing images)
-- External Media modal
-
-### Feature Flags
-
-| Flag                   | Description                                                |
-| ---------------------- | ---------------------------------------------------------- |
-| `image-studio-calypso` | Enables Image Studio from Calypso (without Big Sky plugin) |
-
-Use via URL: `?flags=image-studio-calypso`
-
-## Development
-
-### Commands
-
-```bash
-# Build the package (ESM + CJS)
-yarn build
-
-# Watch for changes
-yarn watch
-
-# Clean build output
-yarn clean
-
-# Lint
-yarn lint
-
-# Type check
-yarn tsc --noEmit
-```
-
-### Project Structure
+## Project Structure
 
 ```
 src/
 ├── index.tsx              # Main exports and initialization
-├── store/                 # WordPress data store
+├── store/                 # WordPress data store (single file)
 ├── components/            # React components
-│   ├── image-studio/      # Main Image Studio UI
 │   ├── annotation-canvas/ # Drawing/annotation tools
-│   ├── canvas-controls/   # Image manipulation controls
-│   └── style-picker/      # Style selection UI
-├── hooks/                 # Custom React hooks
-├── abilities/             # WordPress Abilities API integrations
-├── extensions/            # Block editor filters
+│   ├── aspect-ratio-picker/ # Aspect ratio selection
+│   ├── canvas/            # Image display
+│   ├── canvas-controls/   # Revision navigator
+│   ├── confirmation-dialog/ # Unsaved changes prompt
+│   ├── edit-layout/       # Edit mode container
+│   ├── footer/            # Agent chat UI
+│   ├── generate-layout/   # Generate mode container
+│   ├── header/            # Toolbar, save, navigation
+│   ├── image-feedback-buttons/ # Thumbs up/down
+│   ├── sidebar/           # Metadata editing, file details
+│   ├── style-picker/      # Style selection UI
+│   └── styles/            # Shared SCSS variables and mixins
+├── hooks/                 # Custom React hooks (feature logic)
+├── abilities/             # WordPress Abilities API handlers
+├── extensions/            # Block editor filter registrations
 ├── provider/              # Exports for agents-manager integration
-├── types/                 # TypeScript types
+├── types/                 # TypeScript type definitions
 └── utils/                 # Utility functions
 ```
+
+## How It Works
+
+Image Studio does not run standalone. The loading chain:
+
+1. **Jetpack plugin** (PHP) — enqueues the `agents-manager` script on relevant WordPress admin screens (Media Library, Block Editor, External Media modal)
+2. **`agents-manager`** (JS bundle on `widgets.wp.com`) — imports and initializes Image Studio, calls `initImageStudioIntegration()` and `registerBlockEditorFilters()`
+3. **Image Studio** — injects UI entry points ("Edit with AI" buttons, "Generate Image" link) and renders the full-screen modal when triggered
+
+Image Studio and the block editor run in **separate bundles**. They communicate through a shared WordPress data store (`src/store/index.ts`) — no direct component access between bundles.
+
+### Key Integration Points
+
+- **Abilities API** (`src/abilities/`) — `image-studio/update-canvas-image` for AI agent integration
+- **Block Editor filters** (`src/extensions/`) — toolbar buttons, generate placeholder, external media
+- **Provider exports** (`src/provider/`) — `toolProvider` and `contextProvider` for `agents-manager`
 
 ### Key Exports
 
@@ -198,36 +66,57 @@ export {
 } from '@automattic/image-studio/provider';
 ```
 
-## Architecture
+## Development
 
-### Store
+### Commands
 
-The `image-studio` store manages:
+```bash
+# Build the package (ESM + CJS)
+yarn build
 
-- Current image state (URL, attachment ID, metadata)
-- UI state (open/closed, mode, dialogs)
-- Draft management (temporary images during editing)
-- Undo/redo history
+# Watch for changes
+yarn watch
 
-### Abilities
+# Clean build output
+yarn clean
 
-Image Studio registers WordPress Abilities for AI agent integration:
+# Lint
+yarn lint
 
-- `image-studio/update-canvas-image` - Update the displayed image
+# Unit tests (from repo root)
+yarn jest packages/image-studio --config packages/image-studio/jest.config.js
 
-### Block Editor Integration
+# Type check
+yarn workspace @automattic/image-studio tsc --build --dry
+```
 
-Filters registered for Gutenberg:
+Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
-- Image block toolbar button
-- Generate button in image placeholder
-- External media integration
+### Manual Testing
 
-## Related Documentation
+No local dev server. Image Studio requires a sandbox on `widgets.wp.com`:
 
-- [NOT_IMPLEMENTED.md](./NOT_IMPLEMENTED.md) - Features not yet migrated
-- [Migration Plan](/.claude/plans/kind-crunching-manatee.md) - Original migration plan
-- [@automattic/agents-manager](../agents-manager/README.md) - Parent integration package
+```bash
+# 1. Add `widgets.wp.com` to your etc/hosts pointing to sandbox IP
+# 2. Build and sync (from repo root)
+cd apps/agents-manager && yarn dev --sync
+```
+
+Then on the sandboxed site:
+
+- **Media Library** (`/wp-admin/upload.php`): Click any image → "Edit with AI", or click "Generate Image"
+- **Block Editor**: Add an Image block → "Generate" in placeholder, or select an existing image → "Edit with AI" in toolbar
+
+For comprehensive UI test cases, see [.agents/skills/ui-testing/SKILL.md](.agents/skills/ui-testing/SKILL.md).
+
+### Deployment
+
+Deployed as part of the `agents-manager` bundle to `widgets.wp.com`. PHP in `jetpack-plugin` enqueues scripts on Media Library, Block Editor, and External Media screens.
+
+## Related
+
+- [AGENTS.md](AGENTS.md) — Critical patterns, conventions, and pitfalls for AI agents
+- [@automattic/agents-manager](../agents-manager/README.md) — Parent integration package
 
 ## License
 

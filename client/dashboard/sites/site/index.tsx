@@ -1,6 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
+import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Suspense, useMemo, lazy } from 'react';
@@ -12,7 +12,7 @@ import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
-import { canSwitchEnvironment } from '../features';
+import { canManageSite, canSwitchEnvironment } from '../features';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 
@@ -24,6 +24,10 @@ function Site() {
 
 	if ( isError ) {
 		throw error;
+	}
+
+	if ( ! canManageSite( site ) ) {
+		throw notFound();
 	}
 
 	return (

@@ -8,5 +8,10 @@ export function getSiteDisplayName( site: Site ) {
 	if ( status === 'migration_pending' || status === 'migration_started' ) {
 		return __( 'Incoming Migration' );
 	}
+
+	if ( site.options?.is_redirect ) {
+		return site.slug;
+	}
+
 	return site.name || getSiteDisplayUrl( site );
 }

@@ -10,6 +10,7 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: string[];
 			useUnifiedExperience?: boolean;
+			helpCenterUrl?: string;
 	  }
 	| undefined;
 
@@ -52,7 +53,11 @@ interface AgentsManagerActions {
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
 	setChatCompactMode: ( isCompact: boolean ) => void;
+	setChatDesktopMediaQuery: ( query: string ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
+	isCompactMode?: boolean;
+	isChatEnabled?: boolean;
+	desktopMediaQuery?: string;
 }
 
 /**

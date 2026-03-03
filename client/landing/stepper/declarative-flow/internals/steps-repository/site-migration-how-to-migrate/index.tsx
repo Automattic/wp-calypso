@@ -1,5 +1,5 @@
-import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
 import { NextButton, Step } from '@automattic/onboarding';
+import { canInstallPlugins } from '@automattic/sites';
 import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -46,13 +46,9 @@ const SiteMigrationHowToMigrate: StepType< {
 	);
 
 	const handleClick = async ( value: string ) => {
-		const canInstallPlugins = site?.plan?.features?.active.find(
-			( feature ) => feature === 'install-plugins'
-		)
-			? true
-			: false;
+		const siteCanInstallPlugins = canInstallPlugins( site );
 
-		const destination = canInstallPlugins ? 'migrate' : 'upgrade';
+		const destination = siteCanInstallPlugins ? 'migrate' : 'upgrade';
 
 		if ( navigation.submit ) {
 			return navigation.submit( { how: value, destination } );
@@ -65,29 +61,14 @@ const SiteMigrationHowToMigrate: StepType< {
 	}, [ cancelMigration, navigation ] );
 
 	const renderSubHeaderText = () => {
-		const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
-		const isBusinessPlan = site?.plan?.product_slug
-			? isWpComBusinessPlan( site?.plan?.product_slug )
-			: false;
+		const siteCanInstallPlugins = canInstallPlugins( site );
 
-		return isBusinessPlan
-			? // translators: %(planName)s is the name of the Business plan.
-			  translate(
-					"Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it's included in your %(planName)s plan.",
-					{
-						args: {
-							planName,
-						},
-					}
+		return siteCanInstallPlugins
+			? translate(
+					"Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it's included in your plan."
 			  )
-			: // translators: %% is the percentage symbol, please leave it as is. %(planName)s is the name of the Business plan.
-			  translate(
-					'Skip the migration hassle. Our team handles everything without disrupting your current site, plus you get 50%% off our annual %(planName)s plan.',
-					{
-						args: {
-							planName,
-						},
-					}
+			: translate(
+					'Skip the migration hassle. Our team handles everything without disrupting your current site.'
 			  );
 	};
 

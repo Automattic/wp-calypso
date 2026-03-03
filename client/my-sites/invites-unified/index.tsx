@@ -2,7 +2,9 @@ import page from '@automattic/calypso-router';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
-import type { Invite } from './types';
+import AlreadyMemberScreen from './screens/already-member-screen';
+import { isAlreadyMemberError } from './utils';
+import type { Invite, InviteBlogDetails, InviteError } from './types';
 
 /**
  * Build the legacy invite path for fallback redirects
@@ -24,7 +26,8 @@ interface UnifiedInviteAcceptProps {
 	inviteKey: string;
 	activationKey?: string;
 	authKey?: string;
-	inviteData: Record< string, unknown >;
+	inviteData?: Record< string, unknown >;
+	inviteError?: InviteError;
 }
 
 export function UnifiedInviteAccept( {
@@ -33,6 +36,7 @@ export function UnifiedInviteAccept( {
 	activationKey,
 	authKey,
 	inviteData,
+	inviteError,
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -40,6 +44,12 @@ export function UnifiedInviteAccept( {
 	if ( ! isLoggedIn ) {
 		page.redirect( buildLegacyPath( siteId, inviteKey, activationKey, authKey ) );
 		return null;
+	}
+
+	// Already a member → show already-member screen
+	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
+		const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
+		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
 	}
 
 	const invite = { ...inviteData, inviteKey, activationKey } as Invite;

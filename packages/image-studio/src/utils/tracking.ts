@@ -11,7 +11,44 @@ import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store'
 import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
-const TRACKS_PREFIX = 'jetpack_big_sky';
+const TRACKS_PREFIX_MAP: Record< ImageStudioPlatform, string > = {
+	wpcom: 'wpcom',
+	jetpack: 'jetpack',
+};
+
+export type ImageStudioPlatform = 'wpcom' | 'jetpack';
+
+// Cached platform value — doesn't change during a session
+let cachedPlatform: ImageStudioPlatform | null = null;
+
+/**
+ * Detect the current product where Image Studio is running.
+ * - 'wpcom': Big Sky plugin is active (WP.com AI Assistant)
+ * - 'jetpack': Loaded via Agents Manager / Jetpack (Jetpack AI Assistant)
+ * Result is cached since platform doesn't change during a session.
+ * @returns The detected platform identifier
+ */
+export function detectPlatform(): ImageStudioPlatform {
+	if ( cachedPlatform ) {
+		return cachedPlatform;
+	}
+
+	// Big Sky plugin sets this global when active
+	if ( window.bigSkyInitialState ) {
+		cachedPlatform = 'wpcom';
+	} else {
+		cachedPlatform = 'jetpack';
+	}
+
+	return cachedPlatform;
+}
+
+/**
+ * Reset the cached platform value. Exported for testing only.
+ */
+export function resetPlatformCache(): void {
+	cachedPlatform = null;
+}
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -42,7 +79,7 @@ function getImageStudioEntryPoint(): string | null {
 }
 
 /**
- * Record a tracks event with the Big Sky prefix
+ * Record a tracks event with a platform-specific prefix
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
  */
@@ -50,7 +87,8 @@ function recordTracksEvent(
 	eventName: string,
 	properties: Record< string, string | number | boolean > = {}
 ): void {
-	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, properties );
+	const prefix = TRACKS_PREFIX_MAP[ detectPlatform() ];
+	recordTracksEventBase( `${ prefix }_${ eventName }`, properties );
 }
 
 /**
@@ -65,7 +103,7 @@ function recordImageStudioEvent(
 	const entryPoint = getImageStudioEntryPoint();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
-		sessionId: getSessionId(),
+		sessionid: getSessionId(),
 	};
 
 	if ( entryPoint ) {
@@ -147,6 +185,7 @@ interface TrackImageStudioErrorOptions {
 		| 'preparation_failed'
 		| 'draft_cleanup_failed'
 		| 'draft_cleanup_permission_denied'
+		| 'delete_permanently_failed'
 		| 'other';
 	attachmentId?: number;
 }
@@ -472,4 +511,69 @@ export function trackImageStudioFileNavigated( {
 		attachment_id: attachmentId,
 		direction,
 	} );
+}
+
+interface TrackImageStudioStyleSelectedOptions {
+	style: string;
+	mode: ImageStudioMode;
+}
+
+/**
+ * Tracks when a user selects a style in Image Studio
+ *
+ * @param {Object} options       - Tracking options
+ * @param {string} options.style - The selected style value
+ * @param {string} options.mode  - 'edit' or 'generate'
+ */
+export function trackImageStudioStyleSelected( {
+	style,
+	mode,
+}: TrackImageStudioStyleSelectedOptions ): void {
+	recordImageStudioEvent( 'image_studio_style_selected', {
+		style,
+		mode,
+	} );
+}
+
+interface TrackImageStudioAspectRatioSelectedOptions {
+	aspectRatio: string;
+	mode: ImageStudioMode;
+}
+
+/**
+ * Tracks when a user selects an aspect ratio in Image Studio
+ *
+ * @param {Object} options             - Tracking options
+ * @param {string} options.aspectRatio - The selected aspect ratio value
+ * @param {string} options.mode        - 'edit' or 'generate'
+ */
+export function trackImageStudioAspectRatioSelected( {
+	aspectRatio,
+	mode,
+}: TrackImageStudioAspectRatioSelectedOptions ): void {
+	recordImageStudioEvent( 'image_studio_aspect_ratio_selected', {
+		aspect_ratio: aspectRatio,
+		mode,
+	} );
+}
+
+/**
+ * Tracks when an image is permanently deleted from Image Studio
+ *
+ * @param {Object} options                - Tracking options
+ * @param {number} [options.attachmentId] - Attachment ID of the deleted image
+ * @param {string} options.mode           - 'edit' or 'generate'
+ */
+export function trackImageStudioImageDeletedPermanently( {
+	attachmentId,
+	mode,
+}: {
+	attachmentId?: number;
+	mode: string;
+} ): void {
+	const properties: Record< string, number | string > = { mode };
+	if ( attachmentId ) {
+		properties.attachment_id = attachmentId;
+	}
+	recordImageStudioEvent( 'image_studio_file_deleted_permanently', properties );
 }

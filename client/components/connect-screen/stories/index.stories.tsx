@@ -2,10 +2,24 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { CIAB_PARTNERS } from 'calypso/lib/partner-branding';
+import {
+	AppleLoginButton,
+	GithubSocialButton,
+	GoogleSocialButton,
+	MagicLoginButton,
+	PayPalSocialButton,
+	QrCodeLoginButton,
+	UsernameOrEmailButton,
+} from '../../social-buttons';
 import { ActionButtons } from '../action-buttons';
 import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
+import { LoginPageWrapper } from '../login-page-wrapper';
 import { PermissionsList } from '../permissions-list';
 import { ScreenLayout } from '../screen-layout';
 import { UserCard } from '../user-card';
@@ -23,6 +37,73 @@ const VariantSection = ( { title, children }: { title: string; children: React.R
 		{ children }
 	</div>
 );
+
+const socialButtonsStore = createStore( () => ( {
+	login: {
+		isFormDisabled: false,
+	},
+	route: {
+		query: {
+			initial: {},
+			current: {},
+		},
+	},
+	ui: {
+		route: {
+			path: {
+				currentRoute: '/log-in',
+			},
+		},
+	},
+	language: {
+		locale: 'en',
+	},
+	signup: {
+		flow: {
+			currentFlowName: null,
+		},
+	},
+	oauth2Clients: {
+		ui: {
+			currentClientId: null,
+		},
+	},
+} ) );
+
+const SocialButtonsPanel = () => (
+	<Provider store={ socialButtonsStore }>
+		<div className="auth-form__social is-login is-social-first">
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					<UsernameOrEmailButton onClick={ () => {} } />
+					<GoogleSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
+					<AppleLoginButton
+						responseHandler={ () => {} }
+						onClick={ () => {} }
+						socialServiceResponse={ {} }
+						isLogin
+					/>
+					<GithubSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
+					<PayPalSocialButton responseHandler={ () => {} } onClick={ () => {} } isLogin />
+					<MagicLoginButton loginUrl="https://wordpress.com/log-in/link" />
+					<QrCodeLoginButton loginUrl="https://wordpress.com/log-in/link" />
+				</div>
+			</div>
+		</div>
+	</Provider>
+);
+
+const LoginPageWrapperControlledInputStory = () => {
+	const [ usernameOrEmail, setUsernameOrEmail ] = useState( 'demo-user' );
+
+	return (
+		<LoginPageWrapper
+			title="Log in to your account"
+			usernameOrEmail={ usernameOrEmail }
+			onUsernameOrEmailChange={ setUsernameOrEmail }
+		/>
+	);
+};
 
 // Mock data
 const mockUser = {
@@ -226,6 +307,86 @@ export const LoadingScreenVariants: StoryObj< typeof LoadingScreen > = {
 			</VariantSection>
 		</div>
 	),
+};
+
+// LoginPageWrapper - All variants
+export const LoginPageWrapperVariants: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+		/>
+	),
+};
+
+export const LoginPageWrapperPartnerBranded: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to Woo"
+			branding={ {
+				logo: CIAB_PARTNERS.woo.logo.src,
+				logoAlt: CIAB_PARTNERS.woo.logo.alt,
+				logoWidth: CIAB_PARTNERS.woo.logo.width,
+				logoHeight: CIAB_PARTNERS.woo.logo.height,
+				topBarLogo: CIAB_PARTNERS.woo.compactLogo?.src,
+				topBarLogoAlt: CIAB_PARTNERS.woo.compactLogo?.alt,
+				topBarLogoWidth: CIAB_PARTNERS.woo.compactLogo?.width,
+				topBarLogoHeight: CIAB_PARTNERS.woo.compactLogo?.height,
+			} }
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks' } }
+		/>
+	),
+};
+
+export const LoginPageWrapperWithRedirectTo: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			redirectTo="https://wordpress.com/home/example.wordpress.com"
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			secondaryNavLink={ { label: 'No thanks', href: '/no-thanks?source=login' } }
+		/>
+	),
+};
+
+export const LoginPageWrapperLoading: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			isLoading
+			loadingMessage="Loading account details..."
+		/>
+	),
+};
+
+export const LoginPageWrapperSocialTwoColumn: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			socialButtons={ <SocialButtonsPanel /> }
+		/>
+	),
+};
+
+export const LoginPageWrapperSocialTwoColumnMobile: StoryObj< typeof LoginPageWrapper > = {
+	render: () => (
+		<LoginPageWrapper
+			title="Log in to your account"
+			primaryNavLink={ { label: 'Create an account', href: '/start/account' } }
+			socialButtons={ <SocialButtonsPanel /> }
+		/>
+	),
+	parameters: {
+		viewport: {
+			defaultViewport: 'mobile1',
+		},
+	},
+};
+
+export const LoginPageWrapperControlledInput: StoryObj< typeof LoginPageWrapper > = {
+	render: () => <LoginPageWrapperControlledInputStory />,
 };
 
 // Full Example - Combined Components

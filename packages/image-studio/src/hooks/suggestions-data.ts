@@ -8,18 +8,18 @@ import { ImageStudioMode } from '../types';
 export const EDIT_SUGGESTIONS: Suggestion[] = [
 	{
 		id: 'enhance-image',
-		label: __( 'Enhance image', 'big-sky' ),
+		label: __( 'Enhance image', __i18n_text_domain__ ),
 		prompt: __(
 			'Enhance this image with balanced lighting, sharpness, and color while keeping it natural',
-			'big-sky'
+			__i18n_text_domain__
 		),
 	},
 	{
 		id: 'brighten-image',
-		label: __( 'Brighten image', 'big-sky' ),
+		label: __( 'Brighten image', __i18n_text_domain__ ),
 		prompt: __(
 			'Increase the overall brightness of this image while keeping it natural',
-			'big-sky'
+			__i18n_text_domain__
 		),
 	},
 ];
@@ -30,21 +30,21 @@ export const EDIT_SUGGESTIONS: Suggestion[] = [
 export const DEFAULT_GENERATE_SUGGESTIONS: Suggestion[] = [
 	{
 		id: 'generate-image-a',
-		label: __( 'Cozy cafe scene', 'big-sky' ),
+		label: __( 'Cozy cafe scene', __i18n_text_domain__ ),
 		prompt: __(
 			'A warm and inviting cafe scene with coffee, pastries, and natural lighting',
-			'big-sky'
+			__i18n_text_domain__
 		),
 	},
 	{
 		id: 'generate-image-b',
-		label: __( 'Mountain landscape', 'big-sky' ),
-		prompt: __( 'A serene mountain landscape at sunrise with misty valleys', 'big-sky' ),
+		label: __( 'Mountain landscape', __i18n_text_domain__ ),
+		prompt: __( 'A serene mountain landscape at sunrise with misty valleys', __i18n_text_domain__ ),
 	},
 	{
 		id: 'generate-image-c',
-		label: __( 'Professional workspace', 'big-sky' ),
-		prompt: __( 'A professional workspace scene with natural lighting', 'big-sky' ),
+		label: __( 'Professional workspace', __i18n_text_domain__ ),
+		prompt: __( 'A professional workspace scene with natural lighting', __i18n_text_domain__ ),
 	},
 ];
 
@@ -54,23 +54,26 @@ export const DEFAULT_GENERATE_SUGGESTIONS: Suggestion[] = [
 export const ANNOTATION_SUGGESTIONS: Suggestion[] = [
 	{
 		id: 'replace-annotated',
-		label: __( 'Replace this', 'big-sky' ),
-		prompt: __( 'Replace only the region marked by the blue annotation with:', 'big-sky' ),
+		label: __( 'Replace this', __i18n_text_domain__ ),
+		prompt: __(
+			'Replace only the region marked by the blue annotation with:',
+			__i18n_text_domain__
+		),
 	},
 	{
 		id: 'remove-annotated',
-		label: __( 'Remove this', 'big-sky' ),
+		label: __( 'Remove this', __i18n_text_domain__ ),
 		prompt: __(
 			'Remove only the region marked by the blue annotation. Do not change anything else',
-			'big-sky'
+			__i18n_text_domain__
 		),
 	},
 	{
 		id: 'enhance-annotated',
-		label: __( 'Enhance this', 'big-sky' ),
+		label: __( 'Enhance this', __i18n_text_domain__ ),
 		prompt: __(
 			'Enhance only the region marked by the blue annotation. Preserve everything else unchanged.',
-			'big-sky'
+			__i18n_text_domain__
 		),
 	},
 ];
@@ -104,7 +107,7 @@ export interface SuggestionResult {
 function createAnnotateSuggestion( onAnnotate: () => void ): Suggestion {
 	return {
 		id: 'annotate-image',
-		label: __( 'Draw annotation', 'big-sky' ),
+		label: __( 'Draw annotation', __i18n_text_domain__ ),
 		action: () => {
 			onAnnotate();
 			return true;
