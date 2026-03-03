@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
-import { RailcarRenderer } from './railcar-renderer';
 
 interface UnsubscribedFeedsSearchListProps {
 	title?: React.ReactNode;
@@ -90,17 +89,15 @@ export const UnsubscribedFeedsSearchList = ( props: UnsubscribedFeedsSearchListP
 			{ title }
 			<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
 				{ filteredUnsubscribedFeedItems?.map( ( feed, index ) => (
-					<RailcarRenderer
+					<ReaderFeedItem
 						key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 						feed={ feed }
-						uiPosition={ index }
-					>
-						<ReaderFeedItem
-							feed={ feed }
-							source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
-							shouldHideOnSubscribedState
-						/>
-					</RailcarRenderer>
+						source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
+						railcarExtra={ {
+							uiPosition: index,
+						} }
+						shouldHideOnSubscribedState
+					/>
 				) ) }
 			</VStack>
 		</VStack>
