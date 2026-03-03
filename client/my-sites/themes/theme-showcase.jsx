@@ -150,6 +150,7 @@ class ThemeShowcase extends Component {
 
 	getStaticFilters() {
 		const { translate } = this.props;
+		const isThemeShowcaseModern = this.isThemeShowcaseModern();
 		return {
 			MYTHEMES: {
 				key: STATIC_FILTERS.MYTHEMES,
@@ -160,7 +161,7 @@ class ThemeShowcase extends Component {
 			RECOMMENDED: {
 				key: STATIC_FILTERS.RECOMMENDED,
 				get text() {
-					return translate( 'Recommended' );
+					return isThemeShowcaseModern ? translate( 'Discover' ) : translate( 'Recommended' );
 				},
 			},
 			ALL: {
