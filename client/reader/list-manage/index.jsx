@@ -143,7 +143,7 @@ function ReaderListEdit( props ) {
 				{ ! list && <Card>{ translate( 'Loading…' ) }</Card> }
 				{ list && (
 					<>
-						<SectionNav>
+						<SectionNav variation="minimal">
 							<NavTabs>
 								<NavItem
 									selected={ selectedSection === 'details' }

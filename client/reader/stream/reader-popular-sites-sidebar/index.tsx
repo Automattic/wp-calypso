@@ -60,9 +60,9 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 		.map( ( item ): ReaderPopularSite | null => getPopularSiteFromItem( item ) )
 		.filter( ( site ): site is ReaderPopularSite => site !== null );
 
-	const popularSitesLinks: JSX.Element[] = sites.map( ( site ) => (
+	const popularSitesLinks: JSX.Element[] = sites.map( ( site, index ) => (
 		<ConnectedReaderSubscriptionListItem
-			key={ site.feed_ID }
+			key={ site.feed_ID ?? `popular-site-${ index }` }
 			feedId={ site.feed_ID }
 			siteId={ site.blog_ID }
 			site={ site }

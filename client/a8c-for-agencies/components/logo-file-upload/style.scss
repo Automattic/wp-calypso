@@ -1,0 +1,47 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.logo-file-upload {
+	width: 100%;
+}
+
+.logo-file-upload-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 134px;
+	height: 134px;
+	min-width: 134px;
+	min-height: 134px;
+	padding: 0;
+	border: 1px dashed var( --color-neutral-20 );
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+	cursor: pointer;
+	box-shadow: none;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+
+	&:hover {
+		border-color: var( --color-neutral-40 );
+		background: var( --color-neutral-5 );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 2px;
+	}
+}
+
+.logo-file-upload-preview {
+	max-width: 132px;
+	max-height: 132px;
+	object-fit: contain;
+}
+
+.logo-file-upload-icon {
+	color: var( --color-neutral-40 );
+}
+
+p.logo-file-upload-error {
+	color: var( --color-error );
+}
