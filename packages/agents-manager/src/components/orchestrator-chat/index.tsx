@@ -222,7 +222,6 @@ export default function OrchestratorChat( {
 					'.agenttic .Textarea-module_textarea'
 				);
 				if ( textarea ) {
-					textarea.value = inputValue;
 					textarea.focus();
 					textarea.setSelectionRange( inputValue.length, inputValue.length );
 				}
