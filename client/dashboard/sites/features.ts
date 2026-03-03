@@ -65,9 +65,7 @@ export function canLeaveSite( site: Site ) {
 }
 
 export function canDisconnectSite( site: Site ) {
-	return (
-		! site.is_deleted && site.capabilities?.manage_options && isSelfHostedJetpackConnected( site )
-	);
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
 }
 
 export function canResetSite( site: Site ) {

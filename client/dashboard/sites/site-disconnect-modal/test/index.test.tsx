@@ -6,7 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import SiteDisconnectModal from '../index';
+import ContentInfo from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {
@@ -32,14 +32,14 @@ function mockDisconnect() {
 		.reply( 200, {} );
 }
 
-const renderModal = ( onClose = jest.fn() ) =>
-	render( <SiteDisconnectModal site={ site } onClose={ onClose } /> );
+const renderContent = ( onClose = jest.fn() ) =>
+	render( <ContentInfo site={ site } onClose={ onClose } /> );
 
-describe( '<SiteDisconnectModal>', () => {
+describe( '<ContentInfo> (disconnect)', () => {
 	test( 'disconnect button is disabled until the correct domain is typed', async () => {
 		const user = userEvent.setup();
 		mockPurchases();
-		renderModal();
+		renderContent();
 
 		const button = await screen.findByRole( 'button', { name: 'Disconnect site' } );
 		expect( button ).toBeDisabled();
@@ -66,7 +66,7 @@ describe( '<SiteDisconnectModal>', () => {
 				subscription_status: 'active',
 			},
 		] );
-		renderModal();
+		renderContent();
 
 		expect(
 			await screen.findByText( /You have active subscriptions associated with this site/ )
@@ -75,7 +75,7 @@ describe( '<SiteDisconnectModal>', () => {
 
 	test( 'does not show purchase warning when site has no Jetpack purchases', async () => {
 		mockPurchases();
-		renderModal();
+		renderContent();
 
 		await screen.findByRole( 'button', { name: 'Disconnect site' } );
 		expect( screen.queryByText( /You have active subscriptions/ ) ).not.toBeInTheDocument();
@@ -87,7 +87,7 @@ describe( '<SiteDisconnectModal>', () => {
 		mockPurchases();
 		const scope = mockDisconnect();
 
-		renderModal( onClose );
+		renderContent( onClose );
 
 		await screen.findByRole( 'button', { name: 'Disconnect site' } );
 		await user.type(
