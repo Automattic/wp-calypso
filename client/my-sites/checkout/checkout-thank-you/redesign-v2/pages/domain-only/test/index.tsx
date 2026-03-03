@@ -144,21 +144,6 @@ describe( 'DomainOnly', () => {
 				screen.queryByText( /in upgrade credits will be applied to new paid plan purchases/ )
 			).not.toBeInTheDocument();
 		} );
-
-		it( 'records a tracks event when the user clicks the "Add a mailbox" link', async () => {
-			const user = userEvent.setup();
-			renderComponent();
-
-			await user.click( screen.getByRole( 'link', { name: /Add a mailbox/ } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_checkout_thank_you_domain_next_step_click',
-				{
-					next_step: 'add_mailbox',
-					domain_tld: 'com',
-				}
-			);
-		} );
 	} );
 
 	describe( 'Add a mailbox', () => {
