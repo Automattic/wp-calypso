@@ -18,6 +18,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -434,7 +435,7 @@ const PodcastingDetails = () => {
 			<DocumentHead title={ translate( 'Podcasting' ) } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Podcasting' ) }
+				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
 				subtitle={ translate(
 					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{

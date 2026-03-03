@@ -21,11 +21,6 @@ export type AddSitesFormProps = {
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
 };
 
-type SubscriptionError = {
-	error?: string;
-	message?: string;
-};
-
 const AddSitesForm = ( {
 	placeholder,
 	buttonText,
@@ -99,7 +94,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
@@ -144,7 +139,7 @@ const AddSitesForm = ( {
 				<Button
 					variant="primary"
 					className="button subscriptions-add-sites__save-button"
-					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					disabled={ ! inputValue || ! isValidInput || subscribing }
 					isBusy={ isSubmitting }
 					type="submit"
 					__next40pxDefaultSize

@@ -1,5 +1,6 @@
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, external } from '@wordpress/icons';
 import { store as imageStudioStore } from '../../store';
@@ -8,6 +9,7 @@ import {
 	trackImageStudioMetadataUpdated,
 	trackImageStudioSidebarClose,
 } from '../../utils/tracking';
+import { ConfirmationDialog } from '../confirmation-dialog';
 import { EditableField } from './editable-field';
 import { FileDetails } from './file-details';
 import './style.scss';
@@ -43,9 +45,22 @@ export function ImageStudioSidebar( { onClose, title, children }: ImageStudioSid
 
 interface ImageStudioAltTextSidebarProps {
 	onClose: () => void;
+	onDeletePermanently?: () => Promise< void >;
+	canDeletePermanently?: boolean;
 }
 
-export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSidebarProps ) {
+export function ImageStudioAltTextSidebar( {
+	onClose,
+	onDeletePermanently,
+	canDeletePermanently,
+}: ImageStudioAltTextSidebarProps ) {
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+
+	let deletePermanentlyDisabledTooltip: string | undefined;
+	if ( ! canDeletePermanently ) {
+		deletePermanentlyDisabledTooltip = __( 'Save or discard your changes', 'big-sky' );
+	}
+
 	const attachmentId = useSelect(
 		( select ) => select( imageStudioStore ).getImageStudioAttachmentId(),
 		[]
@@ -128,6 +143,53 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				</a>
 			</p>
 			{ attachmentId && <FileDetails attachmentId={ attachmentId } /> }
+			{ onDeletePermanently && (
+				<>
+					<Button
+						variant="link"
+						isDestructive
+						disabled={ ! canDeletePermanently }
+						label={ deletePermanentlyDisabledTooltip || __( 'Delete permanently', 'big-sky' ) }
+						showTooltip
+						accessibleWhenDisabled={ !! deletePermanentlyDisabledTooltip }
+						onClick={ () => setIsDeleteDialogOpen( true ) }
+					>
+						{ __( 'Delete permanently', 'big-sky' ) }
+					</Button>
+					{ isDeleteDialogOpen && (
+						<ConfirmationDialog
+							isOpen={ isDeleteDialogOpen }
+							onClose={ () => setIsDeleteDialogOpen( false ) }
+							title={ __( 'Delete this item', 'big-sky' ) }
+							actions={ [
+								{
+									text: __( 'Cancel', 'big-sky' ),
+									onClick: () => setIsDeleteDialogOpen( false ),
+									variant: 'secondary',
+								},
+								{
+									text: __( 'Delete permanently', 'big-sky' ),
+									onClick: async () => {
+										// Close dialog first to prevent interaction during deletion
+										// The exit overlay will appear once deletion starts
+										setIsDeleteDialogOpen( false );
+										// Note: Don't set state after this - onDeletePermanently
+										// triggers onExit() which unmounts this component
+										await onDeletePermanently();
+									},
+									variant: 'primary',
+									isDestructive: true,
+								},
+							] }
+						>
+							{ __(
+								'You are about to permanently delete this item from your site. This action cannot be undone.',
+								'big-sky'
+							) }
+						</ConfirmationDialog>
+					) }
+				</>
+			) }
 		</ImageStudioSidebar>
 	);
 }

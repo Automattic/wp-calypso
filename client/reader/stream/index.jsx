@@ -93,6 +93,7 @@ class ReaderStream extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
 		isLoggedIn: PropTypes.bool,
+		wideLayout: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -109,6 +110,7 @@ class ReaderStream extends Component {
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 		isLoggedIn: false,
+		wideLayout: false,
 	};
 
 	state = {
@@ -686,7 +688,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = emptyBody;
 			}
@@ -730,7 +732,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = (
 					<>
@@ -792,7 +794,7 @@ class ReaderStream extends Component {
 		}
 
 		return (
-			<TopLevel className={ baseClassnames }>
+			<TopLevel className={ baseClassnames } wideLayout={ this.props.wideLayout }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
