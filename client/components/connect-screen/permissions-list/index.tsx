@@ -28,7 +28,6 @@ export interface PermissionsListProps {
 }
 
 function getSecureBlankRel( rel?: string ): string {
-	// Junior-dev note:
 	// This helper is a guardrail for links that open in a new tab.
 	// `noopener` blocks access to `window.opener`, and `noreferrer` also avoids
 	// sending referrer information. Keeping this in one helper prevents accidental
