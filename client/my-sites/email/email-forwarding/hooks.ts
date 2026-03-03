@@ -47,9 +47,11 @@ export function useResend( { mailbox }: { mailbox: Mailbox } ) {
 }
 
 export function useEdit( { mailbox }: { mailbox: Mailbox } ) {
-	const { mutateAsync: updateEmailForward } = useUpdateEmailForwardMutation( mailbox.domain );
+	const { mutateAsync: updateEmailForward, isPending } = useUpdateEmailForwardMutation(
+		mailbox.domain
+	);
 
-	return useCallback(
+	const edit = useCallback(
 		( mailboxName: string, domain: string, destination: string, newDestination: string ) => {
 			recordTracksEvent( 'calypso_email_management_email_forwarding_edit_click', {
 				destination,
@@ -67,4 +69,6 @@ export function useEdit( { mailbox }: { mailbox: Mailbox } ) {
 		},
 		[ updateEmailForward ]
 	);
+
+	return { edit, isPending };
 }

@@ -24,7 +24,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 	const [ isEditOpen, setIsEditOpen ] = useState( false );
 	const remove = useRemove( { mailbox } );
 	const resend = useResend( { mailbox } );
-	const edit = useEdit( { mailbox } );
+	const { edit, isPending: isEditPending } = useEdit( { mailbox } );
 	const translate = useTranslate();
 
 	const currentDestination = getEmailForwardAddress( mailbox );
@@ -91,6 +91,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 					mailbox={ mailbox }
 					currentDestination={ currentDestination }
 					onEdit={ edit }
+					isPending={ isEditPending }
 					onClose={ () => setIsEditOpen( false ) }
 				/>
 			) }
@@ -107,6 +108,7 @@ function EditModal( {
 	mailbox,
 	currentDestination,
 	onEdit,
+	isPending,
 	onClose,
 }: {
 	mailbox: Mailbox;
@@ -117,23 +119,18 @@ function EditModal( {
 		destination: string,
 		newDestination: string
 	) => Promise< unknown >;
+	isPending: boolean;
 	onClose: () => void;
 } ) {
 	const translate = useTranslate();
 	const [ newDestination, setNewDestination ] = useState( currentDestination );
-	const [ isSaving, setIsSaving ] = useState( false );
 
 	const isUnchanged = newDestination.trim() === currentDestination;
 	const isValid = emailValidator.validate( newDestination.trim() );
 
 	const handleSave = async () => {
-		setIsSaving( true );
-		try {
-			await onEdit( mailbox.mailbox, mailbox.domain, currentDestination, newDestination.trim() );
-			onClose();
-		} finally {
-			setIsSaving( false );
-		}
+		await onEdit( mailbox.mailbox, mailbox.domain, currentDestination, newDestination.trim() );
+		onClose();
 	};
 
 	return (
@@ -153,7 +150,7 @@ function EditModal( {
 					value={ newDestination }
 					onChange={ setNewDestination }
 					type="email"
-					disabled={ isSaving }
+					disabled={ isPending }
 					help={
 						! isUnchanged && newDestination.trim() && ! isValid
 							? translate( 'Please enter a valid email address.' )
@@ -165,7 +162,7 @@ function EditModal( {
 						__next40pxDefaultSize
 						variant="tertiary"
 						onClick={ onClose }
-						disabled={ isSaving }
+						disabled={ isPending }
 						accessibleWhenDisabled
 					>
 						{ translate( 'Cancel' ) }
@@ -174,8 +171,8 @@ function EditModal( {
 						__next40pxDefaultSize
 						variant="primary"
 						onClick={ handleSave }
-						isBusy={ isSaving }
-						disabled={ isSaving || isUnchanged || ! isValid }
+						isBusy={ isPending }
+						disabled={ isPending || isUnchanged || ! isValid }
 						accessibleWhenDisabled
 					>
 						{ translate( 'Save' ) }
