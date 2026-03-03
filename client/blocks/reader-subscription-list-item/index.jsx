@@ -8,6 +8,7 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { resemblesUrl } from 'calypso/lib/url';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -22,6 +23,7 @@ import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
+import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import './style.scss';
 
@@ -47,15 +49,15 @@ function ReaderSubscriptionListItem( {
 	onFollowToggle,
 	replaceStreamClickWithItemClick,
 } ) {
-	const siteTitle = getSiteName( { feed, site } );
+	let siteTitle = getSiteName( { feed, site } );
 	const siteAuthor = site && site.owner;
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-	const streamUrl = getStreamUrl( feedId, siteId );
+	let streamUrl = feedId && siteId ? getStreamUrl( feedId, siteId ) : null;
 	const feedUrl = url || getFeedUrl( { feed, site } );
-	const siteUrl = getSiteUrl( { feed, site } );
+	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
 	const hasSiteError = site?.is_error || feed?.is_error;
@@ -123,12 +125,30 @@ function ReaderSubscriptionListItem( {
 		onItemClick();
 	};
 
+	const isPotentialFeedUrl = ( urlToVerify ) => {
+		if ( ! resemblesUrl( urlToVerify ) ) {
+			return false;
+		}
+
+		try {
+			const parsedUrl = new URL( urlToVerify );
+			return commonExtensions.some( ( ext ) => parsedUrl.toString().includes( ext ) );
+		} catch {
+			return false;
+		}
+	};
+
 	if ( hasSiteError ) {
 		return null;
 	}
 
-	if ( ! site && ! feed ) {
+	const isFeedUrl = isPotentialFeedUrl( feedUrl );
+	if ( ! site && ! feed && ! isFeedUrl ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
+	} else if ( isFeedUrl ) {
+		siteTitle ||= formatUrlForDisplay( feedUrl );
+		siteUrl ||= feedUrl;
+		streamUrl ||= feedUrl;
 	}
 
 	return (

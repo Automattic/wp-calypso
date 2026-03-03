@@ -93,4 +93,43 @@ describe( 'AddSitesForm', () => {
 
 		expect( addButton ).toBeDisabled();
 	} );
+
+	test( 'disables the Add site button immediately when typing invalid URL', () => {
+		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
+		const input = screen.getByRole( 'textbox' );
+		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
+
+		fireEvent.change( input, { target: { value: 'not-a-valid-url' } } );
+
+		expect( addButton ).toBeDisabled();
+	} );
+
+	test( 'enables the Add site button immediately when typing valid URL', () => {
+		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
+		const input = screen.getByRole( 'textbox' );
+		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
+
+		fireEvent.change( input, { target: { value: 'https://example.com' } } );
+
+		expect( addButton ).toBeEnabled();
+	} );
+
+	test( 'disables the Add site button when input is empty', () => {
+		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
+		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
+
+		expect( addButton ).toBeDisabled();
+	} );
+
+	test( 'disables button when transitioning from valid to invalid URL', () => {
+		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
+		const input = screen.getByRole( 'textbox' );
+		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
+
+		fireEvent.change( input, { target: { value: 'https://example.com' } } );
+		expect( addButton ).toBeEnabled();
+
+		fireEvent.change( input, { target: { value: 'invalid' } } );
+		expect( addButton ).toBeDisabled();
+	} );
 } );

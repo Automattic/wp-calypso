@@ -18,7 +18,7 @@ export const addImageStudioMediaSource = (
 	}
 ) => {
 	const { onSelect, multiple, isFeatured, onClick } = args;
-	const handleClose = ( image: ImageData ) => {
+	const handleClose = ( image: ImageData | null ) => {
 		handleImageSelection( {
 			image,
 			onSelect,

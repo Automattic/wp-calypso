@@ -296,6 +296,7 @@ __metadata:
   resolution: "@automattic/agents-manager-app@workspace:apps/agents-manager"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/block-notes": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -348,16 +349,14 @@ __metadata:
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.49":
+"@automattic/agenttic-client@npm:^0.1.44, @automattic/agenttic-client@npm:^0.1.49":
   version: 0.1.49
   resolution: "@automattic/agenttic-client@npm:0.1.49"
   dependencies:
@@ -521,6 +520,36 @@ __metadata:
     webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/block-notes@workspace:^, @automattic/block-notes@workspace:packages/block-notes":
+  version: 0.0.0-use.local
+  resolution: "@automattic/block-notes@workspace:packages/block-notes"
+  dependencies:
+    "@automattic/agents-manager": "workspace:^"
+    "@automattic/agenttic-client": "npm:^0.1.44"
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/react": "npm:^15.0.0"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/abilities": "npm:^0.4.0"
+    "@wordpress/api-fetch": "npm:^7.23.0"
+    "@wordpress/block-editor": "npm:^14.23.0"
+    "@wordpress/core-data": "npm:^7.23.0"
+    "@wordpress/editor": "npm:^14.23.0"
+    "@wordpress/hooks": "npm:^4.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    nanoid: "npm:^3.3.11"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1572,6 +1601,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
+    "@automattic/agents-manager": "workspace:^"
     "@automattic/agenttic-client": "npm:^0.1.49"
     "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-analytics": "workspace:^"
@@ -37795,8 +37825,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.49"
-    "@automattic/agenttic-ui": "npm:^0.1.49"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
