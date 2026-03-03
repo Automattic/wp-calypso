@@ -158,10 +158,12 @@ export interface UsePartnerBrandingResult {
  */
 export function usePartnerBranding(): UsePartnerBrandingResult {
 	const translate = useTranslate();
-	const fromInitial = useSelector( ( state ) => get( getInitialQueryArguments( state ), 'from' ) );
-	const fromCurrent = useSelector( ( state ) => get( getCurrentQueryArguments( state ), 'from' ) );
+	const from = useSelector( ( state ) => {
+		const fromCurrent = get( getCurrentQueryArguments( state ), 'from' );
+		const fromInitial = get( getInitialQueryArguments( state ), 'from' );
 
-	const from = fromCurrent || fromInitial;
+		return fromCurrent || fromInitial;
+	} );
 
 	return useMemo( () => {
 		const ciabConfig = getCiabConfig( from );
