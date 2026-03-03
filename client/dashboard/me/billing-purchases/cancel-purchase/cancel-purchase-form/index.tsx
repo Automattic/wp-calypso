@@ -262,8 +262,8 @@ function SurveyContent( {
 				onGetCancellationOffer={ onGetCancellationOffer }
 				percentDiscount={ offerDiscountBasedFromPurchasePrice }
 				purchase={ purchase }
-				isApplyingOffer={ isApplyingOffer }
-				isSubmitting={ isSubmitting }
+				isApplyingOffer={ isApplyingOffer ?? false }
+				isSubmitting={ isSubmitting ?? false }
 				offerApplyError={ offerApplyError }
 				onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 			/>
@@ -490,7 +490,7 @@ export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 		props.isVisible && (
 			<VStack spacing={ 6 }>
 				<SectionHeader
-					title={ getSurveyTitle( props.surveyStep ?? '', props.isAkismet ) }
+					title={ getSurveyTitle( props.surveyStep ?? '', props.isAkismet ?? false ) }
 					level={ 3 }
 				/>
 				<SurveyContent { ...props } />
