@@ -25,12 +25,6 @@
 	}
 }
 
-.is-reader-page .main.search-stream {
-	max-width: 905px;
-	margin: 0 auto;
-	padding-inline: 24px;
-}
-
 .search-stream__intro {
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-left: 16px;
@@ -144,13 +138,13 @@
 }
 
 .is-reader-page
-.search-stream.search-stream__with-sites
-.search-stream__results.is-two-columns
-.reader__content,
+	.search-stream.search-stream__with-sites
+	.search-stream__results.is-two-columns
+	.reader__content,
 .is-reader-page
-.search-stream.search-stream__with-sites
-.search-stream__single-column-results.is-post-results
-.reader__content {
+	.search-stream.search-stream__with-sites
+	.search-stream__single-column-results.is-post-results
+	.reader__content {
 	flex-flow: inherit;
 	flex-direction: column; // So post results are stacked
 }
@@ -173,7 +167,6 @@
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
 	}
-
 
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
@@ -358,7 +351,7 @@ div.is-section-reader:not(.is-logged-in) {
 .search-stream .search-stream__site-results {
 	max-width: 265px;
 	min-width: 265px;
-	margin-left: 40px;
+	margin-left: 42px;
 
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
@@ -367,10 +360,8 @@ div.is-section-reader:not(.is-logged-in) {
 
 // Site results and Popular sites
 .search-stream .search-stream__site-results,
-.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
-
-	.reader-subscription-list-item .follow-button__label,
-	.reader-subscription-list-item__settings-label {
+.search-stream .is-two-columns .reader-tag-sidebar-recommended-sites {
+	.reader-subscription-list-item .follow-button__label {
 		display: none;
 	}
 
@@ -380,12 +371,12 @@ div.is-section-reader:not(.is-logged-in) {
 }
 
 // For popular sites list on single column view.
-.search-stream .following:not(.reader-two-column) .reader-subscription-list-item {
+.search-stream .following:not(.is-two-columns) .reader-subscription-list-item {
 	border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .search-stream__results.is-two-columns .reader-subscription-list-item__byline,
-.search-stream .reader-two-column .reader-subscription-list-item__byline {
+.search-stream .is-two-columns .reader-subscription-list-item__byline {
 	min-width: 185px;
 	max-width: 185px;
 }
@@ -422,8 +413,8 @@ div.is-section-reader:not(.is-logged-in) {
 }
 
 .search-stream__results.is-two-columns .search-stream__post-results {
-	max-width: 660px;
-	width: calc(100% - 304px);
+	max-width: 685px;
+	width: calc(100% - 305px);
 
 	.reader-post-card__post {
 		@include breakpoint-deprecated( "<960px" ) {
