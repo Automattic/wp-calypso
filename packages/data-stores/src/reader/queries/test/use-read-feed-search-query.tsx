@@ -102,4 +102,21 @@ describe( 'useReadFeedSearchQuery', () => {
 			} );
 		} );
 	} );
+
+	it( 'disables the react-query request when there is no query', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useReadFeedSearchQuery( { query: undefined } ), {
+			wrapper,
+		} );
+
+		// Nock throws an error if a request is made when it is not expected.
+		await waitFor( () => {
+			expect( result.current.isEnabled ).toBe( false );
+			expect( result.current.isFetching ).toBe( false );
+		} );
+	} );
 } );
