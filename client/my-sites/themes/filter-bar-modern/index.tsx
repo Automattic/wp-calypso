@@ -56,12 +56,13 @@ const FilterBarModern = ( {
 				link: constructThemeShowcaseUrl( {
 					tier: selectedTier,
 					category: category.key,
+					search: searchQuery,
 					isLoggedIn: false,
 				} ),
 				icon:
 					category.key === DEFAULT_STATIC_FILTER ? <Icon icon={ starEmpty } size={ 26 } /> : null,
 			} ) ),
-		[ categories, selectedTier ]
+		[ categories, searchQuery, selectedTier ]
 	);
 
 	const handleCategorySelect = useCallback(
