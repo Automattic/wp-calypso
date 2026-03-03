@@ -24,7 +24,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 	const [ isEditOpen, setIsEditOpen ] = useState( false );
 	const remove = useRemove( { mailbox } );
 	const resend = useResend( { mailbox } );
-	const { edit, isPending: isEditPending } = useEdit( { mailbox } );
+	const { edit, isPending } = useEdit( { mailbox } );
 	const translate = useTranslate();
 
 	const currentDestination = getEmailForwardAddress( mailbox );
@@ -91,7 +91,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 					mailbox={ mailbox }
 					currentDestination={ currentDestination }
 					onEdit={ edit }
-					isPending={ isEditPending }
+					isPending={ isPending }
 					onClose={ () => setIsEditOpen( false ) }
 				/>
 			) }
