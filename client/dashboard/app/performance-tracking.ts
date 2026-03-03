@@ -47,12 +47,21 @@ function buildCollector( siteSlug?: string ): Collector {
  * The `cancel()` call can be removed when the upstream issue is fixed.
  * @see https://github.com/TanStack/router/issues/3179
  */
+/**
+ * TanStack Router routeIds have a trailing slash (e.g. "/plugins/manage/")
+ * but we want a canonical form without one for metrics.
+ */
+function normalizeRouteId( routeId?: string ): string {
+	return routeId?.replace( /\/$/, '' ) ?? '';
+}
+
 export function startPerformanceTracking( routeId: string ) {
 	if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 		return;
 	}
-	cancel( routeId );
-	start( routeId, { fullPageLoad: isFirstLoad } );
+	const id = normalizeRouteId( routeId );
+	cancel( id );
+	start( id, { fullPageLoad: isFirstLoad } );
 }
 
 /**
@@ -63,6 +72,8 @@ export function usePerformanceTrackerStop( siteSlug?: string ) {
 	const router = useRouter();
 	const routeId = ( router.state.pendingMatches ?? router.state.matches ).at( -1 )?.routeId;
 
+	const normalizedRouteId = normalizeRouteId( routeId );
+
 	useLayoutEffect( () => {
 		if ( ! config.isEnabled( 'rum-tracking/logstash' ) || isDashboardBackport() ) {
 			return;
@@ -71,9 +82,9 @@ export function usePerformanceTrackerStop( siteSlug?: string ) {
 		// redirects (e.g. / → /sites) don't clear it before the final page renders.
 		isFirstLoad = false;
 		requestAnimationFrame( () => {
-			stop( routeId, { collectors: [ buildCollector( siteSlug ) ] } );
+			stop( normalizedRouteId, { collectors: [ buildCollector( siteSlug ) ] } );
 		} );
-	}, [ routeId, siteSlug ] );
+	}, [ normalizedRouteId, siteSlug ] );
 }
 
 /**

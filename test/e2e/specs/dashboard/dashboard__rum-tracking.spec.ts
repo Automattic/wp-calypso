@@ -132,15 +132,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			await page.waitForURL( /\/plugins\/manage/ );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for /plugins/manage/ with fullPage false', async function () {
+		await test.step( 'Then a perf.nav event is sent for /plugins/manage with fullPage false', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === '/plugins/manage/' ), {
+				.poll( () => events.find( ( e ) => e.id === '/plugins/manage' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "/plugins/manage/"',
+					message: 'Expected logstash request with id "/plugins/manage"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === '/plugins/manage/' )!;
+			const event = events.find( ( e ) => e.id === '/plugins/manage' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 			expect( event.fullPage ).toBe( false );
 		} );
