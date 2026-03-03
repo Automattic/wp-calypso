@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize, fixMe } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -248,19 +248,10 @@ class MagicLogin extends Component {
 				),
 			},
 		};
-		const tosText = fixMe( {
-			text: 'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			newCopy: translate(
-				'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
-			),
-			oldCopy: translate(
-				'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
-			),
-		} );
-
-		return tosText;
+		return translate(
+			'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
+		);
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {
