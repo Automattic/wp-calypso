@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -227,7 +226,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					) }
 				</CardBody>
 			</Card>
-			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</PageLayout>
 	);
 }

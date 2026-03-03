@@ -4,6 +4,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteScanActiveThreatsRoute } from '../../app/router/sites';
 import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { useTimeSince } from '../../components/time-since';
@@ -90,21 +91,24 @@ export function ActiveThreatsDataViews( {
 	};
 
 	return (
-		<DataViews< Threat >
-			actions={ actions }
-			data={ filteredData }
-			defaultLayouts={ { table: {} } }
-			empty={ <NoActiveThreatsFound /> }
-			fields={ fields }
-			getItemId={ ( item ) => item.id.toString() }
-			isLoading={ isLoading }
-			onChangeSelection={ setSelection }
-			onChangeView={ updateView }
-			onResetView={ resetView }
-			paginationInfo={ paginationInfo }
-			searchLabel={ __( 'Search' ) }
-			selection={ selection }
-			view={ view }
-		/>
+		<>
+			{ ! isLoading && <PerformanceTrackerStop siteSlug={ site.slug } /> }
+			<DataViews< Threat >
+				actions={ actions }
+				data={ filteredData }
+				defaultLayouts={ { table: {} } }
+				empty={ <NoActiveThreatsFound /> }
+				fields={ fields }
+				getItemId={ ( item ) => item.id.toString() }
+				isLoading={ isLoading }
+				onChangeSelection={ setSelection }
+				onChangeView={ updateView }
+				onResetView={ resetView }
+				paginationInfo={ paginationInfo }
+				searchLabel={ __( 'Search' ) }
+				selection={ selection }
+				view={ view }
+			/>
+		</>
 	);
 }

@@ -243,6 +243,7 @@ export default function PluginsScheduledUpdates() {
 				}
 			>
 				<DataViewsCard>
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						paginationInfo={ paginationInfo }
 						fields={ fields }
@@ -304,7 +305,6 @@ export default function PluginsScheduledUpdates() {
 			>
 				{ __( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmModal>
-			<PerformanceTrackerStop />
 		</>
 	);
 }

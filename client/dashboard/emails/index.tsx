@@ -99,7 +99,12 @@ function Emails() {
 
 	const renderContent = () => {
 		if ( hasNoDomains ) {
-			return <EmptyDomainsState />;
+			return (
+				<>
+					<EmptyDomainsState />
+					<PerformanceTrackerStop />
+				</>
+			);
 		}
 
 		if ( hasNoEmails ) {
@@ -115,6 +120,7 @@ function Emails() {
 						}
 					) }
 				>
+					<PerformanceTrackerStop />
 					<EmptyMailboxesStateContent />
 				</DataViewsEmptyStateLayout>
 			);
@@ -122,6 +128,7 @@ function Emails() {
 
 		return (
 			<DataViewsCard>
+				<PerformanceTrackerStop />
 				<DataViews
 					data={ filteredData }
 					fields={ emailFields }
@@ -182,7 +189,6 @@ function Emails() {
 		>
 			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			{ renderContent() }
-			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

@@ -114,6 +114,7 @@ function DomainGlueRecords() {
 	return (
 		<DomainGlueRecordsLayout>
 			<DataViewsCard>
+				{ ! isLoading && <PerformanceTrackerStop /> }
 				<DataViews< DomainGlueRecord >
 					data={ filteredData || [] }
 					fields={ fields }
@@ -134,7 +135,6 @@ function DomainGlueRecords() {
 					}
 				/>
 			</DataViewsCard>
-			<PerformanceTrackerStop />
 		</DomainGlueRecordsLayout>
 	);
 }

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteScanHistoryRoute } from '../../app/router/sites';
 import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { getActions } from './dataviews/actions';
@@ -84,19 +85,22 @@ export function ScanHistoryDataViews( {
 	};
 
 	return (
-		<DataViews< Threat >
-			actions={ actions }
-			data={ filteredData }
-			defaultLayouts={ { table: {} } }
-			empty={ <NoArchivedThreatsFound /> }
-			fields={ fields }
-			getItemId={ ( item ) => item.id.toString() }
-			isLoading={ isLoading }
-			onChangeView={ updateView }
-			onResetView={ resetView }
-			paginationInfo={ paginationInfo }
-			searchLabel={ __( 'Search' ) }
-			view={ view }
-		/>
+		<>
+			{ ! isLoading && <PerformanceTrackerStop siteSlug={ site.slug } /> }
+			<DataViews< Threat >
+				actions={ actions }
+				data={ filteredData }
+				defaultLayouts={ { table: {} } }
+				empty={ <NoArchivedThreatsFound /> }
+				fields={ fields }
+				getItemId={ ( item ) => item.id.toString() }
+				isLoading={ isLoading }
+				onChangeView={ updateView }
+				onResetView={ resetView }
+				paginationInfo={ paginationInfo }
+				searchLabel={ __( 'Search' ) }
+				view={ view }
+			/>
+		</>
 	);
 }

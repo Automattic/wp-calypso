@@ -16,6 +16,7 @@ import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { usePlugin } from '../plugin/use-plugin';
 import { PluginSites } from './components/plugin-sites';
 import { PluginSwitcher } from './components/plugin-switcher';
 import { useSitesById } from './hooks/use-sites-by-id';
@@ -44,7 +45,7 @@ const searchableFields = [
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const { data: sitesPlugins } = useQuery( pluginsQuery() );
+	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
 	const { sitesById } = useSitesById();
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
@@ -127,6 +128,10 @@ export default function PluginsList() {
 		} );
 	}, [ plugins, iconBySlug ] );
 
+	const { isLoading: isPluginLoading } = usePlugin( selectedPluginSlug, {
+		enabled: ! isSmallViewport,
+	} );
+
 	if ( isSmallViewport ) {
 		return (
 			<PageLayout
@@ -153,7 +158,7 @@ export default function PluginsList() {
 						paginationInfo={ paginationInfo }
 					/>
 				) }
-				<PerformanceTrackerStop />
+				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
 			</PageLayout>
 		);
 	}
@@ -181,7 +186,7 @@ export default function PluginsList() {
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 			</Grid>
-			<PerformanceTrackerStop />
+			{ ! sitesPluginsLoading && ! isPluginLoading && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }

@@ -90,6 +90,7 @@ export default function PurchasesList() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						isLoading={ isLoading }
 						data={ filteredSubscriptions }
@@ -104,7 +105,6 @@ export default function PurchasesList() {
 					/>
 				</DataViewsCard>
 			</div>
-			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

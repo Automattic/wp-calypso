@@ -1,5 +1,6 @@
 import { useRouterState } from '@tanstack/react-router';
 import { useViewportMatch } from '@wordpress/compose';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -84,6 +85,7 @@ export default function HostingFeatureGatedWithCallout( {
 
 				return (
 					<>
+						<PerformanceTrackerStop siteSlug={ props.site.slug } />
 						{ wrapCallout( upsellCallout ) }
 						{ backButton }
 					</>
@@ -100,6 +102,7 @@ export default function HostingFeatureGatedWithCallout( {
 
 				return (
 					<>
+						<PerformanceTrackerStop siteSlug={ props.site.slug } />
 						{ wrapCallout( activationCallout ) }
 						{ backButton }
 					</>

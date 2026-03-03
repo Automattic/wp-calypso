@@ -88,7 +88,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const renderActiveTab = () => {
 		if ( isScanInProgress ) {
-			return <ScanStatus scanState={ scanState } />;
+			return (
+				<>
+					<PerformanceTrackerStop siteSlug={ siteSlug } />
+					<ScanStatus scanState={ scanState } />
+				</>
+			);
 		}
 		return (
 			<ActiveThreatsDataViews
@@ -200,7 +205,6 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					/>
 				</Modal>
 			) }
-			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

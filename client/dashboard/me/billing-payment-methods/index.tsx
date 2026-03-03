@@ -192,6 +192,7 @@ export default function PaymentMethods() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard>
+					{ ! isLoadingPaymentMethods && <PerformanceTrackerStop /> }
 					<DataViews
 						isLoading={ isLoadingPaymentMethods }
 						data={ filteredPaymentMethods ?? [] }
@@ -245,7 +246,6 @@ export default function PaymentMethods() {
 					/>
 				) }
 			</div>
-			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

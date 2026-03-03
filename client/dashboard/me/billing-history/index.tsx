@@ -73,6 +73,7 @@ export default function BillingHistory() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard>
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						data={ filteredReceipts }
 						fields={ fields }
@@ -87,7 +88,6 @@ export default function BillingHistory() {
 					/>
 				</DataViewsCard>
 			</div>
-			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

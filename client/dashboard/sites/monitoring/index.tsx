@@ -67,6 +67,9 @@ function SiteMonitoringBody( {
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			{ /* Similar to the site overview page, we mark the page as loaded one the layout is looking correct */ }
+			<PerformanceTrackerStop siteSlug={ site.slug } />
+
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
@@ -142,7 +145,6 @@ function SiteMonitoring() {
 			>
 				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
 			</PageLayout>
-			<PerformanceTrackerStop siteSlug={ siteSlug } />
 		</HostingFeatureGatedWithCallout>
 	);
 }

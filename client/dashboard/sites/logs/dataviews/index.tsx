@@ -13,6 +13,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect, useCallback, useRef, useLayoutEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { DataViews } from '../../../components/dataviews';
 import { LogsDownloader } from '../downloader';
 import {
@@ -124,9 +125,14 @@ function SiteLogsDataViews( {
 		pageSize: DEFAULT_PER_PAGE,
 	};
 
-	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery(
-		siteLogsInfiniteQuery( site.ID, params )
-	);
+	const {
+		data,
+		isFetching,
+		isFetchingNextPage,
+		fetchNextPage,
+		hasNextPage,
+		isLoading: isLoadingLogQuery,
+	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -356,6 +362,7 @@ function SiteLogsDataViews( {
 					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
 				/>
 			) }
+			{ ! isLoadingLogQuery && <PerformanceTrackerStop siteSlug={ site.slug } /> }
 		</>
 	);
 }
