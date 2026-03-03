@@ -18,7 +18,7 @@ import { queryClient } from './query-client';
 
 export const domainsQuery = ( options?: FetchDomainsOptions ) =>
 	queryOptions( {
-		queryKey: [ 'domains', ...( options ? [ options ] : [] ) ],
+		queryKey: [ 'domains', options ],
 		queryFn: () => fetchDomains( options ),
 	} );
 
