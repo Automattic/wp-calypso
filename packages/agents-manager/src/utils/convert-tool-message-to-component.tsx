@@ -7,7 +7,6 @@ import type { UIMessage } from '@automattic/agenttic-client';
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
-	sessionId: string;
 }
 
 /**
@@ -16,7 +15,6 @@ interface Options {
 export function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
-	sessionId,
 }: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
@@ -42,7 +40,6 @@ export function convertToolMessagesToComponents( {
 					{
 						type: 'component',
 						component: EscalationButton,
-						componentProps: { sessionId },
 					} as any,
 				],
 			};

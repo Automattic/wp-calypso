@@ -2,8 +2,11 @@ import { SummaryButton } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import './style.scss';
 import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 
-export function EscalationButton( { sessionId }: { sessionId: string } ) {
+export function EscalationButton() {
+	const { agentConfig } = useAgentsManagerContext();
+	const sessionId = agentConfig?.sessionId;
 	const navigate = useNavigate();
 	return (
 		<SummaryButton
