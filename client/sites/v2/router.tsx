@@ -1,4 +1,4 @@
-import { siteBySlugQuery, queryClient } from '@automattic/api-queries';
+import { jetpackSiteUrlsQuery, siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Outlet, createRootRouteWithContext, createRoute } from '@tanstack/react-router';
 import { canManageSite } from 'calypso/dashboard/sites/features';
@@ -13,6 +13,12 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
  */
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'enter' ) {
+			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
+			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+		}
+	},
 } );
 
 export const dashboardSitesCompatibilityRoute = createRoute( {
