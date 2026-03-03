@@ -75,7 +75,7 @@ const SubscriptionsManagerWrapper = ( {
 
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-			<Main className="site-subscriptions-manager">
+			<Main className="site-subscriptions-manager" wideLayout>
 				<DocumentHead title={ translate( 'Manage subscriptions' ) } />
 				<NavigationHeader
 					title={ headerText }
@@ -100,7 +100,11 @@ const SubscriptionsManagerWrapper = ( {
 					) }
 				</NavigationHeader>
 
-				<Nav className="site-subscriptions-manager__nav" selectedText={ selectedTabText }>
+				<Nav
+					className="site-subscriptions-manager__nav"
+					selectedText={ selectedTabText }
+					variation="minimal"
+				>
 					<NavTabs>
 						<NavItem
 							count={ counts?.blogs }

@@ -107,6 +107,7 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		progressMessage,
 	} = useAgentChat( agentConfig! );
 
 	// Notify parent when message count changes
@@ -295,6 +296,7 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
+			thinkingMessage={ progressMessage }
 			error={ error }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }

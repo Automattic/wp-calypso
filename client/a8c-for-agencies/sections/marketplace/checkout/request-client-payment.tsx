@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -37,6 +38,7 @@ import useShoppingCart from '../hooks/use-shopping-cart';
 import { isPressableAddonProduct } from '../lib/hosting';
 import hasActiveReferralPressablePlanForClient from './lib/has-active-referral-pressable-plan';
 import NoticeSummary from './notice-summary';
+import ReferralLogo from './referral-logo';
 import type { ShoppingCartItem, TermPricingType } from '../types';
 interface Props {
 	checkoutItems: ShoppingCartItem[];
@@ -59,6 +61,8 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+
+	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
 
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
@@ -271,6 +275,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						}
 					/>
 				</FormFieldset>
+				{ isCobrandedCheckoutEnabled && <ReferralLogo /> }
 			</div>
 
 			<NoticeSummary type="request-client-payment" />

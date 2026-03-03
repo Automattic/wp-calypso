@@ -1,6 +1,5 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -16,9 +15,9 @@ import QuerySiteCredentials from 'calypso/components/data/query-site-credentials
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -50,7 +49,6 @@ const BackupPage = ( { queryDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSettingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
@@ -65,14 +63,6 @@ const BackupPage = ( { queryDate } ) => {
 	const selectedDate = useDateWithOffset( parsedQueryDate, {
 		keepLocalTime: !! queryDate,
 	} );
-
-	const supportLink = isAtomic ? (
-		<InlineSupportLink supportContext="backups" showIcon={ false } />
-	) : (
-		<ExternalLink href="https://jetpack.com/support/backup/">
-			{ translate( 'Learn more' ) }
-		</ExternalLink>
-	);
 
 	return (
 		<div
@@ -91,15 +81,8 @@ const BackupPage = ( { queryDate } ) => {
 				{ ! ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<NavigationHeader
 						navigationItems={ [] }
-						title={ translate( 'Jetpack VaultPress Backup' ) }
-						subtitle={ translate(
-							'Restore or download a backup of your site from a specific moment in time. {{learnMoreLink/}}',
-							{
-								components: {
-									learnMoreLink: supportLink,
-								},
-							}
-						) }
+						title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
+						subtitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
 					>
 						<BackupActionsToolbar siteId={ siteId } />
 					</NavigationHeader>

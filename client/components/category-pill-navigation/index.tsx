@@ -25,6 +25,7 @@ type CategoryPillNavigationProps = {
 	}[];
 	selectedCategoryId: string;
 	onSelect?: ( selectedId: string ) => void;
+	disableMobileCollapse?: boolean;
 };
 
 export const CategoryPillNavigation = ( {
@@ -32,6 +33,7 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 	onSelect = () => {},
+	disableMobileCollapse = false,
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
@@ -91,7 +93,7 @@ export const CategoryPillNavigation = ( {
 		} );
 	}, [ selectedCategoryId ] );
 
-	if ( isMobile ) {
+	if ( isMobile && ! disableMobileCollapse ) {
 		const selectedItem =
 			buttons?.find( ( { isActive } ) => isActive ) ||
 			categories.find( ( { id } ) => id === selectedCategoryId );

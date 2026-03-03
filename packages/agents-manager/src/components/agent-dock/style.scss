@@ -2,7 +2,11 @@
 @import '../../styles/mixins.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
-	background-color: $gray-900 !important;
+	// Also set the background color for the sidebar chat to prevent transparency issues during transitions (e.g., site editor)
+	&,
+	.agents-manager-chat {
+		background-color: $gray-900 !important;
+	}
 
 	#{$main-container-selector} {
 		will-change: width, margin, border-radius;
@@ -211,7 +215,6 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			.masterbar__item.is-active {
 				cursor: pointer;
 			}
-
 		}
 
 		// Hide the outward border that protrudes into the agents manager sidebar
@@ -309,13 +312,11 @@ body.is-section-stepper.agents-manager-sidebar-container {
 }
 
 /* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
-.agents-manager-sidebar-container--sidebar-open
-	.layout__secondary
-	~ .layout__primary {
+.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary {
 	.plugins-browser--site-view .search-categories.fixed-top {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
 		right: calc( $sidebar-width + 1px );
-		left: calc( var(--sidebar-width-max) + 17px );
+		left: calc( var( --sidebar-width-max ) + 17px );
 
 		&::after {
 			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
@@ -324,7 +325,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 
 	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		left: calc( var(--sidebar-width-max) + 17px );
+		left: calc( var( --sidebar-width-max ) + 17px );
 		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
 	}
 }

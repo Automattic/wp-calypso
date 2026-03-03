@@ -11,6 +11,7 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -347,7 +348,11 @@ class ScanPage extends Component< Props > {
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-					<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+						subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+					/>
 				) }
 
 				<QueryJetpackScan siteId={ siteId } />

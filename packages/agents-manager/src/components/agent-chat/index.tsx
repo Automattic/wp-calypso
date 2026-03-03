@@ -10,7 +10,7 @@ import {
 	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -36,6 +36,8 @@ interface Props {
 	emptyViewSuggestions?: Suggestion[];
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
+	/** Custom thinking message to display while the agent is processing. */
+	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
 	isLoadingConversation: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -81,6 +83,7 @@ export default function AgentChat( {
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	isProcessing,
+	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
 	isOpen,
@@ -102,6 +105,7 @@ export default function AgentChat( {
 	onCancelFeedback = () => {},
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -130,6 +134,7 @@ export default function AgentChat( {
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
+			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
@@ -160,7 +165,7 @@ export default function AgentChat( {
 				)
 			}
 		>
-			<AgentUI.ConversationView>
+			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
@@ -185,6 +190,7 @@ export default function AgentChat( {
 							] }
 							showFileMetadata
 							allowDragToInsert={ false }
+							dropZoneRef={ conversationViewRef }
 						/>
 					) }
 

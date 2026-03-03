@@ -2,6 +2,13 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.is-two-columns.tag-stream__main {
+	.reader__content,
+	.tag-stream__header {
+		max-width: 650px;
+	}
+}
+
 .is-section-reader .tag-stream__header {
 	&.has-description {
 		.info-popover {
@@ -109,7 +116,6 @@
 
 // Tag page only shows site titles in the sidebar, so spacing needs to be tighter
 .tag-stream__main {
-
 	.stream__two-column .stream__right-column {
 		margin-top: 0;
 		.reader-subscription-list-item .follow-button__label {
