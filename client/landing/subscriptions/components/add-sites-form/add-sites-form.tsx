@@ -26,11 +26,6 @@ interface AddSitesFormProps {
 	onChange?: ( value: string ) => void;
 }
 
-interface SubscriptionError {
-	error?: string;
-	message?: string;
-}
-
 const AddSitesForm = ( {
 	onChange,
 	placeholder,
@@ -106,7 +101,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
