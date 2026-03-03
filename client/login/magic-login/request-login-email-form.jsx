@@ -34,7 +34,7 @@ import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 import { getCheckYourEmailHeaders, getEmailLinkHeaders } from './utils/heading-utils';
 
-class RequestLoginEmailForm extends Component {
+export class RequestLoginEmailForm extends Component {
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,

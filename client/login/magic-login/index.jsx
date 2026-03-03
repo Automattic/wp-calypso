@@ -89,7 +89,7 @@ export const buildEnterPasswordLoginParameters = (
 	return loginParameters;
 };
 
-class MagicLogin extends Component {
+export class MagicLogin extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 
@@ -321,7 +321,7 @@ class MagicLogin extends Component {
 	}
 }
 
-const getMagicLoginInitialHeaders = ( props, translate ) => {
+export const getMagicLoginInitialHeaders = ( props, translate ) => {
 	if ( isGravPoweredOAuth2Client( props.oauth2Client ) ) {
 		return {};
 	}
