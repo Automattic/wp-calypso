@@ -631,3 +631,48 @@
 .section-nav-tab__text .theme-showcase__badge-beta {
 	margin-left: 6px;
 }
+
+// Modern theme card overrides (logged-out redesign)
+.theme-showcase.is-modern {
+	.theme-card {
+		border-radius: 8px;
+	}
+
+	.theme-card__image-container {
+		border-radius: 8px 8px 0 0;
+	}
+
+	.theme-card__info {
+		padding: 12px 16px;
+	}
+
+	// Hide style variation swatches for logged-out modern view
+	.theme-card__info-style-variations {
+		display: none;
+	}
+}
+
+.theme__overlay-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.theme__overlay-button {
+	border-radius: 4px;
+	font-size: $font-body-small;
+	padding: 6px 16px;
+	white-space: nowrap;
+}
+
+.theme__overlay-button--preview {
+	background: transparent;
+	border: 1px solid var(--studio-white);
+	color: var(--studio-white);
+}
+
+.theme__overlay-button--preview:hover,
+.theme__overlay-button--preview:focus {
+	background: rgba(255, 255, 255, 0.1);
+	border-color: var(--studio-white);
+	color: var(--studio-white);
+}

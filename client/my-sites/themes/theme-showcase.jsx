@@ -652,6 +652,7 @@ class ThemeShowcase extends Component {
 
 		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
+			'is-modern': this.isThemeShowcaseModern(),
 		} );
 
 		const showThemeErrors =
