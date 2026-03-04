@@ -97,7 +97,7 @@ export default function OrchestratorChat( {
 	const agentId = agentConfig!.agentId;
 	const agentSessionId = agentConfig!.sessionId;
 
-	const { sessionId: cachedId, messages: cachedMessages } = cachedConversation;
+	const { sessionId: cachedId, messages: cachedMessages = [] } = cachedConversation;
 	const hasCachedConversation = !! cachedId && agentSessionId === cachedId;
 
 	const {
@@ -307,7 +307,7 @@ export default function OrchestratorChat( {
 	] );
 
 	// Use cached messages when navigating back from history to avoid re-fetching.
-	const finalMessages = hasCachedConversation ? cachedMessages! : visibleMessages;
+	const finalMessages = hasCachedConversation ? cachedMessages : visibleMessages;
 
 	// Notify parent when message count changes
 	useEffect( () => {
