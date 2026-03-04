@@ -98,6 +98,10 @@ function Root() {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
 
+	if ( router.latestLocation.href.startsWith( '/setup' ) ) {
+		return <Outlet />;
+	}
+
 	return (
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isSlowNavigation ) && (

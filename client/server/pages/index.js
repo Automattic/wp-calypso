@@ -1097,7 +1097,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing.
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+	if ( isDashboardEnv() ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),

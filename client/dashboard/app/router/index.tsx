@@ -9,6 +9,7 @@ import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
+import { createSetupRoutes } from './setup';
 import { createSitesRoutes } from './sites';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
@@ -65,6 +66,8 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
 	}
+
+	children.push( ...createSetupRoutes() );
 
 	return rootRoute.addChildren( children );
 };
