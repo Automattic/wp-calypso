@@ -271,6 +271,7 @@ class ThemesSelection extends Component {
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
 					tier={ tier }
+					isModern={ this.props.isModern }
 				>
 					{ this.props.children }
 				</ThemesList>

@@ -634,12 +634,13 @@
 
 // Modern theme card overrides (logged-out redesign)
 .theme-showcase.is-modern {
-	.theme-card {
+	.card.theme-card {
 		border-radius: 8px;
+		overflow: hidden;
 	}
 
 	.theme-card__image-container {
-		border-radius: 8px 8px 0 0;
+		border-radius: 0;
 	}
 
 	.theme-card__info {
