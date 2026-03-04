@@ -97,8 +97,8 @@ export default function OrchestratorChat( {
 	const agentId = agentConfig!.agentId;
 	const initSessionId = agentConfig!.sessionId;
 
-	const { sessionId: cachedId, messages: cachedMessages = [] } = cachedConversation;
-	const hasCachedConversation = !! cachedId && initSessionId === cachedId;
+	const { sessionId: cachedSessionId, messages: cachedMessages = [] } = cachedConversation;
+	const hasCachedConversation = !! cachedSessionId && initSessionId === cachedSessionId;
 
 	const {
 		addMessage,
