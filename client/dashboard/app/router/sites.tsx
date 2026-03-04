@@ -1165,27 +1165,6 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
-export const siteSettingsExperimentalRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsExperimental' },
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'AI Site Assistant' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'ai-assistant',
-	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-ai-assistant' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-ai-assistant' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
 export const siteSettingsRepositoriesRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
@@ -1496,11 +1475,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteSettingsDefensiveModeRoute,
 	];
-
-	// Experimental
-	if ( isEnabled( 'wordpress-ai-assistant' ) ) {
-		settingsRoutes.push( siteSettingsExperimentalRoute );
-	}
 
 	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 

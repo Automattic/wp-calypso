@@ -10,7 +10,6 @@ import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import AgencySettingsSummary from '../settings-agency/summary';
-import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import CrontabSettingsSummary from '../settings-crontab/summary';
@@ -91,14 +90,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<WebApplicationFirewallSettingsSummary site={ site } />
 						<WpcomLoginSettingsSummary site={ site } />
 						<DefensiveModeSettingsSummary site={ site } />
-					</SummaryButtonList>
-				</VStack>
-			) }
-			{ siteTypeSupports.settingsExperimental && isEnabled( 'wordpress-ai-assistant' ) && (
-				<VStack spacing={ 3 }>
-					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
-					<SummaryButtonList>
-						<AISiteAssistantSettingsSummary site={ site } />
 					</SummaryButtonList>
 				</VStack>
 			) }
