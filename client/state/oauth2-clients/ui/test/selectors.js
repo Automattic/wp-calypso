@@ -35,6 +35,9 @@ describe( 'selectors', () => {
 			} );
 		} );
 
+		// These tests verify the second half of the mobile app detection chain:
+		// 1. The UI reducer sets currentClientId from the URL query param (see ui/test/reducer.js)
+		// 2. getCurrentOAuth2Client resolves it to client data from initialClientsData (tested below)
 		test( 'should return the iOS mobile app client when client_id is 11', () => {
 			const clientData = getCurrentOAuth2Client( {
 				oauth2Clients: {
