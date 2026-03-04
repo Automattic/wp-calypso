@@ -35,9 +35,12 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin';
+	environment: 'wp-admin' | 'image-studio';
 	imageStudio?: ImageStudioData;
 	currentPageContent?: PageContentBlock[];
+	constructorArguments?: {
+		skip_storage?: boolean;
+	};
 }
 
 const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
@@ -219,7 +222,7 @@ export function getClientContext(): ImageStudioClientContext {
 		url: window.location.href,
 		pathname: window.location.pathname,
 		search: window.location.search,
-		environment: 'wp-admin',
+		environment: imageStudio?.isOpen ? 'image-studio' : 'wp-admin',
 	};
 
 	if ( imageStudio ) {
@@ -230,8 +233,6 @@ export function getClientContext(): ImageStudioClientContext {
 	if ( currentPageContent ) {
 		context.currentPageContent = currentPageContent;
 	}
-
-	window.console?.log?.( '[Image Studio] Client context:', context );
 
 	return context;
 }

@@ -1,5 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -311,13 +311,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					const { cartItems } = providedDependencies;
 
 					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
-						await addPlanToCart(
-							siteSlugFromSiteData,
-							AI_SITE_BUILDER_FLOW,
-							true,
-							'assembler',
-							cartItems[ 0 ]
-						);
+						await addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
+							cartItems[ 0 ],
+						] );
 					}
 
 					// Flow is plan => domain and we are on plans: go to domains

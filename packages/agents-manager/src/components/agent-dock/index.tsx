@@ -68,8 +68,15 @@ export default function AgentDock( {
 }: Props ) {
 	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
 
-	const [ isCompactMode, setIsCompactMode ] = useState( false );
-	const [ shouldRenderChat, setShouldRenderChat ] = useState( true );
+	const [ isCompactMode, setIsCompactMode ] = useState(
+		window.__agentsManagerActions?.isCompactMode ?? false
+	);
+	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+		window.__agentsManagerActions?.isChatEnabled ?? true
+	);
+	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
+		window.__agentsManagerActions?.desktopMediaQuery
+	);
 	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
 	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
@@ -91,6 +98,7 @@ export default function AgentDock( {
 		useAgentLayoutManager( {
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
+			desktopMediaQuery,
 			onOpenSidebar: () => {
 				setIsOpen( true );
 				if ( pathname === '/history' ) {
@@ -109,12 +117,14 @@ export default function AgentDock( {
 	} );
 
 	useSetupCustomActions( {
+		canDock,
 		dock,
 		undock,
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
 		setShouldRenderChat,
+		setDesktopMediaQuery,
 	} );
 
 	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );

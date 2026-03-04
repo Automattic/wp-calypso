@@ -2,7 +2,6 @@ import { isMobile } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import connectSocialAccountsIllustration from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
-import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -12,7 +11,6 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 
 	return (
 		<>
-			<QueryPublicizeConnections selectedSite />
 			<Task
 				title={ translate( 'Drive traffic to your site' ) }
 				description={ translate(

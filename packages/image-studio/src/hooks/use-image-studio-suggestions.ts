@@ -129,9 +129,16 @@ export function useImageStudioSuggestions( {
 
 	// Get current state from the image studio store and editor store
 	const { suggestionState, postId } = useSelect( ( storeSelect ) => {
+		let currentPostId: string | number | null = null;
+		try {
+			currentPostId = storeSelect( editorStore )?.getCurrentPostId?.() ?? null;
+		} catch {
+			// eslint-disable-next-line no-console
+			console.debug( '[Image Studio] Failed to get current post ID from editor store.' );
+		}
 		return {
 			suggestionState: getSuggestionState( storeSelect( imageStudioStore ) ),
-			postId: storeSelect( editorStore )?.getCurrentPostId?.() ?? null,
+			postId: currentPostId,
 		};
 	}, [] );
 

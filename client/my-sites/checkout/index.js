@@ -17,6 +17,8 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
+	checkoutRenewalBySubscriptionId,
+	redirectToRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -357,6 +359,19 @@ export default function () {
 		clientRender
 	);
 
+	// A renewal using only a subscription ID. The backend derives the product
+	// and site info from the subscription record. Must be registered before the
+	// generic two-segment /checkout/:product/:domainOrProduct route so "renew"
+	// is not treated as a product slug.
+	page(
+		'/checkout/renew/:subscriptionId',
+		redirectLoggedOut,
+		noSite,
+		checkoutRenewalBySubscriptionId,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
@@ -381,25 +396,9 @@ export default function () {
 		clientRender
 	);
 
-	// A renewal link without a site is not allowed, but we send the user to
-	// checkout anyway so they can see a helpful error message.
-	page(
-		'/checkout/:product/renew/:purchaseId',
-		redirectLoggedOut,
-		noSite,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/renew/:purchaseId', redirectToRenewalBySubscriptionId );
 
-	page(
-		'/checkout/:product/renew/:purchaseId/:domain',
-		redirectLoggedOut,
-		siteSelection,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/renew/:purchaseId/:domain', redirectToRenewalBySubscriptionId );
 
 	// Gift purchases work without a site, so do not include the `siteSelection`
 	// middleware.

@@ -8,7 +8,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { preventWidows } from 'calypso/lib/formatting';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import HundredYearThankYou from 'calypso/my-sites/checkout/checkout-thank-you/hundred-year-thank-you';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { useSelector } from 'calypso/state';
@@ -43,8 +42,6 @@ export default function DomainBulkTransferThankYou( {
 			  )
 			: null
 	);
-
-	usePresalesChat( 'wpcom' );
 
 	if ( isHundredYearDomain ) {
 		return (

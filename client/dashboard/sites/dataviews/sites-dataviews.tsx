@@ -36,7 +36,7 @@ export function SitesDataViews( {
 
 	return (
 		<>
-			{ ! isLoading && <PerformanceTrackerStop id="dashboard-site-list" /> }
+			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< Site >
 					getItemId={ ( item ) => item.ID.toString() }

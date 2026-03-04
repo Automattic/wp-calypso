@@ -36,6 +36,15 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
+				// Handle image assets from block-notes package
+				{
+					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
+					include: /block-notes/,
+					type: 'asset/resource',
+					generator: {
+						filename: 'images/[name].[contenthash:8][ext]',
+					},
+				},
 			],
 		},
 		optimization: {
@@ -69,7 +78,10 @@ function getIndividualConfig( options = {} ) {
 					// WordPress core (expected in WP 7.0).
 					// Bundle @wordpress/abilities into image-studio so it works on
 					// self-hosted sites where the package isn't registered as a script.
-					if ( name === 'image-studio' && request === '@wordpress/abilities' ) {
+					if (
+						( name === 'image-studio' || name === 'block-notes' ) &&
+						request === '@wordpress/abilities'
+					) {
 						return null;
 					}
 				},
@@ -99,6 +111,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
+		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 	];
 }

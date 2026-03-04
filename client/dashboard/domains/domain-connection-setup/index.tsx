@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -214,6 +215,7 @@ export default function DomainConnection() {
 					queryErrorDescription={ queryErrorDescription }
 				/>
 			) }
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

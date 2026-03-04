@@ -48,6 +48,12 @@
 		}
 	}
 
+	.subscriptions-add-sites__save-button {
+		&[disabled] {
+			cursor: not-allowed;
+		}
+	}
+
 	.components-base-control {
 		position: relative;
 	}

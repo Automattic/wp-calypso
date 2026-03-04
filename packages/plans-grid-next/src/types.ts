@@ -105,6 +105,7 @@ export type PlansIntent =
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
 	| 'plans-woo-hosted'
+	| 'plans-migration'
 	| 'default';
 
 export interface PlanActionOverrides {

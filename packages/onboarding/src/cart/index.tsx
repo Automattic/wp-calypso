@@ -6,7 +6,7 @@ import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
-import { startsWith, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
@@ -136,16 +136,14 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 	return newSiteParams;
 };
 
-export const createSiteWithCart = async (
+export const createSite = async (
 	flowName: string,
-	userIsLoggedIn: boolean,
 	themeSlugWithRepo: string,
 	siteVisibility: Site.Visibility,
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
-	domainCartItems: MinimalRequestCartProduct[],
 	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
@@ -157,7 +155,6 @@ export const createSiteWithCart = async (
 	specId?: string | null
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -250,19 +247,6 @@ export const createSiteWithCart = async (
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
-	if ( domainCartItems.length ) {
-		for ( const domainCartItem of domainCartItems ) {
-			await processItemCart(
-				siteSlug,
-				isFreeThemePreselected,
-				themeSlugWithRepo,
-				flowName,
-				userIsLoggedIn,
-				domainCartItem
-			);
-		}
-	}
-
 	return providedDependencies;
 };
 
@@ -275,30 +259,6 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 			...( lastKnownFlow && { signup_flow: lastKnownFlow } ),
 		},
 	};
-}
-
-export async function addPlanToCart(
-	siteSlug: string,
-	flowName: string,
-	userIsLoggedIn: boolean,
-	themeSlugWithRepo: string,
-	cartItem: MinimalRequestCartProduct
-) {
-	if ( isEmpty( cartItem ) ) {
-		// the user selected the free plan
-		return;
-	}
-
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
-
-	await processItemCart(
-		siteSlug,
-		isFreeThemePreselected,
-		themeSlugWithRepo,
-		flowName,
-		userIsLoggedIn,
-		cartItem
-	);
 }
 
 export async function replaceProductsInCart(
@@ -317,33 +277,6 @@ export async function replaceProductsInCart(
 		debug( 'product replace request had an error', error );
 	}
 }
-
-const addToCartAndProceed = async (
-	newCartItem: MinimalRequestCartProduct,
-	siteSlug: string,
-	flowName: string
-) => {
-	const cartItem = prepareItemForAddingToCart( newCartItem, flowName );
-
-	if ( cartItem ) {
-		debug( 'adding products to cart', cartItem );
-		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
-
-		try {
-			const updatedCart = await cartManagerClient
-				.forCartKey( cartKey )
-				.actions.addProductsToCart( [ cartItem ] );
-
-			debug( 'product add request complete', updatedCart );
-		} catch ( error ) {
-			debug( 'product add request had an error', error );
-			//TODO Manage error
-			// reduxStore.dispatch( errorNotice( error.message ) );
-		}
-	} else {
-		debug( 'no cart items to add' );
-	}
-};
 
 export async function addProductsToCart(
 	siteSlug: string,
@@ -393,24 +326,5 @@ export async function setThemeOnSite(
 		} );
 	} catch ( error ) {
 		//TODO: Manage error
-	}
-}
-
-export async function processItemCart(
-	siteSlug: string,
-	isFreeThemePreselected: boolean,
-	themeSlugWithRepo: string,
-	lastKnownFlow: string,
-	userIsLoggedIn: boolean,
-	newCartItem?: MinimalRequestCartProduct
-) {
-	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
-		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
-	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
-		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
-	} else {
-		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	}
 }

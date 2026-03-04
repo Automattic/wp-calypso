@@ -7,6 +7,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardHeader, CardBody } from '../../components/card';
@@ -87,7 +88,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const renderActiveTab = () => {
 		if ( isScanInProgress ) {
-			return <ScanStatus scanState={ scanState } />;
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<ScanStatus scanState={ scanState } />
+				</>
+			);
 		}
 		return (
 			<ActiveThreatsDataViews

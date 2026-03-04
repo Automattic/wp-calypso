@@ -1,5 +1,10 @@
 import { TrialPlans } from '@automattic/api-core';
-import { p2HubP2sQuery, siteDeleteMutation, sitePurchasesQuery } from '@automattic/api-queries';
+import {
+	p2HubP2sQuery,
+	siteDeleteMutation,
+	sitePurchasesQuery,
+	stagingSiteSyncStateQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -20,6 +25,11 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import {
+	getProductionSiteId,
+	hasStagingSite,
+	isStagingSiteSyncing,
+} from '../../utils/site-staging-site';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -136,6 +146,13 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
 	const mutation = useMutation( siteDeleteMutation( site.ID ) );
 
+	const productionSiteId = getProductionSiteId( site );
+	const { data: stagingSiteSyncState } = useQuery( {
+		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId && hasStagingSite( site ),
+	} );
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+
 	const fields: Field< SiteDeleteFormData >[] = [
 		{
 			id: 'domain',
@@ -179,6 +196,15 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 
 	return (
 		<>
+			{ isSyncing && (
+				<Notice variant="warning" density="medium">
+					<Text>
+						{ __(
+							'A sync is currently in progress. Deleting this site will cancel the sync and any unfinished changes will be lost.'
+						) }
+					</Text>
+				</Notice>
+			) }
 			<Notice variant="warning" density="medium">
 				<Text>
 					{ createInterpolateElement(
