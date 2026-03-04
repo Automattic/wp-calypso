@@ -634,17 +634,8 @@
 
 // Modern theme card overrides (logged-out redesign)
 .theme-showcase.is-modern {
-	.card.theme-card {
-		border-radius: 8px;
-		overflow: hidden;
-	}
-
 	.theme-card__image-container {
-		border-radius: 0;
-	}
-
-	.theme-card__info {
-		padding: 12px 16px;
+		border-radius: 8px;
 	}
 
 	// Hide style variation swatches for logged-out modern view
