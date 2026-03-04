@@ -63,7 +63,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 					className={ `reader-add-subscription__form${ isEmailVerified ? '' : ' is-disabled' }` }
 				>
 					{ isAddNewTab && (
-						<h2 className="reader-add-subscription__form-desc">
+						<h2 className="reader-add-subscription__form-title">
 							{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 						</h2>
 					) }
