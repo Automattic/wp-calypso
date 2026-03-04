@@ -22,13 +22,20 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			// Get supported MIME types
 			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 
-			// Fetch the attachment MIME type from the media store
-			const media = useSelect(
+			// Fetch the attachment from the media store
+			const { media, hasResolved } = useSelect(
 				( select ) => {
 					if ( ! attributes?.id ) {
-						return null;
+						return { media: null, hasResolved: true };
 					}
-					return select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id );
+					return {
+						media: select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id ),
+						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
+							'postType',
+							'attachment',
+							attributes.id,
+						] ),
+					};
 				},
 				[ attributes?.id ]
 			);
@@ -71,9 +78,35 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				return <BlockEdit { ...props } />;
 			}
 
+			const attachment = media as {
+				source_url?: string;
+				mime_type?: string;
+				media_details?: { sizes?: Record< string, { source_url?: string } > };
+			} | null;
+
 			// Check if image MIME type is supported
-			const imageMimeType = media?.mime_type;
-			if ( imageMimeType && ! supportedMimeTypes.includes( imageMimeType ) ) {
+			if ( attachment?.mime_type && ! supportedMimeTypes.includes( attachment.mime_type ) ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			// Don't show button if the attachment doesn't match the displayed image
+			// (e.g., image block pasted from another site with a stale ID).
+			// Collect all known URLs for this attachment (full size + all
+			// intermediate sizes) and check if the block URL matches any of them.
+			const stripParams = ( url: string ) => url.split( '?' )[ 0 ];
+			const knownUrls = new Set< string >();
+			if ( attachment?.source_url ) {
+				knownUrls.add( stripParams( attachment.source_url ) );
+			}
+			if ( attachment?.media_details?.sizes ) {
+				for ( const size of Object.values( attachment.media_details.sizes ) ) {
+					if ( size.source_url ) {
+						knownUrls.add( stripParams( size.source_url ) );
+					}
+				}
+			}
+			const attributeUrl = attributes?.url ? stripParams( attributes.url ) : null;
+			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
 				return <BlockEdit { ...props } />;
 			}
 

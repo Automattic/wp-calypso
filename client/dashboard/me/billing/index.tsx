@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution, currencyDollar } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	purchasesRoute,
 	billingHistoryRoute,
@@ -68,6 +69,7 @@ function Billing() {
 					to={ taxDetailsRoute.to }
 				/>
 			</VStack>
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

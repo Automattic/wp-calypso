@@ -186,6 +186,7 @@ interface TrackImageStudioErrorOptions {
 		| 'draft_cleanup_failed'
 		| 'draft_cleanup_permission_denied'
 		| 'delete_permanently_failed'
+		| 'save_metadata_failed'
 		| 'other';
 	attachmentId?: number;
 }

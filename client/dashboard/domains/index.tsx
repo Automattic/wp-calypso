@@ -118,7 +118,7 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
-			<PerformanceTrackerStop id="dashboard-domain-list" />
+			<PerformanceTrackerStop />
 		</>
 	);
 }

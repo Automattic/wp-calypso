@@ -13,6 +13,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -145,6 +146,7 @@ export default function DomainOverview() {
 			{ snackbarBackButtonText && (
 				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 			) }
+			<PerformanceTrackerStop />
 		</>
 	);
 }

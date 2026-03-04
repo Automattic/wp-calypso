@@ -2,6 +2,7 @@ import { Modal, Button } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 
 import './style.scss';
 
@@ -23,6 +24,7 @@ export default function A4AModal( {
 	showCloseButton?: boolean;
 } ) {
 	const translate = useTranslate();
+	useMinimizeHelpCenterOnMount();
 
 	return (
 		<Modal

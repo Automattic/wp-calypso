@@ -3,6 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -94,6 +95,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			) }
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

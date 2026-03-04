@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ReviewsRatingsStars from 'calypso/components/reviews-rating-stars/reviews-ratings-stars';
@@ -24,6 +25,7 @@ const DEFAULT_RATING_VALUE = 0;
 export default function UserFeedbackModalForm( { show, onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	useMinimizeHelpCenterOnMount();
 
 	const [ feedback, setFeedback ] = useState( DEFAULT_FEEDBACK_VALUE );
 	const [ rating, setRating ] = useState( DEFAULT_RATING_VALUE );

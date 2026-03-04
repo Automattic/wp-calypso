@@ -5,20 +5,22 @@
 	width: 100%;
 }
 
+$logo-aspect-ratio: 800 / 320;
+
 .logo-file-upload-placeholder {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 134px;
-	height: 134px;
-	min-width: 134px;
-	min-height: 134px;
+	width: 250px;
+	aspect-ratio: $logo-aspect-ratio;
+	min-height: 80px;
 	padding: 0;
 	border: 1px dashed var( --color-neutral-20 );
 	border-radius: 4px;
 	background: var( --color-neutral-0 );
 	cursor: pointer;
 	box-shadow: none;
+	overflow: hidden;
 	transition: border-color 0.15s ease, background-color 0.15s ease;
 
 	&:hover {
@@ -30,12 +32,20 @@
 		outline: 2px solid var( --color-primary );
 		outline-offset: 2px;
 	}
+
+	&.logo-file-upload-placeholder--has-image {
+		border-style: solid;
+	}
+
+	&.logo-file-upload-placeholder--has-image:hover {
+		background: var( --color-neutral-0 );
+	}
 }
 
 .logo-file-upload-preview {
-	max-width: 132px;
-	max-height: 132px;
-	object-fit: contain;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 .logo-file-upload-icon {
