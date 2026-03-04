@@ -13,9 +13,6 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-	TRENDING_THEMES_FAIL,
-	TRENDING_THEMES_FETCH,
-	TRENDING_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -507,26 +504,6 @@ export function recommendedThemes( state = {}, action ) {
 	return state;
 }
 
-/**
- * Returns updated state for trending themes after
- * corresponding actions have been dispatched.
- * @param   {Object} state  Current state
- * @param   {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function trendingThemes( state = {}, action ) {
-	switch ( action.type ) {
-		case TRENDING_THEMES_FETCH:
-			return { ...state, isLoading: true, themes: [] };
-		case TRENDING_THEMES_SUCCESS:
-			return { ...state, isLoading: false, themes: action.payload.themes };
-		case TRENDING_THEMES_FAIL:
-			return { ...state, isLoading: false, themes: [] };
-	}
-
-	return state;
-}
-
 export function themesUpdate( state = {}, action ) {
 	const themesUpdating = state.themesUpdating || [];
 	const themesUpdated = state.themesUpdated || [];
@@ -685,7 +662,6 @@ const combinedReducer = combineReducers( {
 	themeFilters,
 	themeFilterRequestError,
 	recommendedThemes,
-	trendingThemes,
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,

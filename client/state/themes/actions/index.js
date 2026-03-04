@@ -19,10 +19,6 @@ export {
 	receiveRecommendedThemes,
 } from 'calypso/state/themes/actions/recommended-themes';
 export { redirectToLivePreview } from 'calypso/state/themes/actions/redirect-to-live-preview';
-export {
-	getTrendingThemes,
-	receiveTrendingThemes,
-} from 'calypso/state/themes/actions/trending-themes';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
 export { setActiveTheme } from 'calypso/state/themes/actions/set-active-theme';
 export { requestTheme } from 'calypso/state/themes/actions/request-theme';
