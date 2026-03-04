@@ -28,7 +28,7 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 				<div className="reader-full-post__header-meta-line-1">
 					{ showAuthorLink && (
 						<ReaderAuthorLink
-							className="reader-full-post__header-meta-author"
+							className="reader-full-post__header-meta-author extraclass"
 							author={ author }
 							siteUrl={ streamUrl }
 							post={ post }
