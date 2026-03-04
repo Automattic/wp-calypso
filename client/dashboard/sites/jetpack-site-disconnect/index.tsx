@@ -1,6 +1,5 @@
 import { sitePurchasesQuery, siteJetpackDisconnectMutation } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -95,7 +94,6 @@ function ContentConfirmDisconnect( {
 	onClose,
 	activePurchaseIds,
 }: ContentInfoProps & { activePurchaseIds: number[] } ) {
-	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( siteJetpackDisconnectMutation( site.ID ) );
@@ -124,7 +122,6 @@ function ContentConfirmDisconnect( {
 					{ type: 'snackbar' }
 				);
 
-				router.navigate( { to: '/sites' } );
 				onClose();
 			},
 			onError: ( error: Error ) => {
