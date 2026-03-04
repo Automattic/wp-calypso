@@ -95,10 +95,10 @@ export default function OrchestratorChat( {
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
-	const initSessionId = agentConfig!.sessionId;
+	const configSessionId = agentConfig!.sessionId;
 
 	const { sessionId: cachedSessionId, messages: cachedMessages = [] } = cachedConversation;
-	const hasCachedConversation = !! cachedSessionId && initSessionId === cachedSessionId;
+	const hasCachedConversation = !! cachedSessionId && configSessionId === cachedSessionId;
 
 	const {
 		addMessage,
@@ -139,7 +139,7 @@ export default function OrchestratorChat( {
 			getAgentManager().updateSessionId( agentId, serverSessionId );
 
 			// Sync local session ID with the server's
-			if ( initSessionId !== serverSessionId ) {
+			if ( configSessionId !== serverSessionId ) {
 				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
@@ -315,7 +315,7 @@ export default function OrchestratorChat( {
 	}, [ finalMessages.length, onMessagesCountChange ] );
 
 	const handleViewHistory = () => {
-		// Cache current conversation messages before navigating to history view
+		// Cache current conversation messages to restore when navigating back from history
 		cachedConversation = { sessionId: getActiveSessionId(), messages: finalMessages };
 	};
 
