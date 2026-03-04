@@ -38,9 +38,39 @@ const siteVisibilityRoute = createRoute( {
 const aiToolsRoute = createRoute( {
 	...appRouterSites.siteSettingsAIToolsRoute.options,
 	getParentRoute: () => settingsRoute,
+} );
+
+const aiToolsIndexRoute = createRoute( {
+	getParentRoute: () => aiToolsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'ai-tools' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const aiToolsMcpCategoryRoute = createRoute( {
+	// Bypass type issue by omitting the loader (the component handles its own data fetching).
+	...Object.assign( appRouterSites.siteSettingsAIToolsMcpCategoryRoute.options, {
+		loader: undefined,
+	} ),
+	getParentRoute: () => aiToolsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools/mcp-tools-category' ).then( ( d ) =>
+		createLazyRoute( 'ai-tools-mcp-category' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const aiToolsMcpSetupRoute = createRoute( {
+	...appRouterSites.siteSettingsAIToolsMcpSetupRoute.options,
+	getParentRoute: () => aiToolsRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools/mcp-setup' ).then( ( d ) =>
+		createLazyRoute( 'ai-tools-mcp-setup' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -219,7 +249,11 @@ const createRouteTree = () =>
 			settingsRoute.addChildren( [
 				settingsIndexRoute,
 				siteVisibilityRoute,
-				aiToolsRoute,
+				aiToolsRoute.addChildren( [
+					aiToolsIndexRoute,
+					aiToolsMcpSetupRoute,
+					aiToolsMcpCategoryRoute,
+				] ),
 				subscriptionGiftingRoute,
 				wordpressRoute,
 				phpRoute,

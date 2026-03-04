@@ -1,6 +1,13 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { bigSkyPluginMutation, bigSkyPluginQuery, siteBySlugQuery } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	bigSkyPluginMutation,
+	bigSkyPluginQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteSettingsMutation,
+} from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -9,25 +16,28 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
-import { useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { check, comment, connection, pencil, seen } from '@wordpress/icons';
+import { useCallback, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useHelpCenter } from '../../app/help-center';
-import { Card, CardBody, CardFooter } from '../../components/card';
+import { Card, CardBody, CardFooter, CardHeader } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
-import SummaryButton from '../../components/summary-button';
-import { SummaryButtonList } from '../../components/summary-button-list';
+import '../../components/summary-button-list/style.scss';
+import { getPermissionLevel } from '../../me/mcp/categories';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import { getMockMcpAbilities, updateMockMcpAbilities } from './mock-mcp-abilities';
 import upsellIllustrationUrl from './upsell-illustration.svg';
+import type { SiteMcpAbility } from '@automattic/api-core';
+import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
 const features = [
-	__( 'Get answers where you work so you‘re unstuck faster' ),
+	__( 'Get answers where you work so you\u2019re unstuck faster' ),
 	__( 'Update your site design with less effort' ),
 	__( 'Draft and revise content in one place' ),
 	__( 'Create beautiful images without leaving WordPress' ),
@@ -44,8 +54,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
 
-	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
-
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
 		meta: {
@@ -55,6 +63,117 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			},
 		},
 	} );
+
+	// MCP site-level data — fall back to localStorage mock when API has no abilities.
+	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
+	const apiAbilities = siteSettings?.mcp_abilities;
+	const useMock = ! apiAbilities || Object.keys( apiAbilities ).length === 0;
+	const [ mockAbilities, setMockAbilities ] = useState( getMockMcpAbilities );
+
+	const mcpAbilities = useMock ? mockAbilities : apiAbilities;
+	const availableTools = Object.entries( mcpAbilities );
+	const enabledToolsCount = Object.values( mcpAbilities ).filter( ( tool ) => tool.enabled ).length;
+	const anyToolsEnabled = enabledToolsCount > 0;
+
+	// MCP toggle mutation (real API) — only used when we have real data.
+	const mcpToggleAllRef = useRef( false );
+	const mcpMutation = useMutation( {
+		...siteSettingsMutation( site.ID ),
+		onSettled: () => {
+			mcpToggleAllRef.current = false;
+		},
+		meta: {
+			snackbar: {
+				success: __( 'MCP settings saved.' ),
+				error: __( 'Failed to save MCP settings.' ),
+			},
+		},
+	} );
+
+	const handleMcpToggleAll = useCallback(
+		( enabled: boolean ) => {
+			if ( mcpToggleAllRef.current ) {
+				return;
+			}
+			mcpToggleAllRef.current = true;
+
+			const updates: Record< string, boolean > = {};
+			Object.entries( mcpAbilities ).forEach( ( [ toolId, tool ] ) => {
+				if ( enabled ) {
+					const level = getPermissionLevel( tool );
+					const shouldEnable = level === 'read';
+					if ( tool.enabled !== shouldEnable ) {
+						updates[ toolId ] = shouldEnable;
+					}
+				} else if ( tool.enabled ) {
+					updates[ toolId ] = false;
+				}
+			} );
+
+			if ( Object.keys( updates ).length === 0 ) {
+				mcpToggleAllRef.current = false;
+				return;
+			}
+
+			if ( useMock ) {
+				setMockAbilities( updateMockMcpAbilities( updates ) );
+				mcpToggleAllRef.current = false;
+			} else {
+				mcpMutation.mutate( { mcp_abilities: updates } as any );
+			}
+		},
+		[ mcpAbilities, useMock, mcpMutation ]
+	);
+
+	// Group MCP tools by permission level
+	const permissionGroups: Record< string, Array< [ string, SiteMcpAbility ] > > = {};
+	availableTools.forEach( ( [ toolId, tool ] ) => {
+		const level = getPermissionLevel( tool );
+		if ( ! permissionGroups[ level ] ) {
+			permissionGroups[ level ] = [];
+		}
+		permissionGroups[ level ].push( [ toolId, tool ] );
+	} );
+	const readTools = permissionGroups.read || [];
+	const writeTools = [ ...( permissionGroups.write || [] ), ...( permissionGroups.manage || [] ) ];
+
+	const getBadgeText = ( enabledCount: number, totalCount: number ): string => {
+		if ( enabledCount === totalCount ) {
+			return __( 'All enabled' );
+		}
+		if ( enabledCount === 0 ) {
+			return __( 'Disabled' );
+		}
+		return sprintf(
+			/* translators: %1$d is enabled count, %2$d is total */
+			__( '%1$d of %2$d enabled' ),
+			enabledCount,
+			totalCount
+		);
+	};
+
+	const getBadgeIntent = (
+		enabledCount: number,
+		totalCount: number
+	): 'success' | 'info' | 'default' => {
+		if ( enabledCount === totalCount ) {
+			return 'success';
+		}
+		if ( enabledCount > 0 ) {
+			return 'info';
+		}
+		return 'default';
+	};
+
+	const badgesFor = ( tools: Array< [ string, SiteMcpAbility ] > ): SummaryButtonBadgeProps[] => {
+		const count = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+		return [
+			{
+				text: getBadgeText( count, tools.length ),
+				intent: getBadgeIntent( count, tools.length ),
+			},
+		];
+	};
 
 	const description = isAvailable
 		? createInterpolateElement(
@@ -153,45 +272,66 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						) }
 					</ConfirmModal>
 				) }
-				{ isEnabled && (
-					<VStack spacing={ 3 }>
-						<SectionHeader title={ __( 'Ways to get started' ) } level={ 3 } />
-						<SummaryButtonList>
-							<SummaryButton
-								title={ __( 'Get answers' ) }
-								decoration={ <Icon icon={ help } /> }
-								onClick={ () => {
-									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
-									setNavigateToRoute( '/odie' );
-									setShowHelpCenter( true );
-								} }
-							/>
-							<SummaryButton
-								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
-								title={ __( 'Update your site design' ) }
-								decoration={ <Icon icon={ brush } /> }
-								onClick={ () => {
-									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
-								} }
-							/>
-							<SummaryButton
-								href={ `${ site.options?.admin_url }post-new.php` }
-								title={ __( 'Draft and revise content' ) }
-								decoration={ <Icon icon={ termDescription } /> }
-								onClick={ () => {
-									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
-								} }
-							/>
-							<SummaryButton
-								href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
-								title={ __( 'Create beautiful images' ) }
-								decoration={ <Icon icon={ image } /> }
-								onClick={ () => {
-									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );
-								} }
-							/>
-						</SummaryButtonList>
-					</VStack>
+				{ config.isEnabled( 'mcp-settings' ) && (
+					<Card className="dashboard-summary-button-list has-density-medium">
+						<CardHeader>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ __( 'External AI agent access' ) }
+									description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ anyToolsEnabled }
+									disabled={ mcpMutation.isPending }
+									onChange={ handleMcpToggleAll }
+									label={ __( 'Enable MCP access' ) }
+								/>
+							</VStack>
+						</CardHeader>
+						{ anyToolsEnabled && (
+							<CardBody
+								className="dashboard-summary-button-list__children-list-wrapper"
+								style={
+									mcpMutation.isPending ? { opacity: 0.5, pointerEvents: 'none' } : undefined
+								}
+							>
+								<ul className="dashboard-summary-button-list__children-list">
+									{ readTools.length > 0 && (
+										<li className="dashboard-summary-button-list__children-list-item">
+											<RouterLinkSummaryButton
+												to={ `/sites/${ siteSlug }/settings/ai-tools/mcp/read` }
+												title={ __( 'Read' ) }
+												decoration={ <Icon icon={ seen } /> }
+												badges={ badgesFor( readTools ) }
+												density="medium"
+											/>
+										</li>
+									) }
+									{ writeTools.length > 0 && (
+										<li className="dashboard-summary-button-list__children-list-item">
+											<RouterLinkSummaryButton
+												to={ `/sites/${ siteSlug }/settings/ai-tools/mcp/write` }
+												title={ __( 'Write' ) }
+												decoration={ <Icon icon={ pencil } /> }
+												badges={ badgesFor( writeTools ) }
+												density="medium"
+											/>
+										</li>
+									) }
+								</ul>
+							</CardBody>
+						) }
+					</Card>
+				) }
+				{ config.isEnabled( 'mcp-settings' ) && anyToolsEnabled && (
+					<RouterLinkSummaryButton
+						to={ `/sites/${ siteSlug }/settings/ai-tools/mcp/setup` }
+						title={ __( 'Connect external AI agent' ) }
+						description={ __( 'Get instructions for connecting your external AI agent.' ) }
+						decoration={ <Icon icon={ connection } /> }
+					/>
 				) }
 			</>
 		);

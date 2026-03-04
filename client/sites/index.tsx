@@ -25,8 +25,11 @@ export default function () {
 		return page.redirect( `/sites/${ context.params.site }/settings` );
 	} );
 
+	// :feature* matches zero or more path segments so that deep sub-routes
+	// (e.g. /settings/ai-tools/mcp/read) are also handled by the dashboard
+	// backport.  TanStack Router inside the backport does the real matching.
 	page(
-		'/sites/:site/settings/:feature?',
+		'/sites/:site/settings/:feature*',
 		siteSelection,
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard(),

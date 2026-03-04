@@ -1,3 +1,5 @@
+import type { McpAbilityAnnotations } from '../me-settings/types';
+
 export interface SiteSettings {
 	blog_public?: number;
 	is_fully_managed_agency_site?: boolean;
@@ -17,14 +19,15 @@ export interface SiteSettings {
 	mcp_abilities?: SiteMcpAbilities;
 }
 
-export type SiteMcpAbilities = Record<
-	string,
-	{
-		name: string;
-		title: string;
-		description: string;
-		category: string;
-		type: string;
-		enabled: boolean;
-	}
->;
+export type SiteMcpAbility = {
+	name: string;
+	title: string;
+	description: string;
+	category: string;
+	category_label?: string;
+	type: string;
+	enabled: boolean;
+	annotations?: McpAbilityAnnotations;
+};
+
+export type SiteMcpAbilities = Record< string, SiteMcpAbility >;

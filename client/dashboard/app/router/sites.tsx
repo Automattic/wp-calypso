@@ -673,9 +673,78 @@ export const siteSettingsAIToolsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
 	},
+} );
+
+export const siteSettingsAIToolsIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsMcpCategoryRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'MCP access' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'mcp/$categorySlug',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		if ( ! isEnabled( 'mcp-settings' ) ) {
+			throw redirectAsNotAllowed( {
+				to: siteSettingsAIToolsRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/mcp-tools-category' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-mcp-category' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsMcpSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connect AI agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'mcp/setup',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		if ( ! isEnabled( 'mcp-settings' ) ) {
+			throw redirectAsNotAllowed( {
+				to: siteSettingsAIToolsRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/mcp-setup' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-mcp-setup' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1488,7 +1557,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
-		siteSettingsAIToolsRoute,
+		siteSettingsAIToolsRoute.addChildren( [
+			siteSettingsAIToolsIndexRoute,
+			...( isEnabled( 'mcp-settings' )
+				? [ siteSettingsAIToolsMcpSetupRoute, siteSettingsAIToolsMcpCategoryRoute ]
+				: [] ),
+		] ),
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,
