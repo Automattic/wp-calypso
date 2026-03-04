@@ -19,8 +19,10 @@ import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import {
+	getActiveAgency,
+	hasApprovedAgencyStatus,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -57,9 +59,8 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
 	const canIssueLicenses = agency?.can_issue_licenses ?? true;
-	const isAgencyPendingOrRejected =
-		agency?.approval_status === ApprovalStatus.PENDING ||
-		agency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
@@ -178,7 +179,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 			<div className="checkout__aside-actions">
 				<Tooltip
 					text={
-						isAgencyPendingOrRejected
+						! isAgencyApproved
 							? translate(
 									'Your agency is not yet approved. Please wait for approval before making a purchase.'
 							  )
@@ -201,10 +202,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 							primary
 							onClick={ onCheckout }
 							disabled={
-								! checkoutItems.length ||
-								! isReady ||
-								! canIssueLicenses ||
-								isAgencyPendingOrRejected
+								! checkoutItems.length || ! isReady || ! canIssueLicenses || ! isAgencyApproved
 							}
 							busy={ ! isReady }
 							ref={ wrapperRef }

@@ -14,8 +14,7 @@ import {
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import WPCOMPlanSlider from '../wpcom-plan-selector/slider';
@@ -36,10 +35,7 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 
 	const { data: devLicenses } = useFetchDevLicenses();
 
-	const currentAgency = useSelector( getActiveAgency );
-	const isAgencyPendingOrRejected =
-		currentAgency?.approval_status === ApprovalStatus.PENDING ||
-		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const availableDevSites = devLicenses?.available;
 
@@ -161,9 +157,9 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 						label: translate( 'Create a development site' ),
 						variant: 'secondary',
 						icon: arrowRight,
-						disabled: ! availableDevSites || isAgencyPendingOrRejected,
+						disabled: ! availableDevSites || ! isAgencyApproved,
 						onClick: onClickCreateWPCOMDevSite,
-						tooltip: isAgencyPendingOrRejected
+						tooltip: ! isAgencyApproved
 							? translate(
 									'Your agency is not yet approved. Please wait for approval before creating a development site.'
 							  )

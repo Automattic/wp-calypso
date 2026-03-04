@@ -4,8 +4,7 @@ import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext, TermPricingContext } from '../../context';
@@ -25,10 +24,7 @@ type Props = {
 export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
 	const translate = useTranslate();
 
-	const currentAgency = useSelector( getActiveAgency );
-	const isAgencyPendingOrRejected =
-		currentAgency?.approval_status === ApprovalStatus.PENDING ||
-		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const { termPricing } = useContext( TermPricingContext );
@@ -90,7 +86,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 
 					<Tooltip
 						text={
-							isAgencyPendingOrRejected
+							! isAgencyApproved
 								? translate(
 										'Your agency is not yet approved. Please wait for approval before making a purchase.'
 								  )
@@ -100,7 +96,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 						<span className="shopping-cart__menu-checkout-button">
 							<Button
 								onClick={ onCheckout }
-								disabled={ ! items.length || isAgencyPendingOrRejected }
+								disabled={ ! items.length || ! isAgencyApproved }
 								primary
 							>
 								{ translate( 'Checkout' ) }

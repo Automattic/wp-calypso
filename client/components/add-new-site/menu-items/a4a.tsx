@@ -23,8 +23,7 @@ import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
@@ -35,8 +34,6 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const { setVisibleModalType } = useContext( AddNewSiteContext );
 
 	const pressableOwnership = usePressableOwnershipType();
-
-	const currentAgency = useSelector( getActiveAgency );
 
 	const { data: pendingSites } = useFetchPendingSites();
 	const { data: devLicenses } = useFetchDevLicenses();
@@ -53,9 +50,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	const isAgencyPendingOrRejected =
-		currentAgency?.approval_status === ApprovalStatus.PENDING ||
-		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
@@ -146,10 +141,10 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 						description={ translate(
 							'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
 						) }
-						disabled={ ! hasAvailableDevSites || isAgencyPendingOrRejected }
+						disabled={ ! hasAvailableDevSites || ! isAgencyApproved }
 						buttonProps={ {
 							onClick: () => {
-								if ( ! hasAvailableDevSites || isAgencyPendingOrRejected ) {
+								if ( ! hasAvailableDevSites || ! isAgencyApproved ) {
 									return;
 								}
 								if ( paymentMethodRequired ) {
@@ -163,7 +158,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 							},
 						} }
 						tooltip={
-							isAgencyPendingOrRejected
+							! isAgencyApproved
 								? translate(
 										'Your agency is not yet approved. Please wait for approval before creating a development site.'
 								  )

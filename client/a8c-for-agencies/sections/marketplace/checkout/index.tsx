@@ -3,8 +3,7 @@ import page from '@automattic/calypso-router';
 import { useContext, useEffect } from 'react';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
@@ -22,18 +21,15 @@ function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutPro
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	const currentAgency = useSelector( getActiveAgency );
-	const isAgencyPendingOrRejected =
-		currentAgency?.approval_status === ApprovalStatus.PENDING ||
-		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	useEffect( () => {
-		if ( isAgencyPendingOrRejected && ! isClient ) {
+		if ( ! isAgencyApproved && ! isClient ) {
 			page.redirect( A4A_MARKETPLACE_LINK );
 		}
-	}, [ isAgencyPendingOrRejected, isClient ] );
+	}, [ isAgencyApproved, isClient ] );
 
-	if ( isAgencyPendingOrRejected && ! isClient ) {
+	if ( ! isAgencyApproved && ! isClient ) {
 		return null;
 	}
 

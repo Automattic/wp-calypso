@@ -10,8 +10,7 @@ import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-crea
 import PressableBanner from 'calypso/assets/images/a8c-for-agencies/pressable-card-banner.svg';
 import WPCOMBanner from 'calypso/assets/images/a8c-for-agencies/wpcom-card-banner.svg';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -50,10 +49,7 @@ export default function MigrationsHostingOptions() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const currentAgency = useSelector( getActiveAgency );
-	const isAgencyPendingOrRejected =
-		currentAgency?.approval_status === ApprovalStatus.PENDING ||
-		currentAgency?.approval_status === ApprovalStatus.REJECTED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const { data: devLicenses } = useFetchDevLicenses();
 
@@ -117,7 +113,7 @@ export default function MigrationsHostingOptions() {
 						<Tooltip
 							key="create-dev-site-cta-button"
 							text={
-								isAgencyPendingOrRejected
+								! isAgencyApproved
 									? translate(
 											'Your agency is not yet approved. Please wait for approval before creating a development site.'
 									  )
@@ -127,7 +123,7 @@ export default function MigrationsHostingOptions() {
 							<span>
 								<Button
 									variant="secondary"
-									disabled={ ! availableDevSites || isAgencyPendingOrRejected }
+									disabled={ ! availableDevSites || ! isAgencyApproved }
 									onClick={ onClickCreateWPCOMDevSite }
 								>
 									{ translate( 'Create a development site →' ) }
