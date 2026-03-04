@@ -2,9 +2,15 @@
  * MCP Sites — Site exceptions page
  * Legacy port of: client/dashboard/me/mcp/sites/index.tsx
  */
-import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	bigSkyPluginQuery,
+	sitesQuery,
+	userSettingsQuery,
+	userSettingsMutation,
+} from '@automattic/api-queries';
+import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
@@ -40,6 +46,23 @@ export default function McpSites( { path } ) {
 
 	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
+
+	// Fetch BigSky plugin status to determine site eligibility (paid plan check)
+	const bigSkyQueries = useQueries( {
+		queries: sites.map( ( site ) => ( {
+			...bigSkyPluginQuery( site.ID ),
+			enabled: sites.length > 0,
+		} ) ),
+	} );
+
+	// Build a map of site ID → available
+	const siteAvailability = new Map();
+	sites.forEach( ( site, index ) => {
+		const result = bigSkyQueries[ index ];
+		if ( result?.data ) {
+			siteAvailability.set( site.ID, result.data.available );
+		}
+	} );
 
 	const isGlobalOn = hasEnabledAccountTools( userSettings || {} );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
@@ -86,12 +109,30 @@ export default function McpSites( { path } ) {
 	} );
 
 	// ComboboxControl options — exclude already-listed sites.
+	// In "add" mode, include unavailable sites with "Upgrade required" badge.
+	// In "exceptions" mode, exclude unavailable sites entirely.
 	const siteOptions = sites
-		.filter( ( site ) => ! excludedSiteIds.includes( site.ID ) )
-		.map( ( site ) => ( {
-			value: String( site.ID ),
-			label: getSiteDisplayName( site ),
-		} ) );
+		.filter( ( site ) => {
+			if ( excludedSiteIds.includes( site.ID ) ) {
+				return false;
+			}
+			// In exceptions mode, only show available (paid plan) sites.
+			if ( isGlobalOn ) {
+				const available = siteAvailability.get( site.ID );
+				if ( available === false ) {
+					return false;
+				}
+			}
+			return true;
+		} )
+		.map( ( site ) => {
+			const available = siteAvailability.get( site.ID ) ?? true;
+			return {
+				value: String( site.ID ),
+				label: getSiteDisplayName( site ),
+				...( ! isGlobalOn && ! available && { badge: translate( 'Available on paid plans' ) } ),
+			};
+		} );
 
 	const handleSiteSelect = ( value ) => {
 		if ( ! value ) {
@@ -101,6 +142,20 @@ export default function McpSites( { path } ) {
 		if ( isNaN( siteId ) ) {
 			return;
 		}
+
+		// Check if this site needs an upgrade (only in "add" mode)
+		if ( ! isGlobalOn ) {
+			const available = siteAvailability.get( siteId );
+			if ( available === false ) {
+				const site = sites.find( ( s ) => s.ID === siteId );
+				const slug = site?.slug || site?.URL?.replace( /^https?:\/\//, '' ) || '';
+				window.location.href = addQueryArgs( 'https://wordpress.com/setup/plan-upgrade/', {
+					siteSlug: slug,
+				} );
+				return;
+			}
+		}
+
 		isAddingRef.current = true;
 		if ( document.activeElement ) {
 			document.activeElement.blur();

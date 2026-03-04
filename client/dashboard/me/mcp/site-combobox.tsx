@@ -47,21 +47,19 @@ export default function SiteCombobox( {
 		const badge = badgeByValue.get( item.value );
 
 		return (
-			<HStack spacing={ 3 } alignment="left">
+			<HStack spacing={ 3 } alignment="center">
 				{ site && <SiteIcon site={ site } size={ 32 } /> }
-				<VStack spacing={ 0 }>
-					<HStack spacing={ 2 } alignment="left">
-						<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
-							{ item.label }
-						</Text>
-						{ badge && <Badge intent="warning">{ badge }</Badge> }
-					</HStack>
+				<VStack spacing={ 0 } style={ { flex: 1, minWidth: 0 } }>
+					<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
+						{ item.label }
+					</Text>
 					{ site && (
 						<Text as="div" size={ 12 } weight={ 300 } lineHeight={ 1.2 } color="inherit">
 							{ getSiteDisplayUrl( site ) }
 						</Text>
 					) }
 				</VStack>
+				{ badge && <Badge intent="info">{ badge }</Badge> }
 			</HStack>
 		);
 	};

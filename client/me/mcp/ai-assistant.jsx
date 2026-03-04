@@ -131,7 +131,7 @@ export default function McpAiAssistant( { path } ) {
 			? searchPool.map( ( site ) => ( {
 					value: String( site.id ),
 					label: site.name,
-					...( ! site.available && { badge: translate( 'Upgrade required' ) } ),
+					...( ! site.available && { badge: translate( 'Available on paid plans' ) } ),
 			  } ) )
 			: [ { value: '', label: translate( 'No eligible sites.' ) } ];
 

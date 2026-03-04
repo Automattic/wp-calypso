@@ -1,7 +1,12 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import {
+	bigSkyPluginQuery,
+	userSettingsQuery,
+	userSettingsMutation,
+} from '@automattic/api-queries';
+import { useQueries, useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useRef, useReducer } from 'react';
 import {
 	getDisabledSiteIds,
@@ -12,12 +17,14 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
+import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import SiteCombobox from '../site-combobox';
 import type { Site } from '@automattic/api-core';
@@ -29,6 +36,23 @@ export default function McpSites() {
 	);
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+
+	// Fetch BigSky plugin status to determine site eligibility (paid plan check)
+	const bigSkyQueries = useQueries( {
+		queries: sites.map( ( site ) => ( {
+			...bigSkyPluginQuery( site.ID ),
+			enabled: sites.length > 0,
+		} ) ),
+	} );
+
+	// Build a map of site ID → available (eligible for AI/MCP features)
+	const siteAvailability = new Map< number, boolean >();
+	sites.forEach( ( site, index ) => {
+		const result = bigSkyQueries[ index ];
+		if ( result?.data ) {
+			siteAvailability.set( site.ID, result.data.available );
+		}
+	} );
 
 	const isGlobalOn = hasEnabledAccountTools( userSettings || {} );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
@@ -67,12 +91,30 @@ export default function McpSites() {
 	} );
 
 	// ComboboxControl options — exclude already-listed sites.
+	// In "add" mode, include unavailable sites with "Upgrade required" badge.
+	// In "exceptions" mode, exclude unavailable sites entirely.
 	const siteOptions = sites
-		.filter( ( site ) => ! excludedSiteIds.includes( site.ID ) )
-		.map( ( site ) => ( {
-			value: String( site.ID ),
-			label: getSiteDisplayName( site ),
-		} ) );
+		.filter( ( site ) => {
+			if ( excludedSiteIds.includes( site.ID ) ) {
+				return false;
+			}
+			// In exceptions mode, only show available (paid plan) sites.
+			if ( isGlobalOn ) {
+				const available = siteAvailability.get( site.ID );
+				if ( available === false ) {
+					return false;
+				}
+			}
+			return true;
+		} )
+		.map( ( site ) => {
+			const available = siteAvailability.get( site.ID ) ?? true;
+			return {
+				value: String( site.ID ),
+				label: getSiteDisplayName( site ),
+				...( ! isGlobalOn && ! available && { badge: __( 'Available on paid plans' ) } ),
+			};
+		} );
 
 	const handleSiteSelect = ( value: string | null | undefined ) => {
 		if ( ! value ) {
@@ -82,6 +124,24 @@ export default function McpSites() {
 		if ( isNaN( siteId ) ) {
 			return;
 		}
+
+		// Check if this site needs an upgrade (only in "add" mode)
+		if ( ! isGlobalOn ) {
+			const available = siteAvailability.get( siteId );
+			if ( available === false ) {
+				const site = sites.find( ( s ) => s.ID === siteId );
+				const slug = site?.slug || site?.URL?.replace( /^https?:\/\//, '' ) || '';
+				const backUrl = redirectToDashboardLink( { supportBackport: true } );
+				window.location.href = addQueryArgs( wpcomLink( '/setup/plan-upgrade/' ), {
+					siteSlug: slug,
+					cancel_to: backUrl,
+					redirect_to: backUrl,
+					dashboard: getCurrentDashboard(),
+				} );
+				return;
+			}
+		}
+
 		isAddingRef.current = true;
 		if ( document.activeElement instanceof HTMLElement ) {
 			document.activeElement.blur();
