@@ -1,3 +1,5 @@
+import { isAndroidOAuth2Client, isIosOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { initialClientsData } from 'calypso/state/oauth2-clients/reducer';
 import { getCurrentOAuth2Client, showOAuth2Layout } from '../selectors';
 
 describe( 'selectors', () => {
@@ -31,6 +33,36 @@ describe( 'selectors', () => {
 				title: 'WordPress.com Test Client',
 				url: 'https://wordpres.com/calypso/images/wordpress/logo-stars.svg',
 			} );
+		} );
+
+		test( 'should return the iOS mobile app client when client_id is 11', () => {
+			const clientData = getCurrentOAuth2Client( {
+				oauth2Clients: {
+					clients: initialClientsData,
+					ui: {
+						currentClientId: 11,
+					},
+				},
+			} );
+
+			expect( clientData ).toEqual( initialClientsData[ 11 ] );
+			expect( isIosOAuth2Client( clientData ) ).toBe( true );
+			expect( isAndroidOAuth2Client( clientData ) ).toBe( false );
+		} );
+
+		test( 'should return the Android mobile app client when client_id is 2697', () => {
+			const clientData = getCurrentOAuth2Client( {
+				oauth2Clients: {
+					clients: initialClientsData,
+					ui: {
+						currentClientId: 2697,
+					},
+				},
+			} );
+
+			expect( clientData ).toEqual( initialClientsData[ 2697 ] );
+			expect( isAndroidOAuth2Client( clientData ) ).toBe( true );
+			expect( isIosOAuth2Client( clientData ) ).toBe( false );
 		} );
 	} );
 
