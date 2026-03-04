@@ -88,6 +88,7 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
+		isModern: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -129,6 +130,7 @@ export class Theme extends Component {
 			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
 			nextProps.onMoreButtonItemClick !== this.props.onMoreButtonItemClick ||
+			nextProps.isModern !== this.props.isModern ||
 			themeThumbnailRefUpdated
 		);
 	}
@@ -343,6 +345,50 @@ export class Theme extends Component {
 		);
 	};
 
+	renderImageOverlay = () => {
+		const { isModern, buttonContents, theme } = this.props;
+
+		if ( ! isModern ) {
+			return null;
+		}
+
+		const previewOption = buttonContents.preview;
+		const signupOption = buttonContents.signup;
+
+		if ( ! previewOption && ! signupOption ) {
+			return null;
+		}
+
+		return (
+			<div className="theme__overlay-buttons">
+				{ previewOption && (
+					<Button
+						className="theme__overlay-button theme__overlay-button--preview"
+						onClick={ ( e ) => {
+							e.stopPropagation();
+							e.preventDefault();
+							previewOption.action?.( theme.id );
+						} }
+					>
+						{ this.props.translate( 'Preview demo' ) }
+					</Button>
+				) }
+				{ signupOption && (
+					<Button
+						className="theme__overlay-button theme__overlay-button--get-started"
+						primary
+						href={ signupOption.getUrl?.( theme.id ) }
+						onClick={ ( e ) => {
+							e.stopPropagation();
+						} }
+					>
+						{ this.props.translate( 'Get started' ) }
+					</Button>
+				) }
+			</div>
+		);
+	};
+
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
 		const { name, style_variations = [] } = theme;
@@ -358,6 +404,7 @@ export class Theme extends Component {
 				image={ this.renderScreenshot() }
 				imageClickUrl={ this.props.screenshotClickUrl }
 				imageActionLabel={ this.props.actionLabel }
+				imageOverlay={ this.renderImageOverlay() }
 				banner={ this.renderUpdateAlert() }
 				badge={ this.renderBadge() }
 				styleVariations={ style_variations }
