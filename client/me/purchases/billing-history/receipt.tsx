@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -23,6 +22,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
@@ -300,7 +300,7 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 							vatDetailsLink: (
 								<a
 									href={
-										config( 'env_id' ).includes( 'jetpack-cloud' )
+										isJetpackCloud()
 											? 'https://wordpress.com/me/purchases/vat-details'
 											: vatDetailsPath
 									}
