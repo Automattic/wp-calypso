@@ -6,6 +6,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
+import { Button as WPButton } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import photon from 'photon';
@@ -362,8 +363,10 @@ export class Theme extends Component {
 		return (
 			<div className="theme__overlay-buttons">
 				{ previewOption && (
-					<Button
-						className="theme__overlay-button theme__overlay-button--preview"
+					<WPButton
+						__next40pxDefaultSize
+						variant="secondary"
+						className="theme__overlay-button theme__overlay-button-preview"
 						onClick={ ( e ) => {
 							e.stopPropagation();
 							e.preventDefault();
@@ -371,19 +374,20 @@ export class Theme extends Component {
 						} }
 					>
 						{ this.props.translate( 'Preview demo' ) }
-					</Button>
+					</WPButton>
 				) }
 				{ signupOption && (
-					<Button
-						className="theme__overlay-button theme__overlay-button--get-started"
-						primary
+					<WPButton
+						__next40pxDefaultSize
+						variant="primary"
+						className="theme__overlay-button theme__overlay-button-get-started"
 						href={ signupOption.getUrl?.( theme.id ) }
 						onClick={ ( e ) => {
 							e.stopPropagation();
 						} }
 					>
 						{ this.props.translate( 'Get started' ) }
-					</Button>
+					</WPButton>
 				) }
 			</div>
 		);

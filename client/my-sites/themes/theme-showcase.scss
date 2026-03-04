@@ -643,28 +643,3 @@
 		display: none;
 	}
 }
-
-.theme__overlay-buttons {
-	display: flex;
-	gap: 8px;
-}
-
-.theme__overlay-button {
-	border-radius: 4px;
-	font-size: $font-body-small;
-	padding: 6px 16px;
-	white-space: nowrap;
-}
-
-.theme__overlay-button--preview {
-	background: transparent;
-	border: 1px solid var(--studio-white);
-	color: var(--studio-white);
-}
-
-.theme__overlay-button--preview:hover,
-.theme__overlay-button--preview:focus {
-	background: rgba(255, 255, 255, 0.1);
-	border-color: var(--studio-white);
-	color: var(--studio-white);
-}
