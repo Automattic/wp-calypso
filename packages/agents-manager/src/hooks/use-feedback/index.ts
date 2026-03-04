@@ -239,7 +239,7 @@ export default function useFeedback( {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, sessionId, isLoggedIn ] );
+	}, [ registerMessageActions, handleFeedback, isLoggedIn ] );
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );

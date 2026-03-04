@@ -64,6 +64,7 @@ interface Props {
 	onMessagesCountChange: ( count: number ) => void;
 }
 
+// Module-level cache to preserve conversation state during back-navigation from history.
 let cachedConversation: { sessionId?: string; messages?: UIMessage[] } = {};
 
 export default function OrchestratorChat( {
@@ -131,7 +132,6 @@ export default function OrchestratorChat( {
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
-		enabled: ! hasCachedConversation,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
@@ -144,6 +144,8 @@ export default function OrchestratorChat( {
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
+		// Skip fetching when cached messages are available for this session.
+		enabled: ! hasCachedConversation,
 	} );
 
 	// Save new chat route for cross-domain conversation restore.
@@ -270,8 +272,13 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
-	const visibleMessages = useMemo( () => {
+	const displayedMessages = useMemo( () => {
 		let currentMessages = messages;
+
+		// Return already-processed cached messages on back-navigation from history.
+		if ( hasCachedConversation && ! currentMessages.length ) {
+			return cachedMessages;
+		}
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
@@ -296,27 +303,34 @@ export default function OrchestratorChat( {
 			getChatComponent,
 		} );
 
+		// Dedup and append new messages to cached messages during back-navigation.
+		if ( hasCachedConversation ) {
+			const cachedIds = new Set( cachedMessages.map( ( m ) => m.id ) );
+			const newMessages = currentMessages.filter( ( m ) => ! cachedIds.has( m.id ) );
+
+			return [ ...cachedMessages, ...newMessages ];
+		}
+
 		return currentMessages;
 	}, [
+		cachedMessages,
 		deletedMessageIds,
 		getChatComponent,
+		hasCachedConversation,
 		isBuildingSite,
 		messages,
 		siteBuildUtils,
 		thinkingMessage,
 	] );
 
-	// Use cached messages if they exist for the current session, otherwise use loaded messages
-	const finalMessages = hasCachedConversation ? cachedMessages : visibleMessages;
-
-	// Notify parent when message count changes
+	// Notify parent when message count changes.
 	useEffect( () => {
-		onMessagesCountChange( finalMessages.length );
-	}, [ finalMessages.length, onMessagesCountChange ] );
+		onMessagesCountChange( displayedMessages.length );
+	}, [ displayedMessages.length, onMessagesCountChange ] );
 
 	const handleViewHistory = () => {
-		// Cache current conversation messages to restore when navigating back from history
-		cachedConversation = { sessionId: getActiveSessionId(), messages: finalMessages };
+		// Cache current conversation messages to restore when navigating back from history.
+		cachedConversation = { sessionId: getActiveSessionId(), messages: displayedMessages };
 	};
 
 	// Determine which suggestions to show following Big Sky's logic:
@@ -325,13 +339,13 @@ export default function OrchestratorChat( {
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( finalMessages.length === 0 && inputValue.length === 0 ) {
+	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
 		displayedEmptyViewSuggestions = emptyViewSuggestions;
 	}
 
 	return (
 		<AgentChat
-			messages={ finalMessages }
+			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
