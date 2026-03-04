@@ -6,6 +6,7 @@ import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
 import QrCode from 'calypso/blocks/app-promo/qr-code';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import userAgent from 'calypso/lib/user-agent';
 import './style.scss';
 
@@ -30,6 +31,11 @@ export const AppPromo = ( {
 }: AppPromoProps ) => {
 	const isRtl = useRtl();
 	const translate = useTranslate();
+
+	// Don't show app promo when user is already in a mobile app.
+	if ( isWpMobileApp() || isWcMobileApp() ) {
+		return null;
+	}
 	const iconWidth = Math.ceil( ( 49 / 29 ) * iconSize );
 
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
