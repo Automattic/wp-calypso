@@ -1,18 +1,10 @@
 import {
-	DataHelper,
-	MediaHelper,
-	EditorPage,
 	ImageBlock,
 	AudioBlock,
 	FileBlock,
 	VideoPressBlock,
 	TestFile,
-	TestAccount,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
 import { test, tags } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_VIDEO_PATH } from '../constants';
 
@@ -22,63 +14,49 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_VIDEO_PATH } from '../constants'
  * Keywords: Media, Video, VideoPress, Image, Audio, File
  */
 test.describe(
-	DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ),
+	'Blocks: Media (Upload)',
 	{ tag: [ tags.CALYPSO_PR, tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
-		const features = envToFeatureKey( envVariables );
+		test.skip( ( { viewportName } ) => viewportName === 'mobile', 'Skipped on mobile viewports' );
 
-		// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required
-		// for VideoPress block testing.
-		const accountName = getTestAccountByFeature( features, [
-			{
-				gutenberg: 'stable',
-				siteType: 'simple',
-				accountName: 'defaultUser',
-			},
-			{
-				gutenberg: 'edge',
-				siteType: 'simple',
-				accountName: 'defaultUser',
-			},
-		] );
-
-		let page: Page;
-		let browser: Browser;
-		let testAccount: TestAccount;
-		let editorPage: EditorPage;
-		let testFiles: {
-			image: TestFile;
-			imageReservedName: TestFile;
-			audio: TestFile;
-			video: TestFile;
-		};
-
-		test.beforeAll( async ( { browser: browserFixture } ) => {
-			browser = browserFixture;
-			page = await browser.newPage();
-
-			testFiles = {
-				image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
-				imageReservedName: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
-					postfix: 'filewith#?#?reservedurlchars',
-				} ),
-				audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
-				video: await MediaHelper.createTestFile( TEST_VIDEO_PATH ),
+		test( 'As a WordPress.com user, I can upload media files using various blocks and see them on the published post', async ( {
+			accountDefaultUser,
+			helperMedia,
+			helperData,
+			page,
+			pageEditor,
+		} ) => {
+			let testFiles: {
+				image: TestFile;
+				imageReservedName: TestFile;
+				audio: TestFile;
+				video: TestFile;
 			};
 
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			editorPage = new EditorPage( page );
-			await editorPage.visit( 'post', {
-				siteSlug: testAccount.getSiteURL( { protocol: false } ),
+			await test.step( 'Given I have test media files prepared', async function () {
+				testFiles = {
+					image: await helperMedia.createTestFile( TEST_IMAGE_PATH ),
+					imageReservedName: await helperMedia.createTestFile( TEST_IMAGE_PATH, {
+						postfix: 'filewith#?#?reservedurlchars',
+					} ),
+					audio: await helperMedia.createTestFile( TEST_AUDIO_PATH ),
+					video: await helperMedia.createTestFile( TEST_VIDEO_PATH ),
+				};
 			} );
-			await editorPage.enterTitle( DataHelper.getRandomPhrase() );
-		} );
 
-		test.describe( 'Populate post with media blocks', () => {
-			test( `Given editor loaded When adding ${ ImageBlock.blockName } block with reserved URL characters Then image uploads successfully`, async () => {
-				const blockHandle = await editorPage.addBlockFromSidebar(
+			await test.step( 'And I am authenticated as a user with a Premium plan', async function () {
+				await accountDefaultUser.authenticate( page );
+			} );
+
+			await test.step( 'And I have a new post open in the editor', async function () {
+				await pageEditor.visit( 'post', {
+					siteSlug: accountDefaultUser.getSiteURL( { protocol: false } ),
+				} );
+				await pageEditor.enterTitle( helperData.getRandomPhrase() );
+			} );
+
+			await test.step( 'When I add an Image block and upload an image with reserved URL characters', async function () {
+				const blockHandle = await pageEditor.addBlockFromSidebar(
 					ImageBlock.blockName,
 					ImageBlock.blockEditorSelector,
 					{ noSearch: true }
@@ -87,8 +65,8 @@ test.describe(
 				await imageBlock.upload( testFiles.imageReservedName.fullpath );
 			} );
 
-			test( `Given editor loaded When adding ${ ImageBlock.blockName } block using Calypso media modal Then image uploads successfully`, async () => {
-				const blockHandle = await editorPage.addBlockFromSidebar(
+			await test.step( 'And I add an Image block and upload an image via the Calypso media library', async function () {
+				const blockHandle = await pageEditor.addBlockFromSidebar(
 					ImageBlock.blockName,
 					ImageBlock.blockEditorSelector,
 					{ noSearch: true }
@@ -97,8 +75,8 @@ test.describe(
 				await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
 			} );
 
-			test( `Given editor loaded When adding ${ AudioBlock.blockName } block Then audio file uploads successfully`, async () => {
-				const blockHandle = await editorPage.addBlockFromSidebar(
+			await test.step( 'And I add an Audio block and upload an audio file', async function () {
+				const blockHandle = await pageEditor.addBlockFromSidebar(
 					AudioBlock.blockName,
 					AudioBlock.blockEditorSelector,
 					{ noSearch: true }
@@ -107,8 +85,8 @@ test.describe(
 				await audioBlock.upload( testFiles.audio.fullpath );
 			} );
 
-			test( `Given editor loaded When adding ${ FileBlock.blockName } block Then audio file uploads successfully`, async () => {
-				const blockHandle = await editorPage.addBlockFromSidebar(
+			await test.step( 'And I add a File block and upload an audio file', async function () {
+				const blockHandle = await pageEditor.addBlockFromSidebar(
 					FileBlock.blockName,
 					FileBlock.blockEditorSelector,
 					{ noSearch: true }
@@ -117,27 +95,12 @@ test.describe(
 				await fileBlock.upload( testFiles.audio.fullpath );
 			} );
 
-			// If this starts failing, check whether Premium or higher plan is enabled.
-			// 2024-09-16: Skipping. This has been failing all year, seems to be a problem with the backend and the way the test sites get cleaned up. p1707923887553869-slack-C034JEXD1RD
-			test.skip( `Given editor loaded When adding ${ VideoPressBlock.blockName } block Then video uploads successfully`, async () => {
-				await editorPage.addBlockFromSidebar(
-					VideoPressBlock.blockName,
-					VideoPressBlock.blockEditorSelector,
-					{ noSearch: true }
-				);
-
-				const videoPressBlock = new VideoPressBlock( page );
-				await videoPressBlock.upload( testFiles.video.fullpath );
+			await test.step( 'When I save as draft and publish the post', async function () {
+				await pageEditor.saveDraft();
+				await pageEditor.publish( { visit: true } );
 			} );
 
-			test( 'Given post with media blocks When publishing Then post is published and visited', async () => {
-				await editorPage.saveDraft();
-				await editorPage.publish( { visit: true } );
-			} );
-		} );
-
-		test.describe( 'Validate published post', () => {
-			test( 'Given published post When viewing Then image with reserved characters in filename is visible', async () => {
+			await test.step( 'Then the image with reserved URL characters in the filename is visible', async function () {
 				await Promise.any( [
 					// WP < 6.6
 					ImageBlock.validatePublishedContent( page, [
@@ -148,22 +111,51 @@ test.describe(
 				] );
 			} );
 
-			test( 'Given published post When viewing Then image added via Calypso modal is visible', async () => {
+			await test.step( 'And the image uploaded via the Calypso media library is visible', async function () {
 				await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
 			} );
 
-			test( 'Given published post When viewing Then audio block is visible', async () => {
+			await test.step( 'And the Audio block is visible', async function () {
 				await AudioBlock.validatePublishedContent( page );
 			} );
 
-			test( 'Given published post When viewing Then file block is visible', async () => {
+			await test.step( 'And the File block is visible', async function () {
 				await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
 			} );
+		} );
 
-			// Skipped above.
-			test.skip( 'Given published post When viewing Then VideoPress block is visible', async () => {
-				await VideoPressBlock.validatePublishedContent( page );
+		// If this starts failing, check whether Premium or higher plan is enabled.
+		// 2024-09-16: Skipping. This has been failing all year, seems to be a problem with the backend
+		// and the way the test sites get cleaned up. p1707923887553869-slack-C034JEXD1RD
+		test( 'As a WordPress.com user with a Premium plan, I can upload a VideoPress video via the VideoPress block', async ( {
+			accountDefaultUser,
+			helperMedia,
+			helperData,
+			page,
+			pageEditor,
+		} ) => {
+			test.skip( true, 'Skipping: persistent backend issue with VideoPress uploads on test sites' );
+
+			const videoFile = await helperMedia.createTestFile( TEST_VIDEO_PATH );
+
+			await accountDefaultUser.authenticate( page );
+
+			await pageEditor.visit( 'post', {
+				siteSlug: accountDefaultUser.getSiteURL( { protocol: false } ),
 			} );
+			await pageEditor.enterTitle( helperData.getRandomPhrase() );
+
+			await pageEditor.addBlockFromSidebar(
+				VideoPressBlock.blockName,
+				VideoPressBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+
+			const videoPressBlock = new VideoPressBlock( page );
+			await videoPressBlock.upload( videoFile.fullpath );
+
+			await pageEditor.publish( { visit: true } );
+			await VideoPressBlock.validatePublishedContent( page );
 		} );
 	}
 );
