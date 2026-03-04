@@ -3,8 +3,8 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
-import { useAgentsManagerContext } from '../../../contexts';
-import useFeedback from '../index';
+import { useAgentsManagerContext } from '../../contexts';
+import useFeedback from '../use-feedback';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 // Capture the onFeedback callback passed to createFeedbackActions
@@ -31,7 +31,7 @@ jest.mock(
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
 	virtual: true,
 } );
-jest.mock( '../../../contexts', () => ( {
+jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
 
@@ -127,10 +127,13 @@ describe( 'useFeedback', () => {
 				initialProps: defaultConfig,
 			} );
 
+			// Provide a new getActiveSessionId reference to simulate the real
+			// useCallback behavior where agentConfig change creates a new callback.
+			const newGetActiveSessionId = jest.fn().mockReturnValue( 'new-session' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
 				isLoggedIn: true,
-				getActiveSessionId: mockGetActiveSessionId,
+				getActiveSessionId: newGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			rerender( defaultConfig );
