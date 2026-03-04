@@ -213,9 +213,11 @@ object BuildDockerImage : BuildType({
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
+			--cache-from=registry.a8c.com/calypso/app:latest
 			--build-arg workers=32
 			--build-arg node_memory=16384
 			--build-arg use_cache=true
+			--build-arg BUILDKIT_INLINE_CACHE=1
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%

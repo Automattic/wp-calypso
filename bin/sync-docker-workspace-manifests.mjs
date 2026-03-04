@@ -7,6 +7,7 @@ const ROOT_DIR = process.cwd();
 const PACKAGE_JSON_PATH = path.join( ROOT_DIR, 'package.json' );
 const STAGING_DIR_NAME = '.docker-workspace-manifests';
 const STAGING_DIR_PATH = path.join( ROOT_DIR, STAGING_DIR_NAME );
+const NORMALIZED_TIME = new Date( '2000-01-01T00:00:00.000Z' );
 
 const args = new Set( process.argv.slice( 2 ) );
 const isCheckMode = args.has( '--check' );
@@ -166,6 +167,32 @@ function listFilesRecursive( rootPath ) {
 	return entries.sort();
 }
 
+function listDirectoriesRecursive( rootPath ) {
+	if ( ! fs.existsSync( rootPath ) ) {
+		return [];
+	}
+
+	const directories = [];
+
+	function walk( currentPath ) {
+		directories.push( currentPath );
+
+		for ( const entry of fs.readdirSync( currentPath, { withFileTypes: true } ) ) {
+			if ( entry.isDirectory() ) {
+				walk( path.join( currentPath, entry.name ) );
+			}
+		}
+	}
+
+	walk( rootPath );
+
+	// Write deeper directories first so parent mtimes stay normalized too.
+	return directories.sort(
+		( left, right ) =>
+			right.split( path.sep ).length - left.split( path.sep ).length || right.length - left.length
+	);
+}
+
 function arraysMatch( left, right ) {
 	return left.length === right.length && left.every( ( value, index ) => value === right[ index ] );
 }
@@ -212,8 +239,11 @@ function writeStagingDirectory( manifestPaths ) {
 
 		fs.mkdirSync( path.dirname( stagedPath ), { recursive: true } );
 		fs.copyFileSync( sourcePath, stagedPath );
-		const sourceStats = fs.statSync( sourcePath );
-		fs.utimesSync( stagedPath, sourceStats.atime, sourceStats.mtime );
+		fs.utimesSync( stagedPath, NORMALIZED_TIME, NORMALIZED_TIME );
+	}
+
+	for ( const stagedDir of listDirectoriesRecursive( STAGING_DIR_PATH ) ) {
+		fs.utimesSync( stagedDir, NORMALIZED_TIME, NORMALIZED_TIME );
 	}
 
 	console.log(
