@@ -20,7 +20,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import type { Site } from '@automattic/api-core';
 
-interface ContentInfoProps {
+interface JetpackSiteDisconnectProps {
 	site: Site;
 	onClose: () => void;
 }
@@ -93,7 +93,7 @@ function ContentConfirmDisconnect( {
 	site,
 	onClose,
 	activePurchaseIds,
-}: ContentInfoProps & { activePurchaseIds: number[] } ) {
+}: JetpackSiteDisconnectProps & { activePurchaseIds: number[] } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( siteJetpackDisconnectMutation( site.ID ) );
@@ -202,7 +202,7 @@ function ContentConfirmDisconnect( {
 	);
 }
 
-export default function JetpackSiteDisconnect( { site, onClose }: ContentInfoProps ) {
+export default function JetpackSiteDisconnect( { site, onClose }: JetpackSiteDisconnectProps ) {
 	const { data: activePurchaseIds, isLoading } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) =>
