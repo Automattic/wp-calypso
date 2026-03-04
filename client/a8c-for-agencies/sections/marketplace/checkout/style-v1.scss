@@ -443,3 +443,35 @@
 		background-color: var( --color-primary-50 );
 	}
 }
+
+.referral-email-preview-modal {
+	.components-modal__content {
+		background-color: var( --a4a-brand-blue-80 );
+		padding: 4px;
+
+		@include break-small {
+			padding: 4px 24px 24px;
+		}
+
+	}
+
+	.shopping-cart__menu-list-item-price-interval {
+		display: block;
+	}
+}
+
+.referral-email-preview-modal-body {
+	overflow-y: auto;
+}
+
+.referral-email-preview {
+	padding: 0 0 4px 0;
+
+	@include break-small {
+		padding: 56px;
+	}
+
+	.product-info__text-content {
+		display: flex;
+	}
+}

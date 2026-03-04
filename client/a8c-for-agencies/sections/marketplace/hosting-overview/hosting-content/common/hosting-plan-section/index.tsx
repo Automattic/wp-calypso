@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import { Children } from 'react';
@@ -21,6 +21,7 @@ type AsideProps = BaseProps & {
 		disabled?: boolean;
 		href?: string;
 		target?: string;
+		tooltip?: string;
 	};
 };
 
@@ -42,19 +43,23 @@ function Aside( { heading, cta, children }: AsideProps ) {
 
 			<footer className="hosting-plan-section__aside-footer">
 				{ cta && (
-					<Button
-						className="hosting-plan-section__aside-button"
-						variant={ cta.variant }
-						onClick={ cta.onClick }
-						disabled={ cta.disabled }
-						{ ...( cta.href && { href: cta.href, target: cta.target } ) }
-						icon={ cta.icon }
-						iconPosition="right"
-						iconSize={ 16 }
-						__next40pxDefaultSize
-					>
-						{ cta.label }
-					</Button>
+					<Tooltip text={ cta.tooltip }>
+						<span>
+							<Button
+								className="hosting-plan-section__aside-button"
+								variant={ cta.variant }
+								onClick={ cta.onClick }
+								disabled={ cta.disabled }
+								{ ...( cta.href && { href: cta.href, target: cta.target } ) }
+								icon={ cta.icon }
+								iconPosition="right"
+								iconSize={ 16 }
+								__next40pxDefaultSize
+							>
+								{ cta.label }
+							</Button>
+						</span>
+					</Tooltip>
 				) }
 			</footer>
 		</aside>

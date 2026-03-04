@@ -20,6 +20,7 @@ import {
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
+import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-utils';
 import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -27,7 +28,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateAgencyReferralsLogo } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	getActiveAgencyId,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -42,6 +46,7 @@ import useShoppingCart from '../hooks/use-shopping-cart';
 import { isPressableAddonProduct } from '../lib/hosting';
 import hasActiveReferralPressablePlanForClient from './lib/has-active-referral-pressable-plan';
 import NoticeSummary from './notice-summary';
+import ReferralEmailPreviewModal from './referral-email-preview-modal';
 import ReferralLogo from './referral-logo';
 import type { ReferralLogoChoice } from './referral-logo';
 import type { ShoppingCartItem, TermPricingType } from '../types';
@@ -60,13 +65,17 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const isMobile = useBreakpoint( '<660px' );
 
 	const user = useSelector( getCurrentUser );
+	const agency = useSelector( getActiveAgency );
+	const profileLogoUrl = agency?.profile?.company_details?.logo_url || null;
 
 	const isUserUnverified = ! user?.email_verified;
 
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ isPreviewOpen, setIsPreviewOpen ] = useState( false );
 	const [ isUploadingLogo, setIsUploadingLogo ] = useState( false );
+	const [ previewLogoUrl, setPreviewLogoUrl ] = useState< string | null >( null );
 	const [ referralLogo, setReferralLogo ] = useState< ReferralLogoChoice >( {
 		option: 'different',
 		logoUrl: null,
@@ -270,6 +279,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
 					{
 						term_pricing: termPricing,
+						...( isCobrandedCheckoutEnabled && referralLogo.option
+							? { logo_type: referralLogo.option }
+							: {} ),
 					}
 				)
 			);
@@ -349,6 +361,8 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			hasPressableAddonsInCheckout,
 			dispatch,
 			termPricing,
+			isCobrandedCheckoutEnabled,
+			referralLogo.option,
 			buildLogoPayload,
 			requestPayment,
 			message,
@@ -454,7 +468,32 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						) }
 					</Tooltip>
 				</div>
+				{ isCobrandedCheckoutEnabled && (
+					<Button
+						variant="link"
+						onClick={ async () => {
+							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
+							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
+							setPreviewLogoUrl( logoUrlForPreview );
+							setIsPreviewOpen( true );
+						} }
+					>
+						{ translate( 'Preview referral email' ) }
+					</Button>
+				) }
 			</VStack>
+
+			<ReferralEmailPreviewModal
+				isOpen={ isPreviewOpen }
+				onClose={ () => {
+					setIsPreviewOpen( false );
+					setPreviewLogoUrl( null );
+				} }
+				clientMessage={ message }
+				checkoutItems={ checkoutItems }
+				termPricing={ termPricing }
+				logoUrl={ previewLogoUrl }
+			/>
 		</>
 	);
 }

@@ -8,8 +8,9 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import LogoFileUpload from 'calypso/a8c-for-agencies/components/logo-file-upload';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export type ReferralLogoChoice = {
 	option: 'profile' | 'different' | 'none' | null;
@@ -23,6 +24,7 @@ interface Props {
 
 export default function ReferralLogo( { onChange }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const profileLogoUrl = agency?.profile?.company_details?.logo_url || null;
 	const agencyReferralsLogoUrl = agency?.referrals_logo || null;
@@ -98,7 +100,15 @@ export default function ReferralLogo( { onChange }: Props ) {
 						},
 					] }
 					onChange={ ( value ) => {
-						setLogoOption( ( value as 'profile' | 'different' | 'none' ) || null );
+						const option = ( value as 'profile' | 'different' | 'none' ) || null;
+						if ( option ) {
+							dispatch(
+								recordTracksEvent( 'calypso_a4a_client_referral_logo_option_click', {
+									option,
+								} )
+							);
+						}
+						setLogoOption( option );
 					} }
 				/>
 				{ logoOption === 'profile' && profileLogoUrl && (
