@@ -31,7 +31,7 @@ import './setup';
 
 declare global {
 	interface Window {
-		qp: ( ...args: string[] ) => void;
+		qp: ( ...args: any[] ) => void;
 		twq: ( ...args: any[] ) => void;
 		fbq: ( ...args: any[] ) => void;
 		gtag: ( ...args: any[] ) => void;

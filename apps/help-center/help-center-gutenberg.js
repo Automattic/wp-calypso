@@ -124,21 +124,25 @@ function HelpCenterContent() {
 					icon: page,
 					onClick: () => handleMenuClick( '/support-guides' ),
 				},
-				{
-					title: __( 'Courses', __i18n_text_domain__ ),
-					icon: video,
-					onClick: () =>
-						handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
-				},
-				{
-					title: __( 'Product updates', __i18n_text_domain__ ),
-					icon: rss,
-					onClick: () =>
-						handleMenuClick(
-							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
-							true
-						),
-				},
+				...( ! helpCenterData.isCommerceGarden
+					? [
+							{
+								title: __( 'Courses', __i18n_text_domain__ ),
+								icon: video,
+								onClick: () =>
+									handleMenuClick( localizeUrl( 'https://wordpress.com/support/courses/' ), true ),
+							},
+							{
+								title: __( 'Product updates', __i18n_text_domain__ ),
+								icon: rss,
+								onClick: () =>
+									handleMenuClick(
+										localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
+										true
+									),
+							},
+					  ]
+					: [] ),
 			],
 		],
 		[ handleMenuClick ]
@@ -183,11 +187,10 @@ function HelpCenterContent() {
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
-				source={ helpCenterData.isCommerceGarden ? 'commerce-garden' : null }
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				isCommerceGarden={ helpCenterData.isCommerceGarden }
+				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 				{ ...botProps }
 			/>
 		</>

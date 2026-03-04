@@ -6,7 +6,7 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
+import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
@@ -19,11 +19,6 @@ export type AddSitesFormProps = {
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
-};
-
-type SubscriptionError = {
-	error?: string;
-	message?: string;
 };
 
 const AddSitesForm = ( {
@@ -99,7 +94,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
@@ -144,7 +139,7 @@ const AddSitesForm = ( {
 				<Button
 					variant="primary"
 					className="button subscriptions-add-sites__save-button"
-					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					disabled={ ! inputValue || ! isValidInput || subscribing }
 					isBusy={ isSubmitting }
 					type="submit"
 					__next40pxDefaultSize

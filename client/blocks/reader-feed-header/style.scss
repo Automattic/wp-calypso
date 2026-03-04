@@ -89,12 +89,6 @@
 	.reader-feed-header__site-title-link:visited {
 		color: var(--color-neutral-100);
 	}
-
-	&::after {
-		@include long-content-fade( $size: 15% );
-		height: 16px * 1.7;
-		top: auto;
-	}
 }
 
 .reader-feed-header__description {

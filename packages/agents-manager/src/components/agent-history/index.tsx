@@ -2,25 +2,19 @@ import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ConversationHistoryView from '../conversation-history-view';
-import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
-interface AgentHistoryProps {
-	/** Agent ID for fetching conversation history. */
-	agentId: string;
-	/** Authentication provider for API requests. */
-	authProvider: UseAgentChatConfig[ 'authProvider' ];
+interface Props {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
-	/** Called when the user submits a message. */
-	onSubmit: ( message: string ) => void;
 	/** Called when the user aborts the current request. */
 	onAbort: () => void;
 	/** Called when the chat is closed. */
@@ -34,18 +28,15 @@ interface AgentHistoryProps {
 }
 
 export default function AgentHistory( {
-	agentId,
-	authProvider,
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
-	onSubmit,
 	onAbort,
 	onClose,
 	onExpand,
 	onSelectConversation,
 	onNewChat,
-}: AgentHistoryProps ) {
+}: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -56,11 +47,11 @@ export default function AgentHistory( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
-			onSubmit={ onSubmit }
+			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
@@ -69,14 +60,11 @@ export default function AgentHistory( {
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
 				<ConversationHistoryView
-					agentId={ agentId }
-					authProvider={ authProvider }
 					onSelectConversation={ onSelectConversation }
 					onNewChat={ onNewChat }
 				/>

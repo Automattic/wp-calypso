@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, FormLabel, Tooltip } from '@automattic/components';
+import { FormLabel, Tooltip } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { customLink, Icon, send, warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -17,14 +20,18 @@ import {
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
+import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch, useSelector } from 'calypso/state';
+import { updateAgencyReferralsLogo } from 'calypso/state/a8c-for-agencies/agency/actions';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -32,7 +39,11 @@ import {
 } from '../hoc/with-marketplace-type';
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { isPressableAddonProduct } from '../lib/hosting';
+import hasActiveReferralPressablePlanForClient from './lib/has-active-referral-pressable-plan';
 import NoticeSummary from './notice-summary';
+import ReferralLogo from './referral-logo';
+import type { ReferralLogoChoice } from './referral-logo';
 import type { ShoppingCartItem, TermPricingType } from '../types';
 interface Props {
 	checkoutItems: ShoppingCartItem[];
@@ -46,6 +57,7 @@ type ValidationState = {
 function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isMobile = useBreakpoint( '<660px' );
 
 	const user = useSelector( getCurrentUser );
 
@@ -54,6 +66,22 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
+	const [ isUploadingLogo, setIsUploadingLogo ] = useState( false );
+	const [ referralLogo, setReferralLogo ] = useState< ReferralLogoChoice >( {
+		option: 'different',
+		logoUrl: null,
+		file: null,
+	} );
+
+	// Track the last uploaded file to avoid re-uploading the same file
+	const [ lastUploadedFile, setLastUploadedFile ] = useState< {
+		name: string;
+		size: number;
+		lastModified: number;
+		logoUrl: string;
+	} | null >( null );
+
+	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
 
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
@@ -72,9 +100,30 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		setMessage( event.currentTarget.value );
 	}, [] );
 
+	const onReferralLogoChange = useCallback( ( choice: ReferralLogoChoice ) => {
+		setReferralLogo( choice );
+		// Reset cached upload if user changes logo selection
+		if ( choice.option === 'profile' || ! choice.file ) {
+			setLastUploadedFile( null );
+		}
+	}, [] );
+
+	const agencyId = useSelector( getActiveAgencyId );
+	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
+	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
 
 	const hasCompletedForm = !! email && !! message;
+	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
+	const isDifferentLogoWithoutUpload =
+		isCobrandedCheckoutEnabled &&
+		referralLogo.option === 'different' &&
+		! referralLogo.file &&
+		! referralLogo.logoUrl;
+	const hasPressableAddonsInCheckout = useMemo(
+		() => checkoutItems.some( ( item ) => isPressableAddonProduct( item.slug ) ),
+		[ checkoutItems ]
+	);
 
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 
@@ -91,8 +140,82 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
+	const buildLogoPayload = useCallback( async (): Promise<
+		{ type: 'profile' | 'custom' | 'none'; url?: string } | undefined | 'error'
+	> => {
+		if ( ! isCobrandedCheckoutEnabled ) {
+			return undefined;
+		}
+
+		let logo: { type: 'profile' | 'custom' | 'none'; url?: string } | undefined;
+
+		if ( referralLogo.option === 'profile' ) {
+			logo = { type: 'profile' };
+		} else if ( referralLogo.option === 'different' ) {
+			let logoUrl: string | undefined;
+			if ( referralLogo.file ) {
+				const fileSignature = {
+					name: referralLogo.file.name,
+					size: referralLogo.file.size,
+					lastModified: referralLogo.file.lastModified,
+				};
+
+				if (
+					lastUploadedFile &&
+					lastUploadedFile.name === fileSignature.name &&
+					lastUploadedFile.size === fileSignature.size &&
+					lastUploadedFile.lastModified === fileSignature.lastModified
+				) {
+					logoUrl = lastUploadedFile.logoUrl;
+				} else {
+					setIsUploadingLogo( true );
+					try {
+						const result = await uploadLogo( agencyId, referralLogo.file );
+						if ( result?.logo_url ) {
+							logoUrl = result.logo_url;
+							setLastUploadedFile( {
+								...fileSignature,
+								logoUrl: result.logo_url,
+							} );
+						}
+					} catch ( error ) {
+						dispatch(
+							errorNotice(
+								( error as { message?: string } )?.message ??
+									translate( 'Failed to upload logo. Please try again.' )
+							)
+						);
+						return 'error';
+					} finally {
+						setIsUploadingLogo( false );
+					}
+				}
+			} else if ( referralLogo.logoUrl ) {
+				logoUrl = referralLogo.logoUrl;
+			}
+
+			if ( logoUrl ) {
+				logo = { type: 'custom', url: logoUrl };
+			}
+		} else if ( referralLogo.option === 'none' || referralLogo.option === null ) {
+			logo = { type: 'none' };
+		}
+
+		return logo;
+	}, [
+		agencyId,
+		dispatch,
+		isCobrandedCheckoutEnabled,
+		lastUploadedFile,
+		referralLogo.file,
+		referralLogo.logoUrl,
+		referralLogo.option,
+		translate,
+		uploadLogo,
+	] );
+
 	const handleRequestPayment = useCallback(
-		( flowType: ReferralOrderFlowType ) => {
+		async ( flowType: ReferralOrderFlowType ) => {
 			if ( flowType === 'send' && ! hasCompletedForm ) {
 				return;
 			}
@@ -105,6 +228,41 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 				setValidationError( { email: translate( 'Please provide correct email address' ) } );
 				return;
 			}
+
+			if ( hasPressableAddonsInCheckout ) {
+				let referralsData = referrals;
+
+				if ( ! referralsData ) {
+					try {
+						const { data } = await refetchReferrals();
+						referralsData = data;
+					} catch {
+						dispatch(
+							errorNotice(
+								translate(
+									'We were unable to validate whether this client has an active Pressable plan. Please try again.'
+								)
+							)
+						);
+						return;
+					}
+				}
+
+				const hasClientActiveReferralPressablePlan = hasActiveReferralPressablePlanForClient(
+					referralsData,
+					email
+				);
+
+				if ( ! hasClientActiveReferralPressablePlan ) {
+					setValidationError( {
+						email: translate(
+							'This client does not have an active Pressable plan. An active Pressable plan is required to refer Pressable add-ons.'
+						),
+					} );
+					return;
+				}
+			}
+
 			dispatch(
 				recordTracksEvent(
 					flowType === 'send'
@@ -115,6 +273,15 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					}
 				)
 			);
+
+			const logoResult = await buildLogoPayload();
+
+			if ( logoResult === 'error' ) {
+				return;
+			}
+
+			const logo = logoResult;
+
 			requestPayment(
 				{
 					client_email: email,
@@ -122,9 +289,13 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					product_ids: productIds,
 					licenses: licenses,
 					flow_type: flowType,
+					logo,
 				},
 				{
 					onSuccess: ( referral ) => {
+						if ( logo?.type === 'custom' && logo.url ) {
+							dispatch( updateAgencyReferralsLogo( logo.url ) );
+						}
 						navigator.clipboard.writeText( referral.checkout_url );
 
 						sessionStorage.setItem(
@@ -173,16 +344,21 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			);
 		},
 		[
-			dispatch,
-			email,
 			hasCompletedForm,
-			isFeedbackShown,
-			licenses,
-			message,
-			onClearCart,
-			productIds,
+			email,
+			hasPressableAddonsInCheckout,
+			dispatch,
+			termPricing,
+			buildLogoPayload,
 			requestPayment,
+			message,
+			productIds,
+			licenses,
 			translate,
+			referrals,
+			refetchReferrals,
+			isFeedbackShown,
+			onClearCart,
 		]
 	);
 
@@ -222,58 +398,63 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						}
 					/>
 				</FormFieldset>
+				{ isCobrandedCheckoutEnabled && <ReferralLogo onChange={ onReferralLogoChange } /> }
 			</div>
 
 			<NoticeSummary type="request-client-payment" />
 
-			<div
-				className="checkout__aside-actions is-row"
-				role="button"
-				tabIndex={ 0 }
-				onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
-				onMouseLeave={ () => setShowVerifyAccountToolip( false ) }
-				onTouchStart={ () => setShowVerifyAccountToolip( true ) }
-			>
-				<Button
-					ref={ ctaButtonRef }
-					primary
-					onClick={ () => handleRequestPayment( 'send' ) }
-					disabled={ ! hasCompletedForm || isUserUnverified }
-					busy={ isPending }
+			<VStack spacing={ 2 } alignment="left">
+				<div
+					className="checkout__aside-actions is-row"
+					role="button"
+					tabIndex={ 0 }
+					onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
+					onMouseLeave={ () => setShowVerifyAccountToolip( false ) }
+					onTouchStart={ () => setShowVerifyAccountToolip( true ) }
 				>
-					<Icon icon={ send } />
-					{ translate( 'Send to Client' ) }
-					{ isUserUnverified && <Icon icon={ warning } /> }
-				</Button>
+					<Button
+						ref={ ctaButtonRef }
+						variant="primary"
+						onClick={ () => handleRequestPayment( 'send' ) }
+						disabled={ ! hasCompletedForm || isUserUnverified || isDifferentLogoWithoutUpload }
+						isBusy={ isPending || isUploadingLogo }
+					>
+						<Icon icon={ send } />
+						{ isMobile ? translate( 'Send' ) : translate( 'Send to Client' ) }
+						{ isUserUnverified && <Icon icon={ warning } /> }
+					</Button>
 
-				{ translate( 'or' ) }
+					{ translate( 'or' ) }
 
-				<Button
-					primary
-					onClick={ () => handleRequestPayment( 'copy' ) }
-					disabled={ ! email || isUserUnverified }
-					busy={ isPending }
-				>
-					<Icon icon={ customLink } />
-					{ translate( 'Copy referral link' ) }
-				</Button>
+					<Button
+						variant="primary"
+						onClick={ () => handleRequestPayment( 'copy' ) }
+						disabled={ ! email || isUserUnverified || isDifferentLogoWithoutUpload }
+						isBusy={ isPending || isUploadingLogo }
+					>
+						<Icon icon={ customLink } />
+						{ isMobile ? translate( 'Copy link' ) : translate( 'Copy referral link' ) }
+					</Button>
 
-				<Tooltip
-					className="checkout__verify-account-tooltip"
-					context={ ctaButtonRef.current }
-					isVisible={ showVerifyAccountToolip && isUserUnverified }
-					position="bottom"
-				>
-					{ translate(
-						"Please verify your {{a}}account's email{{/a}} in order to begin referring products to clients.",
-						{
-							components: {
-								a: <a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />,
-							},
-						}
-					) }
-				</Tooltip>
-			</div>
+					<Tooltip
+						className="checkout__verify-account-tooltip"
+						context={ ctaButtonRef.current }
+						isVisible={ showVerifyAccountToolip && isUserUnverified }
+						position="bottom"
+					>
+						{ translate(
+							"Please verify your {{a}}account's email{{/a}} in order to begin referring products to clients.",
+							{
+								components: {
+									a: (
+										<a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />
+									),
+								},
+							}
+						) }
+					</Tooltip>
+				</div>
+			</VStack>
 		</>
 	);
 }

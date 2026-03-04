@@ -10,7 +10,7 @@ import {
 	type ChatState,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
@@ -23,7 +23,7 @@ import type { UseImageUploadResult } from '../../utils/load-external-providers';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
-interface AgentChatProps {
+interface Props {
 	/** Chat messages to display. */
 	messages: Message[];
 	/** Suggestions to show in the chat input. */
@@ -36,6 +36,8 @@ interface AgentChatProps {
 	emptyViewSuggestions?: Suggestion[];
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
+	/** Custom thinking message to display while the agent is processing. */
+	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
 	isLoadingConversation: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -62,7 +64,7 @@ interface AgentChatProps {
 	inputValue?: string;
 	/** Called when the input value changes. */
 	onInputChange?: ( value: string ) => void;
-	/** Whether to render the floating chat in compact mode. */
+	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
 	imageUpload?: UseImageUploadResult;
@@ -81,6 +83,7 @@ export default function AgentChat( {
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	isProcessing,
+	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
 	isOpen,
@@ -91,7 +94,7 @@ export default function AgentChat( {
 	clearSuggestions,
 	markdownComponents = {},
 	markdownExtensions = {},
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with ZendeskChat
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
 	onTypingStatusChange,
 	inputValue,
 	onInputChange,
@@ -100,8 +103,9 @@ export default function AgentChat( {
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
-}: AgentChatProps ) {
+}: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -130,6 +134,7 @@ export default function AgentChat( {
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
+			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
@@ -142,6 +147,7 @@ export default function AgentChat( {
 			messageRenderer={ messageRenderer }
 			inputValue={ inputValue }
 			onInputChange={ onInputChange }
+			messagesPosition="bottom"
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -154,13 +160,13 @@ export default function AgentChat( {
 								: undefined
 						}
 						suggestions={ emptyViewSuggestions }
-						icon={ isDocked ? <AI /> : <AI size={ 41 } color="#3858e8" /> }
+						icon={ <AI size={ 32 } /> }
 					/>
 				)
 			}
 		>
-			<AgentUI.ConversationView>
-				<ChatHeader isChatDocked={ isDocked } onClose={ onClose } options={ chatHeaderOptions } />
+			<AgentUI.ConversationView ref={ conversationViewRef }>
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
@@ -184,6 +190,7 @@ export default function AgentChat( {
 							] }
 							showFileMetadata
 							allowDragToInsert={ false }
+							dropZoneRef={ conversationViewRef }
 						/>
 					) }
 

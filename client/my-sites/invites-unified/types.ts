@@ -58,3 +58,8 @@ export interface Invite {
 	role?: string;
 	sentTo?: string;
 }
+
+export interface InviteError {
+	error: string;
+	message: string;
+}

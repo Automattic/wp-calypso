@@ -9,7 +9,7 @@ const useAddSitesModalNotices = () => {
 	const translate = useTranslate();
 
 	const showErrorNotice = useCallback(
-		( url: string, error?: { error?: string } ) => {
+		( url: string, error?: Error & { error?: string } ) => {
 			if ( error?.error === 'email_unverified' ) {
 				dispatch(
 					errorNotice(
@@ -33,7 +33,7 @@ const useAddSitesModalNotices = () => {
 					translate( 'There was an error when trying to subscribe to %s.', {
 						args: [ url ],
 						comment: 'URL of the site that the user tried to subscribe to.',
-					} )
+					} ) + ( error?.cause ? ` (${ error.cause })` : '' )
 				)
 			);
 		},

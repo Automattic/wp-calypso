@@ -6,7 +6,11 @@ import { Fragment, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, close, external, redo, undo } from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
-import { type ImageStudioActions, store as imageStudioStore } from '../../store';
+import {
+	type ImageStudioActions,
+	ImageStudioEntryPoint,
+	store as imageStudioStore,
+} from '../../store';
 import { type ImageStudioConfig, ImageStudioMode, ToolbarOption } from '../../types';
 import { trackImageStudioToolClick } from '../../utils/tracking';
 import { AltIcon } from '../icons/AltIcon';
@@ -54,14 +58,18 @@ export const Header = ( {
 	hasPreviousImage = false,
 	hasNextImage = false,
 }: HeaderProps ) => {
-	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode } = useSelect( ( select ) => {
-		const selectors = select( imageStudioStore ) as any;
-		return {
-			isAiProcessing: selectors.getImageStudioAiProcessing(),
-			hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
-			isAnnotationMode: selectors.getIsAnnotationMode(),
-		};
-	}, [] );
+	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } = useSelect(
+		( select ) => {
+			const selectors = select( imageStudioStore ) as any;
+			return {
+				isAiProcessing: selectors.getImageStudioAiProcessing(),
+				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
+				isAnnotationMode: selectors.getIsAnnotationMode(),
+				hasDrafts: selectors.getDraftIds().length > 0,
+			};
+		},
+		[]
+	);
 
 	const { setAnnotationMode, addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
@@ -97,6 +105,50 @@ export const Header = ( {
 		: null;
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
+	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
+
+	// Get entry point from store with fallback for navigation
+	const entryPoint = useSelect(
+		( select ) => select( imageStudioStore ).getEntryPoint() as ImageStudioEntryPoint | null,
+		[]
+	);
+
+	// Helper function to get save button text based on entry point
+	const getSaveButtonText = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
+		const effectiveEntryPoint = currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+
+		switch ( effectiveEntryPoint ) {
+			case ImageStudioEntryPoint.EditorBlock:
+			case ImageStudioEntryPoint.EditorSidebar:
+			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
+			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+				return __( 'Save & Apply', __i18n_text_domain__ );
+			case ImageStudioEntryPoint.MediaLibrary:
+			default:
+				return __( 'Save', __i18n_text_domain__ );
+		}
+	};
+
+	// Helper function to get save button label based on entry point
+	const getSaveButtonLabel = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
+		const effectiveEntryPoint = currentEntryPoint || ImageStudioEntryPoint.MediaLibrary;
+
+		switch ( effectiveEntryPoint ) {
+			case ImageStudioEntryPoint.EditorBlock:
+			case ImageStudioEntryPoint.EditorSidebar:
+			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
+			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+				return __( 'Save and apply image', __i18n_text_domain__ );
+			case ImageStudioEntryPoint.MediaLibrary:
+			default:
+				return __( 'Save displayed image to Media Library', __i18n_text_domain__ );
+		}
+	};
+
+	let navButtonDisabledTooltip: string | undefined;
+	if ( hasDrafts || hasUpdatedMetadata ) {
+		navButtonDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
+	}
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasPendingAnnotations,
@@ -105,6 +157,40 @@ export const Header = ( {
 	useKeyboardShortcut( 'mod+shift+z', () => onAnnotationRedo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasUndoneAnnotations,
 	} );
+
+	useKeyboardShortcut(
+		'mod+left',
+		( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if ( ! hasPreviousImage || isNavDisabled ) {
+				return;
+			}
+
+			onNavigatePrevious?.();
+		},
+		{
+			bindGlobal: true,
+		}
+	);
+
+	useKeyboardShortcut(
+		'mod+right',
+		( event ) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if ( ! hasNextImage || isNavDisabled ) {
+				return;
+			}
+
+			onNavigateNext?.();
+		},
+		{
+			bindGlobal: true,
+		}
+	);
 
 	return (
 		<div className="image-studio-header">
@@ -118,8 +204,8 @@ export const Header = ( {
 								'image-studio-sr-only': showTitle,
 							} ) }
 						>
-							{ __( 'Image Editor', 'big-sky' ) }{ ' ' }
-							<span className="image-studio-badge">{ __( 'Beta', 'big-sky' ) }</span>
+							{ __( 'Image Editor', __i18n_text_domain__ ) }{ ' ' }
+							<span className="image-studio-badge">{ __( 'Beta', __i18n_text_domain__ ) }</span>
 						</h2>
 					) }
 				</div>
@@ -131,29 +217,37 @@ export const Header = ( {
 								variant="tertiary"
 								icon={ chevronLeft }
 								onClick={ onNavigatePrevious }
-								disabled={ ! hasPreviousImage || isAiProcessing || isSaving }
-								label={ sprintf(
-									/* translators: %s: modifier key (command or control) */
-									__( 'Previous image %s←', 'big-sky' ),
-									modKeySymbol
-								) }
+								disabled={ ! hasPreviousImage || isNavDisabled }
+								label={
+									navButtonDisabledTooltip ||
+									sprintf(
+										/* translators: %s: modifier key (command or control) */
+										__( 'Previous image %s←', __i18n_text_domain__ ),
+										modKeySymbol
+									)
+								}
 								showTooltip
+								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
-								{ config?.imageData?.filename || __( 'Untitled', 'big-sky' ) }
+								{ config?.imageData?.filename || __( 'Untitled', __i18n_text_domain__ ) }
 							</span>
 							<Button
 								variant="tertiary"
 								icon={ chevronRight }
 								onClick={ onNavigateNext }
-								disabled={ ! hasNextImage || isAiProcessing || isSaving }
-								label={ sprintf(
-									/* translators: %s: modifier key (command or control) */
-									__( 'Next image %s→', 'big-sky' ),
-									modKeySymbol
-								) }
+								disabled={ ! hasNextImage || isNavDisabled }
+								label={
+									navButtonDisabledTooltip ||
+									sprintf(
+										/* translators: %s: modifier key (command or control) */
+										__( 'Next image %s→', __i18n_text_domain__ ),
+										modKeySymbol
+									)
+								}
 								showTooltip
+								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 						</div>
@@ -171,7 +265,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationUndo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Undo %sZ', 'big-sky' ),
+											__( 'Undo %sZ', __i18n_text_domain__ ),
 											modKeySymbol
 										) }
 										disabled={ ! hasPendingAnnotations }
@@ -182,7 +276,7 @@ export const Header = ( {
 										onClick={ () => onAnnotationRedo?.() }
 										label={ sprintf(
 											/* translators: %s: modifier key (command or control) */
-											__( 'Redo ⇧%sZ', 'big-sky' ),
+											__( 'Redo ⇧%sZ', __i18n_text_domain__ ),
 											modKeySymbol
 										) }
 										disabled={ ! hasUndoneAnnotations }
@@ -195,7 +289,10 @@ export const Header = ( {
 										variant="tertiary"
 										icon={ external }
 										className="image-studio-classic-editor-link"
-										label={ __( 'Edit this image in the WordPress Media Library', 'big-sky' ) }
+										label={ __(
+											'Edit this image in the WordPress Media Library',
+											__i18n_text_domain__
+										) }
 										onClick={ async () => {
 											trackImageStudioToolClick( 'media_library' );
 											try {
@@ -204,7 +301,7 @@ export const Header = ( {
 												addNotice(
 													__(
 														'Failed to save changes. Please try again or use the Save button.',
-														'big-sky'
+														__i18n_text_domain__
 													),
 													'error'
 												);
@@ -216,14 +313,14 @@ export const Header = ( {
 										} }
 									>
 										<span className="image-studio-header__button-text">
-											{ __( 'Media Library', 'big-sky' ) }
+											{ __( 'Media Library', __i18n_text_domain__ ) }
 										</span>
 									</Button>
 								) }
 								<Button
 									variant="tertiary"
 									icon={ <Icon icon={ LassoIcon } /> }
-									label={ __( 'Select an area of the image to edit', 'big-sky' ) }
+									label={ __( 'Select an area of the image to edit', __i18n_text_domain__ ) }
 									onClick={ () => {
 										trackImageStudioToolClick( 'annotate' );
 										handleToolbarClick( ToolbarOption.Annotate );
@@ -232,7 +329,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.Annotate }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Select', 'big-sky' ) }
+										{ __( 'Select', __i18n_text_domain__ ) }
 									</span>
 								</Button>
 								<Button
@@ -241,7 +338,7 @@ export const Header = ( {
 										'image-studio-toolbar-alt-button': hasUpdatedMetadata,
 									} ) }
 									icon={ <Icon icon={ AltIcon } /> }
-									label={ __( 'View or edit information about the image', 'big-sky' ) }
+									label={ __( 'View or edit information about the image', __i18n_text_domain__ ) }
 									onClick={ () => {
 										// Track whether we're opening or closing
 										const isCurrentlyOpen = activeToolbarOption === ToolbarOption.AltText;
@@ -252,7 +349,7 @@ export const Header = ( {
 									isPressed={ activeToolbarOption === ToolbarOption.AltText }
 								>
 									<span className="image-studio-header__button-text">
-										{ __( 'Image Info', 'big-sky' ) }
+										{ __( 'Image Info', __i18n_text_domain__ ) }
 									</span>
 								</Button>
 							</div>
@@ -261,14 +358,16 @@ export const Header = ( {
 								disabled={ ! isSaveable || isSaving }
 								isBusy={ isSaving }
 								onClick={ onSave }
-								label={ __( 'Save displayed image to Media Library', 'big-sky' ) }
-								text={ isSaving ? __( 'Saving…', 'big-sky' ) : __( 'Save', 'big-sky' ) }
+								label={ getSaveButtonLabel( entryPoint ) }
+								text={
+									isSaving ? __( 'Saving…', __i18n_text_domain__ ) : getSaveButtonText( entryPoint )
+								}
 							/>
 						</Fragment>
 					) }
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close image editor', 'big-sky' ) }
+						label={ __( 'Close image editor', __i18n_text_domain__ ) }
 						onClick={ () => onClose() }
 						disabled={ isSaving }
 					/>

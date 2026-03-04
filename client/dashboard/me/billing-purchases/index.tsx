@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -89,6 +90,7 @@ export default function PurchasesList() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						isLoading={ isLoading }
 						data={ filteredSubscriptions }

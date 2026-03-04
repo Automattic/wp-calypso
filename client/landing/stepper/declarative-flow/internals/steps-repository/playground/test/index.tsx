@@ -3,11 +3,11 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import { screen, waitFor, act } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
-import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
+import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 
 // Mock the initializeWordPressPlayground function
@@ -60,11 +60,22 @@ describe( 'Playground', () => {
 			const submit = jest.fn();
 
 			await act( async () => {
-				renderPlaygroundStep( { navigation: { submit } } );
+				renderPlaygroundStep(
+					{ navigation: { submit } },
+					{ initialEntry: '/setup/onboarding/playground?blueprint=123&playground=1' }
+				);
 			} );
 
 			await userEvent.click( getLaunchButton() );
 			expect( submit ).toHaveBeenCalled();
+		} );
+
+		it( 'should keep launch button disabled when playground query parameter is missing', async () => {
+			await act( async () => {
+				renderPlaygroundStep();
+			} );
+
+			expect( getLaunchButton() ).toBeDisabled();
 		} );
 	} );
 

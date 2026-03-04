@@ -149,6 +149,9 @@ const LayoutLoggedOut = ( {
 				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 			userAllowedToHelpCenter );
 
+	const isThemeShowcaseModern =
+		sectionName === 'themes' && isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -176,6 +179,7 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
 	let masterbar = null;
@@ -241,6 +245,7 @@ const LayoutLoggedOut = ( {
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
 					} ) }
+				{ ...( isThemeShowcaseModern && { logoColor: 'var(--studio-black)' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),

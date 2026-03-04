@@ -1,6 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from './types';
 
+export interface FetchSiteOptions {
+	force?: 'wpcom';
+}
+
 export const SITE_FIELDS = [
 	'ID',
 	'slug',
@@ -61,9 +65,12 @@ export const SITE_OPTIONS = [
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
+export async function fetchSite(
+	siteIdOrSlug: number | string,
+	options: FetchSiteOptions = {}
+): Promise< Site > {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
+		{ ...options, fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 }

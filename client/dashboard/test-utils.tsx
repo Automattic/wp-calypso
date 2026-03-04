@@ -1,4 +1,3 @@
-import { startSiteCollisionListener } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
@@ -51,7 +50,6 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 			},
 		} );
 	const router = createTestRouter( ui );
-	startSiteCollisionListener( queryClient );
 
 	const recordTracksEvent = jest.fn();
 	const recordPageView = jest.fn();

@@ -53,6 +53,14 @@ describe( 'ActionButtons', () => {
 			expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Switch Account' } ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'supports submit type for primary button', () => {
+			render( <ActionButtons primaryLabel="Accept" primaryType="submit" /> );
+			expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toHaveAttribute(
+				'type',
+				'submit'
+			);
+		} );
 	} );
 
 	describe( 'click handlers', () => {

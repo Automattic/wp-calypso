@@ -20,99 +20,102 @@ import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
+import { ImageStudioMode } from '../../types';
+import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
 interface StylePickerProps {
 	disabled?: boolean;
+	mode: ImageStudioMode;
 }
 
 export const STYLE_OPTIONS = [
-	{ label: __( 'Select style', 'big-sky' ), value: 'none', preview: null },
-	{ label: __( 'None', 'big-sky' ), value: '', preview: nonePreview },
+	{ label: __( 'Select style', __i18n_text_domain__ ), value: 'none', preview: null },
+	{ label: __( 'None', __i18n_text_domain__ ), value: '', preview: nonePreview },
 	{
-		label: __( 'Vivid', 'big-sky' ),
+		label: __( 'Vivid', __i18n_text_domain__ ),
 		value: 'vivid',
 		preview: vividPreview,
 	},
-	{ label: __( 'Anime', 'big-sky' ), value: 'anime', preview: animePreview },
+	{ label: __( 'Anime', __i18n_text_domain__ ), value: 'anime', preview: animePreview },
 	{
-		label: __( 'Photographic', 'big-sky' ),
+		label: __( 'Photographic', __i18n_text_domain__ ),
 		value: 'photographic',
 		preview: photographicPreview,
 	},
 	{
-		label: __( 'Digital Art', 'big-sky' ),
+		label: __( 'Digital Art', __i18n_text_domain__ ),
 		value: 'digital-art',
 		preview: digitalArtPreview,
 	},
 	{
-		label: __( 'Comicbook', 'big-sky' ),
+		label: __( 'Comicbook', __i18n_text_domain__ ),
 		value: 'comicbook',
 		preview: comicbookPreview,
 	},
 	{
-		label: __( 'Fantasy Art', 'big-sky' ),
+		label: __( 'Fantasy Art', __i18n_text_domain__ ),
 		value: 'fantasy-art',
 		preview: fantasyArtPreview,
 	},
 	{
-		label: __( 'Analog Film', 'big-sky' ),
+		label: __( 'Analog Film', __i18n_text_domain__ ),
 		value: 'analog-film',
 		preview: analogFilmPreview,
 	},
 	{
-		label: __( 'Neonpunk', 'big-sky' ),
+		label: __( 'Neonpunk', __i18n_text_domain__ ),
 		value: 'neonpunk',
 		preview: neonpunkPreview,
 	},
 	{
-		label: __( 'Isometric', 'big-sky' ),
+		label: __( 'Isometric', __i18n_text_domain__ ),
 		value: 'isometric',
 		preview: isometricPreview,
 	},
 	{
-		label: __( 'Lowpoly', 'big-sky' ),
+		label: __( 'Lowpoly', __i18n_text_domain__ ),
 		value: 'lowpoly',
 		preview: lowpolyPreview,
 	},
 	{
-		label: __( 'Origami', 'big-sky' ),
+		label: __( 'Origami', __i18n_text_domain__ ),
 		value: 'origami',
 		preview: origamiPreview,
 	},
 	{
-		label: __( 'Line Art', 'big-sky' ),
+		label: __( 'Line Art', __i18n_text_domain__ ),
 		value: 'line-art',
 		preview: lineArtPreview,
 	},
 	{
-		label: __( 'Craft Clay', 'big-sky' ),
+		label: __( 'Craft Clay', __i18n_text_domain__ ),
 		value: 'craft-clay',
 		preview: craftClayPreview,
 	},
 	{
-		label: __( 'Cinematic', 'big-sky' ),
+		label: __( 'Cinematic', __i18n_text_domain__ ),
 		value: 'cinematic',
 		preview: cinematicPreview,
 	},
 	{
-		label: __( '3D Model', 'big-sky' ),
+		label: __( '3D Model', __i18n_text_domain__ ),
 		value: '3d-model',
 		preview: threeDModelPreview,
 	},
 	{
-		label: __( 'Pixel Art', 'big-sky' ),
+		label: __( 'Pixel Art', __i18n_text_domain__ ),
 		value: 'pixel-art',
 		preview: pixelArtPreview,
 	},
 	{
-		label: __( 'Texture', 'big-sky' ),
+		label: __( 'Texture', __i18n_text_domain__ ),
 		value: 'texture',
 		preview: texturePreview,
 	},
 ];
 
-export function StylePicker( { disabled = false }: StylePickerProps ) {
+export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	const { setSelectedStyle } = useDispatch( imageStudioStore );
 
 	const selectedStyle = useSelect( ( select ) => {
@@ -121,6 +124,8 @@ export function StylePicker( { disabled = false }: StylePickerProps ) {
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
+		// Track style selection
+		trackImageStudioStyleSelected( { style: value, mode } );
 		// Close dropdown by triggering a mousedown event outside the InputToolbar container
 		// We use requestAnimationFrame to ensure the state update completes first
 		requestAnimationFrame( () => {
@@ -136,7 +141,7 @@ export function StylePicker( { disabled = false }: StylePickerProps ) {
 
 	const selectedLabel =
 		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Styles', 'big-sky' );
+		__( 'Styles', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar

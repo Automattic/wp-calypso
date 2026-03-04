@@ -90,6 +90,24 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
+		// Handle support tool message by rendering its data as plain text
+		if (
+			textData.tool_id === 'big_sky__wordpress_com_support' &&
+			typeof textData.data === 'string'
+		) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'text' as const,
+							text: textData.data,
+						},
+					],
+				},
+			];
+		}
+
 		// Handle start over tool message
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
@@ -111,7 +129,7 @@ export function convertToolMessagesToComponents( {
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		// eslint-disable-next-line no-console
-		console.warn( `Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }

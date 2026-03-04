@@ -3,9 +3,8 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
-	addPlanToCart,
 	addProductsToCart,
-	createSiteWithCart,
+	createSite,
 	isCopySiteFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
@@ -15,6 +14,7 @@ import {
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
+	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -113,7 +113,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		partnerBundle,
 		gardenName,
 		gardenPartnerName,
-		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -127,7 +126,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			gardenName: select( ONBOARD_STORE ).getGardenName(),
 			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
-			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
 		[]
 	);
@@ -190,16 +188,21 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
-	async function createSite() {
+	async function createSiteAction() {
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
 
-			if ( planCartItem && slug ) {
-				await addPlanToCart( slug, flow, true, theme, planCartItem );
+			if ( theme && slug ) {
+				await setThemeOnSite( slug, theme );
 			}
 
-			if ( productCartItems?.length && slug ) {
-				await addProductsToCart( slug, flow, productCartItems );
+			const manageFlowCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
+			if ( manageFlowCartItems.length > 0 && slug ) {
+				await addProductsToCart( slug, flow, manageFlowCartItems );
 			}
 
 			return {
@@ -259,9 +262,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
-		const site = await createSiteWithCart(
+		const site = await createSite(
 			flow,
-			true,
 			theme,
 			siteVisibility,
 			urlData?.meta.title ?? selectedSiteTitle,
@@ -271,7 +273,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			'#113AF5',
 			useThemeHeadstart,
 			username,
-			mergedDomainCartItems,
 			partnerBundle,
 			siteUrl,
 			domainItem,
@@ -280,16 +281,29 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			undefined, // siteGoals
 			gardenName,
 			gardenPartnerName,
-			urlQueryParams.get( 'spec_id' ),
-			blueprint
+			urlQueryParams.get( 'spec_id' )
 		);
 
+		if ( ! site ) {
+			throw new Error( 'Failed to create site' );
+		}
+
+		const additionalCartItems = [
+			...( planCartItem ? [ planCartItem ] : [] ),
+			...( productCartItems ?? [] ),
+			...mergedDomainCartItems,
+		];
+
+		if ( additionalCartItems.length > 0 ) {
+			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+		}
+
 		// Poll for garden provisioning status if this is a garden site
-		if ( gardenName && site?.siteId ) {
+		if ( gardenName ) {
 			await pollForGardenProvisioning( site.siteId );
 		}
 
-		if ( isEntrepreneurFlow( flow ) && site ) {
+		if ( isEntrepreneurFlow( flow ) ) {
 			await addEcommerceTrial( { siteId: site.siteId } );
 
 			return {
@@ -300,21 +314,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		if ( planCartItem && site?.siteSlug ) {
-			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
-		}
-
-		if ( productCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
-		}
-
-		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, domainCartItems );
-		}
-
 		return {
-			siteId: site?.siteId,
-			siteSlug: site?.siteSlug,
+			siteId: site.siteId,
+			siteSlug: site.siteSlug,
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
 			platform,
@@ -323,7 +325,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 	useEffect( () => {
 		if ( submit ) {
-			setPendingAction( createSite );
+			setPendingAction( createSiteAction );
 			submit();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

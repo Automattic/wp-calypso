@@ -1,6 +1,7 @@
 export default function ReaderYouTubeIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg
+			aria-label="YouTube Icon"
 			fill="#ff0000"
 			viewBox="0 0 256 256"
 			width={ iconSize }

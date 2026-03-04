@@ -9,10 +9,12 @@ import SignupForm from 'calypso/blocks/signup-form';
 import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
 import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
@@ -85,7 +87,20 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	renderFormHeader = () => {
-		return <InviteFormHeader { ...this.props.invite } />;
+		return (
+			<InviteFormHeaderLoggedOut
+				site={ this.props.invite?.site }
+				ciabConfig={ this.getCiabConfig() }
+			/>
+		);
+	};
+
+	getCiabConfig = () => {
+		const site = this.props.invite?.site;
+		const gardenName = site?.garden?.name;
+		const gardenPartner = site?.garden?.partner;
+
+		return getCiabConfigFromGarden( gardenPartner, gardenName );
 	};
 
 	loginUser = () => {
@@ -161,8 +176,18 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	render() {
+		const ciabConfig = this.getCiabConfig();
+
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
-			return this.renderSignInLinkOnly();
+			return (
+				<>
+					<BodySectionCssClass
+						bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+					/>
+					<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+					{ this.renderSignInLinkOnly() }
+				</>
+			);
 		}
 
 		if ( get( this.props.invite, 'site.is_wpforteams_site', false ) ) {
@@ -179,10 +204,14 @@ class InviteAcceptLoggedOut extends Component {
 
 		return (
 			<>
-				<WpLoggedOutInviteLogo />
+				<BodySectionCssClass
+					bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+				/>
+				<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm
+						className="signup-form--connect-screen"
 						redirectToAfterLoginUrl={ window.location.href }
 						isPasswordless
 						displayUsernameInput={ false }
@@ -204,6 +233,7 @@ class InviteAcceptLoggedOut extends Component {
 						) }
 						submitButtonLabel={ this.props.translate( 'Create an account' ) }
 						labelText={ this.props.translate( 'Your email address' ) }
+						useConnectScreenActions
 					/>
 					{ this.state.userData && this.loginUser() }
 				</div>

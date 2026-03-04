@@ -146,9 +146,47 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 					metadata = { ...metadata, [ key ]: value };
 				}
 
-				if ( metadata !== canvasMetadata ) {
+				const hasNewMetadata = Object.keys( input?.metadata || {} ).length > 0;
+				const hasMetadataChanged = Object.entries( metadata ).some(
+					( [ key, value ] ) => canvasMetadata[ key as keyof CanvasMetadata ] !== value
+				);
+				const shouldCopyExistingMetadata = ! hasNewMetadata && mode === ImageStudioMode.Edit;
+				const shouldPersistMetadata = shouldCopyExistingMetadata || hasNewMetadata;
+
+				if ( hasMetadataChanged ) {
 					setHasUpdatedMetadata( true );
 					setCanvasMetadata( metadata );
+				}
+
+				// Persist metadata to the attachment: either new metadata from the agent,
+				// or in edit mode, copy existing canvas metadata to the new attachment.
+				if ( shouldPersistMetadata ) {
+					const { title, caption, description, alt_text } = metadata;
+					try {
+						await dispatch( coreStore ).saveEntityRecord(
+							'postType',
+							'attachment',
+							{
+								id: attachmentId,
+								title,
+								caption,
+								description,
+								alt_text,
+							},
+							{ throwOnError: true }
+						);
+					} catch ( error ) {
+						window.console?.warn?.(
+							`[Image Studio] Failed to persist metadata for attachment ${ attachmentId }:`,
+							error
+						);
+
+						trackImageStudioError( {
+							mode,
+							errorType: 'save_metadata_failed',
+							attachmentId,
+						} );
+					}
 				}
 
 				// In Generate mode (originalAttachmentId is null), ALL images are drafts
