@@ -111,7 +111,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 					}
 				}
 			}
-			const attributeUrl = attributes?.url ? stripParams( attributes.url ) : null;
+			const attributeUrl = attributes?.url ? stripParams( attributes.url as string ) : null;
 			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
 				return <BlockEdit { ...props } />;
 			}
