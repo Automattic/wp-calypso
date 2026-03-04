@@ -129,4 +129,6 @@ const ThemeCard = forwardRef(
 	}
 );
 
+ThemeCard.displayName = 'ThemeCard';
+
 export default ThemeCard;
