@@ -279,6 +279,9 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
 					{
 						term_pricing: termPricing,
+						...( isCobrandedCheckoutEnabled && referralLogo.option
+							? { logo_type: referralLogo.option }
+							: {} ),
 					}
 				)
 			);
@@ -467,6 +470,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 					<Button
 						variant="link"
 						onClick={ async () => {
+							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
 							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
 							setPreviewLogoUrl( logoUrlForPreview );
 							setIsPreviewOpen( true );
