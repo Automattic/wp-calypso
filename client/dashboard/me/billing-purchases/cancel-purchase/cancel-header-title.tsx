@@ -7,7 +7,6 @@ interface CancelHeaderTitleProps {
 	flowType: CancelFlowType;
 	purchase: Purchase;
 	surveyStep?: string;
-	isAkismet?: boolean;
 }
 
 export default function CancelHeaderTitle( {

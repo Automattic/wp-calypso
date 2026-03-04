@@ -19,7 +19,6 @@ interface Props {
 	percentDiscount: number;
 	onGetCancellationOffer: () => void;
 	isAkismet?: boolean;
-	isSubmitting: boolean;
 }
 
 const JetpackCancellationOfferStep: FC< Props > = ( props ) => {

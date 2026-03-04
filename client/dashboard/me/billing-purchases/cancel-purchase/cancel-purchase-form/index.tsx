@@ -129,7 +129,6 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
-	isSubmitting,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -256,7 +255,6 @@ function SurveyContent( {
 				onGetCancellationOffer={ onGetCancellationOffer }
 				percentDiscount={ offerDiscountBasedFromPurchasePrice }
 				purchase={ purchase }
-				isSubmitting={ isSubmitting ?? false }
 			/>
 		);
 	}
@@ -354,7 +352,7 @@ function StepButtons( {
 				<Button
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
-					onClick={ closeDialog }
+					onClick={ onSubmit }
 					variant="secondary"
 				>
 					{ __( 'No, thanks' ) }
