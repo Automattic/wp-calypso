@@ -35,9 +35,14 @@ export default function ZendeskChat( {
 	markdownExtensions = {},
 	onMessagesCountChange,
 }: Props ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat();
-
+	const {
+		agentticMessages,
+		onSubmit,
+		isLoadingConversation,
+		isProcessing,
+		onTypingStatusChange,
+		imageUpload,
+	} = useManagedZendeskChat();
 	// Notify parent when message count changes
 	useEffect( () => {
 		onMessagesCountChange( agentticMessages.length );
@@ -60,6 +65,7 @@ export default function ZendeskChat( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			imageUpload={ imageUpload }
 		/>
 	);
 }

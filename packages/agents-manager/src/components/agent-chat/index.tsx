@@ -4,6 +4,7 @@ import {
 	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
+	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
@@ -106,6 +107,7 @@ export default function AgentChat( {
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
+	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -176,6 +178,7 @@ export default function AgentChat( {
 					<AgentUI.Notice />
 					{ imageUpload && (
 						<ImageUploader
+							ref={ imageUploaderRef }
 							images={ imageUpload.pendingImages }
 							uploadingImages={ imageUpload.uploadingImages }
 							onFilesSelected={ imageUpload.handleFilesSelected }
@@ -195,7 +198,10 @@ export default function AgentChat( {
 					) }
 
 					<SelectedBlock />
-					<AgentUI.Input />
+					<AgentUI.Input
+						imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+						disabled={ imageUpload?.pendingImages?.length ? false : undefined }
+					/>
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>

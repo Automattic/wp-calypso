@@ -5,15 +5,41 @@ import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
+import { AttachmentMessage } from './components/attachment-message';
 import { CSATForm } from './components/csat-form';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { ZendeskConversation } from './types';
+import { useAttachFileToConversation } from './use-attach-file';
 import {
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { AgentticMessage, ZendeskMessage } from './types';
+
+const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const MAX_ATTACHMENTS = 5;
+
+function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
+
+/** Minimal image preview shape for attachment upload UI (compatible with UseImageUploadResult). */
+export type ZendeskImagePreview = {
+	id: string;
+	url: string;
+	name: string;
+	alt: string;
+	mime_type: string;
+	file: File;
+};
+
+/** Minimal uploading image shape (compatible with UseImageUploadResult.uploadingImages). */
+export type ZendeskUploadingImage = {
+	id: string;
+	url?: string;
+	name?: string;
+};
 
 type ConversationData = {
 	conversation: {
@@ -144,8 +170,20 @@ export const useManagedZendeskChat = () => {
 	const [ connectionStatus, setConnectionStatus ] = useState<
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
+	const [ pendingImages, setPendingImages ] = useState< ZendeskImagePreview[] >( [] );
 
+	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
+	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
+		useAttachFileToConversation();
+
+	const clientId = useMemo( () => {
+		const messages = conversation?.messages ?? [];
+		const msg = messages.find( ( m ) => m.source?.type === 'web' && m.source?.id ) as
+			| ZendeskMessage
+			| undefined;
+		return msg?.source?.id ?? '';
+	}, [ conversation?.messages ] );
 
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
@@ -277,6 +315,37 @@ export const useManagedZendeskChat = () => {
 				};
 			}
 
+			const isAttachment =
+				( message.type === 'file' ||
+					message.type === 'image' ||
+					message.type === 'image-placeholder' ) &&
+				message.mediaUrl;
+
+			if ( isAttachment && message.mediaUrl ) {
+				const mediaUrl = message.mediaUrl;
+				return {
+					id: message.id || crypto.randomUUID(),
+					role: message.role === 'business' ? 'agent' : 'user',
+					content: [
+						{
+							type: 'component',
+							component: () => (
+								<AttachmentMessage
+									mediaUrl={ mediaUrl }
+									type={ message.type as 'file' | 'image' | 'image-placeholder' }
+									altText={ message.altText }
+								/>
+							),
+						},
+					],
+					timestamp: message.received,
+					archived: false,
+					showIcon: true,
+					icon: message.avatarUrl,
+					disabled: false,
+				};
+			}
+
 			return convertZendeskMessageToAgentticFormat( message );
 		} );
 
@@ -338,6 +407,105 @@ export const useManagedZendeskChat = () => {
 		Smooch,
 	] );
 
+	const handleFilesSelected = useCallback( ( files: File[] ) => {
+		const toAdd = files
+			.filter( ( f ) => isSupportedImageType( f.type ) )
+			.slice( 0, MAX_ATTACHMENTS );
+		setPendingImages( ( prev ) => {
+			const next = [ ...prev ];
+			for ( const file of toAdd ) {
+				if ( next.length >= MAX_ATTACHMENTS ) {
+					break;
+				}
+				if ( next.some( ( p ) => p.name === file.name && p.file.size === file.size ) ) {
+					continue;
+				}
+				next.push( {
+					id: crypto.randomUUID(),
+					url: URL.createObjectURL( file ),
+					name: file.name,
+					alt: '',
+					mime_type: file.type,
+					file,
+				} );
+			}
+			return next;
+		} );
+	}, [] );
+
+	const handleRemoveImage = useCallback( ( image: { id: string } ) => {
+		setPendingImages( ( prev ) => {
+			const item = prev.find( ( p ) => p.id === image.id );
+			if ( item?.url ) {
+				URL.revokeObjectURL( item.url );
+			}
+			return prev.filter( ( p ) => p.id !== image.id );
+		} );
+	}, [] );
+
+	const imageUpload =
+		conversation?.id && clientId && authData?.jwt
+			? {
+					pendingImages,
+					uploadingImages: [] as ZendeskUploadingImage[],
+					isUploadingImages: isAttachingFile,
+					handleFilesSelected,
+					handleRemoveImage: handleRemoveImage as ( image: unknown ) => void,
+					uploadImagesToWordPress: () => Promise.resolve( [] as never[] ),
+			  }
+			: undefined;
+
+	const onSubmitWithAttachments = useCallback(
+		( message: string ) => {
+			const toUpload = pendingImages;
+			setPendingImages( [] );
+			if ( toUpload.length > 0 && conversation?.id && authData?.jwt && clientId && Smooch ) {
+				const conversationId = conversation.id;
+				Promise.all(
+					toUpload.map( ( item ) =>
+						attachFileToConversation( {
+							authData: {
+								isLoggedIn: true,
+								jwt: authData.jwt,
+								externalId: authData.externalId,
+							},
+							clientId,
+							conversationId: conversation.id,
+							file: item.file,
+						} ).then( () => {
+							URL.revokeObjectURL( item.url );
+						} )
+					)
+				).then( () => {
+					// Refetch after a short delay so the backend has time to add the file message to the conversation.
+					const refetch = () =>
+						Smooch.getConversationById( conversationId ).then( setConversation );
+					refetch();
+					setTimeout( refetch, 1500 );
+				} );
+			}
+			if ( conversation?.id && Smooch ) {
+				const messageToSend = {
+					type: 'text',
+					text: message || '',
+				};
+				setConversation( ( prev ) =>
+					prev ? { ...prev, messages: [ ...prev.messages, messageToSend as ZendeskMessage ] } : prev
+				);
+				Smooch.sendMessage( messageToSend, conversation.id );
+			}
+		},
+		[
+			pendingImages,
+			conversation?.id,
+			authData?.jwt,
+			authData?.externalId,
+			clientId,
+			Smooch,
+			attachFileToConversation,
+		]
+	);
+
 	return {
 		typingStatus,
 		isProcessing: isSettingUpSmooch,
@@ -352,19 +520,8 @@ export const useManagedZendeskChat = () => {
 				Smooch?.stopTyping( conversation?.id );
 			}
 		},
-		onSubmit: ( message: string ) => {
-			const messageToSend = {
-				type: 'text',
-				text: message,
-			};
-			if ( conversation?.id && Smooch ) {
-				setConversation( {
-					...conversation,
-					messages: [ ...conversation.messages, messageToSend as ZendeskMessage ],
-				} );
-				Smooch.sendMessage( messageToSend, conversation.id );
-			}
-		},
+		onSubmit: onSubmitWithAttachments,
+		imageUpload,
 	};
 };
 
