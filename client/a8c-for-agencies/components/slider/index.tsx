@@ -67,9 +67,6 @@ export default function A4ASlider( {
 	const fillEndPosition = sliderSectionWidth * displayValue - valueOffset;
 	const fillAreaWidth = `${ Math.max( 0, fillEndPosition - disabledEndPosition + 1 ) }px`;
 
-	// NOTE: Removed auto-select useEffect that was causing render loops
-	// The minimum is still enforced visually via displayValue and in onSliderChange
-
 	return (
 		<div className={ clsx( 'a4a-slider', className ) }>
 			{ label && (
