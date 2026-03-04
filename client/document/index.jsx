@@ -80,9 +80,6 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
-			( selectedSite
-				? `var currentSelectedSite = ${ jsonStringifyForHtml( selectedSite ) };\n`
-				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
