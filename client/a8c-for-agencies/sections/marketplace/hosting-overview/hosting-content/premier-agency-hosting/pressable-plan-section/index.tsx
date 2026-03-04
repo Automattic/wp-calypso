@@ -178,7 +178,9 @@ export default function PressablePlanSection( {
 			defaultSlug = 'pressable-build';
 		}
 
-		const defaultPlan = pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null;
+		const defaultPlan = isReferralMode
+			? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
+			: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ];
 		setSelectedPlan( defaultPlan );
 	}, [
 		pressablePlans,

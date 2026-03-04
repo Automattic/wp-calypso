@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
+import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -53,7 +54,10 @@ export default function PlanSelectionFilter( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
+	const [ filterType, setFilterType ] = useSliderPersistence< FilterType >( {
+		key: 'pressable-filter-type',
+		defaultValue: FILTER_TYPE_INSTALL,
+	} );
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
@@ -161,7 +165,7 @@ export default function PlanSelectionFilter( {
 				recordTracksEvent( `calypso_a4a_marketplace_hosting_pressable_filter_by_${ value }_click` )
 			);
 		},
-		[ dispatch ]
+		[ dispatch, setFilterType ]
 	);
 
 	const onSelectTab = useCallback(
@@ -176,7 +180,7 @@ export default function PlanSelectionFilter( {
 				setFilterType( FILTER_TYPE_VISITS );
 			}
 		},
-		[ filterType, hasNewPremiumPlans, setSelectedTab ]
+		[ filterType, hasNewPremiumPlans, setSelectedTab, setFilterType ]
 	);
 
 	const additionalWrapperClass =
