@@ -94,6 +94,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						onChangeFeedPreview={ handleChangeFeedPreview }
 						onChangeSubscribe={ handleSubscribeToggle }
 						onChange={ handleChangeSearchTerm }
+						hideFeedPreview={ isAddNewTab }
 					/>
 				</div>
 
@@ -120,22 +121,8 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						</div>
 					) : (
 						<>
-							{ shouldShowSubscriptionsList && (
-								<>
-									<h2 className="reader-add-subscription__subscriptions-title">
-										{ translate( 'Your subscriptions' ) }
-									</h2>
-									<SiteSubscriptionsList layout="compact" />
-								</>
-							) }
-							{ shouldShowRelatedSitesList && (
-								<>
-									<h2 className="reader-add-subscription__subscriptions-title">
-										{ translate( 'Related sites' ) }
-									</h2>
-									<UnsubscribedFeedsSearchList />
-								</>
-							) }
+							{ shouldShowSubscriptionsList && <SiteSubscriptionsList layout="compact" /> }
+							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList /> }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>

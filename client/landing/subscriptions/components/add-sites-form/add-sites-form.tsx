@@ -24,6 +24,10 @@ interface AddSitesFormProps {
 	 * @param value - The new value of the input field.
 	 */
 	onChange?: ( value: string ) => void;
+	/**
+	 * Whether to hide the feed preview.
+	 */
+	hideFeedPreview?: boolean;
 }
 
 const AddSitesForm = ( {
@@ -34,6 +38,7 @@ const AddSitesForm = ( {
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
+	hideFeedPreview = false,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -155,12 +160,14 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			<FeedPreview
-				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
-				source={ source }
-				onChangeFeedPreview={ onChangeFeedPreview }
-				onChangeSubscribe={ onSubscribeToggle }
-			/>
+			{ ! hideFeedPreview && (
+				<FeedPreview
+					url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
+					source={ source }
+					onChangeFeedPreview={ onChangeFeedPreview }
+					onChangeSubscribe={ onSubscribeToggle }
+				/>
+			) }
 		</>
 	);
 };
