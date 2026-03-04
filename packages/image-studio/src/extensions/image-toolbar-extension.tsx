@@ -6,12 +6,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
-import {
-	type BlockEditProps,
-	IMAGE_STUDIO_SUPPORTED_MIME_TYPES,
-	type MediaAttachment,
-	ImageStudioMode,
-} from '../types';
+import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
 
@@ -34,7 +29,11 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						return { media: null, hasResolved: true };
 					}
 					return {
-						media: select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id as number ),
+						media: select( coreStore ).getEntityRecord(
+							'postType',
+							'attachment',
+							attributes.id as number
+						),
 						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
 							'postType',
 							'attachment',
