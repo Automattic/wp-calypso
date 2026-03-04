@@ -1,0 +1,19 @@
+{
+	"name": "@automattic/tc-workspace-cache-probe",
+	"version": "0.1.0",
+	"description": "Temporary workspace package for TeamCity Docker cache-path validation.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/tc-workspace-cache-probe"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"scripts": {
+		"prepare": "echo \"No build needed for @automattic/tc-workspace-cache-probe\"",
+		"clean": "echo \"No clean step needed for @automattic/tc-workspace-cache-probe\""
+	}
+}
