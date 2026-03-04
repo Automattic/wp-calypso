@@ -95,10 +95,10 @@ export default function OrchestratorChat( {
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
-	const agentSessionId = agentConfig!.sessionId;
+	const initSessionId = agentConfig!.sessionId;
 
 	const { sessionId: cachedId, messages: cachedMessages = [] } = cachedConversation;
-	const hasCachedConversation = !! cachedId && agentSessionId === cachedId;
+	const hasCachedConversation = !! cachedId && initSessionId === cachedId;
 
 	const {
 		addMessage,
@@ -139,7 +139,7 @@ export default function OrchestratorChat( {
 			getAgentManager().updateSessionId( agentId, serverSessionId );
 
 			// Sync local session ID with the server's
-			if ( agentSessionId !== serverSessionId ) {
+			if ( initSessionId !== serverSessionId ) {
 				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
