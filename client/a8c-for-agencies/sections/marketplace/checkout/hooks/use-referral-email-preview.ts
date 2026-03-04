@@ -1,4 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { getLogoCacheKey } from 'calypso/a8c-for-agencies/lib/logo-url-utils';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -25,12 +26,15 @@ export default function useReferralEmailPreview( {
 }: UseReferralEmailPreviewParams ): UseQueryResult< ReferralEmailPreviewResponse, Error > {
 	const agencyId = useSelector( getActiveAgencyId );
 
+	const logoKey = getLogoCacheKey( logoUrl );
+
 	return useQuery< ReferralEmailPreviewResponse, Error >( {
 		queryKey: [
 			'referral-email-preview',
 			agencyId,
 			productIds,
 			greetingLine,
+			logoKey,
 			logoUrl,
 			termPricing,
 		],

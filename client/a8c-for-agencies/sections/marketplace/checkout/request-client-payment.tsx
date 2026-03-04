@@ -361,6 +361,8 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			hasPressableAddonsInCheckout,
 			dispatch,
 			termPricing,
+			isCobrandedCheckoutEnabled,
+			referralLogo.option,
 			buildLogoPayload,
 			requestPayment,
 			message,
