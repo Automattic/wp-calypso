@@ -848,6 +848,34 @@ export class RestAPIClient {
 		return response;
 	}
 
+	/**
+	 * Likes or unlikes a post.
+	 *
+	 * @param {'like'|'unlike'} action Action to perform on the post.
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 */
+	async postLikeAction(
+		action: 'like' | 'unlike',
+		siteID: number,
+		postID: number
+	): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const endpoint =
+			action === 'like'
+				? this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/likes/new` )
+				: this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/likes/mine/delete` );
+
+		return await this.sendRequest( endpoint, params );
+	}
+
 	/* Media */
 
 	/**
