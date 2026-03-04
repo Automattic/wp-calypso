@@ -6,6 +6,7 @@ import InlineSupportLink from '../components/inline-support-link';
 import Notice from '../components/notice';
 import { OptInWelcome } from '../components/opt-in-welcome';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
+import SiteIssues from './site-issues';
 
 const RestoringSitesNotices = ( { onClose }: { onClose?: () => void } ) => {
 	return (
@@ -39,6 +40,7 @@ export const SitesNotices = () => {
 	return (
 		<>
 			<OptInWelcome tracksContext="sites" />
+			<SiteIssues />
 			{ isRestoringAccount && (
 				<RestoringSitesNotices
 					onClose={ () =>

@@ -3,6 +3,7 @@ import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
+	dashboardSiteIssuesQuery,
 	githubInstallationsQuery,
 	isAutomatticianQuery,
 	productsQuery,
@@ -81,6 +82,7 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		queryClient.prefetchQuery( dashboardSiteIssuesQuery() );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
