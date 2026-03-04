@@ -134,7 +134,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"wordpress-ai-assistant": false,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},
