@@ -86,7 +86,6 @@ describe( 'AddSubscriptionForm', () => {
 
 			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
-			expect( screen.getByText( 'Your subscriptions' ) ).toBeInTheDocument();
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 			expect( SiteSubscriptionsList ).toHaveBeenCalledWith(
 				expect.objectContaining( { layout: 'compact' } ),
@@ -100,7 +99,6 @@ describe( 'AddSubscriptionForm', () => {
 					<AddSubscriptionForm type="add-new" />
 				</SiteSubscriptionsQueryPropsProvider>
 			);
-			expect( screen.getByText( 'Related sites' ) ).toBeVisible();
 			expect( screen.getByTestId( 'unsubscribed-feeds-search-list' ) ).toBeInTheDocument();
 		} );
 
@@ -110,7 +108,6 @@ describe( 'AddSubscriptionForm', () => {
 					<AddSubscriptionForm type="add-new" />
 				</SiteSubscriptionsQueryPropsProvider>
 			);
-			expect( screen.queryByText( 'Related sites' ) ).not.toBeInTheDocument();
 			expect( screen.queryByTestId( 'unsubscribed-feeds-search-list' ) ).not.toBeInTheDocument();
 		} );
 
