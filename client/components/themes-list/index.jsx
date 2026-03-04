@@ -297,7 +297,6 @@ export function ThemeBlock( props ) {
 			siteId={ siteId }
 			softLaunched={ theme.soft_launched }
 			selectedStyleVariation={ selectedStyleVariation }
-			isThemeShowcaseModern={ props.isThemeShowcaseModern }
 		/>
 	);
 }

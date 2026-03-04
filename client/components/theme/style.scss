@@ -199,6 +199,6 @@ $theme-info-height: 54px;
 }
 
 .theme__overlay-button-preview.components-button.is-secondary:not(.is-destructive) {
-  --wp-components-color-accent: var(--studio-white);
-  --wp-components-color-accent-darker-20: var(--studio-white);
+	--wp-components-color-accent: var(--studio-white);
+	--wp-components-color-accent-darker-20: var(--studio-white);
 }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -16,6 +17,7 @@ import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
@@ -131,7 +133,6 @@ export class Theme extends Component {
 			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
 			nextProps.onMoreButtonItemClick !== this.props.onMoreButtonItemClick ||
-			nextProps.isThemeShowcaseModern !== this.props.isThemeShowcaseModern ||
 			themeThumbnailRefUpdated
 		);
 	}
@@ -433,6 +434,9 @@ const ConnectedTheme = connect(
 		} = state;
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
+		const isLoggedIn = isUserLoggedIn( state );
+
+		const isThemeShowcaseModern = isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
 
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
@@ -440,6 +444,7 @@ const ConnectedTheme = connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
+			isThemeShowcaseModern,
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
