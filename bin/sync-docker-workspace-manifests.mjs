@@ -143,9 +143,15 @@ function getWorkspaceManifestPaths( workspacePatterns ) {
 }
 
 function buildDockerCopyLines( manifestPaths ) {
-	return manifestPaths.map(
-		( manifestPath ) => `COPY ./${ manifestPath } /calypso/${ manifestPath }`
-	);
+	if ( manifestPaths.length === 0 ) {
+		fail( 'No workspace package.json files found to generate Docker COPY block.' );
+	}
+
+	return [
+		'COPY --parents \\',
+		...manifestPaths.map( ( manifestPath ) => `  ./${ manifestPath } \\` ),
+		'  /calypso/',
+	];
 }
 
 function findBlockRange( lines ) {

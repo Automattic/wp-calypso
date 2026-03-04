@@ -117,6 +117,8 @@ object BuildDockerImage : BuildType({
 			unchecked = "false"
 		)
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
+		param("env.DOCKER_BUILDKIT", "1")
+		param("env.BUILDKIT_PROGRESS", "plain")
 	}
 
 	vcs {
