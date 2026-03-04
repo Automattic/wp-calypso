@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.20
+
 ARG use_cache=false
 ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
@@ -18,7 +20,55 @@ ARG generate_cache_image=false
 ENV GENERATE_CACHE_IMAGE $generate_cache_image
 
 ###################
-FROM builder-cache-${use_cache} AS builder
+# Dedicated dependency-install stage.
+# By copying only manifests and the lockfile first, we can cache
+# the slow yarn install and skip it when only source files change.
+FROM builder-cache-${use_cache} AS deps
+
+WORKDIR /calypso
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV SKIP_TSC=true
+ENV SKIP_CALYPSO_POSTINSTALL=true
+ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
+
+# Build a "base" layer
+#
+# This layer should never change unless env-config.sh
+# changes. For local development this should always
+# be an empty file and therefore this layer should
+# cache well.
+#
+# env-config.sh
+#   used by systems to overwrite some defaults
+#   such as the apt and npm mirrors
+COPY ./env-config.sh /tmp/env-config.sh
+RUN bash /tmp/env-config.sh
+
+# Copy dependency metadata only — manifests, lockfile, and Yarn config.
+# The workspace COPY block below should stay in sync with the root
+# workspaces in package.json. A CI check (`yarn check:docker-workspace-copy-globs`)
+# will let you know if they drift apart.
+COPY ./package.json ./yarn.lock ./.yarnrc.yml /calypso/
+COPY ./.yarn/releases /calypso/.yarn/releases
+COPY ./.yarn/patches /calypso/.yarn/patches
+# BEGIN: workspace package manifests (must stay in sync with package.json workspaces)
+COPY --parents \
+  ./apps/*/package.json \
+  ./packages/*/package.json \
+  ./client/package.json \
+  ./desktop/package.json \
+  ./test/e2e/package.json \
+  /calypso/
+# END: workspace package manifests
+
+# We don't need the full postinstall (build-packages, husky) at this
+# stage — just the bare install. SKIP_CALYPSO_POSTINSTALL lets us
+# bypass it safely.
+RUN yarn install --immutable --check-cache --inline-builds
+
+###################
+FROM deps AS builder
 
 # Make sure shell options, like pipefail, are set for the build.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -41,34 +91,15 @@ ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
-ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-ENV SKIP_TSC true
-ENV SKIP_CALYPSO_POSTINSTALL true
-ENV SKIP_CALYPSO_PACKAGE_BUILDS true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 ENV IS_CI=true
 WORKDIR /calypso
-
-# Build a "base" layer
-#
-# This layer should never change unless env-config.sh
-# changes. For local development this should always
-# be an empty file and therefore this layer should
-# cache well.
-#
-# env-config.sh
-#   used by systems to overwrite some defaults
-#   such as the apt and npm mirrors
-COPY ./env-config.sh /tmp/env-config.sh
-RUN bash /tmp/env-config.sh
 
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache --inline-builds
 RUN yarn run build-packages:web
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)

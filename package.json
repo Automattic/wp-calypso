@@ -122,6 +122,7 @@
 		"start-dashboard-only": "CALYPSO_ENV=dashboard-development ENTRY_LIMIT=entry-dashboard-dotcom,entry-dashboard-ciab yarn run start",
 		"storybook:start": "storybook dev -c ./.storybook -p 6006",
 		"storybook:build": "storybook build -c ./.storybook",
+		"check:docker-workspace-copy-globs": "node bin/check-docker-workspace-copy-globs.mjs",
 		"test": "run-s -s test-client test-packages test-server test-build-tools",
 		"test-build-tools": "jest -c=test/build-tools/jest.config.js",
 		"test-client": "TZ=UTC jest -c=test/client/jest.config.js",
