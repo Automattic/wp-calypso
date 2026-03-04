@@ -6,8 +6,6 @@ type KeyedPersistenceOptions< T > = {
 	storageKey: string;
 	currentKey: string;
 	defaultValue: T;
-	serialize?: ( value: T ) => string;
-	deserialize?: ( value: string ) => T;
 };
 
 /**
@@ -24,8 +22,6 @@ export default function useKeyedPersistence< T >( {
 	storageKey,
 	currentKey,
 	defaultValue,
-	serialize = ( v ) => String( v ),
-	deserialize = ( v ) => v as unknown as T,
 }: KeyedPersistenceOptions< T > ): [ T, ( value: T ) => void, ( key: string ) => T ] {
 	const fullStorageKey = STORAGE_KEY_PREFIX + storageKey;
 	const isInitialMount = useRef( true );
@@ -61,14 +57,14 @@ export default function useKeyedPersistence< T >( {
 			const map = readMap();
 			if ( key in map ) {
 				try {
-					return deserialize( map[ key ] );
+					return JSON.parse( map[ key ] ) as T;
 				} catch {
-					// deserialize failed
+					// JSON parse failed
 				}
 			}
 			return defaultValue;
 		},
-		[ readMap, deserialize, defaultValue ]
+		[ readMap, defaultValue ]
 	);
 
 	const [ value, setValue ] = useState< T >( () => getValueForKey( currentKey ) );
@@ -86,11 +82,11 @@ export default function useKeyedPersistence< T >( {
 	const setPersistedValue = useCallback(
 		( newValue: T ) => {
 			const map = readMap();
-			map[ currentKey ] = serialize( newValue );
+			map[ currentKey ] = JSON.stringify( newValue );
 			writeMap( map );
 			setValue( newValue );
 		},
-		[ currentKey, readMap, writeMap, serialize ]
+		[ currentKey, readMap, writeMap ]
 	);
 
 	return [ value, setPersistedValue, getValueForKey ];

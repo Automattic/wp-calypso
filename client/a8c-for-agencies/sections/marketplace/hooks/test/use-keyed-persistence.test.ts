@@ -27,7 +27,7 @@ describe( 'useKeyedPersistence', () => {
 	it( 'returns stored value for current key', () => {
 		sessionStorage.setItem(
 			STORAGE_KEY_PREFIX + 'test',
-			JSON.stringify( { tab1: 'stored-value' } )
+			JSON.stringify( { tab1: JSON.stringify( 'stored-value' ) } )
 		);
 
 		const { result } = renderHook( () =>
@@ -57,7 +57,7 @@ describe( 'useKeyedPersistence', () => {
 		expect( result.current[ 0 ] ).toBe( 'new-value' );
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY_PREFIX + 'test' ) || '{}' );
-		expect( stored.tab1 ).toBe( 'new-value' );
+		expect( stored.tab1 ).toBe( JSON.stringify( 'new-value' ) );
 	} );
 
 	it( 'maintains separate values per key', () => {
@@ -92,31 +92,11 @@ describe( 'useKeyedPersistence', () => {
 		expect( result.current[ 0 ] ).toBe( 'tab1-value' );
 	} );
 
-	it( 'handles custom serialize/deserialize', () => {
-		const { result } = renderHook( () =>
-			useKeyedPersistence( {
-				storageKey: 'test',
-				currentKey: 'tab1',
-				defaultValue: 0,
-				serialize: ( v ) => String( v * 2 ),
-				deserialize: ( v ) => parseInt( v, 10 ) / 2,
-			} )
-		);
-
-		act( () => {
-			result.current[ 1 ]( 10 );
-		} );
-
-		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY_PREFIX + 'test' ) || '{}' );
-		expect( stored.tab1 ).toBe( '20' ); // serialized as doubled
-		expect( result.current[ 0 ] ).toBe( 10 ); // but state is correct
-	} );
-
 	it( 'provides synchronous getter for any key', () => {
-		// Pre-populate storage with values for multiple keys
+		// Pre-populate storage with values for multiple keys (values are JSON-stringified)
 		sessionStorage.setItem(
 			STORAGE_KEY_PREFIX + 'test',
-			JSON.stringify( { tab1: 'value1', tab2: 'value2' } )
+			JSON.stringify( { tab1: JSON.stringify( 'value1' ), tab2: JSON.stringify( 'value2' ) } )
 		);
 
 		const { result } = renderHook( () =>
