@@ -12,6 +12,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	Button,
 	Icon,
 	ToggleControl,
 } from '@wordpress/components';
@@ -21,6 +22,7 @@ import { check, comment, connection, pencil, seen } from '@wordpress/icons';
 import { useCallback, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardFooter, CardHeader } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -45,6 +47,7 @@ const features = [
 
 export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
 
@@ -332,6 +335,149 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						description={ __( 'Get instructions for connecting your external AI agent.' ) }
 						decoration={ <Icon icon={ connection } /> }
 					/>
+				) }
+				{ isEnabled && (
+					<VStack spacing={ 4 }>
+						<SectionHeader title={ __( 'Ways to get started' ) } level={ 3 } />
+						<div
+							style={ {
+								display: 'grid',
+								gridTemplateColumns: '1fr 1fr',
+								gap: '16px',
+							} }
+						>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Get instant help' ) }
+											description={ __(
+												'Get answers where you work so you can get unstuck faster.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												onClick={ () => {
+													setNavigateToRoute( '/odie' );
+													setShowHelpCenter( true );
+												} }
+											>
+												{ __( 'Ask a question' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Update your design' ) }
+											description={ __(
+												'Redesign your site\u2019s layouts, colors, and overall appearance with ease.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												href={ `${ site.options?.admin_url }site-editor.php?p=%2F&canvas=edit` }
+												onClick={ () => setShowHelpCenter( true ) }
+											>
+												{ __( 'Update design' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Improve your writing' ) }
+											description={ __(
+												'Get AI-powered help writing and editing pages, posts, and site copy.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												href={ `${ site.options?.admin_url }post-new.php?use_ai_block=1` }
+											>
+												{ __( 'Create post' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Create beautiful images' ) }
+											description={ __(
+												'Describe your image and see it come to life in a matter of moments.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
+											>
+												{ __( 'Create image' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Review your posts' ) }
+											description={ __(
+												'Get instant feedback on your posts to improve engagement.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												href={ `${ site.options?.admin_url }edit.php?post_type=post` }
+											>
+												{ __( 'Update posts' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											title={ __( 'Effortlessly build forms' ) }
+											description={ __(
+												'Explain your needs and generate the fields in a few seconds.'
+											) }
+											level={ 4 }
+										/>
+										<HStack justify="flex-start">
+											<Button
+												variant="secondary"
+												href={ `${ site.options?.admin_url }admin.php?page=jetpack-forms-admin#/forms` }
+											>
+												{ __( 'Create form' ) }
+											</Button>
+										</HStack>
+									</VStack>
+								</CardBody>
+							</Card>
+						</div>
+					</VStack>
 				) }
 			</>
 		);
