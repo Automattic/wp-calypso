@@ -14,7 +14,7 @@ import { Browser, Page } from 'playwright';
 import { test, tags } from '../../lib/pw-base';
 
 test.describe.serial(
-	DataHelper.createSuiteTitle( 'Editor: Advanced Post Flow' ),
+	'Editor: Advanced Post Flow',
 	{ tag: [ tags.GUTENBERG, tags.CALYPSO_PR ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
@@ -42,18 +42,18 @@ test.describe.serial(
 		} );
 
 		test.describe( 'Publish post', () => {
-			test( 'Start a new post from the Posts page', async () => {
+			test( 'Given user is authenticated When navigating to Posts page And creating a new post Then the editor opens', async () => {
 				postsPage = new PostsPage( page );
 				await postsPage.visit();
 				await postsPage.newPost();
 			} );
 
-			test( 'Enter post title', async () => {
+			test( 'When user enters the post title', async () => {
 				editorPage = new EditorPage( page );
 				await editorPage.enterTitle( postTitle );
 			} );
 
-			test( 'Enter post content', async () => {
+			test( 'And user enters post content', async () => {
 				const blockHandle = await editorPage.addBlockFromSidebar(
 					ParagraphBlock.blockName,
 					ParagraphBlock.blockEditorSelector,
@@ -63,7 +63,7 @@ test.describe.serial(
 				await paragraphBlock.enterParagraph( originalContent );
 			} );
 
-			test( 'Publish post', async () => {
+			test( 'When user publishes the post Then a post URL is returned', async () => {
 				postURL = await editorPage.publish();
 			} );
 
@@ -75,7 +75,7 @@ test.describe.serial(
 			 * Retries due to possible cache issue.
 			 * @see https://github.com/Automattic/wp-calypso/issues/57503
 			 */
-			test( 'Validate post', async () => {
+			test( 'Then the published post content is visible on the frontend', async () => {
 				await page.goto( postURL.href );
 
 				await ElementHelper.reloadAndRetry( page, validatePublishedPage );
@@ -87,7 +87,7 @@ test.describe.serial(
 		} );
 
 		test.describe( 'Edit published post', () => {
-			test( 'Re-open the published post from the Posts page', async () => {
+			test( 'Given a published post exists When user re-opens it from the Posts page Then the editor loads', async () => {
 				// Redefine the `EditorPage` without the `target`
 				// optional parameter.
 				// This is critical because even AT sites load with
@@ -99,11 +99,11 @@ test.describe.serial(
 				editorPage = new EditorPage( page );
 			} );
 
-			test( 'Editor is shown', async () => {
+			test( 'And the editor is shown', async () => {
 				await editorPage.waitUntilLoaded();
 			} );
 
-			test( 'Append additional content', async () => {
+			test( 'When user appends additional content', async () => {
 				const blockHandle = await editorPage.addBlockFromSidebar(
 					ParagraphBlock.blockName,
 					ParagraphBlock.blockEditorSelector,
@@ -113,7 +113,7 @@ test.describe.serial(
 				await paragraphBlock.enterParagraph( additionalContent );
 			} );
 
-			test( 'Publish post', async () => {
+			test( 'And user republishes the post', async () => {
 				postURL = await editorPage.publish();
 			} );
 
@@ -125,7 +125,7 @@ test.describe.serial(
 			 * Retries due to possible cache issue.
 			 * @see https://github.com/Automattic/wp-calypso/issues/57503
 			 */
-			test( 'Ensure published post contains additional content', async () => {
+			test( 'Then the published post contains the original and additional content', async () => {
 				await page.goto( postURL.href );
 
 				await ElementHelper.reloadAndRetry( page, validatePublishedPage );
@@ -140,18 +140,17 @@ test.describe.serial(
 		} );
 
 		test.describe( 'Revert post to draft', () => {
-			test( 'Re-open the published post from the Posts page', async () => {
-				// See: https://github.com/Automattic/wp-calypso/issues/74925
+			test( 'Given an edited published post When user re-opens it from the Posts page Then the editor loads', async () => {
 				await postsPage.visit();
 				await postsPage.clickPost( postTitle );
 				editorPage = new EditorPage( page );
 			} );
 
-			test( 'Switch to draft', async () => {
+			test( 'When user reverts the post to draft', async () => {
 				await editorPage.unpublish();
 			} );
 
-			test( 'Ensure post is no longer visible', async () => {
+			test( 'Then the post URL returns a 404', async () => {
 				// It's important that we use another context to confirm that the
 				// page was reverted to draft. It's also important that we DON'T use
 				// a separate context to preview this page when it was previously
@@ -171,12 +170,12 @@ test.describe.serial(
 				await postsPage.visit();
 			} );
 
-			test( 'Trash post', async () => {
+			test( 'When user trashes the draft post', async () => {
 				await postsPage.clickTab( 'Drafts' );
 				await postsPage.clickActionItemForPost( { title: postTitle, action: 'Trash' } );
 			} );
 
-			test( 'Confirmation notice is shown', async () => {
+			test( 'Then a trash confirmation notice is shown', async () => {
 				const noticeComponent = new WpAdminNoticeComponent( page );
 				await noticeComponent.noticeShown( '1 post moved to the Trash.', {
 					type: 'Updated',
@@ -185,18 +184,18 @@ test.describe.serial(
 		} );
 
 		test.describe( 'Permanently delete post', () => {
-			test( 'View trashed posts', async () => {
+			test( 'Given user navigates to the Trash tab', async () => {
 				await postsPage.clickTab( 'Trash' );
 			} );
 
-			test( 'Hard trash post', async () => {
+			test( 'When user permanently deletes the post', async () => {
 				await postsPage.clickActionItemForPost( {
 					title: postTitle,
 					action: 'Delete Permanently',
 				} );
 			} );
 
-			test( 'Confirmation notice is shown', async () => {
+			test( 'Then a permanent deletion confirmation notice is shown', async () => {
 				const noticeComponent = new WpAdminNoticeComponent( page );
 				await noticeComponent.noticeShown( '1 post permanently deleted', {
 					type: 'Updated',
