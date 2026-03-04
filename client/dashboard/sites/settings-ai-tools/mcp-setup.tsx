@@ -5,8 +5,8 @@
  * breadcrumb hierarchy so navigation stays consistent.
  */
 
-import { userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -22,13 +22,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { hasEnabledAccountTools } from '../../../me/mcp/utils';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { getMockMcpAbilities } from './mock-mcp-abilities';
 
 type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
 
@@ -78,7 +78,11 @@ const codeStyle = {
 };
 
 export default function SiteMcpSetup( { siteSlug }: { siteSlug: string } ) {
-	const { data: userSettings, isLoading } = useQuery( userSettingsQuery() );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
+	const apiAbilities = siteSettings?.mcp_abilities;
+	const useMock = ! apiAbilities || Object.keys( apiAbilities ).length === 0;
+	const mcpAbilities = useMock ? getMockMcpAbilities() : apiAbilities;
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
 	const [ commandCopyStatus, setCommandCopyStatus ] = useState( 'idle' );
@@ -139,11 +143,7 @@ export default function SiteMcpSetup( { siteSlug }: { siteSlug: string } ) {
 		}
 	};
 
-	if ( isLoading ) {
-		return null;
-	}
-
-	const hasEnabledTools = hasEnabledAccountTools( userSettings || {} );
+	const hasEnabledTools = Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
 
 	if ( ! hasEnabledTools ) {
 		return (
