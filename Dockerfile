@@ -24,6 +24,9 @@ FROM builder-cache-${use_cache} as deps
 
 WORKDIR /calypso
 
+ENV IS_CI=true
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
+
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh
