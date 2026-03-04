@@ -167,6 +167,8 @@ export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
 	intervalType: SupportedUrlFriendlyTermType;
+	/** Called when the number of visible plans in the grid changes (e.g. for narrowing the container). */
+	onVisiblePlansCountChange?: ( count: number ) => void;
 }
 
 export type UseActionCallback = ( {
