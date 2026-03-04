@@ -2356,12 +2356,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/tc-workspace-cache-probe@workspace:packages/tc-workspace-cache-probe":
-  version: 0.0.0-use.local
-  resolution: "@automattic/tc-workspace-cache-probe@workspace:packages/tc-workspace-cache-probe"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/tree-select@workspace:^, @automattic/tree-select@workspace:packages/tree-select":
   version: 0.0.0-use.local
   resolution: "@automattic/tree-select@workspace:packages/tree-select"
