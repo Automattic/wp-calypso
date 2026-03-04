@@ -102,6 +102,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								useCompactCards
 								suppressSiteNameLink
 								restoreScroll={ false }
+								showDefaultEmptyContentIfMissing={ false }
 							/>
 						</div>
 					) : (
