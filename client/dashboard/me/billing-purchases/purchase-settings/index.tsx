@@ -718,7 +718,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 				__( 'Excludes taxes.' ) +
 				' ' +
 				/* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
-				sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s' ), {
+				sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
 					regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
 						isSmallestUnit: true,
 						stripZeros: true,

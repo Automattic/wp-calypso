@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, UseNavigateResult } from '@tanstack/react-router';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -299,7 +299,7 @@ function StepButtons( {
 	navigate,
 }: {
 	canGoNext: boolean;
-	navigate: () => void;
+	navigate: ( { to: string } ) => UseNavigateResult;
 } & CancelPurchaseFormProps ) {
 	const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -466,19 +466,8 @@ function canGoToNextStep( {
 	return ! disableButtons && ! isSubmitting;
 }
 
-function getSurveyTitle( surveyStep: string, isAkismet: boolean ) {
-	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
-		return sprintf(
-			/* Translators: %(brand)s is either Akismet or Jetpack */
-			__(
-				'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
-			),
-			{
-				brand: isAkismet ? 'Akismet' : 'Jetpack',
-			}
-		);
-	}
-	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
+function getSurveyTitle( surveyStep: string ) {
+	if ( surveyStep === OFFER_ACCEPTED_STEP || surveyStep === CANCELLATION_OFFER_STEP ) {
 		return '';
 	}
 	if ( surveyStep === UPSELL_STEP ) {
@@ -490,13 +479,11 @@ function getSurveyTitle( surveyStep: string, isAkismet: boolean ) {
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
 	const navigate = useNavigate();
+	const title = getSurveyTitle( props.surveyStep ?? '', props.isAkismet ?? false );
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader
-					title={ getSurveyTitle( props.surveyStep ?? '', props.isAkismet ?? false ) }
-					level={ 3 }
-				/>
+				{ title && <SectionHeader title={ title } level={ 3 } /> }
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } navigate={ navigate } />
 			</VStack>
