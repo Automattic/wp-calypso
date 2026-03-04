@@ -2,7 +2,6 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -20,22 +19,11 @@ interface Props {
 	percentDiscount: number;
 	onGetCancellationOffer: () => void;
 	isAkismet?: boolean;
-	isApplyingOffer: boolean;
 	isSubmitting: boolean;
-	offerApplyError?: Error | null;
-	onClickAcceptForCancellationOffer?: () => void;
 }
 
 const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
-	const {
-		offer,
-		purchase,
-		percentDiscount,
-		isAkismet,
-		isApplyingOffer,
-		offerApplyError,
-		onClickAcceptForCancellationOffer,
-	} = props;
+	const { offer, purchase, percentDiscount, isAkismet } = props;
 	const { offerHeadline, renewalCopy } = useMemo( () => {
 		const periods = offer.discounted_periods;
 		const renewalPrice = formatCurrency( offer.raw_price, offer.currency_code );
@@ -72,7 +60,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					sprintf(
 						/* Translators: %(renewalPrice)d%% is this price charged when the subscription renews */
 						__(
-							'Your biennial subscription renews every two years. It will renew at <strong>%(renewalPrice)s/biennium</strong> for the next %(periods)d bienniums. It will then renew at <strong>%(fullPrice)s/biennium</strong> each following biennium.'
+							'Your subscription renews every two years. It will renew at <strong>%(renewalPrice)s / two years</strong> for the next %(periods)d two-year renewals. It will then renew at <strong>%(fullPrice)s / two years</strong> each following two-year renewal.'
 						),
 						renewalCopyOptions.args
 					),
@@ -88,7 +76,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						sprintf(
 							/* Translators: %(renewalPrice)d%% is this price charged when the subscription renews */
 							__(
-								'Your biennial subscription renews every two years. It will renew at <strong>%(renewalPrice)s/biennium</strong> for the next biennium. It will then renew at <strong>%(fullPrice)s/biennium</strong> each following biennium.'
+								'Your subscription renews every two years. It will renew at <strong>%(renewalPrice)s / two years</strong> for the next two years. It will then renew at <strong>%(fullPrice)s/ two years</strong> each following two-year renewal.'
 							),
 							renewalCopyOptions.args
 						),
@@ -212,17 +200,6 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						}
 					) }
 				</p>
-				<Button
-					className="jetpack-cancellation-offer__accept-cta"
-					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
-					isBusy={ isApplyingOffer ?? false }
-					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
-					} }
-					variant="primary"
-				>
-					{ isApplyingOffer ? __( 'Getting discount' ) : __( 'Get discount' ) }
-				</Button>
 			</div>
 		</>
 	);

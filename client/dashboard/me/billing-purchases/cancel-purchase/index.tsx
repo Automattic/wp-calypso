@@ -70,7 +70,6 @@ import {
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
@@ -91,6 +90,7 @@ import type {
 	UserPreferences,
 } from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
+
 import './style.scss';
 
 const willShowDomainOptionsRadioButtons = (
@@ -350,6 +350,7 @@ export default function CancelPurchase() {
 	const includedDomainPurchase = getIncludedDomainPurchase( purchases ?? [], purchase );
 
 	const productSlug = purchase ? purchase.product_slug : null;
+	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
 	const redirectBack = useCallback( () => {
@@ -531,10 +532,44 @@ export default function CancelPurchase() {
 		},
 		[ recordEvent, state.upsell ]
 	);
+	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
+		purchase,
+		cancellationOffer
+	);
 	const onGetCancellationOffer = useCallback( () => {
-		changeSurveyStep( OFFER_ACCEPTED_STEP );
 		recordEvent( 'calypso_purchases_cancel_get_discount' );
-	}, [ changeSurveyStep, recordEvent ] );
+		const akismetHeadline = __(
+			'We’re happy you’ve chosen Akismet to protect your site against spam.'
+		);
+		const jetpackHeadline = __( 'We’re happy you’ve chosen Jetpack to level-up your site.' );
+		createSuccessNotice(
+			/* Translators: %(brand)s is either Jetpack or Akismet */
+			sprintf( __( 'Thanks for sticking with %(brand)s!' ), {
+				brand: isAkismet ? 'Akismet' : 'Jetpack',
+			} ) +
+				' ' +
+				sprintf(
+					/* Translators: %(headline)s is already translated text; %(percentDiscount)d%% should be a percentage like 15% or 20% */
+					__(
+						'%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
+					),
+					{
+						headline: isAkismet ? akismetHeadline : jetpackHeadline,
+						percentDiscount: offerDiscountBasedFromPurchasePrice,
+						productName: purchase.product_name,
+					}
+				),
+			{ type: 'snackbar', explicitDismiss: true }
+		);
+		navigate( { to: purchasesRoute.to } );
+	}, [
+		createSuccessNotice,
+		isAkismet,
+		navigate,
+		offerDiscountBasedFromPurchasePrice,
+		purchase.product_name,
+		recordEvent,
+	] );
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
@@ -1291,7 +1326,6 @@ export default function CancelPurchase() {
 		return null;
 	}
 
-	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
@@ -1316,10 +1350,6 @@ export default function CancelPurchase() {
 		);
 	}
 
-	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
-		purchase,
-		cancellationOffer
-	);
 	const cancellationOfferDescription = sprintf(
 		/* Translators: %(brand)s is either Akismet or Jetpack */
 		__(
@@ -1331,7 +1361,7 @@ export default function CancelPurchase() {
 	);
 	const description =
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
-	const showCard = state.surveyStep !== CANCELLATION_OFFER_STEP;
+	const showCard = true;
 	const form = (
 		<>
 			<CancelPurchaseForm

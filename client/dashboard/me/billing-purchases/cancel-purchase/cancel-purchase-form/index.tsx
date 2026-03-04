@@ -1,16 +1,13 @@
-import { useNavigate, UseNavigateResult } from '@tanstack/react-router';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
-import { purchasesRoute } from '../../../../app/router/me';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
-import JetpackCancellationOfferAcceptedStep from './step-components/jetpack-cancellation-offer-accepted-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
@@ -19,7 +16,6 @@ import {
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
@@ -133,10 +129,7 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
-	isApplyingOffer,
-	offerApplyError,
 	isSubmitting,
-	onClickAcceptForCancellationOffer,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -263,22 +256,7 @@ function SurveyContent( {
 				onGetCancellationOffer={ onGetCancellationOffer }
 				percentDiscount={ offerDiscountBasedFromPurchasePrice }
 				purchase={ purchase }
-				isApplyingOffer={ isApplyingOffer ?? false }
 				isSubmitting={ isSubmitting ?? false }
-				offerApplyError={ offerApplyError }
-				onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
-			/>
-		);
-	}
-
-	// Step 4: Offer Accepted
-	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
-		// Show after an offer discount has been accepted
-		return (
-			<JetpackCancellationOfferAcceptedStep
-				isAkismet={ isAkismet }
-				percentDiscount={ offerDiscountBasedFromPurchasePrice }
-				productName={ productName }
 			/>
 		);
 	}
@@ -296,10 +274,11 @@ function StepButtons( {
 	solution,
 	surveyStep,
 	allSteps,
-	navigate,
+	onClickAcceptForCancellationOffer,
+	isApplyingOffer,
+	offerApplyError,
 }: {
 	canGoNext: boolean;
-	navigate: ( { to: string } ) => UseNavigateResult;
 } & CancelPurchaseFormProps ) {
 	const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -312,23 +291,6 @@ function StepButtons( {
 
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
-	}
-
-	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
-		return (
-			<ButtonStack justify="flex-end">
-				<Button
-					disabled={ ! canGoNext || disableButtons }
-					isBusy={ isCancelling }
-					onClick={ () => {
-						navigate( { to: purchasesRoute.to } );
-					} }
-					variant="primary"
-				>
-					{ __( 'Back to my purchases' ) }
-				</Button>
-			</ButtonStack>
-		);
 	}
 
 	if ( ! isLastStep ) {
@@ -377,7 +339,18 @@ function StepButtons( {
 
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return (
-			<ButtonStack justify="flex-end">
+			<ButtonStack justify="flex-start">
+				<Button
+					className="jetpack-cancellation-offer__accept-cta"
+					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
+					isBusy={ isApplyingOffer ?? false }
+					onClick={ () => {
+						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+					} }
+					variant="primary"
+				>
+					{ isApplyingOffer ? __( 'Getting discount' ) : __( 'Get discount' ) }
+				</Button>
 				<Button
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
@@ -467,7 +440,7 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
-	if ( surveyStep === OFFER_ACCEPTED_STEP || surveyStep === CANCELLATION_OFFER_STEP ) {
+	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return '';
 	}
 	if ( surveyStep === UPSELL_STEP ) {
@@ -478,14 +451,13 @@ function getSurveyTitle( surveyStep: string ) {
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
-	const navigate = useNavigate();
-	const title = getSurveyTitle( props.surveyStep ?? '', props.isAkismet ?? false );
+	const title = getSurveyTitle( props.surveyStep ?? '' );
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
 				{ title && <SectionHeader title={ title } level={ 3 } /> }
 				<SurveyContent { ...props } />
-				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } navigate={ navigate } />
+				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>
 		)
 	);
