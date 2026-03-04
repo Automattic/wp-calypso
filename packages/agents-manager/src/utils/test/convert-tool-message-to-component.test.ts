@@ -1,3 +1,4 @@
+import { EscalationButton } from '../../components/esclation-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { convertToolMessagesToComponents } from '../convert-tool-message-to-component';
 import { isEditorPage } from '../is-editor-page';
@@ -149,6 +150,26 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'text',
 			text: supportText,
+		} );
+	} );
+
+	it( 'returns EscalationButton when forward_to_human_support is set', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'Hello' },
+				{
+					type: 'data',
+					data: { flags: { forward_to_human_support: true } },
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: EscalationButton,
 		} );
 	} );
 
