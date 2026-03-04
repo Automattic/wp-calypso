@@ -1,5 +1,6 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	allSitesQuery,
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -37,6 +38,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
 	queryClient,
+	userPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
@@ -81,6 +83,8 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		queryClient.prefetchQuery( allSitesQuery() );
+		queryClient.prefetchQuery( userPurchasesQuery() );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
