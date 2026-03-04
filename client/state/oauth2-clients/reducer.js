@@ -12,6 +12,16 @@ export const gravatarClientData = {
 };
 
 export const initialClientsData = {
+	11: {
+		id: 11,
+		name: 'wordpress-app-ios',
+		title: 'WordPress for iOS',
+	},
+	2697: {
+		id: 2697,
+		name: 'wordpress-app-android',
+		title: 'WordPress for Android',
+	},
 	930: {
 		id: 930,
 		name: 'vaultpress',
