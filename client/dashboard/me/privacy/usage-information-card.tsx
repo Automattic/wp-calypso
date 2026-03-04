@@ -2,7 +2,6 @@ import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -39,33 +38,7 @@ export default function UsageInformationCard() {
 		);
 	};
 
-	const fields: Field< { tracks_opt_out: boolean } >[] = [
-		{
-			id: 'tracks_opt_out',
-			label: __(
-				'Share information with our analytics tool about your use of services while logged in to your WordPress.com account.'
-			),
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { id, label, getValue } = field;
-				return (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : label }
-						checked={ ! getValue( { item: data } ) }
-						disabled={ mutation.isPending }
-						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
-					/>
-				);
-			},
-		},
-	];
-
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'tracks_opt_out' ],
-	};
-
-	const data = { tracks_opt_out: userSettings?.tracks_opt_out ?? true };
+	const isOptedOut = userSettings?.tracks_opt_out ?? true;
 
 	return (
 		<Card>
@@ -114,11 +87,12 @@ export default function UsageInformationCard() {
 						}
 						level={ 3 }
 					/>
-					<DataForm< { tracks_opt_out: boolean } >
-						data={ data }
-						fields={ fields }
-						form={ form }
-						onChange={ handleChange }
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Enable usage information sharing' ) }
+						checked={ ! isOptedOut }
+						disabled={ mutation.isPending }
+						onChange={ () => handleChange( { tracks_opt_out: ! isOptedOut } ) }
 					/>
 				</VStack>
 			</CardBody>

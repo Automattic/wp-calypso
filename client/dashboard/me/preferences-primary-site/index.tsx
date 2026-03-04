@@ -16,9 +16,11 @@ interface PrimarySiteFormData {
 export default function PreferencesPrimarySite( {
 	primarySiteId: controlledPrimarySiteId,
 	onChange,
+	footer,
 }: {
 	primarySiteId?: number;
 	onChange: ( primarySiteId: number ) => void;
+	footer?: React.ReactNode;
 } ) {
 	const { user } = useAuth();
 	const { queries } = useAppContext();
@@ -87,6 +89,7 @@ export default function PreferencesPrimarySite( {
 							}
 						} }
 					/>
+					{ footer }
 				</VStack>
 			</CardBody>
 		</Card>

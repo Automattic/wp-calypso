@@ -776,7 +776,7 @@ export const privacyRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
@@ -1067,6 +1067,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 						] ),
 				  ]
 				: [] ),
+			...( config.supports.me.privacy ? [ privacyRoute ] : [] ),
 			...( config.supports.reader ? [ blockedSitesRoute ] : [] ),
 		] ),
 	];
@@ -1124,10 +1125,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			notificationsExtrasRoute,
 		] )
 	);
-
-	if ( config.supports.me.privacy ) {
-		meRoutes.push( privacyRoute );
-	}
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );

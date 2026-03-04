@@ -8,9 +8,15 @@ import McpSummary from '../mcp/summary';
 import PreferencesDefaultLandingSummary from '../preferences-default-landing/summary';
 import PreferencesLanguageSummary from '../preferences-language/summary';
 import PreferencesNewHostingDashboardSummary from '../preferences-new-hosting-dashboard/summary';
+import PrivacySummary from '../privacy/summary';
+import type { AppConfig, MeSupports } from '../../app/context';
+
+const hasAppSupport = ( appSupports: AppConfig[ 'supports' ], feature: keyof MeSupports ) => {
+	return appSupports.me && appSupports.me[ feature ];
+};
 
 export default function PreferencesIndex() {
-	const { optIn } = useAppContext();
+	const { optIn, supports } = useAppContext();
 
 	return (
 		<PageLayout
@@ -27,6 +33,7 @@ export default function PreferencesIndex() {
 				<McpSummary />
 				<PreferencesLanguageSummary />
 				<PreferencesDefaultLandingSummary />
+				{ hasAppSupport( supports, 'privacy' ) && <PrivacySummary /> }
 				<BlockedSitesSummary />
 			</VStack>
 		</PageLayout>
