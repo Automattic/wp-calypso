@@ -44,7 +44,6 @@ import {
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
 	getRecommendedThemes,
-	areRecommendedThemesLoading,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
@@ -2733,30 +2732,6 @@ describe( '#getRecommendedThemes', () => {
 	test( 'should return empty themes list for unfetched filter', () => {
 		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
 		expect( Object.keys( recommended ) ).toHaveLength( 0 );
-	} );
-} );
-
-describe( '#areRecommendedThemesLoading', () => {
-	const filterForIsLoading = 'foo';
-	const filterForNotLoading = 'bar';
-	const state = {
-		themes: {
-			recommendedThemes: {
-				[ filterForNotLoading ]: { isLoading: false },
-				[ filterForIsLoading ]: { isLoading: true },
-			},
-		},
-	};
-	test( 'should return true when loading', () => {
-		expect( areRecommendedThemesLoading( state, filterForIsLoading ) ).toBe( true );
-	} );
-
-	test( 'should return false when not loading', () => {
-		expect( areRecommendedThemesLoading( state, filterForNotLoading ) ).toBe( false );
-	} );
-
-	test( 'should return false when filter request not initiated', () => {
-		expect( areRecommendedThemesLoading( state, 'lolol' ) ).toBe( false );
 	} );
 } );
 
