@@ -447,6 +447,12 @@
 .referral-email-preview-modal {
 	.components-modal__content {
 		background-color: var( --a4a-brand-blue-80 );
+		padding: 4px;
+
+		@include break-small {
+			padding: 4px 24px 24px;
+		}
+
 	}
 
 	.shopping-cart__menu-list-item-price-interval {
@@ -459,9 +465,9 @@
 }
 
 .referral-email-preview {
-	padding: 24px;
+	padding: 0 0 4px 0;
 
-	@include break-medium {
+	@include break-small {
 		padding: 56px;
 	}
 

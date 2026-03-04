@@ -45,16 +45,26 @@ const PREVIEW_IFRAME_CSS = `
 		pointer-events: none;
 		cursor: default;
 	}
+
+	/* Scale so 600px email fits: scale = viewport width / 600px (capped at 1). */
+	@media (max-width: 600px) {
+		html {
+			transform: scale(calc(100vw / 600px));
+			transform-origin: 0 0;
+		}
+	}
 `;
+
+const VIEWPORT_META = '<meta name="viewport" content="width=device-width, initial-scale=1">';
 
 function injectPreviewStyles( html: string ): string {
 	const styleTag = `<style>${ PREVIEW_IFRAME_CSS }</style>`;
 
 	if ( html.includes( '</head>' ) ) {
-		return html.replace( '</head>', `${ styleTag }</head>` );
+		return html.replace( '</head>', `${ VIEWPORT_META }${ styleTag }</head>` );
 	}
 
-	return `${ styleTag }${ html }`;
+	return `${ VIEWPORT_META }${ styleTag }${ html }`;
 }
 
 export default function ReferralEmailPreviewModal( {
@@ -91,18 +101,24 @@ export default function ReferralEmailPreviewModal( {
 	const updateIframeHeight = useCallback( () => {
 		const iframe = iframeRef.current;
 		const doc = iframe?.contentDocument;
+		const win = iframe?.contentWindow;
 
-		if ( ! doc ) {
+		if ( ! doc || ! win ) {
 			return;
 		}
 
 		const { body, documentElement } = doc;
-		// Use only scrollHeight so iframe matches content height (avoids extra space from offsetHeight/clientHeight)
-		const nextHeight = body?.scrollHeight ?? documentElement?.scrollHeight ?? 0;
-
-		if ( nextHeight > 0 ) {
-			setIframeHeight( nextHeight );
+		const scrollHeight = body?.scrollHeight ?? documentElement?.scrollHeight ?? 0;
+		if ( scrollHeight <= 0 ) {
+			return;
 		}
+
+		// When content is scaled (viewport ≤ 600px), visual height = scrollHeight * scale.
+		const viewportWidth = win.innerWidth;
+		const scale = viewportWidth <= 600 ? viewportWidth / 600 : 1;
+		const nextHeight = Math.ceil( scrollHeight * scale );
+
+		setIframeHeight( nextHeight );
 	}, [] );
 
 	useEffect( () => {
@@ -147,7 +163,8 @@ export default function ReferralEmailPreviewModal( {
 			<VStack spacing={ 0 } className="referral-email-preview">
 				<div
 					style={ {
-						width: '600px',
+						width: '100%',
+						maxWidth: '600px',
 						marginInline: 'auto',
 						background: 'var(--color-surface)',
 						borderRadius: '8px',
