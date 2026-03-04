@@ -306,7 +306,7 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Use cached messages when navigating back from history to avoid re-fetching.
+	// Use cached messages if they exist for the current session, otherwise use loaded messages
 	const finalMessages = hasCachedConversation ? cachedMessages : visibleMessages;
 
 	// Notify parent when message count changes
@@ -315,6 +315,7 @@ export default function OrchestratorChat( {
 	}, [ finalMessages.length, onMessagesCountChange ] );
 
 	const handleViewHistory = () => {
+		// Cache current conversation messages before navigating to history view
 		cachedConversation = { sessionId: getActiveSessionId(), messages: finalMessages };
 	};
 
