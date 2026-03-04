@@ -1097,7 +1097,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing.
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+	if ( isDashboardEnv() ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1146,13 +1146,14 @@ export default function pages() {
 	// Register CSP report route
 	registerCspReportRoute( app );
 
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+
 	// Multi-site Dashboard routing.
 	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
 		return app;
 	}
 
-	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
