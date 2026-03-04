@@ -13,6 +13,7 @@
 *.iws
 /.tsc-cache/
 /.cache/
+/.docker-workspace-manifests/
 /tags
 node_modules
 /npm-debug.log*

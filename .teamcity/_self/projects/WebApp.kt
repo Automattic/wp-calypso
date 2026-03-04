@@ -199,9 +199,10 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
-			name = "Check Docker workspace manifest sync"
+			name = "Prepare Docker workspace manifests"
 			scriptContent = """
 				#!/usr/bin/env bash
+				node ./bin/sync-docker-workspace-manifests.mjs
 				node ./bin/sync-docker-workspace-manifests.mjs --check
 			"""
 			dockerImage = "%docker_image_e2e%"

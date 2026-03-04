@@ -14,6 +14,14 @@ const { spawnSync, execSync } = require( 'child_process' );
 
 const sha = String( execSync( 'git rev-parse HEAD' ) ).trim();
 
+const syncResult = spawnSync( process.execPath, [ 'bin/sync-docker-workspace-manifests.mjs' ], {
+	stdio: 'inherit',
+} );
+
+if ( syncResult.status !== 0 ) {
+	process.exit( syncResult.status || 1 );
+}
+
 const args = [ 'build', '--build-arg', 'commit_sha=' + sha, '-t', 'wp-calypso', '.' ];
 
 console.log( 'docker ' + args.join( ' ' ) );
