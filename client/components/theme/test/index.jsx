@@ -89,14 +89,16 @@ describe( 'Theme', () => {
 			},
 		};
 
-		test( 'should render overlay buttons when isModern is true', () => {
-			render( <Theme { ...props } isModern buttonContents={ modernButtonContents } /> );
+		test( 'should render overlay buttons when isThemeShowcaseModern is true', () => {
+			render(
+				<Theme { ...props } isThemeShowcaseModern buttonContents={ modernButtonContents } />
+			);
 
 			expect( screen.getByText( 'Preview demo' ) ).toBeVisible();
 			expect( screen.getByText( 'Get started' ) ).toBeVisible();
 		} );
 
-		test( 'should not render overlay buttons when isModern is false', () => {
+		test( 'should not render overlay buttons when isThemeShowcaseModern is false', () => {
 			render( <Theme { ...props } buttonContents={ modernButtonContents } /> );
 
 			expect( screen.queryByText( 'Preview demo' ) ).not.toBeInTheDocument();
@@ -110,7 +112,7 @@ describe( 'Theme', () => {
 				preview: { ...modernButtonContents.preview, action: previewAction },
 			};
 
-			render( <Theme { ...props } isModern buttonContents={ buttonContents } /> );
+			render( <Theme { ...props } isThemeShowcaseModern buttonContents={ buttonContents } /> );
 
 			await userEvent.click( screen.getByText( 'Preview demo' ) );
 			expect( previewAction ).toHaveBeenCalledWith( props.theme.id );

@@ -88,7 +88,7 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
-		isModern: PropTypes.bool,
+		isThemeShowcaseModern: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -130,7 +130,7 @@ export class Theme extends Component {
 			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
 			nextProps.onMoreButtonItemClick !== this.props.onMoreButtonItemClick ||
-			nextProps.isModern !== this.props.isModern ||
+			nextProps.isThemeShowcaseModern !== this.props.isThemeShowcaseModern ||
 			themeThumbnailRefUpdated
 		);
 	}
@@ -346,9 +346,9 @@ export class Theme extends Component {
 	};
 
 	renderImageOverlay = () => {
-		const { isModern, buttonContents, theme } = this.props;
+		const { isThemeShowcaseModern, buttonContents, theme } = this.props;
 
-		if ( ! isModern ) {
+		if ( ! isThemeShowcaseModern ) {
 			return null;
 		}
 
