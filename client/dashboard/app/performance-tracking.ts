@@ -1,7 +1,7 @@
 import { queryClient } from '@automattic/api-queries';
 import { cancel, start, stop } from '@automattic/browser-data-collector';
 import config from '@automattic/calypso-config';
-import { useRouter } from '@tanstack/react-router';
+import { useParams, useRouter } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { getSiteFromCache } from './analytics/super-props';
@@ -68,7 +68,8 @@ export function startPerformanceTracking( routeId: string ) {
  * Hook to stop performance tracking.
  * Use in functional components where the page is considered "loaded".
  */
-export function usePerformanceTrackerStop( siteSlug?: string ) {
+export function usePerformanceTrackerStop() {
+	const { siteSlug } = useParams( { strict: false } );
 	const router = useRouter();
 	const routeId = ( router.state.pendingMatches ?? router.state.matches ).at( -1 )?.routeId;
 
@@ -91,7 +92,7 @@ export function usePerformanceTrackerStop( siteSlug?: string ) {
  * Component to stop performance tracking.
  * Place this where the page is considered "loaded".
  */
-export function PerformanceTrackerStop( { siteSlug }: { siteSlug?: string } ): null {
-	usePerformanceTrackerStop( siteSlug );
+export function PerformanceTrackerStop() {
+	usePerformanceTrackerStop();
 	return null;
 }

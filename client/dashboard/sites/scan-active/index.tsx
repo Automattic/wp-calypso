@@ -92,7 +92,7 @@ export function ActiveThreatsDataViews( {
 
 	return (
 		<>
-			{ ! isLoading && <PerformanceTrackerStop siteSlug={ site.slug } /> }
+			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViews< Threat >
 				actions={ actions }
 				data={ filteredData }

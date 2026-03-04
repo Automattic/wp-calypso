@@ -200,7 +200,7 @@ function SitePerformance() {
 			) : (
 				<SitePerformanceContent site={ site } />
 			) }
-			<PerformanceTrackerStop siteSlug={ siteSlug } />
+			<PerformanceTrackerStop />
 		</HostingFeatureGatedWithCallout>
 	);
 }

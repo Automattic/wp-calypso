@@ -104,7 +104,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			) }
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
-			<PerformanceTrackerStop siteSlug={ siteSlug } />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }
