@@ -177,9 +177,9 @@ export default function McpAiAssistant() {
 		: __( 'Add AI assistant to sites' );
 	const pageDescription = isGlobalOn
 		? __(
-				'The WordPress AI assistant is enabled on all your paid sites. Add exceptions for specific sites here.'
+				'The AI assistant is enabled on all your paid sites. Add exceptions for specific sites here.'
 		  )
-		: __( 'The WordPress AI assistant is disabled. Add it to individual sites here.' );
+		: __( 'The AI assistant is disabled. Add it to individual sites here.' );
 	const searchTitle = isGlobalOn ? __( 'Add an exception' ) : __( 'Add a site' );
 	const searchDescription = isGlobalOn
 		? __( 'Search for eligible sites to disable the AI assistant.' )

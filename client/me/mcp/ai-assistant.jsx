@@ -175,7 +175,7 @@ export default function McpAiAssistant( { path } ) {
 		searchDescription = translate( 'Search for eligible sites to disable the AI assistant.' );
 	} else {
 		searchDescription = translate(
-			'The WordPress AI assistant is disabled. Add it to individual sites here.'
+			'The AI assistant is disabled. Add it to individual sites here.'
 		);
 	}
 	const listTitle = isGlobalOn ? translate( 'Restricted sites' ) : translate( 'Enabled sites' );

@@ -355,7 +355,7 @@ function McpComponent() {
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
 			<VStack spacing={ 6 }>
-				{ /* WordPress AI assistant */ }
+				{ /* AI assistant */ }
 				<Card
 					className="dashboard-summary-button-list has-density-medium"
 					style={ { position: 'relative' } }
@@ -375,7 +375,7 @@ function McpComponent() {
 					<CardHeader>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'WordPress AI assistant' ) }
+							title={ __( 'AI assistant' ) }
 							description={ __(
 								'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
 							) }

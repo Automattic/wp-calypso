@@ -355,7 +355,7 @@ function McpComponent( { path } ) {
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ ! isLoadingUserSettings && ! reauthRequired && (
 				<VStack spacing={ 6 }>
-					{ /* WordPress AI assistant */ }
+					{ /* AI assistant */ }
 					<Card
 						isRounded={ false }
 						className="dashboard-summary-button-list has-density-medium"
@@ -377,7 +377,7 @@ function McpComponent( { path } ) {
 							<VStack spacing={ 4 }>
 								<SectionHeader
 									level={ 3 }
-									title={ translate( 'WordPress AI assistant' ) }
+									title={ translate( 'AI assistant' ) }
 									description={ translate(
 										'Create content, transform designs, and get instant help with AI across all your sites on paid plans.'
 									) }
