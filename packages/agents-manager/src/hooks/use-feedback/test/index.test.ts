@@ -4,7 +4,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../../contexts';
-import { getSessionId as getStoredSessionId } from '../../../utils/agent-session';
 import useFeedback from '../index';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -32,7 +31,6 @@ jest.mock(
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
 	virtual: true,
 } );
-jest.mock( '../../../utils/agent-session' );
 jest.mock( '../../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
@@ -46,9 +44,7 @@ global.fetch = mockFetch;
 
 const mockRegisterMessageActions = jest.fn();
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
-const mockGetStoredSessionId = getStoredSessionId as jest.MockedFunction<
-	typeof getStoredSessionId
->;
+const mockGetActiveSessionId = jest.fn();
 
 const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
 
@@ -82,10 +78,11 @@ describe( 'useFeedback', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockFetch.mockResolvedValue( { ok: true } );
-		mockGetStoredSessionId.mockReturnValue( 'stored-session-123' );
+		mockGetActiveSessionId.mockReturnValue( 'session-abc' );
 		mockUseAgentsManagerContext.mockReturnValue( {
 			agentConfig: defaultAgentConfig,
 			isLoggedIn: true,
+			getActiveSessionId: mockGetActiveSessionId,
 		} as unknown as ReturnType< typeof useAgentsManagerContext > );
 	} );
 
@@ -110,6 +107,7 @@ describe( 'useFeedback', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: defaultAgentConfig,
 				isLoggedIn: false,
+				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedback( defaultConfig ) );
@@ -132,6 +130,7 @@ describe( 'useFeedback', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
 				isLoggedIn: true,
+				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			rerender( defaultConfig );
@@ -298,9 +297,11 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'uses stored session ID when `sessionId` is empty', async () => {
+			mockGetActiveSessionId.mockReturnValue( 'stored-session-123' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: '' },
 				isLoggedIn: true,
+				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			const { result } = renderHook( () => useFeedback( defaultConfig ) );
@@ -348,6 +349,7 @@ describe( 'useFeedback', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, authProvider: undefined },
 				isLoggedIn: true,
+				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedback( defaultConfig ) );

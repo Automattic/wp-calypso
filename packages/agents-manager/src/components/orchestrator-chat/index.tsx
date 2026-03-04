@@ -1,4 +1,4 @@
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -12,7 +12,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyMessage from '../../hooks/use-copy-message';
 import useFeedback from '../../hooks/use-feedback';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
+import { setSessionId } from '../../utils/agent-session';
 import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -64,6 +64,8 @@ interface Props {
 	onMessagesCountChange: ( count: number ) => void;
 }
 
+let cachedConversation: { sessionId?: string; messages?: UIMessage[] } = {};
+
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
@@ -83,7 +85,7 @@ export default function OrchestratorChat( {
 	onMessagesCountChange,
 	navigate,
 }: Props ) {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -92,8 +94,11 @@ export default function OrchestratorChat( {
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
-	const sessionId = agentConfig!.sessionId;
 	const agentId = agentConfig!.agentId;
+	const agentSessionId = agentConfig!.sessionId;
+
+	const { sessionId: cachedId, messages: cachedMessages } = cachedConversation;
+	const hasCachedConversation = !! cachedId && agentSessionId === cachedId;
 
 	const {
 		addMessage,
@@ -109,11 +114,6 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		progressMessage,
 	} = useAgentChat( agentConfig! );
-
-	// Notify parent when message count changes
-	useEffect( () => {
-		onMessagesCountChange( messages.length );
-	}, [ messages.length, onMessagesCountChange ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -131,6 +131,7 @@ export default function OrchestratorChat( {
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
+		enabled: ! hasCachedConversation,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
@@ -138,7 +139,7 @@ export default function OrchestratorChat( {
 			getAgentManager().updateSessionId( agentId, serverSessionId );
 
 			// Sync local session ID with the server's
-			if ( sessionId !== serverSessionId ) {
+			if ( agentSessionId !== serverSessionId ) {
 				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
@@ -205,7 +206,7 @@ export default function OrchestratorChat( {
 	useNavigationContinuation?.( {
 		isProcessing,
 		onSubmit,
-		sessionId,
+		sessionId: getActiveSessionId(),
 		agentId,
 	} );
 
@@ -264,7 +265,7 @@ export default function OrchestratorChat( {
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: () => sessionId || getStoredSessionId( agentId ),
+		getSessionId: getActiveSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
@@ -305,19 +306,31 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
+	// Use cached messages when navigating back from history to avoid re-fetching.
+	const finalMessages = hasCachedConversation ? cachedMessages! : visibleMessages;
+
+	// Notify parent when message count changes
+	useEffect( () => {
+		onMessagesCountChange( finalMessages.length );
+	}, [ finalMessages.length, onMessagesCountChange ] );
+
+	const handleViewHistory = () => {
+		cachedConversation = { sessionId: getActiveSessionId(), messages: finalMessages };
+	};
+
 	// Determine which suggestions to show following Big Sky's logic:
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
+	} else if ( finalMessages.length === 0 && inputValue.length === 0 ) {
 		displayedEmptyViewSuggestions = emptyViewSuggestions;
 	}
 
 	return (
 		<AgentChat
-			messages={ visibleMessages }
+			messages={ finalMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
@@ -341,6 +354,7 @@ export default function OrchestratorChat( {
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
+			onViewHistory={ handleViewHistory }
 		/>
 	);
 }
