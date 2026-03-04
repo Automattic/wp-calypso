@@ -81,7 +81,7 @@ describe( '<JetpackSiteDisconnect>', () => {
 		expect( screen.queryByText( /active Jetpack subscription/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'calls the disconnect endpoint and shows success notice', async () => {
+	test( 'calls the disconnect endpoint and closes the modal on success', async () => {
 		const user = userEvent.setup();
 		const onClose = jest.fn();
 		mockPurchases();
@@ -98,6 +98,10 @@ describe( '<JetpackSiteDisconnect>', () => {
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
+		} );
+
+		await waitFor( () => {
+			expect( onClose ).toHaveBeenCalled();
 		} );
 	} );
 } );

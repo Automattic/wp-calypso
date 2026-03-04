@@ -68,7 +68,11 @@ function PurchasesWarning( {
 		);
 	} else {
 		link = isDashboardBackport() ? (
-			<Button variant="link" href="/me/purchases" onClick={ onLinkClick } />
+			<Button
+				variant="link"
+				href={ `/me/purchases?purchaseSiteFilter=${ site.ID }` }
+				onClick={ onLinkClick }
+			/>
 		) : (
 			<RouterLinkButton
 				variant="link"
