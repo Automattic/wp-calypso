@@ -336,6 +336,9 @@ $theme-card-info-margin-top: 16px;
 .theme-card__image-container:hover .theme-card__image-overlay,
 .theme-card__image-container:focus-within .theme-card__image-overlay {
 	opacity: 1;
+}
+
+.theme-card__image-overlay > * {
 	pointer-events: auto;
 }
 
