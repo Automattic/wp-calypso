@@ -28,6 +28,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { isCommerceGarden } from '../../utils/site-types';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
@@ -187,7 +188,12 @@ export function Preview( { site }: { site: Site } ) {
 				</div>
 			) }
 			{ width && ! iframeDisabled && (
-				<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
+				<SitePreview
+					url={ url }
+					scale={ width / 1200 }
+					height={ 1200 }
+					naSitePreview={ isCommerceGarden( site ) }
+				/>
 			) }
 		</div>
 	);

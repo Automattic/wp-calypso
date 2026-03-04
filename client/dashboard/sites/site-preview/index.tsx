@@ -5,11 +5,13 @@ export default function SitePreview( {
 	scale = 1,
 	width = 1200,
 	height = 800,
+	naSitePreview = false,
 }: {
 	url: string;
 	scale?: number;
 	width?: number;
 	height?: number;
+	naSitePreview?: boolean;
 } ) {
 	// The /sites endpoint may return non-secure URLs. Often these _can_ be
 	// loaded securely, so it's worth trying to load over https. If it fails,
@@ -18,6 +20,8 @@ export default function SitePreview( {
 	// To do: check why the endpoint returns non-secure URLs when it will
 	// redirect to a secure URL.
 	const secureUrl = url.replace( /^http:\/\//, 'https://' );
+	const params =
+		'hide_banners=true&preview=true&iframe=true' + ( naSitePreview ? '&na_site_preview=1' : '' );
 	return (
 		<iframe
 			// Enabling sandbox disables most features, such as autoplay,
@@ -32,7 +36,7 @@ export default function SitePreview( {
 			title={ __( 'Site Preview' ) }
 			// Hide banners + `preview` hides cookie banners + `iframe` hides
 			// admin bar for atomic sites.
-			src={ `${ secureUrl }/?hide_banners=true&preview=true&iframe=true` }
+			src={ `${ secureUrl }/?${ params }` }
 			style={ {
 				display: 'block',
 				border: 'none',

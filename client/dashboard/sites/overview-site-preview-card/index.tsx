@@ -1,6 +1,7 @@
 import { useResizeObserver } from '@wordpress/compose';
 import { Card } from '../../components/card';
 import SiteIcon from '../../components/site-icon';
+import { isCommerceGarden } from '../../utils/site-types';
 import SitePreview from '../site-preview';
 import type { Site } from '@automattic/api-core';
 
@@ -39,7 +40,12 @@ const SitePreviewCard = ( { site }: { site: Site } ) => {
 						backgroundColor: '#f0f0f0',
 					} }
 				>
-					<SitePreview url={ url } scale={ width / 1200 } height={ height / ( width / 1200 ) } />
+					<SitePreview
+						url={ url }
+						scale={ width / 1200 }
+						height={ height / ( width / 1200 ) }
+						naSitePreview={ isCommerceGarden( site ) }
+					/>
 				</div>
 			) }
 		</Card>
