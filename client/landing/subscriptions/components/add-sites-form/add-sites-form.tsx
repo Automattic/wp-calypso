@@ -1,8 +1,7 @@
 import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Button, TextControl } from '@wordpress/components';
-import { check, Icon } from '@wordpress/icons';
+import { Button, SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -118,19 +117,16 @@ const AddSitesForm = ( {
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
 				<div className="subscriptions-add-sites__form-field">
-					<TextControl
-						className={ clsx(
-							'subscriptions-add-sites__form-input',
-							inputFieldError ? 'is-error' : ''
-						) }
+					<SearchControl
+						className={ clsx( 'subscriptions-add-sites__form-input', {
+							'is-error': !! inputFieldError,
+						} ) }
 						disabled={ subscribing }
-						placeholder={ placeholder || translate( 'https://www.site.com' ) }
+						placeholder={ placeholder || 'https://www.site.com' }
 						value={ inputValue }
 						onChange={ onTextFieldChange }
-						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
