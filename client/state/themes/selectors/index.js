@@ -12,7 +12,6 @@ export { getLivePreviewUrl } from 'calypso/state/themes/selectors/get-live-previ
 export { getMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors/get-marketplace-theme-subscription-prices';
 export { getPremiumThemePrice } from 'calypso/state/themes/selectors/get-premium-theme-price';
 export { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
-export { getRecommendedThemes } from 'calypso/state/themes/selectors/get-recommended-themes';
 export { getTheme } from 'calypso/state/themes/selectors/get-theme';
 export { getThemes } from 'calypso/state/themes/selectors/get-themes';
 export { getThemeCustomizeUrl } from 'calypso/state/themes/selectors/get-theme-customize-url';

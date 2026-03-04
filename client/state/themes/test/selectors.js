@@ -43,7 +43,6 @@ import {
 	isThemePurchased,
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
-	getRecommendedThemes,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
@@ -924,9 +923,6 @@ describe( 'themes selectors', () => {
 								},
 							} ),
 						},
-						recommendedThemes: {
-							themes: [],
-						},
 					},
 				},
 				2916284,
@@ -934,37 +930,6 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( themes ).toEqual( [ twentyfifteen, twentysixteen ] );
-		} );
-
-		test( 'should remove recommendedThemes with no filter and no search in query', () => {
-			const themes = getThemesForQueryIgnoringPage(
-				{
-					sites: {
-						plans: {},
-					},
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: {
-									twentyfifteen,
-									twentysixteen,
-								},
-								queries: {
-									'[]': {
-										itemKeys: [ 'twentyfifteen', 'twentysixteen' ],
-									},
-								},
-							} ),
-						},
-						recommendedThemes: {
-							themes: [ { id: 'twentyfifteen' } ],
-						},
-					},
-				},
-				2916284,
-				{ search: '', number: 1 }
-			);
-			expect( themes ).toEqual( [ twentysixteen ] );
 		} );
 
 		test( "should omit found items for which the requested result hasn't been received", () => {
@@ -2708,30 +2673,6 @@ describe( 'themes selectors', () => {
 		);
 
 		expect( isSiteEligible ).toEqual( false );
-	} );
-} );
-
-describe( '#getRecommendedThemes', () => {
-	const themes = [ 'a', 'b', 'c' ];
-	const filter = 'foobar';
-	const state = {
-		themes: {
-			recommendedThemes: {
-				[ filter ]: {
-					isLoading: false,
-					themes,
-				},
-			},
-		},
-	};
-	test( 'should return correct themes list for filter', () => {
-		const recommended = getRecommendedThemes( state, filter );
-		expect( recommended ).toEqual( themes );
-	} );
-
-	test( 'should return empty themes list for unfetched filter', () => {
-		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
-		expect( Object.keys( recommended ) ).toHaveLength( 0 );
 	} );
 } );
 

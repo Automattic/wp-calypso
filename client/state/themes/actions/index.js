@@ -14,10 +14,6 @@ export { installTheme } from 'calypso/state/themes/actions/install-theme';
 export { livePreview } from 'calypso/state/themes/actions/live-preview';
 export { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 export { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
-export {
-	getRecommendedThemes,
-	receiveRecommendedThemes,
-} from 'calypso/state/themes/actions/recommended-themes';
 export { redirectToLivePreview } from 'calypso/state/themes/actions/redirect-to-live-preview';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
 export { setActiveTheme } from 'calypso/state/themes/actions/set-active-theme';

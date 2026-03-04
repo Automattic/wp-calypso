@@ -10,9 +10,6 @@ import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	LIVE_PREVIEW_END,
 	LIVE_PREVIEW_START,
-	RECOMMENDED_THEMES_FAIL,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -478,32 +475,6 @@ export function themeFilterRequestError( state = null, action ) {
 	return state;
 }
 
-/**
- * Returns updated state for recommended themes after
- * corresponding actions have been dispatched.
- * @param   {Object} state  Current state
- * @param   {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function recommendedThemes( state = {}, action ) {
-	switch ( action.type ) {
-		case RECOMMENDED_THEMES_FETCH:
-			return {
-				...state,
-				[ action.filter ]: { isLoading: true, themes: state[ action.filter ]?.themes ?? [] },
-			};
-		case RECOMMENDED_THEMES_SUCCESS:
-			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
-		case RECOMMENDED_THEMES_FAIL:
-			return {
-				...state,
-				[ action.filter ]: { isLoading: false, themes: state[ action.filter ]?.themes ?? [] },
-			};
-	}
-
-	return state;
-}
-
 export function themesUpdate( state = {}, action ) {
 	const themesUpdating = state.themesUpdating || [];
 	const themesUpdated = state.themesUpdated || [];
@@ -661,7 +632,6 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	themeFilterRequestError,
-	recommendedThemes,
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,
