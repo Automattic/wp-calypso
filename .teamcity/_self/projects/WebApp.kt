@@ -125,6 +125,8 @@ object BuildDockerImage : BuildType({
 			unchecked = "false"
 		)
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
+		param("env.DOCKER_BUILDKIT", "1")
+		param("env.BUILDKIT_PROGRESS", "plain")
 	}
 
 	vcs {
@@ -190,6 +192,17 @@ object BuildDockerImage : BuildType({
 		// can be better utilized, since it's kept up-to-date for trunk commits.
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
+
+		script {
+			name = "Check Docker workspace COPY globs"
+			scriptContent = """
+				#!/usr/bin/env bash
+				node ./bin/check-docker-workspace-copy-globs.mjs
+			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
 
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
