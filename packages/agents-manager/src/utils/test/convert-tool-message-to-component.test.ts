@@ -3,6 +3,9 @@ import { convertToolMessagesToComponents } from '../convert-tool-message-to-comp
 import { isEditorPage } from '../is-editor-page';
 import type { UIMessage } from '@automattic/agenttic-client';
 
+jest.mock( '@automattic/components', () => ( {
+	SummaryButton: () => null,
+} ) );
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
