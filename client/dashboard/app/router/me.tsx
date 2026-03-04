@@ -895,7 +895,7 @@ export const blockedSitesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'blocked-sites',
 } ).lazy( () =>
 	import( '../../me/blocked-sites' ).then( ( d ) =>
@@ -1067,6 +1067,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 						] ),
 				  ]
 				: [] ),
+			...( config.supports.reader ? [ blockedSitesRoute ] : [] ),
 		] ),
 	];
 
@@ -1126,10 +1127,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.me.privacy ) {
 		meRoutes.push( privacyRoute );
-	}
-
-	if ( config.supports.reader ) {
-		meRoutes.push( blockedSitesRoute );
 	}
 
 	if ( config.supports.me.apps ) {

@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import BlockedSitesSummary from '../blocked-sites/summary';
 import McpSummary from '../mcp/summary';
 import PreferencesDefaultLandingSummary from '../preferences-default-landing/summary';
 import PreferencesLanguageSummary from '../preferences-language/summary';
@@ -26,6 +27,7 @@ export default function PreferencesIndex() {
 				<McpSummary />
 				<PreferencesLanguageSummary />
 				<PreferencesDefaultLandingSummary />
+				<BlockedSitesSummary />
 			</VStack>
 		</PageLayout>
 	);

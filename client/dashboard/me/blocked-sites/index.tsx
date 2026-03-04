@@ -9,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -128,6 +129,7 @@ export default function BlockedSites() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Blocked sites' ) }
 					description={ createInterpolateElement(
 						__(
