@@ -39,6 +39,7 @@ export function Chat( {
 	clearSuggestions,
 	messageRenderer,
 	className,
+	expandOnHover = true,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -107,7 +108,8 @@ export function Chat( {
 		wasClickedToOpen.current = true;
 		chat.open();
 		onOpen?.();
-	}, [ chat, onOpen ] );
+		onExpand?.();
+	}, [ chat, onOpen, onExpand ] );
 
 	// Check if should auto-collapse (no input and not focused)
 	const shouldAutoCollapse = useCallback( () => {
@@ -138,6 +140,10 @@ export function Chat( {
 
 	// Handle hover to show compact view
 	const handleHover = useCallback( () => {
+		if ( ! expandOnHover ) {
+			return;
+		}
+
 		if ( chat.state === 'collapsed' ) {
 			chat.setState( 'compact' );
 			// Only auto-collapse if initial state was collapsed
@@ -151,7 +157,7 @@ export function Chat( {
 				timeoutRefs.current.add( timeoutId );
 			}
 		}
-	}, [ chat, shouldAutoCollapse ] );
+	}, [ chat, shouldAutoCollapse, expandOnHover ] );
 
 	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
