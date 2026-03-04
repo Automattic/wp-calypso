@@ -407,7 +407,7 @@ export const useManagedZendeskChat = () => {
 		Smooch,
 	] );
 
-	const handleFilesSelected = useCallback( ( files: File[] ) => {
+	const handleFilesSelected = useCallback( async ( files: File[] ) => {
 		const toAdd = files
 			.filter( ( f ) => isSupportedImageType( f.type ) )
 			.slice( 0, MAX_ATTACHMENTS );
