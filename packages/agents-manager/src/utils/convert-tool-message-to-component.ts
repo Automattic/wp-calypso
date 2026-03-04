@@ -1,4 +1,4 @@
-import { EscalationButton } from '../components/esclation-button';
+import { EscalationButton } from '../components/escalation-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';

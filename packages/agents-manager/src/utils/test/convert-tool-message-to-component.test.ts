@@ -1,4 +1,4 @@
-import { EscalationButton } from '../../components/esclation-button';
+import { EscalationButton } from '../../components/escalation-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { convertToolMessagesToComponents } from '../convert-tool-message-to-component';
 import { isEditorPage } from '../is-editor-page';
