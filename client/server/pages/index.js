@@ -14,6 +14,7 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
@@ -1097,7 +1098,7 @@ export default function pages() {
 	}
 
 	// Multi-site Dashboard routing.
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+	if ( isDashboardEnv() ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
 			app.get(
 				pathToRegExp( sectionPath ),
@@ -1121,6 +1122,36 @@ export default function pages() {
 		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
 			return isAllowedDotcomDashboardHostname( req.hostname );
 		} );
+
+		app.use(
+			'/setup',
+			createProxyMiddleware( {
+				target: 'https://wordpress.com/setup',
+				followRedirects: true,
+				secure: false,
+				changeOrigin: true,
+			} )
+		);
+
+		app.use(
+			'/checkout',
+			createProxyMiddleware( {
+				target: 'https://wordpress.com/checkout',
+				followRedirects: true,
+				secure: false,
+				changeOrigin: true,
+			} )
+		);
+
+		// Calypso assets
+		app.use(
+			'/calypso',
+			createProxyMiddleware( {
+				target: 'https://wordpress.com/calypso',
+				changeOrigin: true,
+				secure: false,
+			} )
+		);
 	}
 
 	sections
