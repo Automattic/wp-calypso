@@ -41,7 +41,9 @@ class UploadDropZone extends Component {
 				this.props.onFileTooLarge( file );
 			} else {
 				this.props.errorNotice(
-					translate( 'Zip file is too large. Please upload a file under 50 MB.' )
+					translate( 'Zip file is too large. Please upload a file under %(maxSize)d MB.', {
+						args: { maxSize: Math.floor( MAX_UPLOAD_ZIP_SIZE / 1000000 ) },
+					} )
 				);
 			}
 			return;
