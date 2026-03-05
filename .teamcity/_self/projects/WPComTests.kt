@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.*
 import _self.CalypsoE2ETestsBuildTemplate
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
@@ -80,9 +79,9 @@ object WPComTests : Project({
 	buildType(JetpackAtomicSmokeE2ETests);
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
-	var siteType = if (atomic) "atomic" else "simple";
-	var releaseType = when {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): BuildType {
+	val siteType = if (atomic) "atomic" else "simple"
+	val releaseType = when {
 		nightly -> "nightly"
 		edge -> "edge"
 		else -> "production"
@@ -90,55 +89,44 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 
 	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
 
-	return E2EBuildType (
-		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = buildName,
-		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
-		testGroup = "gutenberg",
-		buildParams = {
+	val extraEnvVarParts = mutableListOf<String>()
+	if (atomic) {
+		extraEnvVarParts.add("TEST_ON_ATOMIC=true")
+		// Limit parallelism on Atomic to avoid login issues when multiple tests run concurrently.
+		// Remove or raise after the underlying issue is resolved.
+		extraEnvVarParts.add("PW_WORKERS=1")
+	}
+	if (edge) extraEnvVarParts.add("GUTENBERG_EDGE=true")
+	if (nightly) extraEnvVarParts.add("GUTENBERG_NIGHTLY=true")
+
+	return BuildType({
+		templates(CalypsoE2ETestsBuildTemplate)
+		id("WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice")
+		uuid = buildUuid
+		name = buildName
+		description = "Runs Gutenberg $siteType E2E tests on $targetDevice size"
+
+		params {
+			param("TEST_GROUP", "@gutenberg")
+			param("PROJECT", targetDevice)
 			text(
-				name = "env.CALYPSO_BASE_URL",
+				name = "CALYPSO_BASE_URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
 				allowEmpty = false
 			)
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
+			param("EXTRA_ENV_VARS", extraEnvVarParts.joinToString(","))
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) {
-				param("env.TEST_ON_ATOMIC", "true")
-				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
-				// The reason for this is an inconsistent issue breaking the login in AT test sites when
-				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
-				param("JEST_E2E_WORKERS", "1")
-
-			}
-
-			if (nightly) {
-				param("env.GUTENBERG_NIGHTLY", "true");
-			}
-
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
-			}
-
-			password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+			password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN)
 			// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
-			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
-			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
-			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
-			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
-		},
-		buildSteps = {
+			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (part of Gutenbot).
+			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN)
+			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN)
+			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN)
+		}
+
+		steps {
 			exec {
 				name = "Post Successful Message to Slack"
 				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
@@ -152,8 +140,9 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				path = "./bin/post-threaded-slack-message.sh"
 				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
-		},
-		buildFeatures = {
+		}
+
+		features {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
@@ -168,8 +157,9 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
-		},
-		buildTriggers = {
+		}
+
+		triggers {
 			schedule {
 				schedulingPolicy = daily {
 					hour = 4
@@ -181,7 +171,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				withPendingChangesOnly = false
 			}
 		}
-	)
+	})
 }
 
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
