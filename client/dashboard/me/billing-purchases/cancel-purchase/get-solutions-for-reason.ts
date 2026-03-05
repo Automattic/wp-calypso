@@ -14,6 +14,12 @@ const SOLUTION_IDS = {
 	SPEAK_WITH_SUPPORT: 'speak-with-support',
 	BUILT_BY: 'built-by',
 	ASK_AI_ASSISTANT: 'ask-ai-assistant',
+	UPGRADE_FULL_ACCESS: 'upgrade-for-full-access',
+	GET_THEME_ADDON: 'get-theme-addon',
+	GET_CSS_ADDON: 'get-css-addon',
+	FIND_GUIDES: 'find-guides',
+	MAKE_SITE_FASTER: 'make-site-faster',
+	USE_MIGRATION_TOOLS: 'use-migration-tools',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -58,6 +64,65 @@ const SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
 ];
 
+/** Cannot install plugins */
+const SOLUTIONS_CANNOT_INSTALL_PLUGINS: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS, label: 'Upgrade for full access' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Cannot upload themes */
+const SOLUTIONS_CANNOT_UPLOAD_THEMES: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS, label: 'Upgrade for full access' },
+	{ id: SOLUTION_IDS.GET_THEME_ADDON, label: 'Get our theme add-on' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Limited customization */
+const SOLUTIONS_LIMITED_CUSTOMIZATION: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS, label: 'Upgrade for full access' },
+	{ id: SOLUTION_IDS.GET_CSS_ADDON, label: 'Get our CSS add-on' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Missing functionality */
+const SOLUTIONS_MISSING_FUNCTIONALITY: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS, label: 'Upgrade for full access' },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Core features missing */
+const SOLUTIONS_CORE_FEATURES_MISSING: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.FIND_GUIDES, label: 'Find easy step-by-step guides' },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Too slow */
+const SOLUTIONS_TOO_SLOW: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.MAKE_SITE_FASTER, label: 'Make your site faster' },
+	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS, label: 'Renew now and pay less' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Bugs or glitches */
+const SOLUTIONS_BUGS_OR_GLITCHES: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS, label: 'Renew now and pay less' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Migration problems */
+const SOLUTIONS_MIGRATION_PROBLEMS: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.USE_MIGRATION_TOOLS, label: 'Use our migration tools' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Downtime */
+const SOLUTIONS_DOWNTIME: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS, label: 'Renew now and pay less' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
 /**
  * Returns the ordered list of solution cards for the given cancellation sub-reason,
  * or null when this reason has no solutions step.
@@ -86,6 +151,28 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY ];
 		case 'otherTooHardToUse':
 			return null;
+
+		// Missing features / limitations
+		case 'cannotInstallPlugins':
+			return [ ...SOLUTIONS_CANNOT_INSTALL_PLUGINS ];
+		case 'cannotUploadThemes':
+			return [ ...SOLUTIONS_CANNOT_UPLOAD_THEMES ];
+		case 'limitedCustomization':
+			return [ ...SOLUTIONS_LIMITED_CUSTOMIZATION ];
+		case 'missingFunctionality':
+			return [ ...SOLUTIONS_MISSING_FUNCTIONALITY ];
+		case 'coreFeaturesMissing':
+			return [ ...SOLUTIONS_CORE_FEATURES_MISSING ];
+
+		// Performance / reliability
+		case 'tooSlow':
+			return [ ...SOLUTIONS_TOO_SLOW ];
+		case 'bugsOrGlitches':
+			return [ ...SOLUTIONS_BUGS_OR_GLITCHES ];
+		case 'migrationProblems':
+			return [ ...SOLUTIONS_MIGRATION_PROBLEMS ];
+		case 'downtime':
+			return [ ...SOLUTIONS_DOWNTIME ];
 
 		default:
 			return null;

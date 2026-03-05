@@ -43,6 +43,18 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Let us build for you' );
 		case 'ask-ai-assistant':
 			return translate( 'Ask our AI assistant' );
+		case 'upgrade-for-full-access':
+			return translate( 'Upgrade for full access' );
+		case 'get-theme-addon':
+			return translate( 'Get our theme add-on' );
+		case 'get-css-addon':
+			return translate( 'Get our CSS add-on' );
+		case 'find-guides':
+			return translate( 'Find easy step-by-step guides' );
+		case 'make-site-faster':
+			return translate( 'Make your site faster' );
+		case 'use-migration-tools':
+			return translate( 'Use our migration tools' );
 		default:
 			return '';
 	}

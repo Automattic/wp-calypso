@@ -1,4 +1,5 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -23,12 +24,16 @@ function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 	);
 }
 
+const SUPPORT_GUIDES_URL = localizeUrl( 'https://wordpress.com/support/' );
+const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
+const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
+
 function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
 	renewNowUrl: string
 ): string | undefined {
-	if ( cardId === 'change-plan' ) {
+	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
 	}
 	if ( cardId === 'renew-now-pay-less' ) {
@@ -36,6 +41,18 @@ function getCardHref(
 	}
 	if ( cardId === 'built-by' ) {
 		return BUILT_BY_URL;
+	}
+	if ( cardId === 'get-theme-addon' || cardId === 'get-css-addon' ) {
+		return changePlanUrl;
+	}
+	if ( cardId === 'find-guides' ) {
+		return SUPPORT_GUIDES_URL;
+	}
+	if ( cardId === 'make-site-faster' ) {
+		return SITE_SPEED_URL;
+	}
+	if ( cardId === 'use-migration-tools' ) {
+		return SITE_MIGRATION_URL;
 	}
 	return undefined;
 }
@@ -45,7 +62,18 @@ function getCardOnClick(
 	hasAction: boolean,
 	handleCardAction: ( id: string ) => void
 ): ( ( e: React.MouseEvent ) => void ) | ( () => void ) | undefined {
-	if ( cardId === 'built-by' || cardId === 'change-plan' || cardId === 'renew-now-pay-less' ) {
+	const navCardIds = [
+		'built-by',
+		'change-plan',
+		'renew-now-pay-less',
+		'upgrade-for-full-access',
+		'get-theme-addon',
+		'get-css-addon',
+		'find-guides',
+		'make-site-faster',
+		'use-migration-tools',
+	];
+	if ( navCardIds.includes( cardId ) ) {
 		return ( e: React.MouseEvent ) => {
 			e.preventDefault();
 			handleCardAction( cardId );
@@ -71,6 +99,18 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Let us build for you' );
 		case 'ask-ai-assistant':
 			return __( 'Ask our AI assistant' );
+		case 'upgrade-for-full-access':
+			return __( 'Upgrade for full access' );
+		case 'get-theme-addon':
+			return __( 'Get our theme add-on' );
+		case 'get-css-addon':
+			return __( 'Get our CSS add-on' );
+		case 'find-guides':
+			return __( 'Find easy step-by-step guides' );
+		case 'make-site-faster':
+			return __( 'Make your site faster' );
+		case 'use-migration-tools':
+			return __( 'Use our migration tools' );
 		default:
 			return '';
 	}
@@ -114,6 +154,7 @@ export default function SolutionsCardsUpsellStep( {
 	const handleCardAction = ( solutionId: string ) => {
 		switch ( solutionId ) {
 			case 'change-plan':
+			case 'upgrade-for-full-access':
 				window.location.href = changePlanUrl;
 				break;
 			case 'renew-now-pay-less':
@@ -134,6 +175,19 @@ export default function SolutionsCardsUpsellStep( {
 			case 'built-by':
 				window.location.replace( BUILT_BY_URL );
 				break;
+			case 'get-theme-addon':
+			case 'get-css-addon':
+				window.location.href = changePlanUrl;
+				break;
+			case 'find-guides':
+				window.open( SUPPORT_GUIDES_URL, '_blank' );
+				break;
+			case 'make-site-faster':
+				window.open( SITE_SPEED_URL, '_blank' );
+				break;
+			case 'use-migration-tools':
+				window.open( SITE_MIGRATION_URL, '_blank' );
+				break;
 			case 'ask-ai-assistant':
 				// No CTA yet – card is label-only
 				break;
@@ -153,6 +207,12 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'built-by' ||
 							card.id === 'change-plan' ||
 							card.id === 'renew-now-pay-less' ||
+							card.id === 'upgrade-for-full-access' ||
+							card.id === 'get-theme-addon' ||
+							card.id === 'get-css-addon' ||
+							card.id === 'find-guides' ||
+							card.id === 'make-site-faster' ||
+							card.id === 'use-migration-tools' ||
 							( card.id === 'switch-to-monthly' && onClickDowngrade ) );
 					const href = getCardHref( card.id, changePlanUrl, renewNowUrl );
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );
