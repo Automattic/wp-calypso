@@ -6,6 +6,8 @@ export {
 	createSendMessageRequest,
 	extractTextFromMessage,
 	extractProgressFromMessage,
+	extractProgressDataFromMessage,
+	type ExtractedProgress,
 	extractToolCallsFromMessage,
 	createToolDataPart,
 	createToolResultDataPart,

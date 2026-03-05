@@ -282,6 +282,7 @@ export interface UseAgentChatReturn {
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
+	progressPhase: string | null;
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -312,6 +313,7 @@ interface AgentChatState {
 	error: string | null;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
+	progressPhase: string | null;
 }
 
 /**
@@ -340,6 +342,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		error: isValidConfig ? null : 'Invalid agent configuration',
 		suggestions: [],
 		progressMessage: null,
+		progressPhase: null,
 	} );
 
 	// Initialize message actions
@@ -523,11 +526,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					message,
 					messageOptions
 				) ) {
-					// Update progress message if present
-					if ( update.progressMessage ) {
+					// Update progress message and phase if present
+					if ( update.progressMessage || update.progressPhase ) {
 						setState( ( prev ) => ( {
 							...prev,
 							progressMessage: update.progressMessage || null,
+							progressPhase: update.progressPhase || null,
 						} ) );
 					}
 
@@ -637,6 +641,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 									uiMessages: updatedMessages,
 									isProcessing: false,
 									progressMessage: null,
+									progressPhase: null,
 								};
 							} );
 						}
@@ -696,6 +701,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							uiMessages: mergedUIMessages,
 							isProcessing: false,
 							progressMessage: null,
+							progressPhase: null,
 						};
 					} );
 				}
@@ -707,6 +713,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						...prev,
 						isProcessing: false,
 						progressMessage: null,
+						progressPhase: null,
 						error: null, // Don't show error for user-initiated abort
 					} ) );
 					return; // Don't re-throw AbortError
@@ -720,6 +727,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					...prev,
 					isProcessing: false,
 					progressMessage: null,
+					progressPhase: null,
 					error: errorMessage,
 				} ) );
 				throw error;
@@ -826,6 +834,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
+		progressPhase: state.progressPhase,
 
 		// UI management methods
 		registerSuggestions,

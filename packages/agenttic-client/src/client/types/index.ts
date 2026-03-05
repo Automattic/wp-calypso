@@ -107,12 +107,14 @@ export type ProgressDataPart =
 	| ( DataPart & {
 			data: {
 				summary: string;
+				phase?: string;
 			};
 	  } )
 	| {
 			type: 'progress';
 			data: {
 				summary: string;
+				phase?: string;
 			};
 			metadata?: Record< string, unknown >;
 	  };
@@ -322,6 +324,7 @@ export interface TaskUpdate {
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts
+	progressPhase?: string; // Optional phase from progress parts (e.g. 'uploading', 'thinking')
 }
 
 export interface Client {
