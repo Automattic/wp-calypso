@@ -69,6 +69,8 @@ interface Props {
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
 	imageUpload?: UseImageUploadResult;
+	/** Optional list of MIME types accepted for image uploads. When not provided, defaults include HEIC/HEIF. */
+	acceptedImageFileTypes?: string[];
 	/** Whether to show the feedback text input (after thumbs down). */
 	showFeedbackInput?: boolean;
 	/** Called when the user submits feedback text. */
@@ -76,6 +78,15 @@ interface Props {
 	/** Called when the user cancels the feedback input. */
 	onCancelFeedback?: () => void;
 }
+
+const DEFAULT_ACCEPTED_IMAGE_TYPES = [
+	'image/jpeg',
+	'image/png',
+	'image/heic',
+	'image/heif',
+	'image/heic-sequence',
+	'image/heif-sequence',
+];
 
 export default function AgentChat( {
 	messages,
@@ -101,6 +112,7 @@ export default function AgentChat( {
 	onInputChange,
 	isCompactMode = false,
 	imageUpload,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
@@ -183,14 +195,7 @@ export default function AgentChat( {
 							uploadingImages={ imageUpload.uploadingImages }
 							onFilesSelected={ imageUpload.handleFilesSelected }
 							onRemoveImage={ imageUpload.handleRemoveImage }
-							acceptedFileTypes={ [
-								'image/jpeg',
-								'image/png',
-								'image/heic',
-								'image/heif',
-								'image/heic-sequence',
-								'image/heif-sequence',
-							] }
+							acceptedFileTypes={ acceptedImageFileTypes }
 							showFileMetadata
 							allowDragToInsert={ false }
 							dropZoneRef={ conversationViewRef }

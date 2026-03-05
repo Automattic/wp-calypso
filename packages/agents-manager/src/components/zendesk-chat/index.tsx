@@ -66,6 +66,7 @@ export default function ZendeskChat( {
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
 			imageUpload={ imageUpload }
+			acceptedImageFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif' ] }
 		/>
 	);
 }

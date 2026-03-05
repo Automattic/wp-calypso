@@ -1,7 +1,7 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
@@ -171,6 +171,7 @@ export const useManagedZendeskChat = () => {
 		'connected' | 'disconnected' | 'reconnecting' | undefined
 	>( undefined );
 	const [ pendingImages, setPendingImages ] = useState< ZendeskImagePreview[] >( [] );
+	const refetchTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
@@ -472,22 +473,36 @@ export const useManagedZendeskChat = () => {
 							clientId,
 							conversationId: conversation.id,
 							file: item.file,
-						} ).then( () => {
+						} ).then( ( response: Response ) => {
+							if ( response && typeof response === 'object' && 'ok' in response && ! response.ok ) {
+								throw new Error( 'Failed to upload attachment' );
+							}
 							URL.revokeObjectURL( item.url );
 						} )
 					)
-				).then( () => {
-					// Refetch after a short delay so the backend has time to add the file message to the conversation.
-					const refetch = () =>
-						Smooch.getConversationById( conversationId ).then( setConversation );
-					refetch();
-					setTimeout( refetch, 1500 );
-				} );
+				)
+					.then( () => {
+						const refetch = () =>
+							Smooch.getConversationById( conversationId ).then( setConversation );
+						refetch();
+						refetchTimeoutRef.current = setTimeout( refetch, 1500 );
+					} )
+					.catch( ( error: unknown ) => {
+						// eslint-disable-next-line no-console
+						console.error( 'Error uploading Zendesk chat attachments', error );
+						try {
+							recordTracksEvent( 'zendesk_chat_file_upload_failed' );
+						} catch {
+							// Swallow analytics errors to avoid affecting user flow.
+						}
+						setPendingImages( ( prev ) => [ ...toUpload, ...prev ] );
+					} );
 			}
-			if ( conversation?.id && Smooch ) {
+			const hasText = message.trim().length > 0;
+			if ( conversation?.id && Smooch && hasText ) {
 				const messageToSend = {
 					type: 'text',
-					text: message || '',
+					text: message.trim(),
 				};
 				setConversation( ( prev ) =>
 					prev ? { ...prev, messages: [ ...prev.messages, messageToSend as ZendeskMessage ] } : prev
@@ -505,6 +520,15 @@ export const useManagedZendeskChat = () => {
 			attachFileToConversation,
 		]
 	);
+
+	useEffect( () => {
+		return () => {
+			if ( refetchTimeoutRef.current !== null ) {
+				clearTimeout( refetchTimeoutRef.current );
+				refetchTimeoutRef.current = null;
+			}
+		};
+	}, [] );
 
 	return {
 		typingStatus,
