@@ -33,7 +33,8 @@ const DOMAINS_EXPLORE_URL = localizeUrl( 'https://wordpress.com/domains/' );
 function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
-	renewNowUrl: string
+	renewNowUrl: string,
+	subscriptionsUrl?: string
 ): string | undefined {
 	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
@@ -62,6 +63,9 @@ function getCardHref(
 	if ( cardId === 'explore-domain-options' ) {
 		return DOMAINS_EXPLORE_URL;
 	}
+	if ( cardId === 'move-subscription' && subscriptionsUrl ) {
+		return subscriptionsUrl;
+	}
 	return undefined;
 }
 
@@ -82,6 +86,7 @@ function getCardOnClick(
 		'use-migration-tools',
 		'use-domain-guide',
 		'explore-domain-options',
+		'move-subscription',
 	];
 	if ( navCardIds.includes( cardId ) ) {
 		return ( e: React.MouseEvent ) => {
@@ -125,6 +130,8 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Use our domain guide' );
 		case 'explore-domain-options':
 			return __( 'Explore more domain options' );
+		case 'move-subscription':
+			return __( 'Move your subscription' );
 		default:
 			return '';
 	}
@@ -163,6 +170,9 @@ export default function SolutionsCardsUpsellStep( {
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
 	const renewNowUrl = wpcomLink(
 		`/checkout/${ purchase.site_slug }/${ purchase.product_slug }?coupon=${ RENEW_COUPON }`
+	);
+	const subscriptionsUrl = wpcomLink(
+		`/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }`
 	);
 
 	const handleCardAction = ( solutionId: string ) => {
@@ -208,6 +218,9 @@ export default function SolutionsCardsUpsellStep( {
 			case 'explore-domain-options':
 				window.open( DOMAINS_EXPLORE_URL, '_blank' );
 				break;
+			case 'move-subscription':
+				window.location.href = subscriptionsUrl;
+				break;
 			case 'ask-ai-assistant':
 				// No CTA yet – card is label-only
 				break;
@@ -235,8 +248,9 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'use-migration-tools' ||
 							card.id === 'use-domain-guide' ||
 							card.id === 'explore-domain-options' ||
+							card.id === 'move-subscription' ||
 							( card.id === 'switch-to-monthly' && onClickDowngrade ) );
-					const href = getCardHref( card.id, changePlanUrl, renewNowUrl );
+					const href = getCardHref( card.id, changePlanUrl, renewNowUrl, subscriptionsUrl );
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );
 					const title = getCardTitle( card.id );
 

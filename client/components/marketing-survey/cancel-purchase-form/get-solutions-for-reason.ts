@@ -22,6 +22,7 @@ const SOLUTION_IDS = {
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
 	USE_DOMAIN_GUIDE: 'use-domain-guide',
 	EXPLORE_DOMAIN_OPTIONS: 'explore-domain-options',
+	MOVE_SUBSCRIPTION: 'move-subscription',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -146,6 +147,62 @@ const SOLUTIONS_DOMAIN_INCORRECT: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
 ];
 
+/** Wrong plan */
+const SOLUTIONS_WRONG_PLAN: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN, label: 'Change plan' },
+	{ id: SOLUTION_IDS.SWITCH_TO_MONTHLY, label: 'Switch to monthly payments' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Wrong site */
+const SOLUTIONS_WRONG_SITE: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.MOVE_SUBSCRIPTION, label: 'Move your subscription' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Plan didn't match (noMatch) */
+const SOLUTIONS_NO_MATCH: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Slow or unhelpful support */
+const SOLUTIONS_SLOW_OR_UNHELPFUL: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.FIND_GUIDES, label: 'Find easy step-by-step guides' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** No human support */
+const SOLUTIONS_NO_HUMAN_SUPPORT: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** AI insufficient */
+const SOLUTIONS_AI_INSUFFICIENT: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.FIND_GUIDES, label: 'Find easy step-by-step guides' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Project changed */
+const SOLUTIONS_PROJECT_CHANGED: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Just exploring */
+const SOLUTIONS_JUST_EXPLORING: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** May return */
+const SOLUTIONS_MAY_RETURN: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS, label: 'Renew now and pay less' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
 /**
  * Returns the ordered list of solution cards for the given cancellation sub-reason,
  * or null when this reason has no solutions step.
@@ -204,6 +261,30 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_CONFUSED_ABOUT_DOMAINS ];
 		case 'domainIncorrect':
 			return [ ...SOLUTIONS_DOMAIN_INCORRECT ];
+
+		// Wrong plan or site
+		case 'wrongPlan':
+			return [ ...SOLUTIONS_WRONG_PLAN ];
+		case 'wrongSite':
+			return [ ...SOLUTIONS_WRONG_SITE ];
+		case 'noMatch':
+			return [ ...SOLUTIONS_NO_MATCH ];
+
+		// Bad support experience
+		case 'slowOrUnhelpful':
+			return [ ...SOLUTIONS_SLOW_OR_UNHELPFUL ];
+		case 'noHumanSupport':
+			return [ ...SOLUTIONS_NO_HUMAN_SUPPORT ];
+		case 'AIInsufficient':
+			return [ ...SOLUTIONS_AI_INSUFFICIENT ];
+
+		// Other / lifecycle
+		case 'projectChanged':
+			return [ ...SOLUTIONS_PROJECT_CHANGED ];
+		case 'justExploring':
+			return [ ...SOLUTIONS_JUST_EXPLORING ];
+		case 'mayReturn':
+			return [ ...SOLUTIONS_MAY_RETURN ];
 
 		default:
 			return null;
