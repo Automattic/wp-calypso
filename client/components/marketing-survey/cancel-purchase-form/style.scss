@@ -250,8 +250,21 @@
 .cancel-purchase-form__upsell-solutions-cards {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0;
 	margin: 1rem 0;
+	border: 1px solid var(--studio-gray-10);
+	border-radius: 4px;
+	overflow: hidden;
+
+	.cancel-purchase-form__solution-card.summary-button {
+		width: 100%;
+		border-radius: 0;
+		border-bottom: 1px solid var(--studio-gray-5);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
 }
 
 .cancel-purchase-form__upsell-buttons {

@@ -234,22 +234,23 @@ export default function SolutionsCardsUpsellStep( {
 			<Heading level={ 3 }>{ __( 'Have you tried any of these options?' ) }</Heading>
 			<VStack spacing={ 3 }>
 				{ filteredSolutions.map( ( card ) => {
-					const hasAction =
+					const hasAction = Boolean(
 						card.id !== 'ask-ai-assistant' &&
-						( card.id === 'speak-with-support' ||
-							card.id === 'built-by' ||
-							card.id === 'change-plan' ||
-							card.id === 'renew-now-pay-less' ||
-							card.id === 'upgrade-for-full-access' ||
-							card.id === 'get-theme-addon' ||
-							card.id === 'get-css-addon' ||
-							card.id === 'find-guides' ||
-							card.id === 'make-site-faster' ||
-							card.id === 'use-migration-tools' ||
-							card.id === 'use-domain-guide' ||
-							card.id === 'explore-domain-options' ||
-							card.id === 'move-subscription' ||
-							( card.id === 'switch-to-monthly' && onClickDowngrade ) );
+							( card.id === 'speak-with-support' ||
+								card.id === 'built-by' ||
+								card.id === 'change-plan' ||
+								card.id === 'renew-now-pay-less' ||
+								card.id === 'upgrade-for-full-access' ||
+								card.id === 'get-theme-addon' ||
+								card.id === 'get-css-addon' ||
+								card.id === 'find-guides' ||
+								card.id === 'make-site-faster' ||
+								card.id === 'use-migration-tools' ||
+								card.id === 'use-domain-guide' ||
+								card.id === 'explore-domain-options' ||
+								card.id === 'move-subscription' ||
+								( card.id === 'switch-to-monthly' && onClickDowngrade ) )
+					);
 					const href = getCardHref( card.id, changePlanUrl, renewNowUrl, subscriptionsUrl );
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );
 					const title = getCardTitle( card.id );
@@ -257,10 +258,12 @@ export default function SolutionsCardsUpsellStep( {
 					return (
 						<DashboardSummaryButton
 							key={ card.id }
+							className="cancel-purchase-form__solution-card"
 							title={ title }
 							href={ href }
 							onClick={ onClick }
 							showArrow={ hasAction }
+							density="medium"
 						/>
 					);
 				} ) }

@@ -159,12 +159,14 @@ export default function SolutionsCardsUpsellStep( {
 						return (
 							<SummaryButton
 								key={ card.id }
+								className="cancel-purchase-form__solution-card"
 								title={ getTranslatedTitle( card.id, translate ) }
 								description={ getTranslatedSubtitle( card.id, translate ) }
 								decoration={ config.decoration }
 								href={ href }
 								onClick={ hasAction ? handleClick : undefined }
 								showArrow={ hasAction }
+								density="medium"
 							/>
 						);
 					} ) }
