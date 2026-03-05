@@ -75,6 +75,13 @@ export default function ReferralLogo( { onChange }: Props ) {
 		} );
 	}, [ logoOption, logoPreviewUrl, agencyReferralsLogoUrl, onChange, selectedLogoFile ] );
 
+	let differentLogoLabel = translate( 'Upload my logo' );
+	if ( hasProfileLogo ) {
+		differentLogoLabel = translate( 'Use a different logo for this referral' );
+	} else if ( hasAgencyReferralsLogo ) {
+		differentLogoLabel = translate( 'Use this logo' );
+	}
+
 	return (
 		<VStack spacing={ 2 } className="checkout__logo-section">
 			<FormLabel style={ { marginBottom: 0 } } htmlFor="logo">
@@ -91,7 +98,7 @@ export default function ReferralLogo( { onChange }: Props ) {
 							? [ { label: translate( 'Use profile logo' ), value: 'profile' } ]
 							: [] ),
 						{
-							label: translate( 'Use a different logo for this referral' ),
+							label: differentLogoLabel,
 							value: 'different',
 						},
 						{
