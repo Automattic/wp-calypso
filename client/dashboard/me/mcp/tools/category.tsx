@@ -118,7 +118,7 @@ export default function McpToolsCategory() {
 		const lower = toolTitle.toLowerCase();
 		// Strip the leading action verb.
 		const withoutVerb = lower.replace(
-			/^(search|get|list|create|update|delete|view|manage|set|activate|install|deactivate)\s+/,
+			/^(search|get|list|create|update|delete|view|manage|moderate|set|activate|install|deactivate)\s+/,
 			''
 		);
 		// Strip filler words: "site", "your", "a", "an", "all".
@@ -143,11 +143,17 @@ export default function McpToolsCategory() {
 	// Dividers only appear when there are multiple distinct entity groups
 	// with more than one tool each (i.e. CRUD sets or List/Get pairs).
 	const renderToolsWithDividers = ( categoryTools: Array< [ string, McpAbility ] > ) => {
-		// Sort tools so that same-entity tools are adjacent.
+		// Sort tools so that same-entity tools are adjacent, with posts first.
+		const entityOrder: Record< string, number > = { post: 0, page: 1, comment: 2 };
 		const sorted = [ ...categoryTools ].sort( ( a, b ) => {
 			const ea = getEntity( a[ 1 ].title );
 			const eb = getEntity( b[ 1 ].title );
 			if ( ea !== eb ) {
+				const pa = entityOrder[ ea ] ?? 99;
+				const pb = entityOrder[ eb ] ?? 99;
+				if ( pa !== pb ) {
+					return pa - pb;
+				}
 				return ea.localeCompare( eb );
 			}
 			return 0;
@@ -179,7 +185,8 @@ export default function McpToolsCategory() {
 							margin: 0,
 							border: 'none',
 							borderTop: '1px solid #e0e0e0',
-							width: '100%',
+							background: 'none',
+							height: 0,
 						} }
 					/>
 				);

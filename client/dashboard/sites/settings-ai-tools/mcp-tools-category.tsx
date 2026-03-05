@@ -120,7 +120,7 @@ export default function SiteMcpToolsCategory( { siteSlug }: { siteSlug: string }
 	const getEntity = ( toolTitle: string ) => {
 		const lower = toolTitle.toLowerCase();
 		const withoutVerb = lower.replace(
-			/^(search|get|list|create|update|delete|view|manage|set|activate|install|deactivate)\s+/,
+			/^(search|get|list|create|update|delete|view|manage|moderate|set|activate|install|deactivate)\s+/,
 			''
 		);
 		const withoutFiller = withoutVerb.replace( /\b(site|your|a|an|all)\s+/g, '' );
@@ -136,10 +136,16 @@ export default function SiteMcpToolsCategory( { siteSlug }: { siteSlug: string }
 
 	// Render tools sorted by entity group with dividers between groups.
 	const renderToolsWithDividers = ( categoryTools: Array< [ string, SiteMcpAbility ] > ) => {
+		const entityOrder: Record< string, number > = { post: 0, page: 1, comment: 2 };
 		const sorted = [ ...categoryTools ].sort( ( a, b ) => {
 			const ea = getEntity( a[ 1 ].title );
 			const eb = getEntity( b[ 1 ].title );
 			if ( ea !== eb ) {
+				const pa = entityOrder[ ea ] ?? 99;
+				const pb = entityOrder[ eb ] ?? 99;
+				if ( pa !== pb ) {
+					return pa - pb;
+				}
 				return ea.localeCompare( eb );
 			}
 			return 0;
@@ -168,7 +174,8 @@ export default function SiteMcpToolsCategory( { siteSlug }: { siteSlug: string }
 							margin: 0,
 							border: 'none',
 							borderTop: '1px solid #e0e0e0',
-							width: '100%',
+							background: 'none',
+							height: 0,
 						} }
 					/>
 				);

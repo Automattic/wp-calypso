@@ -130,7 +130,7 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 	const getEntity = ( toolTitle ) => {
 		const lower = toolTitle.toLowerCase();
 		const withoutVerb = lower.replace(
-			/^(search|get|list|create|update|delete|view|manage|set|activate|install|deactivate)\s+/,
+			/^(search|get|list|create|update|delete|view|manage|moderate|set|activate|install|deactivate)\s+/,
 			''
 		);
 		const withoutFiller = withoutVerb.replace( /\b(site|your|a|an|all)\s+/g, '' );
@@ -146,43 +146,23 @@ export default function McpToolsCategory( { path, categorySlug } ) {
 
 	// Render tools sorted by entity group with dividers between groups.
 	const renderToolsWithDividers = ( categoryTools ) => {
+		const entityOrder = { post: 0, page: 1, comment: 2 };
 		const sorted = [ ...categoryTools ].sort( ( a, b ) => {
 			const ea = getEntity( a[ 1 ].title );
 			const eb = getEntity( b[ 1 ].title );
 			if ( ea !== eb ) {
+				const pa = entityOrder[ ea ] ?? 99;
+				const pb = entityOrder[ eb ] ?? 99;
+				if ( pa !== pb ) {
+					return pa - pb;
+				}
 				return ea.localeCompare( eb );
 			}
 			return 0;
 		} );
 
-		const entityCounts = {};
-		sorted.forEach( ( [ , tool ] ) => {
-			const entity = getEntity( tool.title );
-			if ( entity ) {
-				entityCounts[ entity ] = ( entityCounts[ entity ] || 0 ) + 1;
-			}
-		} );
-
-		const multiToolGroups = Object.values( entityCounts ).filter( ( c ) => c > 1 ).length;
-		const showDividers = multiToolGroups >= 2;
-
 		const elements = [];
-		let lastEntity = '';
-		sorted.forEach( ( [ toolId, tool ], index ) => {
-			const entity = getEntity( tool.title );
-			if ( showDividers && index > 0 && entity !== lastEntity ) {
-				elements.push(
-					<div
-						key={ `divider-${ toolId }` }
-						style={ {
-							margin: 0,
-							height: '1px',
-							backgroundColor: 'var(--color-border-subtle)',
-						} }
-					/>
-				);
-			}
-			lastEntity = entity;
+		sorted.forEach( ( [ toolId, tool ] ) => {
 			elements.push(
 				<ToggleControl
 					key={ toolId }
