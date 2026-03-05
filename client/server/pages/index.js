@@ -110,7 +110,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main', dashboardType ) {
 	performanceMark( request.context, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
@@ -221,6 +221,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
 		isDebug,
+		dashboardType,
 	};
 
 	performanceMark( request.context, 'setup environments', true );
@@ -296,8 +297,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	return context;
 }
 
-const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, res, entrypoint, sectionName );
+const setupDefaultContext = ( entrypoint, sectionName, dashboardType ) => ( req, res, next ) => {
+	req.context = getDefaultContext( req, res, entrypoint, dashboardType );
 	next();
 };
 
@@ -1075,12 +1076,13 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint ) {
+	function handleSectionPath( section, sectionPath, entrypoint, appConfig, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
-			setupDefaultContext( entrypoint, section.name ),
+			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
+			setupDefaultContext( entrypoint, section.name, appConfig ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
 			// SSR checks aren't accounted for here, but happen in the SSR pipeline
@@ -1101,6 +1103,12 @@ export default function pages() {
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() ) {
 		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
+			const dashboardType = section.dashboardType;
+
+			if ( ! dashboardType ) {
+				throw new Error( 'Dashboard type not found' );
+			}
+
 			app.get(
 				pathToRegExp( sectionPath ),
 				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
@@ -1109,17 +1117,41 @@ export default function pages() {
 				setUpRoute,
 				serverRender
 			);
+
+			handleSectionPath(
+				STEPPER_SECTION_DEFINITION,
+				'/setup',
+				'entry-stepper',
+				dashboardType,
+				reqFilter
+			);
+			handleSectionPath( START_SECTION_DEFINITION, '/start', undefined, dashboardType, reqFilter );
+			handleSectionPath(
+				CHECKOUT_SECTION_DEFINITION,
+				'/checkout',
+				undefined,
+				dashboardType,
+				reqFilter
+			);
 		};
+
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
-				isAllowedDotcomDashboardHostname( req.hostname )
+			handleRoute(
+				DOTCOM_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-dotcom',
+				( req ) => {
+					return isAllowedDotcomDashboardHostname( req.hostname );
+				}
 			);
 		} );
+
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
-				isAllowedCiabDashboardHostname( req.hostname )
-			);
+			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) => {
+				return isAllowedCiabDashboardHostname( req.hostname );
+			} );
 		} );
+
 		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
 			return isAllowedDotcomDashboardHostname( req.hostname );
 		} );
@@ -1148,16 +1180,13 @@ export default function pages() {
 	// Register CSP report route
 	registerCspReportRoute( app );
 
-	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-	handleSectionPath( START_SECTION_DEFINITION, '/start' );
-	handleSectionPath( CHECKOUT_SECTION_DEFINITION, '/checkout' );
-
 	// Multi-site Dashboard routing.
 	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
 		return app;
 	}
 
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`

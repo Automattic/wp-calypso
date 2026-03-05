@@ -1,5 +1,6 @@
 import type { User } from '@automattic/api-core';
 import type { StyleVariation } from '@automattic/design-picker';
+import type { DashboardType } from 'calypso/dashboard/app/types';
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -135,6 +136,7 @@ declare global {
 		app?: {
 			isDebug?: boolean;
 			clientIp?: string;
+			dashboardType?: DashboardType;
 		};
 		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;

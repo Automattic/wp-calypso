@@ -25,6 +25,7 @@ import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
+import { dashboardConfigQueryOptions, DASHBOARD_TYPE } from 'calypso/lib/use-dashboard-config';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -155,6 +156,12 @@ async function main() {
 			.queryClient;
 	} else {
 		queryClient = ( await createQueryClient( userId ) ).queryClient;
+	}
+
+	if ( DASHBOARD_TYPE ) {
+		const dashboardConfig = await queryClient.ensureQueryData( dashboardConfigQueryOptions() );
+
+		console.log( 'dashboardConfig', dashboardConfig );
 	}
 
 	/**
