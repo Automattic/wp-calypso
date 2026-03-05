@@ -57,7 +57,14 @@
 			margin-left: -16px;
 
 			.components-tab-panel__tabs {
+				gap: 12px;
 				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.components-tab-panel__tabs-item {
+				padding-left: 0;
+				padding-right: 0;
 			}
 
 			@media (max-width: $break-small) {
