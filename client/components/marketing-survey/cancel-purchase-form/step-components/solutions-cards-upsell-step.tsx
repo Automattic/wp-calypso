@@ -55,6 +55,10 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Make your site faster' );
 		case 'use-migration-tools':
 			return translate( 'Use our migration tools' );
+		case 'use-domain-guide':
+			return translate( 'Use our domain guide' );
+		case 'explore-domain-options':
+			return translate( 'Explore more domain options' );
 		default:
 			return '';
 	}

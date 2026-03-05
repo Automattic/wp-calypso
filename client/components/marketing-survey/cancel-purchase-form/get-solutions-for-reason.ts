@@ -20,6 +20,8 @@ const SOLUTION_IDS = {
 	FIND_GUIDES: 'find-guides',
 	MAKE_SITE_FASTER: 'make-site-faster',
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
+	USE_DOMAIN_GUIDE: 'use-domain-guide',
+	EXPLORE_DOMAIN_OPTIONS: 'explore-domain-options',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -123,6 +125,27 @@ const SOLUTIONS_DOWNTIME: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
 ];
 
+/** Trouble connecting or transferring (domain) */
+const SOLUTIONS_TROUBLE_CONNECTING_OR_TRANSFERRING: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.USE_DOMAIN_GUIDE, label: 'Use our domain guide' },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Confused about domains */
+const SOLUTIONS_CONFUSED_ABOUT_DOMAINS: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.USE_DOMAIN_GUIDE, label: 'Use our domain guide' },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
+/** Domain incorrect */
+const SOLUTIONS_DOMAIN_INCORRECT: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.EXPLORE_DOMAIN_OPTIONS, label: 'Explore more domain options' },
+	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT, label: 'Ask our AI assistant' },
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT, label: 'Speak with our support team' },
+];
+
 /**
  * Returns the ordered list of solution cards for the given cancellation sub-reason,
  * or null when this reason has no solutions step.
@@ -173,6 +196,14 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_MIGRATION_PROBLEMS ];
 		case 'downtime':
 			return [ ...SOLUTIONS_DOWNTIME ];
+
+		// Domain-related
+		case 'troubleConnectingOrTransferring':
+			return [ ...SOLUTIONS_TROUBLE_CONNECTING_OR_TRANSFERRING ];
+		case 'confusedAboutDomains':
+			return [ ...SOLUTIONS_CONFUSED_ABOUT_DOMAINS ];
+		case 'domainIncorrect':
+			return [ ...SOLUTIONS_DOMAIN_INCORRECT ];
 
 		default:
 			return null;

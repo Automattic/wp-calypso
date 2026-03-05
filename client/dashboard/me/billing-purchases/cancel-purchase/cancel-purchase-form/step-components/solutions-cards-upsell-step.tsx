@@ -27,6 +27,8 @@ function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 const SUPPORT_GUIDES_URL = localizeUrl( 'https://wordpress.com/support/' );
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
+const DOMAIN_GUIDE_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
+const DOMAINS_EXPLORE_URL = localizeUrl( 'https://wordpress.com/domains/' );
 
 function getCardHref(
 	cardId: string,
@@ -54,6 +56,12 @@ function getCardHref(
 	if ( cardId === 'use-migration-tools' ) {
 		return SITE_MIGRATION_URL;
 	}
+	if ( cardId === 'use-domain-guide' ) {
+		return DOMAIN_GUIDE_URL;
+	}
+	if ( cardId === 'explore-domain-options' ) {
+		return DOMAINS_EXPLORE_URL;
+	}
 	return undefined;
 }
 
@@ -72,6 +80,8 @@ function getCardOnClick(
 		'find-guides',
 		'make-site-faster',
 		'use-migration-tools',
+		'use-domain-guide',
+		'explore-domain-options',
 	];
 	if ( navCardIds.includes( cardId ) ) {
 		return ( e: React.MouseEvent ) => {
@@ -111,6 +121,10 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Make your site faster' );
 		case 'use-migration-tools':
 			return __( 'Use our migration tools' );
+		case 'use-domain-guide':
+			return __( 'Use our domain guide' );
+		case 'explore-domain-options':
+			return __( 'Explore more domain options' );
 		default:
 			return '';
 	}
@@ -188,6 +202,12 @@ export default function SolutionsCardsUpsellStep( {
 			case 'use-migration-tools':
 				window.open( SITE_MIGRATION_URL, '_blank' );
 				break;
+			case 'use-domain-guide':
+				window.open( DOMAIN_GUIDE_URL, '_blank' );
+				break;
+			case 'explore-domain-options':
+				window.open( DOMAINS_EXPLORE_URL, '_blank' );
+				break;
 			case 'ask-ai-assistant':
 				// No CTA yet – card is label-only
 				break;
@@ -213,6 +233,8 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'find-guides' ||
 							card.id === 'make-site-faster' ||
 							card.id === 'use-migration-tools' ||
+							card.id === 'use-domain-guide' ||
+							card.id === 'explore-domain-options' ||
 							( card.id === 'switch-to-monthly' && onClickDowngrade ) );
 					const href = getCardHref( card.id, changePlanUrl, renewNowUrl );
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );

@@ -398,6 +398,27 @@ class CancelPurchaseForm extends Component {
 			const allSteps = this.getAllSurveySteps();
 			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
 
+			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
+			const useSolutionsCards =
+				config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+				solutions &&
+				solutions.length > 0;
+
+			// When flag is on and we have solution cards for this reason, show them
+			// instead of the legacy education or single-upsell step.
+			if ( useSolutionsCards ) {
+				return (
+					<SolutionsCardsUpsellStep
+						cancellationReason={ this.state.questionOneText }
+						closeDialog={ this.closeDialog }
+						onClickDowngrade={ this.downgradeClick }
+						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
+						purchase={ purchase }
+						site={ site }
+					/>
+				);
+			}
+
 			if ( upsell.startsWith( 'education:' ) ) {
 				return (
 					<EducationContentStep
@@ -405,26 +426,6 @@ class CancelPurchaseForm extends Component {
 						site={ site }
 						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
 						cancellationReason={ this.state.questionOneText }
-					/>
-				);
-			}
-
-			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
-			const useSolutionsCards =
-				config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
-				solutions &&
-				solutions.length > 0;
-
-			if ( useSolutionsCards ) {
-				return (
-					<SolutionsCardsUpsellStep
-						cancellationReason={ this.state.questionOneText }
-						closeDialog={ this.closeDialog }
-						onClickDowngrade={ this.downgradeClick }
-						onClickFreeMonthOffer={ this.freeMonthOfferClick }
-						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
-						purchase={ purchase }
-						site={ site }
 					/>
 				);
 			}
