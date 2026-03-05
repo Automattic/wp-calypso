@@ -24,6 +24,7 @@ import {
 import {
 	isAkismetTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 } from 'calypso/me/purchases/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -89,7 +90,10 @@ function PurchaseMetaExpiration( {
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
-		const shouldRenderToggle = ( isCancellableSitelessPurchase || site ) && isProductOwner;
+		// We allow the empty site if an A4A BD purchase since clients often don't have access to the site so it'll be null.
+		const shouldRenderToggle =
+			( isCancellableSitelessPurchase || site || isA4ABillingDragonPurchase( purchase ) ) &&
+			isProductOwner;
 
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
