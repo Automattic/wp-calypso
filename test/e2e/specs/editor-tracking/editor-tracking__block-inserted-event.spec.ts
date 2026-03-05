@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	EditorPage,
 	EditorTracksEventManager,
 	FullSiteEditorPage,
 	HeaderBlock,
@@ -121,92 +120,149 @@ test.describe(
 			} );
 		} );
 
-		test( 'In the site editor: block inserted event fires with entity_context', async ( {
-			page,
-		} ) => {
-			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+		test.describe( 'In the site editor', () => {
+			const siteEditorAccountName = getTestAccountByFeature( {
+				...features,
+				variant: 'siteEditor',
+			} );
 			let testAccount: TestAccount;
 			let templatePartName: string;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 			let templatePartBlock: TemplatePartBlock;
+			let headerBlock: HeaderBlock;
 
-			await test.step( 'Given I am authenticated', async () => {
-				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
+			test.afterEach( async () => {
+				if ( templatePartName ) {
+					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
+				}
 			} );
 
-			await test.step( 'When I visit the site editor', async () => {
-				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-			} );
-
-			await test.step( 'When I close the navigation sidebar', async () => {
-				await fullSiteEditorPage.closeNavSidebar();
-			} );
-
-			await test.step( 'When I clear event stack for a starting clean slate', async () => {
-				await editorTracksEventManager!.clearEvents();
-			} );
-
-			await test.step( 'When I add a Template Part block', async () => {
-				const block = await fullSiteEditorPage.addBlockFromSidebar(
-					TemplatePartBlock.blockName,
-					TemplatePartBlock.blockEditorSelector
-				);
-				templatePartBlock = new TemplatePartBlock( page, block );
-			} );
-
-			await test.step( 'Then "wpcom_block_inserted" event fires with "entity_context" === "template"', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_inserted', {
-					matchingProperties: {
-						block_name: 'core/template-part',
-						entity_context: 'template',
-					},
+			test( 'block inserted event fires with entity_context', async ( { page } ) => {
+				await test.step( 'Given I am authenticated', async () => {
+					testAccount = new TestAccount( siteEditorAccountName );
+					await testAccount.authenticate( page );
+					editorTracksEventManager = new EditorTracksEventManager( page );
+					fullSiteEditorPage = new FullSiteEditorPage( page );
 				} );
-				expect( eventDidFire ).toBe( true );
-			} );
 
-			await test.step( 'When I create a new Template Part', async () => {
-				templatePartName = `TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(
-					0,
-					100
-				) }`;
-				await templatePartBlock!.clickStartBlank();
-				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
-			} );
-
-			await test.step( 'When I add a Page List block to the template part', async () => {
-				const openInlineInserter: OpenInlineInserter = async () => {
-					await templatePartBlock!.clickAddBlockButton();
-				};
-				await fullSiteEditorPage.addBlockInline(
-					'Page List',
-					'[aria-label="Block: Page List"]',
-					openInlineInserter
-				);
-			} );
-
-			await test.step( 'Then "wpcom_block_inserted" event fires with correct "entity_context" and "template_part_id"', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_inserted', {
-					matchingProperties: {
-						block_name: 'core/page-list',
-						entity_context: 'core/template-part',
-						template_part_id: `pub/twentytwentytwo//${ templatePartName!.toLowerCase() }`,
-					},
+				await test.step( 'When I visit the site editor', async () => {
+					await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+					await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 				} );
-				expect( eventDidFire ).toBe( true );
+
+				await test.step( 'When I close the navigation sidebar', async () => {
+					await fullSiteEditorPage.closeNavSidebar();
+				} );
+
+				await test.step( 'When I clear event stack for a starting clean slate', async () => {
+					await editorTracksEventManager!.clearEvents();
+				} );
+
+				await test.step( 'When I add a Template Part block', async () => {
+					const block = await fullSiteEditorPage.addBlockFromSidebar(
+						TemplatePartBlock.blockName,
+						TemplatePartBlock.blockEditorSelector
+					);
+					templatePartBlock = new TemplatePartBlock( page, block );
+				} );
+
+				await test.step( 'Then "wpcom_block_inserted" event fires with "entity_context" === "template"', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_inserted',
+						{
+							matchingProperties: {
+								block_name: 'core/template-part',
+								entity_context: 'template',
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
+
+				await test.step( 'When I create a new Template Part', async () => {
+					templatePartName = `TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(
+						0,
+						100
+					) }`;
+					await templatePartBlock!.clickStartBlank();
+					await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
+				} );
+
+				await test.step( 'When I add a Page List block to the template part', async () => {
+					const openInlineInserter: OpenInlineInserter = async () => {
+						await templatePartBlock!.clickAddBlockButton();
+					};
+					await fullSiteEditorPage.addBlockInline(
+						'Page List',
+						'[aria-label="Block: Page List"]',
+						openInlineInserter
+					);
+				} );
+
+				await test.step( 'Then "wpcom_block_inserted" event fires with correct "entity_context" and "template_part_id"', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_inserted',
+						{
+							matchingProperties: {
+								block_name: 'core/page-list',
+								entity_context: 'core/template-part',
+								template_part_id: `pub/twentytwentytwo//${ templatePartName!.toLowerCase() }`,
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
 			} );
 
-			// Cleanup
-			if ( templatePartName! ) {
-				await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
-			}
+			// The wpcom_block_inserted event does fire here because the header block selected
+			// includes a core/page-list block, which triggers wpcom_block_inserted. This is
+			// arguably a reasonable outcome. We need to decide whether to adjust the test to
+			// match the tracking behavior or adjust the underlying tracking behavior.
+			test.describe.skip( 'Adding blocks from existing template parts', () => {
+				test( '"wpcom_block_inserted" event does NOT fire when choosing an existing template part', async ( {
+					page,
+				} ) => {
+					await test.step( 'Given I am authenticated', async () => {
+						testAccount = new TestAccount( siteEditorAccountName );
+						await testAccount.authenticate( page );
+						editorTracksEventManager = new EditorTracksEventManager( page );
+						fullSiteEditorPage = new FullSiteEditorPage( page );
+					} );
 
-			void HeaderBlock;
-			void EditorPage;
+					await test.step( 'When I visit the site editor', async () => {
+						await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+						await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+					} );
+
+					await test.step( 'When I close the navigation sidebar', async () => {
+						await fullSiteEditorPage.closeNavSidebar();
+					} );
+
+					await test.step( 'When I add a Header block', async () => {
+						const block = await fullSiteEditorPage.addBlockFromSidebar(
+							HeaderBlock.blockName,
+							HeaderBlock.blockEditorSelector
+						);
+						headerBlock = new HeaderBlock( page, block );
+					} );
+
+					await test.step( 'When I clear the event stack for a clean slate', async () => {
+						await editorTracksEventManager!.clearEvents();
+					} );
+
+					await test.step( 'When I choose an existing theme template part ("header-centered")', async () => {
+						await headerBlock!.clickChoose();
+						await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-centered' );
+					} );
+
+					await test.step( 'Then "wpcom_block_inserted" event does NOT fire', async () => {
+						const eventDidFire =
+							await editorTracksEventManager!.didEventFire( 'wpcom_block_inserted' );
+						expect( eventDidFire ).toBe( false );
+					} );
+				} );
+			} );
 		} );
 	}
 );

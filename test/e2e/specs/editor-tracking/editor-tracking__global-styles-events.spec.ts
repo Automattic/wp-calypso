@@ -225,62 +225,64 @@ test.describe(
 			}
 		} );
 
-		test( '"wpcom_block_editor_global_styles_save" event fires with correct style properties', async ( {
-			page,
-		} ) => {
+		test.describe( '"wpcom_block_editor_global_styles_save" event fires with correct style properties', () => {
 			const padding = DataHelper.getRandomInteger( 1, 32 );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 
-			await test.step( 'Given I am authenticated', async () => {
-				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
-			} );
-
-			await test.step( 'When I visit the site editor', async () => {
-				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-			} );
-
-			await test.step( 'When I close the navigation sidebar', async () => {
-				await fullSiteEditorPage.closeNavSidebar();
-			} );
-
-			await test.step( 'When I open site styles', async () => {
+			test.afterEach( async () => {
+				// Reset layout back to empty to protect future runs.
 				await fullSiteEditorPage.openSiteStyles();
-			} );
-
-			await test.step( 'When I set global layout style', async () => {
-				await fullSiteEditorPage.setGlobalLayoutStyle( { padding: padding } );
-			} );
-
-			await test.step( 'When I save the editor', async () => {
+				await fullSiteEditorPage.resetGlobalLayoutStyle();
 				await fullSiteEditorPage.closeSiteStyles();
 				await fullSiteEditorPage.save();
 			} );
 
-			await test.step( 'Then "wpcom_block_editor_global_styles_save" event fires with correct style properties', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
-					'wpcom_block_editor_global_styles_save',
-					{
-						matchingProperties: {
-							section: 'spacing',
-							field: 'padding',
-							field_value: `${ padding }px`,
-						},
-					}
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
+			test( 'event fires with correct style properties', async ( { page } ) => {
+				await test.step( 'Given I am authenticated', async () => {
+					testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+					editorTracksEventManager = new EditorTracksEventManager( page );
+					fullSiteEditorPage = new FullSiteEditorPage( page );
+				} );
 
-			// Reset layout back to empty to protect future runs.
-			await fullSiteEditorPage.openSiteStyles();
-			await fullSiteEditorPage.resetGlobalLayoutStyle();
-			await fullSiteEditorPage.closeSiteStyles();
-			await fullSiteEditorPage.save();
+				await test.step( 'When I visit the site editor', async () => {
+					await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+					await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+				} );
+
+				await test.step( 'When I close the navigation sidebar', async () => {
+					await fullSiteEditorPage.closeNavSidebar();
+				} );
+
+				await test.step( 'When I open site styles', async () => {
+					await fullSiteEditorPage.openSiteStyles();
+				} );
+
+				await test.step( 'When I set global layout style', async () => {
+					await fullSiteEditorPage.setGlobalLayoutStyle( { padding: padding } );
+				} );
+
+				await test.step( 'When I save the editor', async () => {
+					await fullSiteEditorPage.closeSiteStyles();
+					await fullSiteEditorPage.save();
+				} );
+
+				await test.step( 'Then "wpcom_block_editor_global_styles_save" event fires with correct style properties', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_editor_global_styles_save',
+						{
+							matchingProperties: {
+								section: 'spacing',
+								field: 'padding',
+								field_value: `${ padding }px`,
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
+			} );
 		} );
 	}
 );

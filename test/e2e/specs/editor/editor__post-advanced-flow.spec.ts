@@ -23,13 +23,12 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 	const additionalContent = 'Updated post content';
 
 	test( 'As a user, I can manage the full lifecycle of a post', async ( { page } ) => {
-		let testAccount: TestAccount;
 		let editorPage: EditorPage;
 		let postsPage: PostsPage;
 		let postURL: URL;
 
 		await test.step( 'Given I am authenticated', async () => {
-			testAccount = new TestAccount( accountName );
+			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );
 
@@ -144,7 +143,5 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 			const noticeComponent = new WpAdminNoticeComponent( page );
 			await noticeComponent.noticeShown( '1 post permanently deleted', { type: 'Updated' } );
 		} );
-
-		void testAccount;
 	} );
 } );
