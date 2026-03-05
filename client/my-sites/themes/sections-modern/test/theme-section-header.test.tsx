@@ -45,7 +45,7 @@ describe( 'ThemeSectionHeader', () => {
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not render button when onButtonClick is omitted', () => {
+	test( 'does not render button when only buttonLabel is provided', () => {
 		render(
 			<ThemeSectionHeader
 				title="Our Favorites"
@@ -54,5 +54,38 @@ describe( 'ThemeSectionHeader', () => {
 			/>
 		);
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders as a link when buttonHref is provided', () => {
+		render(
+			<ThemeSectionHeader
+				title="Our Favorites"
+				subtitle="Hand-picked themes we love"
+				buttonLabel="See all"
+				buttonHref="/themes/favorites"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'See all' } );
+		expect( link ).toBeVisible();
+		expect( link ).toHaveAttribute( 'href', '/themes/favorites' );
+	} );
+
+	test( 'renders as a link with onClick when both buttonHref and onButtonClick are provided', async () => {
+		const handleClick = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<ThemeSectionHeader
+				title="Our Favorites"
+				subtitle="Hand-picked themes we love"
+				buttonLabel="See all"
+				buttonHref="/themes/favorites"
+				onButtonClick={ handleClick }
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'See all' } );
+		expect( link ).toHaveAttribute( 'href', '/themes/favorites' );
+		await user.click( link );
+		expect( handleClick ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
