@@ -12,6 +12,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 
+const SIDEBAR_TRANSITION_DURATION_MS = 200;
+
 interface Options {
 	sidebarContainer?: string | HTMLElement;
 	isReady?: boolean;
@@ -190,6 +192,10 @@ export default function useAgentLayoutManager( {
 
 		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
+		container.classList.add( 'agents-manager-sidebar-container--closing' );
+		setTimeout( () => {
+			container.classList.remove( 'agents-manager-sidebar-container--closing' );
+		}, SIDEBAR_TRANSITION_DURATION_MS );
 
 		onCloseSidebarRef.current();
 	}, [ canDock, container, isReady ] );

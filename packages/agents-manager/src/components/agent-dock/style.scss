@@ -88,6 +88,13 @@
 	}
 }
 
+// Disable pointer events on the admin bar during sidebar close transition
+body.wp-admin.agents-manager-sidebar-container--closing {
+	#wpadminbar {
+		pointer-events: none;
+	}
+}
+
 body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
