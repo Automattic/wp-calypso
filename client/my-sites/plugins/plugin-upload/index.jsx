@@ -129,7 +129,7 @@ class PluginUpload extends Component {
 	}
 
 	renderFileTooLarge() {
-		const { translate, siteSlug } = this.props;
+		const { translate, siteAdminUrl } = this.props;
 
 		return (
 			<Notice
@@ -144,10 +144,7 @@ class PluginUpload extends Component {
 					}
 				) }
 			>
-				<NoticeAction
-					href={ `https://${ siteSlug }/wp-admin/plugin-install.php?tab=upload` }
-					external
-				>
+				<NoticeAction href={ `${ siteAdminUrl }plugin-install.php?tab=upload` } external>
 					{ translate( 'Go to WP Admin' ) }
 				</NoticeAction>
 			</Notice>
