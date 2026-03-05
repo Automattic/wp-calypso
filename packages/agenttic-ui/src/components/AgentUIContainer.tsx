@@ -264,7 +264,8 @@ export function AgentUIContainer( {
 		wasClickedToOpen.current = true;
 		chat.open();
 		onOpen?.();
-	}, [ chat, onOpen ] );
+		onExpand?.();
+	}, [ chat, onOpen, onExpand ] );
 
 	// Check if should auto-collapse (no input and not focused)
 	const shouldAutoCollapse = useCallback( () => {
