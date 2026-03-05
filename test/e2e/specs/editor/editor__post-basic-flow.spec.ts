@@ -140,7 +140,9 @@ test.describe(
 			// Skip for Private sites, posts are not visible to non-logged out users
 			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 				await test.step( 'Then I can view the published post', async () => {
-					const newPage = await page.context().newPage();
+					const browser = page.context().browser();
+					const incognito = await browser!.newContext();
+					const newPage = await incognito.newPage();
 
 					const trackingPixelLoaded = newPage.waitForResponse(
 						new RegExp(
@@ -174,7 +176,7 @@ test.describe(
 						await publishedPostPage.validateSocialButton( name, { click: true } );
 					}
 
-					await newPage.close();
+					await incognito.close();
 				} );
 			}
 		} );

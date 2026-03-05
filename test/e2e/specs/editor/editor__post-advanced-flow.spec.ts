@@ -108,10 +108,18 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 		} );
 
 		await test.step( 'Then the post is no longer publicly visible', async () => {
-			const tmpPage = await page.context().newPage();
+			// It's important that we use another context to confirm that the
+			// page was reverted to draft. It's also important that we DON'T use
+			// a separate context to preview this page when it was previously
+			// published, because it would get cached and wouldn't 404 until the
+			// cache self-invalidates (300s period). This workaround is specific
+			// for Atomic sites. See pMz3w-fZ0 for more info.
+			const browser = page.context().browser();
+			const incognito = await browser!.newContext();
+			const tmpPage = await incognito.newPage();
 			await tmpPage.goto( postURL!.href );
 			await tmpPage.waitForSelector( 'body.error404' );
-			await tmpPage.close();
+			await incognito.close();
 		} );
 
 		await test.step( 'When I visit the Posts page and go to Drafts', async () => {

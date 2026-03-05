@@ -15,19 +15,24 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 import { tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
-		test( 'As a user, I can navigate to the Tumblr connection page', async ( { page } ) => {
+		test( 'As a user, I can navigate to the Tumblr connection page', async ( {
+			page,
+			secrets,
+		} ) => {
 			test.skip(
 				envVariables.ATOMIC_VARIATION === 'private',
 				'Social connections not supported on private sites'
 			);
 
 			let marketingPage: MarketingPage;
+			let popup: Page;
 
 			await test.step( 'Setup: authenticate and remove existing Tumblr connection if any', async () => {
 				const features = envToFeatureKey( envVariables );
@@ -62,9 +67,18 @@ test.describe(
 					'connections'
 				);
 			} );
-
 			// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
-			// TODO: Implement the Tumblr connection test once it's more stable.
+			test.skip( 'Click on the "Connect" button for Tumblr', async function () {
+				popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
+			} );
+
+			test.skip( 'Set up Tumblr', async function () {
+				await marketingPage.setupTumblr( popup, secrets.socialAccounts.tumblr );
+			} );
+
+			test.skip( 'Tumblr is connected', async function () {
+				await marketingPage.validateSocialConnected( 'Tumblr' );
+			} );
 		} );
 	}
 );

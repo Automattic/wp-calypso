@@ -111,6 +111,31 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 
+		test.skip( 'get forwarded to a human', async () => {
+			await helpCenterComponent.startAIChat( 'talk to human' );
+
+			const contactSupportButton = helpCenterComponent.getContactSupportButton();
+			await contactSupportButton.waitFor( { state: 'visible' } );
+
+			expect( await contactSupportButton.count() ).toBeTruthy();
+		} );
+
+		/**
+		 * These tests need to be update
+		 */
+		test.skip( 'start talking with a human', async () => {
+			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
+			await contactSupportButton.dispatchEvent( 'click' );
+
+			const zendeskMessaging = await page
+				.frameLocator( 'iframe[title="Messaging window"]' )
+				.getByPlaceholder( 'Type a message' );
+
+			await zendeskMessaging.waitFor( { state: 'visible' } );
+
+			expect( await zendeskMessaging.count() ).toBeTruthy();
+		} );
+
 		// Action Hooks
 
 		await test.step( 'Open help center on page load', async () => {
