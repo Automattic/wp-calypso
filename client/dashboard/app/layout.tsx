@@ -12,7 +12,7 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { AppProvider } from './context';
+import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import { useSurvicate } from './survicate';
@@ -26,12 +26,21 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
+	const { posthog } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
+
+	useEffect( () => {
+		if ( posthog ) {
+			import( '@automattic/posthog' ).then( ( { init } ) =>
+				init( posthog, user ? { ID: user.ID } : undefined )
+			);
+		}
+	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
