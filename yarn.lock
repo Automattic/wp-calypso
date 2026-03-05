@@ -356,27 +356,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.44":
-  version: 0.1.49
-  resolution: "@automattic/agenttic-client@npm:0.1.49"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 5c23307b250453fe781bfe493497d9a0f94eea02ea640b42e7fa55cb1327352dad92c49030553c6fb1276aee7a009c971035c246eb710e488e87a709e57abacf
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-client@npm:^0.1.51":
+"@automattic/agenttic-client@npm:^0.1.44, @automattic/agenttic-client@npm:^0.1.51":
   version: 0.1.51
   resolution: "@automattic/agenttic-client@npm:0.1.51"
   dependencies:
@@ -10515,16 +10495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
-  version: 22.15.3
-  resolution: "@types/node@npm:22.15.3"
-  dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:>=13.7.0":
+"@types/node@npm:*, @types/node@npm:>=13.7.0":
   version: 25.2.3
   resolution: "@types/node@npm:25.2.3"
   dependencies:
@@ -10562,6 +10533,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: dce80d63a3b91892b321af823d624995c61e39c6a223cc0ac481a44d337640cc46931d33efb3beeed75f5c85c3bda1d97cef4c5cd4ec333caf5dee59cff6eca0
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
+  version: 22.15.3
+  resolution: "@types/node@npm:22.15.3"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
   languageName: node
   linkType: hard
 
@@ -16728,14 +16708,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
-  version: 3.46.0
-  resolution: "core-js@npm:3.46.0"
-  checksum: 12d559d39a58227881bc6c86c36d24dcfbe2d56e52dac42e35e8643278172596ab67f57ede98baf40b153ca1b830f37420ea32c3f7417c0c5a1fed46438ae187
-  languageName: node
-  linkType: hard
-
-"core-js@npm:^3.38.1":
+"core-js@npm:^3.30.0, core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.38.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
   version: 3.48.0
   resolution: "core-js@npm:3.48.0"
   checksum: 6c3115900dd7cce9fab74c07cb262b3517fc250d02e8fd2ff34f80bda5f43a28482a909dbc4491dc6e1ddd9807f57a7df4c3eeecd1f202b7d9c8bfe25f9d680c
