@@ -1562,7 +1562,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-draggable: "npm:^4.4.6"
-    smooch: "npm:5.6.0"
+    smooch: "npm:^5.7.17"
     typescript: "npm:^5.8.3"
     use-debounce: "npm:^3.1.0"
   peerDependencies:
@@ -1962,7 +1962,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^9.0.1"
     react-redux: "npm:^9.2.0"
-    smooch: "npm:5.6.0"
+    smooch: "npm:^5.7.17"
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "npm:^7.0.5"
   languageName: unknown
@@ -34470,10 +34470,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smooch@npm:5.6.0":
-  version: 5.6.0
-  resolution: "smooch@npm:5.6.0"
-  checksum: 3a1c4cd17a136903443372a92e197752a80423fe8d8f299d96853dba4af6f51f43a6b573b23fbc04fc558b0b707a679361edce17e3e9f8ae9809a03cfccc0978
+"smooch@npm:^5.7.17":
+  version: 5.7.17
+  resolution: "smooch@npm:5.7.17"
+  checksum: 93753be1d7ed169dcdc8d2132f2dd690a54f3575b74043113ec83a2931102b989203b155f410eae17cb2c87b55c14fd14a2e9f0af46c9a9de5ee12ff349a1ffb
   languageName: node
   linkType: hard
 
