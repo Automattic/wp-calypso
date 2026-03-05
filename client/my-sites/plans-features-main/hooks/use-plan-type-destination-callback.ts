@@ -15,11 +15,19 @@ const usePlanTypeDestinationCallback = () => {
 	return useCallback(
 		( props: Partial< PlanTypeSelectorProps >, additionalArgs: PathArgs = {} ) => {
 			const { intervalType = '' } = additionalArgs;
+
+			// Preserve redirect_to from the current URL so it survives interval changes.
+			const currentRedirectTo =
+				typeof window !== 'undefined'
+					? new URLSearchParams( window.location.search ).get( 'redirect_to' )
+					: null;
+
 			const defaultArgs = {
 				customerType: undefined,
 				coupon: props.coupon,
 				feature: props.selectedFeature,
 				plan: props.selectedPlan,
+				...( currentRedirectTo && { redirect_to: currentRedirectTo } ),
 			};
 			// remove empty values from additionalArgs
 			const _additionalArgs = Object.keys( additionalArgs ).reduce( ( acc, key ) => {

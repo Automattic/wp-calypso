@@ -34,6 +34,7 @@
 	"github_app_slug": "wordpress-com-for-developers",
 	"github_oauth_client_id": "Iv1.a72902e7053ea8aa",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
+	"ciab_posthog_api_key": "phc_tHmeIeJcb4zGfiX4akJwyGq7lioUpCoHd65LKbVPcoR",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",

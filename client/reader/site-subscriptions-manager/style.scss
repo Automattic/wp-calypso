@@ -34,15 +34,6 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		@extend %search-component-subscriptions-style;
 	}
 
-	.site-subscriptions-list-actions-bar,
-	.site-subscriptions-list,
-	.recommended-sites,
-	.navigation-header {
-		@media (max-width: $break-small) {
-			padding: 0 16px;
-		}
-	}
-
 	&__header-h-stack {
 		margin: 0 0 26px;
 
@@ -64,10 +55,6 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 				}
 			}
 		}
-	}
-
-	.site-subscriptions-manager__nav {
-		margin-bottom: 32px;
 	}
 
 	hr.subscriptions__separator {
@@ -97,14 +84,28 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		}
 	}
 
-	.not-found-site-subscriptions,
-	.site-subscriptions__search-recommendations-label {
+	.not-found-site-subscriptions {
 		color: $studio-gray-60;
 		font-size: $font-body-small;
 		font-weight: 500;
 		font-family: "SF Pro Text", $sans;
 		line-height: $font-title-small;
-		margin: 48px 0 16px;
+		margin: 0 0 16px;
+	}
+}
+
+.site-subscriptions-manager__nav {
+	margin-bottom: 24px;
+
+	.section-nav-tab__link {
+		padding-top: 0;
+
+		.count {
+			@media (max-width: $break-mobile) {
+				border-color: var(--color-border);
+				color: var(--color-text);
+			}
+		}
 	}
 }
 

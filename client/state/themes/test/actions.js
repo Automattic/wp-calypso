@@ -5,8 +5,6 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -54,8 +52,6 @@ import {
 	tryAndCustomize,
 	deleteTheme,
 	requestThemeFilters,
-	getRecommendedThemes,
-	receiveRecommendedThemes,
 	updateThemes,
 	addExternalManagedThemeToCart,
 	livePreview,
@@ -1598,27 +1594,6 @@ describe( 'actions', () => {
 		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
 			expect( action ).toEqual( { type: THEME_FILTERS_REQUEST, locale: null } );
-		} );
-	} );
-
-	describe( '#getRecommendedThemes()', () => {
-		const filter = 'nonsense-test-filter';
-		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes( filter )( spy );
-			expect( spy ).toHaveBeenCalledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
-		} );
-	} );
-
-	describe( '#receiveRecommendedThemes()', () => {
-		const themes = [ 'a', 'b', 'c' ];
-		const filter = 'test-filter-nonsense';
-		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes, filter )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: RECOMMENDED_THEMES_SUCCESS,
-				payload: themes,
-				filter,
-			} );
 		} );
 	} );
 

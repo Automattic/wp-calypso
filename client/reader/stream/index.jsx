@@ -80,7 +80,7 @@ class ReaderStream extends Component {
 		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
 		restoreScroll: PropTypes.bool,
-		showDefaultEmptyContentIfMissing: PropTypes.bool,
+		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
@@ -104,7 +104,6 @@ class ReaderStream extends Component {
 		isMain: true,
 		onUpdatesShown: noop,
 		restoreScroll: true,
-		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
 		suppressSiteNameLink: false,
@@ -675,7 +674,7 @@ class ReaderStream extends Component {
 
 		if ( hasNoPosts ) {
 			let emptyBody = this.props.emptyContent?.();
-			if ( ! emptyBody && this.props.showDefaultEmptyContentIfMissing ) {
+			if ( ! emptyBody && ! this.props.hideDefaultEmptyContentIfMissing ) {
 				emptyBody = <EmptyContent />;
 			}
 

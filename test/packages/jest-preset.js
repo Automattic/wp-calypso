@@ -13,5 +13,6 @@ module.exports = {
 	globals: {
 		__i18n_text_domain__: 'default',
 	},
+	modulePathIgnorePatterns: [ '<rootDir>/dist' ],
 	setupFilesAfterEnv: [ '<rootDir>../../test/packages/setup.js' ],
 };

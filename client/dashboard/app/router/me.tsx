@@ -5,6 +5,7 @@ import {
 	allSitesQuery,
 	connectedApplicationsQuery,
 	countryListQuery,
+	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
 	monetizeSubscriptionsQuery,
@@ -278,6 +279,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,
 			] );
+		}
+
+		// Preload domain data to avoid layout shift for the "Attach to a site" card
+		if ( purchase.meta && purchase.is_domain ) {
+			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
 	},
 } ).lazy( () =>

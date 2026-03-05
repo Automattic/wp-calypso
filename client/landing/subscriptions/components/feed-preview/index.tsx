@@ -8,13 +8,7 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 
 interface GetFeedResponse {
-	feeds: GetFeedItemResponse[];
-}
-
-export interface GetFeedItemResponse {
-	feed_ID: string;
-	subscribe_URL: string;
-	meta: object;
+	feeds: Reader.FeedItem[];
 }
 
 interface FeedPreviewProps {
@@ -99,9 +93,10 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								showFollowButton={ false }
 								showBack={ false }
 								trackScrollPage={ () => {} }
+								restoreScroll={ false }
 								useCompactCards
 								suppressSiteNameLink
-								restoreScroll={ false }
+								hideDefaultEmptyContentIfMissing
 							/>
 						</div>
 					) : (
