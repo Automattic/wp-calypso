@@ -122,7 +122,14 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						</div>
 					) : (
 						<>
-							{ shouldShowSubscriptionsList && <SiteSubscriptionsList layout="compact" /> }
+							{ shouldShowSubscriptionsList && (
+								<>
+									<h2 className="reader-add-subscription__subscriptions-title">
+										{ translate( 'Your subscriptions' ) }
+									</h2>
+									<SiteSubscriptionsList layout="compact" />
+								</>
+							) }
 							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList /> }
 						</>
 					) ) }

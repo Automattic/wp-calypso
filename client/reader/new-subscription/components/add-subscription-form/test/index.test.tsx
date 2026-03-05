@@ -86,6 +86,7 @@ describe( 'AddSubscriptionForm', () => {
 
 			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
+			expect( screen.getByText( 'Your subscriptions' ) ).toBeVisible();
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 			expect( SiteSubscriptionsList ).toHaveBeenCalledWith(
 				expect.objectContaining( { layout: 'compact' } ),
@@ -125,6 +126,7 @@ describe( 'AddSubscriptionForm', () => {
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 
 			act( () => capturedOnChangeFeedPreview( true ) );
+			expect( screen.getByText( 'Your subscriptions' ) ).not.toBeInTheDocument();
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
 		} );
