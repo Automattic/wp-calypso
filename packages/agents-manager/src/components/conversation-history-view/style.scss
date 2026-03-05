@@ -1,4 +1,5 @@
 @import '../../styles/mixins.scss';
+@import '@wordpress/base-styles/variables';
 
 .agents-manager-conversation-history-view {
 	display: flex;
@@ -7,6 +8,36 @@
 	width: 100%;
 	min-height: 0;
 	padding-top: 12px;
+
+	&__search {
+		flex-shrink: 0;
+		padding: 0 8px 8px;
+
+		.components-search-control {
+			.components-input-control__container {
+				background-color: #f2f2f2;
+			}
+
+			.components-input-base {
+				border-radius: 16px;
+				color: var( --color-text );
+			}
+
+			.components-input-control__input {
+				color: var( --color-text );
+			}
+
+			.components-input-control__backdrop {
+				opacity: 0;
+			}
+
+			&:focus-within {
+				.components-input-control__backdrop {
+					opacity: 1;
+				}
+			}
+		}
+	}
 
 	&__content {
 		flex: 1;
@@ -82,6 +113,28 @@
 // Docked chat styles override
 @include docked-chat-without-modal {
 	.agents-manager-conversation-history-view {
+		&__search {
+			padding: 0 0 8px;
+
+			.components-search-control {
+				.components-input-control__container {
+					background-color: $gray-800;
+
+					.components-input-control__prefix {
+						color: #f2f2f2;
+					}
+
+					.components-input-control__input {
+						color: $white;
+
+						&::placeholder {
+							color: #f2f2f2;
+						}
+					}
+				}
+			}
+		}
+
 		&__content {
 			padding-top: 0;
 			padding-left: 0;
