@@ -40,12 +40,18 @@ export const THEME_TIERS = {
 		get label() {
 			return getIncludedWithLabel( PLAN_PERSONAL );
 		},
+		get labelModern() {
+			return translate( 'Personal' );
+		},
 		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
 	[ THEME_TIER_PREMIUM ]: {
 		get label() {
 			return getIncludedWithLabel( PLAN_PREMIUM );
+		},
+		get labelModern() {
+			return translate( 'Premium' );
 		},
 		minimumUpsellPlan: PLAN_PREMIUM,
 		isFilterable: true,

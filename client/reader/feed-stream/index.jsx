@@ -79,6 +79,7 @@ const FeedStream = ( props ) => {
 			sidebarTabTitle={ translate( 'Related' ) }
 			streamSidebar={ streamSidebar }
 			useCompactCards
+			wideLayout
 		>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {

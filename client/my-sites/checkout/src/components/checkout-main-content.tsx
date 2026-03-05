@@ -412,9 +412,12 @@ export default function CheckoutMainContent( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 
+	const presalesChatKey = getPresalesChatKey( responseCart );
 	const isPresalesChatEnabled =
-		! useSelector( getIsOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
-	usePresalesChat( getPresalesChatKey( responseCart ), isPresalesChatEnabled );
+		! useSelector( getIsOnboardingAffiliateFlow ) &&
+		responseCart?.products?.length > 0 &&
+		presalesChatKey !== 'wpcom';
+	usePresalesChat( presalesChatKey, isPresalesChatEnabled );
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )

@@ -20,6 +20,33 @@ function isSiteNotFoundError( error: unknown ) {
 	);
 }
 
+async function getSite( siteIdOrSlug: number | string ) {
+	try {
+		return await fetchSite( siteIdOrSlug );
+	} catch ( e ) {
+		// Force the site to be retrieved from wpcom if there is any issue with the Jetpack connection.
+		if ( isInaccessibleJetpackError( e ) ) {
+			const site = await fetchSite( siteIdOrSlug, { force: 'wpcom' } );
+
+			// Throw an error if site.slug is not available because it means there is a site slug collision.
+			if ( ! site.slug ) {
+				throw e;
+			}
+
+			return {
+				...site,
+				__inaccessible_jetpack_error: e as Error,
+			};
+		}
+
+		if ( isSiteNotFoundError( e ) ) {
+			throw notFound();
+		}
+
+		throw e;
+	}
+}
+
 export function siteBySlugQuery( siteSlug: string ) {
 	// Used to find an existing Site object which is already in the `site-by-id` cache.
 	const getFromCache = () =>
@@ -37,16 +64,7 @@ export function siteBySlugQuery( siteSlug: string ) {
 
 	return queryOptions( {
 		queryKey: [ 'site-by-slug', siteSlug, SITE_FIELDS, SITE_OPTIONS ],
-		queryFn: async () => {
-			try {
-				return await fetchSite( siteSlug );
-			} catch ( e ) {
-				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
-					throw notFound();
-				}
-				throw e;
-			}
-		},
+		queryFn: () => getSite( siteSlug ),
 		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
 			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
 				return false;
@@ -80,16 +98,7 @@ export function siteByIdQuery( siteId: number ) {
 
 	return queryOptions( {
 		queryKey: [ 'site-by-id', siteId, SITE_FIELDS, SITE_OPTIONS ],
-		queryFn: async () => {
-			try {
-				return await fetchSite( siteId );
-			} catch ( e ) {
-				if ( isSiteNotFoundError( e ) && ! isInaccessibleJetpackError( e ) ) {
-					throw notFound();
-				}
-				throw e;
-			}
-		},
+		queryFn: () => getSite( siteId ),
 		retry: ( failureCount, e: { isNotFound?: boolean } ) => {
 			if ( e.isNotFound || isInaccessibleJetpackError( e ) ) {
 				return false;

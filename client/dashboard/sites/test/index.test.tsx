@@ -34,9 +34,9 @@ const mockSites = [
 
 function mockSitesEndpoint( sites: Site[] ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.2/me/sites' )
+		.get( '/rest/v1.3/me/sites' )
 		.query( true )
-		.reply( 200, { sites } );
+		.reply( 200, { sites, total: sites.length } );
 }
 
 describe( '<Sites>', () => {

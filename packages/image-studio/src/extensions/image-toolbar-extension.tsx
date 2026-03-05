@@ -6,7 +6,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
-import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
+import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
 
@@ -14,27 +14,48 @@ import { trackImageStudioOpened } from '../utils/tracking';
  * Add Image Studio button to image blocks toolbar
  */
 export const withImageStudioToolbarButton = createHigherOrderComponent(
-	( BlockEdit: React.ComponentType< any > ) => {
-		const ImageStudioToolbarButton = ( props: any ) => {
+	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
+		const ImageStudioToolbarButton = ( props: BlockEditProps ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
 
 			// Get supported MIME types
 			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 
-			// Fetch the attachment MIME type from the media store
-			const media = useSelect(
+			// Fetch the attachment from the media store
+			const { media, hasResolved } = useSelect(
 				( select ) => {
 					if ( ! attributes?.id ) {
-						return null;
+						return { media: null, hasResolved: true };
 					}
-					return select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id );
+					return {
+						media: select( coreStore ).getEntityRecord(
+							'postType',
+							'attachment',
+							attributes.id as number
+						),
+						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
+							'postType',
+							'attachment',
+							attributes.id as number,
+						] ),
+					};
 				},
 				[ attributes?.id ]
 			);
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
+					if ( image === null ) {
+						setAttributes( {
+							url: undefined,
+							id: undefined,
+							alt: '',
+							title: '',
+							caption: '',
+						} );
+						return;
+					}
 					if ( image?.id ) {
 						setAttributes( {
 							url: image.url,
@@ -48,22 +69,50 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				[ setAttributes ]
 			);
 
+			const attachmentId = attributes.id as number | undefined;
+
 			const handleEditClick = useCallback( () => {
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,
-					attachmentId: attributes.id,
+					attachmentId,
 					entryPoint: ImageStudioEntryPoint.EditorBlock,
 				} );
-				openImageStudio( attributes.id, handleClose, ImageStudioEntryPoint.EditorBlock );
-			}, [ attributes, handleClose, openImageStudio ] );
+				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock );
+			}, [ attachmentId, handleClose, openImageStudio ] );
 
 			if ( props.name !== 'core/image' || ! attributes?.id ) {
 				return <BlockEdit { ...props } />;
 			}
 
+			const attachment = media as {
+				source_url?: string;
+				mime_type?: string;
+				media_details?: { sizes?: Record< string, { source_url?: string } > };
+			} | null;
+
 			// Check if image MIME type is supported
-			const imageMimeType = media?.mime_type;
-			if ( imageMimeType && ! supportedMimeTypes.includes( imageMimeType ) ) {
+			if ( attachment?.mime_type && ! supportedMimeTypes.includes( attachment.mime_type ) ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			// Don't show button if the attachment doesn't match the displayed image
+			// (e.g., image block pasted from another site with a stale ID).
+			// Collect all known URLs for this attachment (full size + all
+			// intermediate sizes) and check if the block URL matches any of them.
+			const stripParams = ( url: string ) => url.split( '?' )[ 0 ];
+			const knownUrls = new Set< string >();
+			if ( attachment?.source_url ) {
+				knownUrls.add( stripParams( attachment.source_url ) );
+			}
+			if ( attachment?.media_details?.sizes ) {
+				for ( const size of Object.values( attachment.media_details.sizes ) ) {
+					if ( size.source_url ) {
+						knownUrls.add( stripParams( size.source_url ) );
+					}
+				}
+			}
+			const attributeUrl = attributes?.url ? stripParams( attributes.url as string ) : null;
+			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
 				return <BlockEdit { ...props } />;
 			}
 
@@ -76,7 +125,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 								label={ __( 'Edit image with AI', __i18n_text_domain__ ) }
 								onClick={ handleEditClick }
 							>
-								{ __( 'Edit', __i18n_text_domain__ ) }
+								{ __( 'Edit with AI', __i18n_text_domain__ ) }
 							</ToolbarButton>
 						</ToolbarGroup>
 					</BlockControls>

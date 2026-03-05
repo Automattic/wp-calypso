@@ -42,6 +42,7 @@ In addition to the core components, the dashboard includes several reusable layo
 
 - **Page Layout**: The main container for every dashboard page.
 - **Menu** and **Responsive Menu**: Reusable components to render mobile-friendly navigation menus.
+- **DataViews**: A wrapper for core's DataViews, which supports view persistence.
 - **DataViews Card**: A card component for displaying data views.
 - **Overview Card**: Standard card for data display
 - **Header Bar**: A reusable header bar component for displaying a header bar (main and secondary headers).

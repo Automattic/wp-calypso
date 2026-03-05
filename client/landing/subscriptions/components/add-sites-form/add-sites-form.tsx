@@ -1,12 +1,11 @@
 import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Button, TextControl } from '@wordpress/components';
-import { check, Icon } from '@wordpress/icons';
+import { Button, SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
+import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
@@ -19,11 +18,6 @@ export type AddSitesFormProps = {
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
-};
-
-type SubscriptionError = {
-	error?: string;
-	message?: string;
 };
 
 const AddSitesForm = ( {
@@ -99,7 +93,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
@@ -123,19 +117,16 @@ const AddSitesForm = ( {
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
 				<div className="subscriptions-add-sites__form-field">
-					<TextControl
-						className={ clsx(
-							'subscriptions-add-sites__form-input',
-							inputFieldError ? 'is-error' : ''
-						) }
+					<SearchControl
+						className={ clsx( 'subscriptions-add-sites__form-input', {
+							'is-error': !! inputFieldError,
+						} ) }
 						disabled={ subscribing }
-						placeholder={ placeholder || translate( 'https://www.site.com' ) }
+						placeholder={ placeholder || 'https://www.site.com' }
 						value={ inputValue }
 						onChange={ onTextFieldChange }
-						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
@@ -144,7 +135,7 @@ const AddSitesForm = ( {
 				<Button
 					variant="primary"
 					className="button subscriptions-add-sites__save-button"
-					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					disabled={ ! inputValue || ! isValidInput || subscribing }
 					isBusy={ isSubmitting }
 					type="submit"
 					__next40pxDefaultSize

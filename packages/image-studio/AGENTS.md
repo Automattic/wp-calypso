@@ -1,207 +1,115 @@
 # Image Studio
 
-## Package Overview
+AI-powered image editing/generation for WordPress. Two modes: **Edit** and **Generate**.
 
-`@automattic/image-studio` is an AI-powered image editing and generation tool for WordPress. It provides two modes: **Edit** (modify existing images) and **Generate** (create new images from prompts).
+## File Guide (Read the Right File)
 
-## Architecture
+| File                                                                     | Purpose                                                  | When to read                                             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------- | -------------------------------------------------------- |
+| **AGENTS.md** (this file)                                                | Critical patterns, pitfalls, conventions                 | Always read first for any code change                    |
+| [README.md](README.md)                                                   | Architecture, project structure, build/test/dev commands | When you need to understand how it works or run commands |
+| [.agents/skills/ui-testing/SKILL.md](.agents/skills/ui-testing/SKILL.md) | Comprehensive UI test cases                              | Only when running UI tests                               |
 
-### State Management
+## Critical Patterns (Don't Break These)
 
-All state lives in the WordPress data store `image-studio` (`src/store/index.ts`). This store is the single source of truth for:
-
-- Modal open/close state and current mode (Edit/Generate)
-- Current and original image URLs and attachment IDs
-- Draft management (temporary AI-generated images)
-- Annotation state (brush/lasso drawing tools)
-- Image metadata (title, caption, description, alt text)
-- Navigation between media library images
-- UI state (sidebar open, selected style, aspect ratio)
-
-**Important patterns:**
-
+- **Single store**: All state in `src/store/index.ts`. Do NOT create separate store files.
+- **Non-serializable store values**: `onCloseCallback` and `annotationCanvasRef` are intentionally non-serializable in the Redux store for cross-bundle communication. Don't "fix" this.
 - **Checkpoint system**: `lastSavedAttachmentId` tracks the user's last explicit save. On exit, this determines which image to apply.
-- **Draft cleanup**: All temporary images are tracked in `draftIds`. On exit, drafts are deleted except the original and any saved images.
-- **Non-serializable store values**: `onCloseCallback` and `annotationCanvasRef` are stored in the Redux store for cross-bundle communication despite not being serializable. This is intentional.
+- **Draft cleanup**: Temporary images tracked in `draftIds`. On exit, drafts are deleted except originals and saved images. Never delete the original attachment. See `use-draft-cleanup.ts`.
+- **Cross-bundle**: Image Studio runs in a separate bundle from the block editor. The store is the bridge. Don't assume direct component access.
 
-### Component Hierarchy
+## Abilities API (`src/abilities/`)
 
-```
-ImageStudio (src/components/index.tsx)
-  -> Header (toolbar, save button, navigation)
-  -> EditLayout / GenerateLayout (mode-specific containers)
-     -> Canvas (image display + annotation overlay)
-     -> CanvasControls (revision navigator)
-  -> Sidebar (metadata editing, file details)
-  -> Footer (agent chat UI via agenttic-client)
-  -> ConfirmationDialog (unsaved changes)
-```
+Changes to `update-canvas-image` affect the **AI agent contract** — this is how the backend tells Image Studio to refresh the canvas after saving an attachment. Coordinate with backend team before modifying.
 
-### Abilities API
+- **Contract**: Backend calls `image-studio/update-canvas-image` with `{ attachmentId, url, metadata }`.
+- **Registration**: Ability is registered once via `@wordpress/abilities`. The `isRegistered` guard prevents duplicates.
+- **Flow**: Receives attachment ID → preloads image → resolves attachment via `core-data` → updates store (canvas metadata, draft tracking, mode transition).
+- **0% test coverage** — changes here need manual sandbox testing at minimum.
 
-The package registers `image-studio/update-canvas-image` via the WordPress Abilities API (`src/abilities/`). This is how the AI agent pushes processed images back to the UI.
+## Extensions (`src/extensions/`)
 
-### Block Editor Integration
+Three HOCs that inject Image Studio into the block editor via `addFilter`. These run in the **block editor bundle**, not Image Studio's bundle.
 
-Extensions in `src/extensions/` register Gutenberg filters:
+| File                                  | What it does                                           | Filter hook               |
+| ------------------------------------- | ------------------------------------------------------ | ------------------------- |
+| `generate-button-extension.tsx`       | "Generate Image" button in Image block placeholder     | `editor.MediaPlaceholder` |
+| `image-toolbar-extension.tsx`         | "Edit with AI" toolbar button on selected Image blocks | `editor.BlockEdit`        |
+| `external-media-source-extension.tsx` | Image Studio as external media source                  | `editor.MediaPlaceholder` |
 
-- Image block toolbar: "Edit with AI" button
-- Image placeholder: "Generate" button
-- External media modal: "Generate with AI" source
+- The `utils.ts` helper converts Image Studio's `ImageData` to the shape `onSelect` expects.
+- `any` types in these files are due to WordPress filter HOC signatures — no upstream types exist. If adding new extensions, follow the same pattern.
 
-### Provider Exports
+## Tracking (`src/utils/tracking.ts`)
 
-`src/provider/index.ts` exports `toolProvider` and `contextProvider` for `@automattic/agents-manager` integration.
+576 lines, 28+ exported functions. **31% test coverage** — the biggest gap in the package.
 
-## Key Files
+- **All events auto-prefixed**: `jetpack_big_sky_` (Jetpack) or `wpcom_big_sky_` (WP.com) based on `detectPlatform()`.
+- **Adding a new event**: Use `recordImageStudioEvent( name, properties )` — never call `recordTracksEvent` directly. The wrapper adds session ID, entry point, and platform prefix automatically.
+- **Session tracking**: Every event includes `session_id` from `src/utils/session.ts`.
+- **When adding features**: Check if a tracking function already exists before creating a new one. The file has granular helpers for most UI interactions (tool clicks, sidebar, generation, feedback, navigation, metadata).
 
-| File                                   | Purpose                                 |
-| -------------------------------------- | --------------------------------------- |
-| `src/index.tsx`                        | Main entry point, initialization        |
-| `src/store/index.ts`                   | Redux store (state, actions, selectors) |
-| `src/components/index.tsx`             | Main ImageStudio modal component        |
-| `src/abilities/update-canvas-image.ts` | AI agent -> UI image update             |
-| `src/provider/index.ts`                | agents-manager integration              |
-| `src/extensions/`                      | Block editor filters                    |
-| `src/utils/tracking.ts`                | Analytics event helper                  |
-| `src/utils/agent-config.ts`            | Agent setup and JWT auth                |
-| `src/types/index.ts`                   | Core TypeScript types                   |
+## Client Context (`src/utils/client-context.ts`)
 
-## File Organization
+Builds the context object the AI agent receives. **0% test coverage.** This determines what the agent knows about the current state.
 
-```
-src/
-├── index.tsx              # Entry point & initialization
-├── store/                 # WordPress data store (single file)
-├── components/            # React components (each in own directory)
-│   └── styles/            # Shared SCSS variables and mixins
-├── hooks/                 # Custom React hooks (feature logic)
-├── abilities/             # WordPress Abilities API handlers
-├── extensions/            # Block editor filter registrations
-├── provider/              # agents-manager integration exports
-├── types/                 # TypeScript type definitions
-├── utils/                 # Utility functions
-└── assets/                # Style preset images (WebP)
-```
+- Reads from Image Studio store (current image, mode, metadata) and block editor store (page content, selected blocks).
+- `getPageContent()` walks the block tree to extract text content for contextual suggestions.
+- Changes here directly affect AI generation quality — test on sandbox with both Media Library and Block Editor entry points.
 
-## Conventions
+## Type Guards (`src/types/guards.ts`)
 
-- **Styling**: Dark theme, SCSS modules. Design tokens in `src/components/styles/_variables.scss`. Mixins in `_mixins.scss`.
-- **Tracking**: All analytics events prefixed with `jetpack_big_sky_`. Use `recordEvent()` from `src/utils/tracking.ts`.
-- **Hooks**: Feature logic is isolated into custom hooks in `src/hooks/`. Prefer composing hooks over adding logic to components.
-- **Types**: All types in `src/types/`. Enums for `ImageStudioMode`, `ImageStudioEntryPoint`, `ToolbarOption`, `MetadataField`.
-- **i18n**: Use `@wordpress/i18n` for all user-facing strings.
-- **Components**: Prefer `@wordpress/components` (Button, Modal, etc.) over custom UI primitives.
+306 lines of runtime validation at WordPress API boundaries. **0% test coverage.**
 
-## Before Making Changes
+- Every `is*` function validates data from `@wordpress/core-data` or REST API responses before use.
+- If you modify the types in `src/types/index.ts`, update the corresponding guard. A guard that doesn't match its type will silently reject valid data.
 
-1. Understand the store structure in `src/store/index.ts` before modifying state
-2. Check existing hooks in `src/hooks/` — the feature you need may already exist
-3. Run `yarn workspace @automattic/image-studio tsc --build --dry` to verify types compile
+## Conventions (Non-Obvious)
 
-## Code Patterns to Follow
+- **Prefer hooks over components** for feature logic. Keep components as thin renderers.
+- **Tracking**: See tracking section above. Use `recordImageStudioEvent()`, not the base function.
+- **Styling**: Use design tokens from `src/components/styles/_variables.scss`.
+- **Prefer `@wordpress/components`** for standard UI (Button, Modal) over custom primitives, except annotation canvas.
+- **Types**: Shared types in `src/types/index.ts`. Use enums for fixed option sets. Runtime validation in `src/types/guards.ts`.
+- **Tests must be TypeScript**: Use `.test.ts`/`.test.tsx`, not `.test.js`. (Two legacy `.test.js` files exist — don't add more.)
 
-**State changes**: Add new state, actions, and selectors to `src/store/index.ts`. Do not create separate store files.
+## Error Handling
 
-**New features**: Extract logic into a custom hook in `src/hooks/`. Keep components thin — they should render UI and delegate to hooks.
+- **Notices**: Use store `setError()` action + `use-image-studio-message-display.ts` hook to display user-facing errors.
+- **Console logging**: Log errors to console for debugging. Store error state in `src/store/index.ts`.
+- **API failures**: Hooks should handle failed API calls gracefully and dispatch error actions to store.
 
-**New components**: Place in `src/components/<component-name>/` with `index.tsx` and `style.scss`. Use `@wordpress/components` for primitives (Button, Modal, TextControl, etc.).
+## Entry Points
 
-**Styling**: Use SCSS. Import variables from `../styles/variables`. Follow the dark theme color scheme. The modal uses `$color-background: #1e1e1e` and `$color-foreground: #fff`.
+Image Studio has multiple entry points defined in `ImageStudioEntryPoint` enum (`src/types/index.ts`). Each affects modal behavior and feature availability. See `src/index.tsx:openImageStudioModal()` for initialization logic per entry point.
 
-**Types**: Add to `src/types/index.ts` for shared types. Use enums for fixed option sets.
+## Debugging Cross-Bundle
 
-**Analytics**: Use `recordEvent( 'event_name', props )` from `src/utils/tracking.ts`. All events are auto-prefixed with `jetpack_big_sky_`.
+- **Store inspection**: Image Studio runs in a separate bundle. Inspect store state via browser console when debugging.
+- **Symptom**: Buttons render but modal doesn't open → check if store bridge is working.
+- **Symptom**: Save dispatches but editor doesn't update → verify extension filter registrations in `src/extensions/`.
 
-**i18n**: All user-facing strings must use `__()` or `_n()` from `@wordpress/i18n`.
+## Build & Test
 
-## Testing
-
-### What agents can run autonomously
-
-| Test       | Command                                                                         | Needs sandbox? |
-| ---------- | ------------------------------------------------------------------------------- | -------------- |
-| Unit tests | `yarn jest packages/image-studio --config packages/image-studio/jest.config.js` | No             |
-| Type check | `yarn workspace @automattic/image-studio tsc --build --dry`                     | No             |
-
-Always run both before creating a PR.
-
-### Unit tests
-
-- Write unit tests for new hooks and utility functions
-- Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`
-- Use `@testing-library/react` for hook tests via `renderHook`
-- Mock `@wordpress/data` store interactions in tests
-
-### UI testing (requires dev assistance)
-
-Image Studio is bundled in `agents-manager` and served from `widgets.wp.com`. There is no local dev server — **visual testing requires a sandbox**.
-
-**Prerequisites (dev must set up):**
-
-1. Sandbox `widgets.wp.com` — dev confirms sandbox is active
-2. Run `cd apps/agents-manager && yarn dev --sync` — syncs build to sandbox
-3. Log in to test site manually — agent cannot authenticate
-
-**Once prerequisites are met**, agents can use MCP Playwright tools for smoke testing:
-
-- Navigate to the test site
-- Open Image Studio (click image → "Edit with AI" or use Generate mode)
-- Verify modal opens, UI renders correctly, changes apply
-- See `.agents/skills/ui-testing/SKILL.md` for full MCP tool reference and flows
-
-**Without a sandbox**, agents cannot do UI testing. Focus on unit tests, type checks, and build verification instead.
-
-## Build & Verify
+See [README.md](README.md) for all commands. Quick reference:
 
 ```bash
-# Initial setup (run once from repo root)
-yarn install
-
-# Type check
-yarn workspace @automattic/image-studio tsc --build --dry
-
-# Run tests (from repo root)
-yarn jest packages/image-studio --config packages/image-studio/jest.config.js
-
-# Deploy to sandbox (builds image-studio as part of agents-manager bundle)
-cd apps/agents-manager
-yarn dev --sync
+yarn build && yarn test && yarn lint && yarn typecheck  # Full validation (run before submitting)
 ```
 
-## Deployment
+Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
-Deployed as part of the `agents-manager` bundle to `widgets.wp.com`. PHP in `jetpack plugins` enqueues the scripts on relevant admin screens.
+**Coverage gaps to be aware of** (test manually if modifying):
 
-## Common Pitfalls
-
-- **Store non-serializable values**: `onCloseCallback` and `annotationCanvasRef` are intentionally non-serializable in the store. Don't try to "fix" this.
-- **Draft cleanup**: Never delete the original attachment or saved attachments. Only drafts are cleaned up on exit. See `use-draft-cleanup.ts`.
-- **Abilities API**: Changes to `update-canvas-image` affect the AI agent contract. Coordinate with the backend agent team.
-- **Cross-bundle communication**: Image Studio runs in a separate bundle from the block editor. The store is the bridge. Don't assume direct component access.
-- **Asset imports**: WebP style preset images in `src/assets/` are copied during build. Update the build script if adding new asset types.
+- `utils/tracking.ts` — 31% statements
+- `abilities/update-canvas-image.ts` — 0%
+- `utils/client-context.ts` — 0%
+- `types/guards.ts` — 0%
 
 ## PR Guidelines
 
-- Reference the Linear issue ID in the PR title
-- Include before/after screenshots for any UI changes
-- Test in both Edit and Generate modes if the change affects shared components
-- Test in Media Library and Block Editor contexts
+- Reference Linear issue ID in title
+- Before/after screenshots for UI changes
+- Test in both Edit and Generate modes for shared components
 
-## Manual Browser Testing
-
-Verify the image generation flow on the user's sandboxed site using Playwright MCP and DON'T use playwright-test. If the user has not provided a test site URL, ask them for one before proceeding.
-
-### Rules
-
-- Prefer `browser_evaluate` over screenshots or snapshots for verifying page state and interacting with elements.
-- Prefer `browser_wait_for` over polling or sleeping when waiting for content.
-- Only use screenshots as a last resort when debugging failures.
-
-### Testing Steps
-
-1. Navigate to `/wp-admin/upload.php` on the test site and verify the Media Library loaded
-2. Click the "Generate Image" button to open the generation UI
-3. Enter an image prompt (e.g. "A sunset over a mountain lake") in the prompt text field
-4. Click the Generate/Submit button and wait for the image to be generated
-5. Verify the generated image is displayed
+**Last updated**: 2026-03-02

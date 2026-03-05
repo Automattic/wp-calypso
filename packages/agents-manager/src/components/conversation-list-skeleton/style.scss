@@ -1,5 +1,4 @@
 @import '../../styles/animations.scss';
-@import '../../styles/mixins.scss';
 
 .agents-manager-conversation-list-skeleton {
 	width: 100%;
@@ -9,8 +8,8 @@
 		gap: 8px;
 		align-items: center;
 		padding: 10px 0;
-		border-top: 1px solid #ebebeb;
-		border-bottom: 1px solid #ebebeb;
+		border-top: 1px solid var(--color-muted);
+		border-bottom: 1px solid var(--color-muted);
 		margin-bottom: -1px;
 		width: 100%;
 		pointer-events: none;
@@ -19,7 +18,7 @@
 	&__avatar,
 	&__title,
 	&__subtitle {
-		background-color: rgba( 0, 0, 0, 0.08 );
+		background-color: color-mix(in srgb, var(--color-foreground) 10%, transparent);
 	}
 
 	&__avatar {
@@ -52,20 +51,5 @@
 		width: 40%;
 		animation: skeleton-pulse 1.5s ease-in-out infinite;
 		animation-delay: 0.2s;
-	}
-}
-
-// Dark theme overrides for the docked chat
-@include docked-chat-without-modal {
-	.agents-manager-conversation-list-skeleton {
-		&__item {
-			border-color: #464646;
-		}
-
-		&__avatar,
-		&__title,
-		&__subtitle {
-			background-color: rgba( 255, 255, 255, 0.1 );
-		}
 	}
 }

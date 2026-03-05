@@ -267,7 +267,6 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
-					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
 				<AgentsManagerLoader
 					sectionName={ this.props.sectionName }

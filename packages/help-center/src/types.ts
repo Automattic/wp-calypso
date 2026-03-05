@@ -73,7 +73,6 @@ export interface SupportTicket {
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
-	is_presales_chat_open: boolean;
 	is_precancellation_chat_open: boolean;
 	force_email_support: boolean;
 	force_email_support_test: boolean;
@@ -84,17 +83,6 @@ interface Eligibility {
 	is_user_eligible: boolean;
 	is_chat_restricted: boolean;
 	wapuu_assistant_enabled: boolean;
-	support_level:
-		| 'free'
-		| 'personal'
-		| 'personal-with-legacy-chat'
-		| 'starter'
-		| 'premium'
-		| 'pro'
-		| 'business'
-		| 'ecommerce'
-		| 'jetpack-paid'
-		| 'p2-plus';
 	user_field_flow_name: string;
 	unified_agent_enabled?: boolean;
 }

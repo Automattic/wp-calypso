@@ -8,6 +8,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
@@ -98,7 +99,12 @@ function Emails() {
 
 	const renderContent = () => {
 		if ( hasNoDomains ) {
-			return <EmptyDomainsState />;
+			return (
+				<>
+					<EmptyDomainsState />
+					<PerformanceTrackerStop />
+				</>
+			);
 		}
 
 		if ( hasNoEmails ) {
@@ -114,6 +120,7 @@ function Emails() {
 						}
 					) }
 				>
+					<PerformanceTrackerStop />
 					<EmptyMailboxesStateContent />
 				</DataViewsEmptyStateLayout>
 			);
@@ -121,6 +128,7 @@ function Emails() {
 
 		return (
 			<DataViewsCard>
+				<PerformanceTrackerStop />
 				<DataViews
 					data={ filteredData }
 					fields={ emailFields }

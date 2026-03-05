@@ -54,7 +54,7 @@ export const Promo = ( { adminUrl, pluginInstallUrl, translate, siteId } ) => {
 		adminUrl || pluginInstallUrl || 'https://wordpress.org/plugins/jetpack-social';
 
 	const ctaButtonLabel = adminUrl
-		? translate( 'Enable Social sharing' )
+		? translate( 'Manage Jetpack Social' )
 		: translate( 'Get Started' );
 
 	return (
@@ -116,11 +116,7 @@ const getSocialAdminUrl = ( state, siteId ) => {
 		return undefined;
 	}
 
-	// Prefer Social over Jetpack.
-	const page = isSocialActive ? 'jetpack-social' : 'jetpack#/sharing';
-
-	// Use direct query params instead of URLSearchParams to avoid "#" getting encoded.
-	const parts = getUrlParts( siteAdminUrl + `admin.php?page=${ page }` );
+	const parts = getUrlParts( siteAdminUrl + 'admin.php?page=jetpack-social' );
 
 	return formatUrl( getUrlFromParts( parts ) );
 };

@@ -1,3 +1,4 @@
+import { EscalationButton } from '../components/escalation-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
@@ -21,6 +22,27 @@ export function convertToolMessagesToComponents( {
 		// @ts-expect-error -- 'assistant' comes from Big Sky messages
 		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
 			return [ message ];
+		}
+
+		// The user asked for human support
+		if (
+			message.content.find(
+				( content ) =>
+					content.type === 'data' &&
+					content.data?.flags &&
+					typeof content.data.flags === 'object' &&
+					'forward_to_human_support' in content.data.flags
+			)
+		) {
+			return {
+				...message,
+				content: [
+					{
+						type: 'component',
+						component: EscalationButton,
+					},
+				],
+			};
 		}
 
 		// The tool message is a JSON string. Try to parse it, falling back to the original if invalid
@@ -90,6 +112,24 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
+		// Handle support tool message by rendering its data as plain text
+		if (
+			textData.tool_id === 'big_sky__wordpress_com_support' &&
+			typeof textData.data === 'string'
+		) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'text' as const,
+							text: textData.data,
+						},
+					],
+				},
+			];
+		}
+
 		// Handle start over tool message
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
@@ -111,7 +151,7 @@ export function convertToolMessagesToComponents( {
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		// eslint-disable-next-line no-console
-		console.warn( `Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }

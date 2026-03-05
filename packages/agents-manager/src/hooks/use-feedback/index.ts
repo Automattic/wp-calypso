@@ -9,30 +9,41 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-interface UseFeedbackConfig {
+export interface UseFeedbackConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
 }
 
-interface UseFeedbackReturn {
+export interface UseFeedbackReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
 }
 
-async function rateMessage(
+export async function rateMessage(
 	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
 	rating: 'up' | 'down',
-	messageText?: string
+	messageText?: string,
+	metadata?: Record< string, string >
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
 
-	const body: Record< string, string > = { message_id: messageId, rating };
+	const body: {
+		message_id: string;
+		rating: 'up' | 'down';
+		message_text?: string;
+		metadata?: Record< string, string >;
+	} = { message_id: messageId, rating };
+
 	if ( messageText ) {
 		body.message_text = messageText;
+	}
+
+	if ( metadata ) {
+		body.metadata = metadata;
 	}
 
 	fetch( url, {
@@ -47,7 +58,7 @@ interface PreviousMessage {
 	text: string;
 }
 
-async function submitFeedback(
+export async function submitFeedback(
 	authProvider: AuthProvider,
 	sessionId: string,
 	messageId: string,
@@ -152,7 +163,7 @@ export default function useFeedback( {
 	registerMessageActions,
 	messages,
 }: UseFeedbackConfig ): UseFeedbackReturn {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, isLoggedIn } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
@@ -203,12 +214,17 @@ export default function useFeedback( {
 	}, [] );
 
 	useEffect( () => {
+		// Only register feedback actions for logged-in users.
+		if ( ! isLoggedIn ) {
+			return;
+		}
+
 		const feedbackManager = createFeedbackActions( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
 			icons: {
-				up: createElement( ThumbsUpIcon, { size: 24 } ),
-				down: createElement( ThumbsDownIcon, { size: 24 } ),
+				up: createElement( ThumbsUpIcon, { className: 'agents-manager-message-action-icon' } ),
+				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),
 			},
 		} );
 
@@ -227,7 +243,7 @@ export default function useFeedback( {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, sessionId ] );
+	}, [ registerMessageActions, handleFeedback, sessionId, isLoggedIn ] );
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );

@@ -16,7 +16,10 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"version": "1.0.0",
-	"sideEffects": false,
+	"sideEffects": [
+		"*.scss",
+		"*.css"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso.git",

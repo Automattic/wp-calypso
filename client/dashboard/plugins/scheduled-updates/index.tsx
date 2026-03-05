@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesNewRoute,
@@ -242,6 +243,7 @@ export default function PluginsScheduledUpdates() {
 				}
 			>
 				<DataViewsCard>
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						paginationInfo={ paginationInfo }
 						fields={ fields }

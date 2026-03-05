@@ -11,6 +11,8 @@ import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 export interface AgentsManagerContextType {
 	/** The current user object. */
 	currentUser?: CurrentUser;
+	/** Whether the current user is logged in. Derived from `currentUser.ID`. */
+	isLoggedIn: boolean;
 	/** The selected site object. */
 	site?: AgentsManagerSite | null;
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
@@ -31,6 +33,7 @@ export interface AgentsManagerContextType {
 
 const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
+	isLoggedIn: false,
 	site: null,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
@@ -67,10 +70,11 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	value,
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const isLoggedIn = value.currentUser?.ID !== undefined;
 
 	return (
 		<AgentsManagerContext.Provider
-			value={ { ...defaultContext, ...value, agentConfig, setAgentConfig } }
+			value={ { ...defaultContext, ...value, isLoggedIn, agentConfig, setAgentConfig } }
 		>
 			{ children }
 		</AgentsManagerContext.Provider>

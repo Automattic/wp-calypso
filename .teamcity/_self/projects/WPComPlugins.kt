@@ -190,6 +190,10 @@ object CalypsoApps: BuildType({
 			"""
 		}
 	}
+
+	failureConditions {
+		executionTimeoutMin = 12
+	}
 })
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {

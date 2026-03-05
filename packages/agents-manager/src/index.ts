@@ -21,3 +21,8 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+
+// Feedback exports
+export { default as useFeedback, submitFeedback, rateMessage } from './hooks/use-feedback';
+export type { UseFeedbackConfig, UseFeedbackReturn } from './hooks/use-feedback';
+export { default as FeedbackInput } from './components/feedback-input';

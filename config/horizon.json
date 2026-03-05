@@ -30,7 +30,6 @@
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
-		"dashboard/v2/paginated-site-list": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-transfer-redesign": true,
@@ -125,6 +124,7 @@
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
+		"themes/showcase-modern": false,
 		"themes/subscription-purchases": false,
 		"themes/universal-header": true,
 		"plugins/universal-header": true,
@@ -134,7 +134,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"wordpress-ai-assistant": false,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},

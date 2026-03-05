@@ -9,7 +9,7 @@
  * @param responseText - The raw text response from the AI model.
  * @returns The parsed JSON value, or null if no valid JSON could be extracted.
  */
-export function extractJsonFromModelResponse( responseText: string ): any | null {
+export function extractJsonFromModelResponse( responseText: string ): unknown {
 	// Try direct parse first
 	try {
 		return JSON.parse( responseText );
