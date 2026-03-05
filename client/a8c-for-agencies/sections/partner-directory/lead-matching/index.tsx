@@ -220,23 +220,29 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		return 'in-progress';
 	}, [ wasInitiallyComplete, hasSavedSuccessfully, completionStatus.isComplete ] );
 
-	// Get strapline based on progress
+	// Get strapline with progressive encouragement based on progress
 	const getProgressStrapline = () => {
-		const remaining = completionStatus.total - completionStatus.completed;
-		if ( completionStatus.completed === 0 ) {
-			return translate( 'Complete all sections to start receiving leads' );
+		const { completed, total } = completionStatus;
+
+		if ( completed === 0 ) {
+			return translate( 'Answer all questions to start receiving leads' );
 		}
-		if ( remaining > 3 ) {
-			return translate( '%(remaining)d sections left to unlock lead matching', {
-				args: { remaining },
+		if ( completed <= 4 ) {
+			return translate( 'Question %(completed)d of %(total)d', {
+				args: { completed, total },
 			} );
 		}
-		if ( remaining > 1 ) {
-			return translate( 'Just %(remaining)d more sections to go', {
-				args: { remaining },
+		if ( completed <= 6 ) {
+			return translate( 'Halfway there! Question %(completed)d of %(total)d', {
+				args: { completed, total },
 			} );
 		}
-		return translate( 'One more section to complete' );
+		if ( completed <= 9 ) {
+			return translate( 'Almost done! Question %(completed)d of %(total)d', {
+				args: { completed, total },
+			} );
+		}
+		return translate( 'One more question to go!' );
 	};
 
 	const submitForm = () => {
@@ -273,7 +279,7 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 								<Badge type="info-blue">{ translate( '1 step left' ) }</Badge>
 								<span className="partner-directory-lead-matching__status-text">
 									{ translate(
-										'All sections complete — click Save preferences to start receiving leads'
+										'All questions answered — click Save preferences to start receiving leads'
 									) }
 								</span>
 							</>
@@ -290,7 +296,7 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 										},
 									} )
 								) }
-								description={ translate( 'sections complete' ) as string }
+								description={ translate( 'questions answered' ) as string }
 								progressValue={ ( completionStatus.completed / completionStatus.total ) * 100 }
 							/>
 						) }
