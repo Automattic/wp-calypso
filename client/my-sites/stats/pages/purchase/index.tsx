@@ -174,7 +174,11 @@ const StatsPurchasePage = ( {
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
-						<PageHeader titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } } />
+						<PageHeader
+							titleProps={ {
+								subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
+							} }
+						/>
 						<StatsNavigation
 							selectedItem="traffic"
 							interval="day"

@@ -175,7 +175,11 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					<PageHeader titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } } />
+					<PageHeader
+						titleProps={ {
+							subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
+						} }
+					/>
 
 					{ ! canAccessAds && (
 						<EmptyContent

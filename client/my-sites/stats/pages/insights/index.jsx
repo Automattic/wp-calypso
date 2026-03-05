@@ -79,7 +79,9 @@ function StatsInsights( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				<PageHeader titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } } />
+				<PageHeader
+					titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
+				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
 					<div id="my-stats-content" className="stats-content">
