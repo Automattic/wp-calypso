@@ -196,18 +196,21 @@ class CancelPurchaseForm extends Component {
 			this.recordClickRadioEvent( 'radio_1_2', value );
 		}
 
+		const upsellFromType = getUpsellType( value, {
+			productSlug: purchase?.productSlug || '',
+			canRefund: !! parseFloat( this.getRefundAmount() ),
+			canDowngrade: !! downgradeClick,
+			canOfferFreeMonth:
+				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
+		} );
+		const hasSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 		const newState = {
 			...this.state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			upsell:
-				getUpsellType( value, {
-					productSlug: purchase?.productSlug || '',
-					canRefund: !! parseFloat( this.getRefundAmount() ),
-					canDowngrade: !! downgradeClick,
-					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
-				} ) || '',
+			upsell: upsellFromType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		};
 		this.setState( newState );
 	};
