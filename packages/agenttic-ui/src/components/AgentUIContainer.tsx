@@ -337,15 +337,13 @@ export function AgentUIContainer( {
 
 	// Handle message submission (for button clicks)
 	const handleSubmit = useCallback( async () => {
-		if ( input.value.trim() ) {
-			const message = input.value.trim();
-			input.clear();
-			if ( chat.state !== 'expanded' ) {
-				onExpand?.();
-			}
-			chat.setState( 'expanded' );
-			await onSubmit( message );
+		const message = input.value.trim();
+		input.clear();
+		if ( chat.state !== 'expanded' ) {
+			onExpand?.();
 		}
+		chat.setState( 'expanded' );
+		await onSubmit( message );
 	}, [ input, onSubmit, chat, onExpand ] );
 
 	// Handle expand (go to expanded state)
