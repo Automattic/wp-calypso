@@ -7,7 +7,7 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src", "src/*.json", "types" ],
+	"include": [ "src", "src/*.json", "types", "../zendesk-client/src/types/smooch.d.ts" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
 		{ "path": "../state-utils" },
