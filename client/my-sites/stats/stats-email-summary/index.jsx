@@ -76,7 +76,6 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		title: navigationItems[ 1 ].label,
 		// Remove the default logo for Odyssey stats.
 		titleLogo: null,
-		subtitle: null,
 	};
 
 	const downloadCsvElement = shouldGateCsvDownloads ? (

@@ -432,7 +432,7 @@ class StatsSummary extends Component {
 				<div className="stats stats-summary-view">
 					<PageHeader
 						className="stats__section-header modernized-header"
-						titleProps={ { title, titleLogo: null, subtitle: null } }
+						titleProps={ { title, titleLogo: null } }
 						backLinkProps={ {
 							url: lastScreen.url,
 							text: lastScreen.text,

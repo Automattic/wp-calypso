@@ -175,7 +175,7 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					<PageHeader />
+					<PageHeader showTagline />
 
 					{ ! canAccessAds && (
 						<EmptyContent

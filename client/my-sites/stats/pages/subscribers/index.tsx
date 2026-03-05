@@ -139,7 +139,7 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className={ subscribersPageClasses }>
-				<PageHeader />
+				<PageHeader showTagline />
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }

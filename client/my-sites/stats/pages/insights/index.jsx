@@ -78,7 +78,7 @@ function StatsInsights( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				<PageHeader />
+				<PageHeader showTagline />
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
 					<div id="my-stats-content" className="stats-content">

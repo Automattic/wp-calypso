@@ -173,7 +173,7 @@ const StatsPurchasePage = ( {
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
-						<PageHeader />
+						<PageHeader showTagline />
 						<StatsNavigation
 							selectedItem="traffic"
 							interval="day"

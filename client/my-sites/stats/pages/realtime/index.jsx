@@ -115,7 +115,7 @@ function StatsRealtime( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
-				<PageHeader />
+				<PageHeader showTagline />
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<StatsRealtimeHeader />
 				<AsyncLoad
