@@ -221,7 +221,7 @@ export class CartCheckoutPage {
 		number | string
 	> {
 		const totalAmountLocator = this.page.locator( selectors.totalAmount );
-		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
+		await totalAmountLocator.waitFor( { state: 'attached', timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();
 		if ( rawString ) {

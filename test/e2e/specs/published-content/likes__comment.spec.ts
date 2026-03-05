@@ -21,13 +21,13 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 		},
 	] );
 
-	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
-		const testAccount = new TestAccount( accountName );
-		const restAPIClient = new RestAPIClient( testAccount.credentials );
-		let newPost: PostResponse;
-		let commentToBeLiked: NewCommentResponse;
-		let commentToBeUnliked: NewCommentResponse;
+	const testAccount = new TestAccount( accountName );
+	const restAPIClient = new RestAPIClient( testAccount.credentials );
+	let newPost: PostResponse;
+	let commentToBeLiked: NewCommentResponse;
+	let commentToBeUnliked: NewCommentResponse;
 
+	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
 		await test.step( 'Setup the test', async () => {
 			const postContent =
 				'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
@@ -90,15 +90,15 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 			}
 			await commentsComponent.unlike( commentToBeUnliked.raw_content );
 		} );
+	} );
 
-		test.afterAll( async () => {
-			if ( ! newPost ) {
-				return;
-			}
-			await restAPIClient.deletePost(
-				testAccount.credentials.testSites?.primary.id as number,
-				newPost.ID
-			);
-		} );
+	test.afterAll( async () => {
+		if ( ! newPost ) {
+			return;
+		}
+		await restAPIClient.deletePost(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID
+		);
 	} );
 } );

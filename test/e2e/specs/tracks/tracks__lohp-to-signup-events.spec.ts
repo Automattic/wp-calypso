@@ -7,7 +7,8 @@ test.describe(
 	DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' ),
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
-		test( 'Loading LOHP fires wpcom_page_view event', async ( { page } ) => {
+		test( 'Loading LOHP fires wpcom_page_view event', async ( { pageIncognito } ) => {
+			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
 			tracksEventManager.init();
 
@@ -16,7 +17,8 @@ test.describe(
 			expect( await didEventFirePromise ).toBe( true );
 		} );
 
-		test( 'Clicking link on LOHP fires wpcom_homepage_link_click', async ( { page } ) => {
+		test( 'Clicking link on LOHP fires wpcom_homepage_link_click', async ( { pageIncognito } ) => {
+			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
 			tracksEventManager.init();
 
@@ -28,8 +30,9 @@ test.describe(
 		} );
 
 		test( 'Anon ids in page view events match when navigating from LOHP to Calypso signup', async ( {
-			page,
+			pageIncognito,
 		} ) => {
+			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
 			tracksEventManager.init();
 
