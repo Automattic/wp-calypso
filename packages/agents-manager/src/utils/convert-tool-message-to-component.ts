@@ -1,3 +1,4 @@
+import { EscalationButton } from '../components/escalation-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
@@ -21,6 +22,27 @@ export function convertToolMessagesToComponents( {
 		// @ts-expect-error -- 'assistant' comes from Big Sky messages
 		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
 			return [ message ];
+		}
+
+		// The user asked for human support
+		if (
+			message.content.find(
+				( content ) =>
+					content.type === 'data' &&
+					content.data?.flags &&
+					typeof content.data.flags === 'object' &&
+					'forward_to_human_support' in content.data.flags
+			)
+		) {
+			return {
+				...message,
+				content: [
+					{
+						type: 'component',
+						component: EscalationButton,
+					} as any,
+				],
+			};
 		}
 
 		// The tool message is a JSON string. Try to parse it, falling back to the original if invalid

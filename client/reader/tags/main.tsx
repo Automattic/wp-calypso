@@ -18,7 +18,7 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	return (
-		<ReaderMain className="tags__main">
+		<ReaderMain className="tags__main" wideLayout>
 			{ isLoggedIn && (
 				<NavigationHeader
 					title={ translate( 'Popular Tags' ) }

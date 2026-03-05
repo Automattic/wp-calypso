@@ -20,6 +20,7 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		courses: true,
 		productUpdates: true,
 		feedback: true,
+		supportGuidesUrl: null,
 	},
 	contactForm: {
 		variant: 'standard',
@@ -46,6 +47,7 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		courses: true,
 		productUpdates: true,
 		feedback: false,
+		supportGuidesUrl: null,
 	},
 	contactForm: {
 		variant: 'a4a',
@@ -72,6 +74,7 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 		courses: false,
 		productUpdates: false,
 		feedback: true,
+		supportGuidesUrl: 'https://ciabattasupportguides.wpcomstaging.com/',
 	},
 	contactForm: {
 		variant: 'standard',

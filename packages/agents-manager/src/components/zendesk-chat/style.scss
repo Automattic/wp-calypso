@@ -1,3 +1,31 @@
 .agents-manager-typing-placeholder {
 	margin-inline-start: -1em;
 }
+
+.agents-manager-transfer-message {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1em;
+	opacity: 0.7;
+
+	&::before {
+		display: block;
+		content: '';
+		height: 1px;
+		background: #ccc;
+		flex: 1;
+	}
+	&::after {
+		display: block;
+		content: '';
+		height: 1px;
+		background: #ccc;
+		flex: 1;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+}

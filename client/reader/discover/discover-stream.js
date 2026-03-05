@@ -33,9 +33,7 @@ const DiscoverStream = ( props ) => {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
-				<div className="reader__content">
-					<AddSubscriptionForm type={ selectedTab } />
-				</div>
+				<AddSubscriptionForm type={ selectedTab } />
 			</ReaderMain>
 		);
 	}

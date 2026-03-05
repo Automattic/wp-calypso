@@ -1116,6 +1116,10 @@ export default function PurchaseSettings() {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
 		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
+	const { data: domain } = useQuery( {
+		...domainQuery( purchase.meta ?? '' ),
+		enabled: Boolean( purchase.meta ) && purchase.is_domain,
+	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
@@ -1233,7 +1237,8 @@ export default function PurchaseSettings() {
 					{ site &&
 						( site.options?.is_domain_only &&
 						purchase.is_domain &&
-						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ? (
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+						domain?.can_transfer_to_other_site ? (
 							<OverviewCard
 								icon={ <Icon icon={ layout } /> }
 								title={ __( 'Attach to a site' ) }

@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
@@ -401,10 +402,10 @@ const NewsletterSettings = () => {
 
 	return (
 		<Main wideLayout className="site-settings">
-			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
+			<DocumentHead title="Jetpack Newsletter" />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Newsletter Settings' ) }
+				title={ <JetpackTitle title={ translate( 'Newsletter' ) } /> }
 				subtitle={ translate(
 					'Transform your blog posts into newsletters to easily reach your subscribers.'
 				) }

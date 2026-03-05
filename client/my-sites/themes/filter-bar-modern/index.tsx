@@ -1,3 +1,4 @@
+import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -5,7 +6,8 @@ import { InView } from 'react-intersection-observer';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
-
+import { DEFAULT_STATIC_FILTER } from 'calypso/state/themes/constants';
+import { constructThemeShowcaseUrl } from '../helpers';
 import './style.scss';
 
 interface Category {
@@ -50,9 +52,17 @@ const FilterBarModern = ( {
 			categories.map( ( category ) => ( {
 				id: category.key,
 				label: category.text,
-				link: '#',
+				link: constructThemeShowcaseUrl( {
+					tier: selectedTier,
+					category: category.key,
+					search: searchQuery,
+					isLoggedIn: false,
+				} ),
+				...( category.key === DEFAULT_STATIC_FILTER && {
+					icon: <Icon icon={ starEmpty } size={ 26 } />,
+				} ),
 			} ) ),
-		[ categories ]
+		[ categories, searchQuery, selectedTier ]
 	);
 
 	const handleCategorySelect = useCallback(

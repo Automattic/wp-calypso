@@ -2,17 +2,11 @@ import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import bigSkySvg from '../../assets/big-sky.svg';
 import { hasAiMention } from '../../utils/content';
 
 export const MAX_RETRIES = 5;
 export const RETRY_DELAY_MS = 200;
-
-declare global {
-	interface Window {
-		bigSkyBlockNotes?: { enabled: boolean };
-		bigSkyInitialState?: { pluginUrl?: string };
-	}
-}
 
 /**
  * BlockNoteThinkingIndicator Component
@@ -38,7 +32,6 @@ function BlockNoteThinkingIndicator() {
 	 */
 	const applyThinkingIndicatorToThread = useCallback( ( threadContainer: Element ) => {
 		const threadId = threadContainer.id;
-		const pluginUrl = window.bigSkyInitialState?.pluginUrl || '/wp-content/plugins/big-sky-plugin';
 
 		// Find all notes in this thread
 		const noteComments = threadContainer.querySelectorAll(
@@ -73,7 +66,7 @@ function BlockNoteThinkingIndicator() {
 		const indicator = document.createElement( 'div' );
 		indicator.className = 'bigsky-thinking-indicator';
 		indicator.innerHTML = `
-				<img src="${ pluginUrl }/assets/big-sky.svg" width="14" height="14" alt="" />
+				<img src="${ bigSkySvg }" width="14" height="14" alt="" />
 				<span class="bigsky-thinking-text">${ __( 'Thinking…', 'big-sky' ) }</span>
 			`;
 

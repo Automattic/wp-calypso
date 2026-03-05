@@ -35,6 +35,8 @@ window.IntersectionObserver = jest.fn( () => ( {
 	unobserve: jest.fn(),
 } ) );
 
+Element.prototype.scrollBy = jest.fn();
+
 const themes = [
 	{
 		author: 'AudioTheme',

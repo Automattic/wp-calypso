@@ -107,6 +107,7 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		progressMessage,
 	} = useAgentChat( agentConfig! );
 
 	// Notify parent when message count changes
@@ -208,6 +209,31 @@ export default function OrchestratorChat( {
 		agentId,
 	} );
 
+	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.
+	useEffect( () => {
+		const handleInlineSuggestionClick = ( event: Event ) => {
+			const { value } = ( event as CustomEvent ).detail;
+			if ( value ) {
+				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
+				setInputValue( inputValue );
+
+				// Focus the textarea and set cursor position to end
+				const textarea = document.querySelector< HTMLTextAreaElement >(
+					'.agenttic .Textarea-module_textarea'
+				);
+				if ( textarea ) {
+					textarea.focus();
+					textarea.setSelectionRange( inputValue.length, inputValue.length );
+				}
+			}
+		};
+
+		window.addEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
+		return () => {
+			window.removeEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
+		};
+	}, [] );
+
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
@@ -295,6 +321,7 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
+			thinkingMessage={ progressMessage }
 			error={ error }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }

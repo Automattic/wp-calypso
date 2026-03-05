@@ -13,7 +13,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { scheduled, trash, copy } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
@@ -25,14 +24,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { parseScheduleValue, PREDEFINED_SCHEDULES } from './schedule-field';
+import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
+import { formatScheduleLabel, formatScheduleDescription } from './schedules';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
-
-function getScheduleLabel( schedule: string ): string {
-	const scheduleType = parseScheduleValue( schedule );
-	return PREDEFINED_SCHEDULES.find( ( s ) => s.value === scheduleType )?.label ?? '';
-}
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -95,24 +90,28 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			id: 'schedule',
 			label: __( 'Schedule' ),
 			getValue: ( { item }: { item: Crontab } ) => {
-				const label = getScheduleLabel( item.schedule );
-				const cronDescription = cronstrue.toString( item.schedule, {
-					verbose: true,
-					locale,
-				} );
-				return `${ label } ${ cronDescription } ${ item.schedule }`;
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
+
+				return `${ label } ${ description } ${ item.schedule }`;
 			},
 			render: ( { item }: { item: Crontab } ) => {
-				const cronDescription = cronstrue.toString( item.schedule, {
-					verbose: true,
-					locale,
-				} );
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
 
 				return (
 					<div>
-						<Text>{ getScheduleLabel( item.schedule ) }</Text>{ ' ' }
+						<Text>{ label }</Text>{ ' ' }
 						<Text variant="muted" size={ 12 }>
-							({ cronDescription })
+							({ description })
 						</Text>
 					</div>
 				);

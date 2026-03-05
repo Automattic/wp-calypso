@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { flatMap } from 'lodash';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getActiveTheme,
@@ -26,7 +25,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
 		if ( ! themesForQueryIgnoringPage ) {
 			return null;
 		}
@@ -44,15 +43,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			query.filter !== 'store' ||
 			( query.tier && premiumThemesEnabled )
 		);
-		// If query is default, filter out recommended themes.
-		if ( isDefaultQuery ) {
-			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, ( theme ) => theme.id );
-
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
-				( theme ) => ! themeIds.includes( theme.id )
-			);
-		}
 
 		// Set active theme to be the first theme in the array.
 		if ( selectedSiteId ) {

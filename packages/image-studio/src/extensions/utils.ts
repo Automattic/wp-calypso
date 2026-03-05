@@ -3,19 +3,24 @@ import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, select } from '@wordpress/data';
 import { transformAttachment } from '@wordpress/media-utils';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
-import { ImageStudioMode } from '../types';
+import {
+	type BlockEditorDispatch,
+	ImageStudioMode,
+	type MediaAttachment,
+	type MediaSelectCallback,
+} from '../types';
 import { type ImageData } from '../utils/get-image-data';
 
 interface HandleImageSelectionOptions {
 	image: ImageData | null;
-	onSelect: ( image: any ) => void;
+	onSelect: MediaSelectCallback;
 	multiple: boolean;
 }
 
 interface BlockContext {
 	name: string;
 	clientId?: string;
-	attributes?: Record< string, any >;
+	attributes?: Record< string, unknown >;
 	innerBlocks?: BlockContext[];
 }
 
@@ -45,13 +50,18 @@ export function handleImageSelection( {
 
 	// Fetch the full attachment record. ImageData lacks some fields like 'link' and 'sizes' that the image block uses.
 	const attachment = select( coreStore ).getEntityRecord( 'postType', 'attachment', image.id ) as
-		| Record< string, any >
+		| MediaAttachment
 		| undefined;
 
 	// Transform the attachment from the REST API format to block editor format.
 	// Maps REST API fields (alt_text, source_url, caption.raw, title.raw) to block editor fields (alt, caption, title, url).
 	if ( attachment ) {
-		const transformedAttachment = transformAttachment( attachment as any );
+		// transformAttachment expects RestAttachment which extends WP_REST_API_Attachment.
+		// MediaAttachment is a compatible subset, but the nominal types don't overlap,
+		// so we use a targeted cast through unknown.
+		const transformedAttachment = transformAttachment(
+			attachment as unknown as Parameters< typeof transformAttachment >[ 0 ]
+		);
 
 		onSelect( multiple ? [ transformedAttachment ] : transformedAttachment );
 	}
@@ -74,12 +84,14 @@ export function openImageStudioForBlock(
 	}
 
 	const { clientId } = imageBlock;
-	const attachmentId = imageBlock.attributes?.id;
+	const attachmentId = imageBlock.attributes?.id as number | undefined;
+
+	const blockEditorDispatch = dispatch( blockEditorStore ) as unknown as BlockEditorDispatch;
 
 	const handleClose = ( image: ImageData | null ) => {
 		if ( image === null ) {
 			// Image was deleted - clear the block's image reference
-			( dispatch( blockEditorStore ) as any ).updateBlockAttributes( clientId, {
+			blockEditorDispatch.updateBlockAttributes( clientId, {
 				url: undefined,
 				id: undefined,
 				alt: '',
@@ -90,7 +102,7 @@ export function openImageStudioForBlock(
 		}
 
 		if ( image?.id ) {
-			( dispatch( blockEditorStore ) as any ).updateBlockAttributes( clientId, {
+			blockEditorDispatch.updateBlockAttributes( clientId, {
 				url: image.url,
 				id: image.id,
 				alt: image.alt,
