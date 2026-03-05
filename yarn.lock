@@ -1647,7 +1647,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter":
+"@automattic/jest-circus-allure-reporter@workspace:^, @automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter":
   version: 0.0.0-use.local
   resolution: "@automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter"
   dependencies:
@@ -38247,6 +38247,7 @@ __metadata:
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
     "@playwright/browser-chromium": "npm:1.57.0"
