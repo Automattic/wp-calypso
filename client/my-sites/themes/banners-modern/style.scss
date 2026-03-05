@@ -1,0 +1,93 @@
+@import '@automattic/color-studio/dist/color-properties-rgb.css';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.ai-builder-banner {
+	background:
+		linear-gradient(
+			150deg,
+			rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
+			rgba( var( --studio-blue-50-rgb ), 0.8 ) 90%
+		),
+		url( ./background.png ) no-repeat bottom right / contain,
+		linear-gradient(
+			150deg,
+			rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
+			rgba( var( --studio-blue-50-rgb ), 1 ) 90%
+		);
+
+	border-radius: 8px;
+	grid-column: 1 / -1;
+	grid-row-start: 2;
+	margin-block: 24px;
+	max-width: 1220px;
+	overflow: hidden;
+	padding: 36px;
+	position: relative;
+
+	@include break-small {
+		padding: 96px 32px;
+	}
+}
+
+@keyframes ai-builder-banner-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	@keyframes ai-builder-banner-blink {
+		0%,
+		100% {
+			opacity: 1;
+		}
+	}
+}
+
+.ai-builder-banner__title {
+	color: var( --studio-gray-100 );
+	font-family: $brand-serif;
+	font-size: rem( 40px );
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+
+	&::after {
+		content: '';
+		margin-inline-start: 8px;
+		animation: ai-builder-banner-blink 1s step-end infinite;
+		border-right: 1px solid var( --studio-blue-50 );
+	}
+
+	@include break-small {
+		font-size: rem( 50px );
+		max-width: 50%;
+	}
+}
+
+.ai-builder-banner__description {
+	color: var( --studio-gray-80 );
+	font-size: $font-body-large;
+	line-height: 1.2;
+	margin-block-end: 24px;
+
+	@include break-small {
+		max-width: 50%;
+	}
+}
+
+.ai-builder-banner__button.components-button.is-primary {
+	--wp-components-color-accent: var( --studio-gray-80 );
+	--wp-components-color-accent-darker-10: var( --studio-gray-100 );
+	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
+
+	border-radius: 4px;
+	font-size: $font-body;
+	height: auto;
+	padding: 12px 24px;
+}
