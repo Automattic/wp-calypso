@@ -4,14 +4,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 	skipIfMailosaurLimitReached();
 
 	test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
-		pageDashboard,
 		pageDashboardVisibilitySettings,
 		pageIncognito,
 		sitePublic,
+		helperData,
+		page,
 	} ) => {
 		await test.step( "Given I am on my new public site's visibility settings page", async function () {
-			await pageDashboard.visitPath(
-				`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+			await page.goto(
+				helperData.getCalypsoURL(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+				)
 			);
 		} );
 
@@ -32,14 +35,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 	} );
 
 	test( 'As a new simple site user, I can set my site visibility to Coming Soon, so that others see a nice coming soon message', async ( {
-		pageDashboard,
 		pageDashboardVisibilitySettings,
 		pageIncognito,
 		sitePublic,
+		helperData,
+		page,
 	} ) => {
 		await test.step( "Given I am on my new public site's visibility settings page", async function () {
-			await pageDashboard.visitPath(
-				`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+			await page.goto(
+				helperData.getCalypsoURL(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+				)
 			);
 		} );
 
@@ -60,14 +66,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 	} );
 
 	test( 'As a new simple site user, I can set my site visibility to Public and discourage search engines, so that my content is less likely to show on search engines like Google', async ( {
-		pageDashboard,
-		pageDashboardVisibilitySettings,
 		pageIncognito,
+		pageDashboardVisibilitySettings,
 		sitePublic,
+		helperData,
+		page,
 	} ) => {
 		await test.step( "Given I am on my new public site's visibility settings page", async function () {
-			await pageDashboard.visitPath(
-				`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+			await page.goto(
+				helperData.getCalypsoURL(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
+				)
 			);
 		} );
 
