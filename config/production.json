@@ -30,6 +30,7 @@
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
 		"catch-js-errors": true,
+		"posthog-tracking": true,
 		"checkout/checkout-version": false,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,

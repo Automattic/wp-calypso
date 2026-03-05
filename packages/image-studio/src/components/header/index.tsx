@@ -60,7 +60,9 @@ export const Header = ( {
 }: HeaderProps ) => {
 	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } = useSelect(
 		( select ) => {
-			const selectors = select( imageStudioStore ) as any;
+			const selectors = select(
+				imageStudioStore
+			) as unknown as import('../../types/wordpress').CurriedImageStudioSelectors;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),

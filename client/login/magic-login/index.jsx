@@ -9,7 +9,12 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isGravPoweredOAuth2Client, isStudioAppOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isAndroidOAuth2Client,
+	isGravPoweredOAuth2Client,
+	isIosOAuth2Client,
+	isStudioAppOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -157,9 +162,10 @@ class MagicLogin extends Component {
 		} = this.props;
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
+		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A ) {
+			if ( isA4A || isMobileApp ) {
 				return null;
 			}
 			return (
@@ -206,7 +212,7 @@ class MagicLogin extends Component {
 						</a>
 					}
 				/>
-				{ ! oauth2Client && (
+				{ ! oauth2Client && ! isMobileApp && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"

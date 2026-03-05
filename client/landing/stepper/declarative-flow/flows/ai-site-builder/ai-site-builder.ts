@@ -262,9 +262,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( specId ) {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
-
 							if ( triggerBackendBuild ) {
-								window.location.replace( `${ siteURL }/wp-admin/` );
+								const ph = queryParams.get( '_ph' );
+								window.location.replace(
+									addQueryArgs( `${ siteURL }/wp-admin/`, {
+										...( ph && { _ph: ph } ),
+									} )
+								);
 							} else {
 								window.location.replace(
 									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`

@@ -1,4 +1,4 @@
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
 	__unstableAnimatePresence as AnimatePresence,
@@ -48,7 +48,7 @@ function ImageStudioAgentChat( {
 	mode,
 	onChatSubmit,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
@@ -195,7 +195,7 @@ const ImageStudioAgentUIComponent = ( {
 	onChatSubmit,
 	mode,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;

@@ -56,6 +56,22 @@ $sidebar-appearance-break-point: $break-medium;
 		}
 	}
 
+	.stats__section-header.calypso-navigation-header {
+		.calypso-navigation-header__title {
+			gap: 8px;
+		}
+
+		.calypso-navigation-header__title-logo {
+			padding: 0;
+			height: 20px;
+			width: 20px;
+		}
+
+		.calypso-navigation-header__title-text {
+			line-height: 20px;
+		}
+	}
+
 	.calypso-navigation-header,
 	.navigation-header {
 		margin-bottom: 0;

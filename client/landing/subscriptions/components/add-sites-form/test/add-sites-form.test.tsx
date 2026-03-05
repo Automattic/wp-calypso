@@ -29,7 +29,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'displays an error message with invalid URL', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		fireEvent.change( input, {
 			target: { value: 'not-a-url' },
@@ -42,7 +42,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'does not display an error message with valid URL', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		fireEvent.change( input, {
 			target: { value: 'https://www.valid-url.com' },
@@ -55,7 +55,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'does not display an error message when input field is empty and blurred', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		fireEvent.change( input, {
 			target: { value: '' },
@@ -66,23 +66,9 @@ describe( 'AddSitesForm', () => {
 		expect( screen.queryByText( 'Please enter a valid URL' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'displays a check icon when a valid URL is entered', () => {
-		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
-
-		fireEvent.change( input, {
-			target: { value: 'https://www.valid-url.com' },
-		} );
-
-		fireEvent.blur( input );
-
-		const checkIcon = screen.getByTestId( 'check-icon' );
-		expect( checkIcon ).toBeInTheDocument();
-	} );
-
 	test( 'disables the Add site button when an invalid URL is entered', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		fireEvent.change( input, {
@@ -96,7 +82,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'disables the Add site button immediately when typing invalid URL', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		fireEvent.change( input, { target: { value: 'not-a-valid-url' } } );
@@ -106,7 +92,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'enables the Add site button immediately when typing valid URL', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		fireEvent.change( input, { target: { value: 'https://example.com' } } );
@@ -123,7 +109,7 @@ describe( 'AddSitesForm', () => {
 
 	test( 'disables button when transitioning from valid to invalid URL', () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		fireEvent.change( input, { target: { value: 'https://example.com' } } );

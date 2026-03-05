@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -46,7 +46,7 @@ const AddSitesButton = () => {
 				onClick={ handleClick }
 				href={ isDiscoverV3Enabled() && isEmailVerified ? '/reader/new' : undefined }
 			>
-				<Gridicon className="subscriptions-add-sites__button-icon" icon="plus" size={ 24 } />
+				<Icon className="subscriptions-add-sites__button-icon" icon={ plus } />
 				<span className="subscriptions-add-sites__button-text">
 					{ translate( 'New subscription' ) }
 				</span>
