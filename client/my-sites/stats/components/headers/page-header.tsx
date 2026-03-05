@@ -13,7 +13,7 @@ function PageHeader( { titleProps, ...otherProps }: HeaderProps ) {
 			className="stats__section-header modernized-header"
 			titleProps={ {
 				title: STATS_PRODUCT_NAME,
-				titleLogo: <JetpackLogo size={ 24 } monochrome={ false } />,
+				titleLogo: <JetpackLogo size={ 20 } monochrome={ false } />,
 				subtitle: statsTagline,
 				...titleProps,
 			} }

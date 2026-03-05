@@ -81,7 +81,7 @@
 		color: var(--wp-components-color-gray-900, $gray-900);
 		display: flex;
 		align-items: center;
-		gap: 12px;
+		gap: 8px;
 		line-height: 1.2;
 		min-height: 32px;
 
@@ -91,16 +91,17 @@
 	}
 
 	&__title-logo {
-		padding: 4px;
-		display: flex;
-		align-items: center;
-		height: 24px;
-		width: 24px;
+		height: 20px;
+		width: 20px;
 
 		img, svg {
 			max-height: 100%;
 			width: auto;
 		}
+	}
+
+	&__title-text {
+		line-height: 20px;
 	}
 
 	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
