@@ -137,9 +137,7 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync(
-				`${ quotedPath( phpcbfPath ) } --standard=apps/phpcs.xml ${ toPHPCBF.join( ' ' ) }`
-			);
+			execSync( `${ quotedPath( phpcbfPath ) } --standard=WordPress ${ toPHPCBF.join( ' ' ) }` );
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -199,14 +197,10 @@ if ( toEslint.length ) {
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync(
-			quotedPath( phpcsPath ),
-			[ '--standard=apps/phpcs.xml', ...toPHPCS ],
-			{
-				shell: true,
-				stdio: 'inherit',
-			}
-		);
+		const lintResult = spawnSync( quotedPath( phpcsPath ), [ '--standard=WordPress', ...toPHPCS ], {
+			shell: true,
+			stdio: 'inherit',
+		} );
 
 		if ( lintResult.status ) {
 			linterFailure();
