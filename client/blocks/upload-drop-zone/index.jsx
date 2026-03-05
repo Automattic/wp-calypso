@@ -38,7 +38,7 @@ class UploadDropZone extends Component {
 
 		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
 			if ( this.props.onFileTooLarge ) {
-				this.props.onFileTooLarge( file );
+				this.props.onFileTooLarge();
 			} else {
 				this.props.errorNotice(
 					translate( 'Zip file is too large. Please upload a file under %(maxSize)d MB.', {
