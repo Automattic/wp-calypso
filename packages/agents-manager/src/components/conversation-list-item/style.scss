@@ -1,27 +1,26 @@
-@import '../../styles/mixins.scss';
-
 .agents-manager-conversation-list-item {
 	display: flex;
 	gap: 8px;
 	align-items: center;
 	padding: 10px 0;
 	border: none;
-	border-top: 1px solid #464646;
-	border-bottom: 1px solid #464646;
+	border-top: 1px solid var(--color-muted);
+	border-bottom: 1px solid var(--color-muted);
 	margin-bottom: -1px;
 	width: 100%;
 	background: transparent;
 	text-align: left;
 	transition: background-color 0.2s ease;
 	cursor: pointer;
+	color: var(--color-foreground);
 
 	&:hover {
-		background-color: rgba( 0, 0, 0, 0.05 );
+		background-color: color-mix(in srgb, var(--color-foreground) 5%, transparent);
 	}
 
 	&:focus {
 		outline: none;
-		background-color: rgba( 0, 0, 0, 0.08 );
+		background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
 	}
 
 	&__text {
@@ -52,23 +51,5 @@
 		margin: 0;
 		opacity: 0.5;
 		white-space: nowrap;
-	}
-}
-
-// Dark theme overrides for the docked chat
-@include docked-chat-without-modal {
-	.agents-manager-conversation-list-item {
-		&:hover {
-			background-color: rgba( 255, 255, 255, 0.05 );
-		}
-
-		&:focus {
-			background-color: rgba( 255, 255, 255, 0.08 );
-		}
-
-		&__text,
-		&__title {
-			color: var( --color-foreground-inverted, #eff0f1 );
-		}
 	}
 }

@@ -64,7 +64,10 @@ export async function getImageData( attachmentId: number ): Promise< ImageData |
 		}
 
 		// Extract filename from URL
-		const filename = extractFilenameFromUrl( media.source_url, __( 'Untitled', 'big-sky' ) );
+		const filename = extractFilenameFromUrl(
+			media.source_url,
+			__( 'Untitled', __i18n_text_domain__ )
+		);
 
 		// Transform WordPress media entity to Image Studio format
 		return {

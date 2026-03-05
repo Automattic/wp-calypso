@@ -1,6 +1,7 @@
 export default function TumblrIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg
+			aria-label="Tumblr Icon"
 			fill="#35465c"
 			viewBox="0 0 256 256"
 			width={ iconSize }

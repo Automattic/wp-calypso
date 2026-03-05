@@ -64,11 +64,11 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns canTagSitesForCommission true when start_date is on or before cutoff (2025-08-11)', () => {
+	it( 'returns true and includes incentive tag when start_date is empty string', () => {
 		const agency = mockActiveAgency( {
 			third_party: {
 				pressable: {
-					usage: { start_date: '2025-08-11T00:00:00Z', end_date: null },
+					usage: { start_date: '', end_date: undefined },
 				},
 			},
 		} );
@@ -81,12 +81,13 @@ describe( 'useCanTagSitesForCommission', () => {
 		const { result } = renderHook( () => useCanTagSitesForCommission() );
 
 		expect( result.current.canTagSitesForCommission ).toBe( true );
-		expect( result.current.migrationTags ).toContain(
-			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026
-		);
+		expect( result.current.migrationTags ).toEqual( [
+			A4A_MIGRATED_SITE_TAG,
+			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
+		] );
 	} );
 
-	it( 'returns canTagSitesForCommission true when start_date is before cutoff', () => {
+	it( 'returns true when start_date is on or before cutoff (2025-08-10)', () => {
 		const agency = mockActiveAgency( {
 			third_party: {
 				pressable: {
@@ -109,11 +110,11 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns canTagSitesForCommission false when start_date is after cutoff', () => {
+	it( 'returns false when start_date is in gap (2025-08-11 to 2026-02-10)', () => {
 		const agency = mockActiveAgency( {
 			third_party: {
 				pressable: {
-					usage: { start_date: '2025-08-12', end_date: null },
+					usage: { start_date: '2025-08-11', end_date: null },
 				},
 			},
 		} );
@@ -129,11 +130,11 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 	} );
 
-	it( 'returns canTagSitesForCommission true when start_date is empty string', () => {
+	it( 'returns true when start_date is on or after promo start (2026-02-11)', () => {
 		const agency = mockActiveAgency( {
 			third_party: {
 				pressable: {
-					usage: { start_date: '', end_date: null },
+					usage: { start_date: '2026-02-11', end_date: null },
 				},
 			},
 		} );

@@ -1,8 +1,12 @@
+import { EscalationButton } from '../../components/escalation-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { convertToolMessagesToComponents } from '../convert-tool-message-to-component';
 import { isEditorPage } from '../is-editor-page';
 import type { UIMessage } from '@automattic/agenttic-client';
 
+jest.mock( '@automattic/components', () => ( {
+	SummaryButton: () => null,
+} ) );
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
@@ -122,6 +126,50 @@ describe( 'convertToolMessagesToComponents', () => {
 			type: 'component',
 			component: UnavailableToolMessage,
 			componentProps: { type: 'start-over' },
+		} );
+	} );
+
+	it( 'renders support tool message data as plain text', () => {
+		const supportText = 'Here is some help for your domain question.';
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: 'big_sky__wordpress_com_support',
+						tool_call_id: 'call_123',
+						data: supportText,
+					} ),
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: supportText,
+		} );
+	} );
+
+	it( 'returns EscalationButton when forward_to_human_support is set', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'Hello' },
+				{
+					type: 'data',
+					data: { flags: { forward_to_human_support: true } },
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: EscalationButton,
 		} );
 	} );
 

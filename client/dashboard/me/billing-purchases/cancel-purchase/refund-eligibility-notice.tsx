@@ -36,7 +36,7 @@ export default function RefundEligibilityNotice( {
 					refundAmount: <RefundAmountString purchase={ purchase } cancelBundledDomain={ false } />,
 				}
 			) }{ ' ' }
-			<Button variant="link" isDestructive onClick={ onClaimRefund }>
+			<Button variant="link" onClick={ onClaimRefund }>
 				{ __( 'Remove plan and claim refund' ) }
 			</Button>
 		</Notice>

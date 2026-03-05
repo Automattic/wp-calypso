@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-ui": "^0.1.44",
+		"@automattic/agenttic-ui": "^0.1.49",
 		"@automattic/api-core": "workspace:^",
 		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
@@ -62,6 +62,7 @@
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
+		"@automattic/posthog": "workspace:^",
 		"@automattic/react-virtualized": "^9.22.4",
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",

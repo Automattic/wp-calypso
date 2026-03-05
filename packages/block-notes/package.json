@@ -1,0 +1,71 @@
+{
+	"name": "@automattic/block-notes",
+	"version": "1.0.0",
+	"description": "Block Notes - AI-powered block commenting for WordPress.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.tsx",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/block-notes"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/agents-manager": "workspace:^",
+		"@automattic/agenttic-client": "^0.1.44",
+		"@automattic/calypso-analytics": "workspace:^",
+		"@wordpress/abilities": "^0.4.0",
+		"@wordpress/api-fetch": "^7.23.0",
+		"@wordpress/block-editor": "^14.23.0",
+		"@wordpress/core-data": "^7.23.0",
+		"@wordpress/editor": "^14.23.0",
+		"@wordpress/hooks": "^4.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"nanoid": "^3.3.11"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/react": "^15.0.0",
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.1",
+		"typescript": "^5.8.3"
+	},
+	"peerDependencies": {
+		"@automattic/calypso-router": "workspace:^",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/element": "^6.23.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"redux": "^5.0.1"
+	},
+	"private": true
+}

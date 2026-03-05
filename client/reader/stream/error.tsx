@@ -17,14 +17,14 @@ export const StreamError = ( { onTryAgain, streamKey }: StreamErrorProps ) => {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		recordTracksEvent( 'reader_stream_error', {
+		recordTracksEvent( 'calypso_reader_stream_error', {
 			stream_key: streamKey,
 			path: window.location.pathname,
 		} );
 	}, [ streamKey ] );
 
 	const handleTryAgain = () => {
-		recordTracksEvent( 'reader_stream_error_try_again', {
+		recordTracksEvent( 'calypso_reader_stream_error_try_again', {
 			stream_key: streamKey,
 			path: window.location.pathname,
 		} );

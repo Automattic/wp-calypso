@@ -22,6 +22,8 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
+import { useSelector } from 'calypso/state';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
@@ -47,6 +49,8 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
+
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
@@ -137,10 +141,10 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 						description={ translate(
 							'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
 						) }
-						disabled={ ! hasAvailableDevSites }
+						disabled={ ! hasAvailableDevSites || ! isAgencyApproved }
 						buttonProps={ {
 							onClick: () => {
-								if ( ! hasAvailableDevSites ) {
+								if ( ! hasAvailableDevSites || ! isAgencyApproved ) {
 									return;
 								}
 								if ( paymentMethodRequired ) {
@@ -153,6 +157,13 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 								setMenuVisible( false );
 							},
 						} }
+						tooltip={
+							! isAgencyApproved
+								? translate(
+										'Your agency is not yet approved. Please wait for approval before creating a development site.'
+								  )
+								: undefined
+						}
 					>
 						<div>
 							<div className="add-new-site-popover__count">

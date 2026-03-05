@@ -95,7 +95,8 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
-		const isCiab = useQuery().get( 'dashboard' ) === 'ciab';
+		const dashboard = useQuery().get( 'dashboard' ) || undefined;
+		const isCiab = dashboard === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -135,7 +136,11 @@ const domain: FlowV2< typeof initialize > = {
 					redirect_to: destination,
 					signup: 1,
 					cancel_to: new URL(
-						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						addQueryArgs( '/setup/domain', {
+							siteSlug,
+							redirect_to: redirectTo,
+							...( dashboard && { dashboard } ),
+						} ),
 						window.location.href
 					).href,
 				} )
@@ -183,7 +188,11 @@ const domain: FlowV2< typeof initialize > = {
 							redirect_to: redirectTo || defaultRedirect,
 							signup: 0,
 							cancel_to: new URL(
-								addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+								addQueryArgs( '/setup/domain', {
+									siteSlug,
+									redirect_to: redirectTo,
+									...( dashboard && { dashboard } ),
+								} ),
 								window.location.href
 							).href,
 						} )
@@ -326,6 +335,8 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_PICKER.slug: {
 					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
+						setSiteUrl( providedDependencies.siteSlug );
+
 						return navigate(
 							`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=${ providedDependencies.siteSlug }`
 						);
@@ -382,21 +393,7 @@ const domain: FlowV2< typeof initialize > = {
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
 					setProductCartItems( addOns );
 
-					if ( ! pickedPlan ) {
-						// Since we're removing the paid domain, it means that the user chose to continue
-						// with a free domain. Because signupDomainOrigin should reflect the last domain
-						// selection status before they land on the checkout page, this value can be
-						// 'free' or 'choose-later'
-						if ( signupDomainOrigin === 'choose-later' ) {
-							setSignupDomainOrigin( signupDomainOrigin );
-						} else {
-							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
-						}
-
-						if ( siteSlug ) {
-							return goToCheckout( siteSlug );
-						}
-					} else if ( siteSlug ) {
+					const addItemsToCartAndGoToCheckout = () => {
 						setPendingAction( async () => {
 							const aggregatedCartItems = [
 								...( pickedPlan ? [ pickedPlan ] : [] ),
@@ -418,6 +415,24 @@ const domain: FlowV2< typeof initialize > = {
 						} );
 
 						return navigate( STEPS.PROCESSING.slug );
+					};
+
+					if ( ! pickedPlan ) {
+						// Since we're removing the paid domain, it means that the user chose to continue
+						// with a free domain. Because signupDomainOrigin should reflect the last domain
+						// selection status before they land on the checkout page, this value can be
+						// 'free' or 'choose-later'
+						if ( signupDomainOrigin === 'choose-later' ) {
+							setSignupDomainOrigin( signupDomainOrigin );
+						} else {
+							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
+
+						if ( siteSlug ) {
+							return addItemsToCartAndGoToCheckout();
+						}
+					} else if ( siteSlug ) {
+						return addItemsToCartAndGoToCheckout();
 					}
 
 					setSignupCompleteFlowName( this.name );

@@ -1,10 +1,17 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SmoochLibrary from 'smooch';
+import { CSATForm } from './components/csat-form';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { ZendeskConversation } from './types';
 import {
@@ -12,7 +19,7 @@ import {
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
-import type { ZendeskMessage } from './types';
+import type { AgentticMessage, ZendeskMessage } from './types';
 
 type ConversationData = {
 	conversation: {
@@ -138,6 +145,7 @@ const playNotificationSound = () => {
 export const useManagedZendeskChat = () => {
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
+	const startedFromChatId = state?.startedFromChatId;
 	const [ conversation, setConversation ] = useState< ZendeskConversation | undefined >();
 	const [ typingStatus, setTypingStatus ] = useState< Record< string, boolean > >( {} );
 	const [ connectionStatus, setConnectionStatus ] = useState<
@@ -203,6 +211,8 @@ export const useManagedZendeskChat = () => {
 			Smooch.createConversation( {
 				metadata: {
 					createdAt: Date.now(),
+					started_from: 'chat',
+					chat_session_id: startedFromChatId,
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
@@ -210,33 +220,129 @@ export const useManagedZendeskChat = () => {
 				Smooch.loadConversation( conversation.id );
 			} );
 		}
-	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render ] );
+	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render, startedFromChatId ] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
+	const sendFeedbackMessage = useCallback(
+		( score: 'good' | 'bad' ) => {
+			if ( ! conversation?.id || ! Smooch ) {
+				return;
+			}
+
+			const text =
+				score === 'good'
+					? __( 'Good', '__i18n_text_domain__' )
+					: __( 'Needs improvement', '__i18n_text_domain__' );
+
+			const messageToSend = {
+				type: 'text',
+				text,
+				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
+				metadata: {
+					rated: true,
+				},
+			};
+
+			Smooch.sendMessage( messageToSend, conversation.id );
+		},
+		[ Smooch, conversation?.id ]
+	);
+
 	const agentticMessages = useMemo( () => {
-		const messages = conversation?.messages.map( convertZendeskMessageToAgentticFormat ) ?? [];
-		if ( currentTypingStatus ) {
-			return [
-				...messages,
-				{
-					id: 'thinking_message_' + messages.length,
+		const rawMessages = conversation?.messages ?? [];
+		const hasRated = rawMessages.some( ( msg ) => msg.metadata?.rated === true );
+
+		const messages = rawMessages.map( ( message ): AgentticMessage => {
+			const isCSAT =
+				message.source?.type === 'zd:surveys' && message.actions && message.actions.length > 0;
+
+			if ( isCSAT && ! hasRated ) {
+				const ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
+
+				return {
+					id: message.id || crypto.randomUUID(),
 					role: 'agent',
 					content: [
 						{
+							type: 'text',
+							text: __(
+								'Please help us improve. How would you rate your support experience?',
+								'__i18n_text_domain__'
+							),
+						},
+						{
 							type: 'component',
 							component: () => (
-								<div className="agents-manager-typing-placeholder">
-									<ThinkingMessage content={ __( 'Typing…', '__i18n_text_domain__' ) } />
-								</div>
+								<CSATForm ticketId={ ticketId } onSendFeedback={ sendFeedbackMessage } />
 							),
 						},
 					],
-				},
-			];
+					timestamp: message.received,
+					archived: false,
+					showIcon: true,
+					icon: message.avatarUrl,
+					disabled: false,
+				};
+			}
+
+			return convertZendeskMessageToAgentticFormat( message );
+		} );
+
+		if ( currentTypingStatus ) {
+			messages.push( {
+				id: 'thinking_message_' + messages.length,
+				role: 'agent',
+				timestamp: new Date().getTime() / 1000,
+				archived: false,
+				showIcon: true,
+				content: [
+					{
+						type: 'component',
+						component: () => (
+							<div className="agents-manager-typing-placeholder">
+								<ThinkingMessage content={ __( 'Typing…', '__i18n_text_domain__' ) } />
+							</div>
+						),
+					},
+				],
+			} );
+		}
+		if (
+			conversation?.metadata?.started_from === 'chat' &&
+			conversation?.metadata?.chat_session_id
+		) {
+			messages.unshift( {
+				id: 'transfer_message',
+				role: 'agent',
+				timestamp: new Date().getTime() / 1000,
+				archived: false,
+				showIcon: true,
+				content: [
+					{
+						type: 'component',
+						component: () => (
+							<div className="agents-manager-transfer-message">
+								<div>
+									{ createInterpolateElement(
+										__( 'Started from <a>another chat</a>', '__i18n_text_domain__' ),
+										{
+											a: (
+												<Link
+													to={ `/chat?sessionId=${ conversation?.metadata?.chat_session_id }` }
+												/>
+											),
+										}
+									) }
+								</div>
+							</div>
+						),
+					},
+				],
+			} );
 		}
 		return messages;
-	}, [ conversation, currentTypingStatus ] );
+	}, [ conversation, currentTypingStatus, sendFeedbackMessage ] );
 
 	useEffect( () => {
 		if ( Smooch ) {

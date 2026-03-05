@@ -201,6 +201,7 @@ function useRedirectOnTransactionSuccess( {
 	const isRenewal = firstPurchase?.isRenewal ?? false;
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
+	const blogId = firstPurchase?.blogId;
 	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
@@ -249,13 +250,21 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
+		// For siteless purchases where the pre-transaction redirect URL defaults to '/'
+		// (because the new site's ID was unknown before the transaction), use the
+		// receipt's blogId to redirect to the new site's thank-you page instead.
+		const effectiveRedirectTo =
+			( ! redirectTo || redirectTo === '/' ) && blogId && finalReceiptId
+				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }`
+				: redirectTo;
+
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
 			receiptId,
-			redirectTo,
+			redirectTo: effectiveRedirectTo,
 			siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
@@ -288,6 +297,7 @@ function useRedirectOnTransactionSuccess( {
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,
+		blogId,
 		orderId,
 		productName,
 		receiptId,

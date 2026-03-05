@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { createRef } from 'react';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { AlphabeticTagsResult, Tag } from './controller';
@@ -111,23 +110,19 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 
 	return (
 		<>
-			<div className="sticky-container">
-				<StickyPanel minLimit={ 0 }>
-					<div className="alphabetic-tags__header">
-						<h2>{ translate( 'Tags from A — Z' ) }</h2>
-						<div className="alphabetic-tags__tag-links">
-							{ Object.keys( tagTables ).map( ( letter: string ) => (
-								<Button
-									variant="link"
-									key={ 'alphabetic-tags-link-' + letter }
-									onClick={ () => scrollToLetter( letter ) }
-								>
-									{ letter }
-								</Button>
-							) ) }
-						</div>
-					</div>
-				</StickyPanel>
+			<div className="alphabetic-tags__header">
+				<h2>{ translate( 'Tags from A — Z' ) }</h2>
+				<div className="alphabetic-tags__tag-links">
+					{ Object.keys( tagTables ).map( ( letter: string ) => (
+						<Button
+							variant="link"
+							key={ 'alphabetic-tags-link-' + letter }
+							onClick={ () => scrollToLetter( letter ) }
+						>
+							{ letter }
+						</Button>
+					) ) }
+				</div>
 			</div>
 			<div ref={ tagsTableRef }>
 				{ Object.keys( tagTables ).map( ( letter: string ) => (

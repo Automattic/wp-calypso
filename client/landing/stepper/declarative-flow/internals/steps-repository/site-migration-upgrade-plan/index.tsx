@@ -1,18 +1,14 @@
-import {
-	PLAN_BUSINESS,
-	PLAN_MIGRATION_TRIAL_MONTHLY,
-	PlanSlug,
-	getPlan,
-	getPlanByPathSlug,
-} from '@automattic/calypso-products';
+import { PLAN_MIGRATION_TRIAL_MONTHLY, getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Step } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
+import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import MigrationPlansGrid from './migration-plans-grid';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -30,81 +26,48 @@ const SiteMigrationUpgradePlan: StepType< {
 		sendIntentWhenCreatingTrial?: boolean;
 		verifyEmail?: boolean;
 	};
-} > = ( { navigation, data } ) => {
+} > = ( { navigation } ) => {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const queryParams = useQuery();
-	const hideFreeMigrationTrialForNonVerifiedEmail =
-		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
 
-	const selectedPlanData = useSelectedPlanUpgradeQuery();
-	const selectedPlanPathSlug = selectedPlanData.data;
+	const handleUpgradeClick = useCallback(
+		( cartItems?: MinimalRequestCartProduct[] | null ) => {
+			const planCartItem = cartItems?.[ 0 ];
 
-	const plan = selectedPlanPathSlug
-		? getPlanByPathSlug( selectedPlanPathSlug )
-		: getPlan( PLAN_BUSINESS );
-
-	if ( ! siteItem || ! siteSlug || ! plan ) {
-		return;
-	}
-	const migrateFrom = queryParams.get( 'from' );
-
-	const goToCheckout = ( planSlug: PlanSlug ) => {
-		const plan = getPlan( planSlug );
-		navigation?.submit?.( {
-			goToCheckout: true,
-			plan: plan?.getPathSlug ? plan.getPathSlug() : '',
-		} );
-	};
-
-	const customTracksEventProps = {
-		from: migrateFrom,
-		has_source_site: migrateFrom !== '' && migrateFrom !== null,
-	};
-
-	const stepContent = (
-		<UpgradePlan
-			site={ siteItem }
-			ctaText={ translate( 'Upgrade and migrate' ) }
-			subTitleText=""
-			isBusy={ false }
-			hideTitleAndSubTitle
-			onCtaClick={ goToCheckout }
-			onFreeTrialClick={ () => {
-				navigation.submit?.( {
+			if ( planCartItem ) {
+				const plan = getPlan( planCartItem.product_slug as PlanSlug );
+				navigation?.submit?.( {
 					goToCheckout: true,
-					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-					sendIntentWhenCreatingTrial: true,
+					plan: plan?.getPathSlug ? plan.getPathSlug() : '',
 				} );
-			} }
-			navigateToVerifyEmailStep={ () => {
-				navigation.submit?.( { verifyEmail: true } );
-			} }
-			hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
-			trackingEventsProps={ customTracksEventProps }
-			visiblePlan={ plan.getStoreSlug() }
-			showVariants
-		/>
+			}
+		},
+		[ navigation ]
 	);
 
-	const headerText = translate( 'There is a plan for you' );
-	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+	const handleFreeTrialClick = useCallback( () => {
+		navigation.submit?.( {
+			goToCheckout: true,
+			plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+			sendIntentWhenCreatingTrial: true,
+		} );
+	}, [ navigation ] );
 
+	if ( ! siteItem || ! siteSlug ) {
+		return <Step.Loading />;
+	}
+
+	const headerText = translate( 'Pick a plan to start your migration' );
 	const subHeaderText = translate(
-		'A %(planName)s plan is needed for Migrations. Choose an option below to access our lightning-fast infrastructure for a faster, more reliable site.',
-		{
-			args: {
-				planName,
-			},
-		}
+		'Migrations are available on all paid plans. Choose the plan that best fits your needs.'
 	);
 
 	return (
 		<>
 			<DocumentHead title={ headerText } />
-			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+			<Step.WideLayout
 				topBar={
 					<Step.TopBar
 						leftElement={
@@ -113,10 +76,28 @@ const SiteMigrationUpgradePlan: StepType< {
 					/>
 				}
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
-				className="site-migration-upgrade-plan-v2"
+				className="site-migration-upgrade-plan"
 			>
-				{ stepContent }
-			</Step.CenteredColumnLayout>
+				<MigrationPlansGrid
+					siteId={ siteItem.ID }
+					onUpgradeClick={ handleUpgradeClick }
+					coupon={ queryParams.get( 'coupon' ) ?? undefined }
+				/>
+				<div className="site-migration-upgrade-plan__trial-section">
+					<p className="site-migration-upgrade-plan__trial-description">
+						{ translate(
+							'Not sure which plan is right for you? Try our 7-day trial to see how your site turns out.'
+						) }
+					</p>
+					<Button
+						className="site-migration-upgrade-plan__trial-button"
+						variant="secondary"
+						onClick={ handleFreeTrialClick }
+					>
+						{ translate( 'Try a free 7-day trial' ) }
+					</Button>
+				</div>
+			</Step.WideLayout>
 		</>
 	);
 };

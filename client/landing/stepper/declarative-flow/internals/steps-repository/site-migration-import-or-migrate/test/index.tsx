@@ -123,9 +123,12 @@ describe( 'Site Migration Import or Migrate Step', () => {
 	} );
 
 	it( 'shows the upgrade required badge when the site can not install plugins', () => {
+		( useSite as jest.Mock ).mockReturnValue( {
+			plan: { features: { active: [] } },
+		} );
 		render();
 
-		expect( screen.getByText( /Available on Business plan with 50% off/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Available on paid plans/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the included with your plan badge when the site can install plugins', () => {

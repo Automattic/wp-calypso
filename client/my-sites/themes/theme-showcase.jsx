@@ -22,6 +22,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -144,8 +145,12 @@ class ThemeShowcase extends Component {
 
 	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
 
+	isThemeShowcaseModern = () =>
+		config.isEnabled( 'themes/showcase-modern' ) && ! this.props.isLoggedIn;
+
 	getStaticFilters() {
 		const { translate } = this.props;
+		const isThemeShowcaseModern = this.isThemeShowcaseModern();
 		return {
 			MYTHEMES: {
 				key: STATIC_FILTERS.MYTHEMES,
@@ -156,7 +161,7 @@ class ThemeShowcase extends Component {
 			RECOMMENDED: {
 				key: STATIC_FILTERS.RECOMMENDED,
 				get text() {
-					return translate( 'Recommended' );
+					return isThemeShowcaseModern ? translate( 'Discover' ) : translate( 'Recommended' );
 				},
 			},
 			ALL: {
@@ -216,11 +221,16 @@ class ThemeShowcase extends Component {
 			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
 				return availableTiers;
 			}
+
+			const label = this.isThemeShowcaseModern()
+				? THEME_TIERS[ tier ].labelModern || THEME_TIERS[ tier ].label
+				: THEME_TIERS[ tier ].label;
+
 			return [
 				...availableTiers,
 				{
 					key: tier,
-					name: THEME_TIERS[ tier ].label,
+					name: label,
 				},
 			];
 		}, [] );
@@ -658,6 +668,9 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
+					search={ search }
+					onSearch={ this.doSearch }
+					onSearchTracksEvent={ this.recordSearchThemesTracksEvent }
 					isCollectionView={ isCollectionView }
 					noIndex={ isCollectionView }
 					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
@@ -685,58 +698,85 @@ class ThemeShowcase extends Component {
 									/>
 								</InView>
 							) }
-							<div
-								className={ clsx( 'themes__controls', {
-									'is-sticky': this.state.shouldThemeControlsSticky,
-								} ) }
-							>
-								<div className="theme__search-container">
-									<div className="theme__search">
-										<div className="theme__search-input">
-											<SearchThemes
-												query={ isLoggedIn ? filterString + search : featureStringFilter + search }
-												onSearch={ this.doSearch }
-												recordTracksEvent={ this.recordSearchThemesTracksEvent }
-											/>
+							{ this.isThemeShowcaseModern() ? (
+								<FilterBarModern
+									categories={ Object.values( tabFilters ) }
+									selectedCategory={ this.getSelectedTabFilter().key }
+									onCategorySelect={ ( category ) =>
+										this.onFilterClick(
+											Object.values( tabFilters ).find(
+												( tabFilter ) => tabFilter.key === category.key
+											)
+										)
+									}
+									tiers={ tiers }
+									selectedTier={ tier }
+									onTierSelect={ this.onTierSelectFilter }
+									searchQuery={ search }
+									onSearch={ this.doSearch }
+									showTierFilter={ !! tabFilters && premiumThemesEnabled && ! isMultisite }
+								/>
+							) : (
+								<div
+									className={ clsx( 'themes__controls', {
+										'is-sticky': this.state.shouldThemeControlsSticky,
+									} ) }
+								>
+									<div className="theme__search-container">
+										<div className="theme__search">
+											<div className="theme__search-input">
+												<SearchThemes
+													query={
+														isLoggedIn ? filterString + search : featureStringFilter + search
+													}
+													onSearch={ this.doSearch }
+													recordTracksEvent={ this.recordSearchThemesTracksEvent }
+												/>
+											</div>
+											{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+												<CustomSelectWrapper
+													className="theme__tier-select"
+													label={ translate( 'Filters' ) }
+													hideLabelFromVision
+													__next40pxDefaultSize
+													options={ tiers.map( ( t ) => {
+														return {
+															...t,
+															className: t.key === tier ? 'is-selected' : '',
+														};
+													} ) }
+													value={ {
+														key: tier,
+														name: translate( 'View: %s', {
+															args: this.getTiers().find( ( t ) => t.key === tier ).name,
+														} ),
+													} }
+													onChange={ this.onTierSelectFilter }
+												/>
+											) }
 										</div>
-										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-											<CustomSelectWrapper
-												className="theme__tier-select"
-												label={ translate( 'Filters' ) }
-												hideLabelFromVision
-												__next40pxDefaultSize
-												options={ tiers.map( ( t ) => {
-													return { ...t, className: t.key === tier ? 'is-selected' : '' };
-												} ) }
-												value={ {
-													key: tier,
-													name: translate( 'View: %s', {
-														args: this.getTiers().find( ( t ) => t.key === tier ).name,
-													} ),
-												} }
-												onChange={ this.onTierSelectFilter }
+									</div>
+									<div
+										className={ clsx( 'themes__filters', {
+											'is-woo-express': isSiteWooExpress,
+										} ) }
+									>
+										{ tabFilters && ! isSiteECommerceFreeTrial && (
+											<ThemesToolbarGroup
+												items={ Object.values( tabFilters ) }
+												selectedKey={ this.getSelectedTabFilter().key }
+												onSelect={ ( key ) =>
+													this.onFilterClick(
+														Object.values( tabFilters ).find(
+															( tabFilter ) => tabFilter.key === key
+														)
+													)
+												}
 											/>
 										) }
 									</div>
 								</div>
-								<div
-									className={ clsx( 'themes__filters', {
-										'is-woo-express': isSiteWooExpress,
-									} ) }
-								>
-									{ tabFilters && ! isSiteECommerceFreeTrial && (
-										<ThemesToolbarGroup
-											items={ Object.values( tabFilters ) }
-											selectedKey={ this.getSelectedTabFilter().key }
-											onSelect={ ( key ) =>
-												this.onFilterClick(
-													Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-												)
-											}
-										/>
-									) }
-								</div>
-							</div>
+							) }
 						</>
 					) }
 					{ isCollectionView && (

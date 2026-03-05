@@ -34,7 +34,6 @@ function App() {
 		<AgentUI.Container variant={ isDocked ? 'embedded' : 'floating' }>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ isDocked ? closeSidebar : handleClose }
 					onDock={ dock }
 					onUndock={ undock }

@@ -1,6 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SecurityAccountRecoverySummary from '../security-account-recovery/summary';
@@ -36,6 +37,7 @@ function Security() {
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
 			</VStack>
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

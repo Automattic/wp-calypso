@@ -10,6 +10,23 @@ body.is-reader-page,
 	background: initial;
 }
 
+body.is-reader-page,
+body.is-section-reader {
+	.main {
+		&:not(.is-wide-layout) {
+			max-width: 768px; // Override default 720px.
+		}
+
+		&:not(.no-padding) {
+			padding: 24px;
+
+			@media (max-width: $break-small ) {
+				padding: 24px 12px;
+			}
+		}
+	}
+}
+
 // Ensure this is only applied in logged in 'global' interface.
 // Applying this more broadly breaks scrolling in logged out reader.
 .is-section-reader.is-global {
@@ -18,16 +35,6 @@ body.is-reader-page,
 
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
-		.main {
-			&:not( .no-padding ) {
-				padding: 24px;
-
-				@media ( max-width: $break-small ) {
-					padding: 24px 0;
-				}
-			}
-		}
-
 		.back-button {
 			@media ( max-width: 1300px ) {
 				position: unset;
@@ -41,7 +48,7 @@ body.is-section-reader {
 				}
 
 				@media ( max-width: $break-small ) {
-					padding: 0 0 0 14px;
+					padding: 0 0 10px 0
 				}
 			}
 
@@ -60,10 +67,6 @@ body.is-section-reader {
 		.navigation-header {
 			margin: 0 auto;
 			padding: 0;
-
-			@media ( max-width: $break-small ) {
-				padding: 0 16px;
-			}
 
 			&::after {
 				content: '';

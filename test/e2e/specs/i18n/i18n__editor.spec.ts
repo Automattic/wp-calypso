@@ -49,7 +49,8 @@ test.describe( 'I18N: Editor', { tag: [ tags.I18N, tags.DESKTOP_ONLY ] }, () => 
 			 */
 			await test.step( 'Then languages other than English show non-English translations', async () => {
 				const englishText = 'Add title';
-				const titleLocator = page.locator( 'h1.wp-block-post-title' );
+				const editorCanvas = await pageEditor.getEditorCanvas();
+				const titleLocator = editorCanvas.locator( '.editor-post-title__input' );
 				const accessibleName = await titleLocator.getAttribute( 'aria-label' );
 				const placeholderText = await titleLocator
 					.locator( 'span' )
