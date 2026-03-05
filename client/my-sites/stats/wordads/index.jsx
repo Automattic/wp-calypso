@@ -175,7 +175,7 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					<PageHeader showTagline />
+					<PageHeader titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } } />
 
 					{ ! canAccessAds && (
 						<EmptyContent

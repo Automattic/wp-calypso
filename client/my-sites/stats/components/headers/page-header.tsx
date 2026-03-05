@@ -1,24 +1,16 @@
-import { translate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeaderImpr, {
 	HeaderProps,
 } from 'calypso/components/navigation-header/navigation-header';
 import { STATS_HEADER_TITLE } from '../../constants';
 
-function PageHeader( {
-	showTagline = false,
-	titleProps,
-	...otherProps
-}: HeaderProps & { showTagline?: boolean } ) {
-	const statsTagline = translate( 'Simple, powerful analytics to grow your site.' ) as string;
-
+function PageHeader( { titleProps, ...otherProps }: HeaderProps ) {
 	return (
 		<NavigationHeaderImpr
 			className="stats__section-header modernized-header"
 			titleProps={ {
 				title: STATS_HEADER_TITLE,
 				titleLogo: <JetpackLogo size={ 20 } monochrome={ false } />,
-				...( showTagline && { subtitle: statsTagline } ),
 				...titleProps,
 			} }
 			{ ...otherProps }
