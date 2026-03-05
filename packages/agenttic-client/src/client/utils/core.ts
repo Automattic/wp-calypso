@@ -118,11 +118,22 @@ export interface ExtractedProgress {
 }
 
 /**
+ * Extract progress message from a message's parts
+ * Returns the summary from the first progress part found
+ * @param message
+ */
+export function extractProgressFromMessage(
+	message: Message
+): string | undefined {
+	return extractProgressDataFromMessage( message )?.summary;
+}
+
+/**
  * Extract progress data from a message's parts
  * Returns the summary and phase from the first progress part found
  * @param message
  */
-export function extractProgressFromMessage(
+export function extractProgressDataFromMessage(
 	message: Message
 ): ExtractedProgress | undefined {
 	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {

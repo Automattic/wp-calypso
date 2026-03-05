@@ -2,7 +2,7 @@ import type { Message, Task, TaskUpdate } from '../../types/index';
 import { logger } from '../logger';
 import {
 	extractTextFromMessage,
-	extractProgressFromMessage,
+	extractProgressDataFromMessage,
 	generateMessageId,
 } from '../core';
 
@@ -199,7 +199,7 @@ export async function* parseSSEStream(
 							parts: [],
 						};
 						const progress =
-							extractProgressFromMessage( statusMessage );
+							extractProgressDataFromMessage( statusMessage );
 						const update: TaskUpdate = {
 							id: event.result.id,
 							sessionId: event.result.sessionId,
@@ -226,7 +226,7 @@ export async function* parseSSEStream(
 								parts: [],
 							};
 							const progress =
-								extractProgressFromMessage( statusMessage );
+								extractProgressDataFromMessage( statusMessage );
 							const update: TaskUpdate = {
 								id: event.result.id,
 								sessionId: event.result.sessionId,
