@@ -1,5 +1,5 @@
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { refreshCountryCodeCookieGdpr, costToUSD } from 'calypso/lib/analytics/utils';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
@@ -153,6 +153,15 @@ export async function recordAddToCart( cartItem ) {
 		};
 		debug( 'recordAddToCart: [TikTok]', params );
 		window.ttq.track( 'AddToCart', params );
+	}
+
+	if ( mayWeTrackByTracker( 'quora' ) ) {
+		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
+		const params = {
+			value: usdValue,
+		};
+		debug( 'recordAddToCart: [Quora]', params );
+		window.qp( 'track', 'AddToCart', params );
 	}
 
 	debug( 'recordAddToCart: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
