@@ -151,6 +151,7 @@ export default function AgentChat( {
 			inputValue={ inputValue }
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
+			expandOnHover={ false }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
