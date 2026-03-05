@@ -126,7 +126,7 @@ describe( 'AddSubscriptionForm', () => {
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 
 			act( () => capturedOnChangeFeedPreview( true ) );
-			expect( screen.getByText( 'Your subscriptions' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Your subscriptions' ) ).not.toBeInTheDocument();
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
 		} );
