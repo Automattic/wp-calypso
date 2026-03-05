@@ -127,7 +127,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 	}
 
 	if ( mayWeTrackByTracker( 'quora' ) ) {
-		const params = { value: syntheticCart.total_cost };
+		const params = { value: 0 };
 		debug( 'recordSignup: [Quora]', params );
 		window.qp( 'track', 'CompleteRegistration', params );
 	}
