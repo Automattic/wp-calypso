@@ -18,8 +18,7 @@ import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
@@ -110,8 +109,6 @@ export default function PressablePlanSection( {
 	} );
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
-
-	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
 
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
@@ -281,7 +278,6 @@ export default function PressablePlanSection( {
 	const isCustomPlan = ! selectedPlan;
 
 	const hasNewPremiumPlans =
-		isBDBillingSystem &&
 		isReferralMode &&
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
