@@ -7,18 +7,22 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { UnifiedInviteAccept } from '../index';
 
-const mockRedirect = jest.fn();
-jest.mock(
-	'@automattic/calypso-router',
-	() => ( {
-		redirect: ( url: string ) => mockRedirect( url ),
-		__esModule: true,
-		default: {
-			redirect: ( url: string ) => mockRedirect( url ),
-		},
-	} ),
-	{ virtual: true }
-);
+const mockNormalizeInvite = jest.fn();
+
+jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () => ( {
+	__esModule: true,
+	default: ( inviteData: unknown ) => mockNormalizeInvite( inviteData ),
+} ) );
+
+const mockLoggedOutInviteAccept = jest.fn();
+
+jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
+	__esModule: true,
+	default: ( props: unknown ) => {
+		mockLoggedOutInviteAccept( props );
+		return <div data-testid="logged-out-invite-screen">LoggedOutInviteAccept</div>;
+	},
+} ) );
 
 // Mock AcceptInviteScreen to simplify testing
 jest.mock( '../screens/accept-invite-screen', () => ( {
@@ -51,11 +55,21 @@ const defaultProps = {
 
 describe( 'UnifiedInviteAccept', () => {
 	beforeEach( () => {
-		mockRedirect.mockClear();
-		window.history.replaceState( {}, '', '/accept-invite/123/abc123' );
+		mockNormalizeInvite.mockReset();
+		mockLoggedOutInviteAccept.mockClear();
+		mockNormalizeInvite.mockReturnValue( {
+			inviteKey: 'abc123',
+			role: 'administrator',
+			sentTo: 'test@example.com',
+			site: {
+				ID: 123,
+				domain: 'test.store',
+				title: 'Test Store',
+			},
+		} );
 	} );
 
-	test( 'redirects to legacy flow when user is not logged in', () => {
+	test( 'renders logged-out invite screen when user is not logged in', () => {
 		const store = mockStore( {
 			currentUser: {
 				id: null,
@@ -68,7 +82,7 @@ describe( 'UnifiedInviteAccept', () => {
 			</Provider>
 		);
 
-		expect( mockRedirect ).toHaveBeenCalledWith( '/accept-invite/123/abc123?legacy=1' );
+		expect( screen.getByTestId( 'logged-out-invite-screen' ) ).toBeVisible();
 	} );
 
 	test( 'renders AcceptInviteScreen when user is logged in', () => {
@@ -84,11 +98,11 @@ describe( 'UnifiedInviteAccept', () => {
 			</Provider>
 		);
 
-		expect( mockRedirect ).not.toHaveBeenCalled();
+		expect( mockLoggedOutInviteAccept ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'accept-invite-screen' ) ).toBeInTheDocument();
 	} );
 
-	test( 'includes activationKey and authKey in legacy redirect path', () => {
+	test( 'passes activationKey and authKey to logged-out invite screen', () => {
 		const store = mockStore( {
 			currentUser: {
 				id: null,
@@ -101,18 +115,18 @@ describe( 'UnifiedInviteAccept', () => {
 			</Provider>
 		);
 
-		expect( mockRedirect ).toHaveBeenCalledWith(
-			'/accept-invite/123/abc123/activation123/auth456?legacy=1'
+		expect( mockLoggedOutInviteAccept ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				invite: expect.objectContaining( {
+					activationKey: 'activation123',
+					authKey: 'auth456',
+				} ),
+				forceMatchingEmail: false,
+			} )
 		);
 	} );
 
-	test( 'preserves social callback query and hash in legacy redirect path', () => {
-		window.history.replaceState(
-			{},
-			'',
-			'/accept-invite/123/abc123?code=oauth-code&state=nonce#social-callback'
-		);
-
+	test( 'passes invite data through normalizeInvite for logged-out flow', () => {
 		const store = mockStore( {
 			currentUser: {
 				id: null,
@@ -125,8 +139,14 @@ describe( 'UnifiedInviteAccept', () => {
 			</Provider>
 		);
 
-		expect( mockRedirect ).toHaveBeenCalledWith(
-			'/accept-invite/123/abc123?code=oauth-code&state=nonce&legacy=1#social-callback'
+		expect( mockNormalizeInvite ).toHaveBeenCalledWith( defaultProps.inviteData );
+		expect( mockLoggedOutInviteAccept ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				invite: expect.objectContaining( {
+					role: 'administrator',
+					sentTo: 'test@example.com',
+				} ),
+			} )
 		);
 	} );
 

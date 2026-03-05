@@ -27,9 +27,6 @@ const mockWpcomGet = wpcom.req.get as jest.Mock;
 describe( 'maybeUseUnifiedInvite', () => {
 	let context: {
 		params: Record< string, string >;
-		store: {
-			getState: jest.Mock;
-		};
 		inviteData?: unknown;
 		inviteError?: unknown;
 		useUnifiedInvite?: boolean;
@@ -45,13 +42,6 @@ describe( 'maybeUseUnifiedInvite', () => {
 			params: {
 				site_id: '123',
 				invitation_key: 'abc123',
-			},
-			store: {
-				getState: jest.fn( () => ( {
-					currentUser: {
-						id: 1,
-					},
-				} ) ),
 			},
 		};
 		next = jest.fn();
@@ -131,13 +121,7 @@ describe( 'maybeUseUnifiedInvite', () => {
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	test( 'falls back to legacy flow for logged-out users on CIAB sites', async () => {
-		context.store.getState.mockReturnValue( {
-			currentUser: {
-				id: null,
-			},
-		} );
-
+	test( 'uses unified flow for logged-out users on CIAB sites', async () => {
 		const ciabInviteData = {
 			blog_details: {
 				is_garden_site: true,
@@ -151,12 +135,12 @@ describe( 'maybeUseUnifiedInvite', () => {
 
 		await maybeUseUnifiedInvite( context as never, next );
 
-		expect( context.useUnifiedInvite ).toBeUndefined();
-		expect( context.primary ).toBeUndefined();
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	test( 'falls back to legacy flow when social callback params are present', async () => {
+	test( 'uses unified flow when social callback params are present', async () => {
 		mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
 			if ( param === 'code' ) {
 				return 'oauth-code';
@@ -177,8 +161,8 @@ describe( 'maybeUseUnifiedInvite', () => {
 
 		await maybeUseUnifiedInvite( context as never, next );
 
-		expect( context.useUnifiedInvite ).toBeUndefined();
-		expect( context.primary ).toBeUndefined();
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
 		expect( next ).toHaveBeenCalled();
 	} );
 
