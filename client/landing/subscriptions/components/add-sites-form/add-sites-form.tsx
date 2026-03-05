@@ -28,6 +28,10 @@ interface AddSitesFormProps {
 	 * Whether to hide the feed preview.
 	 */
 	hideFeedPreview?: boolean;
+	/**
+	 * Whether to hide the input error.
+	 */
+	hideInputError?: boolean;
 }
 
 const AddSitesForm = ( {
@@ -39,6 +43,7 @@ const AddSitesForm = ( {
 	onChangeFeedPreview,
 	onChangeSubscribe,
 	hideFeedPreview = false,
+	hideInputError = false,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -126,6 +131,8 @@ const AddSitesForm = ( {
 		onChangeSubscribe?.( subscribed );
 	}
 
+	const showInputError = inputFieldError && ! hideInputError;
+
 	return (
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
@@ -133,7 +140,7 @@ const AddSitesForm = ( {
 					<TextControl
 						className={ clsx(
 							'subscriptions-add-sites__form-input',
-							inputFieldError ? 'is-error' : ''
+							showInputError ? 'is-error' : ''
 						) }
 						disabled={ subscribing }
 						placeholder={ placeholder || translate( 'https://www.site.com' ) }
@@ -145,7 +152,7 @@ const AddSitesForm = ( {
 						__nextHasNoMarginBottom
 					/>
 
-					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+					{ showInputError ? <FormInputValidation isError text={ inputFieldError } /> : null }
 				</div>
 
 				<Button

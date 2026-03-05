@@ -95,6 +95,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						onChangeSubscribe={ handleSubscribeToggle }
 						onChange={ handleChangeSearchTerm }
 						hideFeedPreview={ isAddNewTab }
+						hideInputError={ isAddNewTab }
 					/>
 				</div>
 
