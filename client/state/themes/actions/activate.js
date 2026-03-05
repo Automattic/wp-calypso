@@ -92,7 +92,10 @@ export function activate( themeId, siteId, options ) {
  */
 export function activateOrInstallThenActivate( themeId, siteId, options ) {
 	return ( dispatch, getState ) => {
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+		const isJetpack = isJetpackSite( getState(), siteId );
+		const themeOnSite = getTheme( getState(), siteId, themeId );
+
+		if ( isJetpack && ! themeOnSite ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.

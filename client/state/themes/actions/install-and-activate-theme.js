@@ -16,10 +16,10 @@ import 'calypso/state/themes/init';
  */
 export function installAndActivateTheme( themeId, siteId, options ) {
 	return ( dispatch ) => {
-		return dispatch( installTheme( themeId, siteId ) ).then( () =>
+		return dispatch( installTheme( themeId, siteId ) ).then( () => {
 			// This will be called even if `installTheme` silently fails. We rely on
 			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, options ) )
-		);
+			return dispatch( activateTheme( themeId, siteId, options ) );
+		} );
 	};
 }
