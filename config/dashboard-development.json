@@ -28,6 +28,9 @@
 		"wordpress-ai-tools": true
 	},
 	"enable_all_sections": false,
+	"sections": {
+		"checkout": true
+	},
 	"site_filter": [],
 	"theme": "dashboard",
 	"theme_color": "#3858E9",

@@ -34,6 +34,7 @@ import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
+import { CHECKOUT_SECTION_DEFINITION } from 'calypso/my-sites/checkout/section';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
@@ -1147,6 +1148,7 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+	handleSectionPath( CHECKOUT_SECTION_DEFINITION, '/checkout' );
 
 	// Multi-site Dashboard routing.
 	// Return earlier since we don't need to set up any other routes.
