@@ -36,7 +36,7 @@ describe( 'AddSitesForm', () => {
 
 		renderWithContextProvider( <AddSitesForm { ...mockProps } onChange={ onChange } /> );
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		await userEvent.type( input, inputValue );
 
 		expect( onChange ).toHaveBeenLastCalledWith( inputValue );
@@ -44,7 +44,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'displays an error message with invalid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		await userEvent.type( input, 'not-a-url' );
 		await userEvent.tab();
@@ -54,7 +54,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'does not display an error message with valid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		await userEvent.type( input, 'https://www.valid-url.com' );
 		await userEvent.tab();
@@ -64,7 +64,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'does not display an error message when input field is empty and blurred', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 
 		await userEvent.click( input );
 		await userEvent.tab();
@@ -72,20 +72,9 @@ describe( 'AddSitesForm', () => {
 		expect( screen.queryByText( 'Please enter a valid URL' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'displays a check icon when a valid URL is entered', async () => {
-		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
-
-		await userEvent.type( input, 'https://www.valid-url.com' );
-		await userEvent.tab();
-
-		const checkIcon = screen.getByTestId( 'check-icon' );
-		expect( checkIcon ).toBeInTheDocument();
-	} );
-
 	it( 'disables the Add site button when an invalid URL is entered', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		await userEvent.type( input, 'not-a-url' );
@@ -96,7 +85,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'disables the Add site button immediately when typing invalid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		await userEvent.type( input, 'not-a-valid-url' );
@@ -106,7 +95,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'enables the Add site button immediately when typing valid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		await userEvent.type( input, 'https://example.com' );
@@ -123,7 +112,7 @@ describe( 'AddSitesForm', () => {
 
 	it( 'disables button when transitioning from valid to invalid URL', async () => {
 		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByRole( 'searchbox' );
 		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
 
 		await userEvent.type( input, 'https://example.com' );

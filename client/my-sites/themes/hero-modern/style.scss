@@ -26,7 +26,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 
 	.full-width-section__content {
 		max-width: 1220px;
-		padding: 48px 24px;
+		padding: 48px 0;
 
 		@media (min-width: $break-small) {
 			background: url(./illustration.svg) no-repeat right clamp(-500px, 70vw - 900px, 0px) bottom;
@@ -42,6 +42,11 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 .hero-modern__content {
 	flex: 1;
 	max-width: 700px;
+	padding: 0 24px;
+
+	@media ( min-width: $break-wide ) {
+		padding-left: 0;
+	}
 }
 
 .hero-modern__title {

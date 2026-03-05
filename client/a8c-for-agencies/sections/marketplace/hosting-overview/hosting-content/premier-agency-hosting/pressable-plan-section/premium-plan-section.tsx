@@ -51,9 +51,6 @@ export default function PremiumPlanSection( {
 		scheduleCall();
 	};
 
-	// Show refer button if premium plans are not enabled or if they are enabled and we are not in referral mode
-	const shouldShowReferButton = ! isPremiumPlansEnabled || marketplaceType !== 'referral';
-
 	return (
 		<HostingPlanSection className="pressable-plan-section" heading={ heading }>
 			{ banner }
@@ -73,20 +70,18 @@ export default function PremiumPlanSection( {
 					</div>
 
 					<div className="premium-plan-section__cta-buttons">
-						{ shouldShowReferButton && (
-							<Button
-								href={
-									isPremiumPlansEnabled
-										? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
-										: A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK
-								}
-								onClick={ onReferNowClick }
-								variant="primary"
-								__next40pxDefaultSize
-							>
-								{ translate( 'Refer now and get rewarded' ) }
-							</Button>
-						) }
+						<Button
+							href={
+								isPremiumPlansEnabled && marketplaceType !== 'referral'
+									? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+									: A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK
+							}
+							onClick={ onReferNowClick }
+							variant="primary"
+							__next40pxDefaultSize
+						>
+							{ translate( 'Refer now and get rewarded' ) }
+						</Button>
 
 						<Button
 							className="premium-plan-section__cta-button"

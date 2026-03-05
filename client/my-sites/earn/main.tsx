@@ -54,7 +54,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		'paid-subscriptions': translate( 'Active Paid Subscriptions' ),
+		'paid-subscriptions': translate( 'Paid Subscribers' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -67,7 +67,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'earn',
 			},
 			{
-				title: translate( 'Active Paid Subscriptions' ),
+				title: translate( 'Paid Subscribers' ),
 				path: earnPath + '/paid-subscriptions' + pathSuffix,
 				id: 'paid-subscriptions',
 			},

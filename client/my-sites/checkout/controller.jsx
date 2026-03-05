@@ -124,6 +124,15 @@ export function checkoutRenewalBySubscriptionId( context, next ) {
 	next();
 }
 
+// Redirect old-style renewal URLs (e.g. /checkout/:product/renew/:purchaseId[/:domain])
+// to the new /checkout/renew/:subscriptionId route, preserving any query parameters.
+export function redirectToRenewalBySubscriptionId( context ) {
+	const { purchaseId } = context.params;
+	const newPath = `/checkout/renew/${ purchaseId }`;
+	const redirectUrl = context.querystring ? `${ newPath }?${ context.querystring }` : newPath;
+	page.redirect( redirectUrl );
+}
+
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );

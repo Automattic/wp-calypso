@@ -60,7 +60,9 @@ export const Header = ( {
 }: HeaderProps ) => {
 	const { isAiProcessing, hasUpdatedMetadata, isAnnotationMode, hasDrafts } = useSelect(
 		( select ) => {
-			const selectors = select( imageStudioStore ) as any;
+			const selectors = select(
+				imageStudioStore
+			) as unknown as import('../../types/wordpress').CurriedImageStudioSelectors;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				hasUpdatedMetadata: selectors.getHasUpdatedMetadata(),
@@ -122,10 +124,10 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
-				return __( 'Save & Apply', 'big-sky' );
+				return __( 'Save & Apply', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:
-				return __( 'Save', 'big-sky' );
+				return __( 'Save', __i18n_text_domain__ );
 		}
 	};
 
@@ -138,16 +140,16 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
-				return __( 'Save and apply image', 'big-sky' );
+				return __( 'Save and apply image', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:
-				return __( 'Save displayed image to Media Library', 'big-sky' );
+				return __( 'Save displayed image to Media Library', __i18n_text_domain__ );
 		}
 	};
 
 	let navButtonDisabledTooltip: string | undefined;
 	if ( hasDrafts || hasUpdatedMetadata ) {
-		navButtonDisabledTooltip = __( 'Save or discard your changes', 'big-sky' );
+		navButtonDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
 	}
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
@@ -359,7 +361,9 @@ export const Header = ( {
 								isBusy={ isSaving }
 								onClick={ onSave }
 								label={ getSaveButtonLabel( entryPoint ) }
-								text={ isSaving ? __( 'Saving…', 'big-sky' ) : getSaveButtonText( entryPoint ) }
+								text={
+									isSaving ? __( 'Saving…', __i18n_text_domain__ ) : getSaveButtonText( entryPoint )
+								}
 							/>
 						</Fragment>
 					) }

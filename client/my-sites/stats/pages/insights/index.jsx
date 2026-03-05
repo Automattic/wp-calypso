@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -78,7 +79,9 @@ function StatsInsights( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				<PageHeader />
+				<PageHeader
+					titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
+				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
 					<div id="my-stats-content" className="stats-content">

@@ -10,7 +10,7 @@ export function persistAgentsManagerState( data: Record< string, unknown > ): vo
 			path: '/agents-manager/state',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
-			body: { calypso_preferences: data },
+			body: { state: data },
 		} ).catch( () => {} );
 	} else {
 		apiFetch( {

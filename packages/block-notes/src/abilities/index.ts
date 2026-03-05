@@ -1,4 +1,4 @@
-import { registerAbility } from '@wordpress/abilities';
+import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { select } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { getBlockNoteThreadSessionId } from '../utils/session';
@@ -39,6 +39,19 @@ export async function registerBlockNotesAbility(): Promise< void > {
 		return;
 	}
 	try {
+		try {
+			await registerAbilityCategory( 'big-sky', {
+				label: 'Big Sky',
+				description: 'Big Sky abilities for WordPress',
+			} );
+		} catch ( categoryError ) {
+			// Ignore "already registered" errors so we can safely re-use the category.
+			const message = ( categoryError as Error )?.message || '';
+			if ( ! message.includes( 'already registered' ) ) {
+				throw categoryError;
+			}
+		}
+
 		await registerAbility( {
 			name: ABILITY_NAME,
 			label: 'Block Notes',
@@ -197,7 +210,6 @@ export async function registerBlockNotesAbility(): Promise< void > {
 			},
 		} );
 		isRegistered = true;
-		window.console?.info( 'Block Notes: Ability registered successfully' );
 	} catch ( error ) {
 		// Ignore if already registered
 		if ( error instanceof Error && error.message.includes( 'already registered' ) ) {

@@ -9,6 +9,7 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainOverviewRoute, domainRoute } from '../../app/router/domains';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -196,6 +197,7 @@ export default function DomainDiagnostics() {
 			}
 		>
 			{ renderDiagnostics() }
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

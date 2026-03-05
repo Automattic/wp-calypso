@@ -15,10 +15,14 @@
 	.category-pill-navigation {
 		flex: 1;
 		min-width: 0;
-	}
 
-	.category-pill-navigation__button {
-		text-decoration: none;
+		.category-pill-navigation__button {
+			text-decoration: none;
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
 	}
 }
 
@@ -38,6 +42,7 @@
 
 .filter-bar-modern__search {
 	flex-shrink: 0;
+	margin-right: 16px;
 
 	.search {
 		margin-bottom: 0;
@@ -73,7 +78,6 @@
 
 .filter-bar-modern__tier-select {
 	flex-shrink: 0;
-	margin-left: 16px;
 	margin-top: -24px; // Accommodate the external label
 	min-width: 120px;
 

@@ -78,7 +78,9 @@ export const useDraftCleanup = () => {
 	 */
 	const deleteDraftsExcept = useCallback(
 		async ( idsToKeep: number[] ) => {
-			const selectors = select( imageStudioStore ) as any;
+			const selectors = select(
+				imageStudioStore
+			) as unknown as import('../types/wordpress').CurriedImageStudioSelectors;
 			const currentDraftIds: number[] = selectors.getDraftIds() || [];
 			const annotatedAttachmentIds: number[] = selectors.getAnnotatedAttachmentIds() || [];
 
@@ -162,7 +164,9 @@ export const useDraftCleanup = () => {
 	const cleanupOnExit = useCallback( async () => {
 		// Always read the latest identifiers from the store to avoid using
 		// stale values when Save & Exit is triggered immediately after a save.
-		const selectors = select( imageStudioStore ) as any;
+		const selectors = select(
+			imageStudioStore
+		) as unknown as import('../types/wordpress').CurriedImageStudioSelectors;
 
 		// Guard against store not being available
 		if ( ! selectors ) {

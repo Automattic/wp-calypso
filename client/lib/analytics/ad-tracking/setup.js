@@ -136,16 +136,16 @@ function setupLinkedinInsight( partnerId ) {
  * This is a rework of the obfuscated tracking code provided by Quora.
  */
 function setupQuoraGlobal() {
-	if ( window.qp ) {
-		return;
+	if ( ! window.qp ) {
+		const quoraPixel = ( window.qp = function () {
+			quoraPixel.qp
+				? quoraPixel.qp.apply( quoraPixel, arguments )
+				: quoraPixel.queue.push( arguments );
+		} );
+		quoraPixel.queue = [];
 	}
-
-	const quoraPixel = ( window.qp = function () {
-		quoraPixel.qp
-			? quoraPixel.qp.apply( quoraPixel, arguments )
-			: quoraPixel.queue.push( arguments );
-	} );
-	quoraPixel.queue = [];
+	// If the pixel loads and fires an event before init has been called, it will throw an error, so we call it here.
+	window.qp( 'init', TRACKING_IDS.quoraPixelId );
 }
 
 /**

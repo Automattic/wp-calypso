@@ -160,11 +160,6 @@ function initLoadedTrackingScripts() {
 		}
 	}
 
-	// init Quora
-	if ( mayWeTrackByTracker( 'quora' ) ) {
-		window.qp( 'init', TRACKING_IDS.quoraPixelId );
-	}
-
 	// init Pinterest
 	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const currentUser = getCurrentUser();

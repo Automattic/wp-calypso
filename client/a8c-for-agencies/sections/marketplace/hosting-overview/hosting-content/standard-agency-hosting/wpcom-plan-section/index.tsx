@@ -12,8 +12,10 @@ import {
 	TermPricingContext,
 } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
+import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import WPCOMPlanSlider from '../wpcom-plan-selector/slider';
@@ -33,6 +35,8 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 	const dispatch = useDispatch();
 
 	const { data: devLicenses } = useFetchDevLicenses();
+
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const availableDevSites = devLicenses?.available;
 
@@ -71,7 +75,11 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 		return count;
 	}, [ count, isReferralMode ] );
 
-	const [ quantity, setQuantity ] = useState( 1 );
+	const [ quantity, setQuantity ] = useSliderPersistence( {
+		key: 'wpcom-quantity',
+		defaultValue: 1,
+		deserialize: ( v ) => parseInt( v, 10 ) || 1,
+	} );
 
 	if ( ! plan ) {
 		return;
@@ -154,8 +162,13 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 						label: translate( 'Create a development site' ),
 						variant: 'secondary',
 						icon: arrowRight,
-						disabled: ! availableDevSites,
+						disabled: ! availableDevSites || ! isAgencyApproved,
 						onClick: onClickCreateWPCOMDevSite,
+						tooltip: ! isAgencyApproved
+							? translate(
+									'Your agency is not yet approved. Please wait for approval before creating a development site.'
+							  )
+							: undefined,
 					} }
 				>
 					<p>

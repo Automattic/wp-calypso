@@ -17,6 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -340,6 +341,7 @@ export default function DomainDns() {
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>
+				{ ! isLoading && <PerformanceTrackerStop /> }
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
 						{ __( 'No DNS records found for this domain.' ) }

@@ -65,7 +65,6 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
-import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -81,11 +80,6 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-site-list', { fullPageLoad } );
-		}
-	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
@@ -178,11 +172,6 @@ export const siteRoute = createRoute( {
 export const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad } );
-		}
-	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
@@ -1176,27 +1165,6 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
-export const siteSettingsExperimentalRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsExperimental' },
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'AI Site Assistant' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'ai-assistant',
-	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-ai-assistant' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-ai-assistant' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
 export const siteSettingsRepositoriesRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
@@ -1507,11 +1475,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteSettingsDefensiveModeRoute,
 	];
-
-	// Experimental
-	if ( isEnabled( 'wordpress-ai-assistant' ) ) {
-		settingsRoutes.push( siteSettingsExperimentalRoute );
-	}
 
 	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 
