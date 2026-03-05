@@ -3,16 +3,16 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import { isZendeskIntroMessage } from '@automattic/odie-client/src/utils/csat';
 import {
-	useLoadZendeskMessaging,
-	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 	isTestModeEnvironment,
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
+	useAuthenticateZendeskMessaging,
 	useCanConnectToZendeskMessaging,
+	useLoadZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -165,7 +165,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			if ( message?.source?.type === 'web' && message.source?.id ) {
 				setZendeskClientId( message.source?.id );
 				// Unregister the listener after setting the client ID
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch?.off?.( 'message:sent', clientIdListener );
 			}
 		},
@@ -250,20 +249,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		}
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:sent', clientIdListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'disconnected', disconnectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'reconnecting', reconnectingListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'typing:stop', typingStopListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'typing:start', typingStartListener );
+			Smooch.off( 'message:received', getUnreadListener );
+			Smooch.off( 'message:sent', clientIdListener );
+			Smooch.off( 'disconnected', disconnectedListener );
+			Smooch.off( 'reconnecting', reconnectingListener );
+			Smooch.off( 'connected', connectedListener );
+			Smooch.off( 'typing:stop', typingStopListener );
+			Smooch.off( 'typing:start', typingStartListener );
 		};
 	}, [
 		getUnreadListener,

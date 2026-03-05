@@ -1,6 +1,6 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	createInterpolateElement,
 	useCallback,
@@ -15,10 +15,10 @@ import { CSATForm } from './components/csat-form';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
 import { ZendeskConversation } from './types';
 import {
-	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
+	useAuthenticateZendeskMessaging,
 } from './use-authenticate-zendesk-messaging';
-import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
+import { convertZendeskMessageToAgentticFormat, isTestModeEnvironment } from './util';
 import type { AgentticMessage, ZendeskMessage } from './types';
 
 type ConversationData = {
@@ -354,18 +354,12 @@ export const useManagedZendeskChat = () => {
 			Smooch.on( 'typing:stop', typingStopListener );
 
 			return () => {
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'message:received', getUnreadListener );
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'disconnected', disconnectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'reconnecting', reconnectingListener );
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'connected', connectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'typing:stop', typingStopListener );
-				// @ts-expect-error -- 'off' is not part of the def.
-				Smooch.off?.( 'typing:start', typingStartListener );
+				Smooch.off( 'message:received', getUnreadListener );
+				Smooch.off( 'disconnected', disconnectedListener );
+				Smooch.off( 'reconnecting', reconnectingListener );
+				Smooch.off( 'connected', connectedListener );
+				Smooch.off( 'typing:stop', typingStopListener );
+				Smooch.off( 'typing:start', typingStartListener );
 			};
 		}
 	}, [
