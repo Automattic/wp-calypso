@@ -9,6 +9,9 @@ export const STATS_PERIOD = {
 // The product title. Do not translate.
 export const STATS_PRODUCT_NAME = 'Jetpack Stats';
 
+// The header-only title shown alongside the Jetpack logo. Do not translate.
+export const STATS_HEADER_TITLE = 'Stats';
+
 // statTypes referred from
 // https://github.com/Automattic/wp-calypso/blob/trunk/packages/wpcom.js/src/lib/runtime/site.get.js
 // stat features are newly defined in this file
