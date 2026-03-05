@@ -92,6 +92,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -181,7 +182,8 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.is_upgradable &&
 			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase )
+			! isJetpackTemporarySitePurchase( purchase ) &&
+			! isA4ABillingDragonPurchase( purchase )
 	);
 }
 

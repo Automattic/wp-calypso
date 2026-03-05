@@ -141,7 +141,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type ) {
+	if ( 'credit_card' !== purchase.payment_type || ! purchase.expiry_date ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -209,8 +209,12 @@ export function isTransferredOwnership(
 	);
 }
 
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
+}
+
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
