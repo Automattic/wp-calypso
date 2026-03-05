@@ -71,11 +71,39 @@ function getTranslatedSubtitle(
 	translate: ( s: string ) => string
 ): string | undefined {
 	switch ( id ) {
-		// Add subtitle cases when config has subtitle for this id
+		case 'change-plan':
+			return translate( 'Find a plan that better suits your needs.' );
+		case 'renew-now-pay-less':
+			return translate( 'Get an exclusive 25% discount automatically applied at checkout.' );
+		case 'switch-to-monthly':
+			return translate( 'Keep things flexible with monthly billing.' );
+		case 'speak-with-support':
+			return translate( "We're here to answer any of your questions." );
+		case 'built-by':
+			return translate( 'Our team can build your site so you can focus on what matters.' );
+		case 'ask-ai-assistant':
+			return translate( 'Use our AI assistant to quickly find solutions.' );
+		case 'upgrade-for-full-access':
+			return translate( 'Get the business plan to access all available plugins and themes.' );
+		case 'get-theme-addon':
+			return translate( 'Unlock premium themes with a simple add-on.' );
+		case 'get-css-addon':
+			return translate( 'Customize every design detail with a simple add-on.' );
+		case 'find-guides':
+			return translate( 'Browse our guides and get back on track quickly.' );
+		case 'make-site-faster':
+			return translate( 'Run our free speed test and get personalized recommendations.' );
+		case 'use-migration-tools':
+			return translate( 'Expert assistance or seamless importers for quick moves.' );
+		case 'use-domain-guide':
+			return translate( 'Follow our simple guide to get connected quickly.' );
+		case 'explore-domain-options':
+			return translate( "Our search tool finds great alternatives you'll love." );
+		case 'move-subscription':
+			return translate( 'Transfer your subscription to another site you own.' );
 		default:
 			return undefined;
 	}
-	void translate; // reserved for future subtitle translations
 }
 
 type SolutionsCardsUpsellStepProps = {
@@ -101,7 +129,7 @@ export default function SolutionsCardsUpsellStep( {
 	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
-	const filteredSolutions = solutions.filter(
+	const filteredSolutions = solutions?.filter(
 		( card ) => card.id !== 'switch-to-monthly' || showSwitchToMonthly
 	);
 
@@ -145,10 +173,9 @@ export default function SolutionsCardsUpsellStep( {
 							return null;
 						}
 						const href = config.getHref?.( context );
-						const hasAction =
-							Boolean( href ) ||
-							Boolean( config.onClick ) ||
-							( card.id === 'switch-to-monthly' && onClickDowngrade );
+						const hasAction = Boolean(
+							href || config.onClick || ( card.id === 'switch-to-monthly' && onClickDowngrade )
+						);
 						const handleClick = ( e: React.MouseEvent ) => {
 							if ( href && config.onClick ) {
 								e.preventDefault();
@@ -166,7 +193,7 @@ export default function SolutionsCardsUpsellStep( {
 								href={ href }
 								onClick={ hasAction ? handleClick : undefined }
 								showArrow={ hasAction }
-								density="medium"
+								density="low"
 							/>
 						);
 					} ) }

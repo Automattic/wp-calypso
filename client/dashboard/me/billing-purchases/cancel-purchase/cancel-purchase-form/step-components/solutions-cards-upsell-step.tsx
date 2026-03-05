@@ -137,6 +137,44 @@ function getCardTitle( cardId: string ): string {
 	}
 }
 
+function getCardDescription( cardId: string ): string {
+	switch ( cardId ) {
+		case 'change-plan':
+			return __( 'Find a plan that better suits your needs.' );
+		case 'renew-now-pay-less':
+			/* translators: % is the discount amount (e.g. 25%) */
+			return __( 'Get an exclusive 25% discount automatically applied at checkout.' );
+		case 'switch-to-monthly':
+			return __( 'Keep things flexible with monthly billing.' );
+		case 'speak-with-support':
+			return __( "We're here to answer any of your questions." );
+		case 'built-by':
+			return __( 'Our team can build your site so you can focus on what matters.' );
+		case 'ask-ai-assistant':
+			return __( 'Use our AI assistant to quickly find solutions.' );
+		case 'upgrade-for-full-access':
+			return __( 'Get the business plan to access all available plugins and themes.' );
+		case 'get-theme-addon':
+			return __( 'Unlock premium themes with a simple add-on.' );
+		case 'get-css-addon':
+			return __( 'Customize every design detail with a simple add-on.' );
+		case 'find-guides':
+			return __( 'Browse our guides and get back on track quickly.' );
+		case 'make-site-faster':
+			return __( 'Run our free speed test and get personalized recommendations.' );
+		case 'use-migration-tools':
+			return __( 'Expert assistance or seamless importers for quick moves.' );
+		case 'use-domain-guide':
+			return __( 'Follow our simple guide to get connected quickly.' );
+		case 'explore-domain-options':
+			return __( "Our search tool finds great alternatives you'll love." );
+		case 'move-subscription':
+			return __( 'Transfer your subscription to another site you own.' );
+		default:
+			return '';
+	}
+}
+
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
@@ -260,10 +298,11 @@ export default function SolutionsCardsUpsellStep( {
 							key={ card.id }
 							className="cancel-purchase-form__solution-card"
 							title={ title }
+							description={ getCardDescription( card.id ) }
 							href={ href }
 							onClick={ onClick }
 							showArrow={ hasAction }
-							density="medium"
+							density="low"
 						/>
 					);
 				} ) }
