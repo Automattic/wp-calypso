@@ -12,6 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -178,6 +179,7 @@ class RemovePurchase extends Component {
 
 		try {
 			await this.props.removePurchase( purchase.id, userId );
+			invokeSurvicateEvent( 'purchaseRemoved' );
 
 			const productName = getName( purchase );
 			let successMessage;
