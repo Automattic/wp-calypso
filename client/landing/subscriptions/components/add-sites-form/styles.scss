@@ -11,27 +11,18 @@
 		flex: 1;
 	}
 
-	.components-base-control.is-error input {
-		border-color: var(--color-error);
+	.components-input-base {
+		border-radius: 4px;
+	}
 
-		&:focus {
-			box-shadow: 0 0 0 2px var(--color-error-10);
+	.components-input-control-prefix-wrapper {
+		svg {
+			fill: var(--studio-gray-30);
 		}
 	}
 
-	.is-error .components-base-control__field {
-		margin-bottom: 6px;
-	}
-
-	.components-text-control__input {
-		border-color: var(--studio-gray-10);
+	.components-input-control__input {
 		border-radius: 4px;
-		box-sizing: border-box;
-		font-size: 0.875rem;
-		padding: rem(10px) rem(16px);
-		/* We need to allow space for the SVG checkmark */
-		padding-right: calc(0.5rem + 24px);
-		height: 40px;
 
 		&::placeholder {
 			color: var(--studio-gray-20);
@@ -40,35 +31,31 @@
 		&[disabled] {
 			background: var(--studio-gray-5);
 		}
+	}
 
-		&:focus {
-			border-color: var(--studio-gray-10);
-			box-shadow: 0 0 0 2px var(--color-primary-10);
-			outline: none;
+	.components-input-control__container div.components-input-control__backdrop {
+		border-color: var(--studio-gray-10);
+	}
+
+	.is-error {
+		.components-input-control__container {
+			.components-input-control__backdrop {
+				border-color: var(--color-error);
+			}
+
+			&:focus .components-input-control__backdrop {
+				box-shadow: 0 0 0 0.5px var(--color-error);
+			}
 		}
+	}
+
+	.form-input-validation.is-error {
+		margin-top: 6px;
 	}
 
 	.subscriptions-add-sites__save-button {
 		&[disabled] {
 			cursor: not-allowed;
-		}
-	}
-
-	.components-base-control {
-		position: relative;
-	}
-
-	.components-base-control__help {
-		display: flex;
-		align-items: center;
-		margin: 0;
-		position: absolute;
-		top: 0;
-		right: 0.5rem;
-		height: 100%;
-
-		svg {
-			fill: var(--color-success-50);
 		}
 	}
 

@@ -43,7 +43,11 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"test": "cd ../.. && yarn test-packages packages/image-studio",
+		"lint": "run -T eslint src/",
+		"lint:fix": "run -T eslint src/ --fix",
+		"typecheck": "tsc --build --dry"
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",

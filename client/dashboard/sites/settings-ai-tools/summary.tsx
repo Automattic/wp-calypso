@@ -43,7 +43,7 @@ export default function AISiteToolsSettingsSummary( {
 			to={ `/sites/${ site.slug }/settings/ai-tools` }
 			title={ __( 'AI tools (early access)' ) }
 			density={ density }
-			decoration={ <BigSkyLogo.CentralLogo heartless size={ 24 } fill="#757575" /> }
+			decoration={ <BigSkyLogo.CentralLogo heartless size={ 24 } /> }
 			badges={ getBadge() }
 		/>
 	);

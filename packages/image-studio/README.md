@@ -70,24 +70,23 @@ export {
 
 ### Commands
 
+All commands run from the package directory (`packages/image-studio/`):
+
 ```bash
-# Build the package (ESM + CJS)
-yarn build
+yarn build       # Build the package (ESM + CJS)
+yarn test        # Run unit tests (155 tests, ~2s)
+yarn lint        # ESLint
+yarn lint:fix    # ESLint with auto-fix
+yarn typecheck   # TypeScript type check (dry run)
+yarn watch       # Watch for changes
+yarn clean       # Clean build output
+```
 
-# Watch for changes
-yarn watch
+Or from the repo root:
 
-# Clean build output
-yarn clean
-
-# Lint
-yarn lint
-
-# Unit tests (from repo root)
-yarn jest packages/image-studio --config packages/image-studio/jest.config.js
-
-# Type check
-yarn workspace @automattic/image-studio tsc --build --dry
+```bash
+yarn workspace @automattic/image-studio build
+yarn test-packages packages/image-studio
 ```
 
 Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
@@ -115,7 +114,8 @@ Deployed as part of the `agents-manager` bundle to `widgets.wp.com`. PHP in `jet
 
 ## Related
 
-- [AGENTS.md](AGENTS.md) — Critical patterns, conventions, and pitfalls for AI agents
+- [AGENTS.md](AGENTS.md) — Critical patterns, conventions, and pitfalls for AI agents (read this first for any code change)
+- [UI Test Skill](.agents/skills/ui-testing/SKILL.md) — Comprehensive UI test cases for Playwright
 - [@automattic/agents-manager](../agents-manager/README.md) — Parent integration package
 
 ## License

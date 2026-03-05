@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -136,16 +137,22 @@ function setupLinkedinInsight( partnerId ) {
  * This is a rework of the obfuscated tracking code provided by Quora.
  */
 function setupQuoraGlobal() {
-	if ( window.qp ) {
-		return;
+	if ( ! window.qp ) {
+		const quoraPixel = ( window.qp = function () {
+			quoraPixel.qp
+				? quoraPixel.qp.apply( quoraPixel, arguments )
+				: quoraPixel.queue.push( arguments );
+		} );
+		quoraPixel.queue = [];
 	}
+	const currentUser = getCurrentUser();
+	const params = currentUser ? { email: currentUser.email } : {};
 
-	const quoraPixel = ( window.qp = function () {
-		quoraPixel.qp
-			? quoraPixel.qp.apply( quoraPixel, arguments )
-			: quoraPixel.queue.push( arguments );
-	} );
-	quoraPixel.queue = [];
+	/*
+	 * If the pixel loads and fires an event before init has been called, it will throw an error, so we call it here.
+	 * init requires the cleartext user email and hashing is handled by the library.
+	 */
+	window.qp( 'init', TRACKING_IDS.quoraPixelId, params );
 }
 
 /**

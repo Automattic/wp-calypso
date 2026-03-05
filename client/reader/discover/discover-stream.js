@@ -1,3 +1,4 @@
+import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -33,7 +34,9 @@ const DiscoverStream = ( props ) => {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
-				<AddSubscriptionForm type={ selectedTab } />
+				<SiteSubscriptionsQueryPropsProvider>
+					<AddSubscriptionForm type={ selectedTab } />
+				</SiteSubscriptionsQueryPropsProvider>
 			</ReaderMain>
 		);
 	}

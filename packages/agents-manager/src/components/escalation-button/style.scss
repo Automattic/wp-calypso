@@ -1,0 +1,14 @@
+.agents-manager__escalation-button.summary-button.components-button {
+	text-align: start;
+	background-color: var( --color-background );
+	border-color: var( --color-muted );
+
+	&:hover:not( :disabled ) {
+		border-color: var( --color-muted );
+		background-color: color-mix( in srgb, var( --color-foreground ) 8%, transparent );
+	}
+
+	.summary-button-title {
+		color: var( --color-foreground );
+	}
+}

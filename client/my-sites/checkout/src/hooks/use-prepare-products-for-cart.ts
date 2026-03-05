@@ -485,15 +485,18 @@ function useAddRenewalBySubscriptionId( {
 			} );
 			return;
 		}
-		const cartItem = createRequestCartProduct( {
-			product_slug: '',
-			extra: {
-				purchaseId: String( originalPurchaseId ),
-				purchaseType: 'renewal',
-			},
-		} );
-		debug( 'preparing renewal from subscription ID', originalPurchaseId );
-		dispatch( { type: 'RENEWALS_ADD', products: [ cartItem ] } );
+		const subscriptionIds = String( originalPurchaseId ).split( ',' );
+		const cartItems = subscriptionIds.map( ( subscriptionId ) =>
+			createRequestCartProduct( {
+				product_slug: '',
+				extra: {
+					purchaseId: subscriptionId,
+					purchaseType: 'renewal',
+				},
+			} )
+		);
+		debug( 'preparing renewals from subscription IDs', originalPurchaseId );
+		dispatch( { type: 'RENEWALS_ADD', products: cartItems } );
 	}, [ addHandler, dispatch, originalPurchaseId, translate ] );
 }
 

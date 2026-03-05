@@ -39,7 +39,6 @@ export interface UseDeletePermanentlyReturn {
  * - Resets canvas history to bypass unsaved-changes exit dialog
  * - Calls onExit to close Image Studio after deletion
  * - Shows error notifications on failure
- *
  * @param props              - Hook props
  * @param props.onExit       - Function to close Image Studio after deletion
  * @param props.setIsExiting - Setter for shared isExiting state (shows exit overlay)
@@ -58,7 +57,9 @@ export function useDeletePermanently( {
 		imageStudioStore
 	) as ImageStudioActions;
 
-	const { deleteEntityRecord } = useDispatch( coreStore ) as any;
+	const { deleteEntityRecord } = useDispatch(
+		coreStore
+	) as unknown as import('../types/wordpress').CoreDataDispatch;
 
 	// Get draft cleanup utilities for cleaning up temporary images before exit
 	const { deleteDraftsExcept } = useDraftCleanup();

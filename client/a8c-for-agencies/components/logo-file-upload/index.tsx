@@ -19,6 +19,8 @@ import {
 	validateLogoDimensions,
 	validateLogoFile,
 } from 'calypso/a8c-for-agencies/lib/logo-file-validation';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -35,6 +37,7 @@ export interface LogoFileUploadProps {
  */
 function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ error, setError ] = useState< LogoFileValidationError | 'dimensions' | null >( null );
 	const maxLogoSizeMb = Math.floor( A4A_LOGO_MAX_FILE_SIZE_BYTES / ( 1024 * 1024 ) );
 
@@ -65,9 +68,10 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 				return;
 			}
 
+			dispatch( recordTracksEvent( 'calypso_a4a_client_referral_logo_file_select' ) );
 			onFileSelect( file );
 		},
-		[ onFileSelect ]
+		[ dispatch, onFileSelect ]
 	);
 
 	let errorMessage: React.ReactNode | null = null;

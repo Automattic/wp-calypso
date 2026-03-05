@@ -96,7 +96,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"reader/discover-v3": false,
+		"reader/discover-v3": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"readymade-templates/showcase": false,
@@ -134,7 +134,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"wordpress-ai-assistant": false,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},

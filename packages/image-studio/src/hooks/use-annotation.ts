@@ -13,7 +13,8 @@ import {
 } from '../utils/tracking';
 import { uploadAnnotation } from '../utils/upload-annotation';
 import type { ImageStudioActions } from '../store';
-import type { ImageStudioConfig } from '../types';
+import type { ImageStudioConfig, UploadedMedia } from '../types';
+import type { CurriedImageStudioSelectors } from '../types/wordpress';
 
 interface UseAnnotationOptions {
 	originalImageUrl: string | null;
@@ -31,7 +32,7 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 
 	const { annotationCanvas, hasAnnotations, hasUndoneAnnotations } = useSelect( ( select ) => {
-		const selectors = select( imageStudioStore ) as any;
+		const selectors = select( imageStudioStore ) as CurriedImageStudioSelectors;
 		const canvasRef = selectors.getAnnotationCanvasRef();
 		return {
 			annotationCanvas: canvasRef,
@@ -42,7 +43,10 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 
 	// Helper function to get the latest attachment ID from the store
 	const getCurrentAttachmentId = useCallback( () => {
-		const state = ( window as any ).wp.data.select( 'image-studio' );
+		// Access image-studio store directly via window.wp.data (bypasses React context for sync access)
+		const state = window.wp?.data?.select( 'image-studio' ) as
+			| CurriedImageStudioSelectors
+			| undefined;
 		const attachmentId = state?.getImageStudioAttachmentId?.();
 		if ( typeof attachmentId === 'number' ) {
 			return attachmentId;
@@ -164,15 +168,32 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 		await uploadAnnotation( {
 			blob,
 			originalFilename,
-			onSuccess: async ( media: any ) => {
+			onSuccess: async ( media: UploadedMedia ) => {
 				// Get the actual uploaded URL (not blob URL)
 				// WordPress REST API returns different property names:
 				// - media.source_url (full size)
 				// - media.url (might be undefined or blob URL)
-				// - media.guid.rendered (always available)
-				const uploadedUrl = media.source_url || media.url || media.guid?.rendered;
+				// - media.guid.rendered (always available as fallback)
+				// TODO: remove cast when @wordpress/media-utils exports guid type
+				const uploadedUrl =
+					media.source_url ??
+					media.url ??
+					( media as { guid?: { rendered: string } } ).guid?.rendered;
 
-				const parsedAttachmentId = parseInt( media.id, 10 );
+				if ( ! uploadedUrl || typeof uploadedUrl !== 'string' ) {
+					// eslint-disable-next-line no-console
+					console.error(
+						'[Image Studio] Upload succeeded but no URL found in media response',
+						media
+					);
+					// Revoke the blob URL
+					URL.revokeObjectURL( blobUrl );
+					setIsAnnotationSaving( false );
+					return;
+				}
+
+				const parsedAttachmentId =
+					typeof media.id === 'number' ? media.id : parseInt( String( media.id ), 10 );
 				const resolvedAttachmentId =
 					typeof parsedAttachmentId === 'number' && ! Number.isNaN( parsedAttachmentId )
 						? parsedAttachmentId

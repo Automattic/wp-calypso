@@ -20,6 +20,19 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 			min-height: inherit;
 		}
 	}
+
+	#jetpack-social-root > div:first-of-type {
+		margin-left: 0;
+	}
+
+	// Lovely
+	#jetpack-social-root > div > div:nth-child(2) > div > div:nth-child(2) > div:nth-child(2) > div {
+		grid-column-end: span 7;
+	}
+
+	&.jetpack_page_jetpack-social #wpbody {
+		z-index: 9990;
+	}
 }
 
 body.agents-manager-sidebar-container--sidebar-open.modal-open:not( .wp-admin ) {
