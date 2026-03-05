@@ -126,7 +126,7 @@ describe( 'receiveError', () => {
 				type: 'NOTICE_CREATE',
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'The plugin zip file must be smaller than 10MB.',
+					text: 'The plugin zip file must be smaller than 50 MB.',
 					showDismiss: true,
 				} ),
 			} )
