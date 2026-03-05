@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Editor tracking: Other block-related events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {

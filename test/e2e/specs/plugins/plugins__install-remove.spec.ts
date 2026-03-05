@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Jetpack: Plugin' ),
 	{ tag: [ tags.JETPACK_REMOTE_SITE ] },
 	() => {

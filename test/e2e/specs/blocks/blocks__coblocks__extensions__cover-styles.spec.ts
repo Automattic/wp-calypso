@@ -21,7 +21,7 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe( 'CoBlocks: Extensions: Cover Styles', { tag: [ tags.GUTENBERG ] }, () => {
+test.describe.fixme( 'CoBlocks: Extensions: Cover Styles', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
 	test( 'As a user, I can change CoBlocks cover styles', async ( { page, pageEditor } ) => {

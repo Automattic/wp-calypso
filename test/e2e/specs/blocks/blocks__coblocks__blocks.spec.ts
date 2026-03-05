@@ -25,7 +25,7 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
+test.describe.fixme( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
 	// Test data

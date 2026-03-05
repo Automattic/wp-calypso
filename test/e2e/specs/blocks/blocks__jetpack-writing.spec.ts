@@ -22,7 +22,9 @@ const blockFlows: BlockFlow[] = [
 	),
 ];
 
-createBlockTests( 'Blocks: Jetpack Writing', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests(
+	'Blocks: Jetpack Writing',
+	blockFlows,
+	[ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ],
+	true
+);

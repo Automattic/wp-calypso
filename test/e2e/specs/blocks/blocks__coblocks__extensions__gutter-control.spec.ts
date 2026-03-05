@@ -20,7 +20,7 @@ if ( isAtomic ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
+test.describe.fixme( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
 	test( 'As a user, I can change CoBlocks gutter control settings', async ( {

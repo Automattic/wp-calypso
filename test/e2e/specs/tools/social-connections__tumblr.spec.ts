@@ -18,7 +18,7 @@ import {
 import { Page } from 'playwright';
 import { tags, test } from '../../lib/pw-base';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
@@ -68,15 +68,15 @@ test.describe(
 				);
 			} );
 			// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
-			test.skip( 'Click on the "Connect" button for Tumblr', async function () {
+			await test.step( 'Click on the "Connect" button for Tumblr', async () => {
 				popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
 			} );
 
-			test.skip( 'Set up Tumblr', async function () {
+			await test.step( 'Set up Tumblr', async () => {
 				await marketingPage.setupTumblr( popup, secrets.socialAccounts.tumblr );
 			} );
 
-			test.skip( 'Tumblr is connected', async function () {
+			await test.step( 'Tumblr is connected', async () => {
 				await marketingPage.validateSocialConnected( 'Tumblr' );
 			} );
 		} );

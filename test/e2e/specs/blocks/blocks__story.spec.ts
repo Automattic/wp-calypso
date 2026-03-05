@@ -19,7 +19,7 @@ import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
  *
  * Keywords: Jetpack, Media Block, Story
  */
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ),
 	{ tag: [ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {

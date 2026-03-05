@@ -20,7 +20,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {

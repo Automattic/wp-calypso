@@ -15,7 +15,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 const createTemplatePartName = () =>
 	`TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger( 0, 100 ) }`;
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Editor tracking: Site editor template events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {

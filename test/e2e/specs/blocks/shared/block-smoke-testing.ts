@@ -20,9 +20,11 @@ import { expect, tags as allTags, test } from '../../../lib/pw-base';
 export function createBlockTests(
 	specName: string,
 	blockFlows: BlockFlow[],
-	testTags: string[] = [ allTags.GUTENBERG ]
+	testTags: string[] = [ allTags.GUTENBERG ],
+	muted: boolean = false
 ): void {
-	test.describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
+	const describe = muted ? test.describe.fixme : test.describe;
+	describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [
 			{

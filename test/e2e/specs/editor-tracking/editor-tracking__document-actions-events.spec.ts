@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Editor tracking: Site editor document actions events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {

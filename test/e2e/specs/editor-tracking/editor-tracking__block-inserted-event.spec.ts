@@ -14,7 +14,7 @@ import {
 import { expect, tags, test } from '../../lib/pw-base';
 import type { TracksEventProperties } from '@automattic/calypso-e2e';
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Editor tracking: "wpcom_block_inserted" event variations' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {

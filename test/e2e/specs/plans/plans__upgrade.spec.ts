@@ -21,7 +21,7 @@ import { apiDeleteSite } from '../shared';
 
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
 	),

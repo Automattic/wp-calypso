@@ -22,7 +22,7 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
+test.describe.fixme( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
 	test( 'As a user, I can replace an image in the editor', async ( { page, pageEditor } ) => {

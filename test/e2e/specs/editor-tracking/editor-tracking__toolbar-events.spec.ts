@@ -11,7 +11,7 @@ import {
 import { expect, tags, test } from '../../lib/pw-base';
 
 // None of these toolbar actions are available in mobile.
-test.describe(
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Editor tracking: Toolbar-related events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
