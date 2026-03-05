@@ -162,22 +162,13 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					}
 				>
 					<div>
-						<div>
-							<div className="add-new-site-popover__count">
-								{ translate( '%(pendingSites)d of 5 free licenses available', {
-									args: {
-										pendingSites: availableDevSites,
-									},
-									comment: '%(pendingSites)s is the number of free licenses available.',
-								} ) }
-							</div>
-							<div
-								className={ clsx( 'add-new-site-popover__cta', {
-									disabled: ! hasAvailableDevSites,
-								} ) }
-							>
-								{ translate( 'Create a site now →' ) }
-							</div>
+						<div className="add-new-site-popover__count">
+							{ translate( '%(pendingSites)d of 5 free licenses available', {
+								args: {
+									pendingSites: availableDevSites,
+								},
+								comment: '%(pendingSites)s is the number of free licenses available.',
+							} ) }
 						</div>
 						<div
 							className={ clsx( 'add-new-site-popover__cta', {
