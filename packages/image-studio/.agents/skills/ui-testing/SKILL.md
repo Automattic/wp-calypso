@@ -1,6 +1,6 @@
 ---
 name: image-studio-ui-tests
-description: Run comprehensive UI tests for the Image Studio feature
+description: Run comprehensive UI tests for the Image Studio feature. Covers Media Library entry points, Edit Mode, Generate Mode, Block Editor integration, navigation, and delete. Use when running the full UI smoke test or testing any Image Studio surface.
 ---
 
 # Image Studio UI Tests
@@ -55,81 +55,15 @@ Section 12 (Delete Permanently) ──► requires Edit Mode with Image Info sid
 
 ## CSS Selectors & Aria Labels Reference
 
-Use these selectors for automated testing with Playwright.
+Full selector tables for all elements (Modal, Sidebar, Generate Mode, Canvas, Block Editor): see [references/selectors.md](references/selectors.md).
 
-### Media Library Page
-
-| Element                | Selector                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| Generate Image button  | `.big-sky-image-studio-link` or `.page-title-action.big-sky-image-studio-link` |
-| List view toggle       | `.view-switch-list` or `button[id="view-switch-list"]`                         |
-| Row actions (on hover) | `.wp-list-table tbody tr td.title .row-actions`                                |
-| Image title link       | `.wp-list-table tbody tr td.title a`                                           |
-
-### Image Studio Modal (shared across modes)
-
-| Element                     | Selector / Aria Label                                                                               |
-| --------------------------- | --------------------------------------------------------------------------------------------------- |
-| Modal overlay               | `.components-modal__screen-overlay.image-studio-overlay`                                            |
-| Modal content               | `.image-studio-modal__content`                                                                      |
-| Header bar                  | `.image-studio-header`                                                                              |
-| Title text ("Image Editor") | `.image-studio-header__title`                                                                       |
-| Beta badge                  | `.image-studio-badge`                                                                               |
-| Nav prev button             | `aria-label="Previous image ⌘←"` / `.image-studio-header__nav-button`                               |
-| Nav next button             | `aria-label="Next image ⌘→"` / `.image-studio-header__nav-button`                                   |
-| Filename display            | `.image-studio-header__filename`                                                                    |
-| Media Library button        | `aria-label="Edit this image in the WordPress Media Library"` / `.image-studio-classic-editor-link` |
-| Select tool                 | `aria-label="Select an area of the image to edit"`                                                  |
-| Image Info toggle           | `aria-label="View or edit information about the image"` / `.image-studio-toolbar-alt-button`        |
-| Save button                 | `.image-studio-header button.is-primary` (text: "Save" or "Save & Apply")                           |
-| Close button                | `aria-label="Close image editor"`                                                                   |
-| Notices container           | `.image-studio-modal__notices`                                                                      |
-| Screen reader status        | `.image-studio-sr-only`                                                                             |
-
-### Sidebar (Image Info)
-
-| Element               | Selector                         |
-| --------------------- | -------------------------------- |
-| Sidebar container     | `.image-studio-sidebar`          |
-| Sidebar header        | `.image-studio-sidebar__header`  |
-| Sidebar content       | `.image-studio-sidebar__content` |
-| Modal sidebar wrapper | `.image-studio-modal__sidebar`   |
-
-### Generate Mode (Chat / AI Agent)
-
-| Element                    | Selector / Aria Label                                                             |
-| -------------------------- | --------------------------------------------------------------------------------- |
-| AI agent container         | `.image-studio-agent.agenttic`                                                    |
-| Chat input (textarea)      | `textarea` inside `.image-studio-modal__content`                                  |
-| Input toolbar              | `.image-studio-modal__input-toolbar`                                              |
-| Send button                | `aria-label="Send message"`                                                       |
-| Good response (thumbs up)  | `aria-label="Good response"`                                                      |
-| Bad response (thumbs down) | `aria-label="Bad response"`                                                       |
-| Style selector button      | `.AgentUIInputToolbar-module_button` (text shows current style, e.g. "None")      |
-| Aspect Ratio button        | `.AgentUIInputToolbar-module_button` (text shows "Aspect Ratio" or current ratio) |
-| Loading state              | `.image-studio-suggestions-loading` or `.image-studio-agent-loading`              |
-
-### Confirmation Dialog (Unsaved Changes)
-
-| Element        | Selector                                    |
-| -------------- | ------------------------------------------- |
-| Dialog content | `.image-studio-confirmation-dialog-content` |
-
-### Canvas
-
-| Element       | Selector                     |
-| ------------- | ---------------------------- |
-| Image display | `.image-studio-image`        |
-| Exit overlay  | `.image-studio-exit-overlay` |
-
-### Block Editor
-
-| Element                   | Selector                                                   |
-| ------------------------- | ---------------------------------------------------------- |
-| Editor content iframe     | `iframe[name="editor-canvas"]`                             |
-| Block Inserter button     | `aria-label="Block Inserter"`                              |
-| Image block placeholder   | `[data-type="core/image"]` (inside editor iframe)          |
-| Generate Image (in block) | `button:has-text("Generate Image")` (inside editor iframe) |
+Key selectors used across most sections:
+- Modal overlay: `.components-modal__screen-overlay.image-studio-overlay`
+- Modal content: `.image-studio-modal__content`
+- Close button: `aria-label="Close image editor"`
+- Save button: `.image-studio-header button.is-primary`
+- Image display: `.image-studio-image`
+- Generate Image button: `.big-sky-image-studio-link`
 
 ---
 
@@ -382,91 +316,7 @@ When running these tests with Playwright MCP (not playwright-test):
 
 ---
 
-## Troubleshooting
+## Troubleshooting & Output
 
-### Known Flaky Areas
-
-Use `⚠️ Partial` for these when behavior is intermittent and reproducible retries still fail.
-These flake notes apply to **sandbox test runs** (e.g., `*.sandbox.wordpress.com`) and should not be assumed for production without re-validation.
-
-- **Section 9 (Block Editor - Generate Entry Point):** The Image block may intermittently not expose **Generate Image** inside `iframe[name="editor-canvas"]`, even after valid setup.
-  - Retry once after re-selecting/re-inserting the Image block.
-  - If still missing, report as `⚠️ Partial (flaky Section 9)`.
-- **Section 10 (Block Editor - Edit Entry Point):** Depends on Section 9 setup and an inserted/selectable image block.
-  - If Section 9 is flaky/blocked, report Section 10 as `⚠️ Partial (blocked by Section 9)` instead of a hard fail.
-- **Section 6 (Prompt & AI Response):** Backend generation may intermittently time out with no explicit streaming error.
-  - Follow the existing retry-once rule, then report as `⚠️ Partial (backend flake)` if both attempts fail.
-
-| Issue                                        | Check                                                                                                                        |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **"Generate Image" button not visible**      | Confirm you're on Media Library page (`upload.php`), not a post edit screen                                                  |
-| **"Edit with AI" not in row actions**        | Confirm you're in List view, not Grid view. If still missing, use hash deep-link (Section 8) instead                         |
-| **AI generation hangs**                      | Check DevTools Console for API errors; wait up to 50 seconds, then retry once                                                |
-| **Streaming error during generation**        | May be a transient backend issue. Retry once. More common from block editor context than Media Library                       |
-| **Block Editor doesn't load**                | Try refreshing; check for JavaScript errors in console                                                                       |
-| **Hash deep-link not working**               | Verify ID is correct; check URL format is exactly `#ai-image-editor=123`; wait for full page load                            |
-| **Section 4 reopen inconsistent**            | Reopen by the captured attachment ID (hash or exact row selector), not by “first row” which may change order                 |
-| **Can't interact with block editor content** | Content is inside `iframe[name="editor-canvas"]` — use iframe-aware interaction methods                                      |
-| **Section 9/10 cannot find Image actions**   | Insert Image block via iframe inline **Add block** button first. `Edit with AI` appears only after a real image is selected. |
-| **Suggestion chip doesn't generate**         | Chips only populate the input; press Enter or click send button to start generation                                          |
-| **"AI Editor" sidebar opens site editor**    | This is expected — it links to the site editor (`site-editor.php`), not Image Studio edit mode                               |
-| **Modal intercepts clicks on background**    | Target elements inside `.image-studio-modal__content` specifically; use JS evaluate as fallback                              |
-
----
-
-## Test Output Template
-
-```
-## Image Studio UI Smoke Test Results
-
-**Date:** YYYY-MM-DD
-**Tester:** [Name]
-**Branch:** forno-194/image-studio-feature-parity
-**Site:** https://[site].wordpress.com
-
-### Results Summary
-- Total Sections: 12
-- Passed: [N]
-- Partial: [N]
-- Failed: [N]
-- Untestable: [N]
-
-### Section Results
-
-| Section | Status | Notes |
-|---------|--------|-------|
-| 1. Media Library Entry Points | ✅/⚠️/❌ | [Details if failed] |
-| 2. Edit Mode | ✅/⚠️/❌ | [Details if failed] |
-| 3. Sidebar & Metadata | ✅/⚠️/❌ | [Details if failed] |
-| 4. Unsaved Changes Dialog | ✅/⚠️/❌ | [Details if failed] |
-| 5. Generate Mode | ✅/⚠️/❌ | [Details if failed] |
-| 6. Prompt & AI Response | ✅/⚠️/❌ | [Details if failed] |
-| 7. Save Flow | ✅/⚠️/❌ | [Details if failed] |
-| 8. Hash Deep-Link | ✅/⚠️/❌ | [Details if failed] |
-| 9. Block Editor — Generate | ✅/⚠️/❌ | [Details if failed] |
-| 10. Block Editor — Edit | ✅/⚠️/❌ | [Details if failed] |
-| 11. Navigation Arrows | ✅/⚠️/❌ | [Details if failed] |
-| 12. Delete Permanently | ✅/⚠️/❌ | [Details if failed] |
-
-### Console Errors (if any)
-```
-
-[Paste relevant errors]
-
-```
-
-### Failed DOM Assertions (if any)
-- Step X.X: Expected `.selector` to be visible, got `offsetHeight: 0`
-- Step X.X: Expected `button` to be disabled, got `disabled: false`
-```
-
----
-
-## Reporting Issues
-
-For each failure, capture:
-
-1. **Exact step** that failed
-2. **DOM state** — what the selector returned vs. what was expected
-3. **Browser DevTools Console** errors (if any, via `playwright_console_logs`)
-4. **Entry point used** (row action, hash deep-link, block editor button, etc.)
+- **Known flaky areas and common issues**: see [references/troubleshooting.md](references/troubleshooting.md)
+- **Test results reporting template**: see [references/output-template.md](references/output-template.md)

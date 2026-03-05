@@ -90,7 +90,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		if ( isScanInProgress ) {
 			return (
 				<>
-					<PerformanceTrackerStop siteSlug={ siteSlug } />
+					<PerformanceTrackerStop />
 					<ScanStatus scanState={ scanState } />
 				</>
 			);

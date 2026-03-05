@@ -12,6 +12,7 @@ import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
 import type { CanvasMetadata, ImageStudioActions } from '../store';
+import type { CurriedImageStudioSelectors, CoreDataDispatch } from '../types/wordpress.d';
 
 function preloadImage( url: string ): Promise< void > {
 	if ( ! url || typeof window === 'undefined' ) {
@@ -129,7 +130,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 				const canvasMetadata = select( imageStudioStore ).getCanvasMetadata() || {};
 
 				// Get current state from store
-				const storeSelectors = select( imageStudioStore ) as any;
+				const storeSelectors = select( imageStudioStore ) as CurriedImageStudioSelectors;
 				const currentDraftIds = storeSelectors.getDraftIds() || [];
 				const originalAttachmentId = storeSelectors.getOriginalAttachmentId();
 
@@ -208,7 +209,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 
 					// Invalidate the cached attachment data in the core store
 					// Then trigger a fresh fetch so the attachment is available for subsequent context reads
-					const coreDispatch = dispatch( coreStore ) as any;
+					const coreDispatch = dispatch( coreStore ) as unknown as CoreDataDispatch;
 					if ( coreDispatch?.invalidateResolution ) {
 						coreDispatch.invalidateResolution( 'getEntityRecord', [
 							'postType',

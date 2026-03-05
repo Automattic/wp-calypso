@@ -230,7 +230,7 @@ function DeploymentsList() {
 					/>
 				</Modal>
 			) }
-			{ ! isLoading && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
+			{ ! isLoading && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }

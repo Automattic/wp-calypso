@@ -143,7 +143,7 @@ export function BackupsListPage() {
 		if ( selectedBackup ) {
 			return (
 				<>
-					<PerformanceTrackerStop siteSlug={ siteSlug } />
+					<PerformanceTrackerStop />
 					<BackupDetails
 						backup={ selectedBackup }
 						site={ site }
@@ -156,7 +156,7 @@ export function BackupsListPage() {
 
 		return (
 			<>
-				{ ! isLoadingActivityLog && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
+				{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
 				<BackupsList
 					activityLog={ activityLog }
 					isLoadingActivityLog={ isLoadingActivityLog }
@@ -244,7 +244,7 @@ export function BackupsListPage() {
 						renderMobileView()
 					) : (
 						<Grid columns={ columns } templateColumns="40% 1fr">
-							{ ! isLoadingActivityLog && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
+							{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
 							<BackupsList
 								activityLog={ activityLog }
 								isLoadingActivityLog={ isLoadingActivityLog }
@@ -259,7 +259,7 @@ export function BackupsListPage() {
 					) }
 				</>
 			) }
-			{ ! hasBackups && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
+			{ ! hasBackups && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }

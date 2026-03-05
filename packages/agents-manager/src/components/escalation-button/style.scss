@@ -1,0 +1,19 @@
+.agents-manager__escalation-button.summary-button.components-button {
+	text-align: start;
+}
+
+.agents-manager-chat--docked {
+	.agents-manager__escalation-button.summary-button.components-button {
+		background-color: #2f2f2f;
+		border-color: #464646;
+
+		&:hover {
+			border-color: #494949;
+			background-color: #595959;
+		}
+
+		.summary-button-title {
+			color: #fff;
+		}
+	}
+}

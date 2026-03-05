@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 
 import './style.scss';
 
@@ -23,6 +24,8 @@ export default function A4AThemedModal( {
 	dismissable,
 	modalVideo,
 }: Props ) {
+	useMinimizeHelpCenterOnMount();
+
 	return (
 		<Modal
 			className={ clsx( 'a4a-themed-modal', className ) }

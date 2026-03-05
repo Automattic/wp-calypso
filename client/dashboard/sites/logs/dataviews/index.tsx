@@ -362,7 +362,7 @@ function SiteLogsDataViews( {
 					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
 				/>
 			) }
-			{ ! isLoadingLogQuery && <PerformanceTrackerStop siteSlug={ site.slug } /> }
+			{ ! isLoadingLogQuery && <PerformanceTrackerStop /> }
 		</>
 	);
 }

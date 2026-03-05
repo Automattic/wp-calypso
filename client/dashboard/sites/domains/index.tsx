@@ -108,7 +108,7 @@ function SiteDomains() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
-			{ ! isLoading && <PerformanceTrackerStop siteSlug={ siteSlug } /> }
+			{ ! isLoading && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }

@@ -6,7 +6,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
-import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
+import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
 
@@ -14,8 +14,8 @@ import { trackImageStudioOpened } from '../utils/tracking';
  * Add Image Studio button to image blocks toolbar
  */
 export const withImageStudioToolbarButton = createHigherOrderComponent(
-	( BlockEdit: React.ComponentType< any > ) => {
-		const ImageStudioToolbarButton = ( props: any ) => {
+	( BlockEdit: React.ComponentType< BlockEditProps > ) => {
+		const ImageStudioToolbarButton = ( props: BlockEditProps ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
 
@@ -29,11 +29,15 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						return { media: null, hasResolved: true };
 					}
 					return {
-						media: select( coreStore ).getEntityRecord( 'postType', 'attachment', attributes.id ),
+						media: select( coreStore ).getEntityRecord(
+							'postType',
+							'attachment',
+							attributes.id as number
+						),
 						hasResolved: ( select( coreStore ) as any ).hasFinishedResolution( 'getEntityRecord', [
 							'postType',
 							'attachment',
-							attributes.id,
+							attributes.id as number,
 						] ),
 					};
 				},
@@ -65,14 +69,16 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				[ setAttributes ]
 			);
 
+			const attachmentId = attributes.id as number | undefined;
+
 			const handleEditClick = useCallback( () => {
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,
-					attachmentId: attributes.id,
+					attachmentId,
 					entryPoint: ImageStudioEntryPoint.EditorBlock,
 				} );
-				openImageStudio( attributes.id, handleClose, ImageStudioEntryPoint.EditorBlock );
-			}, [ attributes, handleClose, openImageStudio ] );
+				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock );
+			}, [ attachmentId, handleClose, openImageStudio ] );
 
 			if ( props.name !== 'core/image' || ! attributes?.id ) {
 				return <BlockEdit { ...props } />;
@@ -105,7 +111,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 					}
 				}
 			}
-			const attributeUrl = attributes?.url ? stripParams( attributes.url ) : null;
+			const attributeUrl = attributes?.url ? stripParams( attributes.url as string ) : null;
 			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
 				return <BlockEdit { ...props } />;
 			}

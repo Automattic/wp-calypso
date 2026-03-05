@@ -85,7 +85,7 @@ export default function HostingFeatureGatedWithCallout( {
 
 				return (
 					<>
-						<PerformanceTrackerStop siteSlug={ props.site.slug } />
+						<PerformanceTrackerStop />
 						{ wrapCallout( upsellCallout ) }
 						{ backButton }
 					</>
@@ -102,7 +102,7 @@ export default function HostingFeatureGatedWithCallout( {
 
 				return (
 					<>
-						<PerformanceTrackerStop siteSlug={ props.site.slug } />
+						<PerformanceTrackerStop />
 						{ wrapCallout( activationCallout ) }
 						{ backButton }
 					</>
