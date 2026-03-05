@@ -6,27 +6,64 @@
 	background:
 		linear-gradient(
 			150deg,
-			rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
-			rgba( var( --studio-blue-50-rgb ), 0.8 ) 90%
+			rgba( var( --studio-gray-0-rgb ), 0 ) 50%,
+			rgba(0, 12, 178, 1) 90%
 		),
-		url( ./background.png ) no-repeat bottom right / contain,
+		url( ./background-mobile.png ) no-repeat bottom center / 120%,
 		linear-gradient(
 			150deg,
 			rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
 			rgba( var( --studio-blue-50-rgb ), 1 ) 90%
 		);
-
 	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
 	grid-column: 1 / -1;
 	grid-row-start: 2;
+	justify-content: space-between;
 	margin-block: 24px;
 	max-width: 1220px;
 	overflow: hidden;
-	padding: 36px;
+	padding: 32px;
 	position: relative;
 
-	@include break-small {
-		padding: 96px 32px;
+	@include break-mobile {
+		background:
+			linear-gradient(
+				150deg,
+				rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
+				rgba(0, 12, 178, 1) 90%
+			),
+			linear-gradient(
+				150deg,
+				rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
+				rgba( var( --studio-blue-50-rgb ), 1 ) 90%
+			);
+		padding: 96px 32px 32px 32px;
+	}
+	@include break-large {
+		background:
+			linear-gradient(
+				150deg,
+				rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
+				rgba(0, 12, 178, 1) 90%
+			),
+			url( ./background.png ) no-repeat bottom right / contain,
+			linear-gradient(
+				150deg,
+				rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
+				rgba( var( --studio-blue-50-rgb ), 1 ) 90%
+			);
+	}
+
+}
+
+.ai-builder-banner__content {
+	padding-bottom: 300px;
+
+	@include break-mobile {
+		max-width: 60%;
+		padding-bottom: 96px;
 	}
 }
 
@@ -56,6 +93,7 @@
 	font-weight: 400;
 	line-height: 1.2;
 	margin: 0;
+	text-wrap: balance;
 
 	&::after {
 		content: '';
@@ -66,7 +104,6 @@
 
 	@include break-small {
 		font-size: rem( 50px );
-		max-width: 50%;
 	}
 }
 
@@ -75,9 +112,33 @@
 	font-size: $font-body-large;
 	line-height: 1.2;
 	margin-block-end: 24px;
+}
 
-	@include break-small {
-		max-width: 50%;
+.ai-builder-banner__byline {
+	align-items: center;
+	align-self: flex-end;
+	color: var( --studio-white );
+	display: flex;
+	font-size: $font-body-small;
+	gap: 6px;
+	justify-content: flex-end;
+	width: 100%;
+
+	@include break-mobile {
+		width: auto;
+	}
+
+	img {
+		filter: brightness( 0 ) invert( 1 );
+	}
+
+	.ai-builder-banner__byline-wp {
+		height: 36px;
+		width: 36px;
+	}
+	.ai-builder-banner__byline-ai {
+		height: 14px;
+		width: 14px;
 	}
 }
 
