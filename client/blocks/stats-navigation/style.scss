@@ -78,12 +78,12 @@
 
 		// Only apply these styles when using the new TabPanel navigation
 		.stats-navigation__tabs {
-			width: calc(100% + 32px);  // Extend width to counter the parent padding
-			margin-left: -16px;        // Pull left to counter parent padding
-			margin-right: -16px;       // Pull right to counter parent padding
+			margin-left: 0; // Reset the negative margin hack from --improved
 
 			.components-tab-panel__tabs {
 				gap: 12px;
+				padding-left: 0;
+				padding-right: 0;
 			}
 
 			.components-tab-panel__tabs-item {
