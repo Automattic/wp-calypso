@@ -273,12 +273,12 @@ export default function OrchestratorChat( {
 	} );
 
 	const displayedMessages = useMemo( () => {
-		let currentMessages = messages;
-
 		// Return already-processed cached messages on back-navigation from history.
-		if ( hasCachedConversation && ! currentMessages.length ) {
+		if ( hasCachedConversation && ! messages.length ) {
 			return cachedMessages;
 		}
+
+		let currentMessages = messages;
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
