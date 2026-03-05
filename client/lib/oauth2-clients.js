@@ -70,6 +70,11 @@ export const isPartnerPortalOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client && [ 102832, 103914 ].includes( oauth2Client.id );
 };
 
+export const isCiabOAuth2Client = ( oauth2Client ) => {
+	// 134404 => CIAB Dev, 134405 => CIAB Staging/Production.
+	return oauth2Client && [ 134404, 134405 ].includes( oauth2Client.id );
+};
+
 export const isVIPOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 76596;
 };
