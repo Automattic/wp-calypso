@@ -10,11 +10,14 @@ const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscripti
 	SubscriptionManager;
 const { useReadFeedSearchQuery } = Reader;
 
-export const UnsubscribedFeedsSearchList = () => {
+interface Props {
+	hideTitle?: boolean;
+}
+export const UnsubscribedFeedsSearchList = ( props: Props ) => {
+	const { hideTitle = false } = props;
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
-
 	const {
 		data: { subscriptions },
 		isFetching: isFetchingSubscriptions,
@@ -79,8 +82,21 @@ export const UnsubscribedFeedsSearchList = () => {
 		);
 	}
 
+	const getTitle = () => {
+		if ( noFeedsFound || hideTitle ) {
+			return null;
+		}
+
+		if ( filteredUnsubscribedFeedItems.length === 1 ) {
+			return translate( 'Here is one result that matches your search:' );
+		}
+		return translate( 'Here are some other sites that match your search:' );
+	};
+	const title = getTitle();
+
 	return (
 		<VStack spacing={ 4 }>
+			{ title && <h2 className="reader-unsubscribed-feeds-search-list-title">{ title }</h2> }
 			<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
 				{ filteredUnsubscribedFeedItems?.map( ( feed, index ) => (
 					<ReaderFeedItem
