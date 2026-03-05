@@ -27,6 +27,9 @@ const mockWpcomGet = wpcom.req.get as jest.Mock;
 describe( 'maybeUseUnifiedInvite', () => {
 	let context: {
 		params: Record< string, string >;
+		store: {
+			getState: jest.Mock;
+		};
 		inviteData?: unknown;
 		inviteError?: unknown;
 		useUnifiedInvite?: boolean;
@@ -42,6 +45,13 @@ describe( 'maybeUseUnifiedInvite', () => {
 			params: {
 				site_id: '123',
 				invitation_key: 'abc123',
+			},
+			store: {
+				getState: jest.fn( () => ( {
+					currentUser: {
+						id: 1,
+					},
+				} ) ),
 			},
 		};
 		next = jest.fn();
@@ -116,6 +126,57 @@ describe( 'maybeUseUnifiedInvite', () => {
 		await maybeUseUnifiedInvite( context as never, next );
 
 		expect( context.inviteData ).toEqual( nonCiabInviteData );
+		expect( context.useUnifiedInvite ).toBeUndefined();
+		expect( context.primary ).toBeUndefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	test( 'falls back to legacy flow for logged-out users on CIAB sites', async () => {
+		context.store.getState.mockReturnValue( {
+			currentUser: {
+				id: null,
+			},
+		} );
+
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
+		expect( context.useUnifiedInvite ).toBeUndefined();
+		expect( context.primary ).toBeUndefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	test( 'falls back to legacy flow when social callback params are present', async () => {
+		mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+			if ( param === 'code' ) {
+				return 'oauth-code';
+			}
+			return undefined;
+		} );
+
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
 		expect( context.useUnifiedInvite ).toBeUndefined();
 		expect( context.primary ).toBeUndefined();
 		expect( next ).toHaveBeenCalled();

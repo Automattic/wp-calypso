@@ -52,6 +52,7 @@ const defaultProps = {
 describe( 'UnifiedInviteAccept', () => {
 	beforeEach( () => {
 		mockRedirect.mockClear();
+		window.history.replaceState( {}, '', '/accept-invite/123/abc123' );
 	} );
 
 	test( 'redirects to legacy flow when user is not logged in', () => {
@@ -102,6 +103,30 @@ describe( 'UnifiedInviteAccept', () => {
 
 		expect( mockRedirect ).toHaveBeenCalledWith(
 			'/accept-invite/123/abc123/activation123/auth456?legacy=1'
+		);
+	} );
+
+	test( 'preserves social callback query and hash in legacy redirect path', () => {
+		window.history.replaceState(
+			{},
+			'',
+			'/accept-invite/123/abc123?code=oauth-code&state=nonce#social-callback'
+		);
+
+		const store = mockStore( {
+			currentUser: {
+				id: null,
+			},
+		} );
+
+		render(
+			<Provider store={ store }>
+				<UnifiedInviteAccept { ...defaultProps } />
+			</Provider>
+		);
+
+		expect( mockRedirect ).toHaveBeenCalledWith(
+			'/accept-invite/123/abc123?code=oauth-code&state=nonce&legacy=1#social-callback'
 		);
 	} );
 

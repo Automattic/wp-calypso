@@ -1,7 +1,8 @@
 import { type Context } from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
-import { isAlreadyMemberError } from './utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasSocialLoginCallbackParams, isAlreadyMemberError } from './utils';
 import UnifiedInviteAccept from './index';
 import type { InviteBlogDetails } from './types';
 
@@ -60,6 +61,8 @@ function getBlogDetailsFromError( apiError: ApiError ): InviteBlogDetails | unde
  */
 export async function maybeUseUnifiedInvite( context: Context, next: () => void ) {
 	const { site_id: siteId, invitation_key: inviteKey } = context.params;
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const hasSocialLoginCallback = hasSocialLoginCallbackParams( window.location.href );
 
 	// Check for legacy flag first - skip unified entirely
 	const forceLegacy = getQueryArg( window.location.href, 'legacy' ) === '1';
@@ -72,7 +75,11 @@ export async function maybeUseUnifiedInvite( context: Context, next: () => void 
 		const response = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
 		context.inviteData = response;
 
-		if ( shouldUseUnifiedFlow( response?.blog_details ) ) {
+		if (
+			shouldUseUnifiedFlow( response?.blog_details ) &&
+			isLoggedIn &&
+			! hasSocialLoginCallback
+		) {
 			renderUnifiedInvite( context );
 			context.useUnifiedInvite = true;
 		}
@@ -85,7 +92,7 @@ export async function maybeUseUnifiedInvite( context: Context, next: () => void 
 		if ( apiError.error && isAlreadyMemberError( apiError.error ) ) {
 			const blogDetails = getBlogDetailsFromError( apiError );
 
-			if ( shouldUseUnifiedFlow( blogDetails ) ) {
+			if ( shouldUseUnifiedFlow( blogDetails ) && isLoggedIn && ! hasSocialLoginCallback ) {
 				context.inviteError = {
 					error: apiError.error,
 					message: apiError.message,
