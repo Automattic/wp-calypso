@@ -4,11 +4,11 @@ import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import Notice from '../components/notice';
-import { isDotcomPlan } from '../utils/purchase';
+import { isDotcomPlan, isExpired } from '../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 function isDisconnectedSite( purchase: Purchase, siteIds: Set< number > ): boolean {
-	return isDotcomPlan( purchase ) && ! siteIds.has( purchase.blog_id );
+	return isDotcomPlan( purchase ) && ! isExpired( purchase ) && ! siteIds.has( purchase.blog_id );
 }
 
 export default function InaccessibleSitesNotice() {
