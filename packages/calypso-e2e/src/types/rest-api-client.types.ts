@@ -95,6 +95,16 @@ export interface SiteDeletionResponse {
 	status: string;
 }
 
+export interface PurchaseData {
+	ID: number;
+	blog_id: number;
+	product_name: string;
+}
+
+export interface SitePurchasesResponse {
+	purchases: Array< PurchaseData >;
+}
+
 export interface AccountClosureResponse {
 	success: boolean;
 }

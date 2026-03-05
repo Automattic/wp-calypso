@@ -1,6 +1,6 @@
 import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiDeleteSite } from '../shared';
+import { apiCancelSitePurchases, apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
 test.describe(
@@ -69,7 +69,7 @@ test.describe(
 			} );
 		} );
 
-		test.afterAll( 'Delete the created site', async function () {
+		test.afterAll( 'Cancel purchases and delete the created site', async function () {
 			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
 				return;
 			}
@@ -78,6 +78,8 @@ test.describe(
 				username: accountUsed.credentials.username,
 				password: accountUsed.credentials.password,
 			} );
+
+			await apiCancelSitePurchases( restAPIClient, newSiteDetails.blog_details.blogid );
 
 			await apiDeleteSite( restAPIClient, {
 				url: newSiteDetails.blog_details.url,

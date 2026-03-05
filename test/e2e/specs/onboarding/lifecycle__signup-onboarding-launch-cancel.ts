@@ -24,7 +24,7 @@ import {
 	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
+import { apiCancelSitePurchases, apiCloseAccount, apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
@@ -279,6 +279,14 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			},
 			newUserDetails.body.bearer_token
 		);
+
+		await apiCancelSitePurchases( restAPIClient, newSiteDetails.blog_details.blogid );
+
+		await apiDeleteSite( restAPIClient, {
+			url: newSiteDetails.blog_details.url,
+			id: newSiteDetails.blog_details.blogid,
+			name: newSiteDetails.blog_details.blogname,
+		} );
 
 		await apiCloseAccount( restAPIClient, {
 			userID: newUserDetails.body.user_id,

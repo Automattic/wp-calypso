@@ -20,6 +20,7 @@ import type {
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
+	SitePurchasesResponse,
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
@@ -294,7 +295,7 @@ export class RestAPIClient {
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
 		const match = mySites.domains.filter( ( site: DomainData ) => {
-			site.blog_id === targetSite.id && site.domain === targetDomain;
+			return site.blog_id === targetSite.id && site.domain === targetDomain;
 		} );
 
 		if ( ! match ) {
@@ -323,6 +324,53 @@ export class RestAPIClient {
 
 		console.log( `Successfully deleted site ID ${ targetSite.domain }` );
 		return response;
+	}
+
+	/**
+	 * Returns the purchases for a given site.
+	 *
+	 * @param {number} siteID ID of the site.
+	 * @returns {Promise<SitePurchasesResponse>} Array of purchases for the site.
+	 */
+	async getSitePurchases( siteID: number ): Promise< SitePurchasesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/purchases` ),
+			params
+		);
+	}
+
+	/**
+	 * Cancels and removes a purchase by ID.
+	 *
+	 * @param {number} purchaseID ID of the purchase to cancel.
+	 */
+	async cancelPurchase( purchaseID: number ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/purchases/${ purchaseID }/delete`, 'wpcom' ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
 	}
 
 	/* Invites */
