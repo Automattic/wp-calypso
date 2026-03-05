@@ -261,6 +261,15 @@
 		border-radius: 0;
 		border-bottom: 1px solid var(--studio-gray-5);
 
+		/* Vertically center the icon (decoration) with the card content */
+		> * {
+			align-items: center;
+		}
+
+		.summary-button-decoration {
+			align-items: center;
+		}
+
 		&:last-child {
 			border-bottom: none;
 		}

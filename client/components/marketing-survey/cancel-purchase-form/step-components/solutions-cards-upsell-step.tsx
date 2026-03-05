@@ -7,6 +7,24 @@ import { SummaryButton } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import {
+	Icon,
+	brush,
+	calendar,
+	code,
+	comment,
+	commentContent,
+	globe,
+	people,
+	percent,
+	postList,
+	reusableBlock,
+	search,
+	shipping,
+	shuffle,
+	trendingUp,
+	upload,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -16,6 +34,32 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+const CARD_ICONS: Record< string, unknown > = {
+	'change-plan': reusableBlock,
+	'switch-to-monthly': calendar,
+	'speak-with-support': comment,
+	'renew-now-pay-less': percent,
+	'built-by': people,
+	'ask-ai-assistant': commentContent,
+	'upgrade-for-full-access': upload,
+	'get-theme-addon': brush,
+	'get-css-addon': code,
+	'find-guides': postList,
+	'make-site-faster': trendingUp,
+	'use-migration-tools': shipping,
+	'use-domain-guide': globe,
+	'explore-domain-options': search,
+	'move-subscription': shuffle,
+};
+
+function getDecorationForCard( cardId: string ) {
+	const icon = CARD_ICONS[ cardId ];
+	if ( ! icon ) {
+		return undefined;
+	}
+	return <Icon icon={ icon } size={ 24 } />;
+}
 
 function isAnnualOrLongerPlan( productSlug: string ): boolean {
 	return (
@@ -189,7 +233,7 @@ export default function SolutionsCardsUpsellStep( {
 								className="cancel-purchase-form__solution-card"
 								title={ getTranslatedTitle( card.id, translate ) }
 								description={ getTranslatedSubtitle( card.id, translate ) }
-								decoration={ config.decoration }
+								decoration={ config.decoration ?? getDecorationForCard( card.id ) }
 								href={ href }
 								onClick={ hasAction ? handleClick : undefined }
 								showArrow={ hasAction }

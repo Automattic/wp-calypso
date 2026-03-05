@@ -2,10 +2,28 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
+	Icon,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import {
+	brush,
+	calendar,
+	code,
+	comment,
+	commentContent,
+	globe,
+	people,
+	percent,
+	postList,
+	reusableBlock,
+	search,
+	shipping,
+	shuffle,
+	trendingUp,
+	upload,
+} from '@wordpress/icons';
 import * as React from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
 import DashboardSummaryButton from '../../../../../components/summary-button';
@@ -15,6 +33,32 @@ import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 const RENEW_COUPON = 'biz25';
+
+const CARD_ICONS: Record< string, unknown > = {
+	'change-plan': reusableBlock,
+	'switch-to-monthly': calendar,
+	'speak-with-support': comment,
+	'renew-now-pay-less': percent,
+	'built-by': people,
+	'ask-ai-assistant': commentContent,
+	'upgrade-for-full-access': upload,
+	'get-theme-addon': brush,
+	'get-css-addon': code,
+	'find-guides': postList,
+	'make-site-faster': trendingUp,
+	'use-migration-tools': shipping,
+	'use-domain-guide': globe,
+	'explore-domain-options': search,
+	'move-subscription': shuffle,
+};
+
+function getDecorationForCard( cardId: string ) {
+	const icon = CARD_ICONS[ cardId ];
+	if ( ! icon ) {
+		return undefined;
+	}
+	return <Icon icon={ icon } size={ 24 } />;
+}
 
 function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 	return (
@@ -299,6 +343,7 @@ export default function SolutionsCardsUpsellStep( {
 							className="cancel-purchase-form__solution-card"
 							title={ title }
 							description={ getCardDescription( card.id ) }
+							decoration={ getDecorationForCard( card.id ) }
 							href={ href }
 							onClick={ onClick }
 							showArrow={ hasAction }
