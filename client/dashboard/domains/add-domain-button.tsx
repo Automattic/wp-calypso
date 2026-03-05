@@ -36,10 +36,7 @@ function DomainOnlyAddDomainButton() {
 	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
 
 	const onSearchClick = () => {
-		window.location.href = addQueryArgs(
-			wpcomLink( siteSlug ? '/setup/domain' : '/start/domain' ),
-			queryArgs
-		);
+		window.location.href = addQueryArgs( siteSlug ? '/setup/domain' : '/start/domain', queryArgs );
 	};
 
 	const onTransferOrConnectClick = () => {
@@ -65,7 +62,7 @@ function DefaultAddDomainButton() {
 	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
 
 	const onSearchClick = () => {
-		window.location.href = addQueryArgs( wpcomLink( '/setup/domain' ), queryArgs );
+		window.location.href = addQueryArgs( '/setup/domain', queryArgs );
 	};
 
 	const onTransferOrConnectClick = () => {

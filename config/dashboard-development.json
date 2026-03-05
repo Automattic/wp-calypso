@@ -29,7 +29,8 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"checkout": true
+		"checkout": true,
+		"signup": true
 	},
 	"site_filter": [],
 	"theme": "dashboard",

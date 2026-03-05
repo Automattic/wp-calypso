@@ -50,6 +50,7 @@ import {
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import { START_SECTION_DEFINITION } from 'calypso/signup/section';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -1148,6 +1149,7 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+	handleSectionPath( START_SECTION_DEFINITION, '/start' );
 	handleSectionPath( CHECKOUT_SECTION_DEFINITION, '/checkout' );
 
 	// Multi-site Dashboard routing.
