@@ -1,19 +1,14 @@
 .agents-manager__escalation-button.summary-button.components-button {
 	text-align: start;
-}
+	background-color: var( --color-background );
+	border-color: var( --color-muted );
 
-.agents-manager-chat--docked {
-	.agents-manager__escalation-button.summary-button.components-button {
-		background-color: #2f2f2f;
-		border-color: #464646;
+	&:hover:not( :disabled ) {
+		border-color: var( --color-muted );
+		background-color: color-mix( in srgb, var( --color-foreground ) 8%, transparent );
+	}
 
-		&:hover {
-			border-color: #494949;
-			background-color: #595959;
-		}
-
-		.summary-button-title {
-			color: #fff;
-		}
+	.summary-button-title {
+		color: var( --color-foreground );
 	}
 }

@@ -40,7 +40,7 @@ export function convertToolMessagesToComponents( {
 					{
 						type: 'component',
 						component: EscalationButton,
-					} as any,
+					},
 				],
 			};
 		}
