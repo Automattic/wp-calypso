@@ -31,10 +31,6 @@ import type {
 } from '../../utils/load-external-providers';
 import type { NavigateFunction } from 'react-router-dom';
 
-interface EditorSelectors {
-	getCurrentPostId?: () => number;
-}
-
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions: Suggestion[];
@@ -103,7 +99,7 @@ export default function OrchestratorChat( {
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 
 	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as EditorSelectors )?.getCurrentPostId?.();
+		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
