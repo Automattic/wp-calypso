@@ -26,7 +26,7 @@ import {
 	upload,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { CardActionContext, RENEW_COUPON, SOLUTION_CARD_CONFIG } from './solution-cards-config';
@@ -35,7 +35,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const CARD_ICONS: Record< string, unknown > = {
+const CARD_ICONS: Record< string, React.ComponentType > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
 	'speak-with-support': comment,
@@ -54,11 +54,11 @@ const CARD_ICONS: Record< string, unknown > = {
 };
 
 function getDecorationForCard( cardId: string ) {
-	const icon = CARD_ICONS[ cardId ];
-	if ( ! icon ) {
+	const IconComponent = CARD_ICONS[ cardId ];
+	if ( ! IconComponent ) {
 		return undefined;
 	}
-	return <Icon icon={ icon } size={ 24 } />;
+	return <Icon icon={ <IconComponent /> } size={ 24 } />;
 }
 
 function isAnnualOrLongerPlan( productSlug: string ): boolean {

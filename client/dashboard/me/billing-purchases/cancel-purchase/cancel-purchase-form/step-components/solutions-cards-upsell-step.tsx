@@ -1,6 +1,6 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, Icon, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, Icon, __experimentalVStack as VStack, type IconType } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	brush,
@@ -30,7 +30,7 @@ import type { Purchase } from '@automattic/api-core';
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
 const RENEW_COUPON = 'biz25';
 
-const CARD_ICONS: Record< string, unknown > = {
+const CARD_ICONS: Record< string, IconType > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
 	'speak-with-support': comment,
