@@ -155,5 +155,10 @@ export async function recordAddToCart( cartItem ) {
 		window.ttq.track( 'AddToCart', params );
 	}
 
+	if ( mayWeTrackByTracker( 'quora' ) ) {
+		debug( 'recordAddToCart: [Quora]' );
+		window.qp( 'track', 'AddToCart' );
+	}
+
 	debug( 'recordAddToCart: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }
