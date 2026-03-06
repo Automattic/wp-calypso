@@ -65,4 +65,15 @@ export interface SiteContextualPlan {
 
 	// Trial availability (conditional - when !is_current_plan && !is_free)
 	can_start_trial?: boolean;
+
+	/** Display order for plan cards on the comparison page. Lower values appear first.
+	 *  Only present on plans that should be shown; absence means the plan is not displayed. */
+	plan_card_order?: number;
+
+	/** Numeric ID shared by all billing-period variants of the same plan family (e.g. 1180 for Woo Basic). */
+	product_tier_id?: number;
+
+	/** product_id values for every billing-period variant of this plan family (inclusive).
+	 *  Use these to navigate between monthly / annual / biennial / triennial variants. */
+	product_tier_product_ids?: number[];
 }

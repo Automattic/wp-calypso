@@ -1,0 +1,664 @@
+import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { plansQuery, sitePlansQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Button,
+	Icon,
+	SelectControl,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { check, lineSolid } from '@wordpress/icons';
+import React, { Fragment, useState } from 'react';
+import { siteRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import { wpcomLink } from '../../utils/link';
+import type {
+	PlanProduct,
+	PlanProductComparisonGroup,
+	SiteContextualPlan,
+	Site,
+	SubscriptionBillPeriodValue,
+} from '@automattic/api-core';
+import './style.scss';
+
+function getBillingPeriodMonths( billPeriod: SubscriptionBillPeriodValue ): number {
+	if ( billPeriod === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
+		return 1;
+	}
+	return Math.round( billPeriod / 365 ) * 12;
+}
+
+function getBillingPeriodLabel( billPeriod: SubscriptionBillPeriodValue ): string {
+	switch ( billPeriod ) {
+		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
+			return __( 'Monthly' );
+		case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			return __( 'Yearly' );
+		default: {
+			const years = Math.round( billPeriod / 365 );
+			if ( years <= 0 ) {
+				return String( billPeriod );
+			}
+			return sprintf(
+				/* translators: %d is the number of years, e.g. "2" */
+				__( '%d Years' ),
+				years
+			);
+		}
+	}
+}
+
+function PlanPrice( {
+	sitePlan,
+	billingInterval,
+	annualSitePlan,
+}: {
+	sitePlan: SiteContextualPlan;
+	billingInterval: SubscriptionBillPeriodValue;
+	annualSitePlan?: SiteContextualPlan;
+} ) {
+	const isMonthly = billingInterval === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
+	const billingMonths = getBillingPeriodMonths( billingInterval );
+
+	if ( sitePlan.introductory_offer_formatted_price ) {
+		const introPriceObj = getCurrencyObject(
+			sitePlan.introductory_offer_raw_price ?? sitePlan.raw_price,
+			sitePlan.currency_code
+		);
+
+		const originalPrice = sitePlan.raw_price + sitePlan.raw_discount;
+		const regularPrice = isMonthly
+			? originalPrice
+			: Math.round( ( originalPrice / billingMonths ) * 100 ) / 100;
+		const regularPriceObj = getCurrencyObject( regularPrice, sitePlan.currency_code );
+
+		const intervalUnit = sitePlan.introductory_offer_interval_unit ?? 'month';
+		const intervalCount = sitePlan.introductory_offer_interval_count ?? 1;
+		let introPeriod: string;
+		if ( intervalUnit === 'year' ) {
+			introPeriod =
+				intervalCount === 1
+					? __( 'your first year' )
+					: sprintf(
+							/* translators: %d is the number of years, e.g. "3" */
+							__( 'your first %d years' ),
+							intervalCount
+					  );
+		} else {
+			introPeriod =
+				intervalCount === 1
+					? __( 'your first month' )
+					: sprintf(
+							/* translators: %d is the number of months, e.g. "3" */
+							__( 'your first %d months' ),
+							intervalCount
+					  );
+		}
+
+		const formattedOriginalPrice = formatCurrency( originalPrice, sitePlan.currency_code, {
+			stripZeros: true,
+		} );
+		let renewalNote: string;
+		if ( isMonthly ) {
+			renewalNote = sprintf(
+				/* translators: 1: intro period (e.g. "your first month"), 2: monthly price (e.g. "$49") */
+				__( 'for %1$s, then %2$s/month, excl. taxes' ),
+				introPeriod,
+				formattedOriginalPrice
+			);
+		} else if ( billingInterval === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD ) {
+			renewalNote = sprintf(
+				/* translators: 1: intro period (e.g. "your first month"), 2: annual price (e.g. "$588") */
+				__( 'for %1$s, then %2$s billed annually, excl. taxes' ),
+				introPeriod,
+				formattedOriginalPrice
+			);
+		} else {
+			const years = Math.round( billingInterval / 365 );
+			renewalNote = sprintf(
+				/* translators: 1: intro period (e.g. "your first month"), 2: price (e.g. "$588"), 3: number of years (e.g. "2") */
+				__( 'for %1$s, then %2$s billed every %3$d years, excl. taxes' ),
+				introPeriod,
+				formattedOriginalPrice,
+				years
+			);
+		}
+
+		return (
+			<VStack spacing={ 1 }>
+				<div className="site-plans__price-display">
+					{ introPriceObj.symbolPosition === 'before' && (
+						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
+					) }
+					<span className="site-plans__price-number">
+						{ introPriceObj.integer }
+						{ introPriceObj.hasNonZeroFraction && introPriceObj.fraction }
+					</span>
+					{ introPriceObj.symbolPosition === 'after' && (
+						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
+					) }
+					<div className="site-plans__price-original">
+						{ regularPriceObj.symbolPosition === 'before' && (
+							<sup className="site-plans__price-currency site-plans__price-currency--original">
+								{ regularPriceObj.symbol }
+							</sup>
+						) }
+						<span className="site-plans__price-number site-plans__price-number--original">
+							{ regularPriceObj.integer }
+							{ regularPriceObj.hasNonZeroFraction && regularPriceObj.fraction }
+						</span>
+						{ regularPriceObj.symbolPosition === 'after' && (
+							<sup className="site-plans__price-currency site-plans__price-currency--original">
+								{ regularPriceObj.symbol }
+							</sup>
+						) }
+					</div>
+				</div>
+				<Text className="site-plans__price-note" variant="muted">
+					{ renewalNote }
+				</Text>
+			</VStack>
+		);
+	}
+
+	// Use original (pre-proration) price for display throughout
+	const originalPrice = sitePlan.raw_price + sitePlan.raw_discount;
+
+	if ( ! isMonthly ) {
+		const perMonthRaw = Math.round( ( originalPrice / billingMonths ) * 100 ) / 100;
+		const perMonthObj = getCurrencyObject( perMonthRaw, sitePlan.currency_code );
+		let billingNote: string;
+		if ( billingInterval === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD ) {
+			billingNote = sprintf(
+				/* translators: %s is the annual price, e.g. "€251" */
+				__( 'per month, %s billed annually, excl. taxes' ),
+				formatCurrency( originalPrice, sitePlan.currency_code, { stripZeros: true } )
+			);
+		} else {
+			const years = Math.round( billingInterval / 365 );
+			billingNote = sprintf(
+				/* translators: 1: total price (e.g. "$588"), 2: number of years (e.g. "2") */
+				__( 'per month, %1$s billed every %2$d years, excl. taxes' ),
+				formatCurrency( originalPrice, sitePlan.currency_code, { stripZeros: true } ),
+				years
+			);
+		}
+		return (
+			<VStack spacing={ 1 }>
+				<div className="site-plans__price-display">
+					{ perMonthObj.symbolPosition === 'before' && (
+						<sup className="site-plans__price-currency">{ perMonthObj.symbol }</sup>
+					) }
+					<span className="site-plans__price-number">
+						{ perMonthObj.integer }
+						{ perMonthObj.hasNonZeroFraction && perMonthObj.fraction }
+					</span>
+					{ perMonthObj.symbolPosition === 'after' && (
+						<sup className="site-plans__price-currency">{ perMonthObj.symbol }</sup>
+					) }
+				</div>
+				<Text className="site-plans__price-note" variant="muted">
+					{ billingNote }
+				</Text>
+			</VStack>
+		);
+	}
+
+	const monthlyObj = getCurrencyObject( originalPrice, sitePlan.currency_code );
+	const savingsPercent =
+		annualSitePlan && originalPrice > 0
+			? Math.round(
+					( 1 - ( annualSitePlan.raw_price + annualSitePlan.raw_discount ) / 12 / originalPrice ) *
+						100
+			  )
+			: 0;
+
+	return (
+		<VStack spacing={ 1 }>
+			<div className="site-plans__price-display">
+				{ monthlyObj.symbolPosition === 'before' && (
+					<sup className="site-plans__price-currency">{ monthlyObj.symbol }</sup>
+				) }
+				<span className="site-plans__price-number">
+					{ monthlyObj.integer }
+					{ monthlyObj.hasNonZeroFraction && monthlyObj.fraction }
+				</span>
+				{ monthlyObj.symbolPosition === 'after' && (
+					<sup className="site-plans__price-currency">{ monthlyObj.symbol }</sup>
+				) }
+			</div>
+			{ savingsPercent > 0 && (
+				<Text className="site-plans__price-note" variant="muted">
+					{ sprintf(
+						/* translators: %d is the savings percentage, e.g. "25" */
+						__( 'Save %d%% by paying annually' ),
+						savingsPercent
+					) }
+				</Text>
+			) }
+		</VStack>
+	);
+}
+
+function PlanCardCTA( {
+	site,
+	sitePlan,
+	planCardName,
+	tierRank,
+	currentTierRank,
+}: {
+	site: Site;
+	sitePlan: SiteContextualPlan;
+	planCardName: string;
+	tierRank: number;
+	currentTierRank: number;
+} ) {
+	const isCurrentPlan =
+		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
+
+	if ( isCurrentPlan ) {
+		return (
+			<Button variant="secondary" disabled className="site-plans__cta-button">
+				{ __( 'Your plan' ) }
+			</Button>
+		);
+	}
+
+	if ( tierRank > currentTierRank ) {
+		const checkoutURL = wpcomLink( `/checkout/${ site.slug }/${ sitePlan.product_slug }` );
+		return (
+			<Button variant="primary" href={ checkoutURL } className="site-plans__cta-button">
+				{ sprintf(
+					/* translators: %s is the plan name, e.g. "Pro" */
+					__( 'Get %s' ),
+					planCardName
+				) }
+			</Button>
+		);
+	}
+
+	// Higher-tier plan is current; downgrade not offered
+	return null;
+}
+
+function PlanCard( {
+	site,
+	sitePlan,
+	planProduct,
+	billingInterval,
+	annualSitePlan,
+	tierRank,
+	currentTierRank,
+}: {
+	site: Site;
+	sitePlan: SiteContextualPlan;
+	planProduct?: PlanProduct;
+	billingInterval: SubscriptionBillPeriodValue;
+	annualSitePlan?: SiteContextualPlan;
+	tierRank: number;
+	currentTierRank: number;
+} ) {
+	const isCurrentPlan =
+		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
+
+	return (
+		<Card className={ `site-plans__card${ isCurrentPlan ? ' site-plans__card--current' : '' }` }>
+			<CardBody>
+				<div className="site-plans__badge-slot">
+					{ isCurrentPlan && (
+						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
+					) }
+					{ ! isCurrentPlan && sitePlan.introductory_offer_formatted_price && (
+						<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
+					) }
+				</div>
+				<VStack spacing={ 4 }>
+					<VStack spacing={ 1 }>
+						<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
+							{ planProduct?.plan_card_name ?? sitePlan.product_name }
+						</Text>
+						{ planProduct?.tagline && (
+							<Text className="site-plans__tagline" variant="muted">
+								{ planProduct.tagline }
+							</Text>
+						) }
+						{ ! planProduct?.tagline && planProduct?.description && (
+							<Text className="site-plans__tagline" variant="muted">
+								{ planProduct.description }
+							</Text>
+						) }
+					</VStack>
+
+					<PlanPrice
+						sitePlan={ sitePlan }
+						billingInterval={ billingInterval }
+						annualSitePlan={ annualSitePlan }
+					/>
+
+					<PlanCardCTA
+						site={ site }
+						sitePlan={ sitePlan }
+						planCardName={ planProduct?.plan_card_name ?? sitePlan.product_name }
+						tierRank={ tierRank }
+						currentTierRank={ currentTierRank }
+					/>
+
+					{ planProduct?.plan_card_features && planProduct.plan_card_features.length > 0 && (
+						<ul className="site-plans__features">
+							{ planProduct.plan_card_features.map( ( feature ) => (
+								<li
+									key={ feature.text }
+									className={ `site-plans__feature-item${
+										feature.available === false ? ' site-plans__feature-item--unavailable' : ''
+									}` }
+								>
+									{ feature.text }
+								</li>
+							) ) }
+						</ul>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+function TierCell( {
+	tier,
+	tiers,
+	tierValues,
+	isUnavailableOnMonthly,
+}: {
+	tier: number;
+	tiers?: number[];
+	tierValues?: Record< string, string >;
+	isUnavailableOnMonthly: boolean;
+} ) {
+	const isAvailable = ! isUnavailableOnMonthly && tiers?.includes( tier );
+	if ( ! isAvailable ) {
+		return <Icon icon={ lineSolid } size={ 20 } className="site-plans__comparison-dash-icon" />;
+	}
+	const tierValue = tierValues?.[ String( tier ) ];
+	if ( tierValue ) {
+		return tierValue;
+	}
+	return <Icon icon={ check } size={ 20 } className="site-plans__comparison-check-icon" />;
+}
+
+function BillingIntervalSelector( {
+	billingInterval,
+	availableBillPeriods,
+	onChange,
+}: {
+	billingInterval: SubscriptionBillPeriodValue;
+	availableBillPeriods: SubscriptionBillPeriodValue[];
+	onChange: ( value: SubscriptionBillPeriodValue ) => void;
+} ) {
+	const handleChange = ( value: string | number | undefined ) => {
+		const numeric = Number( value );
+		if ( ! isNaN( numeric ) && numeric !== 0 ) {
+			onChange( numeric as SubscriptionBillPeriodValue );
+		}
+	};
+
+	if ( availableBillPeriods.length > 2 ) {
+		return (
+			<SelectControl
+				value={ String( billingInterval ) }
+				options={ availableBillPeriods.map( ( period ) => ( {
+					value: String( period ),
+					label: getBillingPeriodLabel( period ),
+				} ) ) }
+				onChange={ ( value ) => handleChange( value ) }
+				__nextHasNoMarginBottom
+				label={ __( 'Billing interval' ) }
+				hideLabelFromVision
+			/>
+		);
+	}
+
+	return (
+		<ToggleGroupControl
+			value={ String( billingInterval ) }
+			isBlock
+			__nextHasNoMarginBottom
+			__next40pxDefaultSize
+			onChange={ handleChange }
+			label={ __( 'Billing interval' ) }
+			hideLabelFromVision
+		>
+			{ availableBillPeriods.map( ( period ) => (
+				<ToggleGroupControlOption
+					key={ period }
+					value={ String( period ) }
+					label={ getBillingPeriodLabel( period ) }
+				/>
+			) ) }
+		</ToggleGroupControl>
+	);
+}
+
+function PlanComparisonSection( {
+	comparisonGroups,
+	planColumns,
+	billPeriod,
+	billingInterval,
+	availableBillPeriods,
+	onBillingIntervalChange,
+}: {
+	comparisonGroups: PlanProductComparisonGroup[];
+	planColumns: Array< { tierKey: number; planCardName: string | undefined } >;
+	billPeriod: SubscriptionBillPeriodValue | undefined;
+	billingInterval: SubscriptionBillPeriodValue;
+	availableBillPeriods: SubscriptionBillPeriodValue[];
+	onBillingIntervalChange: ( value: SubscriptionBillPeriodValue ) => void;
+} ) {
+	return (
+		<section className="site-plans__comparison">
+			<div className="site-plans__comparison-header">
+				<Text size={ 24 } weight={ 600 } className="site-plans__comparison-title">
+					{ __( 'Compare our plans and find yours' ) }
+				</Text>
+				<BillingIntervalSelector
+					billingInterval={ billingInterval }
+					availableBillPeriods={ availableBillPeriods }
+					onChange={ onBillingIntervalChange }
+				/>
+			</div>
+			<Card className="site-plans__comparison-card">
+				<table className="site-plans__comparison-table">
+					<thead>
+						<tr>
+							<th />
+							{ planColumns.map( ( col ) => (
+								<th key={ col.tierKey } className="site-plans__comparison-plan-header">
+									{ col.planCardName }
+								</th>
+							) ) }
+						</tr>
+					</thead>
+					<tbody>
+						{ comparisonGroups.map( ( group ) => (
+							<Fragment key={ group.group }>
+								<tr className="site-plans__comparison-group-row">
+									<th colSpan={ planColumns.length + 1 }>{ group.group }</th>
+								</tr>
+								{ group.features.map( ( feature ) => {
+									const isUnavailableOnMonthly =
+										!! feature.billing_periods &&
+										billPeriod !== undefined &&
+										! feature.billing_periods.includes( billPeriod );
+									return (
+										<tr key={ feature.key }>
+											<td>{ feature.title }</td>
+											{ planColumns.map( ( col ) => (
+												<td key={ col.tierKey } className="site-plans__comparison-check-cell">
+													<TierCell
+														tier={ col.tierKey }
+														tiers={ feature.tiers }
+														tierValues={ feature.tier_values }
+														isUnavailableOnMonthly={ isUnavailableOnMonthly }
+													/>
+												</td>
+											) ) }
+										</tr>
+									);
+								} ) }
+							</Fragment>
+						) ) }
+					</tbody>
+				</table>
+			</Card>
+		</section>
+	);
+}
+
+export default function SitePlans() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const [ billingInterval, setBillingInterval ] = useState< SubscriptionBillPeriodValue >(
+		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+	);
+
+	const { data: sitePlans } = useQuery( {
+		...sitePlansQuery( site.ID ),
+		enabled: !! site.ID,
+	} );
+	const { data: planProducts } = useQuery( plansQuery() );
+
+	const planProductMap = new Map< string, PlanProduct >(
+		( planProducts ?? [] ).map( ( p ) => [ p.product_slug, p ] )
+	);
+
+	// Index sitePlans by product_id for O(1) sibling lookups
+	const plansByProductId = new Map< number, SiteContextualPlan >(
+		( sitePlans ?? [] ).map( ( p ) => [ p.product_id, p ] )
+	);
+
+	// Plans to show, sorted by plan_card_order — one entry per plan family (deduplicated by
+	// product_tier_id in case multiple billing-period variants carry a plan_card_order).
+	const shownPlans = ( sitePlans ?? [] )
+		.filter( ( p ) => typeof p.plan_card_order === 'number' )
+		.filter(
+			( p, index, arr ) =>
+				arr.findIndex( ( q ) => q.product_tier_id === p.product_tier_id ) === index
+		)
+		.sort( ( a, b ) => ( a.plan_card_order ?? 0 ) - ( b.plan_card_order ?? 0 ) );
+
+	// Collect all billing periods available across all shown plan families, sorted ascending.
+	const availableBillPeriods = Array.from(
+		new Set(
+			shownPlans.flatMap( ( p ) =>
+				( p.product_tier_product_ids ?? [] ).flatMap( ( id ) => {
+					const sp = plansByProductId.get( id );
+					if ( ! sp ) {
+						return [];
+					}
+					const pp = planProductMap.get( sp.product_slug );
+					if ( ! pp || pp.bill_period <= 0 ) {
+						return [];
+					}
+					return [ pp.bill_period ];
+				} )
+			)
+		)
+	).sort( ( a, b ) => a - b ) as SubscriptionBillPeriodValue[];
+
+	const activePlans = shownPlans.map( ( canonicalPlan, tierRank ) => {
+		const siblings = ( canonicalPlan.product_tier_product_ids ?? [] )
+			.map( ( id ) => plansByProductId.get( id ) )
+			.filter( Boolean ) as SiteContextualPlan[];
+
+		const sitePlan =
+			siblings.find(
+				( p ) => planProductMap.get( p.product_slug )?.bill_period === billingInterval
+			) ?? canonicalPlan;
+
+		const annualSitePlan =
+			billingInterval === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+				? siblings.find(
+						( p ) =>
+							planProductMap.get( p.product_slug )?.bill_period ===
+							SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+				  )
+				: undefined;
+
+		return { canonicalPlan, sitePlan, annualSitePlan, tierRank };
+	} );
+
+	// Tier rank of the current plan (by product_tier_id)
+	const currentPlanSlug =
+		sitePlans?.find( ( p ) => p.current_plan )?.product_slug ?? site.plan?.product_slug;
+	const currentTierRank = shownPlans.findIndex( ( p ) =>
+		( p.product_tier_product_ids ?? [] )
+			.map( ( id ) => plansByProductId.get( id )?.product_slug )
+			.includes( currentPlanSlug ?? '' )
+	);
+
+	const comparisonGroups = activePlans
+		.map( ( ap ) => planProductMap.get( ap.sitePlan.product_slug )?.features_comparison )
+		.find( Boolean );
+
+	// Comparison table columns keyed by product_tier_id, matching tiers[] in features_comparison
+	const planColumns = activePlans.map( ( ap ) => ( {
+		tierKey: ap.canonicalPlan.product_tier_id ?? 0,
+		planCardName:
+			planProductMap.get( ap.sitePlan.product_slug )?.plan_card_name ?? ap.sitePlan.product_name,
+	} ) );
+
+	const billPeriod = activePlans
+		.map( ( ap ) => planProductMap.get( ap.sitePlan.product_slug )?.bill_period )
+		.find( ( v ) => v !== undefined );
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					actions={
+						<BillingIntervalSelector
+							billingInterval={ billingInterval }
+							availableBillPeriods={ availableBillPeriods }
+							onChange={ setBillingInterval }
+						/>
+					}
+				/>
+			}
+		>
+			<div
+				className="site-plans__grid"
+				style={ { '--plan-count': shownPlans.length } as React.CSSProperties }
+			>
+				{ activePlans.map( ( ap ) => (
+					<PlanCard
+						key={ String( ap.canonicalPlan.product_tier_id ) }
+						site={ site }
+						sitePlan={ ap.sitePlan }
+						planProduct={ planProductMap.get( ap.sitePlan.product_slug ) }
+						billingInterval={ billingInterval }
+						annualSitePlan={ ap.annualSitePlan }
+						tierRank={ ap.tierRank }
+						currentTierRank={ currentTierRank }
+					/>
+				) ) }
+			</div>
+			{ comparisonGroups && (
+				<PlanComparisonSection
+					comparisonGroups={ comparisonGroups }
+					planColumns={ planColumns }
+					billPeriod={ billPeriod }
+					billingInterval={ billingInterval }
+					availableBillPeriods={ availableBillPeriods }
+					onBillingIntervalChange={ setBillingInterval }
+				/>
+			) }
+		</PageLayout>
+	);
+}

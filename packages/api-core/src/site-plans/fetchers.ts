@@ -38,6 +38,15 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 		...( plan.id !== undefined && {
 			id: toNumber( plan.id ),
 		} ),
+		...( plan.plan_card_order != null && {
+			plan_card_order: toNumber( plan.plan_card_order ),
+		} ),
+		...( plan.product_tier_id !== undefined && {
+			product_tier_id: toNumber( plan.product_tier_id ),
+		} ),
+		...( plan.product_tier_product_ids !== undefined && {
+			product_tier_product_ids: plan.product_tier_product_ids.map( toNumber ),
+		} ),
 	};
 }
 

@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '../constants';
+import type { SubscriptionBillPeriodValue } from '../constants';
 
 export interface RefundOptions {
 	to_product_id: number;
@@ -97,20 +97,7 @@ export interface Purchase {
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
 	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days:
-		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
-		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	bill_period_days: SubscriptionBillPeriodValue;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;

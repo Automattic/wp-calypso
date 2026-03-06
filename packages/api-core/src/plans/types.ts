@@ -1,6 +1,61 @@
+import type { SubscriptionBillPeriodValue } from '../constants';
+
 export interface PlanProductFeatureHighlight {
 	title?: string;
 	items: string[];
+}
+
+export interface PlanCardFeature {
+	text: string;
+	available: boolean;
+}
+
+/**
+ * A feature to display in the plans page comparison grid for this product.
+ */
+export interface PlanProductComparisonFeature {
+	/**
+	 * The unique ID of this feature.
+	 */
+	key: string;
+
+	/**
+	 * The feature description shown in the first column of the comparison grid
+	 * (eg: "Accept all major card brands automatically").
+	 */
+	title: string;
+
+	/**
+	 * For products which have different tiers that have differing features,
+	 * this list is the tiers where this feature should be shown. Each entry
+	 * is the product_tier_id for that plan family (e.g. 1180 for Woo Basic,
+	 * 1181 for Woo Pro). This is stable across all billing-period variants
+	 * of a plan.
+	 */
+	tiers?: number[];
+
+	/**
+	 * If set, this feature will only be shown for versions of this product
+	 * with the matching billing periods. The billing periods are numbers of
+	 * days but are not literal renewal periods; they are numeric constants
+	 * that represent each period. For example, `31` means "monthly" although
+	 * the expiry date may be fewer than 31 days from the last renewal.
+	 */
+	billing_periods?: SubscriptionBillPeriodValue[];
+
+	/**
+	 * Per-tier display values shown in the comparison grid instead of a check
+	 * mark. The key is the string form of product_tier_id (JSON object keys are
+	 * always strings, e.g. "1180") and the value is a translated string shown in
+	 * that tier's column (e.g. "10 GB" for tier 1180, "50 GB" for tier 1181).
+	 * Tiers omitted from this map still show the default check mark.
+	 */
+	tier_values?: Record< string, string >;
+}
+
+export interface PlanProductComparisonGroup {
+	group: string;
+	features: PlanProductComparisonFeature[];
 }
 
 export interface PlanProductDowngrade {
@@ -25,7 +80,7 @@ export interface PlanProduct {
 	bundle_product_ids: number[];
 
 	// Billing/pricing properties
-	bill_period: number;
+	bill_period: SubscriptionBillPeriodValue;
 	bill_period_label?: string;
 	orig_cost_integer: number;
 	orig_cost: number | null;
@@ -40,7 +95,15 @@ export interface PlanProduct {
 	// Descriptive properties
 	description: string;
 	tagline: string | null;
+	plan_card_name: string | null;
 	features_highlight?: PlanProductFeatureHighlight[];
+	plan_card_features?: PlanCardFeature[];
+	features_comparison?: PlanProductComparisonGroup[];
+
+	/** Numeric ID shared by all billing-period variants of the same plan family.
+	 *  Matches product_tier_id on SiteContextualPlan. Used as the column identifier
+	 *  in features_comparison (tiers[] and tier_values keys). */
+	product_tier_id?: number;
 
 	// Downgrade options
 	downgrade_paths: PlanProductDowngrade[];
