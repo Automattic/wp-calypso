@@ -22,12 +22,12 @@ body.js.is-image-studio-open {
 
 // Ensure the image studio is above the big sky chrome
 .image-studio-overlay {
-	z-index: $admin-bar-z-index + 1;
+	z-index: $admin-bar-z-index;
 }
 
 // Ensure the confirmation dialog is above the image studio
 .image-studio-confirmation-dialog-overlay {
-	z-index: $admin-bar-z-index + 2;
+	z-index: $admin-bar-z-index + 1;
 }
 
 // Exit overlay - appears above the modal during exit flow (save/discard/cleanup)
@@ -37,7 +37,7 @@ body.js.is-image-studio-open {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: $admin-bar-z-index + 3;
+	z-index: $admin-bar-z-index + 2;
 	display: flex;
 	align-items: center;
 	justify-content: center;
