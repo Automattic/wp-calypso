@@ -1,3 +1,4 @@
+import './post-navigation.scss';
 import {
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
@@ -7,8 +8,7 @@ import {
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-
-import './post-navigation.scss';
+import { getPostTitleFallback } from 'calypso/reader/utils';
 
 interface PostKey {
 	feedId?: number;
@@ -17,7 +17,9 @@ interface PostKey {
 }
 
 interface Post {
-	title?: string;
+	title: string;
+	excerpt: string;
+	content: string;
 }
 
 interface NavigationButtonProps {
@@ -79,7 +81,7 @@ const NavigationButton = ( { direction, post, postKey, onNavigate }: NavigationB
 				>
 					<span className="reader-full-post-navigation__link-label">{ label }</span>
 					<Text className="reader-full-post-navigation__link-title" truncate numberOfLines={ 2 }>
-						{ post?.title || translate( 'Loading…' ) }
+						{ post ? post?.title || getPostTitleFallback( post ) : translate( 'Loading…' ) }
 					</Text>
 				</VStack>
 				{ isNext && <Icon icon={ icon } size={ 18 } /> }
