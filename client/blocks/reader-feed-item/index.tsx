@@ -75,8 +75,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
 	const { data: feed, isLoading: isFeedLoading } = useQuery( {
 		...readFeedQuery( feedId ),
-		enabled:
-			queryFeed && feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
+		enabled: queryFeed,
 	} );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
