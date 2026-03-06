@@ -71,13 +71,16 @@ export function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks } = textData.data ?? {};
+			const { type: contentType, props, followUpTasks, isCurrent } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
-			// Filter out the raw JSON message to avoid showing it to the user
+			// No matching component found for this content type — drop the message to avoid showing raw JSON.
 			if ( ! Component ) {
 				return [];
 			}
+
+			// Whether this is the last message in the array (i.e. the most recent server message).
+			const isLastMessage = index === array.length - 1;
 
 			const componentMessage = {
 				...message,
@@ -88,10 +91,11 @@ export function convertToolMessagesToComponents( {
 						componentProps: { ...props, contentType },
 					},
 				],
+				// Disable if superseded by a newer message or loaded from a past or restored conversation.
+				disabled: ! isLastMessage || ! isCurrent,
 			};
 
 			// Only show `next-step-button` after the most recent component message with follow-up tasks
-			const isLastMessage = index === array.length - 1;
 			const NextStepButton = getChatComponent?.( 'next-step-button' );
 			if ( ! isLastMessage || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
