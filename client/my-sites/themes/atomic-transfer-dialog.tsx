@@ -189,10 +189,12 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	renderActivationInProgress() {
+		const { isJetpack } = this.props;
 		const activationText = translate( 'Please wait while we transfer your site.' );
 
 		return (
-			this.isLoading() && (
+			this.isLoading() &&
+			! isJetpack && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-info"
