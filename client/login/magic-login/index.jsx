@@ -9,13 +9,13 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { getCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import {
 	isAndroidOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isIosOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { getCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -348,7 +348,7 @@ export const getMagicLoginInitialHeaders = ( props, translate ) => {
 		return getCheckYourEmailHeaders( translate, { emailAddress } );
 	}
 
-	const headingOverride = props.ciabConfig
+	const headingOverride = props.ciabConfig?.displayName
 		? translate( 'Log in to %(partnerName)s', {
 				args: {
 					partnerName: props.ciabConfig.displayName,
