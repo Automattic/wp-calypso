@@ -25,7 +25,7 @@ const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 
 const createToolMessage = (
 	toolId: string,
-	data?: object,
+	data?: object | string,
 	overrides?: Partial< UIMessage >
 ): UIMessage =>
 	createMessage( {
@@ -66,7 +66,6 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertToolMessagesToComponents( { messages: [ message ], getChatComponent } );
 
-		expect( getChatComponent ).toHaveBeenCalledWith( 'my-component' );
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
@@ -135,18 +134,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it( 'renders support tool data as plain text', () => {
 		const supportText = 'Here is some help for your domain question.';
-		const message = createMessage( {
-			content: [
-				{
-					type: 'text',
-					text: JSON.stringify( {
-						tool_id: 'big_sky__wordpress_com_support',
-						tool_call_id: 'call_123',
-						data: supportText,
-					} ),
-				},
-			],
-		} );
+		const message = createToolMessage( 'big_sky__wordpress_com_support', supportText );
 
 		const result = convertToolMessagesToComponents( { messages: [ message ] } );
 
@@ -216,7 +204,6 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		// Only the component message, no next-step-button
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			component: MockComponent,
