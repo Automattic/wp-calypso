@@ -4,16 +4,18 @@ import {
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button, Icon } from '@wordpress/components';
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
-import { Card, CardHeader, CardBody } from '../../../../components/card';
+import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
@@ -24,29 +26,96 @@ import type { UserTwoStepAuthSecurityKeys } from '@automattic/api-core';
 
 type SecurityKeyRegistration = UserTwoStepAuthSecurityKeys[ 'registrations' ][ number ];
 
-const fields = [
-	{
-		id: 'name',
-		label: __( 'Name' ),
-		getValue: ( { item }: { item: SecurityKeyRegistration } ) => item.name,
-	},
-];
+const SecurityKeyItem = ( {
+	item,
+	onRemove,
+}: {
+	item: SecurityKeyRegistration;
+	onRemove: () => void;
+} ) => {
+	const { recordTracksEvent } = useAnalytics();
 
-const view = {
-	fields: [],
-	type: 'list' as const,
-	titleField: 'name',
+	const handleRemoveClick = () => {
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_security_keys_remove_key_dialog_open'
+		);
+		onRemove();
+	};
+
+	return (
+		<ActionList.ActionItem
+			title={ item.name }
+			actions={
+				<Button variant="secondary" size="compact" isDestructive onClick={ handleRemoveClick }>
+					{ __( 'Remove' ) }
+				</Button>
+			}
+		/>
+	);
 };
 
 const SecurityKeysList = ( {
 	data,
-	isLoading,
+	onRemoveKey,
+	onAddKey,
 }: {
 	data: SecurityKeyRegistration[];
-	isLoading: boolean;
+	onRemoveKey: ( item: SecurityKeyRegistration ) => void;
+	onAddKey: () => void;
 } ) => {
+	const isBrowserSupported = isWebAuthnSupported();
+
+	return (
+		<ActionList>
+			<VStack spacing={ 4 } style={ { paddingBlock: '16px' } }>
+				<HStack justify="space-between" alignment="top">
+					<SectionHeader
+						level={ 3 }
+						title={ __( 'Security keys' ) }
+						description={
+							isBrowserSupported
+								? createInterpolateElement(
+										__(
+											'Security keys offer a more robust form of two-step authentication. <learnMoreLink />'
+										),
+										{
+											learnMoreLink: (
+												<InlineSupportLink supportContext="two-step-authentication-security-key" />
+											),
+										}
+								  )
+								: __(
+										'Your browser doesn‘t support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox.'
+								  )
+						}
+					/>
+					{ isBrowserSupported && (
+						<VStack style={ { flexShrink: 0 } }>
+							<Button variant="secondary" size="compact" onClick={ onAddKey }>
+								{ __( 'Register key' ) }
+							</Button>
+						</VStack>
+					) }
+				</HStack>
+			</VStack>
+			{ data?.map( ( item ) => (
+				<SecurityKeyItem key={ item.id } item={ item } onRemove={ () => onRemoveKey( item ) } />
+			) ) }
+		</ActionList>
+	);
+};
+
+export default function SecurityKeys() {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
+
+	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
+	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
+		useState< SecurityKeyRegistration | null >( null );
+
+	const { data: securityKeys } = useQuery( twoStepAuthSecurityKeysQuery() );
+
+	const registrations = securityKeys?.registrations ?? [];
 
 	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
 		...deleteTwoStepAuthSecurityKeyMutation(),
@@ -57,8 +126,9 @@ const SecurityKeysList = ( {
 		},
 	} );
 
-	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
-		useState< SecurityKeyRegistration | null >( null );
+	const handleRemoveKey = ( item: SecurityKeyRegistration ) => {
+		setSelectedKeyToRemove( item );
+	};
 
 	const handleRemove = () => {
 		recordTracksEvent( 'calypso_dashboard_security_two_step_auth_security_keys_remove_key_click' );
@@ -81,36 +151,22 @@ const SecurityKeysList = ( {
 		}
 	};
 
+	const handleAddKey = () => {
+		setIsAddKeyModalOpen( true );
+		recordTracksEvent(
+			'calypso_dashboard_security_two_step_auth_security_keys_register_key_modal_open'
+		);
+	};
+
 	return (
 		<>
-			<DataViews< SecurityKeyRegistration >
-				data={ data }
-				fields={ fields }
-				view={ view }
-				onChangeView={ () => {} }
-				getItemId={ ( item ) => item.id }
-				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
-				defaultLayouts={ { list: {} } }
-				empty={ <p>{ __( 'No security keys registered.' ) }</p> }
-				isLoading={ isLoading }
-				actions={ [
-					{
-						id: 'remove',
-						label: __( 'Remove' ),
-						icon: <Icon icon={ closeSmall } />,
-						isPrimary: true,
-						callback: ( items: SecurityKeyRegistration[] ) => {
-							const item = items[ 0 ];
-							recordTracksEvent(
-								'calypso_dashboard_security_two_step_auth_security_keys_remove_key_dialog_open'
-							);
-							setSelectedKeyToRemove( item );
-						},
-					},
-				] }
-			>
-				<DataViews.Layout />
-			</DataViews>
+			<SecurityKeysList
+				data={ registrations }
+				onRemoveKey={ handleRemoveKey }
+				onAddKey={ handleAddKey }
+			/>
+			{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
+			{ isAddKeyModalOpen && <RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } /> }
 			<ConfirmModal
 				isOpen={ !! selectedKeyToRemove }
 				confirmButtonProps={ {
@@ -123,74 +179,6 @@ const SecurityKeysList = ( {
 			>
 				{ __( 'Are you sure you want to remove this security key?' ) }
 			</ConfirmModal>
-		</>
-	);
-};
-
-export default function SecurityKeys() {
-	const { recordTracksEvent } = useAnalytics();
-
-	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
-
-	const { data: securityKeys, isLoading } = useQuery( twoStepAuthSecurityKeysQuery() );
-
-	const registrations = securityKeys?.registrations ?? [];
-
-	const isBrowserSupported = isWebAuthnSupported();
-
-	return (
-		<>
-			<SectionHeader
-				level={ 2 }
-				title={ __( 'Security keys' ) }
-				description={
-					isBrowserSupported
-						? createInterpolateElement(
-								__(
-									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser. <learnMoreLink />'
-								),
-								{
-									learnMoreLink: (
-										<InlineSupportLink supportContext="two-step-authentication-security-key" />
-									),
-								}
-						  )
-						: __(
-								'Your browser doesn‘t support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox.'
-						  )
-				}
-			/>
-			{ isBrowserSupported && (
-				<>
-					<Card>
-						<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'Your security keys' ) }
-								actions={
-									<Button
-										variant="secondary"
-										size="compact"
-										onClick={ () => {
-											setIsAddKeyModalOpen( true );
-											recordTracksEvent(
-												'calypso_dashboard_security_two_step_auth_security_keys_register_key_modal_open'
-											);
-										} }
-									>
-										{ __( 'Register key' ) }
-									</Button>
-								}
-							/>
-						</CardHeader>
-						<CardBody>
-							<SecurityKeysList data={ registrations } isLoading={ isLoading } />
-						</CardBody>
-					</Card>
-					{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
-					{ isAddKeyModalOpen && <RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } /> }
-				</>
-			) }
 		</>
 	);
 }
