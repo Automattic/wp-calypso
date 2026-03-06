@@ -40,25 +40,4 @@
 			max-width: 616px;
 		}
 	}
-
-	// Trial section styles
-	&__trial-section {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 2rem;
-		padding-top: 2rem;
-	}
-
-	&__trial-description {
-		color: var( --color-text-subtle );
-		font-size: 0.875rem;
-		text-align: center;
-		margin: 0 0 1rem;
-		max-width: 400px;
-	}
-
-	&__trial-button.components-button.is-secondary {
-		font-weight: 500;
-	}
 }
