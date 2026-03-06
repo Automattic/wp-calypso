@@ -29,7 +29,7 @@ import { useHelpCenter } from '../../../../../app/help-center';
 import DashboardSummaryButton from '../../../../../components/summary-button';
 import { wpcomLink } from '../../../../../utils/link';
 import { getSolutionsForReason } from '../../get-solutions-for-reason';
-import type { PlanProduct, Purchase } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
 const RENEW_COUPON = 'biz25';
@@ -226,7 +226,6 @@ type SolutionsCardsUpsellStepProps = {
 	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell?: () => void;
 	purchase: Purchase;
-	plans: PlanProduct[];
 };
 
 export default function SolutionsCardsUpsellStep( {

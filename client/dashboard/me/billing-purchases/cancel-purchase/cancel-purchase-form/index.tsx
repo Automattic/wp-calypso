@@ -175,7 +175,6 @@ function SurveyContent( {
 					onClickDowngrade={ downgradeClick }
 					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
-					plans={ plans }
 					purchase={ purchase }
 				/>
 			);
