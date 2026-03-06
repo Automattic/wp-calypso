@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import withDimensions from 'calypso/lib/with-dimensions';

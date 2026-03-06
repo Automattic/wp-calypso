@@ -19,7 +19,7 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import PostExcerpt from 'calypso/components/post-excerpt';

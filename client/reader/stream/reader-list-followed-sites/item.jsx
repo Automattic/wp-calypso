@@ -2,7 +2,7 @@ import { Count } from '@automattic/components';
 import { get } from 'lodash';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';

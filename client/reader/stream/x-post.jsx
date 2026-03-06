@@ -9,7 +9,7 @@ import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';

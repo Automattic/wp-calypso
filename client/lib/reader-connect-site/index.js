@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';

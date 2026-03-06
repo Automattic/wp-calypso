@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';

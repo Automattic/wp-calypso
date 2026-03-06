@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import { removeTrailingSlash } from 'calypso/lib/string';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';

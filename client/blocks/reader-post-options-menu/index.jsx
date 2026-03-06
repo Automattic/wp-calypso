@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { QueryReaderFeed } from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
