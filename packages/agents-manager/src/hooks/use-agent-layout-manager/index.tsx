@@ -195,13 +195,21 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		const wasSidebarOpen = container.classList.contains(
+			'agents-manager-sidebar-container--sidebar-open'
+		);
+
 		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
-		container.classList.add( 'agents-manager-sidebar-container--closing' );
-		clearTimeout( closeSidebarTimeoutRef.current );
-		closeSidebarTimeoutRef.current = setTimeout( () => {
-			container.classList.remove( 'agents-manager-sidebar-container--closing' );
-		}, SIDEBAR_TRANSITION_DURATION_MS );
+
+		// Only suppress admin bar pointer events during an actual sidebar-close transition.
+		if ( wasSidebarOpen ) {
+			container.classList.add( 'agents-manager-sidebar-container--closing' );
+			clearTimeout( closeSidebarTimeoutRef.current );
+			closeSidebarTimeoutRef.current = setTimeout( () => {
+				container?.classList.remove( 'agents-manager-sidebar-container--closing' );
+			}, SIDEBAR_TRANSITION_DURATION_MS );
+		}
 
 		onCloseSidebarRef.current();
 	}, [ canDock, container, isReady ] );
