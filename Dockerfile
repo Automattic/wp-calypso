@@ -71,6 +71,31 @@ COPY . /calypso/
 # Defensive cleanup in case mutable Yarn state is introduced in the source context.
 RUN rm -rf /calypso/.yarn/berry /calypso/.yarn/cache /calypso/.yarn/unplugged \
 	&& rm -f /calypso/.yarn/install-state.gz /calypso/.yarn/build-state.yml
+RUN set -eux; \
+	echo "=== debug: docker workspace manifests ==="; \
+	ls -la /calypso/.docker-workspace-manifests || true; \
+	find /calypso/.docker-workspace-manifests -maxdepth 2 -name package.json | sort | sed -n '1,80p' || true; \
+	echo "=== debug: yarn directory after cleanup ==="; \
+	ls -la /calypso/.yarn || true; \
+	find /calypso/.yarn -maxdepth 3 -type d | sort | sed -n '1,80p' || true; \
+	echo "=== debug: agenttic versions in key package manifests ==="; \
+	for file in \
+		/calypso/client/package.json \
+		/calypso/packages/agents-manager/package.json \
+		/calypso/packages/block-notes/package.json \
+		/calypso/packages/image-studio/package.json \
+		/calypso/packages/odie-client/package.json; do \
+		echo "--- ${file}"; \
+		grep -nE '"@automattic/agenttic-(client|ui)"' "${file}" || true; \
+	done; \
+	echo "=== debug: agenttic entries across workspace package manifests (first 200) ==="; \
+	{ \
+		grep -nE '"@automattic/agenttic-(client|ui)"' /calypso/client/package.json || true; \
+		find /calypso/packages -mindepth 2 -maxdepth 2 -name package.json -print0 | \
+			xargs -0 grep -nE '"@automattic/agenttic-(client|ui)"' || true; \
+	} | sed -n '1,200p'; \
+	echo "=== debug: yarn.lock entries for affected workspaces and agenttic versions ==="; \
+	grep -nE '^"@automattic/(agents-manager|block-notes|image-studio|odie-client)@workspace|agenttic-(client|ui)@npm:\^0\.1\.(50|52)' /calypso/yarn.lock | sed -n '1,240p' || true
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
