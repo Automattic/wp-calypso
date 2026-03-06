@@ -25,9 +25,8 @@
 	font-weight: 400;
 	line-height: 1.2;
 	margin: 0;
-	text-wrap: balance;
 
-	@include break-small {
+	@include break-medium {
 		font-size: rem( 50px );
 	}
 }
@@ -64,36 +63,36 @@
 
 	background:
 		var(--ai-builder-banner-linear-gradient-overlay),
-		url( ./background-mobile.png ) no-repeat bottom center / 120%,
+		url( ./ai-builder-background-mobile.png ) no-repeat bottom center / 120%,
 		var(--ai-builder-banner-linear-gradient-underlay);
 	display: flex;
 	flex-wrap: wrap;
-	grid-row-start: 2;
+	grid-row-start: 3;
 	justify-content: space-between;
 
 	@include break-mobile {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -400px / cover,
+			url( ./ai-builder-background.png ) no-repeat bottom right -400px / cover,
 			var(--ai-builder-banner-linear-gradient-underlay);
-		padding-top: 96px;
 	}
 	@include break-medium {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -250px / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right -250px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
+		padding-top: 96px;
 	}
 	@include break-large {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -100px / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right -100px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 	@include break-xlarge {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 
@@ -103,6 +102,10 @@
 		@include break-mobile {
 			padding-bottom: 96px;
 		}
+	}
+
+	.banner-modern__title {
+		text-wrap: balance;
 	}
 
 	.banner-modern__title::after {
@@ -161,15 +164,19 @@
 }
 
 .difm-banner {
-	background: var( --studio-gray-0 );
-	grid-row-start: 4;
+	background: url( ./difm-background-mobile.png ) no-repeat bottom 24px center / 90%;
+	background-color: var( --studio-gray-0 );
+	grid-row-start: 2;
+	padding-bottom: 288px;
 
-	.banner-modern__content {
-		padding-bottom: 288px;
+	@include break-mobile {
+		background: url( ./difm-background.png ) no-repeat center right 24px / 35%;
+		background-color: var( --studio-gray-0 );
+		padding: 24px;
+	}
 
-		@include break-mobile {
-			padding-bottom: 96px;
-			padding-top: 96px;
-		}
+	@include break-medium {
+		padding-bottom: 72px;
+		padding-top: 72px;
 	}
 }
