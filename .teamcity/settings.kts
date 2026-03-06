@@ -155,6 +155,13 @@ object BuildBaseImages : BuildType({
 	}
 
 	steps {
+		bashNodeScript {
+			name = "Restore git mtime"
+			dockerImage = "%docker_image_e2e%"
+			scriptContent = """
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+			""".trimIndent()
+		}
 		dockerCommand {
 			name = "Build base image"
 			commandType = build {

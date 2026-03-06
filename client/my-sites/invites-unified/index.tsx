@@ -1,24 +1,22 @@
-import page from '@automattic/calypso-router';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
+import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
 import { isAlreadyMemberError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
-/**
- * Build the legacy invite path for fallback redirects
- */
-function buildLegacyPath(
-	siteId: string,
-	inviteKey: string,
-	...optionalKeys: ( string | undefined )[]
-): string {
-	const basePath = `/accept-invite/${ siteId }/${ inviteKey }`;
-	const fullPath = optionalKeys
-		.filter( Boolean )
-		.reduce( ( path, key ) => `${ path }/${ key }`, basePath );
-	return `${ fullPath }?legacy=1`;
+interface LegacyLoggedOutInvite {
+	inviteKey: string;
+	activationKey?: string;
+	authKey?: string;
+	role: string;
+	sentTo: string;
+	knownUser?: boolean;
+	forceMatchingEmail?: boolean;
+	site: Record< string, unknown >;
 }
 
 interface UnifiedInviteAcceptProps {
@@ -31,7 +29,6 @@ interface UnifiedInviteAcceptProps {
 }
 
 export function UnifiedInviteAccept( {
-	siteId,
 	inviteKey,
 	activationKey,
 	authKey,
@@ -39,11 +36,28 @@ export function UnifiedInviteAccept( {
 	inviteError,
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const legacyLoggedOutInvite = useMemo< LegacyLoggedOutInvite | null >( () => {
+		if ( ! inviteData ) {
+			return null;
+		}
 
-	// Redirect to legacy flow if not logged in (signup flow will be added later)
+		const normalizedInvite = normalizeInvite( inviteData ) as LegacyLoggedOutInvite;
+
+		return {
+			...normalizedInvite,
+			inviteKey,
+			activationKey,
+			authKey,
+		};
+	}, [ inviteData, inviteKey, activationKey, authKey ] );
+
+	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
-		page.redirect( buildLegacyPath( siteId, inviteKey, activationKey, authKey ) );
-		return null;
+		if ( ! legacyLoggedOutInvite ) {
+			return null;
+		}
+
+		return <LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />;
 	}
 
 	// Already a member → show already-member screen

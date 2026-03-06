@@ -2,54 +2,121 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import useReadFeedSearchQuery, { FeedSort } from '../use-read-feed-search-query';
-
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
 describe( 'useReadFeedSearchQuery', () => {
 	beforeEach( () => {
-		jest.mocked( wpcomRequest ).mockResolvedValue( {
-			algorithm: 'example_algorithm',
-			feeds: [],
-			next_page: 'example_next_page',
-			total: 0,
-		} );
+		nock.disableNetConnect();
 	} );
 
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
-	it( 'should call wpcomRequest with correct parameters when query is defined', async () => {
+	it( 'returns expected data when with default parameters', async () => {
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( {
+				q: 'example',
+				exclude_followed: false,
+				sort: FeedSort.Relevance,
+			} )
+			.once()
+			.reply( 200, {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						feed_ID: '1',
+						blog_ID: '1',
+						title: 'Example Feed',
+						subscribe_URL: 'https://example.com/rss',
+					},
+				],
+			} );
 
 		const query = 'example';
-		renderHook( () => useReadFeedSearchQuery( { query } ), { wrapper } );
+		const { result } = renderHook( () => useReadFeedSearchQuery( { query } ), { wrapper } );
 
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/read/feed',
-			apiVersion: '1.1',
-			method: 'GET',
-			query: `q=${ encodeURIComponent( query ) }&exclude_followed=false&sort=${ encodeURIComponent(
-				FeedSort.Relevance
-			) }`,
+		await waitFor( () => {
+			expect( result.current.data ).toEqual( {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						feed_ID: '1',
+						blog_ID: '1',
+						title: 'Example Feed',
+						subscribe_URL: 'https://example.com/rss',
+					},
+				],
+			} );
 		} );
 	} );
 
-	it( 'should not call wpcomRequest when query is undefined', () => {
+	it( 'returns expected data when with proper filtering and sorting', async () => {
 		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 
-		renderHook( () => useReadFeedSearchQuery( {} ), { wrapper } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( {
+				q: 'example',
+				exclude_followed: true,
+				sort: FeedSort.LastUpdated,
+			} )
+			.once()
+			.reply( 200, {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						feed_ID: '1',
+						blog_ID: '1',
+						title: 'Example Feed',
+						subscribe_URL: 'https://example.com/rss',
+					},
+				],
+			} );
 
-		expect( wpcomRequest ).not.toHaveBeenCalled();
+		const query = 'example';
+		const { result } = renderHook(
+			() => useReadFeedSearchQuery( { query, excludeFollowed: true, sort: FeedSort.LastUpdated } ),
+			{ wrapper }
+		);
+
+		await waitFor( () => {
+			expect( result.current.data ).toEqual( {
+				algorithm: 'example_algorithm',
+				feeds: [
+					{
+						feed_ID: '1',
+						blog_ID: '1',
+						title: 'Example Feed',
+						subscribe_URL: 'https://example.com/rss',
+					},
+				],
+			} );
+		} );
+	} );
+
+	it( 'disables the react-query request when there is no query', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		const { result } = renderHook( () => useReadFeedSearchQuery( { query: undefined } ), {
+			wrapper,
+		} );
+
+		// Nock throws an error if a request is made when it is not expected.
+		await waitFor( () => {
+			expect( result.current.isEnabled ).toBe( false );
+			expect( result.current.isFetching ).toBe( false );
+		} );
 	} );
 } );

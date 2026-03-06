@@ -84,14 +84,13 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		}
 	}
 
-	.not-found-site-subscriptions,
-	.site-subscriptions__search-recommendations-label {
+	.not-found-site-subscriptions {
 		color: $studio-gray-60;
 		font-size: $font-body-small;
 		font-weight: 500;
 		font-family: "SF Pro Text", $sans;
 		line-height: $font-title-small;
-		margin: 48px 0 16px;
+		margin: 0 0 16px;
 	}
 }
 
