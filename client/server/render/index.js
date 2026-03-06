@@ -30,35 +30,22 @@ import { serialize } from 'calypso/state/utils';
 const debug = debugFactory( 'calypso:server-render' );
 
 /**
- * Returns per-request clientData customized for the request hostname.
- * Overrides hostname when the request arrives on an allowed alternate
- * hostname, and applies any hostname-specific overrides (features, OAuth
- * client, login/logout URLs, etc.) from hostname_overrides config.
+ * Returns per-request clientData with hostname overridden when the request
+ * arrives on an allowed alternate hostname (e.g. behind a reverse proxy).
+ * When the request hostname is not in the allowlist, the clientData is
+ * returned unchanged — the configured default hostname is used.
+ * When no hostname_allowlist is configured, returns clientData as-is.
  */
 export function customizeClientDataForRequest( req, baseClientData ) {
+	const allowlist = config( 'hostname_allowlist' );
+	if ( ! Array.isArray( allowlist ) ) {
+		return baseClientData;
+	}
 	const reqHostname = req.hostname;
-	let clientData = baseClientData;
-
-	const hostnameAllowlist = config( 'hostname_allowlist' );
-	if (
-		Array.isArray( hostnameAllowlist ) &&
-		hostnameAllowlist.includes( reqHostname ) &&
-		reqHostname !== config( 'hostname' )
-	) {
-		clientData = { ...clientData, hostname: reqHostname };
+	if ( allowlist.includes( reqHostname ) && reqHostname !== config( 'hostname' ) ) {
+		return { ...baseClientData, hostname: reqHostname };
 	}
-
-	const hostnameOverrides = config( 'hostname_overrides' );
-	if ( typeof hostnameOverrides === 'object' && hostnameOverrides[ reqHostname ] ) {
-		const { features: overrideFeatures, ...overrideData } = hostnameOverrides[ reqHostname ];
-		clientData = {
-			...clientData,
-			...overrideData,
-			features: { ...clientData.features, ...overrideFeatures },
-		};
-	}
-
-	return clientData;
+	return baseClientData;
 }
 
 const HOUR_IN_MS = 3600000;

@@ -6,14 +6,6 @@
 	"protocol": "http",
 	"hostname": "calypso.localhost",
 	"hostname_allowlist": [ "calypso.localhost", "my.localhost", "my.woo.localhost" ],
-	"hostname_overrides": {
-		"my.woo.localhost": {
-			"oauth_client_id": 134404,
-			"wpcom_login_url": "/connect",
-			"logout_url": "http://my.woo.localhost:3000",
-			"features": { "oauth": true }
-		}
-	},
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
 	"siftscience_key": "e00e878351",

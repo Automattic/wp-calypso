@@ -14,7 +14,6 @@
 	"survicate_enabled_at_help_center": true,
 	"hostname": false,
 	"hostname_allowlist": false,
-	"hostname_overrides": false,
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
