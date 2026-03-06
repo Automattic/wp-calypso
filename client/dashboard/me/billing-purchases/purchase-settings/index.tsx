@@ -671,7 +671,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }

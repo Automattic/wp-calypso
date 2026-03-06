@@ -141,7 +141,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
-	if ( 'credit_card' !== purchase.payment_type || ! purchase.expiry_date ) {
+	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
