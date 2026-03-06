@@ -264,24 +264,26 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Close full post - Esc
-			case 27: {
+		switch ( event.key ) {
+			// Close full post.
+			case 'Escape': {
 				return this.handleBack( event );
 			}
 
-			// Like post - l
-			case 76: {
+			// Like post.
+			case 'l': {
 				return this.handleLike();
 			}
 
-			// Next post - j
-			case 74: {
+			// Next post.
+			case 'ArrowRight':
+			case 'j': {
 				return this.goToPost( this.props.nextPostKey );
 			}
 
-			// Previous post - k
-			case 75: {
+			// Previous post.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.goToPost( this.props.previousPostKey );
 			}
 		}
