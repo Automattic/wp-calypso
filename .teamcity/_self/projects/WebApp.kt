@@ -195,6 +195,20 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
+		script {
+			name = "Debug host workspace manifests"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				node -e "const fs=require('fs');
+				const p=(f)=>JSON.parse(fs.readFileSync(f,'utf8'));
+				console.log('HOST client agenttic-ui:', p('client/package.json').dependencies['@automattic/agenttic-ui']);
+				console.log('HOST agents-manager agenttic-ui:', p('packages/agents-manager/package.json').dependencies['@automattic/agenttic-ui']);
+				"
+			""".trimIndent()
+		}
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%

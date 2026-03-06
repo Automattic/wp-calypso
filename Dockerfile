@@ -96,6 +96,14 @@ RUN set -eux; \
 	} | sed -n '1,200p'; \
 	echo "=== debug: yarn.lock entries for affected workspaces and agenttic versions ==="; \
 	grep -nE '^"@automattic/(agents-manager|block-notes|image-studio|odie-client)@workspace|agenttic-(client|ui)@npm:\^0\.1\.(50|52)' /calypso/yarn.lock | sed -n '1,240p' || true
+
+RUN node -e "const fs=require('fs'); \
+  const p=(f)=>JSON.parse(fs.readFileSync(f,'utf8')); \
+  console.log('client agenttic-ui:', p('client/package.json').dependencies?.['@automattic/agenttic-ui']); \
+  console.log('agents-manager agenttic-ui:', p('packages/agents-manager/package.json').dependencies?.['@automattic/agenttic-ui']); \
+  console.log('agents-manager agenttic-client:', p('packages/agents-manager/package.json').dependencies?.['@automattic/agenttic-client']); \
+"
+
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
