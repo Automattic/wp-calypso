@@ -37,6 +37,12 @@ export async function fetchDashboardConfig() {
 				return dashboardConfig;
 			} );
 			break;
+		case 'dotcom-ciab':
+			dashboardConfigPromise = import( './dotcom-ciab' ).then( ( d ) => {
+				dashboardConfig = d.config;
+				return dashboardConfig;
+			} );
+			break;
 		default: {
 			const exhaustiveCheck: never = DASHBOARD_TYPE;
 			return Promise.reject(

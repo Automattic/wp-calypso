@@ -1,1 +1,1 @@
-export type DashboardType = 'ciab' | 'dotcom';
+export type DashboardType = 'ciab' | 'dotcom' | 'dotcom-ciab';

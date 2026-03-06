@@ -18,6 +18,7 @@ import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { fetchDashboardConfig } from 'calypso/lib/get-dashboard-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { attachLogmein } from 'calypso/lib/logmein';
@@ -339,6 +340,12 @@ const boot = async ( currentUser, registerRoutes ) => {
 	detectHistoryNavigation.start();
 	if ( registerRoutes ) {
 		registerRoutes();
+	}
+
+	const dashboardConfig = await fetchDashboardConfig();
+
+	if ( dashboardConfig?.base ) {
+		page.base( dashboardConfig.base );
 	}
 
 	page.start();

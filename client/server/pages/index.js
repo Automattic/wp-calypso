@@ -1102,19 +1102,25 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() ) {
-		const injectAdditionalSections = ( { dashboardType, reqFilter } ) => {
+		const injectAdditionalSections = ( { pathPrefix = '', dashboardType, reqFilter } ) => {
 			handleSectionPath(
 				STEPPER_SECTION_DEFINITION,
-				'/setup',
+				`${ pathPrefix }/setup`,
 				'entry-stepper',
 				dashboardType,
 				reqFilter
 			);
 
-			handleSectionPath( START_SECTION_DEFINITION, '/start', undefined, dashboardType, reqFilter );
+			handleSectionPath(
+				START_SECTION_DEFINITION,
+				`${ pathPrefix }/start`,
+				undefined,
+				dashboardType,
+				reqFilter
+			);
 			handleSectionPath(
 				CHECKOUT_SECTION_DEFINITION,
-				'/checkout',
+				`${ pathPrefix }/checkout`,
 				undefined,
 				dashboardType,
 				reqFilter
@@ -1166,6 +1172,7 @@ export default function pages() {
 
 		// We still need the /ciab prefix for Calypso live links as the domain name is random words (container-*.calypso.live, so in the code we distinguish between MSD environments by that path prefix.
 		injectAdditionalSections( {
+			pathPrefix: '/ciab',
 			dashboardType: 'dotcom-ciab',
 			reqFilter: dotcomReqFilter,
 		} );
