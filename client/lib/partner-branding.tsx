@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useMemo } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import { useSelector } from 'calypso/state';
@@ -80,14 +79,6 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 };
 
 const CIAB_PARTNER_SESSION_KEY = 'calypso.ciab.partner-id';
-
-function getFirstFromValue( from: string | string[] | undefined ): string | undefined {
-	if ( Array.isArray( from ) ) {
-		return from[ 0 ];
-	}
-
-	return from;
-}
 
 function getSessionStorage(): Storage | null {
 	if ( typeof window === 'undefined' ) {
@@ -172,20 +163,16 @@ export function getCiabConfigFromGarden(
 }
 
 /**
- * Get CIAB partner config from URL 'from' param
- * Returns the full partner config or null if not a CIAB partner
+ * Get CIAB partner config by matching a hostname against partner domains.
  */
-export function getCiabConfig( from: string | string[] | undefined ): CiabPartnerConfig | null {
-	const fromValue = getFirstFromValue( from );
-
-	if ( fromValue && CIAB_PARTNERS[ fromValue ] ) {
-		const partnerConfig = CIAB_PARTNERS[ fromValue ];
-		// Check if feature flag is enabled
-		if ( config.isEnabled( partnerConfig.featureFlag ) ) {
-			return partnerConfig;
+function getCiabConfigByHostname( hostname: string ): CiabPartnerConfig | null {
+	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
+		if ( partnerConfig.domains?.includes( hostname ) ) {
+			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+				return partnerConfig;
+			}
 		}
 	}
-
 	return null;
 }
 
@@ -196,14 +183,28 @@ export function getCiabConfigFromCurrentDomain(): CiabPartnerConfig | null {
 	if ( typeof window === 'undefined' ) {
 		return null;
 	}
+	return getCiabConfigByHostname( window.location.hostname );
+}
 
-	const { hostname } = window.location;
+/**
+ * Get CIAB partner config from the branding code query parameter.
+ *
+ * TODO: The `from` parameter is transitional — it provides backward compatibility
+ * with existing flows (e.g. ?from=woo). In a follow-up, replace it with a dedicated
+ * global branding-code parameter (e.g. ?branding=woo) and remove this fallback.
+ */
+export function getCiabConfigFromBrandingCode(): CiabPartnerConfig | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
 
-	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
-		if ( partnerConfig.domains?.includes( hostname ) ) {
-			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
-				return partnerConfig;
-			}
+	const params = new URLSearchParams( window.location.search );
+	const from = params.get( 'from' );
+
+	if ( from && CIAB_PARTNERS[ from ] ) {
+		const partnerConfig = CIAB_PARTNERS[ from ];
+		if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+			return partnerConfig;
 		}
 	}
 
@@ -212,10 +213,9 @@ export function getCiabConfigFromCurrentDomain(): CiabPartnerConfig | null {
 
 /**
  * Get CIAB partner config by matching a redirect URL's hostname against partner domains.
- * Checks redirect_to and oauth2_redirect query params for known partner domains.
  */
 export function getCiabConfigFromRedirectUrl(
-	redirectUrl: string | string[] | undefined
+	redirectUrl: string | string[] | undefined | null
 ): CiabPartnerConfig | null {
 	const urlValue = Array.isArray( redirectUrl ) ? redirectUrl[ 0 ] : redirectUrl;
 
@@ -224,15 +224,7 @@ export function getCiabConfigFromRedirectUrl(
 	}
 
 	try {
-		const { hostname } = new URL( urlValue );
-
-		for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
-			if ( partnerConfig.domains?.includes( hostname ) ) {
-				if ( config.isEnabled( partnerConfig.featureFlag ) ) {
-					return partnerConfig;
-				}
-			}
-		}
+		return getCiabConfigByHostname( new URL( urlValue ).hostname );
 	} catch {
 		// Invalid URL, ignore
 	}
@@ -241,80 +233,64 @@ export function getCiabConfigFromRedirectUrl(
 }
 
 /**
- * Detect CIAB partner config from the current domain and redirect URL params.
- * Checks in order: current page domain, redirect_to, oauth2_redirect.
+ * Read a query parameter from the current URL.
  */
-export function detectCiabConfig(
-	redirectTo?: string | string[],
-	oauth2Redirect?: string | string[]
-): CiabPartnerConfig | null {
-	return (
-		getCiabConfigFromCurrentDomain() ??
-		getCiabConfigFromRedirectUrl( redirectTo ) ??
-		getCiabConfigFromRedirectUrl( oauth2Redirect )
-	);
-}
-
-export function getEffectiveCiabConfig(
-	currentFrom: string | string[] | undefined,
-	initialFrom: string | string[] | undefined = undefined
-): CiabPartnerConfig | null {
-	const currentFromValue = getFirstFromValue( currentFrom );
-
-	if ( currentFromValue !== undefined ) {
-		const currentCiabConfig = getCiabConfig( currentFromValue );
-
-		if ( currentCiabConfig ) {
-			persistCiabPartnerId( currentCiabConfig.id );
-			return currentCiabConfig;
-		}
-
-		clearPersistedCiabPartnerId();
+function getSearchParam( name: string ): string | null {
+	if ( typeof window === 'undefined' ) {
 		return null;
 	}
-
-	const initialCiabConfig = getCiabConfig( initialFrom );
-
-	if ( initialCiabConfig ) {
-		persistCiabPartnerId( initialCiabConfig.id );
-		return initialCiabConfig;
-	}
-
-	const persistedPartnerId = readPersistedCiabPartnerId();
-
-	if ( ! persistedPartnerId ) {
-		return null;
-	}
-
-	const persistedCiabConfig = getCiabConfig( persistedPartnerId );
-
-	if ( ! persistedCiabConfig ) {
-		clearPersistedCiabPartnerId();
-		return null;
-	}
-
-	return persistedCiabConfig;
+	return new URLSearchParams( window.location.search ).get( name );
 }
 
 /**
- * Get allowed social services for a partner from URL 'from' param
- * Returns the array of allowed SSO providers or null if no restrictions apply
- * @param from - The 'from' query parameter value
- * @returns Array of allowed service names (e.g., ['paypal', 'google', 'apple']) or null
+ * Detect CIAB partner config from globally available values.
+ *
+ * Callers should NOT pass values — the detector reads from window.location internally.
+ *
+ * Detection precedence (first match wins):
+ *   1. hostname           — window.location.hostname against partner domains
+ *   2. branding code      — ?from= query param (transitional, see getCiabConfigFromBrandingCode)
+ *   3. redirect_to        — hostname inside ?redirect_to= URL
+ *   4. oauth2_redirect    — hostname inside ?oauth2_redirect= URL
+ *   5. session storage    — persisted partner from a previous detection in this session
  */
-export function getPartnerAllowedSocialServices(
-	from: string | string[] | undefined
-): AllowedSocialService[] | null {
-	const ciabConfig = getCiabConfig( from );
-	return ciabConfig?.ssoProviders ?? null;
+export function detectCiabConfig(): CiabPartnerConfig | null {
+	const detected =
+		getCiabConfigFromCurrentDomain() ??
+		getCiabConfigFromBrandingCode() ??
+		getCiabConfigFromRedirectUrl( getSearchParam( 'redirect_to' ) ) ??
+		getCiabConfigFromRedirectUrl( getSearchParam( 'oauth2_redirect' ) );
+
+	if ( detected ) {
+		persistCiabPartnerId( detected.id );
+		return detected;
+	}
+
+	// Session persistence fallback: if no detection source matches,
+	// check if a partner was previously detected in this session.
+	const persistedPartnerId = readPersistedCiabPartnerId();
+
+	if ( persistedPartnerId ) {
+		const persistedConfig = CIAB_PARTNERS[ persistedPartnerId ];
+
+		if ( persistedConfig && config.isEnabled( persistedConfig.featureFlag ) ) {
+			return persistedConfig;
+		}
+
+		clearPersistedCiabPartnerId();
+	}
+
+	return null;
 }
 
-export function getEffectivePartnerAllowedSocialServices(
-	currentFrom: string | string[] | undefined,
-	initialFrom: string | string[] | undefined = undefined
-): AllowedSocialService[] | null {
-	const ciabConfig = getEffectiveCiabConfig( currentFrom, initialFrom );
-
+/**
+ * Get allowed social services for a partner.
+ * Detects partner from globally available values (see detectCiabConfig).
+ * Returns the array of allowed SSO providers or null if no restrictions apply.
+ * @returns Array of allowed service names (e.g., ['paypal', 'google', 'apple']) or null
+ */
+export function getPartnerAllowedSocialServices(): AllowedSocialService[] | null {
+	const ciabConfig = detectCiabConfig();
 	return ciabConfig?.ssoProviders ?? null;
 }
 
@@ -333,7 +309,9 @@ export interface UsePartnerBrandingResult {
 }
 
 /**
- * Hook to get current partner branding based on URL params and feature flags
+ * Hook to get current partner branding based on URL params and feature flags.
+ * Internally calls detectCiabConfig() — callers do not need to pass any values.
+ *
  * @example
  * const { topBarLogo, ciabConfig, signupTosElement } = usePartnerBranding();
  *
@@ -352,11 +330,17 @@ export interface UsePartnerBrandingResult {
  */
 export function usePartnerBranding(): UsePartnerBrandingResult {
 	const translate = useTranslate();
-	const fromCurrent = useSelector( ( state ) => get( getCurrentQueryArguments( state ), 'from' ) );
-	const fromInitial = useSelector( ( state ) => get( getInitialQueryArguments( state ), 'from' ) );
+
+	// Redux selectors are used only as memo-invalidation triggers.
+	// The actual detection reads from window.location via detectCiabConfig().
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const initialQuery = useSelector( getInitialQueryArguments );
+	const from = currentQuery?.from || initialQuery?.from;
+	const redirectTo = currentQuery?.redirect_to || initialQuery?.redirect_to;
+	const oauth2Redirect = currentQuery?.oauth2_redirect || initialQuery?.oauth2_redirect;
 
 	return useMemo( () => {
-		const ciabConfig = getEffectiveCiabConfig( fromCurrent, fromInitial );
+		const ciabConfig = detectCiabConfig();
 		const hasCustomBranding = ciabConfig !== null;
 
 		// Build logo element for TopBar
@@ -380,7 +364,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 			topBarLogo,
 			signupTosElement,
 		};
-	}, [ fromCurrent, fromInitial, translate ] );
+	}, [ from, redirectTo, oauth2Redirect, translate ] );
 }
 
 /**
