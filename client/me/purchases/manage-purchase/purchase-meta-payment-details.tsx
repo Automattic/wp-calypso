@@ -13,7 +13,6 @@ interface PaymentProps {
 	siteSlug?: string;
 	site?: SiteDetails;
 	isAkismetPurchase: boolean;
-	isA4ABillingDragonPurchase?: boolean;
 }
 
 function PurchaseMetaPaymentDetails( {
@@ -22,7 +21,6 @@ function PurchaseMetaPaymentDetails( {
 	siteSlug,
 	site,
 	isAkismetPurchase,
-	isA4ABillingDragonPurchase,
 }: PaymentProps ) {
 	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 	const handleEditPaymentMethodClick = () => {
@@ -43,7 +41,7 @@ function PurchaseMetaPaymentDetails( {
 		! canEditPaymentDetails( purchase ) ||
 		! isPaidWithCreditCard( purchase ) ||
 		! siteSlug ||
-		( ! site && ! isAkismetPurchase && ! isA4ABillingDragonPurchase )
+		( ! site && ! isAkismetPurchase )
 	) {
 		return <li>{ paymentDetails }</li>;
 	}
