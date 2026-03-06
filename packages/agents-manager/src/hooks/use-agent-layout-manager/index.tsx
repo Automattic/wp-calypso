@@ -59,6 +59,7 @@ export default function useAgentLayoutManager( {
 	const canDock = isDesktop && hasEnoughHeight;
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -155,13 +156,15 @@ export default function useAgentLayoutManager( {
 	useLayoutEffect(
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
+			clearTimeout( closeSidebarTimeoutRef.current );
 			setIsDocked( null );
 			setIsPortalReady( false );
 
 			if ( container ) {
 				container.classList.remove(
 					'agents-manager-sidebar-container',
-					'agents-manager-sidebar-container--sidebar-open'
+					'agents-manager-sidebar-container--sidebar-open',
+					'agents-manager-sidebar-container--closing'
 				);
 
 				if ( portalRef.current ) {
@@ -193,7 +196,8 @@ export default function useAgentLayoutManager( {
 		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 		container.classList.add( 'agents-manager-sidebar-container--closing' );
-		setTimeout( () => {
+		clearTimeout( closeSidebarTimeoutRef.current );
+		closeSidebarTimeoutRef.current = setTimeout( () => {
 			container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		}, SIDEBAR_TRANSITION_DURATION_MS );
 
