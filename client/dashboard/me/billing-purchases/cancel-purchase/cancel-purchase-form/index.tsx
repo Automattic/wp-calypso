@@ -173,7 +173,6 @@ function SurveyContent( {
 					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					onClickDowngrade={ downgradeClick }
-					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					purchase={ purchase }
 				/>
