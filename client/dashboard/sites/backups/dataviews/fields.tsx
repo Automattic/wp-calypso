@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry, ActivityLogGroupCountResponse } from '@automattic/api-core';
@@ -53,16 +53,6 @@ export function getFields(
 					className="dashboard-backups__list-icon"
 				/>
 			),
-		},
-		{
-			id: 'title',
-			label: __( 'Title' ),
-			getValue: ( { item } ) => {
-				// translators: %s is the name of the person who performed the action
-				const actor = item.actor?.name ? ` ${ sprintf( __( 'by %s' ), item.actor.name ) }` : '';
-				return item.summary + actor;
-			},
-			enableGlobalSearch: true,
 		},
 		{
 			id: 'date',

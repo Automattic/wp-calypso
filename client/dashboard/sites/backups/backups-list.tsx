@@ -13,9 +13,9 @@ import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
 	type: 'list',
-	fields: [ 'date', 'content_text' ],
+	fields: [ 'content_text' ],
 	mediaField: 'icon',
-	titleField: 'title',
+	titleField: 'date',
 	perPage: 10,
 	sort: {
 		field: 'date',

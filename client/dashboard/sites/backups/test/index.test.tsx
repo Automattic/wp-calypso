@@ -196,7 +196,7 @@ test.each( summaryTestCases )(
 		renderBackupsListPage();
 
 		await waitFor( () => {
-			expect( screen.getAllByText( summary ) ).toHaveLength( 2 );
+			expect( screen.getByText( summary ) ).toBeVisible();
 		} );
 	}
 );

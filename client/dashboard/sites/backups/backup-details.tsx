@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Icon,
@@ -139,7 +138,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
 				<SectionHeader
-					title={ backup.summary }
+					title={ formattedTime }
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 					actions={ ! isSmallViewport ? actions : null }
 				/>
@@ -150,17 +149,15 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 					<Text size={ 14 } weight={ 500 }>
 						{ backup.content.text }
 					</Text>
-					<HStack alignment="left" spacing={ 1 }>
-						<Text variant="muted">{ formattedTime }</Text>
-						{ backup.actor?.name && (
-							<Text variant="muted">
-								{
+					<Text variant="muted">
+						{ backup.actor?.name
+							? `${ backup.summary } ${ sprintf(
 									/* translators: %s is the name of the person/system who performed the backup */
-									sprintf( __( 'by %s' ), backup.actor.name )
-								}
-							</Text>
-						) }
-					</HStack>
+									__( 'by %s' ),
+									backup.actor.name
+							  ) }`
+							: backup.summary }
+					</Text>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))">
 						{ backup.streams ? (
 							backup.streams.map( ( item, index ) => (
