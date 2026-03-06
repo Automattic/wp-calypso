@@ -68,11 +68,11 @@ function isAnnualOrLongerPlan( purchase: Purchase ): boolean {
 	);
 }
 
-const SUPPORT_GUIDES_URL = localizeUrl( 'https://wordpress.com/support/' );
-const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
-const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
-const DOMAIN_GUIDE_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
-const DOMAINS_EXPLORE_URL = localizeUrl( 'https://wordpress.com/domains/' );
+const SUPPORT_GUIDES_URL = localizeUrl( wpcomLink( '/support/' ) );
+const SITE_SPEED_URL = localizeUrl( wpcomLink( '/support/site-speed/' ) );
+const SITE_MIGRATION_URL = localizeUrl( wpcomLink( '/support/site-migration/' ) );
+const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
+const DOMAINS_EXPLORE_URL = localizeUrl( wpcomLink( '/domains/' ) );
 
 function getCardHref(
 	cardId: string,
