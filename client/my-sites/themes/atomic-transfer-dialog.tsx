@@ -121,7 +121,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		this.sitePollingTimeout = setTimeout( () => {
 			this.stopSitePolling();
 			this.setState( {
-				errorMessage: translate( 'There was an error transferring your site. Please try again.' ),
+				errorMessage: translate(
+					'Your site was transferred but is still updating. Please refresh and try again.'
+				),
 			} );
 		}, SITE_POLL_TIMEOUT_MS );
 	}
