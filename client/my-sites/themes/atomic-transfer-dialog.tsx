@@ -45,8 +45,8 @@ interface AtomicTransferDialogProps {
 	dispatchRequestSite: typeof requestSite;
 }
 
-const SITE_POLL_DELAY_MS = 3000;
-const SITE_POLL_MAX_ATTEMPTS = 10;
+const SITE_POLL_INTERVAL_MS = 3000;
+const SITE_POLL_TIMEOUT_MS = 30000;
 
 type AtomicTransferDialogState = {
 	requestActiveThemeCount: number;
@@ -57,9 +57,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	state: AtomicTransferDialogState;
 
 	maxRequestActiveThemeAttempts = 30;
+	hasActivated = false;
 	sitePollingInterval?: ReturnType< typeof setInterval >;
 	sitePollingTimeout?: ReturnType< typeof setTimeout >;
-	hasActivated = false;
 
 	constructor( props: AtomicTransferDialogProps ) {
 		super( props );
@@ -114,18 +114,16 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	startSitePolling( siteId: number ) {
 		const { dispatchRequestSite } = this.props;
 
-		dispatchRequestSite( siteId );
-
 		this.sitePollingInterval = setInterval( () => {
 			dispatchRequestSite( siteId );
-		}, SITE_POLL_DELAY_MS );
+		}, SITE_POLL_INTERVAL_MS );
 
 		this.sitePollingTimeout = setTimeout( () => {
 			this.stopSitePolling();
 			this.setState( {
 				errorMessage: translate( 'There was an error transferring your site. Please try again.' ),
 			} );
-		}, SITE_POLL_DELAY_MS * SITE_POLL_MAX_ATTEMPTS );
+		}, SITE_POLL_TIMEOUT_MS );
 	}
 
 	stopSitePolling() {
@@ -147,13 +145,17 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		const { siteId, siteSlug, uploadError, isJetpack, transferStatus } = this.props;
 
 		// After transfer completes, wait for the site to be recognized as Jetpack.
-		if ( siteId && siteSlug && transferStatus === transferStates.COMPLETE ) {
+		// requestActiveThemeCount > 0 ensures we only act if we initiated a transfer in this session.
+		if (
+			siteId &&
+			siteSlug &&
+			transferStatus === transferStates.COMPLETE &&
+			this.state.requestActiveThemeCount > 0
+		) {
 			if ( isJetpack ) {
-				// Site is already Jetpack — stop polling (if active) and activate the theme.
 				this.stopSitePolling();
 				this.continueToActivate();
 			} else if ( ! this.sitePollingInterval ) {
-				// Site is not yet Jetpack — start polling for updated site data.
 				this.startSitePolling( siteId );
 			}
 		}
@@ -181,11 +183,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		const hasNotExceededMaxAttempts =
 			this.state.requestActiveThemeCount > 0 && ! this.exceededMaxAttempts() && ! isJetpack;
 
-		const isPollingSite = !! this.sitePollingInterval;
-
 		const isActivatingAfterTransfer = isJetpack && theme?.id && ! isThemeActive;
 
-		return inProgress || hasNotExceededMaxAttempts || isPollingSite || isActivatingAfterTransfer;
+		return inProgress || hasNotExceededMaxAttempts || isActivatingAfterTransfer;
 	}
 
 	renderActivationInProgress() {
