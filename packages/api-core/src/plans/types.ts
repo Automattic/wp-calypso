@@ -3,6 +3,23 @@ export interface PlanProductFeatureHighlight {
 	items: string[];
 }
 
+export interface PlanCardFeature {
+	text: string;
+	available: boolean;
+}
+
+export interface PlanProductComparisonFeature {
+	key: string;
+	title: string;
+	tiers: string[];
+	billing_periods?: number[];
+}
+
+export interface PlanProductComparisonGroup {
+	group: string;
+	features: PlanProductComparisonFeature[];
+}
+
 export interface PlanProductDowngrade {
 	product_id: number;
 	bill_period: number;
@@ -40,7 +57,10 @@ export interface PlanProduct {
 	// Descriptive properties
 	description: string;
 	tagline: string | null;
+	plan_card_name: string | null;
 	features_highlight?: PlanProductFeatureHighlight[];
+	plan_card_features?: PlanCardFeature[];
+	features_comparison?: PlanProductComparisonGroup[];
 
 	// Downgrade options
 	downgrade_paths: PlanProductDowngrade[];
