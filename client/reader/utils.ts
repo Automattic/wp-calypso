@@ -3,7 +3,9 @@ import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
+import { truncate } from 'lodash';
 import { Dispatch } from 'redux';
+import { stripHTML } from 'calypso/lib/formatting/strip-html';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { AppState } from 'calypso/types';
@@ -183,4 +185,22 @@ export function getCurrentTabFromURL(
 	}
 
 	return path.replace( /^\//, '' );
+}
+
+export function getPostTitleFallback(
+	post: {
+		title: string;
+		excerpt: string;
+		content: string;
+	},
+	fallbackValue: string = ''
+): string {
+	if ( post.title ) {
+		return post.title;
+	}
+
+	const plainContent = stripHTML( post.excerpt || post.content ); // Get plain text without HTML tags.
+	const derivedTitle = truncate( plainContent, { length: 60, separator: /,? +/ } ).trim();
+
+	return derivedTitle || fallbackValue;
 }
