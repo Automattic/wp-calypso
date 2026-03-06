@@ -1,5 +1,7 @@
 import './style.scss';
+import { readFeedSearchQuery } from '@automattic/api-queries';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
@@ -8,7 +10,6 @@ import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing
 
 const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
 	SubscriptionManager;
-const { useReadFeedSearchQuery } = Reader;
 
 interface Props {
 	hideTitle?: boolean;
@@ -27,10 +28,12 @@ export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 		data,
 		isFetching: isFetchingUnsubscribedFeeds,
 		error: searchError,
-	} = useReadFeedSearchQuery( {
-		query: searchTerm,
-		excludeFollowed: true,
-	} );
+	} = useQuery(
+		readFeedSearchQuery( {
+			query: searchTerm,
+			excludeFollowed: true,
+		} )
+	);
 
 	const unsubscribedFeedItems = data?.feeds;
 	const noFeedsFound =
