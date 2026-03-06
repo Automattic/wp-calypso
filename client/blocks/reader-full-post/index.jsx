@@ -42,7 +42,7 @@ import {
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
+import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -759,7 +759,9 @@ export class FullPostView extends Component {
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
-						<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+						<DocumentHead
+							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
+						/>
 					) }
 					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 					{ post && ! post.is_external && post.site_ID && (
