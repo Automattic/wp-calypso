@@ -1,6 +1,13 @@
-import { fetchReadFeedSearch, ReadFeedSearchSort } from '@automattic/api-core';
+import { fetchReadFeed, fetchReadFeedSearch, ReadFeedSearchSort } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
+export const readFeedQuery = ( feedId?: number | string ) => {
+	return queryOptions( {
+		queryKey: [ 'read', 'feeds', Number( feedId ) ],
+		queryFn: () => fetchReadFeed( feedId! ),
+		enabled: feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
+	} );
+};
 interface Options {
 	query?: string;
 	excludeFollowed?: boolean;

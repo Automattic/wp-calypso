@@ -2,7 +2,6 @@ export { default as usePendingPostSubscriptionsQuery } from './use-pending-post-
 export { default as usePendingSiteSubscriptionsQuery } from './use-pending-site-subscriptions-query';
 export { default as usePostSubscriptionsQuery } from './use-post-subscriptions-query';
 export { default as useReadFeedSiteQuery } from './use-read-feed-site-query';
-export { default as useReadFeedQuery } from './use-read-feed-query';
 export { default as useSiteSubscriptionDetailsQuery } from './use-site-subscription-details-query';
 export {
 	default as useSiteSubscriptionsQuery,

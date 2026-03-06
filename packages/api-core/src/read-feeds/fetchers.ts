@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { ReadFeedSearchSort, ReadFeedSearchResponse } from './types';
+import type { ReadFeedItem, ReadFeedSearchSort, ReadFeedSearchResponse } from './types';
 
 export const fetchReadFeedSearch = ( options: {
 	query?: string;
@@ -15,6 +15,14 @@ export const fetchReadFeedSearch = ( options: {
 			exclude_followed: excludeFollowed,
 			sort,
 		} ),
+		apiVersion: '1.1',
+		method: 'GET',
+	} );
+};
+
+export const fetchReadFeed = ( feedId: number | string ): Promise< ReadFeedItem > => {
+	return wpcom.req.get( {
+		path: `/read/feed/${ feedId }`,
 		apiVersion: '1.1',
 		method: 'GET',
 	} );
