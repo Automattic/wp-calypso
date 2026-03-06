@@ -1,4 +1,3 @@
-// Injected by webpack DefinePlugin at build time (see apps/agents-manager/webpack.config.js)
 declare const __i18n_text_domain__: string;
 
 // Type declarations for WordPress packages without types
