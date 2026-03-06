@@ -113,10 +113,10 @@
 		}
 
 		/**
-		 * Make sure the text doesn't overlap with the image when it's aligned left or right.
+		 * Sometimes we have figure inside the div.wp-block-image, in other cases we have figure.wp-block-image
 		 */
-		.wp-block-image.alignleft:has(+ p),
-		.wp-block-image.alignright:has(+ p) {
+		figure.wp-block-image:is(.alignleft, .alignright):has( + p),
+		.wp-block-image:has(figure.alignleft, figure.alignright):has( + p) {
 			max-width: 40%;
 		}
 	}
