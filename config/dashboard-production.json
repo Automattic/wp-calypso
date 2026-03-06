@@ -13,6 +13,7 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
 		"catch-js-errors": true,
+		"posthog-tracking": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,
 		"cookie-banner": true,

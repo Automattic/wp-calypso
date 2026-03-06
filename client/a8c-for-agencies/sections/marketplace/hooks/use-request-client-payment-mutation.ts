@@ -13,6 +13,10 @@ export interface MutationRequestClientPaymentVariables {
 		license_id: number;
 	}[];
 	flow_type: ReferralOrderFlowType;
+	logo?: {
+		type: 'profile' | 'custom' | 'none';
+		url?: string;
+	};
 }
 
 interface APIError {
@@ -28,6 +32,7 @@ function mutationRequestClientPayment( {
 	agencyId,
 	licenses,
 	flow_type,
+	logo,
 }: MutationRequestClientPaymentVariables & { agencyId?: number } ): Promise< ReferralAPIResponse > {
 	if ( ! agencyId ) {
 		throw new Error( 'Agency ID is required request a client payment' );
@@ -35,7 +40,7 @@ function mutationRequestClientPayment( {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/referrals`,
-		body: { client_email, client_message, product_ids, licenses, flow_type },
+		body: { client_email, client_message, product_ids, licenses, flow_type, logo },
 	} );
 }
 

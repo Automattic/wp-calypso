@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import {
@@ -18,6 +19,8 @@ import {
 	validateLogoDimensions,
 	validateLogoFile,
 } from 'calypso/a8c-for-agencies/lib/logo-file-validation';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -30,10 +33,11 @@ export interface LogoFileUploadProps {
 
 /**
  * Reusable logo file upload using FormFileUpload.
- * Validates format (JPG, PNG), dimensions (800x320), and size (max 5 MB) on the client.
+ * Validates format (JPG, PNG), dimensions (800x320), and size (max 10 MB) on the client.
  */
 function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ error, setError ] = useState< LogoFileValidationError | 'dimensions' | null >( null );
 	const maxLogoSizeMb = Math.floor( A4A_LOGO_MAX_FILE_SIZE_BYTES / ( 1024 * 1024 ) );
 
@@ -64,9 +68,10 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 				return;
 			}
 
+			dispatch( recordTracksEvent( 'calypso_a4a_client_referral_logo_file_select' ) );
 			onFileSelect( file );
 		},
-		[ onFileSelect ]
+		[ dispatch, onFileSelect ]
 	);
 
 	let errorMessage: React.ReactNode | null = null;
@@ -110,7 +115,10 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 					<HStack spacing={ 5 } alignment="top">
 						<Button
 							variant="tertiary"
-							className="logo-file-upload-placeholder"
+							className={ clsx(
+								'logo-file-upload-placeholder',
+								displayUrl && 'logo-file-upload-placeholder--has-image'
+							) }
 							onClick={ openFileDialog }
 							aria-label={ displayUrl ? translate( 'Replace logo' ) : translate( 'Select logo' ) }
 						>

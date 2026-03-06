@@ -18,6 +18,7 @@ import {
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
+	redirectToRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -395,25 +396,9 @@ export default function () {
 		clientRender
 	);
 
-	// A renewal link without a site is not allowed, but we send the user to
-	// checkout anyway so they can see a helpful error message.
-	page(
-		'/checkout/:product/renew/:purchaseId',
-		redirectLoggedOut,
-		noSite,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/renew/:purchaseId', redirectToRenewalBySubscriptionId );
 
-	page(
-		'/checkout/:product/renew/:purchaseId/:domain',
-		redirectLoggedOut,
-		siteSelection,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/renew/:purchaseId/:domain', redirectToRenewalBySubscriptionId );
 
 	// Gift purchases work without a site, so do not include the `siteSelection`
 	// middleware.

@@ -186,6 +186,7 @@ interface TrackImageStudioErrorOptions {
 		| 'draft_cleanup_failed'
 		| 'draft_cleanup_permission_denied'
 		| 'delete_permanently_failed'
+		| 'save_metadata_failed'
 		| 'other';
 	attachmentId?: number;
 }
@@ -520,7 +521,6 @@ interface TrackImageStudioStyleSelectedOptions {
 
 /**
  * Tracks when a user selects a style in Image Studio
- *
  * @param {Object} options       - Tracking options
  * @param {string} options.style - The selected style value
  * @param {string} options.mode  - 'edit' or 'generate'
@@ -542,7 +542,6 @@ interface TrackImageStudioAspectRatioSelectedOptions {
 
 /**
  * Tracks when a user selects an aspect ratio in Image Studio
- *
  * @param {Object} options             - Tracking options
  * @param {string} options.aspectRatio - The selected aspect ratio value
  * @param {string} options.mode        - 'edit' or 'generate'
@@ -559,7 +558,6 @@ export function trackImageStudioAspectRatioSelected( {
 
 /**
  * Tracks when an image is permanently deleted from Image Studio
- *
  * @param {Object} options                - Tracking options
  * @param {number} [options.attachmentId] - Attachment ID of the deleted image
  * @param {string} options.mode           - 'edit' or 'generate'

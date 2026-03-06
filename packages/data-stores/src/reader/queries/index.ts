@@ -11,5 +11,3 @@ export {
 } from './use-site-subscriptions-query';
 export { default as useSubscriptionsCountQuery } from './use-subscriptions-count-query';
 export { default as useUserSettingsQuery } from './use-user-settings-query';
-
-export type { FeedItem } from './use-read-feed-search-query';

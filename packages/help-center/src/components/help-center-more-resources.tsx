@@ -2,7 +2,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { backup, chevronRight, external, Icon, rss, thumbsUp, video } from '@wordpress/icons';
+import { backup, chevronRight, external, Icon, page, rss, thumbsUp, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
 import { showHelpCenterFeedbackSurvey } from 'calypso/lib/analytics/survicate';
@@ -55,6 +55,23 @@ export const HelpCenterMoreResources = () => {
 								<span>{ __( 'Support history', __i18n_text_domain__ ) }</span>
 								<Icon icon={ chevronRight } size={ 20 } />
 							</button>
+						</div>
+					</li>
+				) }
+				{ featureConfig.moreResources.supportGuidesUrl && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<a
+								href={ featureConfig.moreResources.supportGuidesUrl }
+								rel="noreferrer"
+								target="_blank"
+								onClick={ () => trackMoreResourcesButtonClick( 'support-guides' ) }
+								className="help-center-more-resources__support-guides"
+							>
+								<Icon icon={ page } size={ 24 } />
+								<span>{ __( 'Support guides', __i18n_text_domain__ ) }</span>
+								<Icon icon={ external } size={ 20 } />
+							</a>
 						</div>
 					</li>
 				) }

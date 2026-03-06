@@ -17,7 +17,6 @@ export type SiteTypeFeatureSupports = {
 	settingsServer?: boolean;
 	settingsSecurity?: boolean;
 	settingsGeneralDotcomSiteVisibility?: boolean;
-	settingsExperimental?: boolean;
 };
 
 /**
@@ -65,7 +64,6 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			settingsGeneralDotcomSiteVisibility: false,
 			settingsServer: false,
 			settingsSecurity: false,
-			settingsExperimental: false,
 		};
 	}
 
@@ -85,7 +83,6 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		settingsGeneralDotcomSiteVisibility: true,
 		settingsServer: true,
 		settingsSecurity: true,
-		settingsExperimental: true,
 	};
 }
 

@@ -46,6 +46,7 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 	};
+	posthog?: string;
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {

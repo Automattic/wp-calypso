@@ -92,9 +92,13 @@
 .shopping-cart__menu-checkout-button {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	min-height: 40px;
-	@include heading-medium;
-	border-radius: 4px;
-	margin-block-start: 20px;
+	justify-content: stretch;
+
+	.button {
+		@include heading-medium;
+		border-radius: 4px;
+		margin-block-start: 20px;
+		min-height: 40px;
+		width: 100%;
+	}
 }

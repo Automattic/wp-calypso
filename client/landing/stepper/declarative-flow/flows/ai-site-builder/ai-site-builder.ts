@@ -1,5 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -262,9 +262,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( specId ) {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
-
 							if ( triggerBackendBuild ) {
-								window.location.replace( `${ siteURL }/wp-admin/` );
+								const ph = queryParams.get( '_ph' );
+								window.location.replace(
+									addQueryArgs( `${ siteURL }/wp-admin/`, {
+										...( ph && { _ph: ph } ),
+									} )
+								);
 							} else {
 								window.location.replace(
 									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
@@ -311,13 +315,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					const { cartItems } = providedDependencies;
 
 					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
-						await addPlanToCart(
-							siteSlugFromSiteData,
-							AI_SITE_BUILDER_FLOW,
-							true,
-							'assembler',
-							cartItems[ 0 ]
-						);
+						await addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
+							cartItems[ 0 ],
+						] );
 					}
 
 					// Flow is plan => domain and we are on plans: go to domains
