@@ -3,6 +3,7 @@ import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -148,14 +149,18 @@ const UserStepComponent: StepType = function UserStep( {
 		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
-			<>
+			<div
+				className={ clsx( {
+					'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
+				} ) }
+			>
 				{ localeSuggestions }
 				<Step.Heading
 					text={ headingText }
 					align={ isExperimentVariant ? 'left' : undefined }
 					size={ isMessagingVariation ? 'small' : undefined }
 				/>
-			</>
+			</div>
 		);
 
 		const topBar = (
