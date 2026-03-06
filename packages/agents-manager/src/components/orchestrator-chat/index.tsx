@@ -13,7 +13,10 @@ import useCopyMessage from '../../hooks/use-copy-message';
 import useFeedback from '../../hooks/use-feedback';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId } from '../../utils/agent-session';
-import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
+import {
+	convertToolMessagesToComponents,
+	disableCachedComponentMessages,
+} from '../../utils/process-tool-messages';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -275,11 +278,7 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo( () => {
 		// Return already-processed cached messages on back-navigation from history.
 		if ( hasCachedConversation && ! messages.length ) {
-			// Disable show-component messages to prevent interactions with stale components.
-			return cachedMessages.map( ( message ) =>
-				// @ts-ignore -- `isShowComponentMessage` is a custom flag not on the UIMessage type.
-				message.isShowComponentMessage ? { ...message, disabled: true } : message
-			);
+			return disableCachedComponentMessages( cachedMessages );
 		}
 
 		let currentMessages = messages;
