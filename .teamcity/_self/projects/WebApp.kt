@@ -195,6 +195,29 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
+		script {
+			name = "Debug worktree vs staged manifests"
+			scriptContent = """
+				set -euo pipefail
+
+				echo "WORKTREE client:" \
+				  "$(node -e "console.log(require('./client/package.json').dependencies['@automattic/agenttic-ui'])")"
+
+				echo "WORKTREE agents-manager:" \
+				  "$(node -e "console.log(require('./packages/agents-manager/package.json').dependencies['@automattic/agenttic-ui'])")"
+
+				if [ -d .docker-workspace-manifests ]; then
+				  echo "STAGED client:" \
+				    "$(node -e "console.log(require('./.docker-workspace-manifests/client/package.json').dependencies['@automattic/agenttic-ui'])")"
+
+				  echo "STAGED agents-manager:" \
+				    "$(node -e "console.log(require('./.docker-workspace-manifests/packages/agents-manager/package.json').dependencies['@automattic/agenttic-ui'])")"
+				else
+				  echo "No .docker-workspace-manifests directory present"
+				fi
+			""".trimIndent()
+		}
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
