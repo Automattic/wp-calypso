@@ -1076,13 +1076,13 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint, appConfig, reqFilter ) {
+	function handleSectionPath( section, sectionPath, entrypoint, dashboardType, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
 			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-			setupDefaultContext( entrypoint, section.name, appConfig ),
+			setupDefaultContext( entrypoint, section.name, dashboardType ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
 			// SSR checks aren't accounted for here, but happen in the SSR pipeline

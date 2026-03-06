@@ -3,5 +3,4 @@ export const START_SECTION_DEFINITION = {
 	paths: [ '/start' ],
 	module: 'calypso/signup',
 	enableLoggedOut: true,
-	isomorphic: true,
 };

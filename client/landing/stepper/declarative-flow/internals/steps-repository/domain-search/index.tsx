@@ -24,7 +24,7 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useDashboardConfig } from 'calypso/lib/use-dashboard-config';
+import { getDashboardConfig } from 'calypso/lib/get-dashboard-config';
 import {
 	domainAddNew,
 	domainManagementList,
@@ -87,7 +87,7 @@ const DomainSearchStep: StepType< {
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
 
-	console.log( 'dashboardConfig', useDashboardConfig() );
+	console.log( 'dashboardConfig', getDashboardConfig() );
 
 	const isCiab = dashboard === 'ciab';
 

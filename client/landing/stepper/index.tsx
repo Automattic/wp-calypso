@@ -23,9 +23,9 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import { fetchDashboardConfig, DASHBOARD_TYPE } from 'calypso/lib/get-dashboard-config';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
-import { dashboardConfigQueryOptions, DASHBOARD_TYPE } from 'calypso/lib/use-dashboard-config';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -159,7 +159,7 @@ async function main() {
 	}
 
 	if ( DASHBOARD_TYPE ) {
-		const dashboardConfig = await queryClient.ensureQueryData( dashboardConfigQueryOptions() );
+		const dashboardConfig = await fetchDashboardConfig();
 
 		console.log( 'dashboardConfig', dashboardConfig );
 	}
