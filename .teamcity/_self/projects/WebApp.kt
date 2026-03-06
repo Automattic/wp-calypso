@@ -183,19 +183,6 @@ object BuildDockerImage : BuildType({
 		mergeTrunk( skipIfConflict = true )
 
 		script {
-			name = "Restore git mtime"
-			scriptContent = """
-				#!/usr/bin/env bash
-				sudo apt-get install -y git-restore-mtime
-				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-			"""
-			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
-			dockerPull = true
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}
-
-		script {
 			name = "Debug host workspace manifests"
 			scriptContent = """
 				#!/usr/bin/env bash
@@ -234,7 +221,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				commandArgs = "--pull --no-cache --label com.a8c.target=calypso-live $commonArgs"
+				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
