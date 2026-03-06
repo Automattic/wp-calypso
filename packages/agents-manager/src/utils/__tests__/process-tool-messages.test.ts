@@ -209,6 +209,99 @@ describe( 'convertToolMessagesToComponents', () => {
 			component: MockComponent,
 		} );
 	} );
+
+	it( 'disables component when `postId` differs from `currentPostId`', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			isCurrent: true,
+			postId: 10,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 20,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
+	} );
+
+	it( 'hides `next-step-button` when `postId` differs from `currentPostId`', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			followUpTasks: true,
+			isCurrent: true,
+			postId: 10,
+		} );
+		const getChatComponent = jest.fn( ( type: string ) =>
+			type === 'my-component' ? MockComponent : MockNextStepButton
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 20,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			component: MockComponent,
+		} );
+	} );
+
+	it( 'does not disable when `postId` matches `currentPostId`', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			isCurrent: true,
+			postId: 10,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 10,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
+	} );
+
+	it( 'does not disable when `postId` is missing from the tool message', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+			currentPostId: 20,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
+	} );
+
+	it( 'does not disable when `currentPostId` is `undefined`', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			isCurrent: true,
+			postId: 10,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
+	} );
 } );
 
 describe( 'disablePickersAndRemoveNextButton', () => {

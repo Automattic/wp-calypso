@@ -7,6 +7,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
+	currentPostId?: number;
 }
 
 /**
@@ -15,6 +16,7 @@ interface Options {
 export function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
+	currentPostId,
 }: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
@@ -71,7 +73,7 @@ export function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks, isCurrent } = textData.data ?? {};
+			const { type: contentType, props, followUpTasks, isCurrent, postId } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
@@ -81,6 +83,12 @@ export function convertToolMessagesToComponents( {
 
 			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
+			// In the site editor, React-Query caching keeps past conversations alive when the
+			// user navigates to a different page. Compare the picker's `postId` with the
+			// current editor page to disable pickers that no longer belong to this page.
+			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
+			// Stale if superseded by a newer message, from a past conversation, or the page has changed.
+			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
 
 			const componentMessage = {
 				...message,
@@ -91,16 +99,14 @@ export function convertToolMessagesToComponents( {
 						componentProps: { ...props, contentType },
 					},
 				],
-				// Disable if superseded by a newer message or from a past conversation.
-				disabled: ! isLastMessage || ! isCurrent,
+				disabled: isStale,
 				// Tag for `disablePickersAndRemoveNextButton` to disable on back-navigation.
 				isShowComponentMessage: true,
 			};
 
-			// Only show `next-step-button` after the most recent component message with follow-up tasks.
-			// Hide it for past conversations since the tasks are no longer actionable.
+			// Only show `next-step-button` when the component is active and has follow-up tasks.
 			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( ! isLastMessage || ! isCurrent || ! followUpTasks || ! NextStepButton ) {
+			if ( isStale || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
 			}
 

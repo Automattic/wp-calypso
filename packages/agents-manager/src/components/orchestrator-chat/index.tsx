@@ -4,6 +4,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -96,6 +97,13 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+
+	// Current post ID from the editor store (`undefined` when not editing a post/page).
+	const currentPostId = useSelect(
+		( select ) =>
+			( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.(),
+		[]
+	);
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
@@ -304,6 +312,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			currentPostId,
 		} );
 
 		// Dedup and append new messages to cached messages during back-navigation.
@@ -317,6 +326,7 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		cachedMessages,
+		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
 		hasCachedConversation,
