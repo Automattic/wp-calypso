@@ -178,7 +178,10 @@ function initLoadedTrackingScripts() {
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		initTikTok();
 	}
-
+	if ( mayWeTrackByTracker( 'quora' ) ) {
+		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.
+		window.qp( 'track', 'ViewContent' );
+	}
 	debug( 'loadTrackingScripts: init done' );
 }
 

@@ -13,8 +13,11 @@ import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
 import {
 	fetchAutomatedTransferStatus,
@@ -76,6 +79,10 @@ class PluginUpload extends Component {
 		page.back();
 	};
 
+	handleFileTooLarge = () => {
+		this.setState( { fileTooLarge: true } );
+	};
+
 	onProceedClick = () => {
 		this.setState( {
 			showEligibility: false,
@@ -95,9 +102,14 @@ class PluginUpload extends Component {
 		const WrapperComponent = ! canUpload ? FeatureExample : Fragment;
 		return (
 			<WrapperComponent>
+				{ this.state.fileTooLarge && this.renderFileTooLarge() }
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ ! canUpload } />
+						<UploadDropZone
+							doUpload={ uploadAction }
+							disabled={ ! canUpload }
+							onFileTooLarge={ this.handleFileTooLarge }
+						/>
 					) }
 				</Card>
 			</WrapperComponent>
@@ -113,6 +125,29 @@ class PluginUpload extends Component {
 				action={ translate( 'Go to WP Admin' ) }
 				actionURL={ `${ siteAdminUrl }/plugin-install.php` }
 			/>
+		);
+	}
+
+	renderFileTooLarge() {
+		const { translate, siteAdminUrl } = this.props;
+
+		return (
+			<Notice
+				status="is-warning"
+				showDismiss={ false }
+				text={ translate(
+					'This plugin exceeds the %(maxSize)d MB upload limit. You can upload it directly in WP Admin.',
+					{
+						args: {
+							maxSize: Math.floor( MAX_UPLOAD_ZIP_SIZE / 1000000 ),
+						},
+					}
+				) }
+			>
+				<NoticeAction href={ `${ siteAdminUrl }plugin-install.php?tab=upload` } external>
+					{ translate( 'Go to WP Admin' ) }
+				</NoticeAction>
+			</Notice>
 		);
 	}
 
