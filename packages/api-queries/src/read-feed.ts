@@ -17,7 +17,7 @@ interface Options {
 export const readFeedSearchQuery = ( options: Options ) => {
 	const { query, excludeFollowed, sort } = options;
 	return queryOptions( {
-		queryKey: [ 'read', 'feed', 'search', query, excludeFollowed, sort ],
+		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ],
 		queryFn: () => fetchReadFeedSearch( { query, excludeFollowed, sort } ),
 		enabled: Boolean( query ),
 	} );
