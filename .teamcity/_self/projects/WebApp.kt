@@ -234,7 +234,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
+				commandArgs = "--pull --no-cache --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
