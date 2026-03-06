@@ -183,6 +183,8 @@ export default function useAgentLayoutManager( {
 		}
 
 		wasOpenRef.current = true;
+		clearTimeout( closeSidebarTimeoutRef.current );
+		container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
