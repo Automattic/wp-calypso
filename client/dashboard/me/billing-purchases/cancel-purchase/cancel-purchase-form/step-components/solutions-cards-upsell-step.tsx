@@ -1,11 +1,6 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
-import {
-	Button,
-	Icon,
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	brush,
@@ -27,6 +22,7 @@ import {
 import * as React from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
 import DashboardSummaryButton from '../../../../../components/summary-button';
+import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { wpcomLink } from '../../../../../utils/link';
 import { getSolutionsForReason } from '../../get-solutions-for-reason';
 import type { Purchase } from '@automattic/api-core';
@@ -312,8 +308,7 @@ export default function SolutionsCardsUpsellStep( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<Heading level={ 3 }>{ __( 'Have you tried any of these options?' ) }</Heading>
-			<VStack spacing={ 3 }>
+			<SummaryButtonList title={ __( 'Have you tried any of these options?' ) } density="low">
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
 						card.id !== 'ask-ai-assistant' &&
@@ -350,7 +345,7 @@ export default function SolutionsCardsUpsellStep( {
 						/>
 					);
 				} ) }
-			</VStack>
+			</SummaryButtonList>
 			<Button variant="secondary" onClick={ onDeclineUpsell } disabled={ cancellationInProgress }>
 				{ __( 'No thanks, cancel my plan' ) }
 			</Button>
