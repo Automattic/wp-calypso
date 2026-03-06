@@ -111,6 +111,14 @@
 			margin-bottom: 12px;
 			margin-left: 32px;
 		}
+
+		/**
+		 * Make sure the text doesn't overlap with the image when it's aligned left or right.
+		 */
+		.wp-block-image.alignleft:has(+ p),
+		.wp-block-image.alignright:has(+ p) {
+			max-width: 40%;
+		}
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
