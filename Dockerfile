@@ -63,13 +63,14 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
+#
+# The base image includes a generated /calypso/.yarn tree from a previous commit.
+# Clear it first so only repo-tracked .yarn files are present after COPY.
+RUN rm -rf /calypso/.yarn
 COPY . /calypso/
-# Look around - debug
-RUN ls -la /calypso/.yarn
-# The base image contains a Yarn install-state from whatever commit it was built on.
-# It's gitignored (not part of the repo), so COPY won't overwrite it.
-# Keeping it can make --immutable installs think the lockfile should be rewritten.
-RUN rm -f /calypso/.yarn/install-state.gz /calypso/.yarn/build-state.yml || true
+# Defensive cleanup in case mutable Yarn state is introduced in the source context.
+RUN rm -rf /calypso/.yarn/berry /calypso/.yarn/cache /calypso/.yarn/unplugged \
+	&& rm -f /calypso/.yarn/install-state.gz /calypso/.yarn/build-state.yml
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
