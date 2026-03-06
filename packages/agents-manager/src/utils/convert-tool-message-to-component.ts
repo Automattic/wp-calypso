@@ -97,7 +97,7 @@ export function convertToolMessagesToComponents( {
 
 			// Only show `next-step-button` after the most recent component message with follow-up tasks
 			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( ! isLastMessage || ! followUpTasks || ! NextStepButton ) {
+			if ( ! isLastMessage || ! isCurrent || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
 			}
 
