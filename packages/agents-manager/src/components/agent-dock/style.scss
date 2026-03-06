@@ -88,9 +88,11 @@
 	}
 }
 
-// Disable pointer events on the admin bar during sidebar close transition
+// Disable pointer events on the admin bar profile menu during sidebar close
+// transition to prevent its hover effect from triggering when the cursor
+// lands on it after the sidebar disappears.
 body.wp-admin.agents-manager-sidebar-container--closing {
-	#wpadminbar {
+	#wp-admin-bar-my-account {
 		pointer-events: none;
 	}
 }
