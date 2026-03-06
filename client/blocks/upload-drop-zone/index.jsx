@@ -19,6 +19,7 @@ class UploadDropZone extends Component {
 	static propTypes = {
 		doUpload: PropTypes.func.isRequired,
 		disabled: PropTypes.bool,
+		onFileTooLarge: PropTypes.func,
 		// Connected
 		siteId: PropTypes.number,
 	};
@@ -36,9 +37,15 @@ class UploadDropZone extends Component {
 		debug( 'zip file:', file );
 
 		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
-			this.props.errorNotice(
-				translate( 'Zip file is too large. Please upload a file under 50 MB.' )
-			);
+			if ( this.props.onFileTooLarge ) {
+				this.props.onFileTooLarge();
+			} else {
+				this.props.errorNotice(
+					translate( 'Zip file is too large. Please upload a file under %(maxSize)d MB.', {
+						args: { maxSize: Math.floor( MAX_UPLOAD_ZIP_SIZE / 1000000 ) },
+					} )
+				);
+			}
 			return;
 		}
 

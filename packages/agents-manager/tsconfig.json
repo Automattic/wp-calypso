@@ -8,6 +8,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/test/*" ],
+	"exclude": [ "**/__tests__/*" ],
 	"references": [ { "path": "../viewport" }, { "path": "../support-articles" } ]
 }
