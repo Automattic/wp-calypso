@@ -67,7 +67,7 @@ function BlockNoteThinkingIndicator() {
 		indicator.className = 'bigsky-thinking-indicator';
 		indicator.innerHTML = `
 				<img src="${ bigSkySvg }" width="14" height="14" alt="" />
-				<span class="bigsky-thinking-text">${ __( 'Thinking…', 'big-sky' ) }</span>
+				<span class="bigsky-thinking-text">${ __( 'Thinking…', __i18n_text_domain__ ) }</span>
 			`;
 
 		lastNote.appendChild( indicator );

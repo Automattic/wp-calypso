@@ -8,7 +8,7 @@ export const MAX_RETRIES = 5;
 export const RETRY_DELAY_MS = 200;
 export const PLACEHOLDER_TEXT = sprintf(
 	/* translators: %s is the @ai trigger keyword/mention — do not translate */
-	__( 'Leave a note. Type %s to use AI assistance.', 'big-sky' ),
+	__( 'Leave a note. Type %s to use AI assistance.', __i18n_text_domain__ ),
 	'@ai'
 );
 
