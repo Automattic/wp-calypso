@@ -3,7 +3,7 @@ import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { isEditorPage } from '../is-editor-page';
 import {
 	convertToolMessagesToComponents,
-	disableCachedComponentMessages,
+	disablePickersAndRemoveNextButton,
 } from '../process-tool-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -46,7 +46,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [ message ] );
 	} );
 
-	it( 'passes through agent messages with plain text unchanged', () => {
+	it( 'passes through plain-text agent messages unchanged', () => {
 		const message = createMessage( {
 			content: [ { type: 'text', text: 'Hello, how can I help?' } ],
 		} );
@@ -60,6 +60,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			props: { name: 'test' },
+			isCurrent: true,
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
@@ -84,7 +85,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'appends `next-step-button` only to the last message with follow-up tasks', () => {
-		const data = { type: 'my-component', followUpTasks: true };
+		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
 		const getChatComponent = jest.fn( ( type: string ) =>
 			type === 'my-component' ? MockComponent : MockNextStepButton
 		);
@@ -103,7 +104,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
 	} );
 
-	it( 'shows unavailable tool message when not on editor page', () => {
+	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
 		const message = createToolMessage( 'big_sky__show_component', { type: 'my-component' } );
 
@@ -117,7 +118,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'shows unavailable tool message for start over tool', () => {
+	it( 'shows `UnavailableToolMessage` for the start-over tool', () => {
 		const message = createToolMessage( 'big_sky__client_assistants', {
 			assistantId: 'big-sky-site-admin',
 		} );
@@ -132,7 +133,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'renders support tool message data as plain text', () => {
+	it( 'renders support tool data as plain text', () => {
 		const supportText = 'Here is some help for your domain question.';
 		const message = createMessage( {
 			content: [
@@ -156,7 +157,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'returns `EscalationButton` when `forward_to_human_support` is set', () => {
+	it( 'returns `EscalationButton` when `forward_to_human_support` flag is set', () => {
 		const message = createMessage( {
 			content: [
 				{ type: 'text', text: 'Hello' },
@@ -184,26 +185,27 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'disables all component messages when `isPastConversation` is true', () => {
+	it( 'disables component messages when `isCurrent` is `false`', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
+			isCurrent: false,
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
-			isPastConversation: true,
 		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
 	} );
 
-	it( 'hides the `next-step-button` when `isPastConversation` is true', () => {
+	it( 'hides `next-step-button` when `isCurrent` is `false`', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			followUpTasks: true,
+			isCurrent: false,
 		} );
 		const getChatComponent = jest.fn( ( type: string ) =>
 			type === 'my-component' ? MockComponent : MockNextStepButton
@@ -212,7 +214,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
-			isPastConversation: true,
 		} );
 
 		// Only the component message, no next-step-button
@@ -223,20 +224,20 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 } );
 
-describe( 'disableCachedComponentMessages', () => {
-	it( 'disables `show-component` messages', () => {
+describe( 'disablePickersAndRemoveNextButton', () => {
+	it( 'disables messages with `isShowComponentMessage`', () => {
 		const message = { ...createMessage(), isShowComponentMessage: true } as UIMessage;
 
-		const result = disableCachedComponentMessages( [ message ] );
+		const result = disablePickersAndRemoveNextButton( [ message ] );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
 	} );
 
-	it( 'removes `next-step-button` messages', () => {
+	it( 'removes messages with `isNextStepButton`', () => {
 		const message = { ...createMessage(), isNextStepButton: true } as UIMessage;
 
-		const result = disableCachedComponentMessages( [ message ] );
+		const result = disablePickersAndRemoveNextButton( [ message ] );
 
 		expect( result ).toHaveLength( 0 );
 	} );
@@ -244,7 +245,7 @@ describe( 'disableCachedComponentMessages', () => {
 	it( 'passes through regular messages unchanged', () => {
 		const message = createMessage();
 
-		const result = disableCachedComponentMessages( [ message ] );
+		const result = disablePickersAndRemoveNextButton( [ message ] );
 
 		expect( result ).toEqual( [ message ] );
 	} );
@@ -260,7 +261,7 @@ describe( 'disableCachedComponentMessages', () => {
 			isNextStepButton: true,
 		} as UIMessage;
 
-		const result = disableCachedComponentMessages( [ regular, component, nextStep ] );
+		const result = disablePickersAndRemoveNextButton( [ regular, component, nextStep ] );
 
 		expect( result ).toHaveLength( 2 );
 		expect( result[ 0 ].id ).toBe( 'regular' );

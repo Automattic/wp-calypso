@@ -15,7 +15,7 @@ import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
-	disableCachedComponentMessages,
+	disablePickersAndRemoveNextButton,
 } from '../../utils/process-tool-messages';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -278,7 +278,7 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo( () => {
 		// Return already-processed cached messages on back-navigation from history.
 		if ( hasCachedConversation && ! messages.length ) {
-			return disableCachedComponentMessages( cachedMessages );
+			return cachedMessages;
 		}
 
 		let currentMessages = messages;
@@ -304,7 +304,6 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
-			isPastConversation: !! configSessionId,
 		} );
 
 		// Dedup and append new messages to cached messages during back-navigation.
@@ -318,7 +317,6 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		cachedMessages,
-		configSessionId,
 		deletedMessageIds,
 		getChatComponent,
 		hasCachedConversation,
@@ -335,7 +333,11 @@ export default function OrchestratorChat( {
 
 	const handleViewHistory = () => {
 		// Cache current conversation messages to restore when navigating back from history.
-		cachedConversation = { sessionId: getActiveSessionId(), messages: displayedMessages };
+		cachedConversation = {
+			sessionId: getActiveSessionId(),
+			// Disable stale picker components and strip `next-step-button` before caching.
+			messages: disablePickersAndRemoveNextButton( displayedMessages ),
+		};
 	};
 
 	// Determine which suggestions to show following Big Sky's logic:
