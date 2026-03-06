@@ -64,9 +64,6 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-# The base image carries Yarn state for performance, but install-state can be
-# stale relative to this checkout and trigger immutable lockfile drift.
-RUN rm -f /calypso/.yarn/install-state.gz
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
