@@ -1102,22 +1102,7 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() ) {
-		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
-			const dashboardType = section.dashboardType;
-
-			if ( ! dashboardType ) {
-				throw new Error( 'Dashboard type not found' );
-			}
-
-			app.get(
-				pathToRegExp( sectionPath ),
-				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-				setupDefaultContext( entrypoint, section.name ),
-				setUpSectionContext( section, entrypoint ),
-				setUpRoute,
-				serverRender
-			);
-
+		const injectAdditionalSections = ( { dashboardType, reqFilter } ) => {
 			handleSectionPath(
 				STEPPER_SECTION_DEFINITION,
 				'/setup',
@@ -1125,6 +1110,7 @@ export default function pages() {
 				dashboardType,
 				reqFilter
 			);
+
 			handleSectionPath( START_SECTION_DEFINITION, '/start', undefined, dashboardType, reqFilter );
 			handleSectionPath(
 				CHECKOUT_SECTION_DEFINITION,
@@ -1135,26 +1121,61 @@ export default function pages() {
 			);
 		};
 
+		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
+			app.get(
+				pathToRegExp( sectionPath ),
+				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
+				setupDefaultContext( entrypoint, section.name ),
+				setUpSectionContext( section, entrypoint ),
+				setUpRoute,
+				serverRender
+			);
+		};
+
+		const dotcomReqFilter = ( req ) => isAllowedDotcomDashboardHostname( req.hostname );
+
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleRoute(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-dotcom',
-				( req ) => {
-					return isAllowedDotcomDashboardHostname( req.hostname );
-				}
+				dotcomReqFilter
 			);
 		} );
 
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) => {
-				return isAllowedCiabDashboardHostname( req.hostname );
-			} );
+		injectAdditionalSections( {
+			dashboardType: DOTCOM_DASHBOARD_SECTION_DEFINITION.dashboardType,
+			reqFilter: dotcomReqFilter,
 		} );
 
-		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			return isAllowedDotcomDashboardHostname( req.hostname );
+		const ciabReqFilter = ( req ) => isAllowedCiabDashboardHostname( req.hostname );
+
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleRoute(
+				CIAB_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-ciab',
+				ciabReqFilter
+			);
 		} );
+
+		injectAdditionalSections( {
+			dashboardType: CIAB_DASHBOARD_SECTION_DEFINITION.dashboardType,
+			reqFilter: ciabReqFilter,
+		} );
+
+		// We still need the /ciab prefix for Calypso live links as the domain name is random words (container-*.calypso.live, so in the code we distinguish between MSD environments by that path prefix.
+		injectAdditionalSections( {
+			dashboardType: 'dotcom-ciab',
+			reqFilter: dotcomReqFilter,
+		} );
+
+		handleRoute(
+			CIAB_DASHBOARD_SECTION_DEFINITION,
+			'/ciab',
+			'entry-dashboard-ciab',
+			dotcomReqFilter
+		);
 	}
 
 	sections
