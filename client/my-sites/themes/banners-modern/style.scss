@@ -2,19 +2,24 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
+
+
 .ai-builder-banner {
+	--ai-builder-banner-linear-gradient-overlay: linear-gradient(
+		150deg,
+		rgba( var( --studio-gray-0-rgb ), 0 ) 50%,
+		rgba(0, 12, 178, 1) 90%
+	);
+	--ai-builder-banner-linear-gradient-underlay: linear-gradient(
+		150deg,
+		rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
+		rgba( var( --studio-blue-50-rgb ), 1 ) 90%
+	);
+
 	background:
-		linear-gradient(
-			150deg,
-			rgba( var( --studio-gray-0-rgb ), 0 ) 50%,
-			rgba(0, 12, 178, 1) 90%
-		),
+		var(--ai-builder-banner-linear-gradient-overlay),
 		url( ./background-mobile.png ) no-repeat bottom center / 120%,
-		linear-gradient(
-			150deg,
-			rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
-			rgba( var( --studio-blue-50-rgb ), 1 ) 90%
-		);
+		var(--ai-builder-banner-linear-gradient-underlay);
 	border-radius: 8px;
 	display: flex;
 	flex-wrap: wrap;
@@ -24,42 +29,38 @@
 	margin-block: 24px;
 	max-width: 1220px;
 	overflow: hidden;
-	padding: 32px;
+	padding: 24px;
 	position: relative;
 
 	@include break-mobile {
 		background:
-			linear-gradient(
-				150deg,
-				rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
-				rgba(0, 12, 178, 1) 90%
-			),
-			linear-gradient(
-				150deg,
-				rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
-				rgba( var( --studio-blue-50-rgb ), 1 ) 90%
-			);
-		padding: 96px 32px 32px 32px;
+			var(--ai-builder-banner-linear-gradient-overlay),
+			url( ./background.png ) no-repeat bottom right -400px / cover,
+			var(--ai-builder-banner-linear-gradient-underlay);
+		padding-top: 96px;
+	}
+	@include break-medium {
+		background:
+			var(--ai-builder-banner-linear-gradient-overlay),
+			url( ./background.png ) no-repeat bottom right -250px / contain,
+			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 	@include break-large {
 		background:
-			linear-gradient(
-				150deg,
-				rgba( var( --studio-gray-0-rgb ), 0 ) 70%,
-				rgba(0, 12, 178, 1) 90%
-			),
-			url( ./background.png ) no-repeat bottom right / contain,
-			linear-gradient(
-				150deg,
-				rgba( var( --studio-gray-0-rgb ), 1 ) 30%,
-				rgba( var( --studio-blue-50-rgb ), 1 ) 90%
-			);
+			var(--ai-builder-banner-linear-gradient-overlay),
+			url( ./background.png ) no-repeat bottom right -100px / contain,
+			var(--ai-builder-banner-linear-gradient-underlay);
 	}
-
+	@include break-xlarge {
+		background:
+			var(--ai-builder-banner-linear-gradient-overlay),
+			url( ./background.png ) no-repeat bottom right / contain,
+			var(--ai-builder-banner-linear-gradient-underlay);
+	}
 }
 
 .ai-builder-banner__content {
-	padding-bottom: 300px;
+	padding-bottom: 288px;
 
 	@include break-mobile {
 		max-width: 60%;
@@ -96,10 +97,10 @@
 	text-wrap: balance;
 
 	&::after {
-		content: '';
-		margin-inline-start: 8px;
 		animation: ai-builder-banner-blink 1s step-end infinite;
-		border-right: 1px solid var( --studio-blue-50 );
+		color: var( --studio-blue-50 );
+		content: '|';
+		margin-inline-start: 12px;
 	}
 
 	@include break-small {
