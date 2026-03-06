@@ -1,8 +1,9 @@
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import type { ComponentType } from 'react';
 import type { Message as MessageType } from '../../types';
 import { cn } from '../../utils/classNames';
+import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { Message } from './Message';
 import styles from './Messages.module.css';
 import { ThinkingMessage } from './ThinkingMessage';
@@ -30,11 +31,11 @@ export function Messages( {
 	messagesPosition = 'top',
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
-	const previousMessagesRef = useRef< MessageType[] >( [] );
-	const isFirstRender = useRef( true );
 
 	// Filter out context messages (type: 'context' should not be displayed in UI)
 	const visibleMessages = getVisibleMessages( messages );
+
+	useAutoScroll( { scrollAreaRef, visibleMessages } );
 
 	// Check if we have an agent message being streamed
 	// If so, hide the thinking indicator since content is arriving
@@ -62,39 +63,6 @@ export function Messages( {
 
 	// Debounce live region updates to prevent repeated announcements during streaming
 	const [ announcedText ] = useDebounce( liveRegionText, 1000 );
-
-	useEffect( () => {
-		// Check if a new message was added
-		const hasNewMessage =
-			visibleMessages.length > previousMessagesRef.current.length;
-
-		// Handle initial render - always scroll to bottom instantly when expanding
-		if (
-			isFirstRender.current &&
-			visibleMessages.length > 0 &&
-			scrollAreaRef.current
-		) {
-			scrollAreaRef.current.scrollTop =
-				scrollAreaRef.current.scrollHeight;
-		}
-		// Handle new messages - scroll smoothly
-		else if (
-			hasNewMessage &&
-			! isFirstRender.current &&
-			scrollAreaRef.current
-		) {
-			scrollAreaRef.current.scrollTo( {
-				top: scrollAreaRef.current.scrollHeight,
-				behavior: 'smooth',
-			} );
-		}
-
-		if ( isFirstRender.current ) {
-			isFirstRender.current = false;
-		}
-
-		previousMessagesRef.current = visibleMessages;
-	}, [ visibleMessages ] );
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
