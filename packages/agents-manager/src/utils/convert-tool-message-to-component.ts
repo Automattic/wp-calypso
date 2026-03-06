@@ -7,6 +7,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
+	isPastConversation?: boolean;
 }
 
 /**
@@ -15,6 +16,7 @@ interface Options {
 export function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
+	isPastConversation,
 }: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
@@ -71,7 +73,7 @@ export function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks, isCurrent } = textData.data ?? {};
+			const { type: contentType, props, followUpTasks } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
@@ -79,7 +81,7 @@ export function convertToolMessagesToComponents( {
 				return [];
 			}
 
-			// Whether this is the last message in the array (i.e. the most recent server message).
+			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
 
 			const componentMessage = {
@@ -92,12 +94,15 @@ export function convertToolMessagesToComponents( {
 					},
 				],
 				// Disable if superseded by a newer message or loaded from a past or restored conversation.
-				disabled: ! isLastMessage || ! isCurrent,
+				disabled: ! isLastMessage || isPastConversation,
+				// Custom flag to identify show-component messages for disabling in cached/past conversations.
+				isShowComponentMessage: true,
 			};
 
-			// Only show `next-step-button` after the most recent component message with follow-up tasks
+			// Only show `next-step-button` after the most recent component message with follow-up tasks.
+			// Hide it for past conversations since the tasks are no longer actionable.
 			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( ! isLastMessage || ! isCurrent || ! followUpTasks || ! NextStepButton ) {
+			if ( ! isLastMessage || isPastConversation || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
 			}
 

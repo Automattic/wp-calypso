@@ -275,7 +275,11 @@ export default function OrchestratorChat( {
 	const displayedMessages = useMemo( () => {
 		// Return already-processed cached messages on back-navigation from history.
 		if ( hasCachedConversation && ! messages.length ) {
-			return cachedMessages;
+			// Disable show-component messages to prevent interactions with stale components.
+			return cachedMessages.map( ( message ) =>
+				// @ts-ignore -- `isShowComponentMessage` is a custom flag not on the UIMessage type.
+				message.isShowComponentMessage ? { ...message, disabled: true } : message
+			);
 		}
 
 		let currentMessages = messages;
@@ -301,6 +305,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			isPastConversation: !! configSessionId,
 		} );
 
 		// Dedup and append new messages to cached messages during back-navigation.
@@ -314,6 +319,7 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		cachedMessages,
+		configSessionId,
 		deletedMessageIds,
 		getChatComponent,
 		hasCachedConversation,
