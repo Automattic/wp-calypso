@@ -6,6 +6,7 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 // Mock the analytics module
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -94,7 +95,7 @@ describe( 'SignupFormSocialFirst', () => {
 
 	describe( 'allowedSocialServices', () => {
 		test( 'passes allowedSocialServices to SocialSignupForm', () => {
-			const allowedServices = [ 'google', 'paypal' ];
+			const allowedServices: SignupAllowedService[] = [ 'google', 'paypal' ];
 
 			render(
 				<SignupFormSocialFirst { ...defaultProps } allowedSocialServices={ allowedServices } />

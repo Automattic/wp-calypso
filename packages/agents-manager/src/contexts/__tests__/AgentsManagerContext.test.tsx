@@ -18,6 +18,7 @@ function ContextConsumer() {
 			<span data-testid="isLoggedIn">{ String( context.isLoggedIn ) }</span>
 			<span data-testid="userId">{ context.currentUser?.ID ?? 'none' }</span>
 			<span data-testid="siteId">{ context.site?.ID ?? 'none' }</span>
+			<span data-testid="activeSessionId">{ context.getActiveSessionId() }</span>
 		</div>
 	);
 }
@@ -141,6 +142,16 @@ describe( 'AgentsManagerContext', () => {
 			);
 
 			expect( screen.getByTestId( 'isEligibleForChat' ).textContent ).toBe( 'false' );
+		} );
+
+		it( 'returns empty string from `getActiveSessionId` when no agentConfig is set', () => {
+			render(
+				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
+					<ContextConsumer />
+				</AgentsManagerContextProvider>
+			);
+
+			expect( screen.getByTestId( 'activeSessionId' ).textContent ).toBe( '' );
 		} );
 	} );
 } );

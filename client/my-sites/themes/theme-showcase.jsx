@@ -644,6 +644,7 @@ class ThemeShowcase extends Component {
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
 			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			isThemeShowcaseModern: this.isThemeShowcaseModern(),
 		};
 
 		const tabFilters = this.getTabFilters();
@@ -651,6 +652,7 @@ class ThemeShowcase extends Component {
 
 		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
+			'is-modern': this.isThemeShowcaseModern(),
 		} );
 
 		const showThemeErrors =

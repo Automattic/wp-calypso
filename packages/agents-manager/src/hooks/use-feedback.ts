@@ -1,9 +1,8 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
-import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
-import { useAgentsManagerContext } from '../../contexts';
-import { getSessionId as getStoredSessionId } from '../../utils/agent-session';
+import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
@@ -163,55 +162,52 @@ export default function useFeedback( {
 	registerMessageActions,
 	messages,
 }: UseFeedbackConfig ): UseFeedbackReturn {
-	const { agentConfig, isLoggedIn } = useAgentsManagerContext();
-	const { agentId, sessionId, authProvider } = agentConfig!;
+	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
+	const { sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
 
 	// Keep refs to avoid recreating the feedback manager on every render
-	const agentIdRef = useRef( agentId );
-	const sessionIdRef = useRef( sessionId );
 	const messagesRef = useRef( messages );
 	const authProviderRef = useRef( authProvider );
-	agentIdRef.current = agentId;
-	sessionIdRef.current = sessionId;
 	messagesRef.current = messages;
 	authProviderRef.current = authProvider;
 
-	const handleFeedback = useCallback( ( messageId: string, feedback: 'up' | 'down' ) => {
-		const currentAuthProvider = authProviderRef.current;
-		// agentConfig.sessionId can be empty for new chats — the server-assigned
-		// session ID is saved to localStorage by agenttic-client, so read it as fallback.
-		const currentSessionId = sessionIdRef.current || getStoredSessionId( agentIdRef.current );
+	const handleFeedback = useCallback(
+		( messageId: string, feedback: 'up' | 'down' ) => {
+			const currentAuthProvider = authProviderRef.current;
+			const currentSessionId = getActiveSessionId();
 
-		if ( ! currentSessionId || ! currentAuthProvider ) {
-			return;
-		}
+			if ( ! currentSessionId || ! currentAuthProvider ) {
+				return;
+			}
 
-		recordTracksEvent( 'calypso_agents_manager_response_feedback_action', {
-			type: feedback === 'up' ? 'thumb_up' : 'thumb_down',
-			message_id: messageId,
-		} );
+			recordTracksEvent( 'calypso_agents_manager_response_feedback_action', {
+				type: feedback === 'up' ? 'thumb_up' : 'thumb_down',
+				message_id: messageId,
+			} );
 
-		const message = messagesRef.current.find( ( m ) => m.id === messageId );
-		const messageText = message ? getMessageText( message ) : undefined;
+			const message = messagesRef.current.find( ( m ) => m.id === messageId );
+			const messageText = message ? getMessageText( message ) : undefined;
 
-		rateMessage(
-			currentAuthProvider,
-			currentSessionId,
-			messageId,
-			feedback,
-			messageText ?? undefined
-		);
+			rateMessage(
+				currentAuthProvider,
+				currentSessionId,
+				messageId,
+				feedback,
+				messageText ?? undefined
+			);
 
-		if ( feedback === 'down' ) {
-			setShowFeedbackInput( true );
-			setFeedbackMessageId( messageId );
-		} else {
-			setShowFeedbackInput( false );
-			setFeedbackMessageId( null );
-		}
-	}, [] );
+			if ( feedback === 'down' ) {
+				setShowFeedbackInput( true );
+				setFeedbackMessageId( messageId );
+			} else {
+				setShowFeedbackInput( false );
+				setFeedbackMessageId( null );
+			}
+		},
+		[ getActiveSessionId ]
+	);
 
 	useEffect( () => {
 		// Only register feedback actions for logged-in users.
@@ -243,7 +239,7 @@ export default function useFeedback( {
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, sessionId, isLoggedIn ] );
+	}, [ registerMessageActions, handleFeedback, isLoggedIn ] );
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );
@@ -258,7 +254,7 @@ export default function useFeedback( {
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = sessionIdRef.current || getStoredSessionId( agentIdRef.current );
+			const currentSessionId = getActiveSessionId();
 			const currentMessageId = feedbackMessageId;
 
 			if (
@@ -284,7 +280,7 @@ export default function useFeedback( {
 				message_id: currentMessageId,
 			} );
 		},
-		[ feedbackMessageId ]
+		[ feedbackMessageId, getActiveSessionId ]
 	);
 
 	return {

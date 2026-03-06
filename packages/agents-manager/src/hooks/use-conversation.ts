@@ -9,6 +9,7 @@ import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
+	enabled?: boolean;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -19,7 +20,11 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
+export default function useConversation( {
+	enabled = true,
+	maxPages = 10,
+	onSuccess = () => {},
+}: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 	// Keep refs to the latest callbacks
@@ -45,7 +50,7 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 				true
 			);
 		},
-		enabled: !! sessionId,
+		enabled: enabled && !! sessionId,
 	} );
 
 	useEffect(
