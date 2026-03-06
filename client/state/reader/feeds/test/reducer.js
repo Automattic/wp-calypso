@@ -1,12 +1,8 @@
 import deepFreeze from 'deep-freeze';
-import {
-	READER_FEED_REQUEST,
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-} from 'calypso/state/reader/action-types';
+import { READER_FEED_REQUEST_SUCCESS } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { captureConsole } from 'calypso/test-helpers/console';
-import { items, queuedRequests, lastFetched } from '../reducer';
+import { items, lastFetched } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -217,19 +213,6 @@ describe( 'reducer', () => {
 			expect( deserialize( items, validState ) ).toEqual( validState );
 		} );
 
-		test( 'should stash an error object in the map if the request fails', () => {
-			expect(
-				items(
-					{},
-					{
-						type: READER_FEED_REQUEST_FAILURE,
-						error: new Error( 'request failed' ),
-						payload: { feed_ID: 666 },
-					}
-				)
-			).toEqual( { 666: { feed_ID: 666, is_error: true } } );
-		} );
-
 		test( 'should overwrite an existing entry on receiving a new feed', () => {
 			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
 			expect(
@@ -261,40 +244,6 @@ describe( 'reducer', () => {
 					subscription_id: undefined,
 				},
 			} );
-		} );
-
-		test( 'should leave an existing entry alone if an error is received', () => {
-			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
-			expect(
-				items( startingState, {
-					type: READER_FEED_REQUEST_FAILURE,
-					error: new Error( 'request failed' ),
-					payload: { feed_ID: 666 },
-				} )
-			).toEqual( startingState );
-		} );
-	} );
-
-	describe( 'isRequestingFeed', () => {
-		test( 'should add to the set of feeds inflight', () => {
-			expect(
-				queuedRequests(
-					{},
-					{
-						type: READER_FEED_REQUEST,
-						payload: { feed_ID: 1 },
-					}
-				)
-			).toEqual( { 1: true } );
-		} );
-
-		test( 'should remove the feed from the set inflight', () => {
-			expect(
-				queuedRequests( deepFreeze( { 1: true } ), {
-					type: READER_FEED_REQUEST_SUCCESS,
-					payload: { feed_ID: 1 },
-				} )
-			).toEqual( {} );
 		} );
 	} );
 
