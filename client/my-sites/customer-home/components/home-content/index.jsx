@@ -208,7 +208,7 @@ const HomeContent = ( {
 				navigationItems={ [] }
 				mobileItem={ null }
 				title={ translate( 'My Home' ) }
-				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
+				subtitle={ translate( 'Your hub2 for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }
 			</NavigationHeader>
