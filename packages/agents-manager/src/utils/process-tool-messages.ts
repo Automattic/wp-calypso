@@ -83,11 +83,11 @@ export function convertToolMessagesToComponents( {
 
 			// Whether this is the last message in the array.
 			const isLastMessage = index === array.length - 1;
+
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
 			// current editor page to disable pickers that no longer belong to this page.
 			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
-			// Stale if superseded by a newer message, from a past conversation, or the page has changed.
 			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
 
 			const componentMessage = {
