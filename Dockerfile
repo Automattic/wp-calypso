@@ -63,9 +63,6 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-# Base image caches can include project-scoped Yarn state from a different
-# revision. Clear it so only checkout-provided Yarn files are used.
-RUN rm -rf /calypso/.yarn
 COPY . /calypso/
 # The base image carries Yarn state for performance, but install-state can be
 # stale relative to this checkout and trigger immutable lockfile drift.
