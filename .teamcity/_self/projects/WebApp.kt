@@ -295,6 +295,7 @@ object BuildDockerImage : BuildType({
 			name = "Rebuild cache image"
 			conditions {
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
+				equals("teamcity.build.branch.is_default", "true")
 			}
 			commandType = build {
 				source = file {
@@ -314,6 +315,7 @@ object BuildDockerImage : BuildType({
 			name = "Push cache image"
 			conditions {
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
+				equals("teamcity.build.branch.is_default", "true")
 			}
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
