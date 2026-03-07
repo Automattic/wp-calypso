@@ -78,6 +78,25 @@ if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'eval';
 }
 
+const webpackCacheBuildDependencies = [
+	__filename,
+	path.resolve( __dirname, '../package.json' ),
+	path.resolve( __dirname, '../babel.config.js' ),
+];
+
+const webpackCacheVersion = JSON.stringify( {
+	browserslistEnv,
+	bundleEnv,
+	nodeEnv: process.env.NODE_ENV || null,
+	calypsoEnv: process.env.CALYPSO_ENV || null,
+	buildChunksMap: shouldBuildChunksMap,
+	minify: shouldMinify,
+	entryLimit: process.env.ENTRY_LIMIT || null,
+	sectionLimit: process.env.SECTION_LIMIT || null,
+	sourceMapType: sourceMapType || null,
+	sentryRelease: shouldCreateSentryRelease,
+} );
+
 if ( shouldCreateSentryRelease ) {
 	console.log(
 		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
@@ -413,19 +432,11 @@ const webpackConfig = {
 				cache: {
 					type: 'filesystem',
 					buildDependencies: {
-						config: [ __filename ],
+						config: webpackCacheBuildDependencies,
 					},
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
 					profile: true,
-					version: [
-						// No need to add BROWSERSLIST, as it is already part of the cacheDirectory
-						shouldBuildChunksMap,
-						shouldMinify,
-						process.env.ENTRY_LIMIT,
-						process.env.SECTION_LIMIT,
-						process.env.NODE_ENV,
-						process.env.CALYPSO_ENV,
-					].join( '-' ),
+					version: webpackCacheVersion,
 				},
 				infrastructureLogging: {
 					debug: /webpack\.cache/,
