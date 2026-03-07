@@ -163,13 +163,13 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 				) : (
 					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				) }
-				<div className="jetpack-cancellation-offer__headline">{ offerHeadline }</div>
+				<h2 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h2>
 				<p>
 					{ createInterpolateElement(
 						sprintf(
 							/* Translators: %(percentDiscount)d%% is a discount percentage like 15% or 20% */
 							__(
-								'<strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
+								'A <strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
 							),
 							{
 								percentDiscount,
@@ -178,9 +178,9 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						{
 							strong: <strong />,
 						}
-					) }
+					) }{ ' ' }
+					{ renewalCopy }
 				</p>
-				<p>{ renewalCopy }</p>
 				<p className="jetpack-cancellation-offer__tos">
 					{ createInterpolateElement(
 						__(

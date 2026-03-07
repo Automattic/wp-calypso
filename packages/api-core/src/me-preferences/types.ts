@@ -28,4 +28,5 @@ export interface UserPreferences {
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
+	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 }

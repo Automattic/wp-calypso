@@ -538,38 +538,8 @@ export default function CancelPurchase() {
 	);
 	const onGetCancellationOffer = useCallback( () => {
 		recordEvent( 'calypso_purchases_cancel_get_discount' );
-		const akismetHeadline = __(
-			'We’re happy you’ve chosen Akismet to protect your site against spam.'
-		);
-		const jetpackHeadline = __( 'We’re happy you’ve chosen Jetpack to level-up your site.' );
-		createSuccessNotice(
-			/* Translators: %(brand)s is either Jetpack or Akismet */
-			sprintf( __( 'Thanks for sticking with %(brand)s!' ), {
-				brand: isAkismet ? 'Akismet' : 'Jetpack',
-			} ) +
-				' ' +
-				sprintf(
-					/* Translators: %(headline)s is already translated text; %(percentDiscount)d%% should be a percentage like 15% or 20% */
-					__(
-						'%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
-					),
-					{
-						headline: isAkismet ? akismetHeadline : jetpackHeadline,
-						percentDiscount: offerDiscountBasedFromPurchasePrice,
-						productName: purchase.product_name,
-					}
-				),
-			{ type: 'snackbar', explicitDismiss: true }
-		);
-		navigate( { to: purchasesRoute.to } );
-	}, [
-		createSuccessNotice,
-		isAkismet,
-		navigate,
-		offerDiscountBasedFromPurchasePrice,
-		purchase.product_name,
-		recordEvent,
-	] );
+		redirectBack();
+	}, [ recordEvent, redirectBack ] );
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error

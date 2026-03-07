@@ -1,6 +1,11 @@
 import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
-import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	purchaseQuery,
+	sitePurchasesQuery,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -28,6 +33,7 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
+import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
@@ -47,6 +53,23 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
 	} );
 	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
+
+	const { data: isDismissedPersisted } = useSuspenseQuery(
+		userPreferenceQuery( `cancellation-offer-accepted-notice-dismissed-${ purchase.ID }` )
+	);
+	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
+		userPreferenceMutation( `cancellation-offer-accepted-notice-dismissed-${ purchase.ID }` )
+	);
+	const shouldShowCancellationNotice =
+		purchase.should_show_cancellation_offer_notice && ! isDismissedPersisted && ! isDismissing;
+	const cancellationOfferNotice = shouldShowCancellationNotice ? (
+		<CancellationOfferNotice
+			purchase={ purchase }
+			onClose={ () => {
+				updateDismissed( new Date().toISOString() );
+			} }
+		/>
+	) : null;
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;
@@ -90,11 +113,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<ExpiredRenewNotice
-				purchase={ purchase }
-				purchaseAttachedTo={ purchaseAttachedTo }
-				refunded={ refunded }
-			/>
+			<>
+				<ExpiredRenewNotice
+					purchase={ purchase }
+					purchaseAttachedTo={ purchaseAttachedTo }
+					refunded={ refunded }
+				/>
+			</>
 		);
 	}
 
@@ -104,12 +129,20 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiringNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+			<>
+				{ cancellationOfferNotice && cancellationOfferNotice }
+				<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+			</>
 		);
 	}
 
 	if ( shouldShowCardExpiringNotice( purchase ) ) {
-		return <CreditCardExpiringNotice purchase={ purchase } />;
+		return (
+			<>
+				{ cancellationOfferNotice && cancellationOfferNotice }
+				<CreditCardExpiringNotice purchase={ purchase } />;
+			</>
+		);
 	}
 }
 
