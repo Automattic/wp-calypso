@@ -66,7 +66,7 @@ const ActivityLogV2: FunctionComponent = () => {
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
 			<div className="activity-log-v2__header-left">
-				<div className="activity-log-v2__header-title">{ translate( 'Activity log' ) }</div>
+				<div className="activity-log-v2__header-title">{ translate( 'Activity Log' ) }</div>
 				<div className="activity-log-v2__header-text">
 					{ translate( 'This is the complete event history for your site' ) }
 				</div>
@@ -125,9 +125,9 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySiteCredentials siteId={ siteId } /> }
-			<DocumentHead title={ translate( 'Activity log' ) } />
+			<DocumentHead title={ translate( 'Activity Log' ) } />
 			{ isJetpackCloud() && <SidebarNavigation /> }
-			<PageViewTracker path="/activity-log/:site" title="Activity log" />
+			<PageViewTracker path="/activity-log/:site" title="Activity Log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ ( isJetpackCloud() || isA8CForAgencies() ) && ! isWPCOMSite ? (
 				jetpackCloudHeader
