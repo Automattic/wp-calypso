@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -14,6 +15,7 @@ import {
 	SubscriptionType,
 } from './components/add-subscription-form/consts';
 
+const { SiteSubscriptionsQueryPropsProvider } = SubscriptionManager;
 interface Tab {
 	slug: SubscriptionType;
 	title: TranslateResult;
@@ -74,7 +76,9 @@ export default function ReaderNewSubscriptionPage(
 				</NavTabs>
 			</SectionNav>
 
-			<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
+			<SiteSubscriptionsQueryPropsProvider>
+				<AddSubscriptionForm key={ `add-subs-form-${ selectedTab }` } type={ selectedTab } />
+			</SiteSubscriptionsQueryPropsProvider>
 		</ReaderMain>
 	);
 }

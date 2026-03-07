@@ -1,4 +1,5 @@
 import './style.scss';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -9,10 +10,12 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import { UnsubscribedFeedsSearchList } from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './consts';
+const { useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
 interface AddSubscriptionFormProps {
 	type: SubscriptionType;
@@ -25,12 +28,19 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const isAddNewTab = props.type === 'add-new';
+	const { setSearchTerm, searchTerm } = useSiteSubscriptionsQueryProps();
+	const hasSearchTerm = searchTerm && searchTerm.length > 0;
+	const shouldShowSubscriptionsList = ! hasSearchTerm && ! hasFeedPreview;
+	const shouldShowRelatedSitesList = hasSearchTerm && ! hasFeedPreview;
 
-	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
-		setHasFeedPreview( hasPreview );
-	}, [] );
+	const handleChangeFeedPreview = useCallback(
+		( hasPreview: boolean ): void => {
+			setHasFeedPreview( hasPreview );
+		},
+		[ setHasFeedPreview ]
+	);
 
-	const onSubscribeToggle = useCallback( (): void => {
+	const handleSubscribeToggle = useCallback( (): void => {
 		setHasFeedPreview( false ); // Close the feed preview when the subscription is toggled.
 
 		// Do not refresh if we are on "Add New" tab. We show subscriptions list on that tab which takes care of the refresh.
@@ -38,6 +48,14 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 			dispatch( requestFollows() );
 		}
 	}, [ dispatch, isAddNewTab ] );
+
+	// Updates SubscriptionList and UnsubscribedFeedsSearchList with the new search term.
+	const handleChangeSearchTerm = useCallback(
+		( value: string ): void => {
+			setSearchTerm( value );
+		},
+		[ setSearchTerm ]
+	);
 
 	if ( ! config ) {
 		return null;
@@ -73,8 +91,11 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						buttonText={ isAddNewTab ? undefined : translate( 'Add Feed' ) }
 						pathname={ config.pathname }
 						source={ config.source }
-						onChangeFeedPreview={ onChangeFeedPreview }
-						onChangeSubscribe={ onSubscribeToggle }
+						onChangeFeedPreview={ handleChangeFeedPreview }
+						onChangeSubscribe={ handleSubscribeToggle }
+						onChange={ handleChangeSearchTerm }
+						hideFeedPreview={ isAddNewTab }
+						hideInputError={ isAddNewTab }
 					/>
 				</div>
 
@@ -101,11 +122,15 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						</div>
 					) : (
 						<>
-							<h2 className="reader-add-subscription__subscriptions-title">
-								{ translate( 'Your subscriptions' ) }
-							</h2>
-
-							<SiteSubscriptionsList layout="compact" />
+							{ shouldShowSubscriptionsList && (
+								<>
+									<h2 className="reader-add-subscription__subscriptions-title">
+										{ translate( 'Your subscriptions' ) }
+									</h2>
+									<SiteSubscriptionsList layout="compact" />
+								</>
+							) }
+							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList /> }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>

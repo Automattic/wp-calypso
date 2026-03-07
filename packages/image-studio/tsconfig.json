@@ -8,5 +8,5 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js" ]
+	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/__mocks__/**" ]
 }

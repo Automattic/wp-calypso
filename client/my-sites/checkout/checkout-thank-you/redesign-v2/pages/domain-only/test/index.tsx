@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
@@ -17,6 +19,8 @@ import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-c
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+
+jest.mock( '@automattic/calypso-analytics' );
 
 jest.mock( 'calypso/state/dashboard/selectors', () => ( {
 	hasDashboardOptIn: jest.fn(),
@@ -68,9 +72,22 @@ function renderComponent( { currency = 'USD' }: { currency?: string } = {} ) {
 
 describe( 'DomainOnly', () => {
 	beforeEach( () => {
+		// Suppress the console for navigation errors, which are not implemented by JSDom
+		const consoleError = console.error;
+
+		jest.spyOn( console, 'error' ).mockImplementation( ( message ) => {
+			if ( ! message.toString().includes( 'Not implemented: navigation' ) ) {
+				consoleError( message );
+			}
+		} );
+
 		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
 		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+	} );
+
+	afterEach( () => {
+		jest.spyOn( console, 'error' ).mockRestore();
 	} );
 
 	describe( 'Start a new site', () => {
@@ -80,6 +97,21 @@ describe( 'DomainOnly', () => {
 			expect( screen.getByRole( 'link', { name: /Start a new site/ } ) ).toHaveAttribute(
 				'href',
 				createSiteFromDomainOnly( mockDomainPurchase.meta, mockDomainPurchase.blogId )
+			);
+		} );
+
+		it( 'records a tracks event when the user clicks the "Start a new site" link', async () => {
+			const user = userEvent.setup();
+			renderComponent();
+
+			await user.click( screen.getByRole( 'link', { name: /Start a new site/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_checkout_thank_you_domain_next_step_click',
+				{
+					next_step: 'start_new_site',
+					domain_tld: 'com',
+				}
 			);
 		} );
 	} );
@@ -141,6 +173,21 @@ describe( 'DomainOnly', () => {
 				screen.getByText( `Create a professional email address on ${ mockDomainPurchase.meta }.` )
 			).toBeVisible();
 		} );
+
+		it( 'records a tracks event when the user clicks the "Add a mailbox" link', async () => {
+			const user = userEvent.setup();
+			renderComponent();
+
+			await user.click( screen.getByRole( 'link', { name: /Add a mailbox/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_checkout_thank_you_domain_next_step_click',
+				{
+					next_step: 'add_mailbox',
+					domain_tld: 'com',
+				}
+			);
+		} );
 	} );
 
 	describe( 'Attach to an existing site', () => {
@@ -181,6 +228,23 @@ describe( 'DomainOnly', () => {
 				dashboardLink( `/domains/${ mockDomainPurchase.meta }/transfer/other-site` )
 			);
 		} );
+
+		it( 'records a tracks event when the user clicks the "Attach to an existing site" link', async () => {
+			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
+
+			const user = userEvent.setup();
+			renderComponent();
+
+			await user.click( screen.getByRole( 'link', { name: /Attach to an existing site/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_checkout_thank_you_domain_next_step_click',
+				{
+					next_step: 'attach_existing_site',
+					domain_tld: 'com',
+				}
+			);
+		} );
 	} );
 
 	describe( 'Use the domain name only', () => {
@@ -203,6 +267,21 @@ describe( 'DomainOnly', () => {
 				dashboardLink( `/domains/${ mockDomainPurchase.meta }` )
 			);
 		} );
+
+		it( 'records a tracks event when the user clicks the "Use the domain name only" link', async () => {
+			const user = userEvent.setup();
+			renderComponent();
+
+			await user.click( screen.getByRole( 'link', { name: /Use the domain name only/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_checkout_thank_you_domain_next_step_click',
+				{
+					next_step: 'use_domain_only',
+					domain_tld: 'com',
+				}
+			);
+		} );
 	} );
 
 	describe( 'Migrate an existing site', () => {
@@ -222,6 +301,21 @@ describe( 'DomainOnly', () => {
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(
 				'href',
 				`/setup/site-migration?dashboard=ciab&siteSlug=${ mockDomainPurchase.meta }`
+			);
+		} );
+
+		it( 'records a tracks event when the user clicks the "Migrate an existing site" link', async () => {
+			const user = userEvent.setup();
+			renderComponent();
+
+			await user.click( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_checkout_thank_you_domain_next_step_click',
+				{
+					next_step: 'migrate_existing_site',
+					domain_tld: 'com',
+				}
 			);
 		} );
 	} );

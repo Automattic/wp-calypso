@@ -5,6 +5,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute, domainGlueRecordsEditRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews';
 import DomainGlueRecordDeleteModal from './delete-modal';
@@ -113,6 +114,7 @@ function DomainGlueRecords() {
 	return (
 		<DomainGlueRecordsLayout>
 			<DataViewsCard>
+				{ ! isLoading && <PerformanceTrackerStop /> }
 				<DataViews< DomainGlueRecord >
 					data={ filteredData || [] }
 					fields={ fields }

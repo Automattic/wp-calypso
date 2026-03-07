@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	domainRoute,
 	domainForwardingAddRoute,
@@ -188,6 +189,7 @@ function DomainForwarding() {
 					empty={ <p>{ __( 'No forwarding rules found for this domain.' ) }</p> }
 				/>
 			</DataViewsCard>
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

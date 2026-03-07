@@ -5,14 +5,13 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { shouldLoadInlineHelp } from './utils';
 
 export default function AgentsManagerLoader( {
 	sectionName,
-	currentRoute,
+	loadAgentsManager,
 }: {
 	sectionName: string;
-	currentRoute: string;
+	loadAgentsManager: boolean;
 } ) {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
@@ -20,7 +19,7 @@ export default function AgentsManagerLoader( {
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
-	if ( ! shouldUseUnifiedAgent || ! shouldLoadInlineHelp( sectionName, currentRoute ) ) {
+	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
 		return null;
 	}
 

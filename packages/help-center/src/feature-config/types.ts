@@ -32,6 +32,8 @@ export type HelpCenterFeatureConfig = {
 		productUpdates: boolean;
 		/** Show the "Share feedback" Survicate button. */
 		feedback: boolean;
+		/** URL for the "Support guides" external link. Null to hide. */
+		supportGuidesUrl: string | null;
 	};
 	contactForm: {
 		/** Which contact form variant to use. */

@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { getLanguage } from '@automattic/i18n-utils';
-import { addPlanToCart, getNewSiteParams, processItemCart } from '@automattic/onboarding';
+import { addProductsToCart, getNewSiteParams, setThemeOnSite } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -15,7 +15,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 type Params = {
 	flowName: string;
-	userIsLoggedIn: boolean;
 	themeSlugWithRepo: string;
 	siteVisibility: Site.Visibility;
 	siteTitle: string;
@@ -31,39 +30,8 @@ type Params = {
 	planCartItems?: MinimalRequestCartProduct[] | null;
 };
 
-async function fillCart(
-	siteSlug: string,
-	flowName: string,
-	userIsLoggedIn: boolean,
-	themeSlugWithRepo: string,
-	domainCartItems: MinimalRequestCartProduct[] | null | undefined,
-	planCartItems: MinimalRequestCartProduct[] | null | undefined
-) {
-	if ( siteSlug && planCartItems?.length ) {
-		for ( const planCartItem of planCartItems ) {
-			await addPlanToCart( siteSlug, flowName, true, themeSlugWithRepo, planCartItem );
-		}
-	}
-
-	const isFreeThemePreselected = themeSlugWithRepo.startsWith( 'pub' );
-
-	if ( domainCartItems?.length ) {
-		for ( const domainCartItem of domainCartItems ) {
-			await processItemCart(
-				siteSlug,
-				isFreeThemePreselected,
-				themeSlugWithRepo,
-				flowName,
-				userIsLoggedIn,
-				domainCartItem
-			);
-		}
-	}
-}
-
 export const createSite = async ( {
 	flowName,
-	userIsLoggedIn,
 	themeSlugWithRepo,
 	siteVisibility,
 	siteTitle,
@@ -117,21 +85,20 @@ export const createSite = async ( {
 		goToCheckout: Boolean( planCartItems?.length ),
 	};
 
-	await fillCart(
-		siteSlug,
-		flowName,
-		userIsLoggedIn,
-		themeSlugWithRepo,
-		domainCartItems,
-		planCartItems
-	);
+	const cartItems = [
+		...( planCartItems && planCartItems.length > 0 ? planCartItems : [] ),
+		...domainCartItems,
+	];
+
+	if ( cartItems.length > 0 ) {
+		await addProductsToCart( siteSlug, flowName, cartItems );
+	}
 
 	return siteDetails;
 };
 
 export const useCreateSite = () => {
 	const flowName = getFlowFromURL();
-	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const { get, set } = useFlowState();
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
@@ -161,21 +128,24 @@ export const useCreateSite = () => {
 			siteGoals?: SiteGoal[];
 		} ) => {
 			if ( createdSite ) {
+				if ( theme ) {
+					await setThemeOnSite( createdSite.siteSlug, theme );
+				}
+
+				const cartItems = [
+					...( planCartItems && planCartItems.length > 0 ? planCartItems : [] ),
+					...mergedDomainCartItems,
+				];
+
 				// If the site already exists, we need to fill the cart with the domain and plan items.
 				// Because the user may have changed their mind about the domain or plan.
-				await fillCart(
-					createdSite.siteSlug,
-					flowName,
-					userIsLoggedIn,
-					theme,
-					mergedDomainCartItems,
-					planCartItems
-				);
+				if ( cartItems.length > 0 ) {
+					await addProductsToCart( createdSite.siteSlug, flowName, cartItems );
+				}
 				return createdSite;
 			}
 			return createSite( {
 				flowName,
-				userIsLoggedIn,
 				themeSlugWithRepo: theme,
 				siteVisibility: 1,
 				siteTitle,

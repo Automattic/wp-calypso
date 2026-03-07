@@ -1,6 +1,7 @@
 import './styles.scss';
 import { Reader } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
@@ -8,13 +9,7 @@ import wpcom from 'calypso/lib/wp';
 import Stream from 'calypso/reader/stream';
 
 interface GetFeedResponse {
-	feeds: GetFeedItemResponse[];
-}
-
-export interface GetFeedItemResponse {
-	feed_ID: string;
-	subscribe_URL: string;
-	meta: object;
+	feeds: Reader.FeedItem[];
 }
 
 interface FeedPreviewProps {
@@ -29,6 +24,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 	const [ debouncedUrl ] = useDebounce( url, 500 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
+	const translate = useTranslate();
 
 	/**
 	 * Fetch the feed for the given URL.
@@ -71,7 +67,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		if ( loading ) {
 			return (
 				<div className="feed-preview__loader">
-					<Spinner /> <p>Loading feed preview...</p>
+					<Spinner /> <p>{ translate( 'Loading feed preview…' ) }</p>
 				</div>
 			);
 		}
@@ -79,7 +75,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		if ( ! feed ) {
 			return (
 				<div className="feed-preview__empty">
-					<p>No feed is available at this url.</p>
+					<p>{ translate( 'No feed is available at this url.' ) }</p>
 				</div>
 			);
 		}
@@ -99,14 +95,15 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								showFollowButton={ false }
 								showBack={ false }
 								trackScrollPage={ () => {} }
+								restoreScroll={ false }
 								useCompactCards
 								suppressSiteNameLink
-								restoreScroll={ false }
+								hideDefaultEmptyContentIfMissing
 							/>
 						</div>
 					) : (
 						<div className="feed-preview__empty">
-							<p>Preview of the feed is not yet available.</p>
+							<p>{ translate( 'Preview of the feed is not yet available.' ) }</p>
 						</div>
 					)
 				}

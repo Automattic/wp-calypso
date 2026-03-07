@@ -1,4 +1,4 @@
-import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
 	__unstableAnimatePresence as AnimatePresence,
@@ -48,7 +48,7 @@ function ImageStudioAgentChat( {
 	mode,
 	onChatSubmit,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
@@ -141,13 +141,10 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	// Detect upload phase from progress message since useAgentChat doesn't expose currentPhase.
-	// The server sends a progress message containing "Uploading" during the upload phase.
-	const isUploadPhase =
-		agentChatProps.progressMessage?.toLowerCase().includes( 'uploading' ) ?? false;
+	const isFinalizingPhase = agentChatProps.progressPhase === 'uploading';
 
 	// Disable input during upload phase or annotation saving to prevent orphan images
-	const isStopDisabled = isUploadPhase || isAnnotationSaving;
+	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -195,7 +192,7 @@ const ImageStudioAgentUIComponent = ( {
 	onChatSubmit,
 	mode,
 }: {
-	agentConfig: any;
+	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
@@ -527,7 +524,7 @@ const ImageStudioContent = withInstanceId(
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
-										{ __( 'Loading AI assistant…', 'big-sky' ) }
+										{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
 									</div>
 								)
 							}

@@ -36,6 +36,8 @@ interface Props {
 	emptyViewSuggestions?: Suggestion[];
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
+	/** Custom thinking message to display while the agent is processing. */
+	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
 	isLoadingConversation: boolean;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -72,6 +74,8 @@ interface Props {
 	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
 	/** Called when the user cancels the feedback input. */
 	onCancelFeedback?: () => void;
+	/** Called when the user views the conversation history. */
+	onViewHistory?: () => void;
 }
 
 export default function AgentChat( {
@@ -81,6 +85,7 @@ export default function AgentChat( {
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	isProcessing,
+	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
 	isOpen,
@@ -100,6 +105,7 @@ export default function AgentChat( {
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
+	onViewHistory,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -131,6 +137,7 @@ export default function AgentChat( {
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
+			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
@@ -162,7 +169,11 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
+				<ChatHeader
+					onClose={ onClose }
+					options={ chatHeaderOptions }
+					onViewHistory={ onViewHistory }
+				/>
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />

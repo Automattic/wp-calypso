@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { Reader } from '@automattic/data-stores';
 import { render, screen, waitFor } from '@testing-library/react';
-import FeedPreview, { GetFeedItemResponse } from '../index';
+import FeedPreview from '../index';
 
 // Mock wpcom API
 const mockWpcomGet = jest.fn();
@@ -26,7 +27,7 @@ jest.mock( 'calypso/reader/stream', () => {
 } );
 
 jest.mock( 'calypso/blocks/reader-feed-item', () => {
-	return jest.fn( ( { feed }: { feed: GetFeedItemResponse } ) => (
+	return jest.fn( ( { feed }: { feed: Reader.FeedItem } ) => (
 		<div
 			data-testid="mock-reader-feed-item"
 			data-feed-id={ feed.feed_ID }
@@ -35,7 +36,7 @@ jest.mock( 'calypso/blocks/reader-feed-item', () => {
 	) );
 } );
 
-const mockFeed: GetFeedItemResponse = {
+const mockFeed: Partial< Reader.FeedItem > = {
 	feed_ID: '123',
 	subscribe_URL: 'https://example.com/feed',
 	meta: {},
@@ -59,7 +60,7 @@ describe( 'FeedPreview', () => {
 
 		render( <FeedPreview url="https://example.com" source="test-source" /> );
 
-		expect( screen.getByText( 'Loading feed preview...' ) ).toBeVisible();
+		expect( screen.getByText( 'Loading feed preview…' ) ).toBeVisible();
 	} );
 
 	it( 'calls the correct API endpoint with the URL', async () => {

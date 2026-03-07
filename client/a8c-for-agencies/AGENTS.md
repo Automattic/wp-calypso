@@ -12,6 +12,11 @@
 - When creating new components or building a new feature that uses `LayoutBody`, put the body content in a separate component in the same directory rather than inlining it.
 - For logic (data fetching, derived state, side effects), use an existing library when it fits; if none exists, extract it into a new custom hook. Keep components readable by avoiding inlined non-trivial logic.
 
+### Analytics and tracking
+
+- When adding new user-facing actions or key flows (e.g. form submissions, modal open/close, option toggles, file uploads), add Tracks events via `recordTracksEvent` from `calypso/state/analytics/actions`.
+- Use the `calypso_a4a_*` event name prefix for A4A-specific events. Include relevant properties where they help analysis.
+
 ### Style Conventions
 
 - Prefer `@wordpress/components` for UI primitives (e.g., `Button`, input controls, modals) and the existing design system primitives over writing new custom components or custom CSS wherever possible.

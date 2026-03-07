@@ -217,6 +217,7 @@ describe( 'PermissionsList', () => {
 			);
 			const link = screen.getByRole( 'link', { name: 'Learn more' } );
 			expect( link ).toHaveAttribute( 'target', '_blank' );
+			expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
 		} );
 	} );
 } );

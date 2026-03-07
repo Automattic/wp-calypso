@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize, fixMe } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,7 +9,13 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isGravPoweredOAuth2Client, isStudioAppOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isAndroidOAuth2Client,
+	isGravPoweredOAuth2Client,
+	isIosOAuth2Client,
+	isStudioAppOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
+import { getEffectiveCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -88,7 +94,7 @@ export const buildEnterPasswordLoginParameters = (
 	return loginParameters;
 };
 
-class MagicLogin extends Component {
+export class MagicLogin extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 
@@ -107,6 +113,7 @@ class MagicLogin extends Component {
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 		isWooJPC: PropTypes.bool,
+		ciabConfig: PropTypes.object,
 	};
 
 	state = {
@@ -157,9 +164,10 @@ class MagicLogin extends Component {
 		} = this.props;
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
+		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A ) {
+			if ( isA4A || isMobileApp ) {
 				return null;
 			}
 			return (
@@ -206,7 +214,7 @@ class MagicLogin extends Component {
 						</a>
 					}
 				/>
-				{ ! oauth2Client && (
+				{ ! oauth2Client && ! isMobileApp && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
@@ -221,7 +229,13 @@ class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
-		const { translate } = this.props;
+		const { ciabConfig, translate } = this.props;
+		const partnerTosElement = getPartnerSignupTosElement( ciabConfig, translate );
+
+		if ( partnerTosElement ) {
+			return partnerTosElement;
+		}
+
 		const options = {
 			components: {
 				tosLink: (
@@ -240,19 +254,10 @@ class MagicLogin extends Component {
 				),
 			},
 		};
-		const tosText = fixMe( {
-			text: 'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			newCopy: translate(
-				'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
-			),
-			oldCopy: translate(
-				'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
-			),
-		} );
-
-		return <p className="magic-login__tos wp-login__one-login-layout-tos">{ tosText }</p>;
+		return translate(
+			'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			options
+		);
 	};
 
 	handlePublicTokenReceived = ( publicToken ) => {
@@ -322,7 +327,7 @@ class MagicLogin extends Component {
 	}
 }
 
-const getMagicLoginInitialHeaders = ( props, translate ) => {
+export const getMagicLoginInitialHeaders = ( props, translate ) => {
 	if ( isGravPoweredOAuth2Client( props.oauth2Client ) ) {
 		return {};
 	}
@@ -343,7 +348,15 @@ const getMagicLoginInitialHeaders = ( props, translate ) => {
 		return getCheckYourEmailHeaders( translate, { emailAddress } );
 	}
 
-	return getEmailLinkHeaders( translate );
+	const headingOverride = props.ciabConfig?.displayName
+		? translate( 'Log in to %(partnerName)s', {
+				args: {
+					partnerName: props.ciabConfig.displayName,
+				},
+		  } )
+		: undefined;
+
+	return getEmailLinkHeaders( translate, { headingOverride } );
 };
 
 const MagicLoginWithContext = ( props ) => {
@@ -357,27 +370,35 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
-const mapState = ( state ) => ( {
-	locale: getCurrentLocaleSlug( state ),
-	query: getCurrentQueryArguments( state ),
-	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
-	emailRequested: isMagicLoginEmailRequested( state ),
-	emailRequestError: getMagicLoginRequestEmailError( state ),
-	isJetpackLogin: getCurrentRoute( state )?.startsWith( '/log-in/jetpack/link' ),
-	oauth2Client: getCurrentOAuth2Client( state ),
-	userEmail:
-		getLastCheckedUsernameOrEmail( state ) ||
-		getCurrentQueryArguments( state ).email_address ||
-		getInitialQueryArguments( state ).email_address,
-	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
-	redirectToSanitized: getRedirectToSanitized( state ),
-	redirectToOriginal: getRedirectToOriginal( state ),
-	isFromJetpackOnboarding:
-		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
-		'jetpack-onboarding',
-	isWooJPC: isWooJPCFlow( state ),
-	publicToken: getMagicLoginPublicToken( state ),
-} );
+const mapState = ( state ) => {
+	const currentRoute = getCurrentRoute( state );
+	const currentQuery = getCurrentQueryArguments( state );
+	const initialQuery = getInitialQueryArguments( state );
+	const redirectToOriginal = getRedirectToOriginal( state );
+
+	return {
+		locale: getCurrentLocaleSlug( state ),
+		query: currentQuery,
+		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
+		emailRequested: isMagicLoginEmailRequested( state ),
+		emailRequestError: getMagicLoginRequestEmailError( state ),
+		isJetpackLogin: currentRoute?.startsWith( '/log-in/jetpack/link' ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		userEmail:
+			getLastCheckedUsernameOrEmail( state ) ||
+			currentQuery.email_address ||
+			initialQuery.email_address,
+		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		redirectToSanitized: getRedirectToSanitized( state ),
+		redirectToOriginal,
+		isFromJetpackOnboarding:
+			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
+			'jetpack-onboarding',
+		isWooJPC: isWooJPCFlow( state ),
+		publicToken: getMagicLoginPublicToken( state ),
+		ciabConfig: getEffectiveCiabConfig( currentQuery.from, initialQuery.from ),
+	};
+};
 
 const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

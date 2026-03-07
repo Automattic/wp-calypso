@@ -39,7 +39,6 @@ export interface UseDeletePermanentlyReturn {
  * - Resets canvas history to bypass unsaved-changes exit dialog
  * - Calls onExit to close Image Studio after deletion
  * - Shows error notifications on failure
- *
  * @param props              - Hook props
  * @param props.onExit       - Function to close Image Studio after deletion
  * @param props.setIsExiting - Setter for shared isExiting state (shows exit overlay)
@@ -58,7 +57,9 @@ export function useDeletePermanently( {
 		imageStudioStore
 	) as ImageStudioActions;
 
-	const { deleteEntityRecord } = useDispatch( coreStore ) as any;
+	const { deleteEntityRecord } = useDispatch(
+		coreStore
+	) as unknown as import('../types/wordpress').CoreDataDispatch;
 
 	// Get draft cleanup utilities for cleaning up temporary images before exit
 	const { deleteDraftsExcept } = useDraftCleanup();
@@ -137,7 +138,7 @@ export function useDeletePermanently( {
 		const targetAttachmentId = attachmentIdRef.current;
 
 		if ( ! targetAttachmentId ) {
-			addNoticeRef.current( __( 'Cannot delete - no image found', 'big-sky' ), 'error' );
+			addNoticeRef.current( __( 'Cannot delete - no image found', __i18n_text_domain__ ), 'error' );
 			isDeletingRef.current = false;
 			setIsExiting( false );
 			return;
@@ -184,7 +185,10 @@ export function useDeletePermanently( {
 			// and page reload on upload.php so the deleted image is removed from the grid
 			onExitRef.current( true );
 		} catch ( error ) {
-			addNoticeRef.current( __( 'Failed to delete image. Please try again.', 'big-sky' ), 'error' );
+			addNoticeRef.current(
+				__( 'Failed to delete image. Please try again.', __i18n_text_domain__ ),
+				'error'
+			);
 
 			trackImageStudioError( {
 				mode,

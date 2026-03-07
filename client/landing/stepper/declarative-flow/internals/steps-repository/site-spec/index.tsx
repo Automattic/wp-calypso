@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -60,11 +61,17 @@ const SiteSpec: StepType = function SiteSpec() {
 		const specId = specData.session_id || '';
 		const blogId = siteCreationPromise ? await siteCreationPromise : null;
 
-		let url = `/setup/ai-site-builder/?create_garden_site=1&spec_id=${ encodeURIComponent(
+		let url = `/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=${ encodeURIComponent(
 			specId
 		) }`;
 		if ( blogId ) {
 			url += `&early_created_site=${ encodeURIComponent( blogId ) }`;
+		}
+
+		// Add the PostHog session ID to the URL to track the user session.
+		const phSessionId = getPostHogSessionId();
+		if ( phSessionId ) {
+			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
 		}
 
 		window.location.href = url;

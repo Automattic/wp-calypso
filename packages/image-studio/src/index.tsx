@@ -23,16 +23,29 @@ import {
  */
 
 interface ImageStudioData {
-	enabled?: boolean;
+	enabled?: boolean | string;
 }
 
 declare const imageStudioData: ImageStudioData | undefined;
+
+declare global {
+	interface Window {
+		__bigSkyImageStudioInitialized?: boolean;
+	}
+}
 
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
  * Uses WordPress data store patterns instead of DOM manipulation.
  */
 function initImageStudioIntegration(): void {
+	// Sentinel guard: prevent double-initialization (e.g. if both Jetpack and Big Sky load this).
+	// TODO: Remove this guard after Jetpack Image Studio is released to WoA.
+	if ( window.__bigSkyImageStudioInitialized ) {
+		return;
+	}
+	window.__bigSkyImageStudioInitialized = true;
+
 	// Validate required globals
 	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
 		return;
@@ -59,7 +72,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 		addSavedAttachmentId,
 		setHasUpdatedMetadata,
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
-	const { invalidateResolution, saveEntityRecord } = useDispatch( coreStore ) as any;
+	const { invalidateResolution, saveEntityRecord } = useDispatch(
+		coreStore
+	) as unknown as import('./types/wordpress').CoreDataDispatch;
 	const { isOpen, attachmentId, canvasMetadata, originalAttachmentId, onCloseCallback } = useSelect(
 		( selectStore ) => ( {
 			isOpen: selectStore( imageStudioStore ).getIsImageStudioOpen(),
@@ -72,7 +87,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 	);
 
 	// Navigation is only available when opened from media library
-	const isMediaLibraryContext = ( window as any ).pagenow === 'upload';
+	const isMediaLibraryContext = window.pagenow === 'upload';
 
 	const [ image, setImage ] = useState< ImageData | null >( null );
 
@@ -148,7 +163,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 				}
 
 				// Check if this is a supported image by querying WordPress media library
-				const wpMedia = ( window as any ).wp?.media;
+				const wpMedia = window.wp?.media;
 				if ( wpMedia?.attachment ) {
 					const attachmentModel = wpMedia.attachment( parseInt( id, 10 ) );
 					const mimeType = attachmentModel?.get( 'mime' );
@@ -241,7 +256,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 	// If `?ai-assistant` is present, open the Image Studio directly on the upload.php page.
 	useEffect( () => {
-		if ( ( window as any ).pagenow !== 'upload' ) {
+		if ( window.pagenow !== 'upload' ) {
 			return;
 		}
 
@@ -285,7 +300,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 	// Sync URL with open state
 	useEffect( () => {
 		// Only sync URL on the upload.php page
-		if ( ( window as any ).pagenow !== 'upload' ) {
+		if ( window.pagenow !== 'upload' ) {
 			return;
 		}
 
@@ -384,7 +399,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 			// Read value from store to avoid stale value when called immediately after save
 			const lastSavedAttachmentId = (
-				select( imageStudioStore ) as any
+				select(
+					imageStudioStore
+				) as unknown as import('./types/wordpress').CurriedImageStudioSelectors
 			 ).getLastSavedAttachmentId();
 
 			// Apply saved image to block/chat context (if not discarded)
