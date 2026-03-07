@@ -1,3 +1,4 @@
+import './styles.scss';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
@@ -21,7 +22,6 @@ import {
 import SiteSubscriptionSettings from './settings';
 import SiteSubscriptionSubheader from './site-subscription-subheader';
 import SubscribeToNewsletterCategories from './subscribe-to-newsletter-categories';
-import './styles.scss';
 
 const SiteSubscriptionDetails = ( {
 	subscriptionId,
@@ -239,23 +239,29 @@ const SiteSubscriptionDetails = ( {
 
 			{ siteSubscribed && (
 				<>
-					<SiteSubscriptionSettings
-						subscriptionId={ subscriptionId }
-						blogId={ blogId }
-						notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
-						emailMeNewPosts={ !! deliveryMethods.email?.send_posts }
-						deliveryFrequency={
-							deliveryMethods.email?.post_delivery_frequency ??
-							Reader.EmailDeliveryFrequency.Instantly
-						}
-						emailMeNewComments={ !! deliveryMethods.email?.send_comments }
-					/>
-
-					{ !! deliveryMethods.email?.send_posts && (
-						<SubscribeToNewsletterCategories siteId={ blogId } />
+					{ !! blogId && (
+						<>
+							<SiteSubscriptionSettings
+								subscriptionId={ subscriptionId }
+								blogId={ blogId }
+								notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
+								emailMeNewPosts={ !! deliveryMethods.email?.send_posts }
+								deliveryFrequency={
+									deliveryMethods.email?.post_delivery_frequency ??
+									Reader.EmailDeliveryFrequency.Instantly
+								}
+								emailMeNewComments={ !! deliveryMethods.email?.send_comments }
+							/>
+							<hr className="subscriptions__separator" />
+						</>
 					) }
 
-					<hr className="subscriptions__separator" />
+					{ !! deliveryMethods.email?.send_posts && (
+						<>
+							<SubscribeToNewsletterCategories siteId={ blogId } />
+							<hr className="subscriptions__separator" />
+						</>
+					) }
 
 					{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
 					<div className="site-subscription-info">
