@@ -1,9 +1,10 @@
 import './styles.scss';
+import page from '@automattic/calypso-router';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -119,7 +120,19 @@ const SiteSubscriptionDetails = ( {
 		// todo: style the button (underline, color?, etc.)
 		const Resubscribe = () => (
 			<Button
-				onClick={ () => subscribe( { blog_id: blogId, url } ) }
+				onClick={ () =>
+					subscribe(
+						{ blog_id: blogId, url },
+						{
+							onSuccess: ( response ): void => {
+								const subscriptionId = response.subscription?.ID;
+								if ( subscriptionId ) {
+									page( `/reader/subscriptions/${ subscriptionId }` );
+								}
+							},
+						}
+					)
+				}
 				disabled={ subscribing || unsubscribing }
 				variant="secondary"
 			>
@@ -134,13 +147,20 @@ const SiteSubscriptionDetails = ( {
 			setNotice( {
 				type: NoticeType.Success,
 				action: <Resubscribe />,
-				message: translate(
-					'You have successfully unsubscribed and will no longer receive emails from %s.',
-					{
+				message: fixMe( {
+					text: 'You have successfully unsubscribed from %s.',
+					newCopy: translate( 'You have successfully unsubscribed from %s.', {
 						args: [ name ],
 						comment: 'Name of the site that the user has unsubscribed from.',
-					}
-				),
+					} ),
+					oldCopy: translate(
+						'You have successfully unsubscribed and will no longer receive emails from %s.',
+						{
+							args: [ name ],
+							comment: 'Name of the site that the user has unsubscribed from.',
+						}
+					),
+				} ),
 			} );
 		}
 		if ( unsubscribeError ) {

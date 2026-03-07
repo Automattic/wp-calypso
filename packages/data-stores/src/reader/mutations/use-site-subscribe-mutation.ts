@@ -20,6 +20,7 @@ type SubscribeResponse = {
 	success?: boolean;
 	subscribed?: boolean;
 	subscription?: {
+		ID: string;
 		blog_ID: string;
 		delivery_frequency: string;
 		status: string;
