@@ -1,8 +1,5 @@
-import { filter, forEach, partition, get } from 'lodash';
+import { filter, forEach, get } from 'lodash';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import wpcom from 'calypso/lib/wp';
-import readerContentWidth from 'calypso/reader/lib/content-width';
-import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
@@ -23,33 +20,6 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey ) {
-	const query = {};
-
-	const contentWidth = readerContentWidth();
-	if ( contentWidth ) {
-		query.content_width = contentWidth;
-	}
-
-	if ( postKey.blogId ) {
-		return wpcom.req.get(
-			`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
-				postKey.postId
-			) }`,
-			query
-		);
-	}
-	const { postId, feedId, ...params } = postKey;
-	return wpcom.req.get(
-		`/read/feed/${ encodeURIComponent( feedId ) }/posts/${ encodeURIComponent( postId ) }`,
-		{
-			apiVersion: '1.2',
-			...params,
-			...query,
-		}
-	);
-}
-
 // helper that hides promise rejections so they return successfully with null instead of rejecting
 // this is so that a failure within a slow run of normalization doesn't stop successful posts
 // from being dispatched
@@ -65,10 +35,7 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 		return Promise.resolve( [] );
 	}
 
-	const [ toReload, toProcess ] = partition( posts, '_should_reload' );
-	toReload.forEach( ( post ) => dispatch( reloadPost( post ) ) );
-
-	const normalizedPosts = toProcess.filter( Boolean ).map( runFastRules );
+	const normalizedPosts = posts.filter( Boolean ).map( runFastRules );
 
 	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
 	forEach( normalizedPosts, ( post ) => {
@@ -103,31 +70,7 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 	return Promise.resolve( normalizedPosts );
 };
 
-const requestsInFlight = new Set();
-export const fetchPost =
-	( postKey, isHelpCenter = false ) =>
-	( dispatch ) => {
-		const requestKey = keyToString( postKey );
-		if ( requestsInFlight.has( requestKey ) ) {
-			return;
-		}
-
-		requestsInFlight.add( requestKey );
-		function removeKey() {
-			requestsInFlight.delete( requestKey );
-		}
-		return fetchForKey( postKey, isHelpCenter )
-			.then( ( data ) => {
-				removeKey();
-				return dispatch( receivePosts( [ data ] ) );
-			} )
-			.catch( ( error ) => {
-				removeKey();
-				return dispatch( receiveErrorForPostKey( error, postKey ) );
-			} );
-	};
-
-function receiveErrorForPostKey( error, postKey ) {
+export function receiveErrorForPostKey( error, postKey ) {
 	return {
 		type: READER_POSTS_RECEIVE,
 		posts: [
@@ -141,18 +84,6 @@ function receiveErrorForPostKey( error, postKey ) {
 				error,
 			},
 		],
-	};
-}
-
-export function reloadPost( post ) {
-	return function ( dispatch ) {
-		// keep track of any railcars we might have
-		const railcar = post.railcar;
-		const postKey = keyForPost( post );
-		fetchForKey( postKey ).then( ( data ) => {
-			data.railcar = railcar;
-			dispatch( receivePosts( [ data ] ) );
-		} );
 	};
 }
 
