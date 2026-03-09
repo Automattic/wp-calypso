@@ -24,7 +24,12 @@ ENV COMMIT_SHA $commit_sha
 
 COPY . .
 
-RUN yarn --inline-builds \
+RUN { yarn --inline-builds || ( \
+		echo "==== yarn build log ===="; \
+		ls -t /tmp/xfs-*/build.log 2>/dev/null | head -n 1 | xargs -r cat; \
+		echo "==== end yarn build log ===="; \
+		exit 1; \
+	); } \
 	# Prime the production webpack cache flavor used by common PR Docker builds.
 	&& NODE_ENV=production yarn build-client
 
