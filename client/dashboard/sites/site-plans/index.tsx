@@ -55,23 +55,87 @@ function PlanPrice( {
 			sitePlan.introductory_offer_raw_price ?? sitePlan.raw_price,
 			sitePlan.currency_code
 		);
+
+		const originalPrice = sitePlan.raw_price + sitePlan.raw_discount;
+		const regularPrice =
+			billingInterval === 'yearly'
+				? Math.round( ( originalPrice / 12 ) * 100 ) / 100
+				: originalPrice;
+		const regularPriceObj = getCurrencyObject( regularPrice, sitePlan.currency_code );
+
+		const intervalUnit = sitePlan.introductory_offer_interval_unit ?? 'month';
+		const intervalCount = sitePlan.introductory_offer_interval_count ?? 1;
+		let introPeriod: string;
+		if ( intervalUnit === 'year' ) {
+			introPeriod =
+				intervalCount === 1
+					? __( 'your first year' )
+					: sprintf(
+							/* translators: %d is the number of years, e.g. "3" */
+							__( 'your first %d years' ),
+							intervalCount
+					  );
+		} else {
+			introPeriod =
+				intervalCount === 1
+					? __( 'your first month' )
+					: sprintf(
+							/* translators: %d is the number of months, e.g. "3" */
+							__( 'your first %d months' ),
+							intervalCount
+					  );
+		}
+
+		const formattedOriginalPrice = formatCurrency( originalPrice, sitePlan.currency_code, {
+			stripZeros: true,
+		} );
+		const renewalNote =
+			billingInterval === 'yearly'
+				? sprintf(
+						/* translators: 1: intro period (e.g. "your first month"), 2: annual price (e.g. "$588") */
+						__( 'for %1$s, then %2$s billed annually, excl. taxes' ),
+						introPeriod,
+						formattedOriginalPrice
+				  )
+				: sprintf(
+						/* translators: 1: intro period (e.g. "your first month"), 2: monthly price (e.g. "$49") */
+						__( 'for %1$s, then %2$s/month, excl. taxes' ),
+						introPeriod,
+						formattedOriginalPrice
+				  );
+
 		return (
 			<VStack spacing={ 1 }>
 				<div className="site-plans__price-display">
 					{ introPriceObj.symbolPosition === 'before' && (
 						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
 					) }
-					<span className="site-plans__price-number site-plans__price-number--intro">
+					<span className="site-plans__price-number">
 						{ introPriceObj.integer }
 						{ introPriceObj.hasNonZeroFraction && introPriceObj.fraction }
 					</span>
 					{ introPriceObj.symbolPosition === 'after' && (
 						<sup className="site-plans__price-currency">{ introPriceObj.symbol }</sup>
 					) }
+					<div className="site-plans__price-original">
+						{ regularPriceObj.symbolPosition === 'before' && (
+							<sup className="site-plans__price-currency site-plans__price-currency--original">
+								{ regularPriceObj.symbol }
+							</sup>
+						) }
+						<span className="site-plans__price-number site-plans__price-number--original">
+							{ regularPriceObj.integer }
+							{ regularPriceObj.hasNonZeroFraction && regularPriceObj.fraction }
+						</span>
+						{ regularPriceObj.symbolPosition === 'after' && (
+							<sup className="site-plans__price-currency site-plans__price-currency--original">
+								{ regularPriceObj.symbol }
+							</sup>
+						) }
+					</div>
 				</div>
 				<Text className="site-plans__price-note" variant="muted">
-					{ sitePlan.formatted_price }{ ' ' }
-					{ billingInterval === 'yearly' ? __( '/year after' ) : __( '/month after' ) }
+					{ renewalNote }
 				</Text>
 			</VStack>
 		);
@@ -211,6 +275,9 @@ function PlanCard( {
 				<div className="site-plans__badge-slot">
 					{ isCurrentPlan && (
 						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
+					) }
+					{ ! isCurrentPlan && sitePlan.introductory_offer_formatted_price && (
+						<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
 					) }
 				</div>
 				<VStack spacing={ 4 }>

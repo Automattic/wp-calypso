@@ -32,6 +32,17 @@
 	letter-spacing: 0.5px;
 }
 
+.site-plans__special-offer-badge {
+	display: inline-block;
+	background-color: var( --studio-green-5, #d8f1e8 );
+	color: var( --studio-green-80, #1a5c3a );
+	font-size: 12px;
+	font-weight: 500;
+	padding: 0 12px;
+	border-radius: 4px;
+	line-height: 21px;
+}
+
 .site-plans__plan-name {
 	font-size: 32px;
 	font-weight: 600;
@@ -56,8 +67,22 @@
 	line-height: 1;
 }
 
-.site-plans__price-number--intro {
-	color: var( --wp-admin-theme-color, #007cba );
+.site-plans__price-original {
+	display: flex;
+	align-items: flex-start;
+	margin-inline-start: 8px;
+	color: var( --wp-components-color-gray-400, #949494 );
+}
+
+.site-plans__price-number--original {
+	font-size: 28px;
+	font-weight: 600;
+	text-decoration: line-through;
+}
+
+.site-plans__price-currency--original {
+	font-size: 14px;
+	margin-block-start: 4px;
 }
 
 .site-plans__price-note {
