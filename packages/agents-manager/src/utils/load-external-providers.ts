@@ -127,9 +127,9 @@ export type UseImageUploadResult = {
 export type ImageUploadHook = () => UseImageUploadResult;
 
 /**
- * Checkpoint hook type - for saving and restoring editor state so that AI actions can be undone.
+ * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
  */
-export type UseCheckpointHook = () => {
+export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
 	setCheckpoint: ( id: string, keys?: string[] ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
@@ -143,7 +143,11 @@ export type UseCheckpointHook = () => {
 	) => void;
 	getLatestUserMessageId: () => string | undefined;
 	clearCheckpoint: ( userMessageId: string ) => void;
+	hasCheckpoint: ( id: string ) => boolean;
 };
+
+/** Hook that returns checkpoint utilities for the current editor session. */
+export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;

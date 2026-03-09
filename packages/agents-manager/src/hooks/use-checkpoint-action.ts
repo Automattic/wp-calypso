@@ -1,7 +1,7 @@
 import { createElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
-import type { UseCheckpointHook } from '../utils/load-external-providers';
+import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -34,10 +34,8 @@ function getCheckpointId( message: UIMessage ): string {
  */
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
-	useCheckpoint?: UseCheckpointHook
+	checkpoint?: UseCheckpointReturn
 ): void {
-	const checkpoint = useCheckpoint?.();
-
 	useEffect( () => {
 		if ( ! checkpoint ) {
 			return;
@@ -51,8 +49,9 @@ export default function useCheckpointAction(
 				}
 
 				const checkpointId = getCheckpointId( message );
+				const hasCheckpoint = checkpoint.hasCheckpoint( checkpointId );
 
-				if ( ! checkpointId ) {
+				if ( ! checkpointId || ! hasCheckpoint ) {
 					return [];
 				}
 

@@ -165,7 +165,8 @@ export default function OrchestratorChat( {
 	useSaveNewChatRoute( agentId, messages );
 
 	// Register an "Undo" action on agent messages with checkpoints.
-	useCheckpointAction( registerMessageActions, useCheckpoint );
+	const checkpoint = useCheckpoint?.();
+	useCheckpointAction( registerMessageActions, checkpoint );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
