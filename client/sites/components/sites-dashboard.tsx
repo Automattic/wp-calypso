@@ -479,10 +479,7 @@ const SitesDashboard = ( {
 					</LayoutTop>
 
 					<DocumentHead title={ dashboardTitle } />
-					<SitesDashboardBannersManager
-						sitesStatuses={ statuses }
-						sitesCount={ paginatedSites.length }
-					/>
+					<SitesDashboardBannersManager sitesStatuses={ statuses } />
 
 					{ renderDataViews() }
 				</LayoutColumn>
