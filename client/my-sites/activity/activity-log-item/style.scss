@@ -309,6 +309,13 @@
 	}
 }
 
+.activity-log-item__actor-mcp {
+	font-size: $font-body-extra-small;
+	color: var(--color-text-subtle);
+	display: block;
+	margin-block-start: 2px;
+}
+
 .activity-log-item__description-content {
 	margin-bottom: 8px;
 

@@ -1,4 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
+import type { UpdateEmailForwardResponse } from './types';
 
 export function disconnectDomain( domainName: string ): Promise< void > {
 	return wpcom.req.get( {
@@ -33,5 +34,20 @@ export function deleteEmailForward(
 		`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 			mailbox
 		) }/${ encodeURIComponent( destination ) }/delete`
+	);
+}
+
+export function updateEmailForward(
+	domainName: string,
+	mailbox: string,
+	destination: string,
+	newDestination: string
+): Promise< UpdateEmailForwardResponse > {
+	return wpcom.req.post(
+		`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent( mailbox ) }`,
+		{
+			destination,
+			new_destination: newDestination,
+		}
 	);
 }

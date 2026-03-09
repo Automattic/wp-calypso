@@ -2,7 +2,52 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
+.banner-modern {
+	border-radius: 8px;
+	grid-column: 1 / -1;
+	margin-block: 24px;
+	max-width: 1220px;
+	overflow: hidden;
+	padding: 24px;
+	position: relative;
+}
 
+.banner-modern__content {
+	@include break-mobile {
+		max-width: 60%;
+	}
+}
+
+.banner-modern__title {
+	color: var( --studio-gray-100 );
+	font-family: $brand-serif;
+	font-size: rem( 40px );
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+
+	@include break-medium {
+		font-size: rem( 50px );
+	}
+}
+
+.banner-modern__description {
+	color: var( --studio-gray-80 );
+	font-size: $font-body-large;
+	line-height: 1.2;
+	margin-block-end: 24px;
+}
+
+.banner-modern__button.components-button.is-primary {
+	--wp-components-color-accent: var( --studio-gray-80 );
+	--wp-components-color-accent-darker-10: var( --studio-gray-100 );
+	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
+
+	border-radius: 4px;
+	font-size: $font-body;
+	height: auto;
+	padding: 12px 24px;
+}
 
 .ai-builder-banner {
 	--ai-builder-banner-linear-gradient-overlay: linear-gradient(
@@ -18,101 +63,57 @@
 
 	background:
 		var(--ai-builder-banner-linear-gradient-overlay),
-		url( ./background-mobile.png ) no-repeat bottom center / 120%,
+		url( ./ai-builder-background-mobile.png ) no-repeat bottom center / 120%,
 		var(--ai-builder-banner-linear-gradient-underlay);
-	border-radius: 8px;
 	display: flex;
 	flex-wrap: wrap;
-	grid-column: 1 / -1;
-	grid-row-start: 2;
+	grid-row-start: 3;
 	justify-content: space-between;
-	margin-block: 24px;
-	max-width: 1220px;
-	overflow: hidden;
-	padding: 24px;
-	position: relative;
 
 	@include break-mobile {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -400px / cover,
+			url( ./ai-builder-background.png ) no-repeat bottom right -400px / cover,
 			var(--ai-builder-banner-linear-gradient-underlay);
-		padding-top: 96px;
 	}
 	@include break-medium {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -250px / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right -250px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
+		padding-top: 96px;
 	}
 	@include break-large {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right -100px / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right -100px / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
 	@include break-xlarge {
 		background:
 			var(--ai-builder-banner-linear-gradient-overlay),
-			url( ./background.png ) no-repeat bottom right / contain,
+			url( ./ai-builder-background.png ) no-repeat bottom right / contain,
 			var(--ai-builder-banner-linear-gradient-underlay);
 	}
-}
 
-.ai-builder-banner__content {
-	padding-bottom: 288px;
+	.banner-modern__content {
+		padding-bottom: 288px;
 
-	@include break-mobile {
-		max-width: 60%;
-		padding-bottom: 96px;
-	}
-}
-
-@keyframes ai-builder-banner-blink {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0;
-	}
-}
-
-@media ( prefers-reduced-motion: reduce ) {
-	@keyframes ai-builder-banner-blink {
-		0%,
-		100% {
-			opacity: 1;
+		@include break-mobile {
+			padding-bottom: 96px;
 		}
 	}
-}
 
-.ai-builder-banner__title {
-	color: var( --studio-gray-100 );
-	font-family: $brand-serif;
-	font-size: rem( 40px );
-	font-weight: 400;
-	line-height: 1.2;
-	margin: 0;
-	text-wrap: balance;
+	.banner-modern__title {
+		text-wrap: balance;
+	}
 
-	&::after {
+	.banner-modern__title::after {
 		animation: ai-builder-banner-blink 1s step-end infinite;
 		color: var( --studio-blue-50 );
 		content: '|';
 		margin-inline-start: 12px;
 	}
-
-	@include break-small {
-		font-size: rem( 50px );
-	}
-}
-
-.ai-builder-banner__description {
-	color: var( --studio-gray-80 );
-	font-size: $font-body-large;
-	line-height: 1.2;
-	margin-block-end: 24px;
 }
 
 .ai-builder-banner__byline {
@@ -143,13 +144,39 @@
 	}
 }
 
-.ai-builder-banner__button.components-button.is-primary {
-	--wp-components-color-accent: var( --studio-gray-80 );
-	--wp-components-color-accent-darker-10: var( --studio-gray-100 );
-	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
+@keyframes ai-builder-banner-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
+}
 
-	border-radius: 4px;
-	font-size: $font-body;
-	height: auto;
-	padding: 12px 24px;
+@media ( prefers-reduced-motion: reduce ) {
+	@keyframes ai-builder-banner-blink {
+		0%,
+		100% {
+			opacity: 1;
+		}
+	}
+}
+
+.difm-banner {
+	background: url( ./difm-background-mobile.png ) no-repeat bottom 24px center / 90%;
+	background-color: var( --studio-gray-0 );
+	grid-row-start: 2;
+	padding-bottom: 288px;
+
+	@include break-mobile {
+		background: url( ./difm-background.png ) no-repeat center right 24px / 35%;
+		background-color: var( --studio-gray-0 );
+		padding: 24px;
+	}
+
+	@include break-medium {
+		padding-bottom: 72px;
+		padding-top: 72px;
+	}
 }

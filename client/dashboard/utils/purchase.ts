@@ -209,8 +209,12 @@ export function isTransferredOwnership(
 	);
 }
 
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
+}
+
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {

@@ -1,55 +1,64 @@
-import { deleteEmailForwardMutation } from '@automattic/api-queries';
+import { updateEmailForwardMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	TextControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect } from 'react';
+import emailValidator from 'email-validator';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
-export const useDeleteEmailForwardAction = (): Action< Email > => {
+export const useEditEmailForwardAction = (): Action< Email > => {
 	return {
-		id: 'delete-email-forward',
-		label: __( 'Delete forwarder' ),
+		id: 'edit-email-forward',
+		label: __( 'Edit forwarder' ),
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-			const { mutateAsync: deleteEmailForward, isPending } = useMutation(
-				deleteEmailForwardMutation()
+			const { mutateAsync: updateEmailForward, isPending } = useMutation(
+				updateEmailForwardMutation()
 			);
 			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 			const { recordTracksEvent } = useAnalytics();
 
+			const email = items[ 0 ];
+			const mailbox = email.emailAddress.split( '@' )[ 0 ];
+			const currentDestination = email.forwardingTo ?? '';
+
+			const [ newDestination, setNewDestination ] = useState( currentDestination );
+
 			useEffect( () => {
 				recordTracksEvent( 'calypso_dashboard_emails_action_click', {
-					action_id: 'delete-email-forward',
+					action_id: 'edit-email-forward',
 				} );
 			}, [ recordTracksEvent ] );
-			const email = items[ 0 ];
 
-			const mailbox = email.emailAddress.split( '@' )[ 0 ];
+			const isUnchanged = newDestination.trim() === currentDestination;
+			const isValid = emailValidator.validate( newDestination.trim() );
+
 			const onConfirm = async () => {
 				recordTracksEvent( 'calypso_dashboard_emails_action_confirm_click', {
-					action_id: 'delete-email-forward',
+					action_id: 'edit-email-forward',
 				} );
 				try {
-					await deleteEmailForward( {
+					await updateEmailForward( {
 						domainName: email.domainName,
 						mailbox,
-						destination: email.forwardingTo as string,
+						destination: currentDestination,
+						newDestination: newDestination.trim(),
 					} );
 					createSuccessNotice(
 						sprintf(
-							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
-							__( 'Forwarder from %1$s to %2$s has been removed.' ),
-							email.emailAddress,
-							email.forwardingTo as string
+							/* translators: %s is the new forwarding destination email. */
+							__( 'Email forward updated. Please check %s to verify the new address.' ),
+							newDestination.trim()
 						),
 						{ type: 'snackbar' }
 					);
@@ -58,10 +67,9 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 				} catch ( _e ) {
 					createErrorNotice(
 						sprintf(
-							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
-							__( 'Failed to remove forwarder from %1$s to %2$s. Please try again.' ),
-							email.emailAddress,
-							email.forwardingTo as string
+							/* translators: %1$s is the email address. */
+							__( 'Failed to update forwarder %1$s. Please try again.' ),
+							email.emailAddress
 						),
 						{ type: 'snackbar' }
 					);
@@ -70,20 +78,34 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 
 			const handleCancel = () => {
 				recordTracksEvent( 'calypso_dashboard_emails_action_cancel_click', {
-					action_id: 'delete-email-forward',
+					action_id: 'edit-email-forward',
 				} );
 				closeModal?.();
 			};
+
 			return (
 				<VStack spacing={ 4 }>
 					<Text>
 						{ sprintf(
-							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
-							__( 'Emails sent to %1$s address will no longer be forwarded to %2$s.' ),
-							email.emailAddress,
-							email.forwardingTo
+							/* translators: %s is the email address being edited. */
+							__( 'Edit the forwarding destination for %s.' ),
+							email.emailAddress
 						) }
 					</Text>
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ __( 'Forward to' ) }
+						value={ newDestination }
+						onChange={ setNewDestination }
+						type="email"
+						disabled={ isPending }
+						help={
+							! isUnchanged && newDestination.trim() && ! isValid
+								? __( 'Please enter a valid email address.' )
+								: undefined
+						}
+					/>
 					<HStack justify="right">
 						<Button
 							__next40pxDefaultSize
@@ -99,11 +121,10 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 							variant="primary"
 							onClick={ onConfirm }
 							isBusy={ isPending }
-							disabled={ isPending }
+							disabled={ isPending || isUnchanged || ! isValid }
 							accessibleWhenDisabled
-							isDestructive
 						>
-							{ __( 'Remove' ) }
+							{ __( 'Save' ) }
 						</Button>
 					</HStack>
 				</VStack>
