@@ -19,20 +19,23 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 
 	useEffect( () => {
 		if ( connectionStatus === 'disconnected' ) {
-			const connectionTimeout = setTimeout( () => {
-				setSecondsSinceDisconnected( secondsSinceDisconnected + 1 );
-				if ( secondsSinceDisconnected >= WARNING_THRESHOLD ) {
-					setShouldWarn( true );
-				}
+			const connectionInterval = setInterval( () => {
+				setSecondsSinceDisconnected( ( prev ) => prev + 1 );
 			}, 1000 );
-			return () => clearTimeout( connectionTimeout );
+			return () => clearInterval( connectionInterval );
 		} else if ( connectionStatus === 'connected' ) {
 			setSecondsSinceDisconnected( 0 );
 			// Show the "Connected" notice for 2 seconds then auto-hide it.
 			const hidingReconnectedTimeout = setTimeout( setShouldWarn, 2000, false );
 			return () => clearTimeout( hidingReconnectedTimeout );
 		}
-	}, [ connectionStatus, secondsSinceDisconnected ] );
+	}, [ connectionStatus ] );
+
+	useEffect( () => {
+		if ( secondsSinceDisconnected >= WARNING_THRESHOLD ) {
+			setShouldWarn( true );
+		}
+	}, [ secondsSinceDisconnected ] );
 
 	if ( secondsSinceDisconnected < WARNING_THRESHOLD && connectionStatus !== 'connected' ) {
 		return undefined;
