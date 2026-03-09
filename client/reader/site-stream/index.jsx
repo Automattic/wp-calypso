@@ -7,7 +7,6 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
-import withDimensions from 'calypso/lib/with-dimensions';
 import FeedError from 'calypso/reader/feed-error';
 import { getFollowerCount } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
@@ -51,13 +50,14 @@ const SiteStream = ( props ) => {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
-	const streamSidebar = () => (
+	const streamSidebar = ( isWideLayout ) => (
 		<FeedStreamSidebar
 			feed={ feed }
 			followerCount={ followerCount }
 			postCount={ postCount }
-			showFollow={ props.width > 900 }
+			isWideLayout={ isWideLayout }
 			site={ site }
+			streamKey={ props.streamKey }
 			tags={ siteTags.data }
 		/>
 	);
@@ -89,4 +89,4 @@ const SiteStream = ( props ) => {
 	);
 };
 
-export default withDimensions( SiteStream );
+export default SiteStream;

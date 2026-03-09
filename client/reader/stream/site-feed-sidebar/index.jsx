@@ -5,13 +5,12 @@ import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import '../style.scss';
 
 const FeedStreamSidebar = ( {
 	feed,
 	followerCount,
 	postCount,
-	showFollow,
+	isWideLayout,
 	site,
 	streamKey,
 	tags,
@@ -37,7 +36,7 @@ const FeedStreamSidebar = ( {
 	return (
 		<>
 			<div className="reader-feed-header__follow">
-				{ showFollow && (
+				{ isWideLayout && (
 					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 				) }
 			</div>

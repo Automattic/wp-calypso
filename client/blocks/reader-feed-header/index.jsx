@@ -38,12 +38,10 @@ class ReaderFeedHeader extends Component {
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteIcon = site ? get( site, 'icon.img' ) : null;
-		const wideDisplay = width > 900;
 		const narrowDisplay = width < 480;
 
 		const classes = clsx( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
-			'is-wide-display': wideDisplay,
 		} );
 
 		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
@@ -103,7 +101,7 @@ class ReaderFeedHeader extends Component {
 
 							<div className="reader-feed-header__description">{ description }</div>
 
-							{ ! wideDisplay && followerCount && (
+							{ followerCount && (
 								<div className="reader-feed-header__follow-count">
 									{ ' ' }
 									{ translate( '%s subscriber', '%s subscribers', {
@@ -116,9 +114,7 @@ class ReaderFeedHeader extends Component {
 						</div>
 					</Card>
 				</AutoDirection>
-				{ ! wideDisplay && (
-					<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
-				) }
+				<ReaderFeedHeaderFollow feed={ feed } site={ site } streamKey={ streamKey } />
 			</div>
 		);
 	}
