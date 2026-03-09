@@ -84,8 +84,12 @@ const webpackCacheBuildDependencies = [
 	path.resolve( __dirname, '../babel.config.js' ),
 ];
 
+const cacheFlavorParts = [ `devtool=${ sourceMapType || 'none' }` ];
+const cacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
+
+// These are things that should invalidate everything.
+// Or inputs that mean "the old cache is wrong".
 const webpackCacheVersion = JSON.stringify( {
-	browserslistEnv,
 	bundleEnv,
 	nodeEnv: process.env.NODE_ENV || null,
 	calypsoEnv: process.env.CALYPSO_ENV || null,
@@ -93,8 +97,6 @@ const webpackCacheVersion = JSON.stringify( {
 	minify: shouldMinify,
 	entryLimit: process.env.ENTRY_LIMIT || null,
 	sectionLimit: process.env.SECTION_LIMIT || null,
-	sourceMapType: sourceMapType || null,
-	sentryRelease: shouldCreateSentryRelease,
 } );
 
 if ( shouldCreateSentryRelease ) {
@@ -431,6 +433,7 @@ const webpackConfig = {
 		? {
 				cache: {
 					type: 'filesystem',
+					name: cacheName,
 					buildDependencies: {
 						config: webpackCacheBuildDependencies,
 					},
