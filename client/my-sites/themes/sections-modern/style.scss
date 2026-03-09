@@ -3,7 +3,21 @@
 @import "@wordpress/base-styles/mixins";
 
 .theme-section-modern {
+	--theme-section-bg: var(--studio-white);
+	--theme-section-text: var(--studio-gray-100);
+	--theme-section-text-secondary: var(--studio-gray-80);
+
 	margin-bottom: 96px;
+	padding-inline: 24px;
+}
+
+.theme-section-modern.is-dark {
+	--theme-section-bg: var(--studio-gray-90);
+	--theme-section-text: var(--studio-white);
+	--theme-section-text-secondary: var(--studio-gray-10);
+
+	background-color: var(--theme-section-bg);
+	padding: 24px 24px 96px 24px;
 }
 
 .theme-section-header {
@@ -19,22 +33,22 @@
 }
 
 .theme-section-header__title {
-	color: var(--studio-gray-100);
+	color: var(--theme-section-text, var(--studio-gray-100));
 	font-family: $brand-serif;
 	font-size: rem(40px);
 	font-weight: 400;
 	line-height: 1.2;
 	margin: 0;
 
-	@include break-small {
+	@include break-medium {
 		font-size: rem(50px);
 	}
 }
 
 .theme-section-header__subtitle {
-	color: var(--studio-gray-80);
+	color: var(--theme-section-text-secondary, var(--studio-gray-80));
 	font-size: $font-body-large;
-	line-height: 1.6;
+	line-height: 1.5;
 	margin: 0;
 }
 
@@ -57,4 +71,23 @@
 	@include break-large {
 		grid-template-columns: repeat(3, 1fr);
 	}
+}
+
+.theme-section-modern.is-dark .theme-section-header__button.components-button.is-secondary {
+	--wp-components-color-accent: var(--studio-white);
+	--wp-components-color-accent-darker-20: var(--studio-gray-0);
+}
+
+.theme-section-modern.is-dark .theme-card__info-title {
+	color: var(--theme-section-text);
+}
+
+.theme-section-modern.is-dark .theme-tier-badge__without-background.theme-tier-badge__content {
+	color: var(--theme-section-text-secondary);
+}
+
+.recommended-sections .banner-modern {
+	margin: 96px auto;
+	max-width: calc( 1220px - 48px);
+	width: calc( 100% - 48px - 48px);
 }
