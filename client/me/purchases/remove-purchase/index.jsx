@@ -170,6 +170,7 @@ class RemovePurchase extends Component {
 		}
 
 		await this.handlePurchaseRemoval( purchase );
+		invokeSurvicateEvent( 'purchaseRemoved' );
 
 		page( purchaseListUrl );
 	};
@@ -179,7 +180,6 @@ class RemovePurchase extends Component {
 
 		try {
 			await this.props.removePurchase( purchase.id, userId );
-			invokeSurvicateEvent( 'purchaseRemoved' );
 
 			const productName = getName( purchase );
 			let successMessage;
