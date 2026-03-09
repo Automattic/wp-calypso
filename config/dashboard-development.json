@@ -6,6 +6,14 @@
 	"survicate_enabled": true,
 	"hostname": "my.localhost",
 	"hostname_allowlist": [ "my.localhost", "my.woo.localhost" ],
+	"hostname_overrides": {
+		"my.woo.localhost": {
+			"oauth_client_id": 134404,
+			"wpcom_login_url": false,
+			"logout_url": "http://my.woo.localhost:3000",
+			"features": { "oauth": true }
+		}
+	},
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"wpcom_signup_id": "39911",
