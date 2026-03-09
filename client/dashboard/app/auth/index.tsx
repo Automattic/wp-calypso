@@ -11,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -81,7 +82,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		authErrorHandled.current = true;
 
 		if ( config.isEnabled( 'oauth' ) ) {
-			const redirectUri = new URL( '/api/oauth/token', window.location.origin );
+			const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 			redirectUri.search = new URLSearchParams( {
 				next: window.location.pathname + window.location.search,
 			} ).toString();
