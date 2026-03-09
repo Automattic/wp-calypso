@@ -9,7 +9,7 @@ interface Props {
 	postKey: { blogId?: number; postId: number; feedId?: number };
 }
 
-function QueryReaderPost( { postKey }: Props ) {
+export const QueryReaderPost = ( { postKey }: Props ) => {
 	const dispatch = useDispatch();
 	const { blogId, postId, feedId, ...params } = postKey;
 	const renderContentWidth = readerContentWidth();
@@ -37,6 +37,4 @@ function QueryReaderPost( { postKey }: Props ) {
 	}, [ postError, postKey, dispatch ] );
 
 	return null;
-}
-
-export default QueryReaderPost;
+};

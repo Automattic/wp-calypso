@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import { QueryReaderPost } from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import Placeholders from './placeholders';
