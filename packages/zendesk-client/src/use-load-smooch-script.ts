@@ -20,9 +20,15 @@ export function useLoadSmoochScript( enabled = false ) {
 			return;
 		}
 
-		loadScript( SMOOCH_CDN_URL, () => setIsSmoochScriptLoaded( true ), {
-			id: SMOOCH_SCRIPT_ID,
-		} );
+		loadScript(
+			SMOOCH_CDN_URL,
+			() => {
+				if ( window.Smooch ) {
+					setIsSmoochScriptLoaded( true );
+				}
+			},
+			{ id: SMOOCH_SCRIPT_ID }
+		);
 	}, [ enabled ] );
 
 	return { isSmoochScriptLoaded };
