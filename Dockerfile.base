@@ -25,8 +25,9 @@ ENV COMMIT_SHA $commit_sha
 COPY . .
 
 RUN yarn --inline-builds \
-	# Prime the production webpack cache flavor used by common PR Docker builds.
-	&& NODE_ENV=production yarn build-client
+	# Prime both production webpack cache flavors used by PR and trunk/manual Sentry builds.
+	&& NODE_ENV=production yarn build-client \
+	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
 
