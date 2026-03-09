@@ -550,7 +550,11 @@ class ThemeShowcase extends Component {
 		if (
 			tabKey === staticFilters.RECOMMENDED?.key &&
 			this.isThemeShowcaseModern() &&
-			! this.props.isCollectionView
+			! this.props.isCollectionView &&
+			! this.props.filter &&
+			! this.props.vertical &&
+			! this.props.search &&
+			( ! this.props.tier || this.props.tier === 'all' )
 		) {
 			return (
 				<RecommendedSections
