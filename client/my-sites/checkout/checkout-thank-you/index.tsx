@@ -18,7 +18,6 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import { invokeSurvicateEvent } from '@automattic/survicate';
 import { css, Global } from '@emotion/react';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
@@ -261,7 +260,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		recordTracksEvent( 'calypso_checkout_thank_you_view' );
-		invokeSurvicateEvent( 'purchaseCompleted' );
 
 		window.scrollTo( 0, 0 );
 	}
