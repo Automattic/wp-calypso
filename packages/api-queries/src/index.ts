@@ -64,6 +64,9 @@ export * from './plans';
 export * from './plugin';
 export * from './products';
 export * from './read-feed';
+
+export * from './read-feed-posts';
+export * from './read-site-posts';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
 export * from './site-address-change';
