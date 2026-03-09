@@ -121,7 +121,6 @@ export const PlanUSPS: React.FC< Props > = ( {
 	pluginSlug,
 	shouldUpgrade,
 	isFreePlan,
-	isMarketplaceProduct,
 	billingPeriod,
 } ) => {
 	const translate = useTranslate();
