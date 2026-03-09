@@ -161,10 +161,7 @@ object BuildBaseImages : BuildType({
 				source = file {
 					path = "Dockerfile.base"
 				}
-				namesAndTags = """
-					registry.a8c.com/calypso/base:%image_tag%
-					registry.a8c.com/calypso/base:%build.number%
-				""".trimIndent()
+				namesAndTags = "registry.a8c.com/calypso/base:%build.number%"
 				commandArgs = "--no-cache --target base --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
@@ -175,10 +172,7 @@ object BuildBaseImages : BuildType({
 				source = file {
 					path = "Dockerfile.base"
 				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci-e2e:%image_tag%
-					registry.a8c.com/calypso/ci-e2e:%build.number%
-				""".trimIndent()
+				namesAndTags = "registry.a8c.com/calypso/ci-e2e:%build.number%"
 				commandArgs = "--target ci-e2e"
 			}
 			param("dockerImage.platform", "linux")
@@ -189,13 +183,42 @@ object BuildBaseImages : BuildType({
 				source = file {
 					path = "Dockerfile.base"
 				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci-wpcom:%image_tag%
-					registry.a8c.com/calypso/ci-wpcom:%build.number%
-				""".trimIndent()
+				namesAndTags = "registry.a8c.com/calypso/ci-wpcom:%build.number%"
 				commandArgs = "--target ci-wpcom"
 			}
 			param("dockerImage.platform", "linux")
+		}
+		script {
+			name = "Retag images for publish"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				retag_image() {
+					local repo=${'$'}1
+					local numbered_tag="${'$'}repo:%build.number%"
+					local publish_tag="${'$'}repo:%image_tag%"
+
+					docker tag "${'$'}numbered_tag" "${'$'}publish_tag"
+
+					local numbered_id
+					local publish_id
+					numbered_id=$(docker image inspect "${'$'}numbered_tag" --format '{{.Id}}')
+					publish_id=$(docker image inspect "${'$'}publish_tag" --format '{{.Id}}')
+
+					echo "${'$'}numbered_tag id=${'$'}numbered_id"
+					echo "${'$'}publish_tag id=${'$'}publish_id"
+
+					if [[ "${'$'}numbered_id" != "${'$'}publish_id" ]]; then
+						echo "Tag mismatch for ${'$'}repo"
+						exit 1
+					fi
+				}
+
+				retag_image registry.a8c.com/calypso/base
+				retag_image registry.a8c.com/calypso/ci-e2e
+				retag_image registry.a8c.com/calypso/ci-wpcom
+			""".trimIndent()
 		}
 		dockerCommand {
 			name = "Push images"
