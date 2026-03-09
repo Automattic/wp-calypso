@@ -140,9 +140,11 @@ export default function useAgentLayoutManager( {
 
 			onDockRef.current();
 		} else {
+			clearTimeout( closeSidebarTimeoutRef.current );
 			container.classList.remove(
 				'agents-manager-sidebar-container',
-				'agents-manager-sidebar-container--sidebar-open'
+				'agents-manager-sidebar-container--sidebar-open',
+				'agents-manager-sidebar-container--closing'
 			);
 			portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--docked' );

@@ -118,6 +118,29 @@ describe( 'useAgentLayoutManager — closing class suppression', () => {
 		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
 	} );
 
+	it( 'removes --closing class and cancels the timeout when undocking during a close transition', () => {
+		const { result } = renderLayoutManager( container );
+
+		act( () => {
+			result.current.closeSidebar();
+		} );
+
+		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
+
+		act( () => {
+			result.current.undock();
+		} );
+
+		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
+
+		// Advance past where the timeout would have fired — class should still be absent
+		act( () => {
+			jest.advanceTimersByTime( TRANSITION_MS );
+		} );
+
+		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
+	} );
+
 	it( 'removes --closing class on unmount', () => {
 		const { result, unmount } = renderLayoutManager( container );
 
