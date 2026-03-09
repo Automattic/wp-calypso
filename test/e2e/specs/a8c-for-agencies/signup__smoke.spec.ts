@@ -1,7 +1,7 @@
 import { test, expect, tags } from '../../lib/pw-base';
 
 /**
- * Verify the A4A > Signup page loads
+ * Verify the A4A > Signup page loads.
  */
 test.describe( 'Automattic For Agencies: Sign Up Page', { tag: [ tags.A8C_FOR_AGENCIES ] }, () => {
 	test( 'As an unauthenticated web agency owner, I can enter my agency details and see these displayed', async ( {
