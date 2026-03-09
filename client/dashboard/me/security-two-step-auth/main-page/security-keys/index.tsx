@@ -165,7 +165,9 @@ export default function SecurityKeys() {
 				onRemoveKey={ handleRemoveKey }
 				onAddKey={ handleAddKey }
 			/>
-			{ isEnabled( 'two-factor/enhanced-security' ) && <EnhancedSecurity /> }
+			{ isEnabled( 'two-factor/enhanced-security' ) && registrations.length > 0 && (
+				<EnhancedSecurity />
+			) }
 			{ isAddKeyModalOpen && <RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } /> }
 			<ConfirmModal
 				isOpen={ !! selectedKeyToRemove }
