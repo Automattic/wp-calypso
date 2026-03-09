@@ -49,9 +49,8 @@ export default function useCheckpointAction(
 				}
 
 				const checkpointId = getCheckpointId( message );
-				const hasCheckpoint = checkpoint.hasCheckpoint( checkpointId );
 
-				if ( ! checkpointId || ! hasCheckpoint ) {
+				if ( ! checkpointId || ! checkpoint.hasCheckpoint( checkpointId ) ) {
 					return [];
 				}
 
