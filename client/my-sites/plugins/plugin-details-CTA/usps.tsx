@@ -121,6 +121,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 	pluginSlug,
 	shouldUpgrade,
 	isFreePlan,
+	isMarketplaceProduct,
 	billingPeriod,
 } ) => {
 	const translate = useTranslate();
@@ -130,8 +131,9 @@ export const PlanUSPS: React.FC< Props > = ( {
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( pluginSlug );
 
-	// Plugins are available on all paid plans (excluding preinstalled premium plugins)
-	const isPluginAvailableOnAllPlans = ! isPreinstalledPremiumPlugin && shouldUpgrade;
+	// Plugins are available on all paid plans for free (non-marketplace, non-premium-preinstalled) plugins
+	const isPluginAvailableOnAllPlans =
+		! isMarketplaceProduct && ! isPreinstalledPremiumPlugin && shouldUpgrade;
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();

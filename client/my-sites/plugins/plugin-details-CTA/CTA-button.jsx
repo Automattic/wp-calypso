@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import { getProductSlugByPeriodVariation, marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -289,12 +289,12 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
-			// Redirect to plans page to let user choose a plan, then checkout with plan + plugin
-			const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
+			// We also need to add a business plan to the cart.
 			return page(
-				`/plans/${ selectedSite.slug }?plan=personal-bundle&plugin=${ encodeURIComponent(
-					product_slug
-				) }&redirect_to=${ encodeURIComponent( installPluginURL ) }`
+				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
+					selectedSite?.plan,
+					billingPeriod
+				) },${ product_slug }`
 			);
 		}
 
@@ -312,7 +312,7 @@ function onClickInstallPlugin( {
 	if ( upgradeAndInstall ) {
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(
-			`/plans/${ selectedSite.slug }?plan=personal-bundle&redirect_to=${ encodeURIComponent(
+			`/plans/${ selectedSite.slug }?plan=personal_bundle&redirect_to=${ encodeURIComponent(
 				installPluginURL
 			) }`
 		);

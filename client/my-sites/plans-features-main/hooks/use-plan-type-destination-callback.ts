@@ -16,11 +16,11 @@ const usePlanTypeDestinationCallback = () => {
 		( props: Partial< PlanTypeSelectorProps >, additionalArgs: PathArgs = {} ) => {
 			const { intervalType = '' } = additionalArgs;
 
-			// Preserve redirect_to and plugin from the current URL so they survive interval changes.
-			const currentSearchParams =
-				typeof window !== 'undefined' ? new URLSearchParams( window.location.search ) : null;
-			const currentRedirectTo = currentSearchParams?.get( 'redirect_to' );
-			const currentPlugin = currentSearchParams?.get( 'plugin' );
+			// Preserve redirect_to from the current URL so it survives interval changes.
+			const currentRedirectTo =
+				typeof window !== 'undefined'
+					? new URLSearchParams( window.location.search ).get( 'redirect_to' )
+					: null;
 
 			const defaultArgs = {
 				customerType: undefined,
@@ -28,7 +28,6 @@ const usePlanTypeDestinationCallback = () => {
 				feature: props.selectedFeature,
 				plan: props.selectedPlan,
 				...( currentRedirectTo && { redirect_to: currentRedirectTo } ),
-				...( currentPlugin && { plugin: currentPlugin } ),
 			};
 			// remove empty values from additionalArgs
 			const _additionalArgs = Object.keys( additionalArgs ).reduce( ( acc, key ) => {

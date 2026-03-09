@@ -79,7 +79,6 @@ export default function useGenerateActionHook( {
 	reflectStorageSelectionInPlanPrices,
 	isGatingBusinessQ1,
 	redirectTo,
-	pluginSlug,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -99,7 +98,6 @@ export default function useGenerateActionHook( {
 	 */
 	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
-	pluginSlug?: string;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -132,7 +130,6 @@ export default function useGenerateActionHook( {
 		coupon,
 		isGatingBusinessQ1,
 		redirectTo,
-		pluginSlug,
 	} );
 
 	const useActionHook = ( {
