@@ -1,6 +1,7 @@
 import { getAgentManager } from '@automattic/agenttic-client';
 import {
 	AgentsManagerSelect,
+	AgentsManager as AgentsManagerStore,
 	type AgentsManagerSite,
 	type CurrentUser,
 } from '@automattic/data-stores';
@@ -38,6 +39,9 @@ export default function AgentsManager( {
 	site,
 	currentRoute,
 }: AgentsManagerProps ): JSX.Element | null {
+	// Set site ID before the store resolver triggers, so state is fetched per-site.
+	AgentsManagerStore.setCurrentSiteId( typeof site?.ID === 'number' ? site.ID : undefined );
+
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
 	const { hasLoaded: isStoreReady } = useSelect( ( select ) => {

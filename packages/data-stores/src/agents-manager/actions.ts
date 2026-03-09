@@ -5,6 +5,27 @@ import { GeneratorReturnType } from '../mapped-types';
 import type { APIFetchOptions } from '../shared-types';
 
 /**
+ * Current site ID for per-site state storage.
+ * Set via `setCurrentSiteId()` before the store resolver runs.
+ */
+let currentSiteId: number | undefined;
+
+/**
+ * Set the current site ID for per-site state storage.
+ * Must be called before the agents manager store resolver triggers.
+ */
+export function setCurrentSiteId( siteId: number | undefined ): void {
+	currentSiteId = siteId;
+}
+
+/**
+ * Get the current site ID for per-site state storage.
+ */
+export function getCurrentSiteId(): number | undefined {
+	return currentSiteId;
+}
+
+/**
  * Partial state object for saving agents manager preferences
  */
 type AgentsManagerState = {
@@ -52,7 +73,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 			path: '/agents-manager/state',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
-			body: { state: saveState },
+			body: { state: saveState, site_id: currentSiteId },
 		} ).catch( () => {} );
 	} else {
 		// Use the promise version to do that action without waiting for the result.
@@ -60,7 +81,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 			global: true,
 			path: '/agents-manager/open-state',
 			method: 'PUT',
-			data: saveState,
+			data: { ...saveState, site_id: currentSiteId },
 		} as APIFetchOptions ).catch( () => {} );
 	}
 }

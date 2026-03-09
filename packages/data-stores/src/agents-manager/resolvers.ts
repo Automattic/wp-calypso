@@ -9,6 +9,7 @@ import {
 	setIsLoading,
 	setHasLoaded,
 	setFloatingPosition,
+	getCurrentSiteId,
 } from './actions';
 import type { APIFetchOptions } from '../shared-types';
 
@@ -25,14 +26,17 @@ type AgentsManagerStateResponse = {
 export function* getAgentsManagerState() {
 	yield setIsLoading( true );
 	try {
+		const siteId = getCurrentSiteId();
+		const siteIdQuery = siteId ? `?site_id=${ siteId }` : '';
+
 		const state: AgentsManagerStateResponse = canAccessWpcomApis()
 			? yield wpcomRequest( {
-					path: '/agents-manager/state',
+					path: `/agents-manager/state${ siteIdQuery }`,
 					apiNamespace: 'wpcom/v2',
 			  } )
 			: yield apiFetch( {
 					global: true,
-					path: '/agents-manager/open-state',
+					path: `/agents-manager/open-state${ siteIdQuery }`,
 			  } as APIFetchOptions );
 
 		if ( state.agents_manager_router_history ) {
