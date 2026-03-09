@@ -4,7 +4,7 @@ import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	getEffectiveCiabConfig: jest.fn(),
+	detectCiabConfig: jest.fn(),
 	getPartnerSignupTosElement: jest.fn(),
 } ) );
 

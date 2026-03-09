@@ -15,7 +15,7 @@ import {
 	isIosOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getEffectiveCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
+import { detectCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -396,7 +396,7 @@ const mapState = ( state ) => {
 			'jetpack-onboarding',
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
-		ciabConfig: getEffectiveCiabConfig( currentQuery.from, initialQuery.from ),
+		ciabConfig: detectCiabConfig(),
 	};
 };
 
