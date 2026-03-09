@@ -10,6 +10,8 @@ import {
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
 import { Theme } from 'calypso/types';
+import AIBuilderBanner from '../banners-modern/ai-builder-banner';
+import DIFMBanner from '../banners-modern/difm-banner';
 import ThemeSectionHeader from './theme-section-header';
 import './style.scss';
 
@@ -178,6 +180,7 @@ export default function RecommendedSections( {
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }
 			/>
+			<AIBuilderBanner />
 			<ThemeSection
 				title={ translate( 'Fresh themes' ) }
 				subtitle={ translate( 'All the latest themes from WordPress.com designers.' ) }
@@ -190,6 +193,7 @@ export default function RecommendedSections( {
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }
 			/>
+			<DIFMBanner />
 			<ThemeSection
 				title={ translate( 'Partner themes' ) }
 				subtitle={
