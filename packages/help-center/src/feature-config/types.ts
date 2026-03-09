@@ -14,6 +14,8 @@ export type HelpCenterFeatureConfig = {
 		filterByBotSlug: boolean;
 		/** Override the flow name for the Odie provider. */
 		flowName: string | null;
+		/** Treat the user as having premium support (bypass eligibility checks). */
+		hasPremiumSupport: boolean;
 		/** Skip fetching support status. */
 		skipSupportStatus: boolean;
 	};

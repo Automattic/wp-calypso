@@ -9,6 +9,7 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		enabled: true,
 		filterByBotSlug: false,
 		flowName: null,
+		hasPremiumSupport: false,
 		skipSupportStatus: false,
 	},
 	home: {
@@ -36,6 +37,7 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		enabled: false,
 		filterByBotSlug: false,
 		flowName: null,
+		hasPremiumSupport: false,
 		skipSupportStatus: false,
 	},
 	home: {
@@ -63,6 +65,7 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 		enabled: true,
 		filterByBotSlug: true,
 		flowName: 'messaging_flow_commerce_in_a_box',
+		hasPremiumSupport: true,
 		skipSupportStatus: true,
 	},
 	home: {
