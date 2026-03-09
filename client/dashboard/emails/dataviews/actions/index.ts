@@ -1,5 +1,6 @@
 import { useDeleteEmailForwardAction } from './delete-email-forward';
 import { useDeleteTitanMailboxAction } from './delete-titan-mailbox';
+import { useEditEmailForwardAction } from './edit-email-forward';
 import { useFinishSetupAction } from './finish-setup';
 import { useManageGoogleWorkspaceAction } from './manage-google-workspace';
 import { usePaymentDetailsAction } from './payment-details';
@@ -15,6 +16,7 @@ export function useActions(): Action< Email >[] {
 		useManageGoogleWorkspaceAction(),
 		usePaymentDetailsAction(),
 		useResendVerificationAction(),
+		useEditEmailForwardAction(),
 		useDeleteTitanMailboxAction(),
 		useDeleteEmailForwardAction(),
 	];

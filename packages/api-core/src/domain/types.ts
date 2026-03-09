@@ -34,6 +34,11 @@ export interface TitanEmailSubscription extends EmailSubscription {
 	maximum_mailbox_count: number;
 }
 
+export interface UpdateEmailForwardResponse {
+	updated: boolean;
+	verified: boolean;
+}
+
 export interface Domain extends DomainSummary {
 	a_records_required_for_mapping?: string[];
 	auth_code_required: boolean;
