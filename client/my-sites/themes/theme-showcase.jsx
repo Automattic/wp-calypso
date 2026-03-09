@@ -51,6 +51,7 @@ import {
 	isStaticFilter,
 	constructThemeShowcaseUrl,
 } from './helpers';
+import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
@@ -545,6 +546,20 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 		const staticFilters = this.getStaticFilters();
+
+		if (
+			tabKey === staticFilters.RECOMMENDED?.key &&
+			this.isThemeShowcaseModern() &&
+			! this.props.isCollectionView
+		) {
+			return (
+				<RecommendedSections
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
