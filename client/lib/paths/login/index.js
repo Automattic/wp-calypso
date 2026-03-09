@@ -91,6 +91,21 @@ export function login( {
 		url = addQueryArgs( { 'wccom-from': wccomFrom }, url );
 	}
 
+	// When `from` is not explicitly provided, try to extract it from the `redirectTo` URL.
+	// This handles Woo flows (Core Profiler, Payments, etc.) where `from` is embedded
+	// in the redirect_to URL rather than being a top-level query parameter.
+	// See: isWooCommerceCoreProfilerFlow, isWooDnaFlow selectors for the same pattern.
+	if ( ! from && redirectTo ) {
+		try {
+			const redirectFromValue = new URLSearchParams( redirectTo.split( '?' )[ 1 ] ).get( 'from' );
+			if ( redirectFromValue ) {
+				from = redirectFromValue;
+			}
+		} catch {
+			// ignore parsing errors
+		}
+	}
+
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
 	}
@@ -117,6 +132,21 @@ export function login( {
 
 	if ( gravatarFlow ) {
 		url = addQueryArgs( { gravatar_flow: '1' }, url );
+	}
+
+	// Same fallback pattern as `from` above — extract plugin_name from redirectTo
+	// when not explicitly provided. Needed for WooCommerce Payments flow detection.
+	if ( ! pluginName && redirectTo ) {
+		try {
+			const redirectPluginName = new URLSearchParams( redirectTo.split( '?' )[ 1 ] ).get(
+				'plugin_name'
+			);
+			if ( redirectPluginName ) {
+				pluginName = redirectPluginName;
+			}
+		} catch {
+			// ignore parsing errors
+		}
 	}
 
 	if ( pluginName ) {
