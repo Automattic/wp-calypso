@@ -80,20 +80,34 @@ if ( ! sourceMapType && shouldCreateSentryRelease ) {
 
 const webpackCacheBuildDependencies = [
 	__filename,
+	// Top-level config inputs that change compilation behavior
 	path.resolve( __dirname, '../package.json' ),
 	path.resolve( __dirname, '../babel.config.js' ),
-	path.resolve( __dirname, '../yarn.lock' ),
-	path.resolve( __dirname, '../.yarnrc.yml' ),
+	// Config modules used by this webpack config
+	require.resolve( './webpack.common' ),
+	require.resolve( './server/config' ),
+	// Local build tools that influence compilation
+	require.resolve( '../build-tools/babel/babel-loader-cache-identifier' ),
+	require.resolve( '../build-tools/webpack/assets-writer-plugin.js' ),
+	require.resolve( '../build-tools/webpack/generate-chunks-map-plugin' ),
+	require.resolve( '../build-tools/webpack/readonly-cache-plugin' ),
+	require.resolve( '../build-tools/webpack/require-chunk-callback-plugin' ),
 	require.resolve( '../build-tools/webpack/sections-loader' ),
+	// Workspace config helper modules used to build rules/plugins
+	require.resolve( '@automattic/calypso-build/webpack/file-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/minify' ),
+	require.resolve( '@automattic/calypso-build/webpack/sass' ),
+	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
+	require.resolve( '@automattic/calypso-build/webpack/util' ),
+	// Dependency graph changes
+	path.resolve( __dirname, '../yarn.lock' ),
 ];
 
-const cacheFlavorParts = [
-	`mode=${ isDevelopment ? 'development' : 'production' }`,
-	`devtool=${ sourceMapType || 'none' }`,
-];
+const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
 const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
 
-// Inputs that should invalidate a cache flavor.
+// These are things that should invalidate everything.
+// Or inputs that mean "the old cache is wrong".
 const webpackCacheVersion = JSON.stringify( {
 	bundleEnv,
 	nodeEnv: process.env.NODE_ENV || null,
@@ -104,7 +118,6 @@ const webpackCacheVersion = JSON.stringify( {
 	sectionLimit: process.env.SECTION_LIMIT || null,
 	emitStats: shouldEmitStats,
 	concatenateModules: shouldConcatenateModules,
-	hotReload: shouldHotReload,
 } );
 
 if ( shouldCreateSentryRelease ) {
