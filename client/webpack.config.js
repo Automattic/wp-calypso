@@ -101,13 +101,13 @@ const webpackCacheBuildDependencies = [
 	require.resolve( '@automattic/calypso-build/webpack/util' ),
 	// Dependency graph changes
 	path.resolve( __dirname, '../yarn.lock' ),
+	path.resolve( __dirname, '../.yarnrc.yml' ),
 ];
 
 const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
 const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
 
-// These are things that should invalidate everything.
-// Or inputs that mean "the old cache is wrong".
+// Inputs that should invalidate a cache flavor.
 const webpackCacheVersion = JSON.stringify( {
 	bundleEnv,
 	nodeEnv: process.env.NODE_ENV || null,
@@ -118,6 +118,7 @@ const webpackCacheVersion = JSON.stringify( {
 	sectionLimit: process.env.SECTION_LIMIT || null,
 	emitStats: shouldEmitStats,
 	concatenateModules: shouldConcatenateModules,
+	hotReload: shouldHotReload,
 } );
 
 if ( shouldCreateSentryRelease ) {
