@@ -112,9 +112,7 @@ describe( 'partner-branding', () => {
 		} );
 
 		test( 'returns partner config when redirect URL has path and query params', () => {
-			const result = getCiabConfigFromRedirectUrl(
-				'https://my.woo.ai/some/path?foo=bar&baz=1'
-			);
+			const result = getCiabConfigFromRedirectUrl( 'https://my.woo.ai/some/path?foo=bar&baz=1' );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
