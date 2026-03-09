@@ -3,14 +3,11 @@ import { queryOptions } from '@tanstack/react-query';
 
 export const readFeedQuery = ( feedId?: number | string ) => {
 	return queryOptions( {
-		queryKey: [ 'read', 'feed', Number( feedId ) ],
-		staleTime: 1000 * 60, // 1 minute
+		queryKey: [ 'read', 'feeds', Number( feedId ) ],
 		queryFn: () => fetchReadFeed( feedId! ),
 		enabled: feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
-		refetchOnWindowFocus: false,
 	} );
 };
-
 interface Options {
 	query?: string;
 	excludeFollowed?: boolean;

@@ -5,8 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	FILTER_TYPE_INSTALL,
@@ -65,13 +64,9 @@ export default function PlanSelectionFilter( {
 
 	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 
-	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
-
 	// Currently, we only want the premium plans for referral mode
 	const hasNewPremiumPlans =
-		isBDBillingSystem &&
-		isReferralMode &&
-		plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
+		isReferralMode && plans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
 	const lowPlanOptions = useMemo(
 		() =>

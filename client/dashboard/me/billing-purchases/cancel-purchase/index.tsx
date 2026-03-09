@@ -24,6 +24,7 @@ import {
 	removePurchaseMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -898,6 +899,7 @@ export default function CancelPurchase() {
 								type: 'snackbar',
 							}
 						);
+						invokeSurvicateEvent( 'purchaseRefunded' );
 						navigate( {
 							to: purchaseSettingsRoute.fullPath,
 							params: { purchaseId: purchase.ID },
@@ -990,6 +992,7 @@ export default function CancelPurchase() {
 					);
 				}
 				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				invokeSurvicateEvent( 'purchaseRemoved' );
 				navigate( {
 					to: purchaseSettingsRoute.fullPath,
 					params: { purchaseId: purchase.ID },
@@ -1036,6 +1039,7 @@ export default function CancelPurchase() {
 						),
 						{ type: 'snackbar' }
 					);
+					invokeSurvicateEvent( 'purchaseCancelled' );
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },

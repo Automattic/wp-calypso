@@ -53,7 +53,9 @@
 						"name": { "type": "string" },
 						"role": { "type": "string" },
 						"type": { "type": "string" },
-						"wpcom_user_id": { "type": "integer" }
+						"wpcom_user_id": { "type": "integer" },
+						"is_mcp_agent": { "type": "boolean" },
+						"mcp_client": { "type": "string" }
 					}
 				},
 				"content": { "type": "object" },

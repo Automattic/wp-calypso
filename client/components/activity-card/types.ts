@@ -30,6 +30,8 @@ export interface Activity {
 	actorName?: string;
 	actorRole?: string;
 	actorType?: string;
+	actorIsMcpAgent?: boolean;
+	actorMcpClient?: string;
 
 	activityIsRewindable: boolean;
 	rewindId?: string;

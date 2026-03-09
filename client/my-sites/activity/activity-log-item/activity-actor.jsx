@@ -1,3 +1,4 @@
+import { sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -83,11 +84,14 @@ export default class ActivityActor extends PureComponent {
 			actorName: PropTypes.string,
 			actorRole: PropTypes.string,
 			actorType: PropTypes.string,
+			actorIsMcpAgent: PropTypes.bool,
+			actorMcpClient: PropTypes.string,
 		} ),
 	};
 
 	render() {
-		const { actorAvatarUrl, actorName, actorRole, actorType } = this.props;
+		const { actorAvatarUrl, actorName, actorRole, actorType, actorIsMcpAgent, actorMcpClient } =
+			this.props;
 		if ( actorName === 'WordPress' && actorType === 'Application' ) {
 			return WORDPRESS_ACTOR;
 		}
@@ -107,12 +111,20 @@ export default class ActivityActor extends PureComponent {
 			return MULTIPLE_ACTORS;
 		}
 
+		let mcpIndicator = null;
+		if ( actorIsMcpAgent ) {
+			mcpIndicator = actorMcpClient
+				? sprintf( translate( 'via %s (MCP)' ), actorMcpClient )
+				: translate( 'via MCP' );
+		}
+
 		return (
 			<div className="activity-log-item__actor">
 				<Gravatar user={ { avatar_URL: actorAvatarUrl } } size={ 40 } />
 				<div className="activity-log-item__actor-info">
 					<div className="activity-log-item__actor-name">{ actorName }</div>
 					{ actorRole && <div className="activity-log-item__actor-role">{ actorRole }</div> }
+					{ mcpIndicator && <div className="activity-log-item__actor-mcp">{ mcpIndicator }</div> }
 				</div>
 			</div>
 		);

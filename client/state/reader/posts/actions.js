@@ -81,6 +81,7 @@ export function receiveErrorForPostKey( error, postKey ) {
 				is_external: ! postKey.blogId,
 				global_ID: crypto.randomUUID(),
 				is_error: true,
+				feed_item_ID: postKey.postId,
 				error,
 			},
 		],

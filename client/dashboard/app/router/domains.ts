@@ -7,7 +7,6 @@ import {
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
 	sslDetailsQuery,
-	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
 	queryClient,
@@ -58,7 +57,7 @@ export const domainsIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { context } ) => {
 		await Promise.all( [
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );

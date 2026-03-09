@@ -13,7 +13,6 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
-import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import type { Domain } from '@automattic/api-core';
 
@@ -79,7 +78,7 @@ export const domainTransferToUserMutation = ( domain: string, siteId: number ) =
 	mutationOptions( {
 		mutationFn: ( userId: string ) => domainTransferToUser( domain, siteId, userId ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );
 
@@ -103,6 +102,6 @@ export const startDomainInboundTransferMutation = ( domain: string, siteId: numb
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
 			queryClient.invalidateQueries( domainInboundTransferStatusQuery( domain ) );
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );

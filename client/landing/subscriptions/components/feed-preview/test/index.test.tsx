@@ -60,7 +60,7 @@ describe( 'FeedPreview', () => {
 
 		render( <FeedPreview url="https://example.com" source="test-source" /> );
 
-		expect( screen.getByText( 'Loading feed preview...' ) ).toBeVisible();
+		expect( screen.getByText( 'Loading feed preview…' ) ).toBeVisible();
 	} );
 
 	it( 'calls the correct API endpoint with the URL', async () => {

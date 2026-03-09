@@ -1,3 +1,18 @@
+.is-site-stream.is-two-columns {
+	.reader-feed-header__site {
+		align-items: center;
+		margin-bottom: 36px;
+	}
+
+	.reader-feed-header__follow-count {
+		display: none;
+	}
+
+	.reader-feed-header .reader-feed-header__follow {
+		display: none;
+	}
+}
+
 .reader-feed-header .reader-feed-header__site {
 	display: flex;
 	margin-bottom: 16px;
@@ -28,10 +43,6 @@
 	}
 }
 
-.reader-feed-header.is-wide-display .reader-feed-header__site {
-	align-items: center;
-	margin-bottom: 36px;
-}
 
 .reader-feed-header__seen-button {
 	align-items: center;

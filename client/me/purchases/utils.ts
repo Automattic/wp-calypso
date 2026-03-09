@@ -69,8 +69,11 @@ export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 }
 
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	const { meta } = purchase;
-	return isTemporarySitePurchase( purchase ) && meta === 'is-a4a';
+	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
+}
+
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
 }
 
 export function getCancelPurchaseSurveyCompletedPreferenceKey(
