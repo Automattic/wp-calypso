@@ -199,13 +199,6 @@ body.is-reader-full-post {
 		display: none;
 		overflow-y: auto;
 		height: 100%;
-		scrollbar-width: thin;
-		scrollbar-gutter: stable both-edges;
-		scrollbar-color: transparent transparent;
-
-		&:hover {
-			scrollbar-color: #949494 transparent;
-		}
 
 		&.overlay {
 			display: block;
