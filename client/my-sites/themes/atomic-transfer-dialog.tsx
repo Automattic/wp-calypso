@@ -4,6 +4,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import Notice from 'calypso/components/notice';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	acceptAtomicTransferDialog,
@@ -28,6 +31,7 @@ interface AtomicTransferDialogProps {
 	siteId?: number;
 	inProgress?: boolean;
 	showEligibility: boolean;
+	transferStatus?: string | null;
 	theme: Theme;
 	siteSlug?: string | null;
 	isMarketplaceProduct?: boolean;
@@ -38,7 +42,11 @@ interface AtomicTransferDialogProps {
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
+	dispatchRequestSite: typeof requestSite;
 }
+
+const SITE_POLL_INTERVAL_MS = 3000;
+const SITE_POLL_TIMEOUT_MS = 30000;
 
 type AtomicTransferDialogState = {
 	requestActiveThemeCount: number;
@@ -49,6 +57,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	state: AtomicTransferDialogState;
 
 	maxRequestActiveThemeAttempts = 30;
+	hasActivated = false;
+	sitePollingInterval?: ReturnType< typeof setInterval >;
+	sitePollingTimeout?: ReturnType< typeof setTimeout >;
 
 	constructor( props: AtomicTransferDialogProps ) {
 		super( props );
@@ -89,22 +100,66 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	continueToActivate() {
+		if ( this.hasActivated ) {
+			return;
+		}
 		const { siteId, theme, dispatchActivateTheme, dispatchAcceptAtomicTransferDialog } = this.props;
-		if ( siteId ) {
+		if ( siteId && theme?.id ) {
+			this.hasActivated = true;
 			dispatchAcceptAtomicTransferDialog( theme.id );
 			dispatchActivateTheme( theme.id, siteId );
 		}
 	}
 
+	startSitePolling( siteId: number ) {
+		const { dispatchRequestSite } = this.props;
+
+		this.sitePollingInterval = setInterval( () => {
+			dispatchRequestSite( siteId );
+		}, SITE_POLL_INTERVAL_MS );
+
+		this.sitePollingTimeout = setTimeout( () => {
+			this.stopSitePolling();
+			this.setState( {
+				errorMessage: translate(
+					'Your site was transferred but is still updating. Please refresh and try again.'
+				),
+			} );
+		}, SITE_POLL_TIMEOUT_MS );
+	}
+
+	stopSitePolling() {
+		if ( this.sitePollingInterval ) {
+			clearInterval( this.sitePollingInterval );
+			this.sitePollingInterval = undefined;
+		}
+		if ( this.sitePollingTimeout ) {
+			clearTimeout( this.sitePollingTimeout );
+			this.sitePollingTimeout = undefined;
+		}
+	}
+
+	componentWillUnmount() {
+		this.stopSitePolling();
+	}
+
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
-		const { siteId, siteSlug, uploadError, isJetpack } = this.props;
+		const { siteId, siteSlug, uploadError, isJetpack, transferStatus } = this.props;
+
+		// After transfer completes, wait for the site to be recognized as Jetpack.
+		// requestActiveThemeCount > 0 ensures we only act if we initiated a transfer in this session.
 		if (
 			siteId &&
 			siteSlug &&
-			prevProps.isJetpack !== undefined &&
-			prevProps.isJetpack !== isJetpack
+			transferStatus === transferStates.COMPLETE &&
+			this.state.requestActiveThemeCount > 0
 		) {
-			this.continueToActivate();
+			if ( isJetpack ) {
+				this.stopSitePolling();
+				this.continueToActivate();
+			} else if ( ! this.sitePollingInterval ) {
+				this.startSitePolling( siteId );
+			}
 		}
 
 		if (
@@ -130,14 +185,18 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		const hasNotExceededMaxAttempts =
 			this.state.requestActiveThemeCount > 0 && ! this.exceededMaxAttempts() && ! isJetpack;
 
-		return inProgress || hasNotExceededMaxAttempts || ( isJetpack && ! isThemeActive );
+		const isActivatingAfterTransfer = isJetpack && theme?.id && ! isThemeActive;
+
+		return inProgress || hasNotExceededMaxAttempts || isActivatingAfterTransfer;
 	}
 
 	renderActivationInProgress() {
+		const { isJetpack } = this.props;
 		const activationText = translate( 'Please wait while we transfer your site.' );
 
 		return (
-			this.isLoading() && (
+			this.isLoading() &&
+			! isJetpack && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-info"
@@ -185,7 +244,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	render() {
 		const { showEligibility, isMarketplaceProduct } = this.props;
 
-		if ( ! showEligibility ) {
+		if ( ! showEligibility && ! this.isLoading() ) {
 			return null;
 		}
 
@@ -193,7 +252,8 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 			<Modal
 				className="plugin-details-cta__dialog-content"
 				title={ translate( 'Before you continue' ) }
-				onRequestClose={ () => this.handleDismiss() }
+				onRequestClose={ this.isLoading() ? () => {} : () => this.handleDismiss() }
+				isDismissible={ ! this.isLoading() }
 				size="medium"
 			>
 				{ this.renderActivationInProgress() }
@@ -201,11 +261,11 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 				{ this.renderError() }
 
 				<EligibilityWarnings
-					disableContinueButton={ this.isLoading() }
+					disableContinueButton={ !! this.isLoading() }
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
-					onDismiss={ () => this.handleDismiss() }
+					onDismiss={ this.isLoading() ? undefined : () => this.handleDismiss() }
 					onProceed={ () => this.handleAccept() }
 					backUrl="#"
 				/>
@@ -225,6 +285,7 @@ export default connect(
 
 		return {
 			siteId,
+			transferStatus: getAutomatedTransferStatus( state, siteId ),
 			theme: themeId && getCanonicalTheme( state, siteId, themeId ),
 			showEligibility: shouldShowAtomicTransferDialog( state, themeId ),
 			isMarketplaceProduct: isExternallyManagedTheme( state, themeId ),
@@ -240,5 +301,6 @@ export default connect(
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
+		dispatchRequestSite: requestSite,
 	}
 )( localize( AtomicTransferDialog ) );

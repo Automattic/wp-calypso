@@ -182,19 +182,6 @@ object BuildDockerImage : BuildType({
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
 
-		script {
-			name = "Restore git mtime"
-			scriptContent = """
-				#!/usr/bin/env bash
-				sudo apt-get install -y git-restore-mtime
-				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-			"""
-			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
-			dockerPull = true
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}
-
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%

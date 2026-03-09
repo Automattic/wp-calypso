@@ -122,7 +122,9 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 			</Provider>
 		);
 
-		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( 'woo', 'commerce' );
+		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( 'woo', 'commerce', {
+			persistToSession: true,
+		} );
 		expect( screen.getByRole( 'img', { name: 'Woo' } ) ).toBeVisible();
 		expect( screen.getByTestId( 'body-section-css-class' ) ).toHaveTextContent(
 			'is-ciab-font-system'
@@ -140,7 +142,9 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 			</Provider>
 		);
 
-		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( 'woo', 'enterprise' );
+		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( 'woo', 'enterprise', {
+			persistToSession: true,
+		} );
 		expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
 		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
 		expect( screen.getByTestId( 'body-section-css-class' ) ).toHaveTextContent( '' );
@@ -155,7 +159,9 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 			</Provider>
 		);
 
-		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( undefined, undefined );
+		expect( mockGetCiabConfigFromGarden ).toHaveBeenCalledWith( undefined, undefined, {
+			persistToSession: true,
+		} );
 		expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
 		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
 	} );

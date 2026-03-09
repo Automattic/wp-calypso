@@ -80,6 +80,8 @@ export const transformActivityLogEntry = ( entry: ActivityLogEntry ): Activity =
 			actorType: actor?.type,
 			isCli: actor?.is_cli,
 			isSupport: actor?.is_happiness,
+			isMcpAgent: actor?.is_mcp_agent,
+			mcpClient: actor?.mcp_client,
 		},
 		activityIsRewindable: Boolean( is_rewindable ),
 		rewindId: rewind_id || undefined,

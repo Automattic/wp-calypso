@@ -14,7 +14,7 @@ import {
 } from '../../utils/datetime';
 import {
 	isTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
 	isRenewing,
 	isExpiring,
@@ -66,7 +66,7 @@ export function PurchaseExpiryStatus( {
 		taxName,
 	] );
 
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		// translators: partnerName is the name of the partner service who manages this product
 		return sprintf( __( 'Managed by %(partnerName)s' ), {
 			partnerName: purchase.partner_name,
@@ -89,20 +89,20 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isA4APurchase = isA4ATemporarySitePurchase( purchase );
+	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
 	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
 	const isKnownTemporarySiteProductType =
 		isTemporarySitePurchase( purchase ) &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isSiteMissing && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if ( isSiteMissing && ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
 	if (
 		isSiteMissing &&
-		! isA4APurchase &&
+		! isA4ABDPurchase &&
 		! isKnownTemporarySiteProductType &&
 		! purchase.is_domain
 	) {
