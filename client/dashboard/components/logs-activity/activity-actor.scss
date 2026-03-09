@@ -10,4 +10,11 @@
         background-color: $gray-300;
         fill: $gray-700;
     }
+
+    .site-activity-logs__actor-mcp {
+        display: block;
+        font-size: 0.75rem;
+        color: $gray-600;
+        margin-block-start: 2px;
+    }
 }

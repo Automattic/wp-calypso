@@ -49,6 +49,8 @@ export function processItem( item ) {
 			actorRole: get( actor, 'role', '' ),
 			actorType: get( actor, 'type', '' ),
 			actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
+			actorIsMcpAgent: get( actor, 'is_mcp_agent', false ),
+			actorMcpClient: get( actor, 'mcp_client', '' ),
 
 			/* base activity info */
 			activityDate,

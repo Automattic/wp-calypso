@@ -631,3 +631,33 @@
 .section-nav-tab__text .theme-showcase__badge-beta {
 	margin-left: 6px;
 }
+
+// Modern theme card overrides (logged-out redesign)
+.theme-showcase.is-modern {
+	.themes__showcase {
+		padding: 0 24px;
+	}
+
+	.themes-list {
+		margin: 0 auto;
+
+		@include break-small {
+			gap: 32px;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			max-width: 1220px;
+		}
+	}
+
+	.theme-card {
+		margin: 0 0 48px 0;
+	}
+
+	.theme-card__image-container {
+		border-radius: 8px;
+	}
+
+	// Hide style variation swatches for logged-out modern view
+	.theme-card__info-style-variations {
+		display: none;
+	}
+}

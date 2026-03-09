@@ -1,28 +1,45 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import {
 	CIAB_PARTNERS,
+	clearPersistedCiabPartnerId,
+	getEffectiveCiabConfig,
+	getEffectivePartnerAllowedSocialServices,
 	getCiabConfig,
 	getCiabConfigFromGarden,
 	getPartnerAllowedSocialServices,
 	getPartnerSignupTosElement,
+	persistCiabPartnerId,
+	readPersistedCiabPartnerId,
 } from '../partner-branding';
 import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => null;
-	config.isEnabled = ( feature: string ) => {
+	config.isEnabled = jest.fn( ( feature: string ) => {
 		if ( feature === 'ciab/custom-branding' ) {
 			return true;
 		}
 		return false;
-	};
+	} );
 	return config;
 } );
 
 describe( 'partner-branding', () => {
+	beforeEach( () => {
+		clearPersistedCiabPartnerId();
+		( config.isEnabled as jest.Mock ).mockImplementation( ( feature: string ) => {
+			if ( feature === 'ciab/custom-branding' ) {
+				return true;
+			}
+
+			return false;
+		} );
+	} );
+
 	describe( 'getCiabConfig', () => {
 		test( 'returns partner config when from param matches a valid partner', () => {
 			const config = getCiabConfig( 'woo' );
@@ -83,6 +100,62 @@ describe( 'partner-branding', () => {
 			const config = getCiabConfigFromGarden( 'woo', 'unknown' );
 
 			expect( config ).toBeNull();
+		} );
+
+		test( 'persists partner id when requested', () => {
+			getCiabConfigFromGarden( 'woo', 'commerce', { persistToSession: true } );
+
+			expect( readPersistedCiabPartnerId() ).toBe( 'woo' );
+		} );
+	} );
+
+	describe( 'session persistence', () => {
+		test( 'persists and reads partner id', () => {
+			persistCiabPartnerId( 'woo' );
+
+			expect( readPersistedCiabPartnerId() ).toBe( 'woo' );
+		} );
+
+		test( 'uses current from when present and persists it', () => {
+			const config = getEffectiveCiabConfig( 'woo', undefined );
+
+			expect( config?.id ).toBe( 'woo' );
+			expect( readPersistedCiabPartnerId() ).toBe( 'woo' );
+		} );
+
+		test( 'uses persisted partner when from params are missing', () => {
+			persistCiabPartnerId( 'woo' );
+
+			const config = getEffectiveCiabConfig( undefined, undefined );
+
+			expect( config?.id ).toBe( 'woo' );
+		} );
+
+		test( 'clears persisted partner when current from is invalid', () => {
+			persistCiabPartnerId( 'woo' );
+
+			const config = getEffectiveCiabConfig( 'unknown', undefined );
+
+			expect( config ).toBeNull();
+			expect( readPersistedCiabPartnerId() ).toBeNull();
+		} );
+
+		test( 'clears persisted partner when feature flag is disabled', () => {
+			persistCiabPartnerId( 'woo' );
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+
+			const effectiveConfig = getEffectiveCiabConfig( undefined, undefined );
+
+			expect( effectiveConfig ).toBeNull();
+			expect( readPersistedCiabPartnerId() ).toBeNull();
+		} );
+
+		test( 'returns social services from persisted partner', () => {
+			persistCiabPartnerId( 'woo' );
+
+			const services = getEffectivePartnerAllowedSocialServices( undefined, undefined );
+
+			expect( services ).toEqual( CIAB_PARTNERS.woo.ssoProviders );
 		} );
 	} );
 

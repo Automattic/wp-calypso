@@ -143,6 +143,8 @@ class ActivityLogItem extends Component {
 				actorName,
 				actorRole,
 				actorType,
+				actorIsMcpAgent,
+				actorMcpClient,
 				activityMedia,
 				isBreakpointActive: isDesktop,
 			},
@@ -170,7 +172,16 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
+				<ActivityActor
+					{ ...{
+						actorAvatarUrl,
+						actorName,
+						actorRole,
+						actorType,
+						actorIsMcpAgent,
+						actorMcpClient,
+					} }
+				/>
 				{ activityMedia && isDesktop && (
 					<ActivityMedia
 						className={ clsx( {

@@ -1,0 +1,38 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-section-header {
+	align-items: flex-end;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 48px auto 0 auto;
+	max-width: 1220px;
+	padding: 24px;
+}
+
+.theme-section-header__title {
+	color: var(--studio-gray-100);
+	font-family: $brand-serif;
+	font-size: rem(40px);
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+
+	@include break-small {
+		font-size: rem(50px);
+	}
+}
+
+.theme-section-header__subtitle {
+	color: var(--studio-gray-80);
+	font-size: $font-body-large;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.theme-section-header__button.components-button.is-secondary {
+	--wp-components-color-accent: var(--studio-gray-80);
+	--wp-components-color-accent-darker-20: var(--studio-gray-100);
+}

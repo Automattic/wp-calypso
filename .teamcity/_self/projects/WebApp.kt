@@ -182,19 +182,6 @@ object BuildDockerImage : BuildType({
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
 
-		script {
-			name = "Restore git mtime"
-			scriptContent = """
-				#!/usr/bin/env bash
-				sudo apt-get install -y git-restore-mtime
-				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-			"""
-			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
-			dockerPull = true
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}
-
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
@@ -977,32 +964,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
-	steps {
-		bashNodeScript {
-			name = "Upload report and send Slack notification"
-			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
-			conditions {
-				matches("teamcity.build.branch", ".*e2e.*")
-			}
-			scriptContent = """
-				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
-				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
-
-				# Need to use -C to avoid creation of an unnecessary top level directory.
-				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
-
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
-
-				# Send custom Slack notification
-				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
-				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
