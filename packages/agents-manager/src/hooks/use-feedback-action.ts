@@ -8,12 +8,12 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-export interface UseFeedbackConfig {
+export interface UseFeedbackActionConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
 }
 
-export interface UseFeedbackReturn {
+export interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
@@ -86,11 +86,11 @@ export async function submitFeedback(
 		} );
 
 		if ( ! response.ok ) {
-			throw new Error( `[useFeedback] Feedback submission failed: ${ response.status }` );
+			throw new Error( `[useFeedbackAction] Feedback submission failed: ${ response.status }` );
 		}
 	} catch ( error ) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		throw new Error( `[useFeedback] Feedback submission failed: ${ message }` );
+		throw new Error( `[useFeedbackAction] Feedback submission failed: ${ message }` );
 	}
 }
 
@@ -158,10 +158,10 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 	return result;
 }
 
-export default function useFeedback( {
+export default function useFeedbackAction( {
 	registerMessageActions,
 	messages,
-}: UseFeedbackConfig ): UseFeedbackReturn {
+}: UseFeedbackActionConfig ): UseFeedbackActionReturn {
 	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
 	const { sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );

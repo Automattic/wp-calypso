@@ -9,9 +9,10 @@ import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
-import useCopyMessage from '../../hooks/use-copy-message';
-import useFeedback from '../../hooks/use-feedback';
+import useCopyAction from '../../hooks/use-copy-action';
+import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId } from '../../utils/agent-session';
 import {
@@ -28,6 +29,7 @@ import type {
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	ImageUploadHook,
+	UseCheckpointHook,
 } from '../../utils/load-external-providers';
 import type { NavigateFunction } from 'react-router-dom';
 
@@ -64,6 +66,8 @@ interface Props {
 	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
 	/** Called when the message count changes. */
 	onMessagesCountChange: ( count: number ) => void;
 }
@@ -87,6 +91,7 @@ export default function OrchestratorChat( {
 	getChatComponent,
 	siteBuildUtils,
 	useImageUpload,
+	useCheckpoint,
 	onMessagesCountChange,
 	navigate,
 }: Props ) {
@@ -159,14 +164,17 @@ export default function OrchestratorChat( {
 	// Save new chat route for cross-domain conversation restore.
 	useSaveNewChatRoute( agentId, messages );
 
+	// Register an "Undo" action on agent messages with checkpoints.
+	useCheckpointAction( registerMessageActions, useCheckpoint );
+
 	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
+	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
 		registerMessageActions,
 		messages,
 	} );
 
 	// Register a "Copy" action on plain-text agent messages.
-	useCopyMessage( registerMessageActions );
+	useCopyAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];

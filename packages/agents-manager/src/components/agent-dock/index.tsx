@@ -30,6 +30,7 @@ import type {
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	ImageUploadHook,
+	UseCheckpointHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -53,6 +54,8 @@ interface Props {
 	siteBuildUtils?: SiteBuildUtils;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
 }
 
 export default function AgentDock( {
@@ -65,6 +68,7 @@ export default function AgentDock( {
 	useSuggestions,
 	siteBuildUtils,
 	useImageUpload,
+	useCheckpoint,
 }: Props ) {
 	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
 
@@ -209,6 +213,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			navigate={ navigate }
 			useImageUpload={ useImageUpload }
+			useCheckpoint={ useCheckpoint }
 			onMessagesCountChange={ setOrchestratorMsgCount }
 		/>
 	);
