@@ -65,7 +65,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 					'It seems the page is not active for authentication. Please click anywhere on the page and try again while keeping the window open.'
 				),
 				NotAllowedError: translate(
-					'The security key interaction timed out or was canceled. Please try again.'
+					'The security key request was denied or timed out. If your browser does not support security keys, please use another verification method.'
 				),
 				AbortError: translate( 'The security key interaction was canceled. Please try again.' ),
 				SecurityError: translate(
