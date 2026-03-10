@@ -246,7 +246,7 @@ export default function SolutionsCardsUpsellStep( {
 						);
 					} ) }
 				</div>
-				<div className="cancel-purchase-form__upsell-buttons">
+				<div>
 					<Button
 						variant="secondary"
 						onClick={ handleDecline }
