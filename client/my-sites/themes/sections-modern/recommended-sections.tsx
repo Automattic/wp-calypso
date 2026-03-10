@@ -15,12 +15,12 @@ const FAVORITES_QUERY: ThemesQuery = {
 };
 
 const FRESH_QUERY: ThemesQuery = {
-	collection: '',
 	number: 6,
 	tier: '',
 	filter: '',
 	search: '',
 	page: 1,
+	sort: 'date',
 };
 
 const PARTNER_QUERY: ThemesQuery = {

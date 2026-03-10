@@ -18,7 +18,8 @@ export interface ThemesQuery {
 	tier: string;
 	filter: string;
 	search: string;
-	collection: string;
+	collection?: string;
+	sort?: string;
 }
 
 export function useThemeCollection( query: ThemesQuery ) {
