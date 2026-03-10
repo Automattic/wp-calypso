@@ -30,6 +30,12 @@ export type CardActionContext = {
 		siteUrl: string;
 		siteId: number;
 	} ) => void;
+	setOpenOdieWithContext: ( config: {
+		initialMessage: string;
+		section: string;
+		siteUrl: string;
+		siteId: number;
+	} ) => void;
 };
 
 export type SolutionCardConfigEntry = {
@@ -103,7 +109,17 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		id: 'ask-ai-assistant',
 		title: 'Ask our AI assistant',
 		subtitle: 'Use our AI assistant to quickly find solutions.',
-		// No CTA yet – card is label-only
+		onClick: ( ctx ) => {
+			ctx.setOpenOdieWithContext( {
+				initialMessage:
+					"User is contacting from pre-cancellation form. Cancellation reason they've given: " +
+					ctx.cancellationReason,
+				section: 'pre-cancellation-upsell',
+				siteUrl: ctx.site.URL,
+				siteId: ctx.site.ID,
+			} );
+			ctx.closeDialog();
+		},
 	},
 	{
 		id: 'upgrade-for-full-access',

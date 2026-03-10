@@ -35,7 +35,10 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const CARD_ICONS: Record< string, import('@wordpress/icons').IconType > = {
+const CARD_ICONS: Record<
+	string,
+	React.ComponentType | { path: React.ReactNode; viewBox?: string }
+> = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
 	'speak-with-support': comment,
@@ -170,7 +173,7 @@ export default function SolutionsCardsUpsellStep( {
 	const translate = useTranslate();
 	const [ busyButton, setBusyButton ] = useState( '' );
 	const solutions = getSolutionsForReason( cancellationReason );
-	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat, setOpenOdieWithContext } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
 	const filteredSolutions = solutions?.filter(
@@ -193,6 +196,7 @@ export default function SolutionsCardsUpsellStep( {
 		cancellationReason,
 		onClickDowngrade,
 		setNewMessagingChat,
+		setOpenOdieWithContext,
 	};
 
 	const handleDecline = () => {
