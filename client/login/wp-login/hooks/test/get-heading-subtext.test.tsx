@@ -3,10 +3,11 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import { useTranslate } from 'i18n-calypso';
 import getHeadingSubText from '../get-heading-subtext';
 
 describe( 'getHeadingSubText', () => {
-	const translate = ( text: string ) => text;
+	const translate = ( ( text ) => text ) as ReturnType< typeof useTranslate >;
 
 	test( 'appends partner consent copy when ToS is primary', () => {
 		const subtext = getHeadingSubText( {
