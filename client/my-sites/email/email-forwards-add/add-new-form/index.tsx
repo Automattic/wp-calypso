@@ -18,6 +18,10 @@ export function NewForwardForm( {
 	const [ destinations, setDestinations ] = React.useState< string[] >( [] );
 	const [ mxWarningAcknowledged, setMxWarningAcknowledged ] = React.useState( false );
 
+	React.useEffect( () => {
+		setMxWarningAcknowledged( false );
+	}, [ showMxWarning ] );
+
 	const existingForwardsForMailbox = existingEmailForwards?.filter(
 		( forward ) =>
 			forward.mailbox.localeCompare( mailbox, undefined, { sensitivity: 'base' } ) === 0

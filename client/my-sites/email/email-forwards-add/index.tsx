@@ -158,7 +158,7 @@ const EmailForwardsAdd = ( {
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<QueryDomainDns domain={ selectedDomainName } />
+			{ selectedDomainName && <QueryDomainDns domain={ selectedDomainName } /> }
 
 			<Main wideLayout className="email-forwards-add">
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
