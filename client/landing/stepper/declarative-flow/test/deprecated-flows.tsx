@@ -15,7 +15,6 @@ const frozenDeprecatedV1Flows = [
 	'connect-domain',
 	'transferring-hosted-site',
 	'domain-transfer',
-	'google-transfer',
 	'plugin-bundle',
 	'hundred-year-plan',
 	'domain-user-transfer',

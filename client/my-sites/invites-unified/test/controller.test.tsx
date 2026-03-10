@@ -121,6 +121,51 @@ describe( 'maybeUseUnifiedInvite', () => {
 		expect( next ).toHaveBeenCalled();
 	} );
 
+	test( 'uses unified flow for logged-out users on CIAB sites', async () => {
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	test( 'uses unified flow when social callback params are present', async () => {
+		mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+			if ( param === 'code' ) {
+				return 'oauth-code';
+			}
+			return undefined;
+		} );
+
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
 	test( 'falls back to legacy flow on API error', async () => {
 		mockWpcomGet.mockRejectedValue( new Error( 'API Error' ) );
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	lock,
 	people,
@@ -52,7 +51,6 @@ import { isPressableAddonProduct } from '../../../lib/hosting';
 export default function useProductFilterOptions() {
 	const translate = useTranslate();
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	const isPressableAddonsEnabled = isEnabled( 'a4a-pressable-addons' );
 	const { data: productsAndPlans = [] } = useProductsQuery();
 	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
 		usePressableAddonVisibility();
@@ -76,7 +74,7 @@ export default function useProductFilterOptions() {
 				label: translate( 'WooCommerce' ) as string,
 				image: <img width={ 80 } src={ WooLogoColor } alt="WooCommerce" />,
 			},
-			...( isPressableAddonsEnabled && hasPressableAddonsAvailable && canShowPressableAddonsByMode
+			...( hasPressableAddonsAvailable && canShowPressableAddonsByMode
 				? [
 						{
 							key: PRODUCT_CATEGORY_PRESSABLE_ADDON,

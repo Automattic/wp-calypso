@@ -21,7 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getCiabConfig } from 'calypso/lib/partner-branding';
+import { getEffectiveCiabConfig } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
@@ -494,9 +494,9 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			ciabConfig: getCiabConfig(
-				get( getCurrentQueryArguments( state ), 'from' ) ||
-					get( getInitialQueryArguments( state ), 'from' )
+			ciabConfig: getEffectiveCiabConfig(
+				get( getCurrentQueryArguments( state ), 'from' ),
+				get( getInitialQueryArguments( state ), 'from' )
 			),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),

@@ -199,7 +199,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 	const ref = new URLSearchParams( window.location.search ).get( 'ref' );
 
 	return {
-		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&spec_id=',
+		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover',
 			url: buildCiabDashboardLink( '/sites' ),

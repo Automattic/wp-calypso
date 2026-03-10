@@ -60,6 +60,7 @@ import {
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -357,7 +358,8 @@ export function PurchaseItemStatus( {
 		isDisconnectedSite &&
 		! isAkismetTemporarySitePurchase( purchase ) &&
 		! isMarketplaceTemporarySitePurchase( purchase ) &&
-		! isA4ATemporarySitePurchase( purchase )
+		! isA4ATemporarySitePurchase( purchase ) &&
+		! isA4ABillingDragonPurchase( purchase )
 	) {
 		if ( isJetpackTemporarySitePurchase( purchase ) ) {
 			return (
@@ -883,7 +885,8 @@ class PurchaseItem extends Component<
 			if (
 				! isDisconnectedSite ||
 				purchase.isJetpackPlanOrProduct ||
-				isTemporarySitePurchase( purchase )
+				isTemporarySitePurchase( purchase ) ||
+				isA4ABillingDragonPurchase( purchase )
 			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );

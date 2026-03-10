@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from '@wordpress/element';
+import { createContext, useCallback, useContext, useState } from '@wordpress/element';
+import { getSessionId } from '../utils/agent-session';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -29,6 +30,8 @@ export interface AgentsManagerContextType {
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from AgentSetup after initialization). */
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
+	/** Returns the active session ID from agentConfig or stored session. */
+	getActiveSessionId: () => string;
 }
 
 const defaultContext: AgentsManagerContextType = {
@@ -40,30 +43,20 @@ const defaultContext: AgentsManagerContextType = {
 	isEligibleForChat: false,
 	agentConfig: null,
 	setAgentConfig: () => {},
+	getActiveSessionId: () => '',
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
 
-/**
- * Props for AgentsManagerContextProvider.
- *
- * Requires `sectionName` to be provided. Other fields are optional
- * and will use defaults if not provided.
- */
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
-	value: Partial< AgentsManagerContextType > & Pick< AgentsManagerContextType, 'sectionName' >;
+	value: Partial<
+		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+	> & { sectionName: string };
 }
 
 /**
  * Provider component that makes AgentsManager data available to all children.
- *
- * Usage:
- * ```tsx
- * <AgentsManagerContextProvider value={{ sectionName: 'wp-admin', currentUser, site }}>
- *   <YourComponent />
- * </AgentsManagerContextProvider>
- * ```
  */
 export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProviderProps > = ( {
 	children,
@@ -72,9 +65,20 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 
+	const getActiveSessionId = useCallback( () => {
+		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
+	}, [ agentConfig ] );
+
 	return (
 		<AgentsManagerContext.Provider
-			value={ { ...defaultContext, ...value, isLoggedIn, agentConfig, setAgentConfig } }
+			value={ {
+				...defaultContext,
+				...value,
+				isLoggedIn,
+				agentConfig,
+				setAgentConfig,
+				getActiveSessionId,
+			} }
 		>
 			{ children }
 		</AgentsManagerContext.Provider>

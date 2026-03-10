@@ -58,6 +58,8 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.activityActor.actorName ).toBe( 'Jane Doe' );
 		expect( activity.activityActor.isCli ).toBe( true );
 		expect( activity.activityActor.isSupport ).toBe( false );
+		expect( activity.activityActor.isMcpAgent ).toBeUndefined();
+		expect( activity.activityActor.mcpClient ).toBeUndefined();
 		expect( activity.activityTs ).toBe( Date.parse( '2024-01-01T00:00:00Z' ) );
 		expect( activity.activityUnparsedTs ).toBe( '2024-01-01T00:00:00Z' );
 		expect( activity.activityIsRewindable ).toBe( true );
@@ -94,5 +96,38 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.activityStatus ).toBe( '' );
 		expect( activity.activityTs ).toBe( 0 );
 		expect( activity.rewindId ).toBeUndefined();
+	} );
+
+	it( 'maps MCP agent fields when present on the actor', () => {
+		const entry: ActivityLogEntry = {
+			activity_id: '99',
+			actor: {
+				name: 'Eoin',
+				role: 'administrator',
+				type: 'Person',
+				is_mcp_agent: true,
+				mcp_client: 'Bruno 1.0.0',
+				icon: {
+					type: 'Image',
+					url: 'https://example.com/avatar.png',
+				},
+			},
+			content: { text: 'Updated option' },
+			type: 'Announce',
+			gridicon: 'cog',
+			last_published: '2024-06-01T12:00:00Z',
+			name: 'option__update',
+			is_rewindable: false,
+			published: '2024-06-01T12:00:00Z',
+			rewind_id: '',
+			status: 'success',
+			summary: 'Option updated',
+			streams: [],
+		};
+		const activity = transformActivityLogEntry( entry );
+
+		expect( activity.activityActor.isMcpAgent ).toBe( true );
+		expect( activity.activityActor.mcpClient ).toBe( 'Bruno 1.0.0' );
+		expect( activity.activityActor.actorName ).toBe( 'Eoin' );
 	} );
 } );

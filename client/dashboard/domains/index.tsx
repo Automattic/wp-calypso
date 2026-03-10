@@ -1,5 +1,4 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -54,7 +53,7 @@ function Domains() {
 	} );
 
 	const { data: domains } = useSuspenseQuery( {
-		...domainsQuery(),
+		...queries.domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},

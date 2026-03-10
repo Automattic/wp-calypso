@@ -10,8 +10,12 @@
 	padding-bottom: 4px;
 
 	.agents-manager-chat-header__back-btn {
-		color: var(--color-foreground);
 		padding: 0;
+
+		&,
+		&:hover:not( :disabled ) {
+			color: var( --color-foreground );
+		}
 	}
 
 	&:has( .agents-manager-chat-header__title ) {
@@ -21,7 +25,7 @@
 	&__title {
 		font-size: 14px;
 		font-weight: 600;
-		color: var(--color-foreground);
+		color: var( --color-foreground );
 		flex-grow: 1;
 	}
 
@@ -42,7 +46,7 @@
 		&.components-button,
 		.components-button {
 			svg {
-				fill: var(--color-foreground);
+				fill: var( --color-foreground );
 			}
 		}
 	}

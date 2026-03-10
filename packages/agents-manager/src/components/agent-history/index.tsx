@@ -3,6 +3,8 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -37,11 +39,18 @@ export default function AgentHistory( {
 	onSelectConversation,
 	onNewChat,
 }: Props ) {
+	const { getActiveSessionId } = useAgentsManagerContext();
+
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const navigate = useNavigate();
+
+	const handleBack = () => {
+		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	};
 
 	return (
 		<AgentUI.Container
@@ -61,6 +70,7 @@ export default function AgentHistory( {
 			<AgentUI.ConversationView>
 				<ChatHeader
 					onClose={ onClose }
+					onBack={ handleBack }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
