@@ -1,5 +1,6 @@
+import { siteSubscriptionDetailsQuery } from '@automattic/api-queries';
 import { Reader } from '@automattic/data-stores';
-import { useSiteSubscriptionDetailsQuery } from '@automattic/data-stores/src/reader/queries';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo } from 'react';
 import { SiteSubscriptionContext } from 'calypso/blocks/reader-site-subscription';
 import { Path } from 'calypso/blocks/reader-site-subscription/context';
@@ -24,7 +25,9 @@ const SiteSubscriptionProvider: React.FC< SiteSubscriptionProviderProps > = ( {
 	blogId,
 	subscriptionId,
 } ) => {
-	const { data, isLoading, error } = useSiteSubscriptionDetailsQuery( blogId, subscriptionId );
+	const { data, isLoading, error } = useQuery(
+		siteSubscriptionDetailsQuery( blogId, subscriptionId )
+	);
 
 	let subscriptionData: Reader.SiteSubscriptionDetails< string > | undefined;
 	let subscriptionError: Reader.ErrorResponse | undefined;
