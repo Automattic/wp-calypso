@@ -7,7 +7,7 @@ import { useDispatch } from 'calypso/state';
 import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
 
 type GiftSubscriptionModalProps = {
-	userId: number;
+	userId: number | string;
 	siteId: number;
 	username: string;
 	onCancel: () => void;
@@ -16,7 +16,7 @@ type GiftSubscriptionModalProps = {
 
 type Gift = {
 	gift_id: number | null;
-	user_id: number;
+	user_id: number | string;
 	plan_id: number;
 };
 

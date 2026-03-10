@@ -182,7 +182,8 @@ export default function SubscriberDataViews( {
 				subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
 					? parseInt( subscriberId, 10 )
 					: undefined,
-			userId: subscriberDetails?.user_id,
+			userId:
+				typeof subscriberDetails?.user_id === 'number' ? subscriberDetails.user_id : undefined,
 			enabled: !! subscriberId && !! siteId,
 		} );
 
@@ -428,12 +429,9 @@ export default function SubscriberDataViews( {
 
 					if ( ! subscriber.user_id ) {
 						dispatch(
-							errorNotice(
-								translate(
-									'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
-								),
-								{ duration: 10000 }
-							)
+							errorNotice( translate( 'Unable to gift a subscription to this subscriber.' ), {
+								duration: 10000,
+							} )
 						);
 						return;
 					}
