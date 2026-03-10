@@ -9,6 +9,31 @@ import {
 import { tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
 
+/**
+ * Annotates the current test with user and site details for easier debugging.
+ */
+function annotateUser( userDetails: NewUserResponse ): void {
+	test.info().annotations.push( {
+		type: 'user_id',
+		description: String( userDetails.body.user_id ),
+	} );
+	test.info().annotations.push( {
+		type: 'username',
+		description: userDetails.body.username,
+	} );
+}
+
+function annotateSite( siteDetails: NewSiteResponse ): void {
+	test.info().annotations.push( {
+		type: 'site_id',
+		description: String( siteDetails.blog_details.blogid ),
+	} );
+	test.info().annotations.push( {
+		type: 'site_slug',
+		description: siteDetails.blog_details.site_slug as string,
+	} );
+}
+
 test.describe(
 	'Setup Domain Flows',
 	{
@@ -42,6 +67,7 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -62,6 +88,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -91,6 +118,7 @@ test.describe(
 			await test.step( 'And I sign up as a new user', async function () {
 				const testUser = helperData.getNewTestUser();
 				const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 				accountsToCleanup.push( { testUser, newUserDetails } );
 			} );
 
@@ -137,10 +165,14 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
+			await test.step( 'And I search for a domain to skip', async function () {
 				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I skip the domain purchase', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
@@ -149,6 +181,7 @@ test.describe(
 					siteCreationPlan,
 					new RegExp( '.*/home/.*' )
 				);
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -215,10 +248,14 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
+			await test.step( 'And I search for a domain to skip', async function () {
 				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I skip the domain purchase', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
@@ -227,6 +264,7 @@ test.describe(
 					siteCreationPlan,
 					new RegExp( '.*/home/.*' )
 				);
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -297,15 +335,20 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
+			await test.step( 'And I search for a domain to skip', async function () {
 				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I skip the domain purchase', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -313,13 +356,17 @@ test.describe(
 				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
-			await test.step( 'When I enter billing and payment details', async function () {
+			await test.step( 'When I enter billing details', async function () {
 				const paymentDetails = helperData.getTestPaymentDetails();
 				await pageCartCheckout.enterBillingDetails( paymentDetails );
+			} );
+
+			await test.step( 'And I enter payment details', async function () {
+				const paymentDetails = helperData.getTestPaymentDetails();
 				await pageCartCheckout.enterPaymentDetails( paymentDetails );
 			} );
 
-			await test.step( 'When I can make the purchase', async function () {
+			await test.step( 'And I make the purchase', async function () {
 				await pageCartCheckout.purchase( { timeout: 90 * 1000 } );
 			} );
 
@@ -360,8 +407,11 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
+			await test.step( 'And I navigate to Me', async function () {
 				await pageMyProfile.visit();
+			} );
+
+			await test.step( 'And I open the Purchases page', async function () {
 				await componentMeSidebar.openMobileMenu();
 				await componentMeSidebar.navigate( 'Purchases' );
 			} );
@@ -371,15 +421,20 @@ test.describe(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
+			} );
+
+			await test.step( 'And I initiate plan cancellation', async function () {
 				await pagePurchases.cancelPurchase( 'Cancel plan' );
 			} );
 
-			await test.step( 'And I cancel the plan renewal', async function () {
+			await test.step( 'And I complete the cancellation flow', async function () {
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
+			} );
 
+			await test.step( 'Then I see the refund confirmation', async function () {
 				await componentNotice.noticeShown(
 					'Your refund has been processed and your purchase removed.',
 					{
@@ -410,6 +465,7 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -430,6 +486,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -463,15 +520,20 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
+			await test.step( 'And I search for a domain to skip', async function () {
 				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I skip the domain purchase', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -529,15 +591,20 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
-			await test.step( 'And I skip the domains step', async function () {
+			await test.step( 'And I search for a domain to skip', async function () {
 				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I skip the domain purchase', async function () {
 				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
@@ -545,9 +612,13 @@ test.describe(
 				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
-			await test.step( 'When I enter billing and payment details', async function () {
+			await test.step( 'When I enter billing details', async function () {
 				const paymentDetails = helperData.getTestPaymentDetails();
 				await pageCartCheckout.enterBillingDetails( paymentDetails );
+			} );
+
+			await test.step( 'And I enter payment details', async function () {
+				const paymentDetails = helperData.getTestPaymentDetails();
 				await pageCartCheckout.enterPaymentDetails( paymentDetails );
 			} );
 
@@ -581,8 +652,11 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
+			await test.step( 'And I navigate to Me', async function () {
 				await pageMyProfile.visit();
+			} );
+
+			await test.step( 'And I open the Purchases page', async function () {
 				await componentMeSidebar.openMobileMenu();
 				await componentMeSidebar.navigate( 'Purchases' );
 			} );
@@ -592,15 +666,20 @@ test.describe(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
+			} );
+
+			await test.step( 'And I initiate plan cancellation', async function () {
 				await pagePurchases.cancelPurchase( 'Cancel plan' );
 			} );
 
-			await test.step( 'And I cancel the plan renewal', async function () {
+			await test.step( 'And I complete the cancellation flow', async function () {
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
+			} );
 
+			await test.step( 'Then I see the refund confirmation', async function () {
 				await componentNotice.noticeShown(
 					'Your refund has been processed and your purchase removed.',
 					{
@@ -631,6 +710,7 @@ test.describe(
 
 			await test.step( 'And I sign up as a new user', async function () {
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				annotateUser( newUserDetails );
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
@@ -651,6 +731,7 @@ test.describe(
 
 			await test.step( `And I select the ${ planName } plan`, async function () {
 				const newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+				annotateSite( newSiteDetails );
 				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
 			} );
 
