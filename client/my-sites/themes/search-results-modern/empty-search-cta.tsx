@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -42,13 +43,15 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 						className="empty-search-cta__illustration empty-search-cta__illustration--ai"
 						aria-hidden="true"
 					/>
-					<h3 className="empty-search-cta__card-title">{ translate( 'AI website builder' ) }</h3>
-					<p className="empty-search-cta__card-description">
+					<Badge type="info" className="empty-search-cta__card-label">
+						{ translate( 'AI website builder' ) }
+					</Badge>
+					<p className="empty-search-cta__card-text">
 						{ preventWidows( translate( 'Create a WordPress.com website by chatting with AI.' ) ) }
 					</p>
 					<Button
 						className="empty-search-cta__button"
-						variant="primary"
+						variant="secondary"
 						href="/setup/ai-site-builder"
 						onClick={ trackAIBuilderClick }
 					>
@@ -60,15 +63,17 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 						className="empty-search-cta__illustration empty-search-cta__illustration--difm"
 						aria-hidden="true"
 					/>
-					<h3 className="empty-search-cta__card-title">{ translate( 'Let us do it for you' ) }</h3>
-					<p className="empty-search-cta__card-description">
+					<Badge type="info" className="empty-search-cta__card-label">
+						{ translate( 'Let us do it for you' ) }
+					</Badge>
+					<p className="empty-search-cta__card-text">
 						{ preventWidows(
 							translate( 'Get a professional website in days\u2014built by WordPress.com experts.' )
 						) }
 					</p>
 					<Button
 						className="empty-search-cta__button"
-						variant="primary"
+						variant="secondary"
 						href="https://wordpress.com/website-design-service/"
 						onClick={ trackDIFMClick }
 					>
@@ -80,8 +85,10 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 						className="empty-search-cta__illustration empty-search-cta__illustration--upload"
 						aria-hidden="true"
 					/>
-					<h3 className="empty-search-cta__card-title">{ translate( 'Upload theme' ) }</h3>
-					<p className="empty-search-cta__card-description">
+					<Badge type="info" className="empty-search-cta__card-label">
+						{ translate( 'Upload theme' ) }
+					</Badge>
+					<p className="empty-search-cta__card-text">
 						{ preventWidows(
 							translate(
 								'Already have a WordPress theme? Upload it here and start customizing right away.'
@@ -90,7 +97,7 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 					</p>
 					<Button
 						className="empty-search-cta__button"
-						variant="primary"
+						variant="secondary"
 						href="/themes/upload"
 						onClick={ trackUploadThemeClick }
 					>

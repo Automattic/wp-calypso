@@ -3,9 +3,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .empty-search-cta {
-	margin: 48px auto;
+	margin: 0 auto;
 	max-width: 1220px;
-	padding-inline: 24px;
+	padding: 24px 24px 96px 24px;
 }
 
 .empty-search-cta__header {
@@ -15,13 +15,13 @@
 .empty-search-cta__title {
 	color: var( --studio-gray-100 );
 	font-family: $brand-serif;
-	font-size: rem( 32px );
+	font-size: rem( 40px );
 	font-weight: 400;
 	line-height: 1.2;
 	margin: 0;
 
 	@include break-medium {
-		font-size: rem( 40px );
+		font-size: rem(50px);
 	}
 }
 
@@ -47,14 +47,12 @@
 }
 
 .empty-search-cta__card {
-	background-color: var( --studio-gray-0 );
-	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
-	padding: 24px;
 }
 
 .empty-search-cta__illustration {
+	box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
 	border-radius: 8px;
 	height: 160px;
 	margin-bottom: 16px;
@@ -72,30 +70,29 @@
 	background-color: var( --studio-green-5 );
 }
 
-.empty-search-cta__card-title {
-	color: var( --studio-gray-100 );
-	font-size: $font-body-large;
-	font-weight: 600;
-	line-height: 1.3;
-	margin: 0 0 8px;
+.empty-search-cta__card-label.badge.badge--info {
+	border-radius: 4px;
+	color: var( --studio-wordpress-blue );
+	background-color: #ebeefc;
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	margin-bottom: 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: fit-content;
 }
 
-.empty-search-cta__card-description {
-	color: var( --studio-gray-80 );
+.empty-search-cta__card-text {
+	color: var( --studio-gray-100 );
 	flex: 1;
 	font-size: $font-body;
 	line-height: 1.5;
 	margin: 0 0 16px;
 }
 
-.empty-search-cta__button.components-button.is-primary {
+.empty-search-cta__button.components-button.is-secondary {
 	--wp-components-color-accent: var( --studio-gray-80 );
-	--wp-components-color-accent-darker-10: var( --studio-gray-100 );
 	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
-
-	border-radius: 4px;
-	font-size: $font-body;
-	height: auto;
-	padding: 12px 24px;
 	width: fit-content;
 }

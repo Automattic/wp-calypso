@@ -34,9 +34,12 @@ describe( 'EmptySearchCTA', () => {
 
 	test( 'renders all three CTA cards', () => {
 		render( <EmptySearchCTA title="No themes found" /> );
-		expect( screen.getByRole( 'heading', { name: 'AI website builder' } ) ).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'Let us do it for you' } ) ).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'Upload theme' } ) ).toBeVisible();
+		expect( screen.getByText( 'AI website builder' ) ).toBeVisible();
+		expect( screen.getByText( 'Let us do it for you' ) ).toBeVisible();
+		// "Upload theme" appears as both a label and a button; query the label specifically.
+		expect(
+			screen.getByText( 'Upload theme', { selector: '.empty-search-cta__card-label' } )
+		).toBeVisible();
 	} );
 
 	test( 'renders CTA buttons with correct labels', () => {
