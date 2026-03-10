@@ -15,6 +15,7 @@ jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () =
 } ) );
 
 const mockLoggedOutInviteAccept = jest.fn();
+const mockAlreadyMemberScreen = jest.fn();
 
 jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
 	__esModule: true,
@@ -32,8 +33,13 @@ jest.mock( '../screens/accept-invite-screen', () => ( {
 
 jest.mock( '../screens/already-member-screen', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="already-member-screen">AlreadyMemberScreen</div>,
+	default: ( props: unknown ) => {
+		mockAlreadyMemberScreen( props );
+		return <div data-testid="already-member-screen">AlreadyMemberScreen</div>;
+	},
 } ) );
+
+jest.mock( '../style.scss', () => ( {} ) );
 
 const mockStore = configureStore();
 
@@ -57,6 +63,7 @@ describe( 'UnifiedInviteAccept', () => {
 	beforeEach( () => {
 		mockNormalizeInvite.mockReset();
 		mockLoggedOutInviteAccept.mockClear();
+		mockAlreadyMemberScreen.mockClear();
 		mockNormalizeInvite.mockReturnValue( {
 			inviteKey: 'abc123',
 			role: 'administrator',
@@ -83,6 +90,11 @@ describe( 'UnifiedInviteAccept', () => {
 		);
 
 		expect( screen.getByTestId( 'logged-out-invite-screen' ) ).toBeVisible();
+		expect(
+			screen
+				.getByTestId( 'logged-out-invite-screen' )
+				.closest( '.invites-unified__logged-out-shell' )
+		).not.toBeNull();
 	} );
 
 	test( 'renders AcceptInviteScreen when user is logged in', () => {
@@ -100,6 +112,35 @@ describe( 'UnifiedInviteAccept', () => {
 
 		expect( mockLoggedOutInviteAccept ).not.toHaveBeenCalled();
 		expect( screen.getByTestId( 'accept-invite-screen' ) ).toBeInTheDocument();
+		expect( mockNormalizeInvite ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does not normalize invite data for logged-in already-member flow with partial invite data', () => {
+		const store = mockStore( { currentUser: { id: 1 } } );
+		const partialInviteData = {
+			blog_details: {
+				title: 'Test Store',
+				domain: 'test.store',
+			},
+		};
+
+		render(
+			<Provider store={ store }>
+				<UnifiedInviteAccept
+					{ ...defaultProps }
+					inviteData={ partialInviteData }
+					inviteError={ { error: 'already_member', message: 'Already a member' } }
+				/>
+			</Provider>
+		);
+
+		expect( screen.getByTestId( 'already-member-screen' ) ).toBeVisible();
+		expect( mockNormalizeInvite ).not.toHaveBeenCalled();
+		expect( mockAlreadyMemberScreen ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				blogDetails: partialInviteData.blog_details,
+			} )
+		);
 	} );
 
 	test( 'passes activationKey and authKey to logged-out invite screen', () => {

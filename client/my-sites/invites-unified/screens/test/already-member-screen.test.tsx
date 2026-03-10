@@ -8,6 +8,24 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { AlreadyMemberScreen } from '../already-member-screen';
 
+const mockCenteredColumnLayout = jest.fn(
+	( {
+		children,
+		heading,
+		topBar,
+	}: {
+		children: React.ReactNode;
+		heading: React.ReactNode;
+		topBar: React.ReactNode;
+	} ) => (
+		<div data-testid="step-layout">
+			{ topBar }
+			{ heading }
+			{ children }
+		</div>
+	)
+);
+
 jest.mock(
 	'@automattic/onboarding',
 	() => ( {
@@ -21,21 +39,13 @@ jest.mock(
 			TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
 				<div data-testid="step-topbar">{ logo }</div>
 			),
-			CenteredColumnLayout: ( {
-				children,
-				heading,
-				topBar,
-			}: {
+			CenteredColumnLayout: ( props: {
 				children: React.ReactNode;
 				heading: React.ReactNode;
 				topBar: React.ReactNode;
-			} ) => (
-				<div data-testid="step-layout">
-					{ topBar }
-					{ heading }
-					{ children }
-				</div>
-			),
+				columnWidth: number;
+				verticalAlign: string;
+			} ) => mockCenteredColumnLayout( props ),
 		},
 	} ),
 	{ virtual: true }
@@ -149,11 +159,30 @@ const setupUser = ( userOverrides = {} ) => {
 describe( 'AlreadyMemberScreen', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCenteredColumnLayout.mockClear();
 		mockDispatch.mockReturnValue( undefined );
 		setupUser();
 	} );
 
 	describe( 'rendering', () => {
+		test( 'passes centered layout props', () => {
+			const store = createStore();
+
+			render(
+				<Provider store={ store }>
+					<AlreadyMemberScreen />
+				</Provider>
+			);
+
+			expect( mockCenteredColumnLayout ).toHaveBeenCalled();
+			expect( mockCenteredColumnLayout.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( {
+					columnWidth: 4,
+					verticalAlign: 'center',
+				} )
+			);
+		} );
+
 		test( 'renders the title and description', () => {
 			const store = createStore();
 
