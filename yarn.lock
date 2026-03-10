@@ -2649,6 +2649,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/wpcom-gutenberg-rtc@workspace:apps/wpcom-gutenberg-rtc":
+  version: 0.0.0-use.local
+  resolution: "@automattic/wpcom-gutenberg-rtc@workspace:apps/wpcom-gutenberg-rtc"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/hooks": "npm:^4.23.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    "@wordpress/sync": "npm:^1.23.0"
+    lib0: "npm:^0.2.117"
+    postcss: "npm:^8.5.3"
+    typescript: "npm:^5.8.3"
+    webpack: "npm:^5.99.8"
+    y-protocols: "npm:^1.0.7"
+    yjs: "npm:^13.6.29"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/wpcom-template-parts@workspace:^, @automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts":
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
@@ -24930,15 +24949,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib0@npm:^0.2.42, lib0@npm:^0.2.74":
-  version: 0.2.82
-  resolution: "lib0@npm:0.2.82"
+"lib0@npm:^0.2.117, lib0@npm:^0.2.42, lib0@npm:^0.2.74, lib0@npm:^0.2.85, lib0@npm:^0.2.99":
+  version: 0.2.117
+  resolution: "lib0@npm:0.2.117"
   dependencies:
     isomorphic.js: "npm:^0.2.4"
   bin:
+    0ecdsa-generate-keypair: bin/0ecdsa-generate-keypair.js
     0gentesthtml: bin/gentesthtml.js
     0serve: bin/0serve.js
-  checksum: f25d54dc998f968942ead4925c8b8da44c4d1777d32d3ddb73d142f7987d5c4c4e38497331de17a2cf272b7d4a28db58691f5757cebb36074e027178c45bd485
+  checksum: d1b9205890d5d0cbd95ffdb0d6df6f9fd2c315b89e195fc9b015f3778046fb34bc12e94205ccf410a3073b836444045dcef6671fa2f6d5a7f70ebf8b6b0c0616
   languageName: node
   linkType: hard
 
@@ -38661,12 +38681,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"y-protocols@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "y-protocols@npm:1.0.5"
+"y-protocols@npm:^1.0.5, y-protocols@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "y-protocols@npm:1.0.7"
   dependencies:
-    lib0: "npm:^0.2.42"
-  checksum: 6117d6658f3947cbcb8964db771d97f5947086eed2e738e69d67cc823b781b9e6c861973ba0a1d16d672332289cb84582d2d18b1dee6c6ef9d98b6b0bd3f34e1
+    lib0: "npm:^0.2.85"
+  peerDependencies:
+    yjs: ^13.0.0
+  checksum: 70e14ab50b9200e97602c5effc3e14ae4ea0f51479a1628569af7cc12a6739fbc02484335828f5c508a4bf6fa0c3ef5ae1c17e13346b7a6093abeb9627f59021
   languageName: node
   linkType: hard
 
@@ -38814,12 +38836,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yjs@npm:~13.6.6":
-  version: 13.6.7
-  resolution: "yjs@npm:13.6.7"
+"yjs@npm:^13.6.29, yjs@npm:~13.6.6":
+  version: 13.6.29
+  resolution: "yjs@npm:13.6.29"
   dependencies:
-    lib0: "npm:^0.2.74"
-  checksum: fd2cdcafa0c558f41ac5e16e82295e51b0084248c9339f512f2f293bc613fd03e99fe41376fcb180683c93b35841c41342e1c078fc5128dde683f7ac2a9a23d7
+    lib0: "npm:^0.2.99"
+  checksum: f300786ea63deac8a83e85598707ab9542e0a90b72fc0a1bcc77a58e618799de531ba4f85bcf349e647ad9e72bc4186edf50c4ecf67c8144cd53d3ac80d27351
   languageName: node
   linkType: hard
 
