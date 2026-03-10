@@ -119,10 +119,6 @@ export const siteRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: overviewUrl } );
 		}
 
-		if ( site.__inaccessible_jetpack_error && ! location.pathname.endsWith( overviewUrl ) ) {
-			throw redirect( { to: overviewUrl } );
-		}
-
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
 			throw redirect( { to: trialExpiredUrl } );
