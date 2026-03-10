@@ -21,6 +21,7 @@ import {
 } from '@wordpress/icons';
 import * as React from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
+import { ButtonStack } from '../../../../../components/button-stack';
 import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
@@ -351,9 +352,11 @@ export default function SolutionsCardsUpsellStep( {
 					);
 				} ) }
 			</SummaryButtonList>
-			<Button variant="secondary" onClick={ onDeclineUpsell } disabled={ cancellationInProgress }>
-				{ __( 'No thanks, cancel my plan' ) }
-			</Button>
+			<ButtonStack justify="flex-start">
+				<Button variant="secondary" onClick={ onDeclineUpsell } disabled={ cancellationInProgress }>
+					{ __( 'No thanks, cancel my plan' ) }
+				</Button>
+			</ButtonStack>
 		</VStack>
 	);
 }
