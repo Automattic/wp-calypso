@@ -1,13 +1,53 @@
 import {
 	BrowserManager,
 	cancelAtomicPurchaseFlow,
+	DataHelper,
 	NewSiteResponse,
 	NewTestUserDetails,
 	NewUserResponse,
 	RestAPIClient,
+	UserSignupPage,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 import { tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
+
+/**
+ * Signs up a new user via the UI and creates a site via the REST API.
+ *
+ * This avoids the flaky onboarding UI flow (skip domains → select plan → captureNewSiteResponse)
+ * while still using the required UI signup (no user-creation API exists).
+ */
+async function signupAndCreateSiteViaAPI( {
+	page,
+	pageUserSignUp,
+	helperData,
+}: {
+	page: Page;
+	pageUserSignUp: UserSignupPage;
+	helperData: typeof DataHelper;
+} ): Promise< {
+	testUser: NewTestUserDetails;
+	newUserDetails: NewUserResponse;
+	newSiteDetails: NewSiteResponse;
+	restAPIClient: RestAPIClient;
+} > {
+	const testUser = helperData.getNewTestUser();
+
+	// Sign up via the domain flow entry point (authenticates the browser).
+	await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
+	const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+
+	// Create the site via REST API instead of going through onboarding UI.
+	const restAPIClient = new RestAPIClient(
+		{ username: testUser.username, password: testUser.password },
+		newUserDetails.body.bearer_token
+	);
+	const siteName = helperData.getBlogName();
+	const newSiteDetails = await restAPIClient.createSite( { name: siteName, title: siteName } );
+
+	return { testUser, newUserDetails, newSiteDetails, restAPIClient };
+}
 
 test.describe(
 	'Setup Domain Flows',
@@ -125,34 +165,24 @@ test.describe(
 			pageSignupPickPlan,
 			pageUserSignUp,
 		} ) => {
-			const siteCreationPlan = 'Free';
-			const testUser = helperData.getNewTestUser();
-			let newUserDetails: NewUserResponse;
 			let newSiteDetails: NewSiteResponse;
 			let selectedDomain: string;
 
-			await test.step( 'When I enter the onboarding flow', async function () {
-				await page.goto( helperData.getCalypsoURL( '/setup' ) );
+			await test.step( 'Given I have signed up and created a free site via API', async function () {
+				const result = await signupAndCreateSiteViaAPI( {
+					page,
+					pageUserSignUp,
+					helperData,
+				} );
+				newSiteDetails = result.newSiteDetails;
+				accountsToCleanup.push( {
+					testUser: result.testUser,
+					newUserDetails: result.newUserDetails,
+					newSiteDetails: result.newSiteDetails,
+				} );
 			} );
 
-			await test.step( 'And I sign up as a new user', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-			} );
-
-			await test.step( 'And I skip the domains step', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan(
-					siteCreationPlan,
-					new RegExp( '.*/home/.*' )
-				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
-			} );
-
-			await test.step( 'And I enter the domain flow', async function () {
+			await test.step( 'When I enter the domain flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
@@ -202,35 +232,25 @@ test.describe(
 			pageSignupPickPlan,
 			pageUserSignUp,
 		} ) => {
-			const siteCreationPlan = 'Free';
 			const domainAdditionPlan = 'Personal';
-			const testUser = helperData.getNewTestUser();
-			let newUserDetails: NewUserResponse;
 			let newSiteDetails: NewSiteResponse;
 			let selectedDomain: string;
 
-			await test.step( 'When I enter the onboarding flow', async function () {
-				await page.goto( helperData.getCalypsoURL( '/setup' ) );
+			await test.step( 'Given I have signed up and created a free site via API', async function () {
+				const result = await signupAndCreateSiteViaAPI( {
+					page,
+					pageUserSignUp,
+					helperData,
+				} );
+				newSiteDetails = result.newSiteDetails;
+				accountsToCleanup.push( {
+					testUser: result.testUser,
+					newUserDetails: result.newUserDetails,
+					newSiteDetails: result.newSiteDetails,
+				} );
 			} );
 
-			await test.step( 'And I sign up as a new user', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-			} );
-
-			await test.step( 'And I skip the domains step', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan(
-					siteCreationPlan,
-					new RegExp( '.*/home/.*' )
-				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
-			} );
-
-			await test.step( 'And I enter the domain flow', async function () {
+			await test.step( 'When I enter the domain flow', async function () {
 				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
 			} );
 
@@ -451,31 +471,25 @@ test.describe(
 			pageUserSignUp,
 		} ) => {
 			const planName = 'Personal';
-			const testUser = helperData.getNewTestUser();
 			let selectedDomain: string;
 			let newSiteDetails: NewSiteResponse;
-			let newUserDetails: NewUserResponse;
 
-			await test.step( 'When I enter the onboarding flow', async function () {
+			await test.step( 'Given I have signed up and created a free site via API', async function () {
 				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
-				await page.goto( helperData.getCalypsoURL( '/setup' ) );
+				const result = await signupAndCreateSiteViaAPI( {
+					page,
+					pageUserSignUp,
+					helperData,
+				} );
+				newSiteDetails = result.newSiteDetails;
+				accountsToCleanup.push( {
+					testUser: result.testUser,
+					newUserDetails: result.newUserDetails,
+					newSiteDetails: result.newSiteDetails,
+				} );
 			} );
 
-			await test.step( 'And I sign up as a new user', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-			} );
-
-			await test.step( 'And I skip the domains step', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
-
-			await test.step( `And I select the ${ planName } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
-			} );
-
-			await test.step( 'And I enter the domain flow with pre-selected site', async function () {
+			await test.step( 'When I enter the domain flow with pre-selected site', async function () {
 				await page.goto(
 					helperData.getCalypsoURL(
 						`/setup/domain?siteSlug=${ newSiteDetails.blog_details.site_slug as string }`
