@@ -368,7 +368,6 @@ import {
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
-	FEATURE_WOO_HOSTED_CSV_IMPORTER,
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
@@ -2950,11 +2949,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
 		getTitle: () => i18n.translate( 'Powerful commerce tools to start and grow your business' ),
-		getDescription: () => '',
-	},
-	[ FEATURE_WOO_HOSTED_CSV_IMPORTER ]: {
-		getSlug: () => FEATURE_WOO_HOSTED_CSV_IMPORTER,
-		getTitle: () => i18n.translate( 'Smart CSV importer to add products and services in bulk' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR ]: {
