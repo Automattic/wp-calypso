@@ -213,6 +213,20 @@ object BuildDockerImage : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 
+		script {
+			name = "Measure docker image size"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				IMAGE="registry.a8c.com/calypso/app:build-%build.number%"
+				SIZE_BYTES=$(docker image inspect "${'$'}IMAGE" --format '{{.Size}}')
+
+				echo "Built image size: ${'$'}SIZE_BYTES bytes"
+				echo "##teamcity[buildStatisticValue key='dockerImageSizeBytes' value='${'$'}SIZE_BYTES']"
+			"""
+		}
+
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
