@@ -163,7 +163,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 				) : (
 					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				) }
-				<h2 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h2>
+				<h1 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h1>
 				<p>
 					{ createInterpolateElement(
 						sprintf(
