@@ -426,10 +426,7 @@ export default function SubscriberDataViews( {
 						return;
 					}
 
-					// TODO: Subscriber.user_id is typed as number but can be a string
-					// (e.g., email address) at runtime. The type should be widened to
-					// number | string and downstream consumers updated to validate.
-					if ( ! subscriber.user_id || isNaN( Number( subscriber.user_id ) ) ) {
+					if ( ! subscriber.user_id ) {
 						dispatch(
 							errorNotice(
 								translate(
