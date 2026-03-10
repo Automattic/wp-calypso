@@ -338,7 +338,7 @@ export default function CancelPurchase() {
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
 	);
 	const {
-		mutate: applyCancellationOffer,
+		mutateAsync: applyCancellationOffer,
 		isPending: isApplyingOffer,
 		isSuccess: offerApplySuccess,
 		error: offerApplyError,
@@ -536,18 +536,27 @@ export default function CancelPurchase() {
 		purchase,
 		cancellationOffer
 	);
-	const onGetCancellationOffer = useCallback( () => {
-		recordEvent( 'calypso_purchases_cancel_get_discount' );
-		redirectBack();
-	}, [ recordEvent, redirectBack ] );
+	const onGetCancellationOffer = useCallback(
+		( newPurchaseId: string ) => {
+			recordEvent( 'calypso_purchases_cancel_get_discount' );
+			navigate( { to: purchasesRoute.to + `/${ newPurchaseId }` } );
+		},
+		[ navigate, recordEvent ]
+	);
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
-			applyCancellationOffer();
-			onGetCancellationOffer(); // Takes care of analytics.
+			applyCancellationOffer().then( ( data ) => {
+				if ( data.success ) {
+					onGetCancellationOffer( data.new_subscription_id ); // Takes care of analytics.
+				} else {
+					redirectBack();
+				}
+			} );
 		}
 	}, [
+		redirectBack,
 		isApplyingOffer,
 		offerApplySuccess,
 		offerApplyError,

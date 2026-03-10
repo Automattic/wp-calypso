@@ -23,13 +23,14 @@ export function CancellationOfferNotice( {
 					brand: isAkismet ? 'Akismet' : 'Jetpack',
 				} ) +
 					' ' +
+					( isAkismet ? akismetHeadline : jetpackHeadline ) +
+					' ' +
 					sprintf(
-						/* Translators: %(headline)s is already translated text; %(percentDiscount)d%% should be a percentage like 15% or 20% */
+						/* Translators: %(percentDiscount)d%% should be a percentage like 15% or 20% */
 						__(
-							'%(headline)s Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
+							'Your %(percentDiscount)d%% discount for %(productName)s will be applied next time you are billed.'
 						),
 						{
-							headline: isAkismet ? akismetHeadline : jetpackHeadline,
 							percentDiscount: purchase.cancellation_offer_notice_discount_percentage,
 							productName: purchase.product_name,
 						}
