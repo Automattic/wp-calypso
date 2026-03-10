@@ -2918,7 +2918,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
-		getTitle: () => i18n.translate( 'Connected seamlessly to your PayPal account' ),
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'Connected seamlessly to your WooPayments account' )
+				? i18n.translate( 'Connected seamlessly to your WooPayments account' )
+				: i18n.translate( 'Connected seamlessly to your PayPal account' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_MARKETING_TOOLS ]: {
