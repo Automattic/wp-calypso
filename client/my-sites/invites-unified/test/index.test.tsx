@@ -8,6 +8,37 @@ import configureStore from 'redux-mock-store';
 import { UnifiedInviteAccept } from '../index';
 
 const mockNormalizeInvite = jest.fn();
+const mockTopBar = jest.fn();
+
+jest.mock( '@automattic/onboarding', () => ( {
+	Step: {
+		TopBar: ( props: { logo?: React.ReactNode } ) => {
+			mockTopBar( props );
+			return (
+				<div data-testid="invite-top-bar">
+					{ props.logo ? <div data-testid="invite-top-bar-logo">{ props.logo }</div> : null }
+				</div>
+			);
+		},
+	},
+} ) );
+
+jest.mock( 'calypso/lib/partner-branding', () => ( {
+	getCiabConfigFromGarden: () => ( {
+		compactLogo: {
+			src: 'https://example.com/compact-logo.svg',
+			alt: 'Compact Logo',
+			width: 32,
+			height: 32,
+		},
+		logo: {
+			src: 'https://example.com/logo.svg',
+			alt: 'Logo',
+			width: 120,
+			height: 32,
+		},
+	} ),
+} ) );
 
 jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () => ( {
 	__esModule: true,
@@ -50,6 +81,11 @@ const defaultProps = {
 		blog_details: {
 			title: 'Test Store',
 			domain: 'test.store',
+			is_garden_site: true,
+			garden: {
+				partner: 'woo',
+				name: 'commerce',
+			},
 		},
 		invite: {
 			meta: {
@@ -62,6 +98,7 @@ const defaultProps = {
 describe( 'UnifiedInviteAccept', () => {
 	beforeEach( () => {
 		mockNormalizeInvite.mockReset();
+		mockTopBar.mockClear();
 		mockLoggedOutInviteAccept.mockClear();
 		mockAlreadyMemberScreen.mockClear();
 		mockNormalizeInvite.mockReturnValue( {
@@ -90,11 +127,18 @@ describe( 'UnifiedInviteAccept', () => {
 		);
 
 		expect( screen.getByTestId( 'logged-out-invite-screen' ) ).toBeVisible();
+		const topBar = screen.getByTestId( 'invite-top-bar' );
+		expect( topBar ).toBeVisible();
+		expect( screen.getByTestId( 'invite-top-bar-logo' ) ).toBeVisible();
+		const shell = screen
+			.getByTestId( 'logged-out-invite-screen' )
+			.closest( '.invites-unified__logged-out-shell' );
+		expect( shell ).not.toBeNull();
+		expect( topBar.closest( '.invites-unified__logged-out-layout' ) ).not.toBeNull();
 		expect(
-			screen
-				.getByTestId( 'logged-out-invite-screen' )
-				.closest( '.invites-unified__logged-out-shell' )
-		).not.toBeNull();
+			topBar.compareDocumentPosition( shell as Node ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		expect( mockTopBar.mock.calls[ 0 ][ 0 ].logo ).toBeDefined();
 	} );
 
 	test( 'renders AcceptInviteScreen when user is logged in', () => {

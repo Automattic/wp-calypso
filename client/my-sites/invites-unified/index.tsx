@@ -1,5 +1,7 @@
+import { Step } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -38,6 +40,17 @@ export function UnifiedInviteAccept( {
 	inviteError,
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
+	const branding =
+		blogDetails?.is_garden_site && blogDetails.garden
+			? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+					persistToSession: true,
+			  } )
+			: null;
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
+		<img { ...topBarLogoConfig } alt={ topBarLogoConfig.alt } />
+	) : undefined;
 	const legacyLoggedOutInvite = useMemo< LegacyLoggedOutInvite | null >( () => {
 		if ( isLoggedIn || ! inviteData || ! ( inviteData as { invite?: unknown } ).invite ) {
 			return null;
@@ -60,15 +73,17 @@ export function UnifiedInviteAccept( {
 		}
 
 		return (
-			<div className="invites-unified__logged-out-shell">
-				<LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />
+			<div className="invites-unified__logged-out-layout">
+				<Step.TopBar logo={ topBarLogo } />
+				<div className="invites-unified__logged-out-shell">
+					<LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />
+				</div>
 			</div>
 		);
 	}
 
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
-		const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
 	}
 
