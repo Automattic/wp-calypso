@@ -93,7 +93,7 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 		case 'upgrade-for-full-access':
 			return translate( 'Upgrade for full access' );
 		case 'get-theme-addon':
-			return translate( 'Get our theme add-on' );
+			return translate( 'Change your plan' );
 		case 'get-css-addon':
 			return translate( 'Get our CSS add-on' );
 		case 'find-guides':
@@ -133,7 +133,7 @@ function getTranslatedSubtitle(
 		case 'upgrade-for-full-access':
 			return translate( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
-			return translate( 'Unlock premium themes with a simple add-on.' );
+			return translate( 'Unlock premium themes on another plan.' );
 		case 'get-css-addon':
 			return translate( 'Customize every design detail with a simple add-on.' );
 		case 'find-guides':

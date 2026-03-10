@@ -1,4 +1,3 @@
-import { PRODUCT_WPCOM_UNLIMITED_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -133,11 +132,11 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 	{
 		id: 'get-theme-addon',
-		title: 'Get our theme add-on',
-		subtitle: 'Unlock premium themes with a simple add-on.',
-		getHref: ( ctx ) => `/checkout/${ ctx.site.slug }/${ PRODUCT_WPCOM_UNLIMITED_THEMES }`,
+		title: 'Change your plan',
+		subtitle: 'Unlock premium themes on another plan.',
+		getHref: ( ctx ) => `/plans/${ ctx.site.slug }`,
 		onClick: ( ctx ) => {
-			page( `/checkout/${ ctx.site.slug }/${ PRODUCT_WPCOM_UNLIMITED_THEMES }` );
+			page( `/plans/${ ctx.site.slug }` );
 			ctx.closeDialog();
 		},
 	},

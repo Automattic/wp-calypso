@@ -158,7 +158,7 @@ function getCardTitle( cardId: string ): string {
 		case 'upgrade-for-full-access':
 			return __( 'Upgrade for full access' );
 		case 'get-theme-addon':
-			return __( 'Get our theme add-on' );
+			return __( 'Change your plan' );
 		case 'get-css-addon':
 			return __( 'Get our CSS add-on' );
 		case 'find-guides':
@@ -196,7 +196,7 @@ function getCardDescription( cardId: string ): string {
 		case 'upgrade-for-full-access':
 			return __( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
-			return __( 'Unlock premium themes with a simple add-on.' );
+			return __( 'Unlock premium themes on another plan.' );
 		case 'get-css-addon':
 			return __( 'Customize every design detail with a simple add-on.' );
 		case 'find-guides':
