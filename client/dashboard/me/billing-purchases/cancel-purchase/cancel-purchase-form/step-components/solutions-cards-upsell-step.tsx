@@ -309,7 +309,10 @@ export default function SolutionsCardsUpsellStep( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<SummaryButtonList title={ __( 'Have you tried any of these options?' ) } density="medium">
+			<SummaryButtonList
+				title={ __( 'Before canceling, you can consider these options:' ) }
+				density="medium"
+			>
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
 						card.id !== 'ask-ai-assistant' &&
