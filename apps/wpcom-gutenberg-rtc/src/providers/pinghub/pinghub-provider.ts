@@ -70,11 +70,12 @@ class PingHubProvider extends ObservableV2< PingHubEvents > {
 	 * - Avoid duplicate emissions for the same status (unless there is an error).
 	 * - Only emit `connecting` when transitioning from `disconnected`.
 	 *
-	 * @param options        - Connection status object.
-	 * @param options.error  - Optional error details.
-	 * @param options.status - New connection status.
+	 * @param connectionStatus - Connection status object.
 	 */
-	protected emitStatus = ( { error, status }: ConnectionStatus ): void => {
+	protected emitStatus = ( connectionStatus: ConnectionStatus ): void => {
+		const error = connectionStatus.status === 'disconnected' ? connectionStatus.error : undefined;
+		const { status } = connectionStatus;
+
 		if ( this.status === status && ! error ) {
 			return;
 		}
@@ -85,7 +86,7 @@ class PingHubProvider extends ObservableV2< PingHubEvents > {
 		this.log( 'Status change', { status, error } );
 
 		this.status = status;
-		this.emit( 'status', [ { error, status } ] );
+		this.emit( 'status', [ connectionStatus ] );
 	};
 
 	/**
