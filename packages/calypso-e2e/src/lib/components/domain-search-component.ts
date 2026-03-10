@@ -176,7 +176,7 @@ export class DomainSearchComponent {
 		await addToCartButton.waitFor( { state: 'detached', timeout: 30000 } );
 
 		if ( waitForContinueButton ) {
-			const continueButton = row.getByRole( 'button', { name: 'Continue' } );
+			const continueButton = this.page.getByRole( 'button', { name: 'Continue' } );
 			await continueButton.waitFor();
 		}
 
