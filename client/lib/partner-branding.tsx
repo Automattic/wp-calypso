@@ -44,6 +44,8 @@ export interface CiabPartnerConfig {
 	fontStyle?: 'system';
 	/** Domains that identify this partner in redirect URLs (e.g., ['my.woo.ai']) */
 	domains?: string[];
+	/** OAuth2 client IDs that identify this partner */
+	clientIds?: number[];
 }
 
 /**
@@ -75,6 +77,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
 		domains: [ 'my.woo.ai', 'my.woo.localhost' ],
+		clientIds: [ 134404, 134405 ], // 134404 = Dev, 134405 = Staging/Production
 	},
 };
 
@@ -233,6 +236,38 @@ export function getCiabConfigFromRedirectUrl(
 }
 
 /**
+ * Get CIAB partner config by matching a client_id query parameter against partner client IDs.
+ */
+export function getCiabConfigFromClientId(): CiabPartnerConfig | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+
+	const params = new URLSearchParams( window.location.search );
+	const clientIdParam = params.get( 'client_id' );
+
+	if ( ! clientIdParam ) {
+		return null;
+	}
+
+	const clientId = Number( clientIdParam );
+
+	if ( Number.isNaN( clientId ) ) {
+		return null;
+	}
+
+	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
+		if ( partnerConfig.clientIds?.includes( clientId ) ) {
+			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+				return partnerConfig;
+			}
+		}
+	}
+
+	return null;
+}
+
+/**
  * Read a query parameter from the current URL.
  */
 function getSearchParam( name: string ): string | null {
@@ -250,16 +285,16 @@ function getSearchParam( name: string ): string | null {
  * Detection precedence (first match wins):
  *   1. hostname           — window.location.hostname against partner domains
  *   2. branding code      — ?from= query param (transitional, see getCiabConfigFromBrandingCode)
- *   3. redirect_to        — hostname inside ?redirect_to= URL
- *   4. oauth2_redirect    — hostname inside ?oauth2_redirect= URL
+ *   3. client_id          — ?client_id= query param matched against partner OAuth2 client IDs
+ *   4. redirect_to        — hostname inside ?redirect_to= URL
  *   5. session storage    — persisted partner from a previous detection in this session
  */
 export function detectCiabConfig(): CiabPartnerConfig | null {
 	const detected =
 		getCiabConfigFromCurrentDomain() ??
 		getCiabConfigFromBrandingCode() ??
-		getCiabConfigFromRedirectUrl( getSearchParam( 'redirect_to' ) ) ??
-		getCiabConfigFromRedirectUrl( getSearchParam( 'oauth2_redirect' ) );
+		getCiabConfigFromClientId() ??
+		getCiabConfigFromRedirectUrl( getSearchParam( 'redirect_to' ) );
 
 	if ( detected ) {
 		persistCiabPartnerId( detected.id );
@@ -337,7 +372,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const initialQuery = useSelector( getInitialQueryArguments );
 	const from = currentQuery?.from || initialQuery?.from;
 	const redirectTo = currentQuery?.redirect_to || initialQuery?.redirect_to;
-	const oauth2Redirect = currentQuery?.oauth2_redirect || initialQuery?.oauth2_redirect;
+	const clientId = currentQuery?.client_id || initialQuery?.client_id;
 
 	return useMemo( () => {
 		const ciabConfig = detectCiabConfig();
@@ -364,7 +399,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 			topBarLogo,
 			signupTosElement,
 		};
-	}, [ from, redirectTo, oauth2Redirect, translate ] );
+	}, [ from, redirectTo, clientId, translate ] );
 }
 
 /**
