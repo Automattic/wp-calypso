@@ -423,6 +423,7 @@ function getInitialHeadingState( props, translate ) {
 		action,
 		translate,
 		isWooJPC,
+		ciabConfig,
 	} );
 
 	return {
