@@ -11,7 +11,6 @@ const SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/' );
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
 const DOMAINS_SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
-const DOMAINS_EXPLORE_URL = localizeUrl( 'https://wordpress.com/domains/' );
 
 function getLiveChatUrlForPlans( site: SiteDetails, purchase: Purchase ): string {
 	return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
@@ -192,9 +191,10 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		id: 'explore-domain-options',
 		title: 'Explore more domain options',
 		subtitle: "Our search tool finds great alternatives you'll love.",
-		getHref: () => DOMAINS_EXPLORE_URL,
-		onClick: () => {
-			window.open( DOMAINS_EXPLORE_URL, '_blank' );
+		getHref: ( ctx ) => `/domains/add/${ ctx.site.slug }`,
+		onClick: ( ctx ) => {
+			page( `/domains/add/${ ctx.site.slug }` );
+			ctx.closeDialog();
 		},
 	},
 	{

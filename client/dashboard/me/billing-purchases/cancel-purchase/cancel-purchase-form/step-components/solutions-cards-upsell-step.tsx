@@ -23,7 +23,7 @@ import * as React from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
 import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
-import { wpcomLink } from '../../../../../utils/link';
+import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getSolutionsForReason } from '../../get-solutions-for-reason';
 import type { Purchase } from '@automattic/api-core';
 
@@ -68,13 +68,13 @@ const SUPPORT_GUIDES_URL = localizeUrl( wpcomLink( '/support/' ) );
 const SITE_SPEED_URL = localizeUrl( wpcomLink( '/support/site-speed/' ) );
 const SITE_MIGRATION_URL = localizeUrl( wpcomLink( '/support/site-migration/' ) );
 const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
-const DOMAINS_EXPLORE_URL = localizeUrl( wpcomLink( '/domains/' ) );
 
 function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
 	renewNowUrl: string,
-	subscriptionsUrl?: string
+	subscriptionsUrl: string | undefined,
+	siteSlug: string
 ): string | undefined {
 	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
@@ -101,7 +101,7 @@ function getCardHref(
 		return DOMAIN_GUIDE_URL;
 	}
 	if ( cardId === 'explore-domain-options' ) {
-		return DOMAINS_EXPLORE_URL;
+		return dashboardLink( `/sites/${ siteSlug }/domains` );
 	}
 	if ( cardId === 'move-subscription' && subscriptionsUrl ) {
 		return subscriptionsUrl;
@@ -293,7 +293,7 @@ export default function SolutionsCardsUpsellStep( {
 				window.open( DOMAIN_GUIDE_URL, '_blank' );
 				break;
 			case 'explore-domain-options':
-				window.open( DOMAINS_EXPLORE_URL, '_blank' );
+				window.location.href = dashboardLink( `/sites/${ purchase.site_slug }/domains` );
 				break;
 			case 'move-subscription':
 				window.location.href = subscriptionsUrl;
@@ -327,7 +327,13 @@ export default function SolutionsCardsUpsellStep( {
 								card.id === 'move-subscription' ||
 								( card.id === 'switch-to-monthly' && onClickDowngrade ) )
 					);
-					const href = getCardHref( card.id, changePlanUrl, renewNowUrl, subscriptionsUrl );
+					const href = getCardHref(
+						card.id,
+						changePlanUrl,
+						renewNowUrl,
+						subscriptionsUrl,
+						purchase.site_slug
+					);
 					const onClick = getCardOnClick( card.id, hasAction, handleCardAction );
 					const title = getCardTitle( card.id );
 
