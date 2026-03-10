@@ -37,7 +37,7 @@ export function UnifiedInviteAccept( {
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const legacyLoggedOutInvite = useMemo< LegacyLoggedOutInvite | null >( () => {
-		if ( ! inviteData ) {
+		if ( isLoggedIn || ! inviteData || ! ( inviteData as { invite?: unknown } ).invite ) {
 			return null;
 		}
 
@@ -49,7 +49,7 @@ export function UnifiedInviteAccept( {
 			activationKey,
 			authKey,
 		};
-	}, [ inviteData, inviteKey, activationKey, authKey ] );
+	}, [ isLoggedIn, inviteData, inviteKey, activationKey, authKey ] );
 
 	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
