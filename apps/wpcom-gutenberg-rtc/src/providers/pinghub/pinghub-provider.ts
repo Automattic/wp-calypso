@@ -1,7 +1,7 @@
 import { ObservableV2 } from 'lib0/observable';
 import { Awareness } from 'y-protocols/awareness';
 import { pinghubManager } from './pinghub-manager';
-import type { ConnectionStatus, ProviderCreator, ProviderCreatorResult } from '@wordpress/sync';
+import type { ConnectionStatus, ProviderCreator, ProviderCreatorResult } from '../../sync-types';
 import type * as Y from 'yjs';
 
 interface ProviderOptions {

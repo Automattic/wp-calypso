@@ -3,7 +3,8 @@ import * as encoding from 'lib0/encoding';
 import * as awarenessProtocol from 'y-protocols/awareness';
 import * as syncProtocol from 'y-protocols/sync';
 import { PingHubBridge } from './pinghub-bridge';
-import type { Awareness, ConnectionStatus } from '@wordpress/sync';
+import type { ConnectionStatus } from '../../sync-types';
+import type { Awareness } from 'y-protocols/awareness';
 import type * as Y from 'yjs';
 
 const MSG_SYNC = 0x00;
