@@ -6,6 +6,7 @@ const program = require( 'commander' );
 const glob = require( 'glob' );
 const version = require( './package.json' ).version;
 const presets = require( './presets' );
+const cleanupPot = require( './utils/cleanup-pot' );
 const concatPot = require( './utils/concat-pot' );
 const makePot = require( './index' );
 
@@ -38,6 +39,7 @@ program
 		'-l, --lines-filter <file>',
 		'JSON file containing files and line numbers filters. Only included line numbers will be passed.'
 	)
+	.option( '-c, --clean', 'Delete intermediate POT fragments after concatenation.' )
 	.action( ( command, [ files = '.' ] = [] ) => {
 		if ( ! presetsKeys.includes( program.preset ) ) {
 			console.log(
@@ -51,7 +53,7 @@ program
 		const filesGlob = files.trim().replace( /^~/, os.homedir() ).split( /\s/gm );
 		const ignore = program.ignore && program.ignore.split( ',' );
 
-		const { preset, dir, base, output, linesFilter } = program;
+		const { preset, dir, base, output, linesFilter, clean } = program;
 
 		filesGlob.forEach( ( pattern ) => {
 			glob.sync( pattern, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
@@ -65,6 +67,12 @@ program
 
 		if ( output && output !== 'false' ) {
 			concatPot( dir, output, linesFilter );
+			if ( clean ) {
+				cleanupPot( dir, output );
+			}
+		} else if ( clean ) {
+			console.error( 'The --clean flag requires --output to be set to a POT file path.' );
+			process.exitCode = 1;
 		}
 	} )
 	.parse( process.argv );

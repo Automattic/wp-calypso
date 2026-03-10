@@ -3,6 +3,7 @@ const path = require( 'path' );
 const glob = require( 'glob' );
 const rimraf = require( 'rimraf' );
 const makePot = require( '..' );
+const cleanupPot = require( '../utils/cleanup-pot' );
 const concatPot = require( '../utils/concat-pot' );
 
 describe( 'makePot', () => {
@@ -64,5 +65,29 @@ describe( 'makePot', () => {
 		// Test combined POT file snapshot.
 		const potFileContent = fs.readFileSync( filterPotOutputPath, 'utf-8' );
 		expect( potFileContent ).toMatchSnapshot();
+	} );
+
+	test( 'cleanup should remove intermediate pot files but preserve output inside the same directory', () => {
+		const cleanOutputDir = path.join( potOutputDir, 'clean' );
+		const cleanOutputPath = path.join( cleanOutputDir, 'bundle-strings.pot' );
+		const examplesGlob = path.join( __dirname, 'examples', '*.{js,jsx,ts,tsx}' );
+		const examplesPaths = glob.sync( examplesGlob );
+
+		fs.mkdirSync( cleanOutputDir, { recursive: true } );
+
+		examplesPaths.forEach( ( filepath ) => {
+			const preset = filepath.includes( 'decorators' ) ? 'decorators' : 'default';
+			makePot( filepath, { preset, dir: cleanOutputDir, base: baseDir } );
+		} );
+
+		concatPot( cleanOutputDir, cleanOutputPath );
+		cleanupPot( cleanOutputDir, cleanOutputPath );
+
+		const remainingPotPaths = glob
+			.sync( path.join( cleanOutputDir, '*.pot' ) )
+			.map( ( filepath ) => path.basename( filepath ) );
+
+		expect( remainingPotPaths ).toEqual( [ 'bundle-strings.pot' ] );
+		expect( fs.existsSync( cleanOutputPath ) ).toBe( true );
 	} );
 } );
