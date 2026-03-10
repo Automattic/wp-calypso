@@ -186,19 +186,6 @@ object BuildDockerImage : BuildType({
 		mergeTrunk( skipIfConflict = true )
 
 		script {
-			name = "Restore git mtime"
-			scriptContent = """
-				#!/usr/bin/env bash
-				sudo apt-get install -y git-restore-mtime
-				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-			"""
-			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID%"
-			dockerPull = true
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-		}
-
-		script {
 			name = "Prepare Docker workspace manifests"
 			scriptContent = """
 				#!/usr/bin/env bash
