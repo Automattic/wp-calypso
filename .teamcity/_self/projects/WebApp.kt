@@ -1098,7 +1098,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 			triggerRules = """
 				-:**.md
 				+:client/a8c-for-agencies/**
-				+:packages/**
 				+:test/e2e/specs/a8c-for-agencies/**
 			""".trimIndent()
 		}
