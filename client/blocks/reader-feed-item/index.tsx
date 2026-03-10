@@ -1,6 +1,8 @@
+import { readFeedQuery } from '@automattic/api-queries';
 import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -71,7 +73,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
+	const { data: feed, isLoading: isFeedLoading } = useQuery( {
+		...readFeedQuery( feedId ),
+		enabled: queryFeed,
+	} );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	// Reader feed item fields to show in the UI.

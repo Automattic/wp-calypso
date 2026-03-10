@@ -11,6 +11,7 @@ import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
 import isDashboardEnv from '../utils/is-dashboard-env';
+import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
@@ -19,6 +20,10 @@ import type { AppConfig } from './context';
 import './style.scss';
 
 function boot( config: AppConfig ) {
+	if ( handleOAuthCallback() ) {
+		return;
+	}
+
 	if ( ! isDashboardEnv() && ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
 		throw new Error( 'Multi-site Dashboard is not enabled' );
 	}

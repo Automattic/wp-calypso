@@ -6,6 +6,14 @@
 	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
 	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai" ],
+	"hostname_overrides": {
+		"my.woo.ai": {
+			"oauth_client_id": 134405,
+			"wpcom_login_url": false,
+			"logout_url": "https://woo.com",
+			"features": { "oauth": true }
+		}
+	},
 	"i18n_default_locale_slug": "en",
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",

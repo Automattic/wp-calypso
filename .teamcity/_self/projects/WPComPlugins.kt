@@ -44,6 +44,7 @@ object WPComPlugins : Project({
 					"help-center-release-build",
 					"agents-manager-release-build",
 					"design-system-docs-release-build",
+					"wpcom-gutenberg-rtc-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -127,6 +128,7 @@ object CalypsoApps: BuildType({
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
 		apps/design-system-docs/dist => design-system-docs.zip
+		apps/wpcom-gutenberg-rtc/dist => wpcom-gutenberg-rtc.zip
 	""".trimIndent()
 
 	steps {
