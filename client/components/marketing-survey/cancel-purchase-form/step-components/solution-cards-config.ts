@@ -1,3 +1,4 @@
+import { PRODUCT_WPCOM_UNLIMITED_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -135,9 +136,9 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		id: 'get-theme-addon',
 		title: 'Get our theme add-on',
 		subtitle: 'Unlock premium themes with a simple add-on.',
-		getHref: ( ctx ) => ctx.changePlanUrl,
+		getHref: ( ctx ) => `/checkout/${ ctx.site.slug }/${ PRODUCT_WPCOM_UNLIMITED_THEMES }`,
 		onClick: ( ctx ) => {
-			page( ctx.changePlanUrl );
+			page( `/checkout/${ ctx.site.slug }/${ PRODUCT_WPCOM_UNLIMITED_THEMES }` );
 			ctx.closeDialog();
 		},
 	},
