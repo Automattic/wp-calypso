@@ -25,6 +25,7 @@ const reporter: ReporterDescription[] = [
 			commit: process.env.BUILD_VCS_NUMBER || '',
 			appName: 'calypso',
 			repositoryName: 'Automattic/wp-calypso',
+			annotations: true,
 		},
 	],
 ];
