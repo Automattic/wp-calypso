@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import {
 	getCiabConfigFromCurrentDomain,
 	getCiabConfigFromBrandingCode,
+	getCiabConfigFromClientId,
 	getCiabConfigFromRedirectUrl,
 	getCiabConfigFromGarden,
 	detectCiabConfig,
@@ -153,6 +154,59 @@ describe( 'partner-branding', () => {
 		} );
 	} );
 
+	describe( 'getCiabConfigFromClientId', () => {
+		test( 'returns partner config when client_id matches dev ID', () => {
+			setLocation( 'wordpress.com', '?client_id=134404' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns partner config when client_id matches production ID', () => {
+			setLocation( 'wordpress.com', '?client_id=134405' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'returns null when client_id does not match any partner', () => {
+			setLocation( 'wordpress.com', '?client_id=99999' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when client_id is absent', () => {
+			setLocation( 'wordpress.com' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when client_id is not a number', () => {
+			setLocation( 'wordpress.com', '?client_id=abc' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).toBeNull();
+		} );
+
+		test( 'returns null when feature flag is disabled', () => {
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			setLocation( 'wordpress.com', '?client_id=134404' );
+
+			const result = getCiabConfigFromClientId();
+
+			expect( result ).toBeNull();
+		} );
+	} );
+
 	describe( 'detectCiabConfig — precedence', () => {
 		test( 'hostname wins over conflicting from query param', () => {
 			setLocation( 'my.woo.ai', '?from=other' );
@@ -190,8 +244,26 @@ describe( 'partner-branding', () => {
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'from wins over oauth2_redirect when conflicting', () => {
-			setLocation( 'wordpress.com', '?from=woo&oauth2_redirect=https://example.com' );
+		test( 'from wins over client_id when conflicting', () => {
+			setLocation( 'wordpress.com', '?from=woo&client_id=99999' );
+
+			const result = detectCiabConfig();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'client_id matching still works when no hostname or from match', () => {
+			setLocation( 'wordpress.com', '?client_id=134404' );
+
+			const result = detectCiabConfig();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'client_id wins over redirect_to when conflicting', () => {
+			setLocation( 'wordpress.com', '?client_id=134405&redirect_to=https://example.com' );
 
 			const result = detectCiabConfig();
 
@@ -201,27 +273,6 @@ describe( 'partner-branding', () => {
 
 		test( 'redirect_to matching still works when no hostname or from match', () => {
 			setLocation( 'wordpress.com', '?redirect_to=https://my.woo.ai/dashboard' );
-
-			const result = detectCiabConfig();
-
-			expect( result ).not.toBeNull();
-			expect( result?.id ).toBe( 'woo' );
-		} );
-
-		test( 'oauth2_redirect matching still works when nothing else matches', () => {
-			setLocation( 'wordpress.com', '?oauth2_redirect=https://my.woo.ai/dashboard' );
-
-			const result = detectCiabConfig();
-
-			expect( result ).not.toBeNull();
-			expect( result?.id ).toBe( 'woo' );
-		} );
-
-		test( 'redirect_to wins over oauth2_redirect when conflicting', () => {
-			setLocation(
-				'wordpress.com',
-				'?redirect_to=https://my.woo.ai&oauth2_redirect=https://example.com'
-			);
 
 			const result = detectCiabConfig();
 
