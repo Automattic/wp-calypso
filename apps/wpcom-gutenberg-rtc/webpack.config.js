@@ -50,11 +50,13 @@ function getWebpackConfig( env = { WP: true }, argv = {} ) {
 		],
 		externals: {
 			// Resolve @wordpress/sync to the global `wp.sync` provided by WordPress.
-			'@wordpress/sync': 'wp.sync',
+			// Array format is required for nested property access (dot-separated
+			// strings are treated as a single variable name by webpack).
+			'@wordpress/sync': [ 'wp', 'sync' ],
 			// Resolve Yjs to the global `wp.sync.Y` to avoid two separate Yjs
 			// instances, which breaks shared document types. See:
 			// https://github.com/yjs/yjs/issues/438
-			yjs: 'wp.sync.Y',
+			yjs: [ 'wp', 'sync', 'Y' ],
 		},
 	};
 }
