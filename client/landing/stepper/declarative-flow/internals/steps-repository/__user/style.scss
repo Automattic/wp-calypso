@@ -2,6 +2,11 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.is-ciab-font-system .step-container-v2__heading h1.wp-brand-font {
+	font-family: $default-font;
+}
 
 $gray-100: #101517;
 $gray-60: #50575e;
