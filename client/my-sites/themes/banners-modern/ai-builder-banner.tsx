@@ -16,14 +16,14 @@ const AIBuilderBanner = () => {
 	}, [] );
 
 	return (
-		<div className="ai-builder-banner">
-			<div className="ai-builder-banner__content">
-				<h2 className="ai-builder-banner__title">{ translate( 'Create my theme with AI' ) }</h2>
-				<p className="ai-builder-banner__description">
+		<div className="banner-modern ai-builder-banner">
+			<div className="banner-modern__content">
+				<h2 className="banner-modern__title">{ translate( 'Create my theme with AI' ) }</h2>
+				<p className="banner-modern__description">
 					{ preventWidows( translate( 'Generate a one-of-a-kind website by chatting with AI.' ) ) }
 				</p>
 				<Button
-					className="ai-builder-banner__button"
+					className="banner-modern__button"
 					variant="primary"
 					href="/setup/ai-site-builder"
 					onClick={ trackClick }

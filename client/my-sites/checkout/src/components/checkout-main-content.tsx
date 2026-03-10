@@ -89,7 +89,6 @@ import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
-import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
@@ -798,13 +797,10 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={
-							<>
-								<GoogleDomainsCopy responseCart={ responseCart } />
-								<PaymentMethodFilter
-									areStoredCardsFiltered={ areStoredCardsFiltered }
-									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-								/>
-							</>
+							<PaymentMethodFilter
+								areStoredCardsFiltered={ areStoredCardsFiltered }
+								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							/>
 						}
 						canEditStep={ canEditPaymentStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }

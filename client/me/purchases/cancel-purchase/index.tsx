@@ -14,6 +14,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
@@ -353,6 +354,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+				if ( refundable ) {
+					invokeSurvicateEvent( 'purchaseRefunded' );
+				} else {
+					invokeSurvicateEvent( 'purchaseCancelled' );
+				}
 				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 					this.props.siteSlug,
 					this.props.purchaseId
