@@ -485,7 +485,11 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_WOO_HOSTED_PAYMENTS ]: {
 		slug: FEATURE_GROUP_WOO_HOSTED_PAYMENTS,
-		getTitle: () => i18n.translate( 'Accept payments with PayPal' ),
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'Accept payments with WooPayments' )
+				? i18n.translate( 'Accept payments with WooPayments' )
+				: i18n.translate( 'Accept payments with PayPal' ),
 		getFeatures: () => [
 			FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 			FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,

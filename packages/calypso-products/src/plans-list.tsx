@@ -1661,7 +1661,7 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 	FEATURE_WOO_HOSTED_AI_BUILDER,
 	FEATURE_WOO_HOSTED_CSV_IMPORTER,
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
-	// Accept payments with PayPal
+	// Accept payments with WooPayments
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
 	// Sell products and bookable services
