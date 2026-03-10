@@ -548,8 +548,8 @@ class ThemeShowcase extends Component {
 		const staticFilters = this.getStaticFilters();
 
 		if (
-			tabKey === staticFilters.RECOMMENDED?.key &&
 			this.isThemeShowcaseModern() &&
+			! this.props.category &&
 			! this.props.isCollectionView &&
 			! this.props.filter &&
 			! this.props.vertical &&
