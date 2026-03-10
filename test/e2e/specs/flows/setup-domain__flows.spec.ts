@@ -34,6 +34,10 @@ function annotateSite( siteDetails: NewSiteResponse ): void {
 	} );
 }
 
+function annotate( type: string, value: string ): void {
+	test.info().annotations.push( { type, description: value } );
+}
+
 test.describe(
 	'Setup Domain Flows',
 	{
@@ -71,6 +75,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
+				annotate( 'domain_search', targetDomain );
 				await componentDomainSearch.search( targetDomain );
 			} );
 
@@ -123,11 +128,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -169,7 +177,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain to skip', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search_skip', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I skip the domain purchase', async function () {
@@ -190,11 +200,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -252,7 +265,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain to skip', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search_skip', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I skip the domain purchase', async function () {
@@ -273,11 +288,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -339,7 +357,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain to skip', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search_skip', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I skip the domain purchase', async function () {
@@ -381,11 +401,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -469,11 +492,14 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -524,7 +550,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain to skip', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search_skip', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I skip the domain purchase', async function () {
@@ -547,6 +575,7 @@ test.describe(
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -595,7 +624,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain to skip', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
+				const searchTerm = helperData.getBlogName();
+				annotate( 'domain_search_skip', searchTerm );
+				await componentDomainSearch.search( searchTerm );
 			} );
 
 			await test.step( 'And I skip the domain purchase', async function () {
@@ -642,6 +673,7 @@ test.describe(
 
 			await test.step( 'And I add the first suggestion to the cart', async function () {
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+				annotate( 'selected_domain', selectedDomain );
 			} );
 
 			await test.step( 'And I continue to the next step', async function () {
@@ -714,6 +746,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I search for a domain', async function () {
+				annotate( 'domain_search', targetDomain );
 				await componentDomainSearch.search( targetDomain );
 			} );
 
