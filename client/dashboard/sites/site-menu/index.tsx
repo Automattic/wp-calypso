@@ -12,6 +12,16 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 
+	if ( site.__inaccessible_jetpack_error ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
