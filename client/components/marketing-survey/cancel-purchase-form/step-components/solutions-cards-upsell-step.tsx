@@ -35,7 +35,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const CARD_ICONS: Record< string, React.ComponentType > = {
+const CARD_ICONS: Record< string, import('@wordpress/icons').IconType > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
 	'speak-with-support': comment,
@@ -54,11 +54,11 @@ const CARD_ICONS: Record< string, React.ComponentType > = {
 };
 
 function getDecorationForCard( cardId: string ) {
-	const IconComponent = CARD_ICONS[ cardId ];
-	if ( ! IconComponent ) {
+	const icon = CARD_ICONS[ cardId ];
+	if ( ! icon ) {
 		return undefined;
 	}
-	return <Icon icon={ <IconComponent /> } size={ 24 } />;
+	return <Icon icon={ icon } size={ 24 } />;
 }
 
 function isAnnualOrLongerPlan( productSlug: string ): boolean {
