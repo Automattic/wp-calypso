@@ -17,13 +17,19 @@ import routeReducer from 'calypso/state/route/reducer';
  * @param {Object} [options.store] - The store to use
  * @param {Object} [options.reducers] - The reducers to use
  * @param {Object} [options.renderOptions] - The options for the render
+ * @param {QueryClient} [options.queryClient] - The query client to use
  */
 export const renderWithProvider = (
 	ui,
-	{ initialPath, initialState, store = null, reducers, ...renderOptions } = {}
+	{
+		initialPath,
+		initialState,
+		store = null,
+		reducers,
+		queryClient = new QueryClient(),
+		...renderOptions
+	} = {}
 ) => {
-	const queryClient = new QueryClient();
-
 	if ( ! store ) {
 		let reducer = initialReducer;
 

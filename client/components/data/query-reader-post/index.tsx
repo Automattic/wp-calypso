@@ -15,7 +15,7 @@ export const QueryReaderPost = ( { postKey }: Props ) => {
 	const renderContentWidth = readerContentWidth();
 	const query = {
 		...params,
-		content_width: renderContentWidth,
+		...( renderContentWidth ? { content_width: renderContentWidth } : {} ),
 	};
 
 	const queryOption = blogId

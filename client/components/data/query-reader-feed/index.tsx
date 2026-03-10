@@ -11,6 +11,11 @@ interface Props {
 	feedId: number;
 }
 
+/**
+ * A hook that fetches a feed using react-query and maintain a bridge with the redux store for retro-compatibility.
+ * @param feedId - The ID of the feed to fetch.
+ * @returns
+ */
 export const QueryReaderFeed = ( { feedId }: Props ) => {
 	const { data: feed, isSuccess, isError, error } = useQuery( readFeedQuery( feedId ) );
 	const dispatch = useDispatch();

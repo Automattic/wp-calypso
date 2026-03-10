@@ -15,8 +15,10 @@ function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values
 	return {
 		[ action.payload.feed_ID ]: {
-			feed_ID: action.payload.feed_ID,
+			feed_ID: Number( action.payload.feed_ID ),
+			blog_ID: Number( action.payload.blog_ID ),
 			is_error: true,
+			error: action.payload.error,
 		},
 		...state,
 	};
