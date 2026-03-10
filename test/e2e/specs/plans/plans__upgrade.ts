@@ -21,7 +21,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
-import { apiDeleteSite } from '../shared';
+import { apiCancelSitePurchases, apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
@@ -168,6 +168,8 @@ describe(
 			if ( ! siteCreatedFlag ) {
 				return;
 			}
+
+			await apiCancelSitePurchases( restAPIClient, newSiteDetails.blog_details.blogid );
 
 			await apiDeleteSite( restAPIClient, {
 				url: newSiteDetails.blog_details.url,
