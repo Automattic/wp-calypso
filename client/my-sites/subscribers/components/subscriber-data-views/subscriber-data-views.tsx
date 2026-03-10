@@ -429,7 +429,7 @@ export default function SubscriberDataViews( {
 
 					if ( ! subscriber.user_id ) {
 						dispatch(
-							errorNotice( translate( 'Unable to gift a subscription to this subscriber.' ), {
+							errorNotice( translate( 'Unable to comp a subscription for this subscriber.' ), {
 								duration: 10000,
 							} )
 						);
