@@ -7,7 +7,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { tags, test, expect } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite } from '../shared';
+import { apiCancelSitePurchases, apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Setup Domain Flows',
@@ -674,6 +674,8 @@ test.describe(
 				);
 
 				if ( account.newSiteDetails ) {
+					await apiCancelSitePurchases( restAPIClient, account.newSiteDetails.blog_details.blogid );
+
 					await apiDeleteSite( restAPIClient, {
 						url: account.newSiteDetails.blog_details.url,
 						id: account.newSiteDetails.blog_details.blogid,

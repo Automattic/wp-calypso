@@ -5,7 +5,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCancelSitePurchases, apiCloseAccount } from '../shared';
 
 test.describe(
 	'Signup: Lifecycle: Logged Out Home Page, signup, onboard, launch and cancel subscription',
@@ -167,6 +167,10 @@ test.describe(
 					},
 					newUserThemeSignup.body.bearer_token
 				);
+
+				if ( newSiteDetails ) {
+					await apiCancelSitePurchases( restAPIClient, newSiteDetails.blog_details.blogid );
+				}
 
 				await apiCloseAccount( restAPIClient, {
 					userID: newUserThemeSignup.body.user_id,
