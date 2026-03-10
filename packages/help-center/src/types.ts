@@ -35,10 +35,6 @@ export interface Article {
 	is_external?: boolean;
 }
 
-export interface FeatureFlags {
-	loadNextStepsTutorial: boolean;
-}
-
 export interface SearchResult {
 	railcar: {
 		railcar?: string;
