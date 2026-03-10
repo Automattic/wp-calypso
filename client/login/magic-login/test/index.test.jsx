@@ -98,4 +98,31 @@ describe( 'magic-login branding behavior', () => {
 			} )
 		);
 	} );
+
+	it( 'hides the app promo in check-your-email when partner branding is enabled', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			showCheckYourEmail: true,
+			ciabConfig: { id: 'woo', displayName: 'Woo' },
+		} );
+
+		expect( instance.renderLinks() ).toBeNull();
+	} );
+
+	it( 'shows the app promo in check-your-email when partner branding is not enabled', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			showCheckYourEmail: true,
+			ciabConfig: null,
+		} );
+
+		expect( instance.renderLinks() ).toEqual(
+			expect.objectContaining( {
+				props: expect.objectContaining( {
+					campaign: 'calypso-login-link-check-email',
+					className: 'magic-link-app-promo',
+				} ),
+			} )
+		);
+	} );
 } );

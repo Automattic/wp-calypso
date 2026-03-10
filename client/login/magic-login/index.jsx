@@ -165,9 +165,10 @@ export class MagicLogin extends Component {
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
+		const hasPartnerBranding = Boolean( this.props.ciabConfig );
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A || isMobileApp ) {
+			if ( isA4A || isMobileApp || hasPartnerBranding ) {
 				return null;
 			}
 			return (
@@ -214,7 +215,7 @@ export class MagicLogin extends Component {
 						</a>
 					}
 				/>
-				{ ! oauth2Client && ! isMobileApp && (
+				{ ! oauth2Client && ! isMobileApp && ! hasPartnerBranding && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
