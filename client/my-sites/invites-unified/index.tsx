@@ -8,6 +8,8 @@ import AlreadyMemberScreen from './screens/already-member-screen';
 import { isAlreadyMemberError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
+import './style.scss';
+
 interface LegacyLoggedOutInvite {
 	inviteKey: string;
 	activationKey?: string;
@@ -57,7 +59,11 @@ export function UnifiedInviteAccept( {
 			return null;
 		}
 
-		return <LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />;
+		return (
+			<div className="invites-unified__logged-out-shell">
+				<LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />
+			</div>
+		);
 	}
 
 	// Already a member → show already-member screen

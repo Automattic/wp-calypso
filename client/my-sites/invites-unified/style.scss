@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.invites-unified__logged-out-shell {
+	box-sizing: border-box;
+	margin: 0 auto;
+	max-width: 32rem;
+	padding: 0 1rem;
+	width: 100%;
+}
+
+@media ( max-width: $break-mobile ) {
+	.invites-unified__logged-out-shell {
+		padding: 0;
+	}
+}
