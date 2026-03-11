@@ -51,9 +51,8 @@ export default function useConversation( {
 			);
 		},
 		enabled: enabled && !! sessionId,
-		// Chat history should stay stable while browsing; reconnect still catches up after offline gaps.
+		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
 		refetchOnWindowFocus: false,
-		refetchOnReconnect: true,
 		refetchOnMount: false,
 		staleTime: 300000, // 5 minutes
 	} );
