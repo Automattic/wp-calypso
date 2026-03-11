@@ -1,6 +1,7 @@
 import { StatsCard } from '@automattic/components';
 import { megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -16,6 +17,7 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import SpamReferrersModal from './spam-referrers-modal';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
@@ -31,6 +33,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
+	const [ isSpamModalOpen, setIsSpamModalOpen ] = useState( false );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -105,7 +108,18 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
+					summaryFooterAction={
+						summary && ! shouldGateStatsModule
+							? { label: translate( 'Manage spam referrers' ) }
+							: undefined
+					}
+					onShowMoreClick={
+						summary && ! shouldGateStatsModule ? () => setIsSpamModalOpen( true ) : undefined
+					}
 				/>
+			) }
+			{ isSpamModalOpen && (
+				<SpamReferrersModal siteId={ siteId } onClose={ () => setIsSpamModalOpen( false ) } />
 			) }
 			{ presentEmptyUI && (
 				// show empty state

@@ -126,6 +126,7 @@
 		display: block;
 		color: var(--color-text);
 		text-decoration: none; // TODO: Should this be a tertiary button component instead?
+		cursor: pointer;
 
 		&:visited {
 			color: $font-color;
@@ -135,6 +136,10 @@
 		&:focus {
 			text-decoration: underline;
 		}
+	}
+
+	button.stats-card--footer {
+		text-align: start;
 	}
 
 	&.stats-card__hasoverlay {

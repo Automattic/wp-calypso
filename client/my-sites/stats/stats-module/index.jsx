@@ -52,6 +52,8 @@ class StatsModule extends Component {
 		formatValue: PropTypes.func,
 		minutesLimit: PropTypes.number,
 		isRealTime: PropTypes.bool,
+		summaryFooterAction: PropTypes.object,
+		onShowMoreClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -294,8 +296,27 @@ class StatsModule extends Component {
 		// TODO: Support error state in redux store
 		const hasError = false;
 
+		const { summaryFooterAction, onShowMoreClick } = this.props;
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
+
+		// Determine showMore action for StatsListCard.
+		let showMoreAction;
+		if ( summary && summaryFooterAction ) {
+			showMoreAction = summaryFooterAction;
+		} else if ( displaySummaryLink && ! summary ) {
+			showMoreAction = {
+				url: summaryLink,
+				label:
+					data.length >= 10
+						? translate( 'View all', {
+								context: 'Stats: Button link to show more detailed stats information',
+						  } )
+						: translate( 'View details', {
+								context: 'Stats: Button label to see the detailed content of a panel',
+						  } ),
+			};
+		}
 		const isAllTime = this.isAllTimeList();
 
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
@@ -316,21 +337,8 @@ class StatsModule extends Component {
 					titleNodes={ titleNodes }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
-					showMore={
-						displaySummaryLink && ! summary
-							? {
-									url: summaryLink,
-									label:
-										data.length >= 10
-											? translate( 'View all', {
-													context: 'Stats: Button link to show more detailed stats information',
-											  } )
-											: translate( 'View details', {
-													context: 'Stats: Button label to see the detailed content of a panel',
-											  } ),
-							  }
-							: undefined
-					}
+					showMore={ showMoreAction }
+					onShowMoreClick={ onShowMoreClick }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={

@@ -1,5 +1,4 @@
-import { Dialog } from '@automattic/components';
-import { Tooltip } from '@wordpress/components';
+import { Button, Modal, Tooltip } from '@wordpress/components';
 import { Icon, warning } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -95,22 +94,11 @@ class StatsActionSpam extends Component {
 						</span>
 					</button>
 				</Tooltip>
-				{ this.props.inHorizontalBarList && (
-					<Dialog
-						isVisible={ this.state.showConfirmDialog }
-						buttons={ [
-							{
-								action: 'cancel',
-								label: this.props.translate( 'Cancel' ),
-							},
-							{
-								action: 'delete',
-								label: this.props.translate( 'Mark as Spam' ),
-								isPrimary: true,
-								onClick: this.markAsSpam,
-							},
-						] }
-						onClose={ this.closeConfirmDialog }
+				{ this.props.inHorizontalBarList && this.state.showConfirmDialog && (
+					<Modal
+						title={ this.props.translate( 'Mark as spam' ) }
+						onRequestClose={ this.closeConfirmDialog }
+						className="action-spam__confirm-modal"
 					>
 						<p>
 							{ this.props.translate( "Are you sure you want to mark '%(domain)s' as spam?", {
@@ -122,7 +110,15 @@ class StatsActionSpam extends Component {
 								'This will hide this referrer from your future stats. Historical stats will not be affected. You can undo this later from the spam referrers list.'
 							) }
 						</p>
-					</Dialog>
+						<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
+							<Button variant="tertiary" onClick={ this.closeConfirmDialog }>
+								{ this.props.translate( 'Cancel' ) }
+							</Button>
+							<Button variant="primary" onClick={ this.markAsSpam }>
+								{ this.props.translate( 'Mark as spam' ) }
+							</Button>
+						</div>
+					</Modal>
 				) }
 			</li>
 		);

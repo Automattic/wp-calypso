@@ -12,18 +12,8 @@ interface SpamReferrersResponse {
 
 const QUERY_KEY_BASE = 'stats-spam-referrers';
 
-// TODO: Replace mock with real API call once the GET endpoint is available.
-// Real implementation:
-// const fetchSpamReferrers = ( siteId: number ): Promise< SpamReferrersResponse > =>
-// 	wpcom.req.get( { path: `/sites/${ siteId }/stats/referrers/spam` } );
-const fetchSpamReferrers = ( siteId: number ): Promise< SpamReferrersResponse > => {
-	// eslint-disable-next-line no-console
-	console.warn( 'useSpamReferrersQuery: using mock data. Replace with real API call.' );
-	void siteId;
-	return Promise.resolve( {
-		domains: [ { domain: 'mock-spam-referrer-1.com' }, { domain: 'mock-spam-referrer-2.net' } ],
-	} );
-};
+const fetchSpamReferrers = ( siteId: number ): Promise< SpamReferrersResponse > =>
+	wpcom.req.get( { path: `/sites/${ siteId }/stats/referrers/spam`, apiVersion: '1.1' } );
 
 export default function useSpamReferrersQuery( siteId: number | null ) {
 	return useQuery( {

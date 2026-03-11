@@ -152,20 +152,34 @@ const StatsCard = ( props: StatsCardProps ) => {
 						{ isEmpty ? emptyMessage : children }
 					</div>
 				</div>
-				{ footerAction && (
-					<a
-						className={ `${ BASE_CLASS_NAME }--footer` }
-						href={ footerAction?.url }
-						aria-label={
-							translate( 'View all %(title)s', {
-								args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
-								comment: '"View all posts & pages", "View all referrers", etc.',
-							} ) as string
-						}
-					>
-						{ footerAction.label || translate( 'View all' ) }
-					</a>
-				) }
+				{ footerAction &&
+					( footerAction.onClick && ! footerAction.url ? (
+						<button
+							className={ `${ BASE_CLASS_NAME }--footer` }
+							onClick={ footerAction.onClick }
+							aria-label={
+								translate( 'View all %(title)s', {
+									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
+									comment: '"View all posts & pages", "View all referrers", etc.',
+								} ) as string
+							}
+						>
+							{ footerAction.label || translate( 'View all' ) }
+						</button>
+					) : (
+						<a
+							className={ `${ BASE_CLASS_NAME }--footer` }
+							href={ footerAction?.url }
+							aria-label={
+								translate( 'View all %(title)s', {
+									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
+									comment: '"View all posts & pages", "View all referrers", etc.',
+								} ) as string
+							}
+						>
+							{ footerAction.label || translate( 'View all' ) }
+						</a>
+					) ) }
 			</div>
 			{ overlay && <div className={ `${ BASE_CLASS_NAME }__overlay` }>{ overlay }</div> }
 		</div>
