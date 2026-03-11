@@ -26,7 +26,7 @@ const getMatchingFiles = ( patterns, ignore ) =>
 
 const resolveJobs = ( jobsOption, fileCount ) => {
 	if ( jobsOption === 'auto' ) {
-		return Math.min( fileCount || 1, Math.max( 1, getAvailableParallelism() - 1 ) );
+		return Math.min( 16, fileCount || 1, Math.max( 1, getAvailableParallelism() - 1 ) );
 	}
 
 	const jobs = Number.parseInt( jobsOption, 10 );
