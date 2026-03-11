@@ -72,7 +72,9 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 								</a>
 							) }
 						</h1>
-						<p>@{ user.user_login }</p>
+						<p>
+							<span dir="ltr">@{ user.user_login }</span>
+						</p>
 					</div>
 				</div>
 
