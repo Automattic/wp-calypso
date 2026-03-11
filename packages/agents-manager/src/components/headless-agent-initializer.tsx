@@ -8,7 +8,7 @@
 
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { createAgentConfig } from '../utils/agent-config';
+import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
 import { getSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
@@ -32,8 +32,9 @@ export default function HeadlessAgentInitializer( {
 }: HeadlessAgentInitializerProps ): JSX.Element | null {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	const { agentId, version, botSlug } = getAgentConfig();
 
-	const sessionId = getSessionId();
+	const sessionId = getSessionId( agentId );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
@@ -55,6 +56,19 @@ export default function HeadlessAgentInitializer( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				environment: 'wp-admin',
+				agentId,
+				version,
+				botSlug,
+			} );
+
+			// eslint-disable-next-line no-console
+			console.info( '[AgentsManager Debug] Agent config initialized (headless)', {
+				agentId: config.agentId,
+				agentUrl: config.agentUrl,
+				sessionId: config.sessionId,
+				version,
+				botSlug,
+				locationSearch: window.location.search,
 			} );
 
 			setAgentConfig( config );
@@ -63,7 +77,7 @@ export default function HeadlessAgentInitializer( {
 		}
 
 		initializeAgent();
-	}, [ currentRoute, sessionId, site?.ID ] );
+	}, [ agentId, version, botSlug, currentRoute, sessionId, site?.ID ] );
 
 	if ( ! agentConfig ) {
 		return null;

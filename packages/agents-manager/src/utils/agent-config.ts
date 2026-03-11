@@ -23,6 +23,8 @@ export interface CreateAgentConfigOptions {
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
+	/** Override bot slug (e.g., for WorkflowAgent when agentId is `workflow`). */
+	botSlug?: string;
 }
 
 /**
@@ -81,7 +83,8 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
  */
 function createWrappedContextProvider(
 	contextProvider: ContextProvider,
-	version?: string
+	version?: string,
+	botSlug?: string
 ): UseAgentChatConfig[ 'contextProvider' ] {
 	return {
 		getClientContext: () => {
@@ -99,6 +102,7 @@ function createWrappedContextProvider(
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
+					...( botSlug && { slug: botSlug } ),
 				},
 			};
 		},
@@ -111,7 +115,8 @@ function createWrappedContextProvider(
 function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
-	version?: string
+	version?: string,
+	botSlug?: string
 ): UseAgentChatConfig[ 'contextProvider' ] {
 	return {
 		getClientContext: () => ( {
@@ -120,7 +125,12 @@ function createDefaultContextProvider(
 			search: window.location.search,
 			environment,
 			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
+			...( ( version || botSlug ) && {
+				constructorArguments: {
+					...( version && { version } ),
+					...( botSlug && { slug: botSlug } ),
+				},
+			} ),
 		} ),
 	};
 }
@@ -141,6 +151,7 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
+		botSlug,
 	} = options;
 
 	const config: UseAgentChatConfig = {
@@ -157,9 +168,14 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = createWrappedContextProvider( contextProvider, version, botSlug );
 	} else {
-		config.contextProvider = createDefaultContextProvider( currentRoute, environment, version );
+		config.contextProvider = createDefaultContextProvider(
+			currentRoute,
+			environment,
+			version,
+			botSlug
+		);
 	}
 
 	return config;
@@ -172,14 +188,17 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
  * Query parameters:
  * - `agent`: Override the agent ID (e.g., ?agent=wpcom-workflow-support_chat)
  * - `version`: Override the agent version (e.g., ?version=1.0.25)
+ * - `slug` or `bot`: Override workflow/configurable bot slug while keeping `agent` fixed
  */
-export function getAgentConfig(): { agentId: string; version?: string } {
+export function getAgentConfig(): { agentId: string; version?: string; botSlug?: string } {
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const agentIdParam = urlSearchParams.get( 'agent' );
 	const versionParam = urlSearchParams.get( 'version' );
+	const botSlugParam = urlSearchParams.get( 'slug' ) || urlSearchParams.get( 'bot' );
 
 	return {
 		agentId: agentIdParam || ORCHESTRATOR_AGENT_ID,
 		version: versionParam || undefined,
+		botSlug: botSlugParam || undefined,
 	};
 }

@@ -70,9 +70,9 @@ function AgentSetup(): JSX.Element | null {
 	const isChatRoute = pathname.startsWith( '/chat' );
 	const isNewChat = isChatRoute && !! state?.isNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
-	// Read agent/version overrides from browser URL (?agent=, ?version=).
+	// Read agent/version/slug overrides from browser URL (?agent=, ?version=, ?slug= or ?bot=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version } = getAgentConfig();
+	const { agentId, version, botSlug } = getAgentConfig();
 	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
@@ -112,13 +112,34 @@ function AgentSetup(): JSX.Element | null {
 				environment: 'calypso',
 				agentId,
 				version,
+				botSlug,
+			} );
+
+			// eslint-disable-next-line no-console
+			console.info( '[AgentsManager Debug] Agent config initialized (dock)', {
+				agentId: config.agentId,
+				agentUrl: config.agentUrl,
+				sessionId: config.sessionId,
+				version,
+				botSlug,
+				locationSearch: window.location.search,
 			} );
 
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
+	}, [
+		agentId,
+		version,
+		botSlug,
+		currentRoute,
+		isNewChat,
+		navigate,
+		sessionId,
+		setAgentConfig,
+		site?.ID,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 
