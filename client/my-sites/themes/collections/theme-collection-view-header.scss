@@ -110,3 +110,26 @@
 		max-width: 680px;
 	}
 }
+
+.is-theme-showcase-modern .theme-showcase.is-collection-view .theme-collection-view-header:not(.is-logged-in) {
+	$navbar-height: 57px;
+
+	margin-top: -$navbar-height;
+	padding-top: calc(#{$navbar-height} + 32px);
+	padding-inline: max(24px, calc(50% - 610px));
+	background: linear-gradient(150deg, var(--studio-white) 30%, var(--studio-blue-50) 90%);
+
+	@include breakpoint-deprecated(">660px") {
+		padding-top: calc(#{$navbar-height} + 48px);
+	}
+
+	.formatted-header {
+		margin-inline: 0;
+	}
+
+	.formatted-header__title,
+	.formatted-header__subtitle,
+	.theme-collection-view-header__back {
+		color: var(--studio-gray-90);
+	}
+}

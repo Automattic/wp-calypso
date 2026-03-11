@@ -26,7 +26,6 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
-const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
@@ -90,7 +89,6 @@ const webpackCacheBuildDependencies = [
 	require.resolve( '../build-tools/babel/babel-loader-cache-identifier' ),
 	require.resolve( '../build-tools/webpack/assets-writer-plugin.js' ),
 	require.resolve( '../build-tools/webpack/generate-chunks-map-plugin' ),
-	require.resolve( '../build-tools/webpack/readonly-cache-plugin' ),
 	require.resolve( '../build-tools/webpack/require-chunk-callback-plugin' ),
 	require.resolve( '../build-tools/webpack/sections-loader' ),
 	// Workspace config helper modules used to build rules/plugins
@@ -426,8 +424,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
-
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
 			new SentryCliPlugin( {
@@ -462,6 +458,7 @@ const webpackConfig = {
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
 					profile: true,
 					version: webpackCacheVersion,
+					readonly: shouldUseReadonlyCache,
 				},
 				infrastructureLogging: {
 					debug: /webpack\.cache/,

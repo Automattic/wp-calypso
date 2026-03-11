@@ -314,35 +314,32 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Move selection down - j
-			case 74: {
+		switch ( event.key ) {
+			// Move selection down.
+			case 'ArrowRight':
+			case 'j': {
 				return this.selectNextItem();
 			}
 
-			// Move selection up - k
-			case 75: {
+			// Move selection up.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.selectPrevItem();
 			}
 
-			// Open selection - Enter
-			case 13: {
+			// Open selection.
+			case 'Enter': {
 				return this.handleOpenSelection();
 			}
 
-			// Open selection in a new tab - v
-			case 86: {
+			// Open selection in a new tab.
+			case 'v': {
 				return this.handleOpenSelectionNewTab();
 			}
 
-			// Like selection - l
-			case 76: {
+			// Like selection.
+			case 'l': {
 				return this.toggleLikeOnSelectedPost();
-			}
-
-			// Go to top - .
-			case 190: {
-				return this.goToTop();
 			}
 		}
 	};
@@ -386,13 +383,6 @@ class ReaderStream extends Component {
 		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
 		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
-
-	goToTop = () => {
-		const { streamKey, updateCount } = this.props;
-		if ( updateCount > 0 ) {
-			this.props.showUpdates( { streamKey } );
-		}
-	};
 
 	getVisibleItemIndexes() {
 		return (

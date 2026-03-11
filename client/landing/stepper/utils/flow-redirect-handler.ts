@@ -6,6 +6,7 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'ai-assembler', to: '/start:lang?' },
 	{ flow: BLOG_FLOW, to: '/start:lang?' },
 	{ flow: 'free', to: '/start/free:lang?' },
+	{ flow: 'google-transfer', to: '/setup/domain-transfer' },
 	{ flow: 'link-in-bio', to: '/start:lang?' },
 	{ flow: 'link-in-bio-tld', to: '/start:lang?' },
 	{ flow: 'sensei', to: ':lang?/plugins/sensei-pro/' },

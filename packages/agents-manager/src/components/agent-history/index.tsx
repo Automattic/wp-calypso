@@ -66,6 +66,7 @@ export default function AgentHistory( {
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
+			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader

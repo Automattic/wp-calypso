@@ -27,6 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
+	buildType(PlaywrightTestA4APRMatrix)
 	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
@@ -1047,6 +1048,59 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:client/dashboard/**
 				+:packages/**
 				+:test/e2e/specs/dashboard/**
+			""".trimIndent()
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+})
+
+
+object PlaywrightTestA4APRMatrix : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_A4A_E2E_Playwright_Test_Matrix")
+	uuid = "1ac8958e-d3e6-4fd1-a0f5-d1b2614900e3"
+	name = "A4A E2E Tests (PR)"
+	description = "Runs Automattic for Agencies e2e tests on pull requests using Playwright Test runner with build matrix"
+
+	params {
+		param("TEST_GROUP", "@a8c-for-agencies")
+		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+				-:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				+:client/a8c-for-agencies/**
+				+:test/e2e/specs/a8c-for-agencies/**
 			""".trimIndent()
 		}
 	}

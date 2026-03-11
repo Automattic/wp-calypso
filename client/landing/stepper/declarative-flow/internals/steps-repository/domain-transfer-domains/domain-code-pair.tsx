@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { GOOGLE_TRANSFER, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,10 +12,8 @@ import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
@@ -112,7 +110,6 @@ export function DomainCodePair( {
 	const validation = useValidationMessage( domain, auth, hasDuplicates, {
 		vendor: isHundredYearDomainsTransferFlow ? '100-year-domains' : undefined,
 	} );
-	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
 	const {
@@ -144,18 +141,6 @@ export function DomainCodePair( {
 
 	const domainActions = () => (
 		<span className="validation-actions">
-			{ isGoogleDomainsTransferFlow &&
-				// this means that the domain is locked and we need to show the instructions
-				errorStatus === domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE && (
-					<GoogleDomainsModal
-						className={ clsx( {
-							'is-first-row': showLabels,
-						} ) }
-						focusedStep={ 3 }
-					>
-						<span className="unlock-label">{ __( 'How to unlock' ) }</span>
-					</GoogleDomainsModal>
-				) }
 			<Button
 				// Disable the delete button on initial state meaning. no domain, no auth and one row.
 				disabled={ ! domain && ! auth && domainCount === 1 }
@@ -177,19 +162,6 @@ export function DomainCodePair( {
 			</Button>
 		</span>
 	);
-
-	const renderGoogleDomainsModal = () => {
-		return (
-			<GoogleDomainsModal
-				className={ clsx( {
-					'is-first-row': showLabels,
-				} ) }
-				focusedStep={ 4 }
-			>
-				<Gridicon icon="info-outline" size={ 18 } />
-			</GoogleDomainsModal>
-		);
-	};
 
 	const renderInfoPopover = () => {
 		return (
@@ -262,8 +234,8 @@ export function DomainCodePair( {
 							} ) }
 							htmlFor={ id + '-auth' }
 						>
-							{ isGoogleDomainsTransferFlow ? __( 'Transfer code' ) : __( 'Authorization code' ) }
-							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
+							{ __( 'Authorization code' ) }
+							{ renderInfoPopover() }
 						</FormLabel>
 
 						<FormInput
