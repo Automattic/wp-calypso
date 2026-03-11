@@ -64,6 +64,29 @@ describe( 'NewForwardForm MX warning', () => {
 		expect( checkbox ).toBeChecked();
 	} );
 
+	it( 'enables submit button when form is filled and MX warning is acknowledged', async () => {
+		const user = userEvent.setup();
+
+		render( <NewForwardForm { ...defaultProps } showMxWarning /> );
+
+		// Fill in the mailbox name.
+		await user.type( screen.getByRole( 'textbox', { name: /Forward from/i } ), 'info' );
+
+		// Add a forwarding destination via FormTokenField.
+		const destinationInput = screen.getByRole( 'combobox', { name: /Forward to/i } );
+		await user.type( destinationInput, 'test@other.com' );
+		await user.keyboard( '{Enter}' );
+
+		// Button should still be disabled — warning not acknowledged yet.
+		expect( screen.getByRole( 'button', { name: /Confirm forwards/i } ) ).toBeDisabled();
+
+		// Acknowledge the MX warning.
+		await user.click( screen.getByLabelText( /I understand that adding email forwarding/i ) );
+
+		// Now the button should be enabled.
+		expect( screen.getByRole( 'button', { name: /Confirm forwards/i } ) ).toBeEnabled();
+	} );
+
 	it( 'keeps submit button disabled without MX warning when form is incomplete', () => {
 		render( <NewForwardForm { ...defaultProps } showMxWarning={ false } /> );
 
