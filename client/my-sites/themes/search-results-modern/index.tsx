@@ -201,7 +201,7 @@ export default function SearchResultsModern( {
 			{ hasWpcomThemes && (
 				<div className="search-results-modern__section">
 					<ThemeSectionHeader
-						title={ translate( 'Results for %(query)s', { args: { query: search } } ) }
+						title={ translate( 'Results for "%(query)s"', { args: { query: search } } ) }
 						subtitle=""
 					/>
 					{ renderThemeGrid( wpcomThemes, wpcomEventRecorder ) }
@@ -213,7 +213,8 @@ export default function SearchResultsModern( {
 					<ThemeSectionHeader
 						title={ translate( 'Community themes' ) }
 						subtitle={ translate(
-							'Explore themes from the WordPress community, and upload to install when ready.'
+							'Explore "%(query)s" themes from the WordPress community, and upload to install when ready.',
+							{ args: { query: search } }
 						) }
 					/>
 					{ renderThemeGrid( wporgThemes, wporgEventRecorder ) }
