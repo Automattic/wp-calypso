@@ -1,6 +1,4 @@
-import { siteSubscriptionDetailsQuery } from '@automattic/api-queries';
-import { Reader } from '@automattic/data-stores';
-import { useQuery } from '@tanstack/react-query';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -14,7 +12,7 @@ export const SiteSubscriptionProvider: React.FC< { children: React.ReactNode } >
 } ) => {
 	const reactRouterNavigate = useNavigate();
 	const { blogId = '' } = useParams();
-	const { data, isLoading, error } = useQuery( siteSubscriptionDetailsQuery( blogId ) );
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionDetailsQuery( blogId );
 
 	let subscriptionData: Reader.SiteSubscriptionDetails< string > | undefined;
 	let subscriptionError: Reader.ErrorResponse | undefined;
