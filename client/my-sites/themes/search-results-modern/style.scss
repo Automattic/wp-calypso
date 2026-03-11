@@ -2,17 +2,17 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.empty-search-cta {
+.search-more-options {
 	margin: 0 auto;
 	max-width: 1220px;
 	padding: 24px 24px 96px 24px;
 }
 
-.empty-search-cta__header {
+.search-more-options__header {
 	margin-bottom: 32px;
 }
 
-.empty-search-cta__title {
+.search-more-options__title {
 	color: var( --studio-gray-100 );
 	font-family: $brand-serif;
 	font-size: rem( 40px );
@@ -25,14 +25,14 @@
 	}
 }
 
-.empty-search-cta__subtitle {
+.search-more-options__subtitle {
 	color: var( --studio-gray-80 );
 	font-size: $font-body-large;
 	line-height: 1.5;
 	margin: 8px 0 0;
 }
 
-.empty-search-cta__cards {
+.search-more-options__cards {
 	display: grid;
 	gap: 24px;
 	grid-template-columns: 1fr;
@@ -46,12 +46,12 @@
 	}
 }
 
-.empty-search-cta__card {
+.search-more-options__card {
 	display: flex;
 	flex-direction: column;
 }
 
-.empty-search-cta__illustration {
+.search-more-options__illustration {
 	border-radius: 8px;
 	display: block;
 	height: auto;
@@ -59,7 +59,7 @@
 	width: 100%;
 }
 
-.empty-search-cta__card-label.badge.badge--info {
+.search-more-options__card-label.badge.badge--info {
 	border-radius: 4px;
 	color: var( --studio-wordpress-blue );
 	background-color: #ebeefc;
@@ -72,7 +72,7 @@
 	width: fit-content;
 }
 
-.empty-search-cta__card-text {
+.search-more-options__card-text {
 	color: var( --studio-gray-100 );
 	flex: 1;
 	font-size: $font-body;
@@ -80,7 +80,7 @@
 	margin: 0 0 16px;
 }
 
-.empty-search-cta__button.components-button.is-secondary {
+.search-more-options__button.components-button.is-secondary {
 	--wp-components-color-accent: var( --studio-gray-80 );
 	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
 	width: fit-content;
