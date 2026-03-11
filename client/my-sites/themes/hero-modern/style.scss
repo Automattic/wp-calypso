@@ -3,23 +3,8 @@
 
 $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 
-.is-section-themes.is-theme-showcase-modern.has-no-sidebar {
-	.masterbar-menu .masterbar {
-		background: transparent;
-		border-bottom-color: transparent;
-		height: 56px;
-		position: relative;
-	}
-
-	.cta-btn-nav {
-		color: var(--studio-gray-100) !important;
-		background: inherit !important;
-		border: 1px solid var(--studio-gray-100);
-	}
-
-	.themes__selection {
-		padding-inline: 24px;
-	}
+.is-theme-showcase-modern.has-no-sidebar .themes__selection {
+	padding-inline: 24px;
 }
 
 
