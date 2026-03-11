@@ -109,6 +109,15 @@ class StatsActionSpam extends Component {
 						title={ this.props.translate( 'Mark as spam' ) }
 						onRequestClose={ this.closeConfirmDialog }
 						className="action-spam__confirm-modal"
+						// React synthetic events from portals bubble through the component
+						// tree, not the DOM tree. Without this, Enter/Space inside the modal
+						// would reach the parent row's onKeyDown handler and navigate to the
+						// referrer URL. Escape is allowed through so the modal can still close.
+						onKeyDown={ ( event ) => {
+							if ( event.key !== 'Escape' ) {
+								event.stopPropagation();
+							}
+						} }
 					>
 						<p>
 							{ this.props.translate( "Are you sure you want to mark '%(domain)s' as spam?", {
