@@ -34,12 +34,14 @@ export interface SummaryButtonProps {
 	 */
 	onClick?: React.MouseEventHandler;
 	/**
-	 * Adjusts spacing and layout. Higher density reduces padding and hides
-	 * optional elements like the strapline to create a more compact appearance.
+	 * Adjusts spacing and layout. Higher density reduces padding and may hide
+	 * optional elements like the description to create a more compact appearance.
 	 */
 	density?: Density;
 	/**
 	 * Optional supporting text that provides additional context or detail about the linked page.
+	 * For now, this property is only rendered in `low` density variant.
+	 * We might revisit adding this in more variants in the future.
 	 */
 	description?: React.ReactNode;
 	/**

@@ -74,7 +74,7 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 							<Text className="summary-button-title">{ title }</Text>
-							{ description && (
+							{ description && hasLowDensity && (
 								<Text variant="muted" className="summary-button-description">
 									{ description }
 								</Text>
