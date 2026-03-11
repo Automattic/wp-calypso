@@ -82,7 +82,12 @@ export class SidebarComponent {
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
+			// Clicking the top-level item may trigger a client-side React
+			// navigation or a full page load. Either way, wait for the
+			// expanded submenu and the specific subitem link to be visible
+			// before interacting with it.
 			const subitemSelector = `.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`;
+			await this.page.locator( subitemSelector ).first().waitFor();
 			const hrefSubItemSelector = ( await this.page.getAttribute(
 				subitemSelector,
 				'href'
