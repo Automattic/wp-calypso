@@ -7,8 +7,8 @@ import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client'
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
 /**
- * Gets the checkpoint ID embedded in a show-component tool message,
- * or an empty string if the message doesn't contain one.
+ * Gets the checkpoint ID embedded in a tool message, or an empty string
+ * if the message doesn't contain one.
  *
  * Checkpoint IDs are not available in past or restored conversations
  * because they are only stored in-memory for the current session.
