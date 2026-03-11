@@ -5,7 +5,7 @@ import config from '@automattic/calypso-config';
 import {
 	getCiabConfigFromCurrentDomain,
 	getCiabConfigFromBrandingCode,
-	getCiabConfigFromClientId,
+	getCiabConfigFromOAuth2Client,
 	getCiabConfigFromRedirectUrl,
 	getCiabConfigFromGarden,
 	detectCiabConfig,
@@ -154,54 +154,43 @@ describe( 'partner-branding', () => {
 		} );
 	} );
 
-	describe( 'getCiabConfigFromClientId', () => {
-		test( 'returns partner config when client_id matches dev ID', () => {
-			setLocation( 'wordpress.com', '?client_id=134404' );
-
-			const result = getCiabConfigFromClientId();
+	describe( 'getCiabConfigFromOAuth2Client', () => {
+		test( 'returns partner config when oauth2Client matches dev ID', () => {
+			const result = getCiabConfigFromOAuth2Client( { id: 134404 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'returns partner config when client_id matches production ID', () => {
-			setLocation( 'wordpress.com', '?client_id=134405' );
-
-			const result = getCiabConfigFromClientId();
+		test( 'returns partner config when oauth2Client matches production ID', () => {
+			const result = getCiabConfigFromOAuth2Client( { id: 134405 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'returns null when client_id does not match any partner', () => {
-			setLocation( 'wordpress.com', '?client_id=99999' );
-
-			const result = getCiabConfigFromClientId();
+		test( 'returns null when oauth2Client does not match any partner', () => {
+			const result = getCiabConfigFromOAuth2Client( { id: 99999 } );
 
 			expect( result ).toBeNull();
 		} );
 
-		test( 'returns null when client_id is absent', () => {
-			setLocation( 'wordpress.com' );
-
-			const result = getCiabConfigFromClientId();
+		test( 'returns null when oauth2Client is null', () => {
+			const result = getCiabConfigFromOAuth2Client( null );
 
 			expect( result ).toBeNull();
 		} );
 
-		test( 'returns null when client_id is not a number', () => {
-			setLocation( 'wordpress.com', '?client_id=abc' );
-
-			const result = getCiabConfigFromClientId();
+		test( 'returns null when oauth2Client is undefined', () => {
+			const result = getCiabConfigFromOAuth2Client( undefined );
 
 			expect( result ).toBeNull();
 		} );
 
 		test( 'returns null when feature flag is disabled', () => {
 			( config.isEnabled as jest.Mock ).mockReturnValue( false );
-			setLocation( 'wordpress.com', '?client_id=134404' );
 
-			const result = getCiabConfigFromClientId();
+			const result = getCiabConfigFromOAuth2Client( { id: 134404 } );
 
 			expect( result ).toBeNull();
 		} );
@@ -244,28 +233,28 @@ describe( 'partner-branding', () => {
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'from wins over client_id when conflicting', () => {
-			setLocation( 'wordpress.com', '?from=woo&client_id=99999' );
+		test( 'from wins over oauth2Client when conflicting', () => {
+			setLocation( 'wordpress.com', '?from=woo' );
 
-			const result = detectCiabConfig();
-
-			expect( result ).not.toBeNull();
-			expect( result?.id ).toBe( 'woo' );
-		} );
-
-		test( 'client_id matching still works when no hostname or from match', () => {
-			setLocation( 'wordpress.com', '?client_id=134404' );
-
-			const result = detectCiabConfig();
+			const result = detectCiabConfig( { id: 99999 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'client_id wins over redirect_to when conflicting', () => {
-			setLocation( 'wordpress.com', '?client_id=134405&redirect_to=https://example.com' );
+		test( 'oauth2Client matching still works when no hostname or from match', () => {
+			setLocation( 'wordpress.com' );
 
-			const result = detectCiabConfig();
+			const result = detectCiabConfig( { id: 134404 } );
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'woo' );
+		} );
+
+		test( 'oauth2Client wins over redirect_to when conflicting', () => {
+			setLocation( 'wordpress.com', '?redirect_to=https://example.com' );
+
+			const result = detectCiabConfig( { id: 134405 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
