@@ -1,19 +1,4 @@
 /**
- * Returns the URL to the pending comments management page for the given site.
- * @param {number|null} siteId Site ID whose pending comments management page URL should be returned.
- * @returns {string|null}
- */
-export function getCommentsUrl( siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-	// Notifications are hosted on widgets.wp.com on WordPress.com
-	const host =
-		document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
-	return `${ document.location.protocol }//${ host }/comments/pending/${ siteId }`;
-}
-
-/**
  * Returns last block in list of blocks with 'actions' property
  */
 function getActionBlock( blocks ) {
@@ -26,7 +11,7 @@ function getActionBlock( blocks ) {
  * @returns {Object}
  */
 export function getActions( note ) {
-	return getActionBlock( note.body ).actions ?? {};
+	return getActionBlock( note.body ).actions;
 }
 
 /**

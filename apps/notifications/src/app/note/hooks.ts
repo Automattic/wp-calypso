@@ -23,11 +23,7 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 	const { client } = useAppContext();
 
 	useEffect( () => {
-		if (
-			! isLoading &&
-			visibleNotes.length &&
-			visibleNotes[ visibleNotes.length - 1 ].id === note?.id
-		) {
+		if ( ! isLoading && visibleNotes[ visibleNotes.length - 1 ].id === note?.id ) {
 			client?.loadMore();
 		}
 	}, [ isLoading, visibleNotes, note, client ] );

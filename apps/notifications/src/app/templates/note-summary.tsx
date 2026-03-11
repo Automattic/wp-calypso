@@ -9,9 +9,8 @@ import type { Note } from '../types';
 import type { CSSProperties } from 'react';
 
 const getNoteIconLink = ( note: Note ) => {
-	const user = ( note.subject?.[ 0 ].ranges || [] ).find( ( { type } ) => type === 'user' );
-	if ( user ) {
-		const { id: userId, site_id: siteId, url } = user;
+	if ( note.header?.[ 0 ].ranges?.[ 0 ].type === 'user' ) {
+		const { id: userId, site_id: siteId, url } = note.header[ 0 ].ranges[ 0 ];
 		// Some site notifications populate id with the siteId, so consider the userId falsy in this
 		// case.
 		return userId && userId !== siteId ? `https://wordpress.com/reader/users/id/${ userId }` : url;
@@ -22,7 +21,7 @@ const getNoteIconLink = ( note: Note ) => {
 
 const NoteSummaryIcon = ( { note }: { note: Note } ) => {
 	const link = getNoteIconLink( note );
-	const style: CSSProperties = { display: 'flex', flexShrink: 0 };
+	const style: CSSProperties = { flexShrink: 0 };
 	const content = <NoteIcon icon={ note.icon } size={ 32 } />;
 
 	if ( ! link ) {
