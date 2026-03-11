@@ -12,7 +12,7 @@ import Promote from './action-promote';
 import Spam from './action-spam';
 import OpenUTMBuilder from './action-utm-builder';
 
-function useActionItems( { data, moduleName } ) {
+function useActionItems( { data, moduleName, statsQuery } ) {
 	return useMemo( () => {
 		const actionItems = [];
 
@@ -47,6 +47,7 @@ function useActionItems( { data, moduleName } ) {
 								inHorizontalBarList
 								key={ action.type }
 								moduleName={ moduleNameTitle }
+								statsQuery={ statsQuery }
 							/>
 						);
 						break;
@@ -83,7 +84,7 @@ function useActionItems( { data, moduleName } ) {
 			}
 		}
 		return actionItems;
-	}, [ data, moduleName ] );
+	}, [ data, moduleName, statsQuery ] );
 }
 
 /**
@@ -96,9 +97,10 @@ const StatsListActions = ( {
 	children,
 	isMobileMenuVisible,
 	onMobileMenuClick,
+	statsQuery,
 } ) => {
 	const translate = useTranslate();
-	const actionItems = useActionItems( { data, moduleName } );
+	const actionItems = useActionItems( { data, moduleName, statsQuery } );
 
 	return actionItems?.length || children ? (
 		<>

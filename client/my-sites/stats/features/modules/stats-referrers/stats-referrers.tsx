@@ -1,13 +1,14 @@
 import { StatsCard } from '@automattic/components';
 import { megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -31,9 +32,20 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	isRealTime = false,
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
 	const [ isSpamModalOpen, setIsSpamModalOpen ] = useState( false );
+
+	const handleSpamModalClose = useCallback(
+		( hasChanges: boolean ) => {
+			setIsSpamModalOpen( false );
+			if ( hasChanges ) {
+				dispatch( requestSiteStats( siteId, statType, query ) );
+			}
+		},
+		[ dispatch, siteId, query ]
+	);
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -119,7 +131,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 				/>
 			) }
 			{ isSpamModalOpen && (
-				<SpamReferrersModal siteId={ siteId } onClose={ () => setIsSpamModalOpen( false ) } />
+				<SpamReferrersModal siteId={ siteId } onClose={ handleSpamModalClose } />
 			) }
 			{ presentEmptyUI && (
 				// show empty state

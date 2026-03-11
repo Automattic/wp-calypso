@@ -44,6 +44,7 @@ const StatsListCard = ( {
 	hasNoBackground,
 	formatValue,
 	onShowMoreClick,
+	statsQuery,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -84,6 +85,7 @@ const StatsListCard = ( {
 				isMobileMenuVisible={ isVisible }
 				inStatsListCard
 				onMobileMenuClick={ ( event ) => toggleMobileMenu( event, isVisible, key ) }
+				statsQuery={ statsQuery }
 			>
 				{ item?.link && (
 					<OpenLink href={ item.link } key={ `link-${ key }` } moduleName={ moduleType } />

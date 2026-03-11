@@ -1,5 +1,6 @@
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useRef, useCallback } from 'react';
 import useSpamReferrersQuery, {
 	useUnspamReferrerMutation,
 } from 'calypso/my-sites/stats/hooks/use-spam-referrers-query';
@@ -8,20 +9,33 @@ import './spam-referrers-modal.scss';
 
 interface SpamReferrersModalProps {
 	siteId: number;
-	onClose: () => void;
+	onClose: ( hasChanges: boolean ) => void;
 }
 
 const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const { data, isLoading } = useSpamReferrersQuery( siteId );
 	const { mutate: unspamReferrer } = useUnspamReferrerMutation( siteId );
+	const hasChangesRef = useRef( false );
+
+	const handleUnspam = useCallback(
+		( domain: string ) => {
+			hasChangesRef.current = true;
+			unspamReferrer( domain );
+		},
+		[ unspamReferrer ]
+	);
+
+	const handleClose = useCallback( () => {
+		onClose( hasChangesRef.current );
+	}, [ onClose ] );
 
 	const domains = data?.domains ?? [];
 
 	return (
 		<Modal
 			title={ translate( 'Spam referrers' ) }
-			onRequestClose={ onClose }
+			onRequestClose={ handleClose }
 			className="spam-referrers-modal"
 		>
 			{ isLoading && <p>{ translate( 'Loading…' ) }</p> }
@@ -37,7 +51,7 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 					{ domains.map( ( item ) => (
 						<li key={ item.domain } className="spam-referrers-modal__item">
 							<span className="spam-referrers-modal__domain">{ item.domain }</span>
-							<Button variant="link" isDestructive onClick={ () => unspamReferrer( item.domain ) }>
+							<Button variant="link" isDestructive onClick={ () => handleUnspam( item.domain ) }>
 								{ translate( 'Remove' ) }
 							</Button>
 						</li>

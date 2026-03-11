@@ -4,8 +4,10 @@ import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import wpcom from 'calypso/lib/wp';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import './actions-spam.scss';
 
 const debug = debugFactory( 'calypso:stats:action-spam' );
@@ -58,7 +60,15 @@ class StatsActionSpam extends Component {
 		}
 
 		const wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, () => {
+			if ( this.props.statsQuery ) {
+				this.props.requestSiteStats(
+					this.props.data.siteID,
+					'statsReferrers',
+					this.props.statsQuery
+				);
+			}
+		} );
 		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	}
 
@@ -125,4 +135,4 @@ class StatsActionSpam extends Component {
 	}
 }
 
-export default localize( StatsActionSpam );
+export default connect( null, { requestSiteStats } )( localize( StatsActionSpam ) );

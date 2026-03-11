@@ -354,6 +354,7 @@ class StatsModule extends Component {
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
 					hasNoBackground={ hasNoBackground }
+					statsQuery={ query }
 					overlay={
 						siteId &&
 						statType &&
