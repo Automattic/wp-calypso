@@ -117,6 +117,11 @@ class StatsActionSpam extends Component {
 								args: { domain: this.props.data?.domain },
 							} ) }
 						</p>
+						<p>
+							{ this.props.translate(
+								'This will hide this referrer from your future stats. Historical stats will not be affected. You can undo this later from the spam referrers list.'
+							) }
+						</p>
 					</Dialog>
 				) }
 			</li>
