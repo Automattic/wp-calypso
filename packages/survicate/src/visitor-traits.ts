@@ -15,7 +15,7 @@ const DAY_IN_MS = 86400000;
 /**
  * Returns the number of whole days between a given date and now.
  */
-export function getAccountAgeInDays( registrationDate: number | Date ): number {
+export function getAccountAgeInDays( registrationDate: string ): number {
 	return Math.floor( ( Date.now() - new Date( registrationDate ).getTime() ) / DAY_IN_MS );
 }
 
