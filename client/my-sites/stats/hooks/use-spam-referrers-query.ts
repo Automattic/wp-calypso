@@ -33,7 +33,16 @@ export function useUnspamReferrerMutation( siteId: number | null ) {
 			const wpcomSite = wpcom.site( siteId );
 			return wpcomSite.statsReferrersSpamDelete( domain );
 		},
-		onSuccess: ( _data, domain ) => {
+		onMutate: async ( domain ) => {
+			// Cancel any outgoing refetches so they don't overwrite our optimistic update.
+			await queryClient.cancelQueries( { queryKey: [ QUERY_KEY_BASE, siteId ] } );
+
+			// Snapshot the previous value for rollback.
+			const previous = queryClient.getQueryData< SpamReferrersResponse >( [
+				QUERY_KEY_BASE,
+				siteId,
+			] );
+
 			// Optimistically remove the domain from the cached list.
 			queryClient.setQueryData< SpamReferrersResponse >( [ QUERY_KEY_BASE, siteId ], ( old ) => {
 				if ( ! old ) {
@@ -43,6 +52,14 @@ export function useUnspamReferrerMutation( siteId: number | null ) {
 					domains: old.domains.filter( ( item ) => item.domain !== domain ),
 				};
 			} );
+
+			return { previous };
+		},
+		onError: ( _error, _domain, context ) => {
+			// Roll back to the previous value on error.
+			if ( context?.previous ) {
+				queryClient.setQueryData( [ QUERY_KEY_BASE, siteId ], context.previous );
+			}
 		},
 		retry: 1,
 		retryDelay: 3 * 1000,

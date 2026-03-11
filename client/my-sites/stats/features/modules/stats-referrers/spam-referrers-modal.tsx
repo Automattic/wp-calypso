@@ -1,4 +1,5 @@
 import { Spinner } from '@automattic/components';
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useCallback } from 'react';
@@ -15,8 +16,8 @@ interface SpamReferrersModalProps {
 
 const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
-	const { data, isLoading } = useSpamReferrersQuery( siteId );
-	const { mutate: unspamReferrer } = useUnspamReferrerMutation( siteId );
+	const { data, isLoading, isError: isFetchError } = useSpamReferrersQuery( siteId );
+	const { mutate: unspamReferrer, isError: isUnspamError } = useUnspamReferrerMutation( siteId );
 	const hasChangesRef = useRef( false );
 
 	const handleUnspam = useCallback(
@@ -40,24 +41,47 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 			className="spam-referrers-modal"
 		>
 			{ isLoading && <Spinner /> }
-			{ ! isLoading && domains.length === 0 && (
-				<p className="spam-referrers-modal__empty">
+			{ isFetchError && (
+				<NoticeBanner level="error" hideCloseButton>
 					{ translate(
-						'No spam referrers yet. To mark a referrer as spam, hover over it in the referrers list and click the warning icon. Spam referrers are hidden from future stats but historical data is not affected.'
+						'Sorry, something went wrong loading spam referrers. Please try again later.'
 					) }
-				</p>
+				</NoticeBanner>
 			) }
-			{ ! isLoading && domains.length > 0 && (
-				<ul className="spam-referrers-modal__list">
-					{ domains.map( ( item ) => (
-						<li key={ item.domain } className="spam-referrers-modal__item">
-							<span className="spam-referrers-modal__domain">{ item.domain }</span>
-							<Button variant="link" isDestructive onClick={ () => handleUnspam( item.domain ) }>
-								{ translate( 'Remove' ) }
-							</Button>
-						</li>
-					) ) }
-				</ul>
+			{ ! isLoading && ! isFetchError && domains.length === 0 && (
+				<div className="spam-referrers-modal__empty">
+					<p>
+						{ translate(
+							'No spam referrers yet. To mark a referrer as spam, hover over it in the referrers list and click the warning icon.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Spam referrers are hidden from future stats but historical data is not affected.'
+						) }
+					</p>
+				</div>
+			) }
+			{ ! isLoading && ! isFetchError && domains.length > 0 && (
+				<>
+					{ isUnspamError && (
+						<NoticeBanner level="error" hideCloseButton>
+							{ translate(
+								'Sorry, something went wrong removing the spam referrer. Please try again.'
+							) }
+						</NoticeBanner>
+					) }
+					<ul className="spam-referrers-modal__list">
+						{ domains.map( ( item ) => (
+							<li key={ item.domain } className="spam-referrers-modal__item">
+								<span className="spam-referrers-modal__domain">{ item.domain }</span>
+								<Button variant="link" isDestructive onClick={ () => handleUnspam( item.domain ) }>
+									{ translate( 'Remove' ) }
+								</Button>
+							</li>
+						) ) }
+					</ul>
+				</>
 			) }
 		</Modal>
 	);

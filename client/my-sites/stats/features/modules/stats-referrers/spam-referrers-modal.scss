@@ -18,6 +18,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 16px;
 		padding: 8px 0;
 		border-block-end: 1px solid var( --color-border-subtle );
 
@@ -29,5 +30,6 @@
 	.spam-referrers-modal__domain {
 		font-weight: 500;
 		word-break: break-all;
+		min-width: 0;
 	}
 }
