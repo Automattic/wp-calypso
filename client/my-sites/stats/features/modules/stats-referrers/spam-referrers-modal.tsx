@@ -1,3 +1,4 @@
+import { Spinner } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useCallback } from 'react';
@@ -38,7 +39,7 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 			onRequestClose={ handleClose }
 			className="spam-referrers-modal"
 		>
-			{ isLoading && <p>{ translate( 'Loading…' ) }</p> }
+			{ isLoading && <Spinner /> }
 			{ ! isLoading && domains.length === 0 && (
 				<p className="spam-referrers-modal__empty">
 					{ translate(

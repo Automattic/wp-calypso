@@ -21,6 +21,7 @@ export default function useSpamReferrersQuery( siteId: number | null ) {
 		queryKey: [ QUERY_KEY_BASE, siteId ],
 		queryFn: () => fetchSpamReferrers( siteId as number ),
 		enabled: !! siteId,
+		staleTime: 0,
 	} );
 }
 
