@@ -119,7 +119,11 @@ export const siteRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: overviewUrl } );
 		}
 
-		if ( site.__inaccessible_jetpack_error && ! location.pathname.endsWith( overviewUrl ) ) {
+		if (
+			site.__inaccessible_jetpack_error &&
+			! location.pathname.endsWith( overviewUrl ) &&
+			! location.pathname.startsWith( `${ overviewUrl }/domains` )
+		) {
 			throw redirect( { to: overviewUrl } );
 		}
 

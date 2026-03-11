@@ -18,6 +18,11 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 					{ __( 'Overview' ) }
 				</ResponsiveMenu.Item>
+				{ siteTypeSupports.domains && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+						{ __( 'Domains' ) }
+					</ResponsiveMenu.Item>
+				) }
 			</ResponsiveMenu>
 		);
 	}
