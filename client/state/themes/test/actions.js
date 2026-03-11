@@ -645,32 +645,22 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'Survicate event triggering', () => {
-		const fakeGetStateWithPaidPlan = () => ( {
+		const createStateWithPlan = ( productId ) => ( {
 			themes: {
-				activeThemes: {
-					2211667: 'twentyfifteen',
-				},
-				lastQuery: {
-					2211667: {
-						search: '',
-					},
-				},
+				activeThemes: { 2211667: 'twentyfifteen' },
+				lastQuery: { 2211667: { search: '' } },
 				queries: {
 					wpcom: new ThemeQueryManager( {
 						items: {
 							'mayland-blocks': {
 								id: 'mayland-blocks',
 								stylesheet: 'pub/mayland-blocks',
-								taxonomies: {
-									theme_feature: [],
-								},
+								taxonomies: { theme_feature: [] },
 							},
 							twentyfifteen: {
 								id: 'twentyfifteen',
 								stylesheet: 'pub/twentyfifteen',
-								taxonomies: {
-									theme_feature: [],
-								},
+								taxonomies: { theme_feature: [] },
 							},
 						},
 					} ),
@@ -681,63 +671,14 @@ describe( 'actions', () => {
 					2211667: {
 						ID: 2211667,
 						jetpack: false,
-						plan: {
-							product_id: 1003, // Business plan
-						},
-					},
-				},
-			},
-		} );
-
-		const fakeGetStateWithFreePlan = () => ( {
-			themes: {
-				activeThemes: {
-					2211667: 'twentyfifteen',
-				},
-				lastQuery: {
-					2211667: {
-						search: '',
-					},
-				},
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: {
-							'mayland-blocks': {
-								id: 'mayland-blocks',
-								stylesheet: 'pub/mayland-blocks',
-								taxonomies: {
-									theme_feature: [],
-								},
-							},
-							twentyfifteen: {
-								id: 'twentyfifteen',
-								stylesheet: 'pub/twentyfifteen',
-								taxonomies: {
-									theme_feature: [],
-								},
-							},
-						},
-					} ),
-				},
-			},
-			sites: {
-				items: {
-					2211667: {
-						ID: 2211667,
-						jetpack: false,
-						plan: {
-							product_id: 1, // Free plan
-						},
+						plan: { product_id: productId },
 					},
 				},
 			},
 		} );
 
 		beforeEach( () => {
-			// Mock window._sva for Survicate event tracking
-			window._sva = {
-				invokeEvent: jest.fn(),
-			};
+			window._sva = { invokeEvent: jest.fn() };
 		} );
 
 		afterEach( () => {
@@ -745,21 +686,13 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should invoke Survicate event only for paid plan users', () => {
-			const mockInvokeEvent = jest.fn();
-			window._sva = { invokeEvent: mockInvokeEvent };
-
-			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetStateWithPaidPlan );
-
-			expect( mockInvokeEvent ).toHaveBeenCalledWith( 'themeActivated' );
+			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, () => createStateWithPlan( 1003 ) );
+			expect( window._sva.invokeEvent ).toHaveBeenCalledWith( 'themeActivated' );
 		} );
 
 		test( 'should not invoke Survicate event for free plan users', () => {
-			const mockInvokeEvent = jest.fn();
-			window._sva = { invokeEvent: mockInvokeEvent };
-
-			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetStateWithFreePlan );
-
-			expect( mockInvokeEvent ).not.toHaveBeenCalled();
+			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, () => createStateWithPlan( 1 ) );
+			expect( window._sva.invokeEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 
