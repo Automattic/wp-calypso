@@ -19,7 +19,6 @@
 	"features": {
 		"100-year-domain": true,
 		"100-year-plan/vip": true,
-		"a4a-dev-sites": true,
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": false,

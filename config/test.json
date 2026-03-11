@@ -22,7 +22,6 @@
 	"facebook_api_key": "249643311490",
 	"features": {
 		"100-year-plan/vip": true,
-		"a4a-dev-sites": true,
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/all-domain-management": true,
