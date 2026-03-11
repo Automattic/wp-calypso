@@ -61,7 +61,7 @@ interface CancelPurchaseFormProps {
 	offerApplyError?: Error | null;
 	offerDiscountBasedFromPurchasePrice: number;
 	onClickAcceptForCancellationOffer?: () => void;
-	onGetCancellationOffer: ( newPurchaseId: string ) => void;
+	onGetCancellationOffer: ( newPurchaseId?: string ) => void;
 	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;

@@ -17,7 +17,7 @@ interface Props {
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
 	>;
 	percentDiscount: number;
-	onGetCancellationOffer: () => void;
+	onGetCancellationOffer: ( newPurchaseId: string ) => void;
 	isAkismet?: boolean;
 }
 

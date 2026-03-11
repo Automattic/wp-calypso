@@ -537,11 +537,15 @@ export default function CancelPurchase() {
 		cancellationOffer
 	);
 	const onGetCancellationOffer = useCallback(
-		( newPurchaseId: string ) => {
+		( newPurchaseId?: string ) => {
+			if ( ! newPurchaseId ) {
+				redirectBack();
+				return;
+			}
 			recordEvent( 'calypso_purchases_cancel_get_discount' );
 			navigate( { to: purchasesRoute.to + `/${ newPurchaseId }` } );
 		},
-		[ navigate, recordEvent ]
+		[ redirectBack, navigate, recordEvent ]
 	);
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
