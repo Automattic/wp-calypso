@@ -6,8 +6,8 @@
 	&__inner {
 		margin-top: 12px;
 		padding: 12px;
-		background: var(--color-background);
-		border: 1px solid var(--color-muted);
+		background: var( --color-background );
+		border: 1px solid var( --color-muted );
 		border-radius: 4px;
 
 		.components-textarea-control {
@@ -17,26 +17,26 @@
 		.components-base-control__label {
 			font-size: 13px;
 			text-transform: none;
-			color: var(--color-muted-foreground);
+			color: var( --color-muted-foreground );
 		}
 
 		.components-textarea-control__input {
 			width: 100%;
 			resize: vertical;
-			background: var(--color-popover-muted);
-			border-color: var(--color-muted);
-			color: var(--color-foreground);
+			background: var( --color-popover-muted );
+			border-color: var( --color-muted );
+			color: var( --color-foreground );
 
 			&::placeholder {
-				color: var(--color-muted-foreground);
+				color: var( --color-muted-foreground );
 			}
 		}
 	}
 
 	&__success {
 		padding: 12px;
-		background: var(--color-success-background);
-		color: var(--color-success);
+		background: var( --color-success-background );
+		color: var( --color-success );
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -44,8 +44,8 @@
 
 	&__error {
 		padding: 12px;
-		background: var(--color-error-background);
-		color: var(--color-error);
+		background: var( --color-error-background );
+		color: var( --color-error );
 		border-radius: 4px;
 		text-align: center;
 		font-size: 14px;
@@ -55,6 +55,7 @@
 		display: flex;
 		gap: 8px;
 		justify-content: flex-end;
+		padding: 2px;
 
 		.components-button {
 			display: flex;
@@ -63,20 +64,20 @@
 		}
 
 		.components-button.is-tertiary {
-			color: var(--color-muted-foreground);
+			color: var( --color-muted-foreground );
 
 			&:hover {
-				color: var(--color-foreground);
+				color: var( --color-foreground );
 			}
 		}
 
 		.components-button.is-primary {
-			background: var(--color-primary);
-			color: var(--color-primary-foreground);
+			background: var( --color-primary );
+			color: var( --color-primary-foreground );
 
 			&:disabled {
-				background: var(--color-muted);
-				color: var(--color-muted-foreground);
+				background: var( --color-muted );
+				color: var( --color-muted-foreground );
 			}
 		}
 
