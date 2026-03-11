@@ -11,6 +11,11 @@ declare const agentsManagerData:
 			agentProviders?: string[];
 			useUnifiedExperience?: boolean;
 			helpCenterUrl?: string;
+			agentConfig?: {
+				agentId?: string;
+				version?: string;
+				botSlug?: string;
+			};
 	  }
 	| undefined;
 

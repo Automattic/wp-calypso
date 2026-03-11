@@ -11,7 +11,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
+import {
+	createAgentConfig,
+	getAgentConfig,
+	type AgentConfigOverrides,
+} from '../utils/agent-config';
 import { getSessionId, clearSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
@@ -26,6 +30,8 @@ export interface AgentsManagerProps {
 	site?: AgentsManagerSite | null;
 	/** The current route path. */
 	currentRoute?: string;
+	/** Optional explicit agent configuration overrides. */
+	agentConfig?: AgentConfigOverrides;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
 }
@@ -37,6 +43,7 @@ export default function AgentsManager( {
 	currentUser,
 	site,
 	currentRoute,
+	agentConfig,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -53,7 +60,7 @@ export default function AgentsManager( {
 		<AgentsManagerContextProvider value={ { sectionName, currentUser, site, currentRoute } }>
 			<QueryClientProvider client={ queryClient }>
 				<PersistentRouter>
-					<AgentSetup />
+					<AgentSetup agentConfigOverrides={ agentConfig } />
 				</PersistentRouter>
 			</QueryClientProvider>
 		</AgentsManagerContextProvider>
@@ -61,7 +68,11 @@ export default function AgentsManager( {
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup(): JSX.Element | null {
+function AgentSetup( {
+	agentConfigOverrides,
+}: {
+	agentConfigOverrides?: AgentConfigOverrides;
+} ): JSX.Element | null {
 	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
@@ -70,9 +81,9 @@ function AgentSetup(): JSX.Element | null {
 	const isChatRoute = pathname.startsWith( '/chat' );
 	const isNewChat = isChatRoute && !! state?.isNewChat;
 	const routeSessionId = isChatRoute && state?.sessionId;
-	// Read agent/version overrides from browser URL (?agent=, ?version=).
+	// Resolve explicit config overrides first, then URL query params as fallback.
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version } = getAgentConfig();
+	const { agentId, version, botSlug } = getAgentConfig( agentConfigOverrides );
 	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
@@ -112,13 +123,24 @@ function AgentSetup(): JSX.Element | null {
 				environment: 'calypso',
 				agentId,
 				version,
+				botSlug,
 			} );
 
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
+	}, [
+		agentId,
+		version,
+		botSlug,
+		currentRoute,
+		isNewChat,
+		navigate,
+		sessionId,
+		setAgentConfig,
+		site?.ID,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

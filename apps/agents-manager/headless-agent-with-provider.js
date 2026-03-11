@@ -13,6 +13,7 @@ export default function HeadlessAgentWithProvider() {
 			<HeadlessAgentInitializer
 				site={ helpCenterData?.site }
 				currentRoute={ window.location.pathname }
+				agentConfig={ helpCenterData?.agentConfig }
 			/>
 		</QueryClientProvider>
 	);

@@ -8,9 +8,10 @@
 
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { createAgentConfig } from '../utils/agent-config';
+import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
 import { getSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
+import type { AgentConfigOverrides } from '../utils/agent-config';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
 
@@ -19,6 +20,8 @@ export interface HeadlessAgentInitializerProps {
 	site?: HelpCenterSite | null;
 	/** The current route path. */
 	currentRoute?: string;
+	/** Optional explicit agent configuration overrides. */
+	agentConfig?: AgentConfigOverrides;
 }
 
 /**
@@ -29,11 +32,15 @@ export interface HeadlessAgentInitializerProps {
 export default function HeadlessAgentInitializer( {
 	site = null,
 	currentRoute,
+	agentConfig,
 }: HeadlessAgentInitializerProps ): JSX.Element | null {
-	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
+	const [ resolvedAgentConfig, setResolvedAgentConfig ] = useState< UseAgentChatConfig | null >(
+		null
+	);
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
+	const { agentId, version, botSlug } = getAgentConfig( agentConfig );
 
-	const sessionId = getSessionId();
+	const sessionId = getSessionId( agentId );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
@@ -42,8 +49,6 @@ export default function HeadlessAgentInitializer( {
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
 				loadedProvidersRef.current = providers;
-				// eslint-disable-next-line no-console
-				console.log( '[HeadlessAgentInitializer] Loaded external providers' );
 			}
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
@@ -55,21 +60,22 @@ export default function HeadlessAgentInitializer( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				environment: 'wp-admin',
+				agentId,
+				version,
+				botSlug,
 			} );
 
-			setAgentConfig( config );
-			// eslint-disable-next-line no-console
-			console.log( '[HeadlessAgentInitializer] Agent config created' );
+			setResolvedAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [ currentRoute, sessionId, site?.ID ] );
+	}, [ agentId, version, botSlug, currentRoute, sessionId, site?.ID ] );
 
-	if ( ! agentConfig ) {
+	if ( ! resolvedAgentConfig ) {
 		return null;
 	}
 
-	return <AgentInitializerInner agentConfig={ agentConfig } />;
+	return <AgentInitializerInner agentConfig={ resolvedAgentConfig } />;
 }
 
 /**

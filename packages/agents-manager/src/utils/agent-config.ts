@@ -24,6 +24,17 @@ export interface CreateAgentConfigOptions {
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
+	/** Override bot slug (e.g., for workflow agent configurations). */
+	botSlug?: string;
+}
+
+export interface AgentConfigOverrides {
+	/** Explicit agent ID to use (for example `workflow`). */
+	agentId?: string;
+	/** Optional constructor argument version. */
+	version?: string;
+	/** Optional constructor argument slug for workflow bot selection. */
+	botSlug?: string;
 }
 
 /**
@@ -82,7 +93,9 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
  */
 async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
-	version?: string
+	environment: string,
+	version?: string,
+	botSlug?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
 	return {
@@ -96,12 +109,21 @@ async function createWrappedContextProvider(
 				  }
 				: pluginContext;
 
+			const fallbackContext = {
+				url: window.location.href,
+				pathname: window.location.pathname,
+				search: window.location.search,
+				environment,
+			};
+
 			return {
+				...fallbackContext,
 				...resolvedContext,
 				can_access_zendesk: canAccessZendesk,
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
+					...( botSlug && { slug: botSlug } ),
 				},
 			};
 		},
@@ -114,7 +136,8 @@ async function createWrappedContextProvider(
 async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
-	version?: string
+	version?: string,
+	botSlug?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
 	return {
@@ -125,7 +148,12 @@ async function createDefaultContextProvider(
 			can_access_zendesk: canAccessZendesk,
 			environment,
 			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
+			...( ( version || botSlug ) && {
+				constructorArguments: {
+					...( version && { version } ),
+					...( botSlug && { slug: botSlug } ),
+				},
+			} ),
 		} ),
 	};
 }
@@ -148,6 +176,7 @@ export async function createAgentConfig(
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
+		botSlug,
 	} = options;
 
 	const config: UseAgentChatConfig = {
@@ -164,12 +193,18 @@ export async function createAgentConfig(
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			environment,
+			version,
+			botSlug
+		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
 			currentRoute,
 			environment,
-			version
+			version,
+			botSlug
 		);
 	}
 
@@ -177,20 +212,27 @@ export async function createAgentConfig(
 }
 
 /**
- * Get agent configuration from query string parameters or defaults.
- * Allows overriding agent ID and version via URL for testing purposes.
+ * Resolve agent config from explicit overrides, query string, and defaults.
+ * Priority: explicit overrides > query params > defaults.
  *
  * Query parameters:
  * - `agent`: Override the agent ID (e.g., ?agent=wpcom-workflow-support_chat)
  * - `version`: Override the agent version (e.g., ?version=1.0.25)
+ * - `slug` or `bot`: Override workflow/configurable bot slug
  */
-export function getAgentConfig(): { agentId: string; version?: string } {
+export function getAgentConfig( overrides: AgentConfigOverrides = {} ): {
+	agentId: string;
+	version?: string;
+	botSlug?: string;
+} {
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const agentIdParam = urlSearchParams.get( 'agent' );
 	const versionParam = urlSearchParams.get( 'version' );
+	const botSlugParam = urlSearchParams.get( 'slug' ) || urlSearchParams.get( 'bot' );
 
 	return {
-		agentId: agentIdParam || ORCHESTRATOR_AGENT_ID,
-		version: versionParam || undefined,
+		agentId: overrides.agentId || agentIdParam || ORCHESTRATOR_AGENT_ID,
+		version: overrides.version || versionParam || undefined,
+		botSlug: overrides.botSlug || botSlugParam || undefined,
 	};
 }

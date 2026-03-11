@@ -5,6 +5,7 @@ export { default as HeadlessAgentInitializer } from './components/headless-agent
 export type { HeadlessAgentInitializerProps } from './components/headless-agent-initializer';
 
 export { AGENTS_MANAGER_STORE } from './stores';
+export type { AgentConfigOverrides } from './utils/agent-config';
 
 // Utility for checking unified experience from inline script data
 export { getUseUnifiedExperienceFromInlineData } from './utils/load-external-providers';

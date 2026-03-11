@@ -20,7 +20,14 @@ import AgentsManager from '@automattic/agents-manager';
 function MyApp() {
 	const site = { ID: 456, URL: 'https://example.com' };
 
-	return <AgentsManager currentRoute="/dashboard" sectionName="dashboard" site={ site } />;
+	return (
+		<AgentsManager
+			currentRoute="/dashboard"
+			sectionName="dashboard"
+			site={ site }
+			agentConfig={ { agentId: 'workflow', botSlug: 'wpcom-workflow-unified_chat' } }
+		/>
+	);
 }
 ```
 
@@ -32,7 +39,13 @@ Use `HeadlessAgentInitializer` when you need to create the agent without renderi
 import { HeadlessAgentInitializer } from '@automattic/agents-manager';
 
 function MyApp() {
-	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
+	return (
+		<HeadlessAgentInitializer
+			site={ site }
+			currentRoute="/media"
+			agentConfig={ { agentId: 'workflow', botSlug: 'wpcom-workflow-unified_chat' } }
+		/>
+	);
 }
 ```
 
@@ -81,6 +94,7 @@ See `src/hooks/use-setup-custom-actions/README.md` for details.
 | `currentUser`  | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`. |
 | `site`         | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).        |
 | `currentRoute` | `string` (optional)            | The current route path.                                           |
+| `agentConfig`  | `AgentConfigOverrides` (optional) | Explicit agent routing config (`agentId`, `version`, `botSlug`). |
 | `handleClose`  | `() => void` (optional)        | Called when the agent is closed.                                  |
 
 ### Exported Hooks and Utilities
