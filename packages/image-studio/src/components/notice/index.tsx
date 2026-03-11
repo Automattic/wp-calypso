@@ -6,13 +6,13 @@ import './style.scss';
 
 /**
  * Renders a single warning notice using the core Notice component.
+ * Dismissibility is controlled by the notice's `dismissible` flag (set by the store).
  * Opens links in new tab to preserve Image Studio modal context.
  * @param root0           - Component props.
  * @param root0.notice    - The notice object to render.
  * @param root0.onDismiss - Callback when notice is dismissed.
  */
 function WarningNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: () => void } ) {
-	// Low credits warnings are dismissible; quota exceeded warnings are not
 	const isDismissible = notice.dismissible ?? false;
 
 	return (

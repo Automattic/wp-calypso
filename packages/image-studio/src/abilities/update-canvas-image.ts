@@ -42,6 +42,31 @@ interface LowCreditsNotice {
 	upgrade_url?: string | null;
 }
 
+/**
+ * Validate that a backend notice payload has the required shape.
+ * Guards against malformed or unexpected data from the API.
+ */
+function isValidNoticePayload( notice: unknown ): notice is LowCreditsNotice {
+	if ( typeof notice !== 'object' || notice === null ) {
+		return false;
+	}
+	const candidate = notice as Record< string, unknown >;
+	if ( candidate.type !== 'low_credits_warning' ) {
+		return false;
+	}
+	if ( typeof candidate.message !== 'string' || candidate.message.trim() === '' ) {
+		return false;
+	}
+	if (
+		candidate.upgrade_url !== undefined &&
+		candidate.upgrade_url !== null &&
+		typeof candidate.upgrade_url !== 'string'
+	) {
+		return false;
+	}
+	return true;
+}
+
 interface UpdateCanvasImageAbilityInput {
 	attachmentId?: string | number | null;
 	url?: string | null;
@@ -255,8 +280,8 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 						isAnnotated: false,
 					} );
 
-					// Show low credits warning if present in input
-					if ( input?.notice?.type === 'low_credits_warning' ) {
+					// Show notice from backend if present and well-formed
+					if ( input?.notice != null && isValidNoticePayload( input.notice ) ) {
 						const notice = input.notice;
 						addNotice(
 							notice.message,

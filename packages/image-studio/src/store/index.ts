@@ -285,6 +285,20 @@ type ImageStudioAction =
 	| ResetCanvasHistoryAction;
 
 /**
+ * Resolve the dismissible flag for a notice.
+ *
+ * When the caller provides an explicit value it is used as-is.
+ * Otherwise, warning notices default to non-dismissible (e.g. hard
+ * quota errors), while all other notice types default to dismissible.
+ */
+function resolveNoticeDismissible( type: NoticeType, explicit?: boolean ): boolean {
+	if ( explicit !== undefined ) {
+		return explicit;
+	}
+	return type !== 'warning';
+}
+
+/**
  * Key for localStorage persistence
  */
 const SIDEBAR_IS_OPEN_STORAGE_KEY = 'big-sky-image-studio-sidebar-open';
@@ -826,8 +840,7 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
-				// Warnings are non-dismissible by default (quota exceeded), unless explicitly set
-				dismissible: dismissible ?? type !== 'warning',
+				dismissible: resolveNoticeDismissible( type, dismissible ),
 				...( noticeActions?.length && {
 					actions: noticeActions,
 				} ),

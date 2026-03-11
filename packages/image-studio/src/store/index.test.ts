@@ -1,7 +1,7 @@
-/* eslint-disable import/order */
 /**
- * Tests for Image Studio Store
+ * @jest-environment jsdom
  */
+/* eslint-disable import/order */
 import type { ImageStudioState, ImageStudioEntryPoint, AnnotationCanvasRef } from './index';
 // Mock localStorage
 const localStorageMock = ( () => {
@@ -242,6 +242,31 @@ describe( 'Image Studio Store', () => {
 				const action2 = actions.addNotice( 'Message 2', 'success' );
 
 				expect( action1.payload.id ).not.toBe( action2.payload.id );
+			} );
+
+			it( 'defaults warning notices to non-dismissible', () => {
+				const action = actions.addNotice( 'Quota exceeded', 'warning' );
+				expect( action.payload.dismissible ).toBe( false );
+			} );
+
+			it( 'defaults error notices to dismissible', () => {
+				const action = actions.addNotice( 'Something failed', 'error' );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'defaults success notices to dismissible', () => {
+				const action = actions.addNotice( 'Saved', 'success' );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'allows overriding dismissible to true for warnings', () => {
+				const action = actions.addNotice( 'Low credits', 'warning', undefined, true );
+				expect( action.payload.dismissible ).toBe( true );
+			} );
+
+			it( 'allows overriding dismissible to false for non-warnings', () => {
+				const action = actions.addNotice( 'Critical error', 'error', undefined, false );
+				expect( action.payload.dismissible ).toBe( false );
 			} );
 		} );
 	} );
