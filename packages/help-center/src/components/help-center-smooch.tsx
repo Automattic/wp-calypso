@@ -15,7 +15,7 @@ import { useQueryClient, QueryClient } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
@@ -98,7 +98,11 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		};
 	}, [] );
 
-	const allowChat = canConnectToZendesk && enableAuth && ( isEligibleForChat || hasPremiumSupport );
+	const featureConfig = useFeatureConfig();
+	const allowChat =
+		canConnectToZendesk &&
+		enableAuth &&
+		( isEligibleForChat || hasPremiumSupport || featureConfig.chat.hasPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 	const authJwt = authData?.jwt;

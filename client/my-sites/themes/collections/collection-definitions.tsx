@@ -16,7 +16,28 @@ export type ThemeCollectionDefinition = {
 	seeAllLink: string;
 };
 
-export const THEME_COLLECTIONS = {
+export const THEME_COLLECTIONS: Record< string, ThemeCollectionDefinition > = {
+	recommended: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 20,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		get title() {
+			return translate( 'Our favorites' );
+		},
+		get fullTitle() {
+			return translate( 'Our favorites' );
+		},
+		collectionSlug: 'recommended-themes',
+		get description() {
+			return translate( 'Exceptional themes selected by the WordPress.com design team.' );
+		},
+		seeAllLink: '/themes/recommended/collection',
+	},
 	marketplace: {
 		query: {
 			collection: 'recommended',
