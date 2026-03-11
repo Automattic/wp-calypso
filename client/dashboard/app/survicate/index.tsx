@@ -48,7 +48,7 @@ export function useSurvicate() {
 
 				const cleanupTraits = setSurvicateVisitorTraits( {
 					email: user.email,
-					account_age_in_days: getAccountAgeInDays( user.date ).toString(),
+					account_age_in_days: getAccountAgeInDays( user.date ),
 				} );
 				controller.signal.addEventListener( 'abort', cleanupTraits );
 			} )

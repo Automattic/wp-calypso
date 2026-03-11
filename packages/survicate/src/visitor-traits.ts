@@ -26,7 +26,7 @@ export function getAccountAgeInDays( registrationDate: string ): number {
  */
 export function setSurvicateVisitorTraits( traits: {
 	email: string;
-	account_age_in_days?: string;
+	account_age_in_days?: number;
 } ): () => void {
 	const handler = function () {
 		if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
