@@ -106,7 +106,7 @@ class StatsActionSpam extends Component {
 				</Tooltip>
 				{ this.props.inHorizontalBarList && this.state.showConfirmDialog && (
 					<Modal
-						title={ this.props.translate( 'Mark as spam' ) }
+						title={ this.props.translate( 'Mark as spam?' ) }
 						onRequestClose={ this.closeConfirmDialog }
 						className="action-spam__confirm-modal"
 						// React synthetic events from portals bubble through the component
@@ -120,13 +120,17 @@ class StatsActionSpam extends Component {
 						} }
 					>
 						<p>
-							{ this.props.translate( "Are you sure you want to mark '%(domain)s' as spam?", {
-								args: { domain: this.props.data?.domain },
-							} ) }
+							{ this.props.translate(
+								'Marking {{strong}}%(domain)s{{/strong}} as spam will hide this referrer from your future stats. Historical stats will not be affected.',
+								{
+									args: { domain: this.props.data?.domain },
+									components: { strong: <strong /> },
+								}
+							) }
 						</p>
 						<p>
 							{ this.props.translate(
-								'This will hide this referrer from your future stats. Historical stats will not be affected. You can undo this later from the spam referrers list.'
+								'You can undo this action and manage spam referrers from the referrers detail page.'
 							) }
 						</p>
 						<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
