@@ -61,6 +61,10 @@ export function useUnspamReferrerMutation( siteId: number | null ) {
 				queryClient.setQueryData( [ QUERY_KEY_BASE, siteId ], context.previous );
 			}
 		},
+		onSettled: () => {
+			// Always refetch after mutation to ensure server/client consistency.
+			queryClient.invalidateQueries( { queryKey: [ QUERY_KEY_BASE, siteId ] } );
+		},
 		retry: 1,
 		retryDelay: 3 * 1000,
 	} );
