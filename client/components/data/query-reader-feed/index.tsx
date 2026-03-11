@@ -18,7 +18,7 @@ interface Props {
  @ @param props.feedId - The ID of the feed to fetch.
  * @returns {null}
  */
-export const QueryReaderFeed = ( { feedId }: Props ) => {
+export default function QueryReaderFeed( { feedId }: Props ) {
 	const { data: feed, isSuccess, isError, error } = useQuery( readFeedQuery( feedId ) );
 	const dispatch = useDispatch();
 
@@ -35,4 +35,4 @@ export const QueryReaderFeed = ( { feedId }: Props ) => {
 	}, [ dispatch, feedId, isError, error ] );
 
 	return null;
-};
+}
