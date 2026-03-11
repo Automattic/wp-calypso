@@ -51,6 +51,11 @@ export default function useConversation( {
 			);
 		},
 		enabled: enabled && !! sessionId,
+		// Chat history should stay stable while browsing; reconnect still catches up after offline gaps.
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: true,
+		refetchOnMount: false,
+		staleTime: 300000, // 5 minutes
 	} );
 
 	useEffect(
