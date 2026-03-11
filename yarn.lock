@@ -1551,7 +1551,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
     "@tanstack/react-query": "npm:^5.83.0"
-    "@types/smooch": "npm:^5.3.7"
+    "@types/smooch": "npm:^5.6.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^32.1.0"
     "@wordpress/i18n": "npm:^5.23.0"
@@ -1946,7 +1946,7 @@ __metadata:
     "@types/autosize": "npm:^4.0.3"
     "@types/jest": "npm:^29.5.14"
     "@types/react": "npm:^18.3.23"
-    "@types/smooch": "npm:^5.3.7"
+    "@types/smooch": "npm:^5.6.0"
     "@wordpress/api-fetch": "npm:7.23.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/element": "npm:^6.23.0"
@@ -10813,10 +10813,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/smooch@npm:^5.3.7":
-  version: 5.3.7
-  resolution: "@types/smooch@npm:5.3.7"
-  checksum: b37b0a50037933e4b2313b0e1f0a31df1c9d8a033ff994eb7342720596a9941745a9b6fd1012ab58f828397a5e76d493d818eeb1bfb6576453021afbfc0bf115
+"@types/smooch@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "@types/smooch@npm:5.6.0"
+  checksum: b6c68651df64ba314e07f6c69fb2daaec64de15d8b66a17630e29c43b17e8582678e7a827a1c2c3e05f86503f234a2e98489985ce791f0c03b04ecff821eca77
   languageName: node
   linkType: hard
 
