@@ -65,11 +65,9 @@ export function themeActivated(
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 
-		invokeSurvicateEvent( 'themeActivated', {
-			theme: themeId,
-			previous_theme: previousThemeId,
-			is_paid_plan: isPaidPlan,
-		} );
+		if ( isPaidPlan ) {
+			invokeSurvicateEvent( 'themeActivated' );
+		}
 
 		// There are instances where switching themes toggles menu items. This action refreshes
 		// the admin bar to ensure that those updates are displayed in the UI.
