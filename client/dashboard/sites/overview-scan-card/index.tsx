@@ -9,10 +9,9 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
-import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { SiteScan, Site } from '@automattic/api-core';
 
-const CARD_PROPS = {
+export const CARD_PROPS = {
 	icon: shield,
 	title: __( 'Last scan' ),
 	tracksId: 'site-overview-scan',
@@ -94,10 +93,6 @@ function ScanCardContent( { site }: { site: Site } ) {
 }
 
 export default function ScanCard( { site }: { site: Site } ) {
-	if ( site.__inaccessible_jetpack_error ) {
-		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
-	}
-
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }

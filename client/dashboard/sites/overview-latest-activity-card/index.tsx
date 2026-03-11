@@ -65,11 +65,7 @@ export default function LatestActivityCard( {
 	isCompact?: boolean;
 } ) {
 	const notGroup = getActivityLogHiddenGroups( site );
-	const hasJetpackError = !! site.__inaccessible_jetpack_error;
-	const { data } = useQuery( {
-		...siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ),
-		enabled: ! hasJetpackError,
-	} );
+	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ) );
 	const { recordTracksEvent } = useAnalytics();
 
 	const view = {
@@ -84,38 +80,30 @@ export default function LatestActivityCard( {
 		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_activity_click' );
 	};
 
-	const renderActivityContent = () => {
-		if ( hasJetpackError ) {
-			return <p>{ __( 'Activity is unavailable due to a Jetpack connection issue.' ) }</p>;
-		}
-
-		if ( data === undefined ) {
-			return <TextSkeleton length={ 30 } />;
-		}
-
-		return (
-			<DataViews< ActivityLogEntry >
-				data={ data }
-				fields={ fields }
-				view={ view }
-				onChangeView={ () => {} }
-				getItemId={ ( item ) => item.activity_id }
-				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
-				defaultLayouts={ { list: {} } }
-				empty={ <p>{ __( 'No activity yet.' ) }</p> }
-			>
-				<DataViews.Layout />
-			</DataViews>
-		);
-	};
-
 	return (
 		<Card role="article" className="dashboard-overview-latest-activity-card">
 			<CardHeader>
 				<SectionHeader title={ __( 'Latest activity' ) } level={ 3 } />
 			</CardHeader>
-			<CardBody>{ renderActivityContent() }</CardBody>
-			{ ! hasJetpackError && data && data.length > 0 && (
+			<CardBody>
+				{ data === undefined ? (
+					<TextSkeleton length={ 30 } />
+				) : (
+					<DataViews< ActivityLogEntry >
+						data={ data }
+						fields={ fields }
+						view={ view }
+						onChangeView={ () => {} }
+						getItemId={ ( item ) => item.activity_id }
+						paginationInfo={ { totalItems: data.length, totalPages: 1 } }
+						defaultLayouts={ { list: {} } }
+						empty={ <p>{ __( 'No activity yet.' ) }</p> }
+					>
+						<DataViews.Layout />
+					</DataViews>
+				) }
+			</CardBody>
+			{ data && data.length > 0 && (
 				<SummaryButtonCardFooter
 					title={ __( 'See all activity' ) }
 					href={ getActivityLogUrl( site ) }

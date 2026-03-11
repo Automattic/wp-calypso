@@ -21,24 +21,30 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
-import BackupCard from '../overview-backup-card';
+import BackupCard, { CARD_PROPS as BACKUP_CARD_PROPS } from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
 import OverviewFlexUsageCard from '../overview-flex-usage-card';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
-import PerformanceCard from '../overview-performance-card';
+import PerformanceCard, {
+	CARD_PROPS as PERFORMANCE_CARD_PROPS,
+} from '../overview-performance-card';
 import PlanCard from '../overview-plan-card';
-import ScanCard from '../overview-scan-card';
+import ScanCard, { CARD_PROPS as SCAN_CARD_PROPS } from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import SubscribersCard from '../overview-subscribers-card';
-import VisibilityCard from '../overview-visibility-card';
-import VisibilityCardCiab from '../overview-visibility-card-ciab';
+import VisibilityCard, { CARD_PROPS as VISIBILITY_CARD_PROPS } from '../overview-visibility-card';
+import VisibilityCardCiab, {
+	CARD_PROPS as VISIBILITY_CIAB_CARD_PROPS,
+} from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
+import type { OverviewCardProps } from '../../components/overview-card';
 import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
@@ -77,12 +83,28 @@ function getGridLayout( {
 	};
 }
 
+function OverviewCardSlot( {
+	site,
+	children,
+	...cardProps
+}: {
+	site: Site;
+	children: React.ReactNode;
+} & Pick< OverviewCardProps, 'icon' | 'title' | 'tracksId' > ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...cardProps } />;
+	}
+	return <>{ children }</>;
+}
+
 function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: number } ) {
 	if ( isCommerceGarden( site ) ) {
 		return (
 			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 				<PlanCard site={ site } />
-				<VisibilityCardCiab site={ site } />
+				<OverviewCardSlot site={ site } { ...VISIBILITY_CIAB_CARD_PROPS }>
+					<VisibilityCardCiab site={ site } />
+				</OverviewCardSlot>
 			</Grid>
 		);
 	}
@@ -93,8 +115,14 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 				const showVisibilityCard = ! site.is_wpcom_flex;
 				return (
 					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ spacing }>
-						{ showVisibilityCard && <VisibilityCard site={ site } /> }
-						<BackupCard site={ site } />
+						{ showVisibilityCard && (
+							<OverviewCardSlot site={ site } { ...VISIBILITY_CARD_PROPS }>
+								<VisibilityCard site={ site } />
+							</OverviewCardSlot>
+						) }
+						<OverviewCardSlot site={ site } { ...BACKUP_CARD_PROPS }>
+							<BackupCard site={ site } />
+						</OverviewCardSlot>
 					</Grid>
 				);
 			} )() }
@@ -109,9 +137,15 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 					if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
 						return <MigrateSiteCard site={ site } />;
 					}
-					return <PerformanceCard site={ site } />;
+					return (
+						<OverviewCardSlot site={ site } { ...PERFORMANCE_CARD_PROPS }>
+							<PerformanceCard site={ site } />
+						</OverviewCardSlot>
+					);
 				} )() }
-				<ScanCard site={ site } />
+				<OverviewCardSlot site={ site } { ...SCAN_CARD_PROPS }>
+					<ScanCard site={ site } />
+				</OverviewCardSlot>
 			</Grid>
 			<PlanCard site={ site } />
 		</>
@@ -146,7 +180,9 @@ function SiteOverviewSecondaryCards( {
 					<DomainsCard site={ site } />
 				) : (
 					<>
-						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						{ ! site.__inaccessible_jetpack_error && (
+							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						) }
 						<VStack spacing={ spacing } justify="start">
 							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (

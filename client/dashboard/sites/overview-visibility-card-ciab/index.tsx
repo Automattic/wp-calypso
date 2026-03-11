@@ -4,7 +4,7 @@ import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import type { Site } from '@automattic/api-core';
 
-const CARD_PROPS = {
+export const CARD_PROPS = {
 	title: __( 'Store Visibility' ),
 	tracksId: 'site-overview-visibility-ciab',
 };
