@@ -45,6 +45,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'existingCard';
 		case 'WPCOM_Billing_Razorpay':
 			return 'razorpay';
+		case 'WPCOM_Billing_Stripe_Upi':
+			return 'stripe-upi';
 		default:
 			throw new Error( `Unknown payment method '${ paymentMethod }'` );
 	}
@@ -97,6 +99,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_WPCOM';
 		case 'razorpay':
 			return 'WPCOM_Billing_Razorpay';
+		case 'stripe-upi':
+			return 'WPCOM_Billing_Stripe_Upi';
 	}
 	return null;
 }
@@ -119,6 +123,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Wechat_Pay':
 		case 'WPCOM_Billing_Web_Payment':
 		case 'WPCOM_Billing_Razorpay':
+		case 'WPCOM_Billing_Stripe_Upi':
 			return slug;
 	}
 	return null;
@@ -153,6 +158,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'web-pay':
 		case 'free-purchase':
 		case 'razorpay':
+		case 'stripe-upi':
 			return slug;
 		case 'apple-pay':
 		case 'google-pay':
@@ -192,6 +198,7 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'paypal-express',
 		'paypal-js',
 		'p24',
+		'stripe-upi',
 		'wechat',
 	];
 	return redirectPaymentMethods.includes( slug );
