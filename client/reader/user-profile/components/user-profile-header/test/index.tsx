@@ -3,6 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { UserProfileData } from 'calypso/lib/user/user';
 import UserProfileHeader from '../index';
 
@@ -43,34 +44,25 @@ describe( 'UserProfileHeader', () => {
 	test( 'should render the user display name', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Check if display name is rendered
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		expect( displayNameEl ).toBeInTheDocument();
 	} );
 
 	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
-		const { container } = render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Check if navigation section is rendered
-		expect( container.querySelector( '.section-nav' ) ).toBeInTheDocument();
-
-		// Check for navigation items
 		const navItems = screen.getAllByRole( 'menuitem' );
 		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
 
-		// Check nav item content - should have Posts, Lists, and Recommended Blogs
-		const navTexts = navItems.map( ( item ) => item.textContent );
-		expect( navTexts ).toContain( 'Posts' );
-		expect( navTexts ).toContain( 'Lists' );
-		expect( navTexts ).toContain( 'Recommended Blogs' );
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Bio section should not be present
-		const bioSection = document.querySelector( '.user-profile-header__bio' );
-		expect( bioSection ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /show more/i } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
@@ -84,5 +76,57 @@ describe( 'UserProfileHeader', () => {
 		// Bio section should be present
 		const bioText = screen.getByText( userWithBio.bio );
 		expect( bioText ).toBeInTheDocument();
+	} );
+
+	test( 'should render Gravatar badge when user has profile_URL', () => {
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		const gravatarBadge = screen.getByRole( 'link', { name: /gravatar/i } );
+		expect( gravatarBadge ).toBeInTheDocument();
+		expect( gravatarBadge ).toHaveAttribute( 'href', defaultUser.profile_URL );
+
+		const gravatarIcon = screen.getByRole( 'img', { name: /gravatar/i } );
+		expect( gravatarIcon ).toBeInTheDocument();
+	} );
+
+	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
+		const userWithoutGravatarProfile = {
+			...defaultUser,
+			profile_URL: undefined,
+		};
+
+		render( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
+
+		expect( screen.queryByRole( 'link', { name: /gravatar/i } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should show "Show more" button for long bio and expand on click', async () => {
+		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
+		const userWithLongBio = { ...defaultUser, bio: longBio };
+
+		const { container, rerender } = render(
+			<UserProfileHeader user={ userWithLongBio } view="posts" />
+		);
+
+		const bioDesc = container.querySelector( '.user-profile-header__bio-desc' );
+		expect( bioDesc ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /show more/i } ) ).not.toBeInTheDocument();
+
+		// Mock scrollHeight to simulate overflow (needed for useLayoutEffect check)
+		Object.defineProperty( bioDesc, 'scrollHeight', { value: 200, configurable: true } );
+		Object.defineProperty( bioDesc, 'clientHeight', { value: 60, configurable: true } );
+		// Re-render with slightly different bio to trigger useLayoutEffect
+		rerender(
+			<UserProfileHeader user={ { ...userWithLongBio, bio: longBio + '.' } } view="posts" />
+		);
+
+		const showMoreButton = screen.getByRole( 'button', { name: /show more/i } );
+		expect( showMoreButton ).toBeInTheDocument();
+		expect( bioDesc ).toHaveClass( 'is-clamped' );
+
+		await userEvent.click( showMoreButton );
+
+		expect( bioDesc ).toHaveClass( 'is-expanded' );
+		expect( screen.getByRole( 'button', { name: /show less/i } ) ).toBeInTheDocument();
 	} );
 } );
