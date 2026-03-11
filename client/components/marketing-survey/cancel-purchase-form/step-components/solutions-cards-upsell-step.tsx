@@ -238,7 +238,7 @@ export default function SolutionsCardsUpsellStep( {
 								href={ href }
 								onClick={ hasAction ? handleClick : undefined }
 								showArrow={ hasAction }
-								density="medium"
+								density="medium-low"
 							/>
 						);
 					} ) }

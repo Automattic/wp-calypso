@@ -77,3 +77,13 @@ export const MediumDensity: Story = {
 		badges: badgeOptions[ 'Two Badges' ],
 	},
 };
+
+export const MediumLowDensity: Story = {
+	args: {
+		title: 'Email Configuration',
+		description: 'Setup email forwarding for your domain.',
+		density: 'medium-low',
+		decoration: <Icon icon={ envelope } />,
+		badges: badgeOptions[ 'Two Badges' ],
+	},
+};

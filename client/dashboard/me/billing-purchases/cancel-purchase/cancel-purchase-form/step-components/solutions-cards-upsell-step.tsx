@@ -311,7 +311,7 @@ export default function SolutionsCardsUpsellStep( {
 		<VStack spacing={ 6 }>
 			<SummaryButtonList
 				title={ __( 'Before canceling, you can consider these options:' ) }
-				density="medium"
+				density="medium-low"
 			>
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
