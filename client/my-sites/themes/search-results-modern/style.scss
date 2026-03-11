@@ -52,22 +52,11 @@
 }
 
 .empty-search-cta__illustration {
-	box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
 	border-radius: 8px;
-	height: 160px;
+	display: block;
+	height: auto;
 	margin-bottom: 16px;
-}
-
-.empty-search-cta__illustration--ai {
-	background-color: var( --studio-blue-5 );
-}
-
-.empty-search-cta__illustration--difm {
-	background-color: var( --studio-purple-5 );
-}
-
-.empty-search-cta__illustration--upload {
-	background-color: var( --studio-green-5 );
+	width: 100%;
 }
 
 .empty-search-cta__card-label.badge.badge--info {

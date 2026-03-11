@@ -4,6 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import emptySearchAI from 'calypso/my-sites/themes/search-results-modern/empty-search-ai.png';
+import emptySearchDIFM from 'calypso/my-sites/themes/search-results-modern/empty-search-difm.png';
+import emptySearchUpload from 'calypso/my-sites/themes/search-results-modern/empty-search-upload.png';
 
 import './style.scss';
 
@@ -39,10 +42,7 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 			</div>
 			<div className="empty-search-cta__cards">
 				<div className="empty-search-cta__card">
-					<div
-						className="empty-search-cta__illustration empty-search-cta__illustration--ai"
-						aria-hidden="true"
-					/>
+					<img className="empty-search-cta__illustration" src={ emptySearchAI } alt="" />
 					<Badge type="info" className="empty-search-cta__card-label">
 						{ translate( 'AI website builder' ) }
 					</Badge>
@@ -59,10 +59,7 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 					</Button>
 				</div>
 				<div className="empty-search-cta__card">
-					<div
-						className="empty-search-cta__illustration empty-search-cta__illustration--difm"
-						aria-hidden="true"
-					/>
+					<img className="empty-search-cta__illustration" src={ emptySearchDIFM } alt="" />
 					<Badge type="info" className="empty-search-cta__card-label">
 						{ translate( 'Let us do it for you' ) }
 					</Badge>
@@ -81,10 +78,7 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 					</Button>
 				</div>
 				<div className="empty-search-cta__card">
-					<div
-						className="empty-search-cta__illustration empty-search-cta__illustration--upload"
-						aria-hidden="true"
-					/>
+					<img className="empty-search-cta__illustration" src={ emptySearchUpload } alt="" />
 					<Badge type="info" className="empty-search-cta__card-label">
 						{ translate( 'Upload theme' ) }
 					</Badge>
