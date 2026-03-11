@@ -40,16 +40,27 @@
 		font-size: rem( 14px );
 		line-height: 20px;
 		margin-bottom: 0;
+		overflow: hidden;
 		position: relative;
+		transition: max-height 0.3s ease-in-out;
 		white-space: pre-line;
 
 		&.is-clamped {
-			display: -webkit-box;
-			line-clamp: 3;
-			overflow: hidden;
-			-webkit-line-clamp: 3;
-			-webkit-box-orient: vertical;
+			max-height: 60px; // 3 lines × 20px line-height.
 		}
+
+		&.is-expanded {
+			max-height: 1000px; // Large enough to accommodate any bio length.
+		}
+	}
+
+	.user-profile-header__bio-toggle {
+		color: var( --studio-gray-60 );
+		cursor: pointer;
+		font-size: rem( 14px );
+		margin-top: 4px;
+		padding: 0;
+		text-decoration: underline;
 	}
 
 	.section-nav-tab__link {

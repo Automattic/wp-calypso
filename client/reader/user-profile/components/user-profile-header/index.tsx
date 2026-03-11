@@ -1,6 +1,7 @@
 import './style.scss';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
@@ -16,26 +17,40 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const userProfileUrlWithUsername = getUserProfileUrl( user.user_login ?? '' );
+	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
+	const bioRef = useRef< HTMLParagraphElement >( null );
+
+	useLayoutEffect( () => {
+		const bioElement = bioRef.current;
+		if ( bioElement ) {
+			const isOverflowing = bioElement.scrollHeight > bioElement.clientHeight;
+			setShowMoreToggle( isOverflowing );
+		}
+	}, [ user.bio ] );
+
+	const handleShowMoreToggle = () => {
+		setIsExpanded( ! isExpanded );
+	};
+
+	const userProfileUrl = getUserProfileUrl( user.user_login ?? String( user.ID ) );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: userProfileUrlWithUsername,
+			path: userProfileUrl,
 			selected: view === 'posts',
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `${ userProfileUrlWithUsername }/lists`,
+			path: `${ userProfileUrl }/lists`,
 			selected: view === 'lists',
 		},
 		{
 			label: translate( 'Recommended Blogs' ),
-			path: `${ userProfileUrlWithUsername }/recommended-blogs`,
+			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
 	];
-
-	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';
 
 	return (
 		<>
@@ -51,12 +66,28 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 				{ user.bio && (
 					<AutoDirection>
 						<div className="user-profile-header__bio">
-							<p className={ clsx( 'user-profile-header__bio-desc' ) }>{ user.bio }</p>
+							<p
+								ref={ bioRef }
+								className={ clsx( 'user-profile-header__bio-desc', {
+									'is-clamped': ! isExpanded,
+									'is-expanded': isExpanded,
+								} ) }
+							>
+								{ user.bio }
+							</p>
+							{ showMoreToggle && (
+								<button
+									className="user-profile-header__bio-toggle"
+									onClick={ handleShowMoreToggle }
+								>
+									{ isExpanded ? translate( 'Show less' ) : translate( 'Show more' ) }
+								</button>
+							) }
 						</div>
 					</AutoDirection>
 				) }
 			</header>
-			<SectionNav enforceTabsView selectedText={ selectedTab } variation="minimal">
+			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
 						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
