@@ -24,6 +24,7 @@ import {
 	removePurchaseMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -75,6 +76,7 @@ import {
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
+import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -774,16 +776,19 @@ export default function CancelPurchase() {
 			recordClickRadioEvent( 'radio_1_2', value );
 		}
 
+		const upsellType = getUpsellType( value, purchase, {
+			canDowngrade: !! downgradeClick,
+			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+		} );
+		const hasSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			upsell:
-				getUpsellType( value, purchase, {
-					canDowngrade: !! downgradeClick,
-					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
-				} ) || '',
+			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
 

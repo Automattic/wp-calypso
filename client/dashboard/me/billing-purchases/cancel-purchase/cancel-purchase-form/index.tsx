@@ -151,17 +151,6 @@ function SurveyContent( {
 	if ( surveyStep === UPSELL_STEP ) {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-		if ( upsell?.startsWith( 'education:' ) ) {
-			return (
-				<EducationContentStep
-					cancellationReason={ questionOneText }
-					onDecline={ isLastStep ? onSubmit : clickNext }
-					siteSlug={ siteSlug }
-					type={ upsell }
-				/>
-			);
-		}
-
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
 		const useSolutionsCards =
 			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) && solutions && solutions.length > 0;
@@ -175,6 +164,17 @@ function SurveyContent( {
 					onClickDowngrade={ downgradeClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					purchase={ purchase }
+				/>
+			);
+		}
+
+		if ( upsell?.startsWith( 'education:' ) ) {
+			return (
+				<EducationContentStep
+					cancellationReason={ questionOneText }
+					onDecline={ isLastStep ? onSubmit : clickNext }
+					siteSlug={ siteSlug }
+					type={ upsell }
 				/>
 			);
 		}
