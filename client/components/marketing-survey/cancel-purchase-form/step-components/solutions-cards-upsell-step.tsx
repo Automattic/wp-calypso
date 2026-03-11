@@ -37,7 +37,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const CARD_ICONS: Record<
 	string,
-	React.ComponentType | { path: React.ReactNode; viewBox?: string }
+	React.ComponentType | { path: React.ReactNode; viewBox?: string } | React.ReactElement
 > = {
 	'change-plan': reusableBlock,
 	'switch-to-monthly': calendar,
