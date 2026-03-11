@@ -122,7 +122,7 @@ export const siteRoute = createRoute( {
 		if (
 			site.__inaccessible_jetpack_error &&
 			! location.pathname.endsWith( overviewUrl ) &&
-			! location.pathname.startsWith( `${ overviewUrl }/domains` )
+			! matches.some( ( match ) => getInaccessibleJetpackAllowedRoutes().includes( match.routeId ) )
 		) {
 			throw redirect( { to: overviewUrl } );
 		}
@@ -1501,6 +1501,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
+}
+
+// Site routes allowed when the Jetpack connection is broken.
+function getInaccessibleJetpackAllowedRoutes() {
+	return [ siteDomainsRoute.id ];
 }
 
 function redirectAsNotAllowed( options: {
