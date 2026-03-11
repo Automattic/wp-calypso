@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { render, screen } from '@testing-library/react';
 import {
 	getCiabConfigFromCurrentDomain,
 	getCiabConfigFromBrandingCode,
@@ -343,6 +344,8 @@ describe( 'partner-branding', () => {
 			const tosElement = getPartnerSignupTosElement( CIAB_PARTNERS.woo, mockTranslate );
 
 			expect( tosElement ).toBeDefined();
+			render( <>{ tosElement }</> );
+			expect( screen.getByText( /WordPress.com is used to manage your account\./ ) ).toBeVisible();
 		} );
 
 		test( 'returns undefined when no partner config is provided', () => {

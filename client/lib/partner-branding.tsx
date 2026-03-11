@@ -403,7 +403,7 @@ export function getPartnerSignupTosElement(
 		case 'woo':
 			return createInterpolateElement(
 				translate(
-					'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
+					'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>. WordPress.com is used to manage your account.'
 				),
 				linkComponents
 			);
