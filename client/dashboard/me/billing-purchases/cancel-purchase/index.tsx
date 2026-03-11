@@ -202,6 +202,7 @@ function getBasicSurveySteps( {
 } ): string[] {
 	const flowType = getPurchaseCancellationFlowType( purchase );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
+	const isAkismet = isAkismetProduct( purchase );
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
 	const hasExpired = purchase.expiry_status === 'expired';
@@ -213,7 +214,7 @@ function getBasicSurveySteps( {
 	) {
 		return [];
 	}
-	if ( isJetpack ) {
+	if ( isJetpack || isAkismet ) {
 		return availableJetpackSurveySteps( purchase, flowType, cancellationOffer );
 	}
 	if ( purchase.is_domain_registration ) {
