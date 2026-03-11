@@ -43,8 +43,6 @@ export default function HeadlessAgentInitializer( {
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
 				loadedProvidersRef.current = providers;
-				// eslint-disable-next-line no-console
-				console.log( '[HeadlessAgentInitializer] Loaded external providers' );
 			}
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
@@ -61,19 +59,7 @@ export default function HeadlessAgentInitializer( {
 				botSlug,
 			} );
 
-			// eslint-disable-next-line no-console
-			console.info( '[AgentsManager Debug] Agent config initialized (headless)', {
-				agentId: config.agentId,
-				agentUrl: config.agentUrl,
-				sessionId: config.sessionId,
-				version,
-				botSlug,
-				locationSearch: window.location.search,
-			} );
-
 			setAgentConfig( config );
-			// eslint-disable-next-line no-console
-			console.log( '[HeadlessAgentInitializer] Agent config created' );
 		}
 
 		initializeAgent();

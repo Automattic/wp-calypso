@@ -115,16 +115,6 @@ function AgentSetup(): JSX.Element | null {
 				botSlug,
 			} );
 
-			// eslint-disable-next-line no-console
-			console.info( '[AgentsManager Debug] Agent config initialized (dock)', {
-				agentId: config.agentId,
-				agentUrl: config.agentUrl,
-				sessionId: config.sessionId,
-				version,
-				botSlug,
-				locationSearch: window.location.search,
-			} );
-
 			setAgentConfig( config );
 		}
 
