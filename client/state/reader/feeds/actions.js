@@ -17,7 +17,6 @@ export function receiveReaderFeedRequestSuccess( data ) {
 export function receiveReaderFeedRequestFailure( feedId, error ) {
 	return {
 		type: READER_FEED_REQUEST_FAILURE,
-		payload: { feedId, error },
-		error: true,
+		payload: { feed_ID: feedId, error: error },
 	};
 }
