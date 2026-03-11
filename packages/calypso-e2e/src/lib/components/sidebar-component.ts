@@ -85,15 +85,17 @@ export class SidebarComponent {
 			// Clicking the top-level item may trigger a client-side React
 			// navigation or a full page load. Either way, wait for the
 			// expanded submenu and the specific subitem link to be visible
-			// before interacting with it.
-			const subitemSelector = `.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`;
-			await this.page.locator( subitemSelector ).first().waitFor();
-			const hrefSubItemSelector = ( await this.page.getAttribute(
-				subitemSelector,
-				'href'
-			) ) as string;
+			// before interacting with it. Use a single locator instance for
+			// all operations to avoid inconsistency if the DOM changes.
+			const subitemLocator = this.page
+				.locator(
+					`.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`
+				)
+				.first();
+			await subitemLocator.waitFor();
+			const hrefSubItemSelector = ( await subitemLocator.getAttribute( 'href' ) ) as string;
 
-			await this.page.dispatchEvent( subitemSelector, 'click' );
+			await subitemLocator.dispatchEvent( 'click' );
 			await this.page.waitForURL( `**${ hrefSubItemSelector }`, {
 				waitUntil: 'domcontentloaded',
 			} );
