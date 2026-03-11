@@ -56,7 +56,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		type: 'list',
 		search: '',
 		fields: [],
-		perPage: 10,
+		perPage: 15,
 		page: 1,
 		titleField: 'post',
 		mediaField: 'icon',
@@ -248,6 +248,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				</div>
 				<aside className="recent-feed__list-column-content">
 					<DataViews< ReaderPost | PaddingItem >
+						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
 						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
