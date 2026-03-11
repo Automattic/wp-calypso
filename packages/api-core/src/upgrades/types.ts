@@ -392,7 +392,18 @@ export interface Purchase {
 	 */
 	blocks_site_deletion: boolean;
 
+	/**
+	 * True if the multisite dashboard should show a notice at the top of the
+	 * purchase management page thanking the user for their purchase and letting
+	 * them know that they will be billed at the regular price next renewal.
+	 */
 	should_show_cancellation_offer_notice: boolean;
+
+	/**
+	 * The percentage (0 - 100%) that this purchase was discounted by when the
+	 * customer accepted the cancellation offer, rounded the nearest whole
+	 * number.
+	 */
 	cancellation_offer_notice_discount_percentage: number | null;
 }
 
