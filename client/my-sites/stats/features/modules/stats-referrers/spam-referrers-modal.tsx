@@ -19,11 +19,18 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 	const { data, isLoading, isError: isFetchError } = useSpamReferrersQuery( siteId );
 	const { mutate: unspamReferrer, isError: isUnspamError } = useUnspamReferrerMutation( siteId );
 	const hasChangesRef = useRef( false );
+	const listRef = useRef< HTMLUListElement >( null );
 
 	const handleUnspam = useCallback(
 		( domain: string ) => {
 			hasChangesRef.current = true;
 			unspamReferrer( domain );
+			// The optimistic update removes the focused button from the DOM,
+			// which drops focus to document.body and breaks Escape-to-close.
+			// Restore focus to the modal after the DOM update.
+			requestAnimationFrame( () => {
+				listRef.current?.closest< HTMLDivElement >( '.components-modal__frame' )?.focus();
+			} );
 		},
 		[ unspamReferrer ]
 	);
@@ -71,7 +78,7 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 							) }
 						</NoticeBanner>
 					) }
-					<ul className="spam-referrers-modal__list">
+					<ul ref={ listRef } className="spam-referrers-modal__list">
 						{ domains.map( ( item ) => (
 							<li key={ item.domain } className="spam-referrers-modal__item">
 								<span className="spam-referrers-modal__domain">{ item.domain }</span>
