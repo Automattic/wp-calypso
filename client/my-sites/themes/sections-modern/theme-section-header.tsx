@@ -4,7 +4,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 interface ThemeSectionHeaderProps {
-	title: string;
+	title: TranslateResult;
 	subtitle: TranslateResult;
 	buttonLabel?: string;
 	buttonHref?: string;

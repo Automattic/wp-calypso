@@ -51,6 +51,7 @@ import {
 	isStaticFilter,
 	constructThemeShowcaseUrl,
 } from './helpers';
+import SearchResultsModern from './search-results-modern';
 import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
@@ -558,6 +559,19 @@ class ThemeShowcase extends Component {
 		) {
 			return (
 				<RecommendedSections
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
+		if ( this.isThemeShowcaseModern() && this.props.search ) {
+			return (
+				<SearchResultsModern
+					search={ this.props.search }
+					filter={ this.props.filter || '' }
+					tier={ this.props.tier || '' }
 					getActionLabel={ this.getActionLabel }
 					getOptions={ this.getThemeOptions }
 					getScreenshotUrl={ this.getScreenshotUrl }
