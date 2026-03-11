@@ -133,7 +133,7 @@ class StatsActionSpam extends Component {
 								'You can undo this action and manage spam referrers from the referrers detail page.'
 							) }
 						</p>
-						<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
+						<div className="action-spam__confirm-modal-actions">
 							<Button variant="tertiary" onClick={ this.closeConfirmDialog }>
 								{ this.props.translate( 'Cancel' ) }
 							</Button>

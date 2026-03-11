@@ -8,3 +8,9 @@
 .action-spam__confirm-modal.components-modal__frame {
 	max-width: 520px;
 }
+
+.action-spam__confirm-modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
