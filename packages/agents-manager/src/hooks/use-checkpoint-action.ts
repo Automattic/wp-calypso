@@ -19,7 +19,7 @@ function getCheckpointId( message: UIMessage ): string {
 	try {
 		const parsed = JSON.parse( firstPartText );
 
-		if ( parsed.tool_id === 'big_sky__show_component' && parsed.data?.calypsoCheckpointId ) {
+		if ( parsed.data?.calypsoCheckpointId ) {
 			return parsed.data.calypsoCheckpointId;
 		}
 	} catch {
