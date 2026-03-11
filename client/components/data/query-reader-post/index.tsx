@@ -9,6 +9,14 @@ interface Props {
 	postKey: { blogId?: number; postId: number; feedId?: number };
 }
 
+/**
+ * A hook that fetches a feed using react-query and maintain a bridge with the redux store for retro-compatibility.
+ * @deprecated Use readSitePostQuery/readFeedPostQuery + useQuery instead for now component, data components are being refactored to use hooks instead.
+ @ @param props - The props object. @ @param props - The props object.
+ * @param props.postKey - The post key object.
+ * @returns {null}
+ */
+
 export const QueryReaderPost = ( { postKey }: Props ) => {
 	const dispatch = useDispatch();
 	const { blogId, postId, feedId, ...params } = postKey;
