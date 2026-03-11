@@ -94,7 +94,7 @@ function OverviewCardSlot( {
 	if ( site.__inaccessible_jetpack_error ) {
 		return <JetpackConnectionWarningCard { ...cardProps } />;
 	}
-	return <>{ children }</>;
+	return children;
 }
 
 function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: number } ) {
