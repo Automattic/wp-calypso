@@ -566,7 +566,7 @@ class ThemeShowcase extends Component {
 			);
 		}
 
-		if ( this.isThemeShowcaseModern() && this.props.search ) {
+		if ( this.isThemeShowcaseModern() && this.props.search && ! this.props.isCollectionView ) {
 			return (
 				<SearchResultsModern
 					search={ this.props.search }
@@ -607,6 +607,16 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	getThemeSource = ( staticFilters ) => {
+		if ( this.props.tier === 'community' ) {
+			return 'wporg';
+		}
+		if ( this.props.category === staticFilters.MYTHEMES?.key ) {
+			return null;
+		}
+		return 'wpcom';
 	};
 
 	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
@@ -676,7 +686,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.getThemeSource( staticFilters ),
 			isThemeShowcaseModern: this.isThemeShowcaseModern(),
 		};
 
@@ -820,11 +830,12 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								search: '',
+								search: this.props.tier === 'community' ? this.props.search : '',
 								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							options={ { search: this.props.search } }
 							isLoggedIn={ isLoggedIn }
 						/>
 					) }

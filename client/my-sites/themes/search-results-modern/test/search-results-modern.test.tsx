@@ -59,6 +59,11 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/build-url', () => ( {
+	buildRelativeSearchUrl: ( url: string, search: string ) =>
+		search ? `${ url }?s=${ search }` : url,
+} ) );
+
 const defaultProps = {
 	search: 'portfolio',
 	filter: '',
@@ -90,7 +95,7 @@ describe( 'SearchResultsModern', () => {
 	test( 'renders wpcom section when there are wpcom themes', () => {
 		mockWpcomThemes = [ { id: 'theme-1', name: 'Theme One' } ];
 		render( <SearchResultsModern { ...defaultProps } /> );
-		expect( screen.getByRole( 'heading', { name: /Results for portfolio/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: /Results for.*portfolio/ } ) ).toBeVisible();
 		expect( screen.getByTestId( 'theme-block-theme-1' ) ).toBeVisible();
 	} );
 
@@ -98,7 +103,7 @@ describe( 'SearchResultsModern', () => {
 		mockWporgThemes = [ { id: 'theme-2', name: 'Theme Two' } ];
 		render( <SearchResultsModern { ...defaultProps } /> );
 		expect( screen.getByRole( 'heading', { name: 'Community themes' } ) ).toBeVisible();
-		expect( screen.getByText( /Explore themes from the WordPress community/ ) ).toBeVisible();
+		expect( screen.getByText( /Explore.*themes from the WordPress community/ ) ).toBeVisible();
 		expect( screen.getByTestId( 'theme-block-theme-2' ) ).toBeVisible();
 	} );
 
@@ -106,7 +111,7 @@ describe( 'SearchResultsModern', () => {
 		mockWpcomThemes = [ { id: 'theme-1', name: 'Theme One' } ];
 		mockWporgThemes = [ { id: 'theme-2', name: 'Theme Two' } ];
 		render( <SearchResultsModern { ...defaultProps } /> );
-		expect( screen.getByRole( 'heading', { name: /Results for portfolio/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: /Results for.*portfolio/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Community themes' } ) ).toBeVisible();
 	} );
 
@@ -134,5 +139,34 @@ describe( 'SearchResultsModern', () => {
 		mockWpcomThemes = [ { id: 'theme-1', name: 'Theme One' } ];
 		render( <SearchResultsModern { ...defaultProps } /> );
 		expect( screen.queryByText( 'Community themes' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'limits community themes to 6 and shows "See all" button', () => {
+		mockWporgThemes = Array.from( { length: 8 }, ( _, i ) => ( {
+			id: `theme-${ i + 1 }`,
+			name: `Theme ${ i + 1 }`,
+		} ) );
+		render( <SearchResultsModern { ...defaultProps } /> );
+		// Only 6 themes should be rendered.
+		for ( let i = 1; i <= 6; i++ ) {
+			expect( screen.getByTestId( `theme-block-theme-${ i }` ) ).toBeVisible();
+		}
+		expect( screen.queryByTestId( 'theme-block-theme-7' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'theme-block-theme-8' ) ).not.toBeInTheDocument();
+		// "See all" button should be visible.
+		expect( screen.getByRole( 'button', { name: 'See all' } ) ).toBeVisible();
+	} );
+
+	test( 'does not show "See all" button when 6 or fewer community themes', () => {
+		mockWporgThemes = Array.from( { length: 6 }, ( _, i ) => ( {
+			id: `theme-${ i + 1 }`,
+			name: `Theme ${ i + 1 }`,
+		} ) );
+		render( <SearchResultsModern { ...defaultProps } /> );
+		// All 6 themes should be rendered.
+		for ( let i = 1; i <= 6; i++ ) {
+			expect( screen.getByTestId( `theme-block-theme-${ i }` ) ).toBeVisible();
+		}
+		expect( screen.queryByRole( 'button', { name: 'See all' } ) ).not.toBeInTheDocument();
 	} );
 } );

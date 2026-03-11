@@ -3,6 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import { ThemeBlock } from 'calypso/components/themes-list';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import { useThemeCollection } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
@@ -17,6 +19,8 @@ import type { ThemesQuery } from 'calypso/my-sites/themes/collections/use-theme-
 import type { Theme } from 'calypso/types';
 
 import './style.scss';
+
+const WPORG_THEMES_LIMIT = 6;
 
 interface SearchResultsModernProps {
 	search: string;
@@ -92,6 +96,10 @@ export default function SearchResultsModern( {
 
 	const hasWpcomThemes = wpcomThemes.length > 0;
 	const hasWporgThemes = wporgThemes.length > 0;
+	const hasMoreWporgThemes = wporgThemes.length > WPORG_THEMES_LIMIT;
+	const displayedWporgThemes = hasMoreWporgThemes
+		? wporgThemes.slice( 0, WPORG_THEMES_LIMIT )
+		: wporgThemes;
 	const hasAnyThemes = hasWpcomThemes || hasWporgThemes;
 
 	// Analytics for wpcom section.
@@ -216,8 +224,19 @@ export default function SearchResultsModern( {
 							'Explore "%(query)s" themes from the WordPress community, and upload to install when ready.',
 							{ args: { query: search } }
 						) }
+						buttonLabel={ hasMoreWporgThemes ? translate( 'See all' ) : undefined }
+						onButtonClick={
+							hasMoreWporgThemes
+								? () => {
+										page(
+											buildRelativeSearchUrl( THEME_COLLECTIONS.community.seeAllLink, search )
+										);
+										window.scrollTo( { top: 0 } );
+								  }
+								: undefined
+						}
 					/>
-					{ renderThemeGrid( wporgThemes, wporgEventRecorder ) }
+					{ renderThemeGrid( displayedWporgThemes, wporgEventRecorder ) }
 				</div>
 			) }
 
