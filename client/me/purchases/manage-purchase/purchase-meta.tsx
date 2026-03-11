@@ -53,6 +53,7 @@ export interface PurchaseMetaProps {
 	siteSlug: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	isA4ABillingDragonPurchase?: boolean;
 }
 
 export default function PurchaseMeta( {
@@ -61,6 +62,7 @@ export default function PurchaseMeta( {
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
+	isA4ABillingDragonPurchase = false,
 }: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
@@ -153,6 +155,7 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					site={ site ?? undefined }
 					isAkismetPurchase={ isAkismetPurchase }
+					isA4ABillingDragonPurchase={ isA4ABillingDragonPurchase }
 				/>
 			</ul>
 			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }

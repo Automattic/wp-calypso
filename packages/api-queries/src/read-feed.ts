@@ -7,7 +7,6 @@ export const readFeedQuery = ( feedId?: number | string ) => {
 		staleTime: 1000 * 60, // 1 minute
 		queryFn: () => fetchReadFeed( feedId! ),
 		enabled: feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
-		refetchOnWindowFocus: false,
 	} );
 };
 

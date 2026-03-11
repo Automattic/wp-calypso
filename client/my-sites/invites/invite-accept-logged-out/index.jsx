@@ -139,7 +139,7 @@ class InviteAcceptLoggedOut extends Component {
 		const gardenName = site?.garden?.name;
 		const gardenPartner = site?.garden?.partner;
 
-		return getCiabConfigFromGarden( gardenPartner, gardenName );
+		return getCiabConfigFromGarden( gardenPartner, gardenName, { persistToSession: true } );
 	};
 
 	loginUser = () => {

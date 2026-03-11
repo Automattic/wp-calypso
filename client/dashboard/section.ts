@@ -1,1 +1,9 @@
-export const DASHBOARD_SECTION_PATHS = [ '/', '/sites', '/domains', '/emails', '/plugins', '/me' ];
+export const DASHBOARD_SECTION_PATHS = [
+	'/',
+	'/sites',
+	'/domains',
+	'/emails',
+	'/plugins',
+	'/me',
+	'/oauth/token',
+];

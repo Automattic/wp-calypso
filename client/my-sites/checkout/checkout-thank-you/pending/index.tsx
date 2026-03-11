@@ -4,6 +4,7 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { AUTO_RENEWAL } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
@@ -275,6 +276,9 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
+		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			invokeSurvicateEvent( 'purchaseCompleted' );
+		}
 		if ( isConnectAfterCheckoutFlow ) {
 			setHeadingText( connectingJetpackText );
 		}
