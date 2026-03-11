@@ -20,8 +20,7 @@ describe( 'actions', () => {
 			const action = receiveReaderFeedRequestFailure( 123, { statusCode: 410 } );
 			expect( action ).toEqual( {
 				type: READER_FEED_REQUEST_FAILURE,
-				payload: { feed_ID: 123 },
-				error: { statusCode: 410 },
+				payload: { feed_ID: 123, error: { statusCode: 410 } },
 			} );
 		} );
 	} );
