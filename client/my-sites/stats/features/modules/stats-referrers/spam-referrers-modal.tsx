@@ -1,5 +1,4 @@
-import { Spinner } from '@automattic/components';
-import NoticeBanner from '@automattic/components/src/notice-banner';
+import { NoticeBanner, Spinner } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useCallback } from 'react';
