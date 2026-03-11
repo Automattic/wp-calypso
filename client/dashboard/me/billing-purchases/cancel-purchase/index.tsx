@@ -549,7 +549,7 @@ export default function CancelPurchase() {
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
 			applyCancellationOffer().then( ( data ) => {
 				if ( data.success ) {
-					onGetCancellationOffer( data.new_subscription_id ); // Takes care of analytics.
+					onGetCancellationOffer( data.new_purchase_id ); // Takes care of analytics.
 				} else {
 					redirectBack();
 				}

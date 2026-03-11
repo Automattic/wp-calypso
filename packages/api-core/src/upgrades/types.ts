@@ -391,6 +391,9 @@ export interface Purchase {
 	 * deletion flow should require the user to cancel these purchases first.
 	 */
 	blocks_site_deletion: boolean;
+
+	should_show_cancellation_offer_notice: boolean;
+	cancellation_offer_notice_discount_percentage: number | null;
 }
 
 export type RawPurchase = Purchase & {
