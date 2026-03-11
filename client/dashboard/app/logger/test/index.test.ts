@@ -31,7 +31,7 @@ const createErrorInfo = ( stack = 'at SomeComponent' ): ErrorInfo => ( {
 } );
 
 describe( 'handleOnCatch', () => {
-	it( 'does not log or capture benign inaccessible Jetpack error', () => {
+	it( 'logs inaccessible Jetpack error to Logstash but does not capture in Sentry', () => {
 		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
 		error.name = 'ParseError';
 
@@ -44,7 +44,23 @@ describe( 'handleOnCatch', () => {
 			calypso_section: 'dashboard',
 		} );
 
-		expect( mockedLogToLogstash ).not.toHaveBeenCalled();
+		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
+		expect( mockedLogToLogstash ).toHaveBeenCalledWith( {
+			feature: 'calypso_client',
+			message: 'The Jetpack site is inaccessible or returned an error',
+			severity: 'error',
+			tags: [ 'dashboard' ],
+			properties: {
+				dashboard_backport: false,
+				env: 'development',
+				message: 'The Jetpack site is inaccessible or returned an error',
+				stack: 'at SomeComponent',
+				path: 'https://example.com/',
+				params: {
+					site_slug: 'my-site',
+				},
+			},
+		} );
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 

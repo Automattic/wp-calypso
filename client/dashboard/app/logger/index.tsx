@@ -15,13 +15,22 @@ function isBenignError( error: Error ) {
 			return true;
 	}
 
-	// Ignore errors related to inaccessible Jetpack sites.
-	// The user is expected to debug their Jetpack sites.
-	if ( isInaccessibleJetpackError( error ) ) {
-		return true;
+	return false;
+}
+
+function shouldCaptureException( error: Error, options: { dashboard_backport?: boolean } ) {
+	// Dashboard backport has its own mechanism to send error logs to Sentry.
+	if ( options.dashboard_backport ) {
+		return false;
 	}
 
-	return false;
+	// Inaccessible Jetpack sites are not application errors — the user is
+	// expected to debug their Jetpack connection. Logstash is enough.
+	if ( isInaccessibleJetpackError( error ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 export function handleOnCatch(
@@ -61,8 +70,7 @@ export function handleOnCatch(
 		},
 	} );
 
-	// Dashboard backport has its mechanism to send error log to sentry.
-	if ( ! options.dashboard_backport ) {
+	if ( shouldCaptureException( error, options ) ) {
 		captureException( error, {
 			tags: {
 				calypso_section: options.calypso_section,
