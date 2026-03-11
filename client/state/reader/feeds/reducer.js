@@ -17,6 +17,7 @@ function handleRequestFailure( state, action ) {
 		[ action.payload.feed_ID ]: {
 			feed_ID: action.payload.feed_ID,
 			is_error: true,
+			error: action.payload.error,
 		},
 		...state,
 	};
