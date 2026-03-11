@@ -60,8 +60,7 @@ export default function useCheckpointAction(
 						label: __( 'Undo', '__i18n_text_domain__' ),
 						icon: createElement( Icon, {
 							icon: undo,
-							className:
-								'agents-manager-message-action-icon agents-manager-message-action-icon--undo',
+							className: 'agents-manager-message-action-icon',
 						} ),
 						onClick: async () => {
 							try {
