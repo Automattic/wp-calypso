@@ -2,6 +2,7 @@ import './style.scss';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
+import GravatarIcon from 'calypso/assets/images/icons/gravatar.svg';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
@@ -58,7 +59,19 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 				<div className="user-profile-header__user-info">
 					<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 56 } />
 					<div className="user-profile-header__names">
-						<h1>{ user.display_name }</h1>
+						<h1>
+							{ user.display_name }
+							{ user.profile_URL && (
+								<a
+									className="user-profile-header__gravatar-badge"
+									href={ user.profile_URL }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img src={ GravatarIcon } alt="Gravatar" width={ 18 } height={ 18 } />
+								</a>
+							) }
+						</h1>
 						<p>@{ user.user_login }</p>
 					</div>
 				</div>
