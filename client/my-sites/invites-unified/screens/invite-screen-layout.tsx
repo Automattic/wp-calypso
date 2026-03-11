@@ -23,6 +23,7 @@ interface InviteScreenLayoutProps {
 	blogDetails?: InviteBlogDetails;
 	trackingEventPrefix: string;
 	trackingProps?: Record< string, unknown >;
+	showUserCard?: boolean;
 }
 
 export function InviteScreenLayout( {
@@ -31,6 +32,7 @@ export function InviteScreenLayout( {
 	blogDetails,
 	trackingEventPrefix,
 	trackingProps: extraTrackingProps,
+	showUserCard = true,
 }: InviteScreenLayoutProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -72,12 +74,13 @@ export function InviteScreenLayout( {
 		? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name )
 		: null;
 
-	const topBarLogo = branding?.logo?.src ? (
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
 		<img
-			src={ branding.logo.src }
-			alt={ branding.logo.alt }
-			width={ branding.logo.width }
-			height={ branding.logo.height }
+			src={ topBarLogoConfig.src }
+			alt={ topBarLogoConfig.alt }
+			width={ topBarLogoConfig.width }
+			height={ topBarLogoConfig.height }
 		/>
 	) : undefined;
 
@@ -99,12 +102,16 @@ export function InviteScreenLayout( {
 				verticalAlign="center"
 				topBar={ topBar }
 			>
-				<UserCard user={ userCardData } size="large" />
-				<div className="invite-screen-switch-account">
-					<Button variant="link" onClick={ handleSwitchAccount }>
-						{ translate( 'Log in with a different account' ) }
-					</Button>
-				</div>
+				{ showUserCard && (
+					<>
+						<UserCard user={ userCardData } size="large" />
+						<div className="invite-screen-switch-account">
+							<Button variant="link" onClick={ handleSwitchAccount }>
+								{ translate( 'Log in with a different account' ) }
+							</Button>
+						</div>
+					</>
+				) }
 			</Step.CenteredColumnLayout>
 		</>
 	);

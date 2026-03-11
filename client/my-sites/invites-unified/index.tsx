@@ -69,6 +69,11 @@ export function UnifiedInviteAccept( {
 
 	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
+		// Invalid invite → show invalid-invite screen (no user card needed)
+		if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+			return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
+		}
+
 		if ( ! legacyLoggedOutInvite ) {
 			return null;
 		}
@@ -82,8 +87,6 @@ export function UnifiedInviteAccept( {
 			</div>
 		);
 	}
-
-	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {

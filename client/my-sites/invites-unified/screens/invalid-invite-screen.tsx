@@ -10,12 +10,15 @@ interface InvalidInviteScreenProps {
 export function InvalidInviteScreen( { blogDetails, inviteError }: InvalidInviteScreenProps ) {
 	const translate = useTranslate();
 
+	const showUserCard = inviteError.error === 'unauthorized_created_by_self';
+
 	return (
 		<InviteScreenLayout
 			title={ translate( 'The invite is not valid' ) }
 			description={ inviteError.message }
 			blogDetails={ blogDetails }
 			trackingEventPrefix="calypso_invite_invalid"
+			showUserCard={ showUserCard }
 		/>
 	);
 }
