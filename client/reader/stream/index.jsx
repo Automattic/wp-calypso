@@ -341,11 +341,6 @@ class ReaderStream extends Component {
 			case 'l': {
 				return this.toggleLikeOnSelectedPost();
 			}
-
-			// Go to top.
-			case '.': {
-				return this.goToTop();
-			}
 		}
 	};
 
@@ -388,13 +383,6 @@ class ReaderStream extends Component {
 		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
 		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
-
-	goToTop = () => {
-		const { streamKey, updateCount } = this.props;
-		if ( updateCount > 0 ) {
-			this.props.showUpdates( { streamKey } );
-		}
-	};
 
 	getVisibleItemIndexes() {
 		return (
