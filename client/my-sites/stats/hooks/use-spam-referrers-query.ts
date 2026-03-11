@@ -65,7 +65,6 @@ export function useUnspamReferrerMutation( siteId: number | null ) {
 			// Always refetch after mutation to ensure server/client consistency.
 			queryClient.invalidateQueries( { queryKey: [ QUERY_KEY_BASE, siteId ] } );
 		},
-		retry: 1,
-		retryDelay: 3 * 1000,
+		retry: false,
 	} );
 }
