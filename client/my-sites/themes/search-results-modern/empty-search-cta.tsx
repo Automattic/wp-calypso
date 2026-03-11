@@ -65,7 +65,7 @@ const EmptySearchCTA = ( { title, subtitle }: EmptySearchCTAProps ) => {
 					</Badge>
 					<p className="empty-search-cta__card-text">
 						{ preventWidows(
-							translate( 'Get a professional website in days\u2014built by WordPress.com experts.' )
+							translate( 'Get a professional website in days—built by WordPress.com experts.' )
 						) }
 					</p>
 					<Button
