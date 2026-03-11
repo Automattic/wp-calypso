@@ -24,7 +24,7 @@ import {
 	isVIPOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getEffectivePartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
+import { getPartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -46,7 +46,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
@@ -546,7 +545,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWoo, currentFrom, initialFrom } = this.props;
+		const { oauth2Client, isWoo } = this.props;
 		const isPasswordless = true;
 		let socialService;
 		let socialServiceResponse;
@@ -561,10 +560,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		const allowedSocialServices = getEffectivePartnerAllowedSocialServices(
-			currentFrom,
-			initialFrom
-		);
+		const allowedSocialServices = getPartnerAllowedSocialServices();
 
 		return (
 			<>
@@ -712,8 +708,6 @@ const ConnectedUser = connect(
 			isWooJPC: isWooJPCFlow( state ),
 			isBlazePro,
 			from: get( getCurrentQueryArguments( state ), 'from' ),
-			currentFrom: get( getCurrentQueryArguments( state ), 'from' ),
-			initialFrom: get( getInitialQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isA4A,

@@ -485,6 +485,22 @@ export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
 		: false;
 }
 
+const JETPACK_STATS_PAID_PRODUCT_SLUGS = [
+	'jetpack_stats_bi_yearly',
+	'jetpack_stats_yearly',
+	'jetpack_stats_monthly',
+	'jetpack_stats_pwyw_yearly',
+] as const;
+
+/**
+ * Checks if a product slug is a paid Jetpack Stats product.
+ */
+export function isJetpackStatsPaidProductSlug( productSlug: string | undefined ): boolean {
+	return productSlug
+		? ( JETPACK_STATS_PAID_PRODUCT_SLUGS as readonly string[] ).includes( productSlug )
+		: false;
+}
+
 export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
 	const securityT1Slugs = [
 		JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,

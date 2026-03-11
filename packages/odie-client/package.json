@@ -41,7 +41,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-ui": "^0.1.50",
+		"@automattic/agenttic-ui": "^0.1.52",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
@@ -60,7 +60,7 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-markdown": "^9.0.1",
 		"react-redux": "^9.2.0",
-		"smooch": "5.6.0",
+		"smooch": "^5.7.17",
 		"wpcom-proxy-request": "^7.0.5"
 	},
 	"devDependencies": {

@@ -6,7 +6,6 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import Banner from 'calypso/components/banner';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
 
@@ -35,7 +34,7 @@ describe( 'SitesDashboardBannersManager', () => {
 
 		const { getByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 1 } />
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } />
 			</Provider>
 		);
 
@@ -55,40 +54,11 @@ describe( 'SitesDashboardBannersManager', () => {
 
 		const { queryByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 1 } />
+				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } />
 			</Provider>
 		);
 
 		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'renders A8C for Agencies banner when sitesCount is 5 or more', () => {
-		const sitesStatuses = [];
-
-		const { getByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 5 } />
-			</Provider>
-		);
-
-		expect(
-			getByText( "Building sites for customers? Here's how to earn more." )
-		).toBeInTheDocument();
-		expect( Banner ).toHaveBeenCalled();
-	} );
-
-	it( 'does not render A8C for Agencies banner when sitesCount is less than 5', () => {
-		const sitesStatuses = [];
-
-		const { queryByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } sitesCount={ 4 } />
-			</Provider>
-		);
-
-		expect(
-			queryByText( "Building sites for customers? Here's how to earn more." )
-		).not.toBeInTheDocument();
 	} );
 
 	it( 'renders restore sites banner when ?restored=true param exists', () => {
@@ -100,7 +70,7 @@ describe( 'SitesDashboardBannersManager', () => {
 
 		const { getByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+				<SitesDashboardBannersManager sitesStatuses={ [] } />
 			</Provider>
 		);
 
@@ -113,7 +83,7 @@ describe( 'SitesDashboardBannersManager', () => {
 	it( 'does not render restore sites banner when ?restored=true param does not exist', () => {
 		const { queryByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ [] } sitesCount={ 0 } />
+				<SitesDashboardBannersManager sitesStatuses={ [] } />
 			</Provider>
 		);
 		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();
