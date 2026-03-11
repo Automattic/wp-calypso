@@ -354,17 +354,11 @@ export const useManagedZendeskChat = () => {
 			Smooch.on( 'typing:stop', typingStopListener );
 
 			return () => {
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'message:received', getUnreadListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'disconnected', disconnectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'reconnecting', reconnectingListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'connected', connectedListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'typing:stop', typingStopListener );
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch.off?.( 'typing:start', typingStartListener );
 			};
 		}
