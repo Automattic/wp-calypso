@@ -8,10 +8,10 @@ interface RecommendedFeedsListProps extends Omit< RecommendedFeedItemProps, 'fee
 }
 
 export function RecommendedFeedsList( props: RecommendedFeedsListProps ): JSX.Element {
-	const { feeds, ...feedItemProps } = props;
+	const { feeds, variant = 'default', ...feedItemProps } = props;
 
 	return (
-		<ul className={ clsx( 'recommended-feeds-list', `is-${ props.variant || 'default' }-view` ) }>
+		<ul className={ clsx( 'recommended-feeds-list', `is-${ variant }-view` ) }>
 			{ feeds
 				.filter( ( feed ) => feed.feedUrl )
 				.map(
@@ -19,6 +19,7 @@ export function RecommendedFeedsList( props: RecommendedFeedsListProps ): JSX.El
 						<RecommendedFeedItem
 							key={ `recommended-feed-item-${ feed.feedId || feed.feedUrl }` }
 							feed={ feed }
+							variant={ variant }
 							{ ...feedItemProps }
 						/>
 					)
