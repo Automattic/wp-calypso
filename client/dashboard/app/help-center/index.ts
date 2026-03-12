@@ -1,4 +1,5 @@
 import { dispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useState, useRef } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import type {
@@ -67,17 +68,27 @@ export function useHelpCenter() {
 	}, [] );
 
 	const setOpenOdieWithContext = useCallback(
-		async ( args: {
+		async ( {
+			initialMessage,
+			section,
+			siteUrl,
+			siteId,
+		}: {
 			initialMessage: string;
 			section?: string;
 			siteUrl?: string;
 			siteId?: string | number;
 		} ) => {
-			await ensureHelpCenterLoaded();
-
-			return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setOpenOdieWithContext( args );
+			const url = addQueryArgs( '/odie', {
+				userFieldMessage: initialMessage,
+				section,
+				siteUrl,
+				siteId: siteId != null ? String( siteId ) : undefined,
+			} );
+			await setNavigateToRoute( url );
+			await setShowHelpCenter( true );
 		},
-		[]
+		[ setNavigateToRoute, setShowHelpCenter ]
 	);
 
 	return {
