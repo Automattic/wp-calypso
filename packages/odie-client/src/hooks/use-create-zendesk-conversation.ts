@@ -138,6 +138,10 @@ export const useCreateZendeskConversation = () => {
 			return;
 		}
 
+		if ( ! conversation ) {
+			return;
+		}
+
 		try {
 			if ( activeInteractionId ) {
 				interaction = await addEventToInteraction( {

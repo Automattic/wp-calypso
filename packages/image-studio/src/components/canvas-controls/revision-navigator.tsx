@@ -56,11 +56,9 @@ export const RevisionNavigator = () => {
 						return null;
 					}
 
-					const attachment = select( coreStore ).getEntityRecord(
-						'postType',
-						'attachment',
-						id
-					) as any;
+					const attachment = select( coreStore ).getEntityRecord( 'postType', 'attachment', id ) as
+						| import('../../types/wordpress').AttachmentRecord
+						| undefined;
 
 					if ( ! attachment ) {
 						return null;
@@ -129,8 +127,8 @@ export const RevisionNavigator = () => {
 				onClick={ handlePrevious }
 				disabled={ disablePrev }
 				className="canvas-controls__nav-button"
-				aria-label={ __( 'Previous revision', 'big-sky' ) }
-				label={ __( 'Previous revision ←', 'big-sky' ) }
+				aria-label={ __( 'Previous revision', __i18n_text_domain__ ) }
+				label={ __( 'Previous revision ←', __i18n_text_domain__ ) }
 			/>
 			<span className="canvas-controls__nav-text">
 				{ currentIndex + 1 } / { images.length }
@@ -140,8 +138,8 @@ export const RevisionNavigator = () => {
 				onClick={ handleNext }
 				disabled={ disableNext }
 				className="canvas-controls__nav-button"
-				aria-label={ __( 'Next revision', 'big-sky' ) }
-				label={ __( 'Next revision →', 'big-sky' ) }
+				aria-label={ __( 'Next revision', __i18n_text_domain__ ) }
+				label={ __( 'Next revision →', __i18n_text_domain__ ) }
 			/>
 		</div>
 	);

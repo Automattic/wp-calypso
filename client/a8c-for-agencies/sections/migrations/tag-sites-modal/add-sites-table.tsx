@@ -1,5 +1,9 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { CheckboxControl } from '@wordpress/components';
+import {
+	BaseControl,
+	CheckboxControl,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -19,10 +23,12 @@ export default function MigrationsAddSitesTable( {
 	selectedSites,
 	setSelectedSites,
 	taggedSites,
+	migrationSourceHost,
 }: {
 	selectedSites: SiteItem[];
 	setSelectedSites: ( sites: SiteItem[] ) => void;
 	taggedSites?: TaggedSite[];
+	migrationSourceHost: string;
 } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -137,23 +143,37 @@ export default function MigrationsAddSitesTable( {
 
 	return (
 		<div className="add-sites-table redesigned-a8c-table">
-			{ isLoading ? (
-				<A4ATablePlaceholder />
-			) : (
-				<ItemsDataViews
-					data={ {
-						items: allSites,
-						fields,
-						getItemId: ( item ) => `${ item.id }`,
-						pagination: paginationInfo,
-						enableSearch: false,
-						actions: [],
-						dataViewsState: dataViewsState,
-						setDataViewsState: setDataViewsState,
-						defaultLayouts: { table: {} },
-					} }
-				/>
-			) }
+			<BaseControl
+				label={ translate( 'Select sites to tag' ) }
+				className="migrations-tag-sites-modal__table-control"
+			>
+				{ migrationSourceHost && (
+					<Spacer marginY={ 4 }>
+						<div className="migrations-tag-sites-modal__instruction">
+							{ translate( 'Make sure you only select sites previously hosted on %s', {
+								args: [ migrationSourceHost ],
+							} ) }
+						</div>
+					</Spacer>
+				) }
+				{ isLoading ? (
+					<A4ATablePlaceholder />
+				) : (
+					<ItemsDataViews
+						data={ {
+							items: allSites,
+							fields,
+							getItemId: ( item ) => `${ item.id }`,
+							pagination: paginationInfo,
+							enableSearch: false,
+							actions: [],
+							dataViewsState: dataViewsState,
+							setDataViewsState: setDataViewsState,
+							defaultLayouts: { table: {} },
+						} }
+					/>
+				) }
+			</BaseControl>
 		</div>
 	);
 }

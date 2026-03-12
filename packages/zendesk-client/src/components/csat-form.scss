@@ -1,0 +1,79 @@
+.zendesk-csat-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	flex-direction: row;
+	width: 100%;
+
+	.zendesk-csat-form__thumbs-container {
+		width: 100%;
+		display: flex;
+		align-items: center;
+
+		&.has_score {
+			display: none;
+		}
+	}
+
+	.zendesk-csat-form__thumbs {
+		display: flex;
+		gap: var(--spacing-1, 0.25rem);
+	}
+
+	.zendesk-csat-form__thumbs-button {
+		padding: 0;
+		color: var(--studio-gray-50);
+
+		&:hover svg {
+			color: var(--color-foreground, oklch(0.241 0 0));
+		}
+	}
+
+	.zendesk-csat-form__rating-message {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		padding: 8px 0;
+
+		> div {
+			border-radius: 24px 24px 8px 24px;
+			background-color: var(--studio-gray-5);
+			width: max-content;
+			margin-right: 16px;
+			padding: 10px 16px;
+			max-width: calc(100% - 32px);
+			align-self: flex-end;
+		}
+	}
+
+	.zendesk-csat-form__feedback {
+		p {
+			padding-top: 12px;
+			padding-bottom: 20px;
+			background-color: unset !important;
+			color: var(--studio-gray-80);
+			line-height: 20px;
+		}
+
+		.zendesk-csat-form__reason {
+			padding-bottom: 12px;
+		}
+
+		button.is-primary {
+			margin-block: 16px;
+			margin-inline-end: 8px;
+			background: var(--studio-wordpress-blue, #3858e9);
+		}
+
+		button.is-tertiary {
+			color: var(--studio-wordpress-blue, #3858e9);
+		}
+	}
+
+	.zendesk-csat-form__loading {
+		width: 100%;
+		text-align: center;
+		margin: 12px;
+	}
+}

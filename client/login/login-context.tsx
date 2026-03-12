@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useCallback, useEffect } from '@wordpress/element';
+import {
+	createContext,
+	useContext,
+	useState,
+	useCallback,
+	useEffect,
+	useRef,
+} from '@wordpress/element';
 import { type TranslateResult } from 'i18n-calypso';
 
 export interface LoginContextType {
@@ -41,17 +48,27 @@ const LoginContextProvider = ( {
 		TranslateResult | undefined | null
 	>( initialSubHeadingSecondary ?? undefined );
 
+	// Track if headers have been explicitly set via setHeaders
+	const headersExplicitlySet = useRef( false );
+
 	// Sync state when initial values change (e.g., when locale changes)
+	// But only if headers haven't been explicitly set via setHeaders
 	useEffect( () => {
-		setHeadingText( initialHeading ?? undefined );
+		if ( ! headersExplicitlySet.current ) {
+			setHeadingText( initialHeading ?? undefined );
+		}
 	}, [ initialHeading ] );
 
 	useEffect( () => {
-		setSubHeadingText( initialSubHeading ?? undefined );
+		if ( ! headersExplicitlySet.current ) {
+			setSubHeadingText( initialSubHeading ?? undefined );
+		}
 	}, [ initialSubHeading ] );
 
 	useEffect( () => {
-		setSubHeadingTextSecondary( initialSubHeadingSecondary ?? undefined );
+		if ( ! headersExplicitlySet.current ) {
+			setSubHeadingTextSecondary( initialSubHeadingSecondary ?? undefined );
+		}
 	}, [ initialSubHeadingSecondary ] );
 
 	const setHeaders = useCallback(
@@ -64,6 +81,7 @@ const LoginContextProvider = ( {
 			subHeading?: TranslateResult | null;
 			subHeadingSecondary?: TranslateResult | null;
 		} ) => {
+			headersExplicitlySet.current = true;
 			setHeadingText( heading );
 			setSubHeadingText( subHeading );
 			setSubHeadingTextSecondary( subHeadingSecondary );

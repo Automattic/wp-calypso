@@ -89,7 +89,14 @@ export interface ClientContextType {
 	/**
 	 * Environment identifier
 	 */
-	environment: 'wp-admin' | 'ciab-admin' | 'calypso' | string;
+	environment:
+		| 'wp-admin'
+		| 'ciab-admin'
+		| 'calypso'
+		| 'wp-admin-disconnected'
+		| 'gutenberg-disconnected'
+		| 'ciab-disconnected'
+		| string;
 
 	/**
 	 * Optional context entries (sitemap, entities, etc.)

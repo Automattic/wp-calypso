@@ -6,93 +6,65 @@
 
 .podcasting-details__publish-notice {
 	position: relative;
-	background: var(--color-neutral-0);
+	background: var( --color-neutral-0 );
 	border-radius: 2px;
 	align-self: stretch;
 	padding: 6px;
 	font-size: $font-body-small;
 	text-align: left;
-	// Center contents vertically
-	// Note this element contains a <span> container to ensure normal
-	// display (whitespace) between text items
 	display: flex;
 	flex-grow: 1;
 	align-items: center;
+	margin-bottom: 16px;
 
 	.gridicons-microphone {
 		flex-shrink: 0;
-		margin-right: 6px;
-		color: var(--color-podcasting);
+		margin-inline-end: 6px;
+		color: var( --color-podcasting );
 	}
 
 	a {
-		color: var(--color-neutral-70);
+		color: var( --color-neutral-70 );
 		text-decoration: underline;
 	}
 }
 
 .podcasting-details__publish-button {
-	color: var(--color-neutral-50);
+	color: var( --color-neutral-50 );
 	font-weight: 600;
 	flex-shrink: 0;
-	margin-left: 12px;
-	// For viewports/translations when the text is taller than the button
-	align-self: center;
 }
 
-// Podcasting details page
-
-.podcasting-details__wrapper .form-setting-explanation,
-.podcasting-details__category-wrapper .form-setting-explanation {
+.podcasting-details .form-setting-explanation {
 	margin-bottom: 6px;
 }
 
-.podcasting-details__category-wrapper .calypso-notice.is-compact {
+.podcasting-details .calypso-notice.is-compact {
 	width: 100%;
 }
 
-.podcasting-details__category-wrapper.card {
-	width: 100%;
-	margin-bottom: 0;
-	padding-bottom: 0;
-}
+.podcasting-details__cover-and-info {
+	display: flex;
+	gap: 24px;
+	margin-bottom: 16px;
 
-.podcasting-details__title-subtitle-wrapper {
-	@include breakpoint-deprecated( ">960px" ) {
-		float: left;
-		width: 80%;
-	}
-}
-
-.podcasting-details__wrapper {
 	.podcast-cover-image-setting {
-		float: left;
-		margin-right: 24px;
+		flex-shrink: 0;
 	}
 
-	.form-select {
-		margin-right: 12px;
-
-		@include breakpoint-deprecated( "<480px" ) {
-			margin-right: 0;
-			width: 100%;
-		}
+	.podcasting-details__title-subtitle-wrapper {
+		flex: 1;
+		min-width: 0;
 	}
+}
 
-	&.is-disabled {
-		background-color: var(--color-neutral-0);
-		border-color: var(--color-neutral-10);
-	}
+.podcasting-details .form-select {
+	margin-inline-end: 12px;
+	margin-bottom: 8px;
 
-	&.is-disabled label,
-	&.is-disabled .form-setting-explanation {
-		color: var(--color-neutral-20);
-	}
-
-	&.is-disabled .form-text-input,
-	&.is-disabled .form-textarea {
-		color: var(--color-neutral-20);
-		border-color: var(--color-neutral-10);
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-inline-end: 0;
+		width: 100%;
 	}
 }
 
@@ -103,13 +75,3 @@
 	}
 }
 
-.podcasting-details__disable-podcasting {
-	color: var(--color-text-subtle);
-	text-align: center;
-	width: 80%;
-	margin: 0 auto;
-
-	.button {
-		margin: 12px 0 6px;
-	}
-}

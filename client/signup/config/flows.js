@@ -7,6 +7,7 @@ import {
 import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -42,6 +43,8 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		? addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, checkoutBackUrl )
 		: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl );
 
+	const dashboard = getDashboardFromQuery();
+
 	return addQueryArgs(
 		{
 			signup: 1,
@@ -52,6 +55,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			checkoutBackUrl: finalCheckoutBackUrl,
 			// Pass the final destination as redirect_to so checkout knows where to go after completion
 			...( destination && { redirect_to: destination } ),
+			...( dashboard && { dashboard } ),
 		},
 		checkoutURL
 	);
@@ -120,10 +124,6 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 
 		// Redirection URL handled by the checkout controller
 		return '';
-	}
-
-	if ( dashboardType ) {
-		return dashboardLink( '/domains' );
 	}
 
 	// Redirection URL handled by the checkout controller

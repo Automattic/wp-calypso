@@ -160,11 +160,6 @@ function initLoadedTrackingScripts() {
 		}
 	}
 
-	// init Quora
-	if ( mayWeTrackByTracker( 'quora' ) ) {
-		window.qp( 'init', TRACKING_IDS.quoraPixelId );
-	}
-
 	// init Pinterest
 	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const currentUser = getCurrentUser();
@@ -183,7 +178,10 @@ function initLoadedTrackingScripts() {
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		initTikTok();
 	}
-
+	if ( mayWeTrackByTracker( 'quora' ) ) {
+		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.
+		window.qp( 'track', 'ViewContent' );
+	}
 	debug( 'loadTrackingScripts: init done' );
 }
 

@@ -24,10 +24,8 @@ export default function useChatStatus() {
 		hasActiveChats,
 		isEligibleForChat,
 		isLoading: isLoadingSupportActivity,
-		isPresalesChatOpen: Boolean( availability?.is_presales_chat_open ),
 		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
-		supportLevel: supportStatus?.eligibility?.support_level,
 		forceEmailSupport,
 		isChatRestricted: supportStatus?.eligibility?.is_chat_restricted,
 	};

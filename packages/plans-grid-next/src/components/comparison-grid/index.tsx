@@ -14,7 +14,15 @@ import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, ChangeEvent, Dispatch, SetStateAction, forwardRef } from 'react';
+import {
+	useState,
+	useCallback,
+	useEffect,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	forwardRef,
+} from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
@@ -1033,6 +1041,7 @@ const ComparisonGrid = ( {
 	planTypeSelectorProps,
 	gridSize,
 	siteId,
+	onVisiblePlansCountChange,
 }: ComparisonGridProps ) => {
 	const { gridPlans, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
@@ -1043,6 +1052,10 @@ const ComparisonGrid = ( {
 		siteId,
 		intervalType,
 	} );
+
+	useEffect( () => {
+		onVisiblePlansCountChange?.( visibleGridPlans.length );
+	}, [ visibleGridPlans.length, onVisiblePlansCountChange ] );
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.

@@ -13,9 +13,11 @@ import type { Field } from '@wordpress/dataviews';
 export default function MigrationsCommissionsList( {
 	items,
 	fetchMigratedSites,
+	migrationTags,
 }: {
 	items: TaggedSite[];
 	fetchMigratedSites: () => void;
+	migrationTags: string[];
 } ) {
 	const translate = useTranslate();
 
@@ -66,12 +68,16 @@ export default function MigrationsCommissionsList( {
 				label: translate( 'Actions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ) => (
-					<CommissionListActions fetchMigratedSites={ fetchMigratedSites } site={ item } />
+					<CommissionListActions
+						fetchMigratedSites={ fetchMigratedSites }
+						site={ item }
+						migrationTags={ migrationTags }
+					/>
 				),
 				enableSorting: false,
 			},
 		],
-		[ translate, fetchMigratedSites ]
+		[ translate, fetchMigratedSites, migrationTags ]
 	);
 
 	if ( ! isDesktop ) {

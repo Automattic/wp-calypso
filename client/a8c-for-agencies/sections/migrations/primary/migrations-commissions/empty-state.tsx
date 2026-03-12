@@ -9,8 +9,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function MigrationsCommissionsEmptyState( {
 	setShowAddSitesModal,
+	canTagSitesForCommission,
 }: {
 	setShowAddSitesModal: ( show: boolean ) => void;
+	canTagSitesForCommission: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -34,47 +36,49 @@ export default function MigrationsCommissionsEmptyState( {
 					)
 				) }
 			/>
-			<StepSectionItem
-				heading={ translate( 'Tag your transferred sites so we can pay you for them.' ) }
-				description={
-					<>
-						{ translate(
-							'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
-						) }
+			{ canTagSitesForCommission && (
+				<StepSectionItem
+					heading={ translate( 'Tag your transferred sites so we can pay you for them.' ) }
+					description={
+						<>
+							{ translate(
+								'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
+							) }
 
-						<ul>
-							<li>
-								{ translate(
-									'Ensure the {{a}}Automattic for Agencies plugin{{/a}} ↗ is installed and connected to each site.',
-									{
-										components: {
-											a: (
-												<a
-													target="_blank"
-													href={ a4aPluginUrl }
-													onClick={ () => {
-														dispatch(
-															recordTracksEvent(
-																'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
-															)
-														);
-													} }
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</li>
-							<li>{ translate( 'Tag the connected sites using the button below.' ) }</li>
-						</ul>
+							<ul>
+								<li>
+									{ translate(
+										'Ensure the {{a}}Automattic for Agencies plugin{{/a}} ↗ is installed and connected to each site.',
+										{
+											components: {
+												a: (
+													<a
+														target="_blank"
+														href={ a4aPluginUrl }
+														onClick={ () => {
+															dispatch(
+																recordTracksEvent(
+																	'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
+																)
+															);
+														} }
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</li>
+								<li>{ translate( 'Tag the connected sites using the button below.' ) }</li>
+							</ul>
 
-						<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
-							{ translate( 'Tag my self-migrated sites' ) }
-						</Button>
-					</>
-				}
-			/>
+							<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
+								{ translate( 'Tag my self-migrated sites' ) }
+							</Button>
+						</>
+					}
+				/>
+			) }
 		</StepSection>
 	);
 }

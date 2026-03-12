@@ -33,7 +33,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.0.1",
+		"@automattic/number-formatters": "^1.1.0",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/data": "^10.23.0",

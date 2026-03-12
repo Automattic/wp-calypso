@@ -40,7 +40,12 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const dispatch = useDispatch();
 	const momentInSite = useMomentInSite( siteId );
 	const getSummaryPeriodLabel = () => {
-		if ( query.start_date ) {
+		// Check for custom range in query or preserved custom range params.
+		const queryParams = new URLSearchParams( context.query );
+		const hasPreservedCustomRange =
+			queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' );
+
+		if ( query.start_date || hasPreservedCustomRange ) {
 			return translate( 'Custom Range Summary' );
 		}
 		switch ( period.period ) {
@@ -80,11 +85,32 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		if ( query.start_date ) {
 			periodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
 		}
+
+		// Check for preserved custom range params (when returning from a different period view).
+		const queryParams = new URLSearchParams( context.query );
+		if ( queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' ) ) {
+			periodPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ queryParams.get(
+				'customRangeStart'
+			) }&endDate=${ queryParams.get( 'customRangeEnd' ) }`;
+		}
+
 		return periodPath;
-	}, [ period.period, period.endOf, path, siteSlug, query ] );
+	}, [ period.period, period.endOf, path, siteSlug, query, context.query ] );
 
 	const getSummaryPathForDaysRange = ( numberDays ) => {
 		const queryParams = new URLSearchParams( context.query );
+
+		// Preserve the custom date range (if any) to allow returning to it later.
+		// Only save if we're currently on a custom range (has startDate and endDate without num).
+		const hasCustomRange =
+			queryParams.has( 'startDate' ) && queryParams.has( 'endDate' ) && ! queryParams.has( 'num' );
+		const hasPreservedCustomRange =
+			queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' );
+
+		if ( hasCustomRange && ! hasPreservedCustomRange ) {
+			queryParams.set( 'customRangeStart', queryParams.get( 'startDate' ) );
+			queryParams.set( 'customRangeEnd', queryParams.get( 'endDate' ) );
+		}
 
 		queryParams.set( 'startDate', momentInSite().format( 'YYYY-MM-DD' ) );
 		queryParams.set( 'summarize', 1 );

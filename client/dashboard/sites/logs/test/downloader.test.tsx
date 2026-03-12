@@ -80,10 +80,6 @@ beforeAll( () => {
 		.mockImplementation( () => {} );
 } );
 
-afterEach( () => {
-	jest.clearAllMocks();
-} );
-
 afterAll( () => {
 	anchorClickSpy.mockRestore();
 } );

@@ -1,6 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -11,6 +13,7 @@ type Props = {
 export default function NoticeSummary( { type }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const title = useMemo( () => {
 		switch ( type ) {
@@ -24,18 +27,6 @@ export default function NoticeSummary( { type }: Props ) {
 		}
 	}, [ translate, type ] );
 
-	const handleClientTermsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_client_terms_click' ) );
-	}, [ dispatch ] );
-
-	const handleSubscriptionInfoLinkClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_subscription_info_link_click' ) );
-	}, [ dispatch ] );
-
-	const handleCancellationInfoLinkClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_cancellation_info_link_click' ) );
-	}, [ dispatch ] );
-
 	const items = useMemo( () => {
 		switch ( type ) {
 			case 'client-purchase':
@@ -46,9 +37,14 @@ export default function NoticeSummary( { type }: Props ) {
 						{
 							components: {
 								a: (
-									<a
+									<Button
+										variant="link"
 										href={ localizeUrl( 'https://wordpress.com/tos' ) }
-										onClick={ handleClientTermsClick }
+										onClick={ () => {
+											dispatch(
+												recordTracksEvent( 'calypso_a4a_client_checkout_client_terms_click' )
+											);
+										} }
 										target="_blank"
 										rel="noreferrer noopener"
 									/>
@@ -61,27 +57,37 @@ export default function NoticeSummary( { type }: Props ) {
 						{
 							components: {
 								subscriptionInfoLink: (
-									<a
-										href={
-											type === 'client-purchase'
-												? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-subscriptions-work'
-												: 'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments'
-										}
-										onClick={ handleSubscriptionInfoLinkClick }
-										target="_blank"
-										rel="noreferrer noopener"
+									<Button
+										variant="link"
+										onClick={ () => {
+											showSupportGuide(
+												type === 'client-purchase'
+													? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-subscriptions-work'
+													: 'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments'
+											);
+											dispatch(
+												recordTracksEvent(
+													'calypso_a4a_client_checkout_subscription_info_link_click'
+												)
+											);
+										} }
 									/>
 								),
 								cancellationInfoLink: (
-									<a
-										href={
-											type === 'client-purchase'
-												? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-to-cancel'
-												: 'https://agencieshelp.automattic.com/knowledge-base/purchases/#canceling-purchases'
-										}
-										onClick={ handleCancellationInfoLinkClick }
-										target="_blank"
-										rel="noreferrer noopener"
+									<Button
+										variant="link"
+										onClick={ () => {
+											showSupportGuide(
+												type === 'client-purchase'
+													? 'https://agencieshelp.automattic.com/knowledge-base/client-billing/#how-to-cancel'
+													: 'https://agencieshelp.automattic.com/knowledge-base/purchases/#canceling-purchases'
+											);
+											dispatch(
+												recordTracksEvent(
+													'calypso_a4a_client_checkout_cancellation_info_link_click'
+												)
+											);
+										} }
 									/>
 								),
 							},
@@ -115,13 +121,7 @@ export default function NoticeSummary( { type }: Props ) {
 			default:
 				return [];
 		}
-	}, [
-		handleCancellationInfoLinkClick,
-		handleClientTermsClick,
-		handleSubscriptionInfoLinkClick,
-		translate,
-		type,
-	] );
+	}, [ dispatch, showSupportGuide, translate, type ] );
 
 	return (
 		<div className="checkout__summary-notice">

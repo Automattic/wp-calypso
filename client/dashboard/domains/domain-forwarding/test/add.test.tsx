@@ -3,7 +3,6 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainForwardingForm from '../form';
 import type { FormData } from '../form';
@@ -30,8 +29,6 @@ function renderForm( props: TestFormProps = {} ) {
 
 	return render( <DomainForwardingForm { ...defaultProps } /> );
 }
-
-afterEach( () => nock.cleanAll() );
 
 test( 'renders domain forwarding form with correct fields', async () => {
 	renderForm();

@@ -73,8 +73,10 @@ module.exports = {
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/js-utils',
+							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
+							'!@automattic/posthog',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],
@@ -165,5 +167,6 @@ module.exports = {
 				],
 			},
 		],
+		'@tanstack/query/exhaustive-deps': 'error',
 	},
 };

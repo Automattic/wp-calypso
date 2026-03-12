@@ -12,7 +12,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
@@ -58,7 +58,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site, source, disableChatSupport } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
 	const currentSiteDomain = site?.domain;
@@ -72,7 +73,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 	const isUserEligibleForPaidSupport =
-		Boolean( data?.eligibility?.is_user_eligible ) || hasPremiumSupport;
+		Boolean( data?.eligibility?.is_user_eligible ) ||
+		hasPremiumSupport ||
+		featureConfig.chat.hasPremiumSupport;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -150,14 +153,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								sectionName={ sectionName }
 								currentSiteDomain={ currentSiteDomain }
 								isEligibleForChat={ isUserEligibleForPaidSupport }
-								forceEmailSupport={ !! forceEmailSupport || disableChatSupport }
+								forceEmailSupport={ !! forceEmailSupport || ! featureConfig.chat.enabled }
 							/>
 						}
 					/>
 					<Route
 						path="/contact-form"
 						element={
-							source === 'a4a' ? (
+							featureConfig.contactForm.variant === 'a4a' ? (
 								<Suspense fallback={ null }>
 									<HelpCenterA4AContactForm />
 								</Suspense>

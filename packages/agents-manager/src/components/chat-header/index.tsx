@@ -9,16 +9,19 @@ export type Options = ComponentProps< typeof DropdownMenu >[ 'controls' ];
 
 interface Props {
 	title?: string;
-	isChatDocked: boolean;
 	onClose: () => void;
 	options: Options;
 	onBack?: () => void;
+	onViewHistory?: () => void;
 }
 
-export default function ChatHeader( { isChatDocked, onClose, options, title, onBack }: Props ) {
+export default function ChatHeader( { onClose, options, title, onBack, onViewHistory }: Props ) {
 	const navigate = useNavigate();
 
-	const buttonSize = ! isChatDocked ? 'small' : undefined;
+	const handleViewHistory = () => {
+		navigate( '/history' );
+		onViewHistory?.();
+	};
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -27,6 +30,7 @@ export default function ChatHeader( { isChatDocked, onClose, options, title, onB
 					className="agents-manager-chat-header__back-btn"
 					onClick={ onBack }
 					aria-label={ __( 'Go Back', '__i18n_text_domain__' ) }
+					size="small"
 				>
 					<Icon icon={ chevronLeft } />
 				</Button>
@@ -38,21 +42,21 @@ export default function ChatHeader( { isChatDocked, onClose, options, title, onB
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
-					toggleProps={ { size: buttonSize } }
+					toggleProps={ { size: 'small' } }
 				/>
 				<Button
 					className="agents-manager-chat-header__history-btn"
 					icon={ backup }
-					onClick={ () => navigate( '/history' ) }
+					onClick={ handleViewHistory }
 					label={ __( 'View history', '__i18n_text_domain__' ) }
-					size={ buttonSize }
+					size="small"
 				/>
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }
 					onClick={ onClose }
 					label={ __( 'Close', '__i18n_text_domain__' ) }
-					size={ buttonSize }
+					size="small"
 				/>
 			</div>
 		</div>

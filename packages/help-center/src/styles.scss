@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/variables';
-@import '@automattic/typography/styles/variables';
 @import 'components/variables';
 
 /**
@@ -19,9 +18,10 @@
 	position: fixed;
 
 	/**
-	 * Generic Stylings
+	 * Typographic root: 16px so the help center has consistent sizing
+	 * regardless of host page html font-size. Use em for child font-sizes.
 	 */
-	font-size: $font-body-small;
+	font-size: 16px;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
 		'Helvetica Neue', sans-serif;
 	font-weight: inherit;

@@ -1,3 +1,5 @@
+@import "variables";
+
 @mixin visually-hidden() {
 	position: absolute;
 	width: 1px;
@@ -8,4 +10,18 @@
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border-width: 0;
+}
+
+@mixin image-studio-theme-variables() {
+	--color-primary: var(--wp-components-color-accent, #3858e9);
+	--color-primary-foreground: #{$color-foreground};
+	--color-background:#{$color-background};
+    --color-foreground:#{$color-foreground};
+    --color-popover: #{$color-background};
+    --color-popover-muted: #{$color-border};
+    --color-muted: #{$color-border};
+    --color-muted-foreground: #ccc;
+    --color-success-background: #1F2E1F;
+	--color-success: #fff;
+	--color-warning-background: #2E281F;
 }

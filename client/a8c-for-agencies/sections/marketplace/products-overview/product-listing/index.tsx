@@ -14,8 +14,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
-import useProductAndPlans from '../../hooks/use-product-and-plans';
+import usePressableAddonVisibility from '../../hooks/use-pressable-addon-visibility';
 import { SelectedFilters } from '../../lib/product-filter';
+import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
 import useSubmitForm from '../hooks/use-submit-form';
 import ProductCard from '../product-card';
@@ -61,6 +62,11 @@ export default function ProductListing( {
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
 		[ isReferralMode, selectedBundleSize ]
 	);
+	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
+		usePressableAddonVisibility();
+	const canShowPressableAddonsByMode = isReferralMode
+		? hasActiveReferralPressablePlanLicense
+		: hasActiveAgencyPressablePlanLicense;
 
 	const {
 		filteredProductsAndBundles,
@@ -73,11 +79,14 @@ export default function ProductListing( {
 		featuredProducts,
 		data,
 		suggestedProductSlugs,
-	} = useProductAndPlans( {
-		selectedSite,
-		selectedProductFilters: selectedFilters,
-		productSearchQuery,
-	} );
+	} = useProductAndPlansWithPressableVisibility(
+		{
+			selectedSite,
+			selectedProductFilters: selectedFilters,
+			productSearchQuery,
+		},
+		canShowPressableAddonsByMode
+	);
 
 	const isEmptyList = ! filteredProductsAndBundles.length;
 

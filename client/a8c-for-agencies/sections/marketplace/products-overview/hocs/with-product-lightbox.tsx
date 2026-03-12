@@ -104,7 +104,7 @@ function withProductLightbox< T >(
 		}, [ asReferral, isSelected, quantity, translate ] );
 
 		const customDescription = useMemo( () => {
-			if ( currentProduct.slug.startsWith( 'pressable-addon-sites-' ) ) {
+			if ( currentProduct.slug.startsWith( 'pressable-addon-' ) ) {
 				return (
 					<PressableAddonsCustomDescription
 						productName={ currentProduct.name }
@@ -118,7 +118,7 @@ function withProductLightbox< T >(
 			}
 
 			return undefined;
-		}, [ currentProduct.slug ] );
+		}, [ currentProduct.name, currentProduct.slug ] );
 
 		const customFooter = useMemo( () => {
 			if ( currentProduct.slug.startsWith( 'woocommerce-' ) ) {

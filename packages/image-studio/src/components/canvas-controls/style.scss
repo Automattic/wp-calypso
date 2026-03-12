@@ -5,6 +5,9 @@
  * Now uses MessageActions component for consistent styling
  */
 
+ @import "../styles/variables";
+ @import "../styles/mixins";
+
 .canvas-controls {
 	z-index: 100;
 	width: 100%;
@@ -51,4 +54,28 @@
 .canvas-controls__revision-navigator {
 	display: flex;
 	align-items: center;
+}
+
+.canvas-controls__feedback-popover {
+	// FeedbackInput normally inherits theme variables from Agenttic.
+	// This popover renders outside that context, so we set them explicitly.
+	@include image-studio-theme-variables();
+	background-color: $color-background;
+	border: 1px solid $color-border;
+	border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	padding: 12px;
+
+	.agents-manager-feedback-input {
+		width: 300px;
+
+		&,
+		&__inner {
+			margin: 0;
+			padding: 0;
+			border: none;
+			background-color: transparent;
+			border-radius: 0;
+		}
+	}
 }

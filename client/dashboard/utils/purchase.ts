@@ -8,6 +8,7 @@ import {
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -41,6 +42,16 @@ export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 
 export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
+}
+
+/**
+ * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ */
+export function isFailedAutoRenewal( purchase: Purchase ): boolean {
+	return (
+		isInExpirationGracePeriod( purchase ) &&
+		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
+	);
 }
 
 export function isExpiring( purchase: Purchase ) {
@@ -198,8 +209,12 @@ export function isTransferredOwnership(
 	);
 }
 
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
+}
+
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
@@ -321,6 +336,18 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	return purchase.product_name;
+}
+
+export function getTitleForListDisplay( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration && purchase.meta ) {
+		if ( purchase.is_hundred_year_domain ) {
+			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
+			return sprintf( __( '100-Year Domain Registration: %s' ), purchase.meta );
+		}
+		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
+		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
+	}
+	return getTitleForDisplay( purchase );
 }
 
 /**
@@ -455,6 +482,22 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
 export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug
 		? Object.keys( JetpackSearchProducts ).includes( product.product_slug )
+		: false;
+}
+
+const JETPACK_STATS_PAID_PRODUCT_SLUGS = [
+	'jetpack_stats_bi_yearly',
+	'jetpack_stats_yearly',
+	'jetpack_stats_monthly',
+	'jetpack_stats_pwyw_yearly',
+] as const;
+
+/**
+ * Checks if a product slug is a paid Jetpack Stats product.
+ */
+export function isJetpackStatsPaidProductSlug( productSlug: string | undefined ): boolean {
+	return productSlug
+		? ( JETPACK_STATS_PAID_PRODUCT_SLUGS as readonly string[] ).includes( productSlug )
 		: false;
 }
 
@@ -631,9 +674,29 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns true if the refund eligibility notice should be shown for the given purchase.
+ *
+ * The notice is shown for refundable WordPress.com plans when the feature flag is enabled.
+ * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
+ * flow, offering the refund as an explicit opt-in action instead.
+ */
+export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
+	return (
+		config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+		hasAmountAvailableToRefund( purchase ) &&
+		isDotcomPlan( purchase )
+	);
+}
+
+/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
+	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
+	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 

@@ -6,7 +6,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
@@ -96,7 +96,7 @@ export default function DomainRemovalWarningStep( {
 					onClick={ onCancel }
 					disabled={ isLoading }
 				>
-					{ __( 'Cancel' ) }
+					{ _x( 'Cancel', 'Deny this change and return to the previous screen' ) }
 				</Button>
 				<Button
 					__next40pxDefaultSize
@@ -104,7 +104,7 @@ export default function DomainRemovalWarningStep( {
 					onClick={ onContinue }
 					disabled={ isLoading }
 				>
-					{ __( 'Continue' ) }
+					{ _x( 'Continue', 'Accept this change and continue with this action' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

@@ -39,8 +39,8 @@ export class CoverBlock {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorParent = await this.editor.parent();
-		await editorParent
+		const editorCanvas = await this.editor.canvas();
+		await editorCanvas
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
 	}
@@ -77,6 +77,7 @@ export class CoverBlock {
 		const styleSelector = `.is-style-${ style.toLowerCase().replace( ' ', '-' ) }`;
 		const blockSelector = `[data-block="${ blockId }"]`;
 
-		await editorParent.locator( blockSelector + styleSelector ).waitFor();
+		const editorCanvas = await this.editor.canvas();
+		await editorCanvas.locator( blockSelector + styleSelector ).waitFor();
 	}
 }

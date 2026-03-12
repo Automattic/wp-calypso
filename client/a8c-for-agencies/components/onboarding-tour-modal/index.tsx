@@ -11,6 +11,7 @@ import {
 	useMemo,
 	useState,
 } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ONBOARDING_TOUR_HASH } from '../hoc/with-onboarding-tour/hooks/use-onboarding-tour';
@@ -32,6 +33,7 @@ interface OnboardingTourModalProps {
 function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	useMinimizeHelpCenterOnMount();
 
 	const sections: ReactElement< OnboardingTourModalSectionProps >[] = Children.toArray(
 		children

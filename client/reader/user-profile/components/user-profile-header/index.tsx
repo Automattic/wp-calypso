@@ -103,7 +103,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</div>
 				</AutoDirection>
 			</header>
-			<SectionNav enforceTabsView selectedText={ selectedTab }>
+			<SectionNav enforceTabsView selectedText={ selectedTab } variation="minimal">
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
 						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>

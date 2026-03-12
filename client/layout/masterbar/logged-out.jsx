@@ -13,6 +13,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import EmptyMasterbar from './empty';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -24,6 +25,7 @@ class MasterbarLoggedOut extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
+		isCIABSite: PropTypes.bool,
 
 		// Connected props
 		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -232,7 +234,13 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName, isCIABSite } =
+			this.props;
+
+		// Hide the masterbar entirely during checkout CIAB flows; they will use TopBar instead
+		if ( ( isCheckout || isCheckoutPending ) && isCIABSite ) {
+			return <EmptyMasterbar />;
+		}
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (

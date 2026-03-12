@@ -96,6 +96,7 @@ export interface Agency {
 		capabilities: string[];
 	};
 	can_issue_licenses: boolean;
+	referrals_logo?: string | null;
 	notifications:
 		| [
 				{

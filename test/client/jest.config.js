@@ -1,11 +1,11 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
 
-module.exports = {
+const shared = {
 	...base,
-	rootDir: '../../client',
+	rootDir: path.join( __dirname, '../../client' ),
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
-	testPathIgnorePatterns: [ '<rootDir>/server/' ],
+	testPathIgnorePatterns: [ ...base.testPathIgnorePatterns, '<rootDir>/server/' ],
 
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
@@ -18,9 +18,32 @@ module.exports = {
 		url: 'https://example.com',
 	},
 	setupFiles: [ 'jest-canvas-mock' ],
-	setupFilesAfterEnv: [ '<rootDir>/../test/client/setup-test-framework.js' ],
 	globals: {
 		google: {},
 		__i18n_text_domain__: 'default',
 	},
+};
+
+module.exports = {
+	projects: [
+		{
+			...shared,
+			displayName: 'client',
+			testPathIgnorePatterns: [ ...shared.testPathIgnorePatterns, '<rootDir>/dashboard/' ],
+			setupFilesAfterEnv: [
+				...shared.setupFilesAfterEnv,
+				'<rootDir>/../test/client/setup-test-framework.js',
+			],
+		},
+		{
+			...shared,
+			displayName: 'dashboard',
+			// Override testMatch to only run dashboard tests
+			testMatch: [ '<rootDir>/dashboard/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+			setupFilesAfterEnv: [
+				...shared.setupFilesAfterEnv,
+				'<rootDir>/../test/client/setup-dashboard-test-framework.js',
+			],
+		},
+	],
 };

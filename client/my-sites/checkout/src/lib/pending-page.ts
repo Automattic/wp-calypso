@@ -267,7 +267,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'wpcalypso.wordpress.com',
 		'horizon.wordpress.com',
 		'my.wordpress.com',
-		'my.woo.com',
+		'my.woo.ai',
 		'calypso.localhost',
 		'my.localhost',
 		'my.woo.localhost',

@@ -31,11 +31,12 @@ function McpSetupComponent() {
 	// Copy button state
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
 
-	type McpClient = 'claude' | 'cursor' | 'vscode' | 'continue' | 'default';
+	type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
 
 	// MCP client options
 	const mcpClientOptions: Array< { label: string; value: McpClient } > = [
 		{ label: 'Claude', value: 'claude' },
+		{ label: 'Claude Code', value: 'claude-code' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'VS Code', value: 'vscode' },
 		{ label: 'Continue', value: 'continue' },
@@ -45,6 +46,7 @@ function McpSetupComponent() {
 	// Documentation links for each client
 	const clientDocumentation: Record< McpClient, string > = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
+		'claude-code': 'https://code.claude.com/docs/en/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
@@ -64,6 +66,15 @@ function McpSetupComponent() {
 				return {
 					mcpServers: {
 						[ serverName ]: baseConfig,
+					},
+				};
+			case 'claude-code':
+				return {
+					mcpServers: {
+						[ serverName ]: {
+							type: 'http',
+							url: baseConfig.url,
+						},
 					},
 				};
 			case 'vscode':
@@ -242,7 +253,9 @@ function McpSetupComponent() {
 					</CardBody>
 				</Card>
 
-				{ ( selectedMcpClient === 'claude' || selectedMcpClient === 'cursor' ) && (
+				{ ( selectedMcpClient === 'claude' ||
+					selectedMcpClient === 'claude-code' ||
+					selectedMcpClient === 'cursor' ) && (
 					<Card>
 						<CardBody>
 							<VStack spacing={ 4 }>
@@ -285,6 +298,114 @@ function McpSetupComponent() {
 											<li>
 												<Text as="p" variant="muted">
 													{ __( 'Select WordPress.com and follow the prompts to connect.' ) }
+												</Text>
+											</li>
+										</ol>
+									</VStack>
+								) }
+
+								{ /* Quick Setup for Claude Code */ }
+								{ selectedMcpClient === 'claude-code' && (
+									<VStack spacing={ 4 }>
+										<Text as="p" variant="muted">
+											{ __(
+												'Claude Code uses a different config format with type: "http". Use the CLI or copy the configuration below.'
+											) }
+										</Text>
+										<Text as="p" variant="muted">
+											{ __( 'Installation steps:' ) }
+										</Text>
+										<ol style={ { color: '#757575', paddingInlineStart: '20px', margin: '0' } }>
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														/* translators: %s is the CLI command to add the MCP server */
+														__( 'Run this command in your terminal: <code>%s</code>' ).replace(
+															'%s',
+															'claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
+														),
+														{
+															code: (
+																<code
+																	key="claude-code-cmd"
+																	style={ {
+																		backgroundColor: '#f0f0f1',
+																		padding: '2px 6px',
+																		borderRadius: '3px',
+																		fontFamily: 'monospace',
+																		fontSize: '13px',
+																	} }
+																>
+																	claude mcp add --transport http wpcom-mcp
+																	https://public-api.wordpress.com/wpcom/v2/mcp/v1
+																</code>
+															),
+														}
+													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														__(
+															'Or copy the configuration below and add it to your <mcpJson/> or <claudeJson/> file.'
+														),
+														{
+															mcpJson: (
+																<code
+																	key="mcp-json"
+																	style={ {
+																		backgroundColor: '#f0f0f1',
+																		padding: '2px 6px',
+																		borderRadius: '3px',
+																		fontFamily: 'monospace',
+																		fontSize: '13px',
+																	} }
+																>
+																	.mcp.json
+																</code>
+															),
+															claudeJson: (
+																<code
+																	key="claude-json"
+																	style={ {
+																		backgroundColor: '#f0f0f1',
+																		padding: '2px 6px',
+																		borderRadius: '3px',
+																		fontFamily: 'monospace',
+																		fontSize: '13px',
+																	} }
+																>
+																	~/.claude.json
+																</code>
+															),
+														}
+													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														__(
+															'In Claude Code, run <code/> to authenticate with your WordPress.com account.'
+														),
+														{
+															code: (
+																<code
+																	key="mcp-cmd"
+																	style={ {
+																		backgroundColor: '#f0f0f1',
+																		padding: '2px 6px',
+																		borderRadius: '3px',
+																		fontFamily: 'monospace',
+																		fontSize: '13px',
+																	} }
+																>
+																	/mcp
+																</code>
+															),
+														}
+													) }
 												</Text>
 											</li>
 										</ol>

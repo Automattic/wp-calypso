@@ -1,5 +1,6 @@
 import {
 	isDomainTransfer,
+	isDomainRegistration,
 	isConciergeSession,
 	isAkismetFreeProduct,
 	PLAN_MONTHLY_PERIOD,
@@ -59,6 +60,7 @@ import {
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -148,7 +150,7 @@ export function PurchaseItemSiteIcon( {
 	if ( ! iconUrl && isJetpackPurchase ) {
 		content = (
 			<div className="purchase-item__static-icon">
-				<img src={ jetpackIcon } alt="Jetpack icon" />;
+				<img src={ jetpackIcon } alt="Jetpack icon" />
 			</div>
 		);
 	}
@@ -175,7 +177,7 @@ export function PurchaseItemProduct( {
 		return null;
 	}
 
-	const productType = purchaseType( purchase );
+	const productType = isDomainRegistration( purchase ) ? null : purchaseType( purchase );
 
 	if ( showSite && site ) {
 		if ( productType && site.name && slug ) {
@@ -356,7 +358,8 @@ export function PurchaseItemStatus( {
 		isDisconnectedSite &&
 		! isAkismetTemporarySitePurchase( purchase ) &&
 		! isMarketplaceTemporarySitePurchase( purchase ) &&
-		! isA4ATemporarySitePurchase( purchase )
+		! isA4ATemporarySitePurchase( purchase ) &&
+		! isA4ABillingDragonPurchase( purchase )
 	) {
 		if ( isJetpackTemporarySitePurchase( purchase ) ) {
 			return (
@@ -882,7 +885,8 @@ class PurchaseItem extends Component<
 			if (
 				! isDisconnectedSite ||
 				purchase.isJetpackPlanOrProduct ||
-				isTemporarySitePurchase( purchase )
+				isTemporarySitePurchase( purchase ) ||
+				isA4ABillingDragonPurchase( purchase )
 			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );

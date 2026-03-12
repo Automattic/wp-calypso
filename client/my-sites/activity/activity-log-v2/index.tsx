@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getActivityLogHiddenGroups from 'calypso/state/selectors/get-activity-log-hidden-groups';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -40,7 +41,9 @@ const ActivityLogV2: FunctionComponent = () => {
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const { data: logs } = useActivityLogQuery( siteId, filter );
+	const notGroup = useSelector( ( state ) => getActivityLogHiddenGroups( state, siteId ) );
+	const filterWithNotGroup = notGroup ? { ...filter, notGroup } : filter;
+	const { data: logs } = useActivityLogQuery( siteId, filterWithNotGroup );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 
@@ -63,7 +66,7 @@ const ActivityLogV2: FunctionComponent = () => {
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
 			<div className="activity-log-v2__header-left">
-				<div className="activity-log-v2__header-title">{ translate( 'Activity log' ) }</div>
+				<div className="activity-log-v2__header-title">{ translate( 'Activity Log' ) }</div>
 				<div className="activity-log-v2__header-text">
 					{ translate( 'This is the complete event history for your site' ) }
 				</div>
@@ -117,14 +120,14 @@ const ActivityLogV2: FunctionComponent = () => {
 			className={ clsx( 'activity-log-v2', {
 				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
-			wideLayout={ ! ( isJetpackCloud() || isA8CForAgencies() ) }
+			wideLayout={ ! isA8CForAgencies() }
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySiteCredentials siteId={ siteId } /> }
-			<DocumentHead title={ translate( 'Activity log' ) } />
+			<DocumentHead title={ translate( 'Activity Log' ) } />
 			{ isJetpackCloud() && <SidebarNavigation /> }
-			<PageViewTracker path="/activity-log/:site" title="Activity log" />
+			<PageViewTracker path="/activity-log/:site" title="Activity Log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ ( isJetpackCloud() || isA8CForAgencies() ) && ! isWPCOMSite ? (
 				jetpackCloudHeader

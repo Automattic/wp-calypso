@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -115,7 +116,9 @@ function StatsRealtime( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
-				<PageHeader />
+				<PageHeader
+					titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
+				/>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<StatsRealtimeHeader />
 				<AsyncLoad

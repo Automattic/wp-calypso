@@ -12,6 +12,7 @@ import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
 import type { CanvasMetadata, ImageStudioActions } from '../store';
+import type { CurriedImageStudioSelectors, CoreDataDispatch } from '../types/wordpress.d';
 
 function preloadImage( url: string ): Promise< void > {
 	if ( ! url || typeof window === 'undefined' ) {
@@ -129,7 +130,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 				const canvasMetadata = select( imageStudioStore ).getCanvasMetadata() || {};
 
 				// Get current state from store
-				const storeSelectors = select( imageStudioStore ) as any;
+				const storeSelectors = select( imageStudioStore ) as CurriedImageStudioSelectors;
 				const currentDraftIds = storeSelectors.getDraftIds() || [];
 				const originalAttachmentId = storeSelectors.getOriginalAttachmentId();
 
@@ -146,9 +147,47 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 					metadata = { ...metadata, [ key ]: value };
 				}
 
-				if ( metadata !== canvasMetadata ) {
+				const hasNewMetadata = Object.keys( input?.metadata || {} ).length > 0;
+				const hasMetadataChanged = Object.entries( metadata ).some(
+					( [ key, value ] ) => canvasMetadata[ key as keyof CanvasMetadata ] !== value
+				);
+				const shouldCopyExistingMetadata = ! hasNewMetadata && mode === ImageStudioMode.Edit;
+				const shouldPersistMetadata = shouldCopyExistingMetadata || hasNewMetadata;
+
+				if ( hasMetadataChanged ) {
 					setHasUpdatedMetadata( true );
 					setCanvasMetadata( metadata );
+				}
+
+				// Persist metadata to the attachment: either new metadata from the agent,
+				// or in edit mode, copy existing canvas metadata to the new attachment.
+				if ( shouldPersistMetadata ) {
+					const { title, caption, description, alt_text } = metadata;
+					try {
+						await dispatch( coreStore ).saveEntityRecord(
+							'postType',
+							'attachment',
+							{
+								id: attachmentId,
+								title,
+								caption,
+								description,
+								alt_text,
+							},
+							{ throwOnError: true }
+						);
+					} catch ( error ) {
+						window.console?.warn?.(
+							`[Image Studio] Failed to persist metadata for attachment ${ attachmentId }:`,
+							error
+						);
+
+						trackImageStudioError( {
+							mode,
+							errorType: 'save_metadata_failed',
+							attachmentId,
+						} );
+					}
 				}
 
 				// In Generate mode (originalAttachmentId is null), ALL images are drafts
@@ -170,7 +209,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 
 					// Invalidate the cached attachment data in the core store
 					// Then trigger a fresh fetch so the attachment is available for subsequent context reads
-					const coreDispatch = dispatch( coreStore ) as any;
+					const coreDispatch = dispatch( coreStore ) as unknown as CoreDataDispatch;
 					if ( coreDispatch?.invalidateResolution ) {
 						coreDispatch.invalidateResolution( 'getEntityRecord', [
 							'postType',

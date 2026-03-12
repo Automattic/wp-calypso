@@ -34,3 +34,10 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {
 	return site.jetpack && site.jetpack_modules?.includes( module );
 }
+
+// Returns activity log groups that should be hidden for the given site.
+// Sites without self-serve backup access shouldn't see backup/scan events in the activity list.
+export function getActivityLogHiddenGroups( site: Site ): string[] | undefined {
+	const hasBackupsSelfServe = hasHostingFeature( site, DotcomFeatures.BACKUPS_SELF_SERVE );
+	return hasBackupsSelfServe ? undefined : [ 'rewind', 'scan' ];
+}

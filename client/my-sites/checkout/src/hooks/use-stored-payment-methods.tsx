@@ -7,7 +7,7 @@ import type { ComponentType } from 'react';
 
 export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
 
-export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
+export type PaymentMethodRequestType = 'card' | 'agreement' | 'vault-token' | 'all';
 
 const fetchPaymentMethods = (
 	type: PaymentMethodRequestType,

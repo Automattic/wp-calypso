@@ -1,21 +1,14 @@
-import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getExpandedService } from 'calypso/state/sharing/selectors';
-import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'calypso/state/sharing/services/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Service from './service';
 import ServicePlaceholder from './service-placeholder';
@@ -41,15 +34,10 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 };
 
 const SharingServicesGroup = ( {
-	type,
 	isFetching,
 	services,
 	title,
 	expandedService,
-	isJetpack,
-	isPublicizeActive,
-	fetchServices,
-	activatePublicize,
 	numberOfPlaceholders = NUMBER_OF_PLACEHOLDERS,
 } ) => {
 	useEffect( () => {
@@ -62,30 +50,11 @@ const SharingServicesGroup = ( {
 			}
 		}
 	}, [ expandedService, isFetching ] );
-	const translate = useTranslate();
-
-	const wasPublicizeActiveRef = useRef();
-	const wasPublicizeActive = wasPublicizeActiveRef.current;
-
-	// In order to update the UI after activating the Publicize module, we re-fetch the services.
-	useEffect( () => {
-		wasPublicizeActiveRef.current = isPublicizeActive;
-
-		if ( isFetching ) {
-			return;
-		}
-
-		if ( isPublicizeActive && ! wasPublicizeActive ) {
-			fetchServices();
-		}
-	}, [ isPublicizeActive, wasPublicizeActive, isFetching, fetchServices ] );
 
 	const showPlaceholder = isFetching;
-	const showPublicizeNotice =
-		! showPlaceholder && type === 'publicize' && isJetpack && ! isPublicizeActive;
 	const showServices = ! showPlaceholder && services.length > 0;
 
-	if ( ! showPlaceholder && ! showPublicizeNotice && ! showServices ) {
+	if ( ! showPlaceholder && ! showServices ) {
 		return null;
 	}
 
@@ -98,17 +67,6 @@ const SharingServicesGroup = ( {
 					times( numberOfPlaceholders, ( index ) => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) ) }
-				{ showPublicizeNotice && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate(
-							'Please enable Jetpack Social to connect your social media accounts and share your posts automatically.'
-						) }
-					>
-						<NoticeAction onClick={ activatePublicize }>{ translate( 'Enable' ) }</NoticeAction>
-					</Notice>
-				) }
 				{ showServices &&
 					services.map( ( service ) => {
 						// eslint-disable-next-line import/namespace
@@ -131,8 +89,8 @@ const SharingServicesGroup = ( {
 							);
 						}
 						{
-							/* Injecting the Fediverse above Twitter */
-							if ( service.ID === 'twitter' && type === 'publicize' ) {
+							/* Injecting the Fediverse above Google Photos */
+							if ( service.ID === 'google_photos' ) {
 								return (
 									<Fragment key="fediverse">
 										<Components.fediverse />
@@ -166,25 +124,10 @@ SharingServicesGroup.defaultProps = {
 const mapStateToProps = ( state, { type } ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		siteId,
-		isFetching: isKeyringServicesFetching( state ) || isFetchingJetpackModules( state, siteId ),
+		isFetching: isKeyringServicesFetching( state ),
 		services: getEligibleKeyringServices( state, siteId, type ),
 		expandedService: getExpandedService( state ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize', true ),
 	};
 };
 
-const mapDispatchToProps = {
-	fetchServices: requestKeyringServices,
-	activateModule,
-};
-
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => ( {
-	...ownProps,
-	...stateProps,
-	...dispatchProps,
-	activatePublicize: () => dispatchProps.activateModule( stateProps.siteId, 'publicize' ),
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( SharingServicesGroup );
+export default connect( mapStateToProps )( SharingServicesGroup );

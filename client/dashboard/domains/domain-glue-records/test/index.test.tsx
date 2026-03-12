@@ -40,8 +40,6 @@ const mockFetchDomainGlueRecordsApiRequest = ( {
 		.reply( responseCode, data );
 };
 
-afterEach( () => nock.cleanAll() );
-
 test( 'renders glue records table with data', async () => {
 	mockFetchDomainGlueRecordsApiRequest();
 

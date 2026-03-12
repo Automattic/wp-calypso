@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, Tooltip } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
@@ -14,6 +14,7 @@ type Props = {
 	heading: string;
 	icon: JSX.Element;
 	isBanner?: boolean;
+	tooltip?: string;
 };
 
 const AddNewSiteMenuItem: React.FC< Props > = ( {
@@ -24,24 +25,29 @@ const AddNewSiteMenuItem: React.FC< Props > = ( {
 	heading,
 	icon,
 	isBanner,
+	tooltip,
 } ) => {
 	return (
-		<Button
-			{ ...buttonProps }
-			className={ clsx( 'add-new-site__popover-button', {
-				'is-banner': isBanner,
-				'is-disabled': disabled,
-			} ) }
-		>
-			<div className="add-new-site__popover-button-icon">
-				<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
-			</div>
-			<div className="add-new-site__popover-button-content">
-				<div className="add-new-site__popover-button-heading">{ heading }</div>
-				<div className="add-new-site__popover-button-description">{ description }</div>
-				{ children }
-			</div>
-		</Button>
+		<Tooltip text={ tooltip }>
+			<span>
+				<Button
+					{ ...buttonProps }
+					className={ clsx( 'add-new-site__popover-button', {
+						'is-banner': isBanner,
+						'is-disabled': disabled,
+					} ) }
+				>
+					<div className="add-new-site__popover-button-icon">
+						<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
+					</div>
+					<div className="add-new-site__popover-button-content">
+						<div className="add-new-site__popover-button-heading">{ heading }</div>
+						<div className="add-new-site__popover-button-description">{ description }</div>
+						{ children }
+					</div>
+				</Button>
+			</span>
+		</Tooltip>
 	);
 };
 

@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -35,6 +36,7 @@ export default function UserContactSupportModalForm( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	useMinimizeHelpCenterOnMount();
 
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );

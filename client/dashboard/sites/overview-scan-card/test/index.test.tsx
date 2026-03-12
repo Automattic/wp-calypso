@@ -21,7 +21,7 @@ const mockSite: Site = {
 	ID: mockSiteId,
 	plan: {
 		features: {
-			active: [ HostingFeatures.SCAN ],
+			active: [ HostingFeatures.SCAN_SELF_SERVE ],
 		},
 	},
 	is_wpcom_atomic: true,
@@ -43,10 +43,6 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 } ) );
-
-afterEach( () => {
-	jest.clearAllMocks();
-} );
 
 describe( 'ScanCard', () => {
 	test( 'shows "No risks found" when there are no threats', async () => {

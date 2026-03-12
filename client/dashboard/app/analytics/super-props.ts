@@ -65,10 +65,15 @@ export function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): 
 		return site;
 	}
 
-	const sitesQueries = queryClient.getQueriesData< Site[] >( { queryKey: sitesQueryKey } );
+	const sitesQueries = queryClient.getQueriesData< Site[] | { sites: Site[] } >( {
+		queryKey: sitesQueryKey,
+	} );
 	const sitesBySlug = new Map(
 		sitesQueries
-			.map( ( [ , sites ] ) => ( sites || [] ).map( ( site ) => [ site.slug, site ] ) )
+			.map( ( [ , data ] ) => {
+				const sites = Array.isArray( data ) ? data : data?.sites;
+				return ( sites || [] ).map( ( site ) => [ site.slug, site ] as const );
+			} )
 			.flat() as [ string, Site ][]
 	);
 

@@ -81,19 +81,19 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 				{ Object.values( paid_subscriptions ).length === 0 && (
 					<Card>
 						{ translate(
-							"You don't have any active subscriptions yet. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
+							"You don't have any paid subscribers yet. {{learnMoreLink}}Learn how to start a paid newsletter{{/learnMoreLink}}.",
 							{
 								components: {
 									learnMoreLink: isJetpackCloud() ? (
 										<a
 											href={ localizeUrl(
-												'https://jetpack.com/support/jetpack-blocks/payments-block/'
+												'https://jetpack.com/support/newsletter/paid-newsletters/'
 											) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
 									) : (
-										<InlineSupportLink supportContext="payments_blocks" showIcon={ false } />
+										<InlineSupportLink supportContext="paid-newsletters" showIcon={ false } />
 									),
 								},
 							}

@@ -1,6 +1,4 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
-import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { shuffle, upload } from '@wordpress/icons';
@@ -34,17 +32,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate(
-			'Available on %(planName)s plan with %(discountPercentage)s off',
-			{
-				args: {
-					planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-					discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
-				},
-				comment:
-					'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
-			}
-		);
+		const upgradeRequiredLabel = translate( 'Available on paid plans' );
 
 		const migrateOptionDescription = translate(
 			"For WordPress sites. Move all your site's content, themes, plugins, and users to WordPress.com."

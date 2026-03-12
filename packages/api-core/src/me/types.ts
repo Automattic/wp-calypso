@@ -25,6 +25,7 @@ export interface User {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
+	garden_site_count: number;
 	had_hosting_trial: boolean;
 	has_jetpack_partner_access?: boolean;
 	has_unseen_notes: boolean;

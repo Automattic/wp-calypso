@@ -6,6 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -173,7 +174,11 @@ const StatsPurchasePage = ( {
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
-						<PageHeader />
+						<PageHeader
+							titleProps={ {
+								subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
+							} }
+						/>
 						<StatsNavigation
 							selectedItem="traffic"
 							interval="day"

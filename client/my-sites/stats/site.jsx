@@ -572,18 +572,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			<PageHeader
-				rightSection={
-					shouldRenderModuleToggler && (
-						<PageModuleToggler
-							selectedItem="traffic"
-							moduleToggles={ moduleToggles }
-							siteId={ siteId }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							onTooltipDismiss={ onTooltipDismiss }
-							customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-						/>
-					)
-				}
+				titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
 			/>
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
@@ -608,6 +597,18 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						showArrows={ ! wpcomShowUpsell }
 						slug={ slug }
 						dateRange={ customChartRange }
+						endContent={
+							shouldRenderModuleToggler && (
+								<PageModuleToggler
+									selectedItem="traffic"
+									moduleToggles={ moduleToggles }
+									siteId={ siteId }
+									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+									onTooltipDismiss={ onTooltipDismiss }
+									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+								/>
+							)
+						}
 					>
 						{ ' ' }
 						<DatePicker

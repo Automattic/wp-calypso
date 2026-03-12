@@ -29,7 +29,7 @@
 
 .pressable-addons-custom-description__callout {
 	@include body-medium;
-	align-items: center;
+	align-items: flex-start;
 	background: transparent;
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 4px;
@@ -40,7 +40,9 @@
 	padding: 6px 10px;
 
 	svg {
+		align-self: flex-start;
 		flex-shrink: 0;
+		margin-top: 3px;
 	}
 }
 

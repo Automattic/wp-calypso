@@ -5,7 +5,6 @@ import {
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
-import { useSummerSpecialStatus } from './use-summer-special-status';
 import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
@@ -19,7 +18,6 @@ const useGridPlansForComparisonGrid = ( {
 	hiddenPlans,
 	intent,
 	isDisplayingPlansNeededForFeature,
-	isInSignup,
 	isSubdomainNotGenerated,
 	selectedFeature,
 	selectedPlan,
@@ -57,9 +55,6 @@ const useGridPlansForComparisonGrid = ( {
 		isExperimentVariant,
 	} );
 
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
-
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
 		gridPlans: gridPlans || [],
 		allFeaturesList,
@@ -67,7 +62,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,

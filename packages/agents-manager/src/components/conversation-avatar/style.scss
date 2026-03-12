@@ -1,20 +1,7 @@
-@import '@wordpress/base-styles/colors';
-
 .agents-manager-conversation-avatar {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 38px;
 	height: 38px;
-	background-color: $gray-800;
-	border: 1px solid #464646;
-	border-radius: 50%;
-
-	svg {
-		color: $white;
-	}
-
-	&--he {
-		background-color: #2d5af2;
-	}
 }

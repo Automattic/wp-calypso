@@ -89,7 +89,6 @@ import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
-import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
@@ -412,9 +411,12 @@ export default function CheckoutMainContent( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
 
+	const presalesChatKey = getPresalesChatKey( responseCart );
 	const isPresalesChatEnabled =
-		! useSelector( getIsOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
-	usePresalesChat( getPresalesChatKey( responseCart ), isPresalesChatEnabled );
+		! useSelector( getIsOnboardingAffiliateFlow ) &&
+		responseCart?.products?.length > 0 &&
+		presalesChatKey !== 'wpcom';
+	usePresalesChat( presalesChatKey, isPresalesChatEnabled );
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
@@ -512,6 +514,7 @@ export default function CheckoutMainContent( {
 
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isUsingTopBar = isStepContainerV2 || isWooHostedCheckout;
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
@@ -526,11 +529,11 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		if ( isStepContainerV2 ) {
+		if ( isUsingTopBar ) {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading />
+					<Step.Loading hideLogo={ isWooHostedCheckout } />
 				</>
 			);
 		}
@@ -605,7 +608,7 @@ export default function CheckoutMainContent( {
 						>
 							<CheckoutSummaryTitleContent className="checkout__summary-title">
 								<CheckoutSummaryTitle>
-									{ ! isStepContainerV2 && (
+									{ ! isUsingTopBar && (
 										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
 									) }
 									{ translate( 'Purchase Details' ) }
@@ -645,7 +648,7 @@ export default function CheckoutMainContent( {
 		<RestorableProductsProvider>
 			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
-				{ isStepContainerV2 ? (
+				{ isUsingTopBar ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
 						align="left"
@@ -794,13 +797,10 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={
-							<>
-								<GoogleDomainsCopy responseCart={ responseCart } />
-								<PaymentMethodFilter
-									areStoredCardsFiltered={ areStoredCardsFiltered }
-									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-								/>
-							</>
+							<PaymentMethodFilter
+								areStoredCardsFiltered={ areStoredCardsFiltered }
+								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							/>
 						}
 						canEditStep={ canEditPaymentStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }
@@ -855,7 +855,7 @@ export default function CheckoutMainContent( {
 		</RestorableProductsProvider>
 	);
 
-	if ( ! isStepContainerV2 ) {
+	if ( ! isUsingTopBar ) {
 		return (
 			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
 				{ checkoutSummary }

@@ -28,48 +28,53 @@ export const CATEGORY_ORDER = [
 	DISPLAY_CATEGORIES.UNCATEGORIZED,
 ] as const;
 
+/** Maps API category values to display category names (fallback when tool not in explicit map) */
+export const API_CATEGORY_TO_DISPLAY: Record< string, string > = {
+	user: DISPLAY_CATEGORIES.ACCOUNT,
+	content: DISPLAY_CATEGORIES.SITES_CONTENT,
+	site: DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+	analytics: DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+	internal: DISPLAY_CATEGORIES.DEVELOPER_TESTING,
+	utility: DISPLAY_CATEGORIES.DEVELOPER_TESTING,
+};
+
 /**
- * Get the display category for a tool based on its ID and API category
+ * Tools that need a different display category than their API category (e.g. "user" tools
+ * that belong in Sites & Content, Billing, Notifications, or Domains & Integrations).
+ */
+const TOOL_DISPLAY_OVERRIDES: Record< string, string > = {
+	'user-sites-resource': DISPLAY_CATEGORIES.SITES_CONTENT,
+	'user-sites': DISPLAY_CATEGORIES.SITES_CONTENT,
+	'site-users': DISPLAY_CATEGORIES.SITES_CONTENT,
+	'user-domains': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
+	'user-connections': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
+	'user-subscriptions': DISPLAY_CATEGORIES.BILLING,
+	'user-notifications': DISPLAY_CATEGORIES.NOTIFICATIONS,
+	'user-notifications-inbox': DISPLAY_CATEGORIES.NOTIFICATIONS,
+};
+
+/**
+ * Get the display category for a tool based on its ID and optional API category.
+ * API category is the primary source; overrides apply for tools needing different grouping.
  * @param toolId - The tool ID (e.g., 'wpcom-mcp/user-profile')
+ * @param ability - Optional ability object with category from API
+ * @param ability.category - API category (user, content, site, analytics, internal, utility)
  * @returns The display category name
  */
-export function getDisplayCategory( toolId: string ): string {
-	// Extract the tool name from the full ID (e.g., 'user-profile' from 'wpcom-mcp/user-profile')
+export function getDisplayCategory( toolId: string, ability?: { category?: string } ): string {
 	const toolName = toolId.replace( 'wpcom-mcp/', '' );
 
-	const TOOL_CATEGORY_MAP: Record< string, string > = {
-		// Sites & Content
-		'user-sites-resource': DISPLAY_CATEGORIES.SITES_CONTENT,
-		'user-sites': DISPLAY_CATEGORIES.SITES_CONTENT,
-		'site-users': DISPLAY_CATEGORIES.SITES_CONTENT,
-		'posts-search': DISPLAY_CATEGORIES.SITES_CONTENT,
-		'post-get': DISPLAY_CATEGORIES.SITES_CONTENT,
-		'site-comments-search': DISPLAY_CATEGORIES.SITES_CONTENT,
+	// 1. Check explicit overrides first (tools that need different grouping than API category)
+	const override = TOOL_DISPLAY_OVERRIDES[ toolName ];
+	if ( override ) {
+		return override;
+	}
 
-		// Account
-		'user-profile': DISPLAY_CATEGORIES.ACCOUNT,
-		'user-security': DISPLAY_CATEGORIES.ACCOUNT,
-		'user-achievements': DISPLAY_CATEGORIES.ACCOUNT,
+	// 2. Use API category as primary source of truth
+	const apiCategory = ability?.category;
+	if ( apiCategory && API_CATEGORY_TO_DISPLAY[ apiCategory ] ) {
+		return API_CATEGORY_TO_DISPLAY[ apiCategory ];
+	}
 
-		// Billing
-		'user-subscriptions': DISPLAY_CATEGORIES.BILLING,
-
-		// Notifications
-		'user-notifications': DISPLAY_CATEGORIES.NOTIFICATIONS,
-		'user-notifications-inbox': DISPLAY_CATEGORIES.NOTIFICATIONS,
-
-		// Domains & Integrations
-		'user-domains': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
-		'user-connections': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
-
-		// Site Configuration
-		'site-plugins': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
-		'site-settings': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
-		'site-statistics': DISPLAY_CATEGORIES.SITE_CONFIGURATION,
-
-		// Developer & Testing
-		'sample-prompt': DISPLAY_CATEGORIES.DEVELOPER_TESTING,
-	};
-
-	return TOOL_CATEGORY_MAP[ toolName ] || DISPLAY_CATEGORIES.UNCATEGORIZED;
+	return DISPLAY_CATEGORIES.UNCATEGORIZED;
 }

@@ -1,5 +1,5 @@
 import { DomainSubtype, EmailBox } from '@automattic/api-core';
-import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
+import { userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -7,7 +7,9 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
@@ -27,10 +29,11 @@ import type { Email } from './types';
 import './style.scss';
 
 function Emails() {
+	const { queries } = useAppContext();
 	const navigate = useNavigate();
 	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
-	const { data: allDomains } = useSuspenseQuery( domainsQuery() );
+	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
@@ -98,7 +101,12 @@ function Emails() {
 
 	const renderContent = () => {
 		if ( hasNoDomains ) {
-			return <EmptyDomainsState />;
+			return (
+				<>
+					<EmptyDomainsState />
+					<PerformanceTrackerStop />
+				</>
+			);
 		}
 
 		if ( hasNoEmails ) {
@@ -114,6 +122,7 @@ function Emails() {
 						}
 					) }
 				>
+					<PerformanceTrackerStop />
 					<EmptyMailboxesStateContent />
 				</DataViewsEmptyStateLayout>
 			);
@@ -121,6 +130,7 @@ function Emails() {
 
 		return (
 			<DataViewsCard>
+				<PerformanceTrackerStop />
 				<DataViews
 					data={ filteredData }
 					fields={ emailFields }

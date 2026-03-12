@@ -163,7 +163,8 @@ export const useGetCombinedChat = (
 								prevChat.conversationId === conversation.id;
 
 							return {
-								...( odieChat ? odieChat : {} ),
+								odieId: odieId ? Number( odieId ) : null,
+								wpcomUserId: odieChat?.wpcomUserId || prevChat.wpcomUserId,
 								supportInteractionId,
 								conversationId: conversation.id,
 								messages: [

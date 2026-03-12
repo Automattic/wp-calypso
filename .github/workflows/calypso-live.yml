@@ -32,7 +32,7 @@ jobs:
             return hasComment;
       - name: Build calypso.live link
         run: |
-          echo "LINK=https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "QUERY=image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
         id: build_link
       - name: Post comment on PR
         uses: actions/github-script@v6
@@ -47,7 +47,9 @@ jobs:
               return lines.map(l => l.slice(min)).join('\n');
             }
 
-            const link = "${{steps.build_link.outputs.LINK}}";
+            const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
+            const ciabLink = `https://calypso.live/ciab?${{steps.build_link.outputs.QUERY}}`;
+
             const body = trimIndent(`
               <!--calypso-live-watermark:apr@v1-->
               <details>
@@ -64,7 +66,7 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Jetpack Cloud live <a href="${link}&env=jetpack">(direct link)</a>
+                  Jetpack Cloud Live <a href="${link}&env=jetpack">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
@@ -76,7 +78,7 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Automattic for Agencies live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
+                  Automattic for Agencies Live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
@@ -88,12 +90,24 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Dashboard live <a href="${link}&env=dashboard">(direct link)</a>
+                  Dashboard Live (dotcom) <a href="${link}&env=dashboard">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
                     <td>
                       <a href="${link}&env=dashboard">${link}&env=dashboard</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Dashboard Live (CIAB) <a href="${ciabLink}&env=dashboard">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${ciabLink}&env=dashboard">${ciabLink}&env=dashboard</a>
                     </td>
                   </tr>
                 </table>

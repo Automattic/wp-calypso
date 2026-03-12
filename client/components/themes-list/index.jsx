@@ -62,24 +62,32 @@ const getWarningModalComponent = ( isDefaultWooExpressTheme, isCurrentThemeAIGen
 	}
 };
 
-export const ThemesList = ( { tabFilter, ...props } ) => {
-	const {
-		themes,
-		translate,
-		isSiteWooExpressOrEcomFreeTrial,
-		siteSlug,
-		siteAdminUrl,
-		getButtonOptions,
-	} = props;
+export const ThemesList = ( {
+	tabFilter,
+	loading = false,
+	searchTerm = '',
+	themes = [],
+	recordTracksEvent = noop,
+	fetchNextPage: fetchNextPageProp = noop,
+	placeholderCount = DEFAULT_THEME_QUERY.number,
+	getActionLabel = () => '',
+	isActive = () => false,
+	getPrice = () => '',
+	isInstalling = () => false,
+	isLivePreviewStarted = () => false,
+	...props
+} ) => {
+	const { translate, isSiteWooExpressOrEcomFreeTrial, siteSlug, siteAdminUrl, getButtonOptions } =
+		props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
 	const updateShowSecondUpsellNudge = useCallback( () => {
 		const minColumnWidth = 320; // $theme-item-min-width: 320px;
 		const margin = 32; // $theme-item-horizontal-margin: 32px;
 		const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
-		const result = columnsPerRow && props.themes.length >= columnsPerRow * 6;
+		const result = columnsPerRow && themes.length >= columnsPerRow * 6;
 		setShowSecondUpsellNudge( result );
-	}, [ props.themes.length ] );
+	}, [ themes.length ] );
 
 	useEffect( () => {
 		updateShowSecondUpsellNudge();
@@ -92,9 +100,9 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const fetchNextPage = useCallback(
 		( options ) => {
-			props.fetchNextPage( options );
+			fetchNextPageProp( options );
 		},
-		[ props.fetchNextPage ]
+		[ fetchNextPageProp ]
 	);
 
 	const [ openWarningModal, setOpenWarningModal ] = useState( false );
@@ -104,7 +112,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	);
 
 	const goToWooDesignWithAI = () => {
-		props.recordTracksEvent( 'calypso_themeshowcase_woo_design_with_ai_cta_click', {
+		recordTracksEvent( 'calypso_themeshowcase_woo_design_with_ai_cta_click', {
 			is_ai_generated: activeTheme?.is_ai_generated,
 		} );
 
@@ -142,13 +150,13 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 		];
 	}, [ themes, translate, activeTheme, getButtonOptions, siteAdminUrl, siteSlug ] );
 
-	if ( ! props.loading && props.themes.length === 0 ) {
+	if ( ! loading && themes.length === 0 ) {
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }
-				recordTracksEvent={ props.recordTracksEvent }
-				searchTerm={ props.searchTerm }
-				translate={ props.translate }
+				recordTracksEvent={ recordTracksEvent }
+				searchTerm={ searchTerm }
+				translate={ translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		);
@@ -183,6 +191,11 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 					theme={ theme }
 					index={ index }
 					tabFilter={ tabFilter }
+					getActionLabel={ getActionLabel }
+					isActive={ isActive }
+					getPrice={ getPrice }
+					isInstalling={ isInstalling }
+					isLivePreviewStarted={ isLivePreviewStarted }
 					{ ...props }
 				/>
 			) ) }
@@ -204,7 +217,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				/>
 			) }
 			{ props.children }
-			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
+			{ loading && <LoadingPlaceholders placeholderCount={ placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
 	);
@@ -238,21 +251,6 @@ ThemesList.propTypes = {
 	tier: PropTypes.string,
 	upsellCardDisplayed: PropTypes.func,
 	children: PropTypes.node,
-};
-
-ThemesList.defaultProps = {
-	loading: false,
-	searchTerm: '',
-	themes: [],
-	recordTracksEvent: noop,
-	fetchNextPage: noop,
-	placeholderCount: DEFAULT_THEME_QUERY.number,
-	optionsGenerator: () => [],
-	getActionLabel: () => '',
-	isActive: () => false,
-	getPrice: () => '',
-	isInstalling: () => false,
-	isLivePreviewStarted: () => false,
 };
 
 export function ThemeBlock( props ) {

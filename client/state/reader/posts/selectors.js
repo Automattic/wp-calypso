@@ -19,19 +19,25 @@ const getPostMapByPostKey = treeSelect(
 		const postMap = {};
 
 		Object.values( posts ).forEach( ( post ) => {
-			const { feed_item_IDs = [] } = post ?? {};
+			const { feed_item_IDs = [], site_ID, ID, feed_ID, feed_item_ID } = post;
 
-			// Default case when the post matches only one feed_item_ID, if available.
-			if ( feed_item_IDs.length <= 1 ) {
-				postMap[ keyToString( keyForPost( post ) ) ] = post;
-				return;
+			// Add blog post with a blog post key.
+			if ( site_ID && ID ) {
+				const postKey = keyForPost( { site_ID, ID } );
+				postMap[ keyToString( postKey ) ] = post;
+			}
+
+			// Add feed item with a feed item key.
+			if ( feed_ID && feed_item_ID ) {
+				const postKey = keyForPost( { feed_ID, feed_item_ID } );
+				postMap[ keyToString( postKey ) ] = post;
 			}
 
 			// Edge case when the post matches multiple feed_item_IDs.
 			// Insert one entry per feed_item_ID to the post map.
 			// See: https://github.com/Automattic/wp-calypso/pull/88408
-			feed_item_IDs.forEach( ( feed_item_ID ) => {
-				const postKey = keyForPost( { feed_ID: post.feed_ID, feed_item_ID } );
+			feed_item_IDs.forEach( ( feedItemId ) => {
+				const postKey = keyForPost( { feed_ID, feed_item_ID: feedItemId } );
 				postMap[ keyToString( postKey ) ] = post;
 			} );
 		} );

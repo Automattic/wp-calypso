@@ -148,13 +148,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 }
 
-.reader-full-post__header-meta-date-link {
+.reader-full-post__header-meta-date-text {
 	color: inherit;
 	text-decoration: none;
-
-	&:hover {
-		color: var( --color-link );
-	}
 }
 
 
@@ -370,10 +366,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__story {
-	max-width: var( --reader-full-post-story-max-width );
-	padding: 32px var( --reader-full-post-story-padding );
-	margin: 0 auto;
-
 	@include breakpoint-deprecated( '<480px' ) {
 		font-size: $font-body;
 		line-height: 24px;

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
@@ -5,8 +9,6 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -54,8 +56,6 @@ import {
 	tryAndCustomize,
 	deleteTheme,
 	requestThemeFilters,
-	getRecommendedThemes,
-	receiveRecommendedThemes,
 	updateThemes,
 	addExternalManagedThemeToCart,
 	livePreview,
@@ -641,6 +641,58 @@ describe( 'actions', () => {
 				},
 			} );
 			expect( spy ).toHaveBeenCalledWith( expectedActivationSuccess );
+		} );
+	} );
+
+	describe( 'Survicate event triggering', () => {
+		const createStateWithPlan = ( productId ) => ( {
+			themes: {
+				activeThemes: { 2211667: 'twentyfifteen' },
+				lastQuery: { 2211667: { search: '' } },
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: {
+							'mayland-blocks': {
+								id: 'mayland-blocks',
+								stylesheet: 'pub/mayland-blocks',
+								taxonomies: { theme_feature: [] },
+							},
+							twentyfifteen: {
+								id: 'twentyfifteen',
+								stylesheet: 'pub/twentyfifteen',
+								taxonomies: { theme_feature: [] },
+							},
+						},
+					} ),
+				},
+			},
+			sites: {
+				items: {
+					2211667: {
+						ID: 2211667,
+						jetpack: false,
+						plan: { product_id: productId },
+					},
+				},
+			},
+		} );
+
+		beforeEach( () => {
+			window._sva = { invokeEvent: jest.fn() };
+		} );
+
+		afterEach( () => {
+			window._sva = undefined;
+		} );
+
+		test( 'should invoke Survicate event only for paid plan users', () => {
+			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, () => createStateWithPlan( 1003 ) );
+			expect( window._sva.invokeEvent ).toHaveBeenCalledWith( 'themeActivated' );
+		} );
+
+		test( 'should not invoke Survicate event for free plan users', () => {
+			themeActivated( 'pub/mayland-blocks', 2211667 )( spy, () => createStateWithPlan( 1 ) );
+			expect( window._sva.invokeEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -1598,27 +1650,6 @@ describe( 'actions', () => {
 		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
 			expect( action ).toEqual( { type: THEME_FILTERS_REQUEST, locale: null } );
-		} );
-	} );
-
-	describe( '#getRecommendedThemes()', () => {
-		const filter = 'nonsense-test-filter';
-		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes( filter )( spy );
-			expect( spy ).toHaveBeenCalledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
-		} );
-	} );
-
-	describe( '#receiveRecommendedThemes()', () => {
-		const themes = [ 'a', 'b', 'c' ];
-		const filter = 'test-filter-nonsense';
-		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes, filter )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: RECOMMENDED_THEMES_SUCCESS,
-				payload: themes,
-				filter,
-			} );
 		} );
 	} );
 

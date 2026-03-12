@@ -20,7 +20,7 @@ export default function CommissionsColumn( { referral }: { referral: Referral } 
 	const { areNextAndCurrentPayoutDatesEqual } = useGetPayoutData();
 
 	const totalPendingCommission = areNextAndCurrentPayoutDatesEqual
-		? formatCurrency( previousQuarterExpectedCommission, 'USD' )
+		? formatCurrency( currentQuarterExpectedCommission, 'USD' )
 		: formatCurrency( previousQuarterExpectedCommission + currentQuarterExpectedCommission, 'USD' );
 
 	if ( isFetching ) {

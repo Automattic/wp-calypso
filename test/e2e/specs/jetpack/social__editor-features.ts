@@ -14,7 +14,7 @@ import {
 	TestAccountName,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
-import { skipDescribeIf } from '../../jest-helpers';
+import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -126,7 +126,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await messageBox.isEditable() ).toBe( true );
 
 				// Verify whether the media button is available.
-				const mediaButton = section.getByRole( 'button', { name: 'Choose Media' } );
+				const mediaButton = section.getByRole( 'button', { name: 'Select' } );
 				expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
 			} );
 
@@ -148,13 +148,13 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// Verify that resharing button is not visible on new posts in the share modal
 				let sharePostModalButton = section.getByRole( 'button', {
-					name: 'Preview social posts',
+					name: 'Preview and customize',
 					exact: true,
 				} );
 				await sharePostModalButton.click();
 
 				const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
-					hasText: 'Social Preview',
+					hasText: 'Preview and customize',
 				} );
 
 				await shareModal.waitFor();
@@ -162,11 +162,17 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				expect( await reshareButton.isVisible() ).toBe( false );
 
-				let closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+				let closeButton = shareModal.getByRole( 'button', { name: 'Close' } ).first();
 				await closeButton.click();
 
 				// Set a title for the post
 				await editorPage.enterTitle( 'Resharing: ' + DataHelper.getRandomPhrase() );
+
+				// Prevent pre-publish confirmation modal from being shown
+				await page.evaluate(
+					"wp.data.dispatch( 'core/preferences' ).set( 'jetpack/social', 'show_pre_publish_confirmation', false )"
+				);
+
 				// Publish the post.
 				await editorPage.publish();
 				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
@@ -184,9 +190,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				const toggle = section.getByLabel( 'Auto-share post' );
 				expect( await toggle.isVisible() ).toBe( false );
 
-				// Check if the Preview & Share button is visible based on resharing feature
+				// Check if the "Preview and share" button is visible based on resharing feature
 				sharePostModalButton = section.getByRole( 'button', {
-					name: 'Preview & Share',
+					name: 'Preview and share',
 					exact: true,
 				} );
 
@@ -198,7 +204,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					await sharePostModalButton.click();
 
 					const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
-						hasText: 'Share Post',
+						hasText: 'Customize and share to social media',
 					} );
 					await shareModal.waitFor();
 
@@ -207,7 +213,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					isReshareButtonVisible = await reshareButton.isVisible();
 
 					// Close the share post modal by clicking the Close button within the modal
-					closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+					closeButton = shareModal.getByRole( 'button', { name: 'Close' } ).first();
 					await closeButton.click();
 				}
 				expect( isReshareButtonVisible ).toBe( features.resharing );
@@ -241,6 +247,12 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// Set a title for the post
 				await editorPage.enterTitle( 'Manual sharing: ' + DataHelper.getRandomPhrase() );
+
+				// Prevent pre-publish confirmation modal from being shown
+				await page.evaluate(
+					"wp.data.dispatch( 'core/preferences' ).set( 'jetpack/social', 'show_pre_publish_confirmation', false )"
+				);
+
 				// Publish the post.
 				await editorPage.publish();
 
@@ -267,26 +279,34 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await manualSharing.isVisible() ).toBe( features.manualSharing );
 			} );
 
-			it( `Should verify that Social Image Generator ${
-				features.socialImageGenerator ? 'IS' : 'is NOT'
-			} available`, async function () {
-				await socialConnectionsManager.mockSocialConnections();
+			skipItIf( ! features.socialImageGenerator )(
+				'Should verify that Social Image Generator is available',
+				async function () {
+					await socialConnectionsManager.mockSocialConnections();
 
-				const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
+					const connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
-				// Open the Jetpack sidebar.
-				await editorPage.openSettings( 'Jetpack' );
+					// Open the Jetpack sidebar.
+					await editorPage.openSettings( 'Jetpack' );
 
-				await connectionTestPromise;
+					await connectionTestPromise;
 
-				// Expand the Publicize panel.
-				const section = await editorPage.expandSection( 'Share to social media' );
+					// Expand the Publicize panel.
+					const section = await editorPage.expandSection( 'Share to social media' );
 
-				const toggle = section.getByLabel( 'Enable Social Image' );
+					await section.getByRole( 'button', { name: 'Select' } ).click();
 
-				// Verify whether the Social Image Generator exists.
-				expect( await toggle.isVisible() ).toBe( features.socialImageGenerator );
-			} );
+					const popoverGroup = page.getByRole( 'group', {
+						name: 'For link preview',
+					} );
+
+					const templatebutton = popoverGroup.getByRole( 'menuitem', { name: 'Use template' } );
+
+					expect( await templatebutton.isVisible() ).toBe( true );
+
+					expect( await templatebutton.isDisabled() ).toBe( false );
+				}
+			);
 		} );
 	}
 } );

@@ -6,6 +6,7 @@ import { PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { thunk } from 'redux-thunk';
 import CheckoutThankYouHeader from '../header';
 import { CheckoutThankYou } from '../index';
 
@@ -55,11 +56,16 @@ const defaultProps = {
 	fetchReceipt: () => {},
 	siteHomeUrl: '',
 	domainOnlySiteFlow: false,
+	hasReceivedRemotePreferences: true,
 };
 
 const initialState = {
 	purchases: {
 		isFetchingSitePurchases: true,
+	},
+	preferences: {
+		fetching: false,
+		remoteValues: {},
 	},
 };
 
@@ -73,7 +79,7 @@ describe( 'CheckoutThankYou', () => {
 	} );
 
 	beforeEach( () => {
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		store = mockStore( initialState );
 		CheckoutThankYouHeader.mockClear();
 	} );

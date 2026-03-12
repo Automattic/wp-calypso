@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -727,8 +726,7 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 					dependencies: {
 						goToCheckout: true,
-						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-						sendIntentWhenCreatingTrial: true,
+						plan: PLAN_BUSINESS_MONTHLY,
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
@@ -739,12 +737,11 @@ describe( 'Site Migration Flow', () => {
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
 					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
-					extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 					flowName: 'site-migration',
 					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					plan: PLAN_BUSINESS_MONTHLY,
 					historyBack: true,
 				} );
 			} );

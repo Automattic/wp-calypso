@@ -56,8 +56,9 @@ export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
 export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
-export const A4A_LEARN_LINK = '/learn';
-export const A4A_LEARN_RESOURCE_CENTER_LINK = `${ A4A_LEARN_LINK }/resource-center`;
+export const A4A_RESOURCES_LINK = '/resources-and-tools';
+export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
+export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
@@ -74,3 +75,6 @@ export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
 export const EXTERNAL_WPCOM_ACCOUNT_URL = 'https://wordpress.com/me';
 export const EXTERNAL_WPCOM_PAYMENT_METHODS_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/payment-methods`;
 export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL }/purchases/billing`;
+
+// Pressable External links
+export const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';

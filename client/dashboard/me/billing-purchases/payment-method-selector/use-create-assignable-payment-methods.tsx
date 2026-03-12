@@ -7,6 +7,7 @@ import {
 	useCreateExistingCards,
 	useCreatePayPalExpress,
 	useCreateCreditCard,
+	useCreateExistingPayPalPPCP,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '../payment-methods';
@@ -31,6 +32,9 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 	);
 
 	const { data: storedCards = [] } = useQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	const { data: storedPaypalTokens = [] } = useQuery(
+		userPaymentMethodsQuery( { type: 'vault-token' } )
+	);
 
 	const existingCardMethods = useCreateExistingCards( {
 		isStripeLoading,
@@ -45,6 +49,13 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
 
+	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
+		storedPaymentMethods: storedPaypalTokens,
+		submitButtonContent: (
+			<PaymentMethodSelectorSubmitButtonContent text={ __( 'Use this PayPal account' ) } />
+		),
+	} );
+
 	const creditCardMethod = useCreateCreditCard( {
 		currency: purchase?.currency_code,
 		isStripeLoading,
@@ -55,16 +66,23 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 	} );
 
 	const currentPaymentMethodId = purchase ? getPaymentMethodIdFromPayment( purchase ) : null;
+	const hasExistingPayPalPPCPMethods =
+		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
 	const payPalExpressMethod = useCreatePayPalExpress( {
 		labelText:
-			currentPaymentMethodId === 'paypal-existing'
+			currentPaymentMethodId === 'paypal-existing' || hasExistingPayPalPPCPMethods
 				? String( __( 'New PayPal account' ) )
 				: String( __( 'PayPal' ) ),
 	} );
 
 	const paymentMethods = useMemo(
 		() =>
-			[ ...existingCardMethods, creditCardMethod, payPalExpressMethod ]
+			[
+				...existingCardMethods,
+				...existingPayPalPPCPMethods,
+				creditCardMethod,
+				payPalExpressMethod,
+			]
 				.filter( isValueTruthy )
 				.filter( ( method ) => {
 					// If there's an error fetching allowed payment methods, just allow all of them.
@@ -76,6 +94,7 @@ export function useCreateAssignablePaymentMethods( purchase?: Purchase ): Paymen
 				} ),
 		[
 			existingCardMethods,
+			existingPayPalPPCPMethods,
 			creditCardMethod,
 			payPalExpressMethod,
 			allowedPaymentMethods,

@@ -96,7 +96,7 @@ export default function ScanCard( { site }: { site: Site } ) {
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }
-			feature={ HostingFeatures.SCAN }
+			feature={ HostingFeatures.SCAN_SELF_SERVE }
 			featureIcon={ CARD_PROPS.icon }
 			upsellId={ CARD_PROPS.tracksId }
 			upsellFeatureId="site-scan"

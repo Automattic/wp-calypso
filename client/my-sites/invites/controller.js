@@ -26,6 +26,11 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context, next ) {
+	// Skip if unified invite flow is handling this request
+	if ( context.useUnifiedInvite ) {
+		return next();
+	}
+
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
@@ -69,6 +74,7 @@ export function acceptInvite( context, next ) {
 				authKey={ context.params.auth_key }
 				locale={ context.params.locale }
 				path={ context.path }
+				prefetchedInvite={ context.inviteData }
 			/>
 		</>
 	);

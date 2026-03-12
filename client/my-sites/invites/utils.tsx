@@ -129,6 +129,26 @@ export function acceptedNotice(
 				{ displayOnNextPage, isPersistent },
 			];
 
+		case 'shop_manager':
+			return [
+				<div>
+					<h3 className="invites__title">
+						{ i18n.translate( "You're now a Shop Manager of: {{site/}}", {
+							components: { site },
+						} ) }
+					</h3>
+					<p>
+						{ i18n.translate(
+							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
+							{
+								components: { a: <a href="http://learn.wordpress.com" /> },
+							}
+						) }
+					</p>
+				</div>,
+				{ displayOnNextPage, isPersistent },
+			];
+
 		case 'subscriber':
 			return [
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {

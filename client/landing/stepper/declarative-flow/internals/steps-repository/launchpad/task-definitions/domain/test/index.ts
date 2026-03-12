@@ -62,4 +62,69 @@ describe( 'getDesignEditedTask', () => {
 			badge_text: 'Upgrade plan',
 		} );
 	} );
+
+	it( 'use domain add page when the site has a paid non-monthly plan', () => {
+		const paidSite = buildSiteDetails( { name: 'paid-site' } );
+		paidSite.plan.is_free = false;
+		paidSite.plan.billing_period = 'Yearly';
+
+		const context = buildContext( {
+			siteSlug: 'site.wordpress.com',
+			site: paidSite,
+		} );
+
+		expect( getDomainUpSellTask( task, 'flow', context ) ).toMatchObject( {
+			useCalypsoPath: true,
+			calypso_path: '/domains/add/site.wordpress.com',
+		} );
+	} );
+
+	it( 'badge_text is empty when the site has a paid non-monthly plan', () => {
+		const paidSite = buildSiteDetails( { name: 'paid-site' } );
+		paidSite.plan.is_free = false;
+		paidSite.plan.billing_period = 'Yearly';
+
+		const context = buildContext( {
+			siteSlug: 'site.wordpress.com',
+			site: paidSite,
+		} );
+
+		expect( getDomainUpSellTask( task, 'flow', context ) ).toMatchObject( {
+			badge_text: '',
+		} );
+	} );
+
+	it( 'use domains manage page when paid non-monthly plan user has deferred domain upsell', () => {
+		const paidSite = buildSiteDetails( { name: 'paid-site' } );
+		paidSite.plan.is_free = false;
+		paidSite.plan.billing_period = 'Yearly';
+
+		const context = buildContext( {
+			siteSlug: 'site.wordpress.com',
+			site: paidSite,
+			checklistStatuses: { domain_upsell_deferred: true },
+		} );
+
+		expect( getDomainUpSellTask( task, 'flow', context ) ).toMatchObject( {
+			useCalypsoPath: true,
+			calypso_path: '/domains/manage/site.wordpress.com',
+		} );
+	} );
+
+	it( 'use domain upsell page when the site has a monthly plan', () => {
+		const monthlySite = buildSiteDetails( { name: 'monthly-site' } );
+		monthlySite.plan.is_free = false;
+		monthlySite.plan.billing_period = 'Monthly';
+
+		const context = buildContext( {
+			siteSlug: 'site.wordpress.com',
+			site: monthlySite,
+		} );
+
+		expect( getDomainUpSellTask( task, 'flow', context ) ).toMatchObject( {
+			useCalypsoPath: true,
+			calypso_path:
+				'/setup/domain-and-plan?siteSlug=site.wordpress.com&back_to=%2Fsetup%2Fflow%2Flaunchpad%3FsiteSlug%3Dsite.wordpress.com&new=monthly-site',
+		} );
+	} );
 } );

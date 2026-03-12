@@ -18,7 +18,10 @@ export default function ConnectIcon( {
 			width={ width }
 			height={ height }
 			viewBox="0 0 24 24"
-			style={ style }
+			style={ {
+				...style,
+				fill: 'none',
+			} }
 			className={ className }
 			aria-hidden="true"
 			focusable="false"
