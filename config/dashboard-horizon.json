@@ -11,7 +11,7 @@
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
 			"logout_url": "https://woo.com",
-			"features": { "oauth": true }
+			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -33,7 +33,8 @@
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"wordpress-ai-tools": true,
-		"two-factor/enhanced-security": true
+		"two-factor/enhanced-security": true,
+		"wpcom-user-bootstrap": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],
