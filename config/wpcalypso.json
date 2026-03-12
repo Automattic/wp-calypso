@@ -32,7 +32,7 @@
 		"checkout/checkout-version": true,
 		"help-center/logged-out": true,
 		"ciab/allow-domain-features": true,
-		"ciab/custom-branding": false,
+		"ciab/custom-branding": true,
 		"checkout/razorpay": true,
 		"checkout/stripe-upi": true,
 		"current-site/domain-warning": false,

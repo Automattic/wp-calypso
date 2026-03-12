@@ -14,7 +14,7 @@
 	"features": {
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
-		"ciab/custom-branding": false,
+		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
 		"dashboard/v2": false,
