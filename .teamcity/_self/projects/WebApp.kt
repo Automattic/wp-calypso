@@ -41,12 +41,12 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
-        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
         EnvConfig(
@@ -71,9 +71,8 @@ object BuildDockerImage : BuildType({
 		),
 		EnvConfig(
 			label = "Dashboard Live (CIAB)",
-			baseUrl = "https://calypso.live/ciab",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
+			envQuery = "&env=dashboard-ciab",
+			qrEnv = "env=dashboard-ciab&flags=oauth",
 		)
     )
 
@@ -82,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
