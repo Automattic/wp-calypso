@@ -10,25 +10,14 @@ import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/
 import { Stat } from 'calypso/dashboard/components/stat';
 import { useDispatch } from 'calypso/state';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import BudgetLevelsSelector from '../components/budget-levels-selector';
-import BusinessTypesSelector from '../components/business-types-selector';
-import CompanySizesSelector from '../components/company-sizes-selector';
-import DecisionProcessesSelector from '../components/decision-processes-selector';
-import HostingEnvironmentsSelector from '../components/hosting-environments-selector';
-import IdealBusinessTypesSelector from '../components/ideal-business-types-selector';
+import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import LanguagesSelector from '../components/languages-selector';
-import MigrationPlatformsSelector from '../components/migration-platforms-selector';
 import MinimumBudgetSelector from '../components/minimum-budget-selector';
-import OngoingRelationshipSelector from '../components/ongoing-relationship-selector';
-import ProjectTypesSelector from '../components/project-types-selector';
-import RegionsSelector from '../components/regions-selector';
-import ServiceLevelsSelector from '../components/service-levels-selector';
-import StoreComplexitiesSelector from '../components/store-complexities-selector';
-import TimingPreferencesSelector from '../components/timing-preferences-selector';
+import TokenFieldSelector from '../components/token-field-selector';
 import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
 import { LeadMatchingDetails } from '../types';
-import { getCompletionOverride, getEligibilityStateOverride } from './hooks/use-dev-test-overrides';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
 import useSubmitForm from './hooks/use-submit-form';
@@ -45,6 +34,21 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 
 	const { validate, validationError, updateValidationError } = useLeadMatchingFormValidation();
 
+	const {
+		availableRegions,
+		availableBusinessTypes,
+		availableCompanySizes,
+		availableHostingEnvironments,
+		availableMigrationPlatforms,
+		availableStoreComplexities,
+		availableProjectTypes,
+		availableServiceLevels,
+		availableTimingPreferences,
+		availableDecisionProcesses,
+		availableOngoingRelationships,
+		availableBudgetLevels,
+	} = useFormSelectors();
+
 	// Sticky card with fixed positioning when scrolled
 	const cardRef = useRef< HTMLDivElement >( null );
 	const placeholderRef = useRef< HTMLDivElement >( null );
@@ -58,7 +62,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 			return;
 		}
 
-		// Measure and lock the placeholder height immediately
 		const cardHeight = cardRef.current.offsetHeight;
 		cardHeightRef.current = cardHeight;
 		placeholderRef.current.style.height = `${ cardHeight }px`;
@@ -72,7 +75,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 			const containerRect = scrollContainer.getBoundingClientRect();
 			const shouldStick = placeholderRect.top < containerRect.top;
 
-			// Only update DOM if state changed
 			if ( shouldStick !== lastStuckRef.current ) {
 				lastStuckRef.current = shouldStick;
 
@@ -90,7 +92,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					cardRef.current.classList.remove( 'is-stuck' );
 				}
 			} else if ( shouldStick ) {
-				// Update position while stuck (in case of resize)
 				cardRef.current.style.top = `${ containerRect.top }px`;
 				cardRef.current.style.left = `${ placeholderRect.left }px`;
 				cardRef.current.style.width = `${ placeholderRect.width }px`;
@@ -116,6 +117,11 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		};
 	}, [] );
 
+	// Track page view
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_view' ) );
+	}, [ dispatch ] );
+
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
 
 	const onSubmitSuccess = useCallback(
@@ -124,10 +130,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 				setHasSavedSuccessfully( true );
 				dispatch(
 					successNotice( translate( 'Your lead matching preferences were saved!' ), {
+						displayOnNextPage: true,
 						duration: 6000,
 					} )
 				);
-				// Scroll to top to show the updated status
 				const scrollContainer = document.querySelector( '.hosting-dashboard-layout__body' );
 				if ( scrollContainer ) {
 					scrollContainer.scrollTo( { top: 0, behavior: 'smooth' } );
@@ -153,7 +159,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		onSubmitError,
 	} );
 
-	// Check if initial data was already complete (saved & eligible)
 	const wasInitiallyComplete = useMemo( () => {
 		if ( ! initialFormData ) {
 			return false;
@@ -173,7 +178,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		);
 	}, [ initialFormData ] );
 
-	// Count completed required fields
 	const completionStatus = useMemo( () => {
 		const requiredFields = [
 			formData.regions.length > 0,
@@ -189,28 +193,11 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 			formData.ongoingRelationships.length > 0,
 		];
 		const total = requiredFields.length;
-
-		// DEV: Check for URL override
-		const completedOverride = getCompletionOverride( total );
-		if ( completedOverride !== null ) {
-			return { completed: completedOverride, total, isComplete: completedOverride === total };
-		}
-
 		const completed = requiredFields.filter( Boolean ).length;
 		return { completed, total, isComplete: completed === total };
 	}, [ formData ] );
 
-	// Determine the eligibility state:
-	// 1. 'eligible' - saved with all required fields complete
-	// 2. 'ready' - all fields complete but not yet saved
-	// 3. 'in-progress' - still filling out required fields
 	const eligibilityState = useMemo( () => {
-		// DEV: Check for URL override
-		const stateOverride = getEligibilityStateOverride();
-		if ( stateOverride ) {
-			return stateOverride;
-		}
-
 		if ( ( wasInitiallyComplete || hasSavedSuccessfully ) && completionStatus.isComplete ) {
 			return 'eligible';
 		}
@@ -220,7 +207,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		return 'in-progress';
 	}, [ wasInitiallyComplete, hasSavedSuccessfully, completionStatus.isComplete ] );
 
-	// Get strapline with progressive encouragement based on progress
 	const getProgressStrapline = () => {
 		const { completed, total } = completionStatus;
 
@@ -254,10 +240,15 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 			}
 			return;
 		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit', {
+				completed_fields: completionStatus.completed,
+				total_fields: completionStatus.total,
+			} )
+		);
 		onSubmit();
 	};
 
-	// Check if "other" is selected in business types to show text field
 	const showOtherBusinessType = formData.businessTypes.includes( 'other' );
 	const showOtherIdealBusinessType = formData.idealBusinessTypes.includes( 'other' );
 
@@ -296,7 +287,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 										},
 									} )
 								) }
-								description={ translate( 'questions answered' ) as string }
 								progressValue={ ( completionStatus.completed / completionStatus.total ) * 100 }
 							/>
 						) }
@@ -310,7 +300,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					'Help us match you with the right leads by specifying your ideal client criteria.'
 				) }
 			>
-				{ /* Regions & languages - P2 spec: Contact info section */ }
 				<FormSection title={ translate( 'Regions and languages' ) }>
 					<FormField
 						label={ translate( 'Which regions / time zones do you serve?' ) }
@@ -320,9 +309,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<RegionsSelector
-							selectedRegions={ formData.regions }
-							setRegions={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableRegions }
+							selectedSlugs={ formData.regions }
+							onChange={ ( value ) => {
 								updateField( 'regions', value );
 								updateValidationError( { regions: undefined } );
 							} }
@@ -355,7 +345,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				{ /* Business details - P2 spec: Client types section */ }
 				<FormSection title={ translate( 'Business details' ) }>
 					<FormField
 						label={ translate( 'Which business types does your agency support?' ) }
@@ -365,12 +354,14 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<BusinessTypesSelector
-							selectedBusinessTypes={ formData.businessTypes }
-							setBusinessTypes={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableBusinessTypes }
+							selectedSlugs={ formData.businessTypes }
+							onChange={ ( value ) => {
 								updateField( 'businessTypes', value );
 								updateValidationError( { businessTypes: undefined } );
 							} }
+							sortSuggestions
 						/>
 					</FormField>
 
@@ -392,12 +383,14 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<IdealBusinessTypesSelector
-							selectedIdealBusinessTypes={ formData.idealBusinessTypes }
-							setIdealBusinessTypes={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableBusinessTypes }
+							selectedSlugs={ formData.idealBusinessTypes }
+							onChange={ ( value ) => {
 								updateField( 'idealBusinessTypes', value );
 								updateValidationError( { idealBusinessTypes: undefined } );
 							} }
+							sortSuggestions
 						/>
 					</FormField>
 
@@ -419,9 +412,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<CompanySizesSelector
-							selectedCompanySizes={ formData.companySizes }
-							setCompanySizes={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableCompanySizes }
+							selectedSlugs={ formData.companySizes }
+							onChange={ ( value ) => {
 								updateField( 'companySizes', value );
 								updateValidationError( { companySizes: undefined } );
 							} }
@@ -429,16 +423,17 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				{ /* Current website - P2 spec: Technical environment section */ }
 				<FormSection title={ translate( 'Current website' ) }>
 					<FormField
 						label={ translate( 'Which hosting environments do you regularly work with?' ) }
 						description={ translate( 'Select all that apply.' ) }
 						showOptionalLabel
 					>
-						<HostingEnvironmentsSelector
-							selectedHostingEnvironments={ formData.hostingEnvironments }
-							setHostingEnvironments={ ( value ) => updateField( 'hostingEnvironments', value ) }
+						<TokenFieldSelector
+							availableOptions={ availableHostingEnvironments }
+							selectedSlugs={ formData.hostingEnvironments }
+							onChange={ ( value ) => updateField( 'hostingEnvironments', value ) }
+							sortSuggestions
 						/>
 					</FormField>
 
@@ -457,9 +452,11 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						description={ translate( 'Select all that apply.' ) }
 						showOptionalLabel
 					>
-						<MigrationPlatformsSelector
-							selectedMigrationPlatforms={ formData.migrationPlatforms }
-							setMigrationPlatforms={ ( value ) => updateField( 'migrationPlatforms', value ) }
+						<TokenFieldSelector
+							availableOptions={ availableMigrationPlatforms }
+							selectedSlugs={ formData.migrationPlatforms }
+							onChange={ ( value ) => updateField( 'migrationPlatforms', value ) }
+							sortSuggestions
 						/>
 					</FormField>
 
@@ -468,14 +465,14 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						description={ translate( 'Select all that apply.' ) }
 						showOptionalLabel
 					>
-						<StoreComplexitiesSelector
-							selectedStoreComplexities={ formData.storeComplexities }
-							setStoreComplexities={ ( value ) => updateField( 'storeComplexities', value ) }
+						<TokenFieldSelector
+							availableOptions={ availableStoreComplexities }
+							selectedSlugs={ formData.storeComplexities }
+							onChange={ ( value ) => updateField( 'storeComplexities', value ) }
 						/>
 					</FormField>
 				</FormSection>
 
-				{ /* Website needs and vision - P2 spec: Project types section */ }
 				<FormSection title={ translate( 'Website needs and vision' ) }>
 					<FormField
 						label={ translate( 'Which types of projects do you generally support?' ) }
@@ -485,12 +482,14 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<ProjectTypesSelector
-							selectedProjectTypes={ formData.projectTypes }
-							setProjectTypes={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableProjectTypes }
+							selectedSlugs={ formData.projectTypes }
+							onChange={ ( value ) => {
 								updateField( 'projectTypes', value );
 								updateValidationError( { projectTypes: undefined } );
 							} }
+							sortSuggestions
 						/>
 					</FormField>
 
@@ -514,9 +513,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<ServiceLevelsSelector
-							selectedServiceLevels={ formData.serviceLevels }
-							setServiceLevels={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableServiceLevels }
+							selectedSlugs={ formData.serviceLevels }
+							onChange={ ( value ) => {
 								updateField( 'serviceLevels', value );
 								updateValidationError( { serviceLevels: undefined } );
 							} }
@@ -524,7 +524,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				{ /* Project budget & timeline - P2 spec */ }
 				<FormSection title={ translate( 'Project budget and timeline' ) }>
 					<FormField
 						label={ translate(
@@ -536,9 +535,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<BudgetLevelsSelector
-							selectedBudgetLevels={ formData.budgetLevels }
-							setBudgetLevels={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableBudgetLevels }
+							selectedSlugs={ formData.budgetLevels }
+							onChange={ ( value ) => {
 								updateField( 'budgetLevels', value );
 								updateValidationError( { budgetLevels: undefined } );
 							} }
@@ -560,9 +560,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<TimingPreferencesSelector
-							selectedTimingPreferences={ formData.timingPreferences }
-							setTimingPreferences={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableTimingPreferences }
+							selectedSlugs={ formData.timingPreferences }
+							onChange={ ( value ) => {
 								updateField( 'timingPreferences', value );
 								updateValidationError( { timingPreferences: undefined } );
 							} }
@@ -580,7 +581,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					</div>
 				</FormSection>
 
-				{ /* Decision making - P2 spec */ }
 				<FormSection title={ translate( 'Decision making' ) }>
 					<FormField
 						label={ translate( 'What types of decision-making processes do you work well with?' ) }
@@ -590,9 +590,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<DecisionProcessesSelector
-							selectedDecisionProcesses={ formData.decisionProcesses }
-							setDecisionProcesses={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableDecisionProcesses }
+							selectedSlugs={ formData.decisionProcesses }
+							onChange={ ( value ) => {
 								updateField( 'decisionProcesses', value );
 								updateValidationError( { decisionProcesses: undefined } );
 							} }
@@ -600,7 +601,6 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				{ /* Site management - P2 spec: Ongoing support section */ }
 				<FormSection title={ translate( 'Site management' ) }>
 					<FormField
 						label={ translate( 'What ongoing relationship do you support?' ) }
@@ -610,9 +610,10 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
-						<OngoingRelationshipSelector
-							selectedOngoingRelationships={ formData.ongoingRelationships }
-							setOngoingRelationships={ ( value ) => {
+						<TokenFieldSelector
+							availableOptions={ availableOngoingRelationships }
+							selectedSlugs={ formData.ongoingRelationships }
+							onChange={ ( value ) => {
 								updateField( 'ongoingRelationships', value );
 								updateValidationError( { ongoingRelationships: undefined } );
 							} }

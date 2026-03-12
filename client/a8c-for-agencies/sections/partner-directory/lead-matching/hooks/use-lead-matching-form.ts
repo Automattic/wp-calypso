@@ -1,15 +1,38 @@
 import { useState } from 'react';
 import { LeadMatchingDetails } from '../../types';
-import { getDefaultFormData, getFormDataWithTestOverrides } from './use-dev-test-overrides';
+
+const getDefaultFormData = (): LeadMatchingDetails => ( {
+	regions: [],
+	supportsGlobal: false,
+	languages: [],
+	businessTypes: [],
+	otherBusinessType: '',
+	idealBusinessTypes: [],
+	otherIdealBusinessType: '',
+	companySizes: [],
+	hostingEnvironments: [],
+	supportsHostingRecommendation: false,
+	migrationPlatforms: [],
+	storeComplexities: [],
+	projectTypes: [],
+	supportsQuickHelp: false,
+	serviceLevels: [],
+	budgetLevels: [],
+	minimumBudget: '',
+	timingPreferences: [],
+	supportsHardDeadlines: false,
+	decisionProcesses: [],
+	ongoingRelationships: [],
+	requiresMaintenance: false,
+} );
 
 type Props = {
 	initialFormData?: LeadMatchingDetails | null;
 };
 
 export default function useLeadMatchingForm( { initialFormData }: Props ) {
-	const [ formData, setFormData ] = useState< LeadMatchingDetails >( () =>
-		// DEV: Uses test overrides if URL params are present, otherwise uses initialFormData
-		getFormDataWithTestOverrides( initialFormData )
+	const [ formData, setFormData ] = useState< LeadMatchingDetails >(
+		initialFormData ?? getDefaultFormData()
 	);
 
 	const updateField = < K extends keyof LeadMatchingDetails >(
@@ -28,5 +51,3 @@ export default function useLeadMatchingForm( { initialFormData }: Props ) {
 		updateField,
 	};
 }
-
-export { getDefaultFormData };

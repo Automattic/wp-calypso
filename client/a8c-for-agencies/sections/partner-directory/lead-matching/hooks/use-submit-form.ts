@@ -25,12 +25,9 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 		setIsSubmitting( true );
 
 		try {
-			// TODO: Replace with actual API call when endpoint is available
-			// For now, we'll simulate a successful save by updating the local state
-			// The actual implementation would use a mutation hook similar to:
-			// useSubmitPartnerDirectoryApplicationMutation
-
-			// Simulate API delay
+			// TODO: Replace with actual API mutation when the lead matching endpoint is available.
+			// Should follow the same pattern as agency-expertise/hooks/use-submit-form.ts
+			// using a mutation hook (e.g., useSubmitLeadMatchingMutation).
 			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 
 			// Create updated agency with lead matching data
