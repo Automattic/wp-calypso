@@ -131,7 +131,13 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	const handleAbort = () => getAgentManager()?.abortCurrentRequest( agentId );
+	const handleAbort = () => {
+		const agentManager = getAgentManager();
+
+		if ( agentManager.hasAgent( agentId ) ) {
+			agentManager.abortCurrentRequest( agentId );
+		}
+	};
 
 	const handleNewChat = () => navigate( '/' );
 
