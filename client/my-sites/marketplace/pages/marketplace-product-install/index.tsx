@@ -307,7 +307,11 @@ const MarketplaceProductInstall = ( {
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
 	// so that the existing redirect (installedPlugin && pluginActive) fires.
 	const isMarketplacePluginFlow =
-		! atomicFlow && ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
+		! atomicFlow &&
+		! isPluginUploadFlow &&
+		!! pluginSlug &&
+		!! freshSite?.is_wpcom_atomic &&
+		wporgPlugin?.wporg === false;
 
 	useInterval(
 		() => dispatch( fetchSitePlugins( siteId ) ),
