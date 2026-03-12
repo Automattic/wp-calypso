@@ -27,12 +27,14 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-export const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
-	name,
-	title: label,
-} ) );
+export const getNotificationTabs = () =>
+	Object.values( getFilters() ).map( ( { name, label } ) => ( {
+		name,
+		title: label,
+	} ) );
 
 const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
+	const notificationTabs = getNotificationTabs();
 	const { params, goTo } = useNavigator();
 	const { filterName = 'all' } = params;
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
@@ -105,7 +107,7 @@ const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 								maxWidth: '100%',
 							} }
 						>
-							{ NOTIFICATION_TABS.map( ( { name, title } ) => (
+							{ notificationTabs.map( ( { name, title } ) => (
 								<Tabs.Tab
 									key={ name }
 									tabId={ name }
