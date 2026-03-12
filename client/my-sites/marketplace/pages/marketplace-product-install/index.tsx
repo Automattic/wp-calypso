@@ -305,32 +305,14 @@ const MarketplaceProductInstall = ( {
 	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
 	// is initiated during checkout, not by this component. The wporg data is unavailable,
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
-	// and activate so that the existing redirect (installedPlugin && pluginActive) fires.
+	// so that the existing redirect (installedPlugin && pluginActive) fires.
 	const isMarketplacePluginFlow =
 		! atomicFlow && ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
-	const hasDispatchedActivation = useRef( false );
 
 	useInterval(
 		() => dispatch( fetchSitePlugins( siteId ) ),
-		isMarketplacePluginFlow && ! installedPlugin ? 3000 : null
+		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
 	);
-
-	useEffect( () => {
-		if (
-			isMarketplacePluginFlow &&
-			installedPlugin &&
-			! pluginActive &&
-			! hasDispatchedActivation.current
-		) {
-			hasDispatchedActivation.current = true;
-			dispatch(
-				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
-				} )
-			);
-		}
-	}, [ isMarketplacePluginFlow, installedPlugin, pluginActive, siteId, dispatch ] );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
