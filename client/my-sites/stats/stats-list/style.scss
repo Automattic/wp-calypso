@@ -609,11 +609,11 @@ ul.module-content-list-item-action-submenu {
 	}
 
 	// Color spam action red
-	.module-content-list-item-action-wrapper.spam {
-		color: var( --color-error );
+	@include breakpoint-deprecated( '<480px' ) {
+		.module-content-list-item-action-wrapper.spam {
+			color: var( --color-error );
 
-		// Hover state
-		@include breakpoint-deprecated( '>480px' ) {
+			// Hover state
 			&:hover {
 				color: var( --color-error-30 );
 			}
