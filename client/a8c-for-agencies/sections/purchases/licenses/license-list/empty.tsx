@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
@@ -35,31 +35,9 @@ export default function LicenseListEmpty( { filter }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_empty_issue_license_click' ) );
 	};
 
-	const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
-
 	return (
 		<div className="license-list__empty-list">
 			<h2>{ licenseFilterStatusTitle }</h2>
-
-			{ showLearnMoreLink && filter === LicenseFilter.NotRevoked && (
-				<p>
-					{ translate(
-						'Learn more about {{a}}adding licenses and billing {{icon}}{{/icon}}{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://" // FIXME: add the correct link
-										target="_blank"
-										rel="noreferrer"
-									/>
-								),
-								icon: <Gridicon icon="external" size={ 16 } />,
-							},
-						}
-					) }
-				</p>
-			) }
 
 			{ filter === LicenseFilter.Detached && hasAssignedLicenses && (
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
