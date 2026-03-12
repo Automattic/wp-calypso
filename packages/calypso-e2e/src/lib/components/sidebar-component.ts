@@ -89,10 +89,10 @@ export class SidebarComponent {
 			// all operations to avoid inconsistency if the DOM changes.
 			const subitemLocator = this.page
 				.locator(
-					`.is-toggle-open a:has(:text-is("${ subitem }"):visible), .wp-menu-open .wp-submenu a:has(:text-is("${ subitem }"):visible)`
+					`.is-toggle-open a:text-is("${ subitem }"), .wp-menu-open .wp-submenu a:text-is("${ subitem }")`
 				)
 				.first();
-			await subitemLocator.waitFor();
+			await subitemLocator.waitFor( { state: 'attached' } );
 			const hrefSubItemSelector = ( await subitemLocator.getAttribute( 'href' ) ) as string;
 
 			await subitemLocator.dispatchEvent( 'click' );
