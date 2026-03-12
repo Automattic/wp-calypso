@@ -129,6 +129,7 @@ COPY --parents \
   ./packages/photon/package.json \
   ./packages/plans-grid-next/package.json \
   ./packages/popup-monitor/package.json \
+  ./packages/posthog/package.json \
   ./packages/privacy-toolset/package.json \
   ./packages/request-external-access/package.json \
   ./packages/search/package.json \
