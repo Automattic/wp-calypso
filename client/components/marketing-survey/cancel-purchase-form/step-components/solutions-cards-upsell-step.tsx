@@ -30,6 +30,7 @@ import React, { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { CardActionContext, RENEW_COUPON, SOLUTION_CARD_CONFIG } from './solution-cards-config';
+import UpsellStep from './upsell-step';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -152,23 +153,32 @@ function getTranslatedSubtitle(
 
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason: string;
+	cancelBundledDomain?: boolean;
 	closeDialog: () => void;
+	downgradePlanPrice?: number | null;
+	includedDomainPurchase?: object;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell: () => void;
 	purchase: Purchase;
+	refundAmount?: string;
 	site: SiteDetails;
 };
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
+	cancelBundledDomain,
 	closeDialog,
+	downgradePlanPrice,
+	includedDomainPurchase,
 	onClickDowngrade,
 	onDeclineUpsell,
 	purchase,
+	refundAmount,
 	site,
 }: SolutionsCardsUpsellStepProps ) {
 	const translate = useTranslate();
 	const [ busyButton, setBusyButton ] = useState( '' );
+	const [ showDowngradeStep, setShowDowngradeStep ] = useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
 	const { setNewMessagingChat, setOpenOdieWithContext } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -192,9 +202,28 @@ export default function SolutionsCardsUpsellStep( {
 		renewNowUrl,
 		cancellationReason,
 		onClickDowngrade,
+		onSelectSwitchToMonthly: () => setShowDowngradeStep( true ),
 		setNewMessagingChat,
 		setOpenOdieWithContext,
 	};
+
+	if ( showDowngradeStep ) {
+		return (
+			<UpsellStep
+				upsell="downgrade-monthly"
+				cancellationReason={ cancellationReason }
+				cancelBundledDomain={ cancelBundledDomain }
+				closeDialog={ closeDialog }
+				downgradePlanPrice={ downgradePlanPrice }
+				includedDomainPurchase={ includedDomainPurchase }
+				onClickDowngrade={ onClickDowngrade }
+				onDeclineUpsell={ () => setShowDowngradeStep( false ) }
+				purchase={ purchase }
+				refundAmount={ refundAmount }
+				site={ site }
+			/>
+		);
+	}
 
 	const handleDecline = () => {
 		setBusyButton( 'decline' );

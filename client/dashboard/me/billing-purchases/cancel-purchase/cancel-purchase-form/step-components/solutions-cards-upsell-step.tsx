@@ -26,7 +26,8 @@ import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getSolutionsForReason } from '../../get-solutions-for-reason';
-import type { Purchase } from '@automattic/api-core';
+import UpsellStep from './upsell-step';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
 const RENEW_COUPON = 'biz25';
@@ -219,20 +220,29 @@ function getCardDescription( cardId: string ): string {
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
+	cancelBundledDomain?: boolean;
 	closeDialog?: () => void;
+	downgradePlan?: PlanProduct | null;
+	includedDomainPurchase?: Purchase;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell?: () => void;
 	purchase: Purchase;
+	refundAmount?: number;
 };
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
 	cancellationInProgress,
+	cancelBundledDomain,
 	closeDialog,
+	downgradePlan,
+	includedDomainPurchase,
 	onClickDowngrade,
 	onDeclineUpsell,
 	purchase,
+	refundAmount,
 }: SolutionsCardsUpsellStepProps ) {
+	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 
@@ -243,6 +253,25 @@ export default function SolutionsCardsUpsellStep( {
 
 	if ( ! filteredSolutions?.length ) {
 		return null;
+	}
+
+	if ( showDowngradeStep ) {
+		return (
+			<UpsellStep
+				upsell="downgrade-monthly"
+				cancellationReason={ cancellationReason }
+				cancellationInProgress={ cancellationInProgress }
+				cancelBundledDomain={ cancelBundledDomain }
+				currencyCode={ purchase.currency_code }
+				downgradePlan={ downgradePlan }
+				includedDomainPurchase={ includedDomainPurchase }
+				onClickDowngrade={ onClickDowngrade }
+				onDeclineUpsell={ () => setShowDowngradeStep( false ) }
+				plans={ [] }
+				purchase={ purchase }
+				refundAmount={ refundAmount }
+			/>
+		);
 	}
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
@@ -263,7 +292,7 @@ export default function SolutionsCardsUpsellStep( {
 				window.location.href = renewNowUrl;
 				break;
 			case 'switch-to-monthly':
-				onClickDowngrade?.( 'downgrade-monthly' );
+				setShowDowngradeStep( true );
 				break;
 			case 'speak-with-support': {
 				const initialMessage =
@@ -331,6 +360,7 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'built-by' ||
 							card.id === 'change-plan' ||
 							card.id === 'renew-now-pay-less' ||
+							card.id === 'switch-to-monthly' ||
 							card.id === 'upgrade-for-full-access' ||
 							card.id === 'get-theme-addon' ||
 							card.id === 'get-css-addon' ||
@@ -339,8 +369,7 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'use-migration-tools' ||
 							card.id === 'use-domain-guide' ||
 							card.id === 'explore-domain-options' ||
-							card.id === 'move-subscription' ||
-							( card.id === 'switch-to-monthly' && onClickDowngrade )
+							card.id === 'move-subscription'
 					);
 					const href = getCardHref(
 						card.id,

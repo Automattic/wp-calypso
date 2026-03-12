@@ -23,6 +23,7 @@ export type CardActionContext = {
 	renewNowUrl: string;
 	cancellationReason: string;
 	onClickDowngrade?: ( upsell: string ) => void;
+	onSelectSwitchToMonthly?: () => void;
 	setNewMessagingChat: ( config: {
 		initialMessage: string;
 		section: string;
@@ -75,7 +76,7 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		title: 'Switch to monthly payments',
 		subtitle: 'Keep things flexible with monthly billing.',
 		onClick: ( ctx ) => {
-			ctx.onClickDowngrade?.( 'downgrade-monthly' );
+			ctx.onSelectSwitchToMonthly?.();
 		},
 	},
 	{

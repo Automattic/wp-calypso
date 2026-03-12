@@ -32,7 +32,7 @@ type UpsellProps = {
 	acceptButtonUrl?: string;
 	declineButtonText?: TranslateResult;
 	onAccept?: () => void;
-	onDecline: () => void;
+	onDecline?: () => void;
 };
 
 function Upsell( { image, ...props }: UpsellProps ) {
@@ -101,15 +101,15 @@ type StepProps = {
 	upsell: UpsellType;
 	site: SiteDetails;
 	purchase: Purchase;
-	refundAmount: string;
-	downgradePlanPrice: number | null;
-	closeDialog: () => void;
-	cancelBundledDomain: boolean;
-	includedDomainPurchase: object;
-	onDeclineUpsell: () => void;
+	refundAmount?: string;
+	downgradePlanPrice?: number | null;
+	closeDialog?: () => void;
+	cancelBundledDomain?: boolean;
+	includedDomainPurchase?: object;
+	onDeclineUpsell?: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
-	cancellationReason: string;
+	cancellationReason?: string;
 };
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {

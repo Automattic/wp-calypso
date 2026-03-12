@@ -410,10 +410,14 @@ class CancelPurchaseForm extends Component {
 				return (
 					<SolutionsCardsUpsellStep
 						cancellationReason={ this.state.questionOneText }
+						cancelBundledDomain={ this.props.cancelBundledDomain }
 						closeDialog={ this.closeDialog }
+						downgradePlanPrice={ this.props.downgradePlanToMonthlyPrice }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
 						onClickDowngrade={ this.downgradeClick }
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
 						purchase={ purchase }
+						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>
 				);

@@ -160,10 +160,14 @@ function SurveyContent( {
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
 					cancellationReason={ questionOneText }
+					cancelBundledDomain={ cancelBundledDomain }
 					closeDialog={ closeDialog }
+					downgradePlan={ downgradePlan }
+					includedDomainPurchase={ includedDomainPurchase }
 					onClickDowngrade={ downgradeClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					purchase={ purchase }
+					refundAmount={ refundAmount }
 				/>
 			);
 		}
