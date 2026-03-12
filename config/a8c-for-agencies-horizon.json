@@ -25,7 +25,6 @@
 		}
 	],
 	"features": {
-		"a4a-help-center": true,
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"cookie-banner": false,
@@ -41,7 +40,6 @@
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-bd-checkout": false,
-		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
 		"a4a-bd-term-pricing": true

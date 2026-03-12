@@ -81,8 +81,8 @@ export default function AgentDock( {
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
-	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
-	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
+	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
+	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
 		( select ) => {
@@ -139,6 +139,15 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
+	const handleChatHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
+		[]
+	);
+	const handleZendeskHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
+		[]
+	);
+
 	const handleNewChat = () => navigate( '/' );
 
 	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
@@ -167,13 +176,13 @@ export default function AgentDock( {
 			{
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
+				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: handleNewChat,
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
+				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
 				onClick: () => {
 					handleAbort();
 					navigate( '/zendesk' );
@@ -217,10 +226,9 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			navigate={ navigate }
 			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
-			onMessagesCountChange={ setOrchestratorMsgCount }
+			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
 
@@ -233,7 +241,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onMessagesCountChange={ setZendeskMsgCount }
+			onHasMessagesChange={ handleZendeskHasMessagesChange }
 		/>
 	);
 

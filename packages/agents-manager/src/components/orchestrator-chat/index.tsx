@@ -7,6 +7,7 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
@@ -31,7 +32,6 @@ import type {
 	ImageUploadHook,
 	UseCheckpointHook,
 } from '../../utils/load-external-providers';
-import type { NavigateFunction } from 'react-router-dom';
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -62,18 +62,16 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Navigate function from the router. */
-	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
-	/** Called when the message count changes. */
-	onMessagesCountChange: ( count: number ) => void;
+	/** Called when the has-messages state changes. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 // Module-level cache to preserve conversation state during back-navigation from history.
-let cachedConversation: { sessionId?: string; messages?: UIMessage[] } = {};
+let cachedConversation: { sessionId?: string; messages: UIMessage[] } = { messages: [] };
 
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
@@ -92,11 +90,11 @@ export default function OrchestratorChat( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
-	onMessagesCountChange,
-	navigate,
+	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 
+	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
@@ -111,7 +109,7 @@ export default function OrchestratorChat( {
 	const agentId = agentConfig!.agentId;
 	const configSessionId = agentConfig!.sessionId;
 
-	const { sessionId: cachedSessionId, messages: cachedMessages = [] } = cachedConversation;
+	const { sessionId: cachedSessionId, messages: cachedMessages } = cachedConversation;
 	const hasCachedConversation = !! cachedSessionId && configSessionId === cachedSessionId;
 
 	const {
@@ -342,10 +340,11 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Notify parent when message count changes.
+	// Notify parent when has-messages state changes.
+	const hasMessages = displayedMessages.length > 0;
 	useEffect( () => {
-		onMessagesCountChange( displayedMessages.length );
-	}, [ displayedMessages.length, onMessagesCountChange ] );
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
 
 	const handleViewHistory = () => {
 		// Cache current conversation messages to restore when navigating back from history.

@@ -2,7 +2,6 @@ import {
 	twoStepAuthApplicationPasswordsQuery,
 	deleteTwoStepAuthApplicationPasswordMutation,
 } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -10,7 +9,6 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -18,7 +16,6 @@ import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
 import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
-import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
 import type { TwoStepAuthApplicationPassword } from '@automattic/api-core';
@@ -124,20 +121,8 @@ export default function ApplicationPasswords() {
 						<SectionHeader
 							level={ 3 }
 							title={ __( 'Application passwords' ) }
-							description={ createInterpolateElement(
-								__(
-									'Generate a custom password for each third-party application you authorize to use your WordPress.com account. <learnMoreLink />'
-								),
-								{
-									learnMoreLink: (
-										<InlineSupportLink
-											supportPostId={ 263616 }
-											supportLink={ localizeUrl(
-												'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
-											) }
-										/>
-									),
-								}
+							description={ __(
+								'Create a password for each third-party app connected to your WordPress.com account.'
 							) }
 						/>
 						<VStack style={ { flexShrink: 0 } }>

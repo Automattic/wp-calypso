@@ -85,3 +85,31 @@
 	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
 	width: fit-content;
 }
+
+.search-results-modern {
+	padding-inline: 24px;
+}
+
+.search-results-modern__section {
+	margin-bottom: 96px;
+}
+
+.search-results-modern__grid {
+	display: grid;
+	gap: 24px;
+	grid-template-columns: 1fr;
+	margin: 0 auto;
+	max-width: 1220px;
+
+	@include break-small {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	@include break-large {
+		grid-template-columns: repeat( 3, 1fr );
+	}
+}
+
+.search-results-modern .search-more-options {
+	padding-inline: 0;
+}
