@@ -123,11 +123,13 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 	}, [ dispatch ] );
 
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
+	const [ isDirty, setIsDirty ] = useState( false );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
 			if ( response ) {
 				setHasSavedSuccessfully( true );
+				setIsDirty( false );
 				dispatch(
 					successNotice( translate( 'Your lead matching preferences were saved!' ), {
 						displayOnNextPage: true,
@@ -151,7 +153,15 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 		);
 	}, [ translate, dispatch ] );
 
-	const { formData, updateField } = useLeadMatchingForm( { initialFormData } );
+	const { formData, updateField: updateFormField } = useLeadMatchingForm( { initialFormData } );
+
+	const updateField = < K extends keyof LeadMatchingDetails >(
+		field: K,
+		value: LeadMatchingDetails[ K ]
+	) => {
+		setIsDirty( true );
+		updateFormField( field, value );
+	};
 
 	const { onSubmit, isSubmitting } = useSubmitForm( {
 		formData,
@@ -198,14 +208,15 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 	}, [ formData ] );
 
 	const eligibilityState = useMemo( () => {
-		if ( ( wasInitiallyComplete || hasSavedSuccessfully ) && completionStatus.isComplete ) {
+		const hasSavedState = ( wasInitiallyComplete || hasSavedSuccessfully ) && ! isDirty;
+		if ( hasSavedState && completionStatus.isComplete ) {
 			return 'eligible';
 		}
 		if ( completionStatus.isComplete ) {
 			return 'ready';
 		}
 		return 'in-progress';
-	}, [ wasInitiallyComplete, hasSavedSuccessfully, completionStatus.isComplete ] );
+	}, [ wasInitiallyComplete, hasSavedSuccessfully, isDirty, completionStatus.isComplete ] );
 
 	const getProgressStrapline = () => {
 		const { completed, total } = completionStatus;
