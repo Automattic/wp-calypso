@@ -227,11 +227,11 @@ object BuildDockerImage : BuildType({
 				SHA="${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 				CACHE_REF="registry.a8c.com/calypso/buildcache:trunk-v1"
 
-				CACHE_ARGS="--cache-from=type=registry,ref=${'$'}CACHE_REF"
+				CACHE_ARGS="--cache-from=type=registry,ref=${'$'}CACHE_REF --cache-to=type=registry,ref=${'$'}CACHE_REF,mode=max"
 
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
-					CACHE_ARGS="${'$'}CACHE_ARGS --cache-to=type=registry,ref=${'$'}CACHE_REF,mode=max"
-				fi
+				# if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+				# 	CACHE_ARGS="${'$'}CACHE_ARGS --cache-to=type=registry,ref=${'$'}CACHE_REF,mode=max"
+				# fi
 
 				# shellcheck disable=SC2086
 				docker buildx build \
