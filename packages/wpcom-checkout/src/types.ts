@@ -320,6 +320,7 @@ export interface WPCOMCart {
 // translateWpcomPaymentMethodToCheckoutPaymentMethod.
 export type CheckoutPaymentMethodSlug =
 	| 'pix'
+	| 'pix_automatico'
 	| 'alipay'
 	| 'web-pay'
 	| 'bancontact'
@@ -370,6 +371,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Wechat_Pay'
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
 	| 'WPCOM_Billing_Razorpay'
 	| 'WPCOM_Billing_Stripe_Upi';
 
