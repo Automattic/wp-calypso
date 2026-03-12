@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -77,8 +77,8 @@ export default function AgentDock( {
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
-	const [ shouldDisableNewChat, setShouldDisableNewChat ] = useState( true );
-	const [ shouldDisableNewZendeskChat, setShouldDisableNewZendeskChat ] = useState( true );
+	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
+	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
 		( select ) => {
@@ -129,6 +129,15 @@ export default function AgentDock( {
 
 	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
 
+	const handleChatHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
+		[]
+	);
+	const handleZendeskHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
+		[]
+	);
+
 	const handleNewChat = () => navigate( '/' );
 
 	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
@@ -157,13 +166,13 @@ export default function AgentDock( {
 			{
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/chat' && shouldDisableNewChat,
+				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: handleNewChat,
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && shouldDisableNewZendeskChat,
+				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
 				onClick: () => {
 					handleAbort();
 					navigate( '/zendesk' );
@@ -209,7 +218,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			navigate={ navigate }
 			useImageUpload={ useImageUpload }
-			onHasMessagesChange={ ( hasMessages ) => setShouldDisableNewChat( ! hasMessages ) }
+			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
 
@@ -222,7 +231,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onHasMessagesChange={ ( hasMessages ) => setShouldDisableNewZendeskChat( ! hasMessages ) }
+			onHasMessagesChange={ handleZendeskHasMessagesChange }
 		/>
 	);
 
