@@ -26,6 +26,13 @@ export interface GridLayoutItem {
 	 * Whether this item should always span all available columns in responsive mode
 	 */
 	fullWidth?: boolean;
+
+	/**
+	 * Whether this item should fill the remaining columns in its row.
+	 * The grid resolves this by looking ahead at subsequent items
+	 * and reserving their widths, then assigning the rest to this item.
+	 */
+	fillWidth?: boolean;
 }
 
 export interface NormalizedGridLayoutItem extends GridLayoutItem {
