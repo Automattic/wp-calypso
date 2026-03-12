@@ -122,6 +122,14 @@ const StatsCard = ( props: StatsCardProps ) => {
 		return simpleHeaderNode;
 	};
 
+	const footerAriaLabel =
+		footerAction?.ariaLabel ??
+		( translate( 'View all %(title)s', {
+			args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
+			comment: '"View all posts & pages", "View all referrers", etc.',
+		} ) as string );
+	const footerLabel = footerAction?.label || translate( 'View all' );
+
 	return (
 		<div
 			className={ clsx( className, BASE_CLASS_NAME, {
@@ -157,29 +165,17 @@ const StatsCard = ( props: StatsCardProps ) => {
 						<button
 							className={ `${ BASE_CLASS_NAME }--footer` }
 							onClick={ footerAction.onClick }
-							aria-label={
-								footerAction.ariaLabel ??
-								( translate( 'View all %(title)s', {
-									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
-									comment: '"View all posts & pages", "View all referrers", etc.',
-								} ) as string )
-							}
+							aria-label={ footerAriaLabel }
 						>
-							{ footerAction.label || translate( 'View all' ) }
+							{ footerLabel }
 						</button>
 					) : (
 						<a
 							className={ `${ BASE_CLASS_NAME }--footer` }
 							href={ footerAction?.url }
-							aria-label={
-								footerAction.ariaLabel ??
-								( translate( 'View all %(title)s', {
-									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
-									comment: '"View all posts & pages", "View all referrers", etc.',
-								} ) as string )
-							}
+							aria-label={ footerAriaLabel }
 						>
-							{ footerAction.label || translate( 'View all' ) }
+							{ footerLabel }
 						</a>
 					) ) }
 			</div>
