@@ -11,7 +11,7 @@
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
 			"logout_url": "https://woo.com",
-			"features": { "oauth": true, "wpcom-user-bootstrap": false }
+			"features": { "oauth": true, "wpcom-user-bootstrap": false, "always_use_logout_url": true }
 		}
 	},
 	"i18n_default_locale_slug": "en",
