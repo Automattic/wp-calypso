@@ -6,6 +6,72 @@ import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
 
+/**
+ * Resolves `fillWidth` items by computing how many columns they should span.
+ * Simulates CSS Grid row packing to determine remaining space in each row,
+ * then assigns that space to `fillWidth` items.
+ */
+function resolveFillWidths(
+	sortedKeys: string[],
+	layoutMap: Map< string, GridLayoutItem >,
+	maxColumns: number
+): Map< string, number > {
+	const resolved = new Map< string, number >();
+
+	const hasFillWidth = sortedKeys.some( ( key ) => layoutMap.get( key )?.fillWidth );
+	if ( ! hasFillWidth ) {
+		return resolved;
+	}
+
+	let currentCol = 0;
+
+	for ( let i = 0; i < sortedKeys.length; i++ ) {
+		const item = layoutMap.get( sortedKeys[ i ] );
+		if ( ! item ) {
+			continue;
+		}
+
+		if ( item.fullWidth ) {
+			currentCol = 0;
+			continue;
+		}
+
+		if ( item.fillWidth ) {
+			// Look ahead: reserve columns for subsequent
+			// non-fill items that fit in this row.
+			let reserved = 0;
+			for ( let j = i + 1; j < sortedKeys.length; j++ ) {
+				const next = layoutMap.get( sortedKeys[ j ] );
+				if ( ! next || next.fullWidth || next.fillWidth ) {
+					break;
+				}
+				const nextW = Math.min( next.width ?? 1, maxColumns );
+				if ( currentCol + 1 + reserved + nextW <= maxColumns ) {
+					reserved += nextW;
+				} else {
+					break;
+				}
+			}
+
+			const fillCols = Math.max( 1, maxColumns - currentCol - reserved );
+			resolved.set( item.key, fillCols );
+			currentCol += fillCols;
+		} else {
+			const w = Math.min( item.width ?? 1, maxColumns );
+			if ( currentCol + w > maxColumns ) {
+				currentCol = 0;
+			}
+			currentCol += w;
+		}
+
+		if ( currentCol >= maxColumns ) {
+			currentCol = 0;
+		}
+	}
+
+	return resolved;
+}
+
 export function Grid( {
 	layout,
 	columns = 6,
@@ -52,6 +118,12 @@ export function Grid( {
 				.sort( ( a, b ) => ( a.order ?? Infinity ) - ( b.order ?? Infinity ) )
 				.map( ( item ) => item.key ),
 		[ activeLayout ]
+	);
+
+	// Resolve fillWidth items to concrete column spans
+	const fillWidthMap = useMemo(
+		() => resolveFillWidths( items, layoutMap, effectiveColumns ),
+		[ items, layoutMap, effectiveColumns ]
 	);
 
 	const [ childrenMap, remaining ] = useMemo( () => {
@@ -173,19 +245,26 @@ export function Grid( {
 						gap: gapPx,
 					} }
 				>
-					{ items.map( ( id ) => (
-						<GridItem
-							key={ id }
-							item={ layoutMap.get( id ) as GridLayoutItem }
-							maxColumns={ effectiveColumns }
-							disabled={ ! editMode }
-							onResize={ ( delta ) => handleResize( id, delta ) }
-							onResizeEnd={ persistTemporaryLayout }
-							actionableArea={ actionableAreaMap.get( id ) }
-						>
-							{ childrenMap.get( id ) }
-						</GridItem>
-					) ) }
+					{ items.map( ( id ) => {
+						const item = layoutMap.get( id ) as GridLayoutItem;
+						const resolvedItem = fillWidthMap.has( id )
+							? { ...item, width: fillWidthMap.get( id ) }
+							: item;
+
+						return (
+							<GridItem
+								key={ id }
+								item={ resolvedItem }
+								maxColumns={ effectiveColumns }
+								disabled={ ! editMode }
+								onResize={ ( delta ) => handleResize( id, delta ) }
+								onResizeEnd={ persistTemporaryLayout }
+								actionableArea={ actionableAreaMap.get( id ) }
+							>
+								{ childrenMap.get( id ) }
+							</GridItem>
+						);
+					} ) }
 					{ remaining }
 				</div>
 			</SortableContext>
