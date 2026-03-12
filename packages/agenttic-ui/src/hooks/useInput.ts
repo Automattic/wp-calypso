@@ -70,7 +70,6 @@ export function useInput( {
 				! e.shiftKey &&
 				! isProcessing &&
 				! isInputOverLimit &&
-				value.trim() &&
 				! disabled
 			) {
 				e.preventDefault();
