@@ -19,8 +19,6 @@ export default function LicenseListEmpty( { filter }: Props ) {
 
 	const hasAssignedLicenses = data?.[ LicenseFilter.Attached ] > 0;
 
-	const partnerCanIssueLicense = true; // FIXME: get this from state
-
 	const licenseFilterStatusTitleMap = {
 		[ LicenseFilter.NotRevoked ]: translate( 'No active licenses' ),
 		[ LicenseFilter.Attached ]: translate( 'No assigned licenses.' ),
@@ -43,11 +41,7 @@ export default function LicenseListEmpty( { filter }: Props ) {
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
 			) }
 
-			<Button
-				disabled={ ! partnerCanIssueLicense }
-				href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
-				onClick={ onIssueNewLicense }
-			>
+			<Button href={ A4A_MARKETPLACE_LINK } onClick={ onIssueNewLicense }>
 				{ translate( 'Issue new license' ) }
 			</Button>
 		</div>
