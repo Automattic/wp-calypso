@@ -1,6 +1,7 @@
 import { addFilter } from '@wordpress/hooks';
 import { addImageStudioMediaSource } from './external-media-source-extension';
 import { withImageStudioGenerateButton } from './generate-button-extension';
+import { addImageStudioHandler } from './image-generation-handler-extension';
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
 
 let filtersRegistered = false;
@@ -20,4 +21,7 @@ export function registerBlockEditorFilters() {
 	);
 
 	addFilter( 'editor.MediaUpload', 'big-sky/generate-button', withImageStudioGenerateButton );
+
+	// Unified handler for AI image generation surfaces (featured image, social, future surfaces)
+	addFilter( 'jetpack.ai.imageGenerationHandler', 'big-sky/image-studio', addImageStudioHandler );
 }

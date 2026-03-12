@@ -813,3 +813,27 @@ $button-border: 4px;
 		padding-left: 1.5rem;
 	}
 }
+
+.is-theme-showcase-modern {
+	.theme__sheet {
+		margin: 0 24px;
+	}
+
+	&.is-section-theme .theme__sheet .navigation-header,
+	&.is-section-theme .theme__sheet .theme__sheet-retired-notice,
+	.theme__sheet-columns {
+		max-width: 1220px;
+		padding: 24px 0;
+	}
+
+	@include breakpoint-deprecated( '<960px' ) {
+		.theme__sheet-column-header .theme__sheet-main,
+		.theme__sheet-reviews-summary,
+		.theme__sheet-column-left {
+			padding: 0;
+		}
+		.theme__sheet-features .card.is-compact {
+			padding: 16px 0;
+		}
+	}
+}

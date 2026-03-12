@@ -45,6 +45,9 @@ export enum ImageStudioEntryPoint {
 	EditorSidebar = 'editor_sidebar',
 	JetpackExternalMediaBlock = 'jetpack_external_media_block',
 	JetpackExternalMediaFeaturedImage = 'jetpack_external_media_featured_image',
+	// Entry points for jetpack.ai.imageGenerationHandler filter
+	JetpackAIFeaturedImage = 'jetpack_ai_featured_image',
+	JetpackAISocialMedia = 'jetpack_ai_social_media',
 }
 
 export interface ImageStudioState {
