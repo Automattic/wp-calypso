@@ -144,9 +144,7 @@ export const domainRoute = createRoute( {
 				checkDomainTransferPermissions( domain );
 			} catch ( error ) {
 				dispatch( noticesStore ).createWarningNotice(
-					error instanceof Error
-						? error.message
-						: __( 'You do not have permission to transfer this domain.' ),
+					__( 'You do not have permission to transfer this domain.' ),
 					{ type: 'snackbar' }
 				);
 				throw redirect( {
