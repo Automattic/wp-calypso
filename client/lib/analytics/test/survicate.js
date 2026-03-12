@@ -4,7 +4,6 @@
 
 // Mock dependencies before importing the module
 jest.mock( '@automattic/calypso-analytics', () => ( {
-	getCurrentUser: jest.fn(),
 	recordTracksEvent: jest.fn(),
 } ) );
 
@@ -36,11 +35,10 @@ jest.mock( '@automattic/survicate', () => ( {
 	loadSurvicateScript: jest.fn(),
 	isSurvicateScriptLoaded: jest.fn(),
 	setSurvicateVisitorTraits: jest.fn(),
+	getAccountAgeInDays: jest.fn(),
 	getSurvicateApi: jest.fn(),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
-
-jest.mock( 'debug', () => () => jest.fn() );
 
 jest.mock( '@wordpress/react-i18n', () => ( {
 	useI18n: () => ( {
@@ -52,13 +50,14 @@ jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
 
-import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	shouldLoadSurvicate,
 	loadSurvicateScript,
 	isSurvicateScriptLoaded,
 	setSurvicateVisitorTraits,
+	getAccountAgeInDays,
 	getSurvicateApi,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
@@ -71,36 +70,24 @@ import { HelpCenterRequiredContextProvider } from '../../../../packages/help-cen
 
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
+const mockUserData = {
+	email: 'test@example.com',
+	registrationDate: '2024-01-15T00:00:00+00:00',
+};
+
 describe( 'survicate', () => {
 	let mayWeLoadSurvicateScript;
 	let addSurvicate;
-	let isUserOnAnonymousPaths;
 
 	beforeEach( () => {
 		// Reset all mocks
 		jest.clearAllMocks();
-
-		// Mock document.referrer and window.location
-		Object.defineProperty( document, 'referrer', {
-			value: 'https://example.com/previous-page',
-			writable: true,
-		} );
-
-		Object.defineProperty( window, 'location', {
-			value: {
-				pathname: '/current-page',
-				hostname: 'calypso.wordpress.com',
-				href: 'https://calypso.wordpress.com/current-page',
-			},
-			writable: true,
-		} );
 
 		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
 			addSurvicate = survicateModule.addSurvicate;
-			isUserOnAnonymousPaths = survicateModule.isUserOnAnonymousPaths;
 		} );
 	} );
 
@@ -126,28 +113,6 @@ describe( 'survicate', () => {
 		} );
 	} );
 
-	describe( 'isUserOnAnonymousPaths', () => {
-		test.each( [
-			// Anonymous paths should return true
-			[ '/log-in', true ],
-			[ '/log-in/lostpassword', true ],
-			[ '/account/user-social', true ],
-			[ '/setup/onboarding/user', true ],
-			[ '/setup/onboarding/user/pt-br', true ],
-			[ '/log-in/two-factor', true ],
-			// Non-anonymous paths should return false
-			[ '/sites', false ],
-			[ '/home', false ],
-		] )( 'should return %s for path %s', ( pathname, expected ) => {
-			Object.defineProperty( window, 'location', {
-				value: { pathname },
-				writable: true,
-			} );
-
-			expect( isUserOnAnonymousPaths() ).toBe( expected );
-		} );
-	} );
-
 	describe( 'addSurvicate', () => {
 		beforeEach( () => {
 			// Set default mocks for successful loading
@@ -157,13 +122,14 @@ describe( 'survicate', () => {
 			shouldLoadSurvicate.mockReturnValue( true );
 			isSurvicateScriptLoaded.mockReturnValue( false );
 			loadSurvicateScript.mockResolvedValue();
+			getAccountAgeInDays.mockReturnValue( 42 );
 		} );
 
 		test( 'should not load script for non-English languages', () => {
 			shouldLoadSurvicate.mockReturnValue( false );
 			getLocaleSlug.mockReturnValue( 'fr' );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
@@ -172,7 +138,7 @@ describe( 'survicate', () => {
 			shouldLoadSurvicate.mockReturnValue( false );
 			getLocaleSlug.mockReturnValue( 'es-ES' );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
@@ -180,7 +146,7 @@ describe( 'survicate', () => {
 		test( 'should load script for English language variants', () => {
 			getLocaleSlug.mockReturnValue( 'en-US' );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).toHaveBeenCalledWith( 'test-workspace-id' );
 		} );
@@ -189,7 +155,7 @@ describe( 'survicate', () => {
 			shouldLoadSurvicate.mockReturnValue( false );
 			isMobile.mockReturnValue( true );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
@@ -197,168 +163,60 @@ describe( 'survicate', () => {
 		test( 'should not load script when survicate is disabled', () => {
 			config.mockReturnValue( false );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call loadSurvicateScript with workspace ID', () => {
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			expect( loadSurvicateScript ).toHaveBeenCalledWith( 'test-workspace-id' );
 		} );
 
-		test( 'should set visitor traits when script loads successfully with logged-in user', async () => {
-			const mockUser = {
-				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			addSurvicate();
+		test( 'should set visitor traits with email and account_age_in_days when script loads', async () => {
+			addSurvicate( mockUserData );
 			await flushPromises();
 
+			expect( getAccountAgeInDays ).toHaveBeenCalledWith( mockUserData.registrationDate );
 			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
-			} );
-			expect( recordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should not set visitor traits when user is not logged in', async () => {
-			getCurrentUser.mockReturnValue( null );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( setSurvicateVisitorTraits ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should log error when user is not logged in', async () => {
-			getCurrentUser.mockReturnValue( null );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_survicate_user_not_available_error',
-				{
-					user_exists: false,
-					user_has_email: false,
-					referrer: 'https://example.com/previous-page',
-					pathname: '/current-page',
-					hostname: 'calypso.wordpress.com',
-				}
-			);
-		} );
-
-		test( 'should not set visitor traits when user has no email', async () => {
-			const mockUser = {
-				id: 123,
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( setSurvicateVisitorTraits ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should log error when user has no email', async () => {
-			const mockUser = {
-				id: 123,
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_survicate_user_not_available_error',
-				{
-					user_exists: true,
-					user_has_email: false,
-					referrer: 'https://example.com/previous-page',
-					pathname: '/current-page',
-					hostname: 'calypso.wordpress.com',
-				}
-			);
-		} );
-
-		test( 'should call setSurvicateVisitorTraits from the package', async () => {
-			const mockUser = {
-				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			addSurvicate();
-			await flushPromises();
-
-			// Trait setting is now delegated to the package
-			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
-				email: 'test@example.com',
+				account_age_in_days: 42,
 			} );
 		} );
 
 		test( 'should handle script load error', async () => {
 			loadSurvicateScript.mockRejectedValue( new Error( 'load failed' ) );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 			await expect( flushPromises() ).resolves.toBeUndefined();
 		} );
 
 		test( 'should not load script twice when called multiple times', () => {
 			// First call should load script
-			addSurvicate();
+			addSurvicate( mockUserData );
 			expect( loadSurvicateScript ).toHaveBeenCalledTimes( 1 );
 
 			// Second call: script is now "loaded"
 			isSurvicateScriptLoaded.mockReturnValue( true );
-			addSurvicate();
+			addSurvicate( mockUserData );
 
 			// loadSurvicateScript should still have been called only once
 			expect( loadSurvicateScript ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'should set visitor traits when user is not on anonymous paths', async () => {
-			const mockUser = {
-				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			// Set non-anonymous path
-			Object.defineProperty( window, 'location', {
-				value: { pathname: '/home' },
-				writable: true,
-			} );
-
-			addSurvicate();
-			await flushPromises();
-
-			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
-				email: 'test@example.com',
-			} );
-		} );
-
 		test( 'should set visitor traits without reloading script when script is already loaded', async () => {
-			const mockUser = {
-				email: 'test@example.com',
-			};
-			getCurrentUser.mockReturnValue( mockUser );
-
-			Object.defineProperty( window, 'location', {
-				value: { pathname: '/home' },
-				writable: true,
-			} );
-
 			// Script is already loaded
 			isSurvicateScriptLoaded.mockReturnValue( true );
 
-			addSurvicate();
+			addSurvicate( mockUserData );
 			await flushPromises();
 
 			// Should have called setSurvicateVisitorTraits without loading script again
 			expect( loadSurvicateScript ).not.toHaveBeenCalled();
 			expect( setSurvicateVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
+				account_age_in_days: 42,
 			} );
 		} );
 	} );
