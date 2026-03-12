@@ -35,7 +35,6 @@ import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
-import { CHECKOUT_SECTION_DEFINITION } from 'calypso/my-sites/checkout/section';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
@@ -51,7 +50,6 @@ import {
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
-import { SIGNUP_SECTION_DEFINITION } from 'calypso/signup/section';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -1113,10 +1111,13 @@ export default function pages() {
 				serverRender
 			);
 		};
-		handleRoute( SIGNUP_SECTION_DEFINITION, '/start', 'entry-main', ( req ) =>
+
+		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
+		handleRoute( signupSectionDefinition, '/start', 'entry-main', ( req ) =>
 			isAllowedDashboardHostname( req.hostname )
 		);
-		handleRoute( CHECKOUT_SECTION_DEFINITION, '/checkout', 'entry-main', ( req ) =>
+		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
+		handleRoute( checkoutSectionDefinition, '/checkout', 'entry-main', ( req ) =>
 			isAllowedDashboardHostname( req.hostname )
 		);
 		handleRoute( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
