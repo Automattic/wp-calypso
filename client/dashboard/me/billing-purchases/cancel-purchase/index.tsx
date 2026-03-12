@@ -70,7 +70,6 @@ import {
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
@@ -91,6 +90,7 @@ import type {
 	UserPreferences,
 } from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
+
 import './style.scss';
 
 const willShowDomainOptionsRadioButtons = (
@@ -338,7 +338,7 @@ export default function CancelPurchase() {
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
 	);
 	const {
-		mutate: applyCancellationOffer,
+		mutateAsync: applyCancellationOffer,
 		isPending: isApplyingOffer,
 		isSuccess: offerApplySuccess,
 		error: offerApplyError,
@@ -350,6 +350,7 @@ export default function CancelPurchase() {
 	const includedDomainPurchase = getIncludedDomainPurchase( purchases ?? [], purchase );
 
 	const productSlug = purchase ? purchase.product_slug : null;
+	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
 	const redirectBack = useCallback( () => {
@@ -531,18 +532,35 @@ export default function CancelPurchase() {
 		},
 		[ recordEvent, state.upsell ]
 	);
-	const onGetCancellationOffer = useCallback( () => {
-		changeSurveyStep( OFFER_ACCEPTED_STEP );
-		recordEvent( 'calypso_purchases_cancel_get_discount' );
-	}, [ changeSurveyStep, recordEvent ] );
+	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
+		purchase,
+		cancellationOffer
+	);
+	const onGetCancellationOffer = useCallback(
+		( newPurchaseId?: string ) => {
+			if ( ! newPurchaseId ) {
+				redirectBack();
+				return;
+			}
+			recordEvent( 'calypso_purchases_cancel_get_discount' );
+			navigate( { to: purchasesRoute.to + `/${ newPurchaseId }` } );
+		},
+		[ redirectBack, navigate, recordEvent ]
+	);
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
-			applyCancellationOffer();
-			onGetCancellationOffer(); // Takes care of analytics.
+			applyCancellationOffer().then( ( data ) => {
+				if ( data.success ) {
+					onGetCancellationOffer( data.new_purchase_id ); // Takes care of analytics.
+				} else {
+					redirectBack();
+				}
+			} );
 		}
 	}, [
+		redirectBack,
 		isApplyingOffer,
 		offerApplySuccess,
 		offerApplyError,
@@ -1291,7 +1309,6 @@ export default function CancelPurchase() {
 		return null;
 	}
 
-	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
@@ -1316,17 +1333,31 @@ export default function CancelPurchase() {
 		);
 	}
 
-	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
-		purchase,
-		cancellationOffer
+	const cancellationOfferDescription = sprintf(
+		/* Translators: %(brand)s is either Akismet or Jetpack */
+		__(
+			'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
+		),
+		{
+			brand: isAkismet ? 'Akismet' : 'Jetpack',
+		}
 	);
+	const description =
+		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
-					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+					title={
+						<CancelHeaderTitle
+							flowType={ flowType }
+							purchase={ purchase }
+							surveyStep={ state.surveyStep }
+						/>
+					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
+					description={ description }
 				/>
 			}
 			notices={

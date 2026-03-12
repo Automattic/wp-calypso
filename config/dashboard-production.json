@@ -17,6 +17,7 @@
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,
 		"cookie-banner": true,
+		"bilmur-script": true,
 		"rum-tracking/logstash": true,
 		"dashboard/v2": false,
 		"domain-transfer-redesign": true,

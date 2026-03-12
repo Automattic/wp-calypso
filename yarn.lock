@@ -2649,25 +2649,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/wpcom-gutenberg-rtc@workspace:apps/wpcom-gutenberg-rtc":
-  version: 0.0.0-use.local
-  resolution: "@automattic/wpcom-gutenberg-rtc@workspace:apps/wpcom-gutenberg-rtc"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
-    "@wordpress/hooks": "npm:^4.23.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
-    "@wordpress/sync": "npm:^1.23.0"
-    lib0: "npm:^0.2.117"
-    postcss: "npm:^8.5.3"
-    typescript: "npm:^5.8.3"
-    webpack: "npm:^5.99.8"
-    y-protocols: "npm:^1.0.7"
-    yjs: "npm:^13.6.29"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/wpcom-template-parts@workspace:^, @automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts":
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
@@ -24948,7 +24929,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib0@npm:^0.2.117, lib0@npm:^0.2.42, lib0@npm:^0.2.74, lib0@npm:^0.2.85, lib0@npm:^0.2.99":
+"lib0@npm:^0.2.42, lib0@npm:^0.2.74, lib0@npm:^0.2.85, lib0@npm:^0.2.99":
   version: 0.2.117
   resolution: "lib0@npm:0.2.117"
   dependencies:
@@ -38680,7 +38661,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"y-protocols@npm:^1.0.5, y-protocols@npm:^1.0.6, y-protocols@npm:^1.0.7":
+"y-protocols@npm:^1.0.5, y-protocols@npm:^1.0.6":
   version: 1.0.7
   resolution: "y-protocols@npm:1.0.7"
   dependencies:
@@ -38837,7 +38818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yjs@npm:^13.6.29, yjs@npm:~13.6.6":
+"yjs@npm:~13.6.6":
   version: 13.6.29
   resolution: "yjs@npm:13.6.29"
   dependencies:
