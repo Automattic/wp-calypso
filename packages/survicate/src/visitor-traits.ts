@@ -1,3 +1,5 @@
+import debug from './debug';
+
 declare global {
 	interface Window {
 		_sva?: {
@@ -32,6 +34,7 @@ export function setSurvicateVisitorTraits( traits: {
 	const setTraits = function () {
 		if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
 			window._sva.setVisitorTraits( traits );
+			debug( 'Visitor traits set: %o', traits );
 		}
 	};
 
@@ -41,6 +44,7 @@ export function setSurvicateVisitorTraits( traits: {
 		return () => {};
 	}
 
+	debug( 'Survicate not ready, deferring visitor traits until SurvicateReady event' );
 	window.addEventListener( 'SurvicateReady', setTraits, { once: true } );
 
 	return () => {
