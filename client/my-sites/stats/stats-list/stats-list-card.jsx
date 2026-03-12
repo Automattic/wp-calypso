@@ -19,7 +19,7 @@ import StatsListCountryFlag from './stats-list-country-flag';
 const StatsListCard = ( {
 	data,
 	moduleType,
-	showMore,
+	footerAction,
 	title,
 	titleNodes,
 	downloadCsv,
@@ -131,16 +131,7 @@ const StatsListCard = ( {
 	return (
 		<StatsCard
 			title={ title }
-			footerAction={
-				showMore
-					? {
-							url: showMore?.url,
-							label: showMore?.label,
-							onClick: showMore?.onClick,
-							ariaLabel: showMore?.ariaLabel,
-					  }
-					: undefined
-			}
+			footerAction={ footerAction }
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			titleNodes={ titleNodes }

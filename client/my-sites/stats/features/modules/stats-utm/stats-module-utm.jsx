@@ -248,7 +248,7 @@ const StatsModuleUTM = ( {
 						titleNodes={ titleNodes }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
-						showMore={
+						footerAction={
 							displaySummaryLink && ! summary
 								? {
 										url: getHref(),

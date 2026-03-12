@@ -57,7 +57,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
 			data={ fakeData }
 			mainItemLabel="Posts by Source / Medium"
 			splitHeader
-			showMore={ {
+			footerAction={ {
 				label: 'View all',
 			} }
 			overlay={

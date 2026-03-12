@@ -93,7 +93,7 @@ export const StatsReach = ( props ) => {
 				useShortNumber
 				// Shares don't have a summary page yet.
 				// TODO: limit to 5 items after summary page is added.
-				// showMore={ ... }
+				// footerAction={ ... }
 				// TODO: add error state once it's implemented
 				loader={
 					( isLoadingFollowData || isLoadingPublicize ) && (

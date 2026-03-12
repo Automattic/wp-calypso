@@ -93,7 +93,7 @@ const StatModuleFollowers = ( { className } ) => {
 			mainItemLabel={ translate( 'Subscriber' ) }
 			metricLabel={ translate( 'Since' ) }
 			splitHeader
-			showMore={ {
+			footerAction={ {
 				url: subscriberManagementUrl,
 				label: translate( 'Manage subscribers' ),
 			} }

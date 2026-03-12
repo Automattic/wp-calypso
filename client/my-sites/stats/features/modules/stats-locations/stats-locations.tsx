@@ -379,7 +379,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
-						showMore={
+						footerAction={
 							summaryUrl
 								? {
 										url: getFinalSummaryUrl(),

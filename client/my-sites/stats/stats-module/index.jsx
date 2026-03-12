@@ -299,12 +299,12 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 
-		// Determine showMore action for StatsListCard.
-		let showMoreAction;
+		// Determine footer action for StatsListCard.
+		let resolvedFooterAction;
 		if ( summary && footerAction ) {
-			showMoreAction = footerAction;
+			resolvedFooterAction = footerAction;
 		} else if ( displaySummaryLink && ! summary ) {
-			showMoreAction = {
+			resolvedFooterAction = {
 				url: summaryLink,
 				label:
 					data.length >= 10
@@ -336,7 +336,7 @@ class StatsModule extends Component {
 					titleNodes={ titleNodes }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
-					showMore={ showMoreAction }
+					footerAction={ resolvedFooterAction }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
