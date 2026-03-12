@@ -83,9 +83,6 @@ export function useFormSelectors() {
 		utility_services: 'energy_and_utilities',
 	};
 
-	// Lead matching options — these match the P2 spec exactly for 1:1 client-agency matching
-	// See: https://a4aprogramming.wordpress.com/2026/02/06/delivering-more-leads-to-agencies-criteria-alignment-feedback-needed-from-sales-team/
-
 	const availableRegions: Record< string, string > = {
 		americas: translate( 'Americas (North, Central, South America)' ),
 		emea: translate( 'EMEA (Europe, Middle East, Africa)' ),
@@ -203,7 +200,6 @@ export function useFormSelectors() {
 		availableDirectories,
 		availableIndustries,
 		oldIndustries,
-		// Lead matching options
 		availableRegions,
 		availableBusinessTypes,
 		availableCompanySizes,
