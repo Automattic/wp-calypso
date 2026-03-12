@@ -130,7 +130,7 @@ class StatsActionSpam extends Component {
 						</p>
 						<p>
 							{ this.props.translate(
-								'You can undo this action and manage spam referrers from the referrers detail page.'
+								'You can undo this action and manage spam referrers from the referrers detail page. Changes may take a few minutes to appear in your stats.'
 							) }
 						</p>
 						<div className="action-spam__confirm-modal-actions">

@@ -32,4 +32,10 @@
 		word-break: break-all;
 		min-width: 0;
 	}
+
+	.spam-referrers-modal__note {
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+		margin-block-end: 16px;
+	}
 }

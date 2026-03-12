@@ -77,6 +77,9 @@ const SpamReferrersModal: React.FC< SpamReferrersModalProps > = ( { siteId, onCl
 							) }
 						</NoticeBanner>
 					) }
+					<p className="spam-referrers-modal__note">
+						{ translate( 'Note: Changes may take a few minutes to appear in your stats.' ) }
+					</p>
 					<ul ref={ listRef } className="spam-referrers-modal__list">
 						{ domains.map( ( item ) => (
 							<li key={ item.domain } className="spam-referrers-modal__item">
