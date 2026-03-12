@@ -1,0 +1,166 @@
+.is-reader-page {
+	ul.recommended-feeds-list {
+		margin: 0;
+	}
+
+	.recommended-feed-name .components-external-link__contents {
+		text-decoration: none;
+	}
+
+	.is-default-view {
+		.recommended-feed-item {
+			padding: 20px 0;
+			border-bottom: 1px solid var( --color-neutral-5 );
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: anchor-center;
+			gap: 11px;
+			flex-wrap: nowrap;
+
+			&:last-child {
+				border-bottom: none;
+				margin-bottom: 0;
+			}
+		}
+
+		.recommended-feed-info {
+			width: 100%;
+		}
+
+		.recommended-feed-name {
+			color: var( --color-neutral-100 );
+			font-weight: 600;
+			font-size: $font-body;
+			&:visited {
+				color: var( --color-neutral-100 );
+			}
+		}
+
+		.recommended-feed-description {
+			color: var( --color-text-subtle );
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 18px;
+			overflow: hidden;
+			width: auto;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			display: -webkit-box;
+		}
+
+		.recommended-feed-subscribe-button {
+			flex-shrink: 0;
+		}
+	}
+
+	.is-compact-view {
+		.recommended-feed-item {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			padding: 8px 0;
+		}
+
+		.recommended-feed-icon.reader-avatar {
+			max-height: unset;
+
+			.site-icon {
+				border-radius: 50%;
+				border: 1px solid var( --color-border-subtle );
+				height: 30px;
+				width: 30px;
+
+				img {
+					object-fit: cover;
+					/* !rtl:ignore */
+					object-position: left center;
+				}
+			}
+		}
+
+		.recommended-feed-info {
+			flex: 1 1 0%;
+			overflow: hidden;
+
+			.recommended-feed-name {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
+
+	.is-card-view {
+		.recommended-feed-item {
+			display: flex;
+			align-items: flex-start;
+			border-radius: 8px;
+			border: 1px solid var( --color-border-subtle );
+			padding: 20px;
+			margin-bottom: 20px;
+			position: relative;
+			gap: 20px;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				border: none;
+				border-bottom: 5px solid var( --color-neutral-5 );
+				border-radius: 0;
+				margin-bottom: 0;
+			}
+
+			.recommended-feed-icon .site-icon {
+				border-radius: 50%;
+				flex-shrink: 0;
+				border: 1px solid var( --color-border-subtle );
+
+				img {
+					object-fit: cover;
+					/* !rtl:ignore */
+					object-position: left center;
+					height: 100%;
+				}
+			}
+
+			.recommended-feed-info {
+				flex: 1 1 auto;
+				display: flex;
+				align-self: center;
+				flex-direction: column;
+				justify-content: center;
+				min-width: 0;
+
+				a {
+					text-decoration: none;
+					color: inherit;
+					// Margin to not obscure the relative-absolute positioned follow button
+					margin-right: 120px;
+					@include breakpoint-deprecated( '<660px' ) {
+						// reduce margin when follow button has no label
+						margin-right: 60px;
+					}
+				}
+			}
+
+			.recommended-feed-name {
+				// font-size: $font-size-header-small;
+				font-weight: 600;
+				margin: 0 0 6px 0;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.recommended-feed-description {
+				margin: 0;
+			}
+
+			.recommended-feed-subscribe-button {
+				position: absolute;
+				top: 20px;
+				right: 20px;
+			}
+		}
+	}
+}

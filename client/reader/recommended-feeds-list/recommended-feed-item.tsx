@@ -1,0 +1,69 @@
+import { ExternalLink } from '@wordpress/components';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import AutoDirection from 'calypso/components/auto-direction';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { useSelector } from 'calypso/state';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
+
+export interface RecommendedFeedItemProps {
+	feed: FeedRecommendation;
+	variant: 'card' | 'compact' | 'default';
+	followSource: string;
+}
+
+export function RecommendedFeedItem( {
+	feed,
+	variant,
+	followSource,
+}: RecommendedFeedItemProps ): JSX.Element {
+	const { image, name, feedUrl, siteId, feedId } = feed;
+	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
+	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
+	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
+	const isCompactView = variant === 'compact';
+
+	return (
+		<li className="recommended-feed-item">
+			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
+				One example being mapped domains: initial follows state may list by wpcom subdomain, and
+				the url here might be of a mapped domain. The site request success also updates follows
+				state, and can bridge the gap to appropriately determine if a site from this list is
+				followed.
+			*/ }
+			<QueryReaderSite siteId={ siteId } />
+
+			<ReaderAvatar
+				isCompact={ isCompactView }
+				siteIcon={ siteIcon }
+				siteUrl={ feedId ? `/reader/feeds/${ feedId }` : feedUrl }
+				iconSize={ variant === 'default' ? 48 : 30 }
+				className="recommended-feed-icon"
+			/>
+
+			<AutoDirection>
+				<div className="recommended-feed-info">
+					<ExternalLink className="recommended-feed-name" href={ linkUrl || '' }>
+						{ name || feedUrl }
+					</ExternalLink>
+					{ ! isCompactView && site?.description && (
+						<p className="recommended-feed-description">{ site.description }</p>
+					) }
+				</div>
+			</AutoDirection>
+
+			{ feedUrl && (
+				<ReaderFollowButton
+					className="recommended-feed-subscribe-button"
+					feedId={ feedId ? Number( feedId ) : undefined }
+					siteId={ siteId ? Number( siteId ) : undefined }
+					siteUrl={ feedUrl }
+					followSource={ followSource }
+					isButtonOnly={ isCompactView }
+				/>
+			) }
+		</li>
+	);
+}
