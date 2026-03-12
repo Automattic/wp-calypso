@@ -2,25 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getAccountAgeInDays, setSurvicateVisitorTraits } from '../visitor-traits';
-
-const DAY_IN_MS = 86400000;
-
-describe( 'getAccountAgeInDays', () => {
-	test( 'should return the number of whole days since the given date string', () => {
-		const threeDaysAgo = new Date( Date.now() - 3 * DAY_IN_MS ).toISOString();
-		expect( getAccountAgeInDays( threeDaysAgo ) ).toBe( 3 );
-	} );
-
-	test( 'should floor partial days', () => {
-		const oneAndAHalfDaysAgo = new Date( Date.now() - 1.5 * DAY_IN_MS ).toISOString();
-		expect( getAccountAgeInDays( oneAndAHalfDaysAgo ) ).toBe( 1 );
-	} );
-
-	test( 'should return 0 for today', () => {
-		expect( getAccountAgeInDays( new Date().toISOString() ) ).toBe( 0 );
-	} );
-} );
+import { setSurvicateVisitorTraits } from '../visitor-traits';
 
 describe( 'setSurvicateVisitorTraits', () => {
 	beforeEach( () => {

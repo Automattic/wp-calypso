@@ -5,7 +5,6 @@ import {
 	shouldLoadSurvicate,
 	loadSurvicateScript,
 	setSurvicateVisitorTraits,
-	getAccountAgeInDays,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
 import { useViewportMatch } from '@wordpress/compose';
@@ -46,10 +45,7 @@ export function useSurvicate() {
 					return;
 				}
 
-				const cleanupTraits = setSurvicateVisitorTraits( {
-					email: user.email,
-					account_age_in_days: getAccountAgeInDays( user.date ),
-				} );
+				const cleanupTraits = setSurvicateVisitorTraits( { email: user.email } );
 				controller.signal.addEventListener( 'abort', cleanupTraits );
 			} )
 			.catch( () => {
