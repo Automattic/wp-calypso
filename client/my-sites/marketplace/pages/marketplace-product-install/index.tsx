@@ -314,6 +314,23 @@ const MarketplaceProductInstall = ( {
 		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
 	);
 
+	// Fallback: if the plugin hasn't activated after 1 minute of polling,
+	// redirect anyway to prevent the user from being stuck on this page.
+	const pluginsUrlFinalRef = useRef( pluginsUrlFinal );
+	pluginsUrlFinalRef.current = pluginsUrlFinal;
+
+	useEffect( () => {
+		if ( ! isMarketplacePluginFlow ) {
+			return;
+		}
+		const timeout = setTimeout( () => {
+			if ( pluginsUrlFinalRef.current ) {
+				window.location.href = pluginsUrlFinalRef.current as string;
+			}
+		}, 60000 );
+		return () => clearTimeout( timeout );
+	}, [ isMarketplacePluginFlow ] );
+
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 	} );
