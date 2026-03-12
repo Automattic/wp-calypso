@@ -276,6 +276,7 @@ object BuildDockerImage : BuildType({
 				EOF
 
 				docker buildx build \
+				  --builder tc-builder \
 				  --progress=plain \
 				  --platform=linux/amd64 \
 				  --cache-to=type=registry,ref="${'$'}CACHE_REF",mode=max \
