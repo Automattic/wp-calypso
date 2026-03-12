@@ -234,7 +234,7 @@ export default function SolutionsCardsUpsellStep( {
 	purchase,
 }: SolutionsCardsUpsellStepProps ) {
 	const solutions = getSolutionsForReason( cancellationReason );
-	const { setSubject, setShowHelpCenter } = useHelpCenter();
+	const { setSubject, setShowHelpCenter, setOpenOdieWithContext } = useHelpCenter();
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
 	const filteredSolutions = solutions?.filter(
@@ -299,9 +299,18 @@ export default function SolutionsCardsUpsellStep( {
 			case 'move-subscription':
 				window.location.href = subscriptionsUrl;
 				break;
-			case 'ask-ai-assistant':
-				// No CTA yet – card is label-only
+			case 'ask-ai-assistant': {
+				const initialMessage =
+					"User is contacting from pre-cancellation form. Cancellation reason they've given: " +
+					cancellationReason;
+				setOpenOdieWithContext( {
+					initialMessage,
+					section: 'pre-cancellation-upsell',
+					siteId: purchase.blog_id,
+				} );
+				closeDialog?.();
 				break;
+			}
 			default:
 				break;
 		}
@@ -315,21 +324,21 @@ export default function SolutionsCardsUpsellStep( {
 			>
 				{ filteredSolutions.map( ( card ) => {
 					const hasAction = Boolean(
-						card.id !== 'ask-ai-assistant' &&
-							( card.id === 'speak-with-support' ||
-								card.id === 'built-by' ||
-								card.id === 'change-plan' ||
-								card.id === 'renew-now-pay-less' ||
-								card.id === 'upgrade-for-full-access' ||
-								card.id === 'get-theme-addon' ||
-								card.id === 'get-css-addon' ||
-								card.id === 'find-guides' ||
-								card.id === 'make-site-faster' ||
-								card.id === 'use-migration-tools' ||
-								card.id === 'use-domain-guide' ||
-								card.id === 'explore-domain-options' ||
-								card.id === 'move-subscription' ||
-								( card.id === 'switch-to-monthly' && onClickDowngrade ) )
+						card.id === 'speak-with-support' ||
+							card.id === 'ask-ai-assistant' ||
+							card.id === 'built-by' ||
+							card.id === 'change-plan' ||
+							card.id === 'renew-now-pay-less' ||
+							card.id === 'upgrade-for-full-access' ||
+							card.id === 'get-theme-addon' ||
+							card.id === 'get-css-addon' ||
+							card.id === 'find-guides' ||
+							card.id === 'make-site-faster' ||
+							card.id === 'use-migration-tools' ||
+							card.id === 'use-domain-guide' ||
+							card.id === 'explore-domain-options' ||
+							card.id === 'move-subscription' ||
+							( card.id === 'switch-to-monthly' && onClickDowngrade )
 					);
 					const href = getCardHref(
 						card.id,

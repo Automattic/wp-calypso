@@ -66,11 +66,26 @@ export function useHelpCenter() {
 		return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setSubject( subject );
 	}, [] );
 
+	const setOpenOdieWithContext = useCallback(
+		async ( args: {
+			initialMessage: string;
+			section?: string;
+			siteUrl?: string;
+			siteId?: string | number;
+		} ) => {
+			await ensureHelpCenterLoaded();
+
+			return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setOpenOdieWithContext( args );
+		},
+		[]
+	);
+
 	return {
 		isLoading,
 		isShown,
 		setShowHelpCenter,
 		setNavigateToRoute,
 		setSubject,
+		setOpenOdieWithContext,
 	};
 }
