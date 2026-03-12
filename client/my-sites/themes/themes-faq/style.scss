@@ -2,24 +2,25 @@
 @import '@wordpress/base-styles/mixins';
 
 .themes-faq {
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-	padding: 40px 20px;
 	background-color: var( --studio-gray-100 );
-
-	@include break-large {
-		padding: 64px;
-	}
-
-	@include break-large {
-		flex-direction: row;
-		gap: 64px;
-	}
+	padding: 24px 24px 96px 24px;
 
 	@include breakpoint-deprecated( '<1400px' ) {
 		// Override the margin from `.layout__primary .main`
 		margin-bottom: -88px;
+	}
+}
+
+.themes-faq__wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	max-width: 1220px;
+	margin: 48px auto 0 auto;
+
+	@include break-large {
+		flex-direction: row;
+		gap: 64px;
 	}
 
 	a,
