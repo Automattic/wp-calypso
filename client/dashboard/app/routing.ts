@@ -1,6 +1,10 @@
 import { buildCiabDashboardLink, isAllowedCiabDashboardHostname } from '../app-ciab/routing';
-import { buildDotcomDashboardLink } from '../app-dotcom/routing';
+import { buildDotcomDashboardLink, isAllowedDotcomDashboardHostname } from '../app-dotcom/routing';
 import type { DashboardType } from './types';
+
+export function isAllowedDashboardHostname( hostname?: string ): boolean {
+	return isAllowedDotcomDashboardHostname( hostname ) || isAllowedCiabDashboardHostname( hostname );
+}
 
 /**
  * Returns the current dashboard based on the current URL.
