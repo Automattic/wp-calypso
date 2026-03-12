@@ -44,7 +44,6 @@ export const AttachmentMessage = ( {
 		);
 	}
 
-	// type === 'file'
 	return (
 		<div className={ clsx( 'zendesk-attachment-message', className ) }>
 			<a

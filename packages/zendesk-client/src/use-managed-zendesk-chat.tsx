@@ -1,4 +1,4 @@
-import { ThinkingMessage } from '@automattic/agenttic-ui';
+import { NoticeConfig, ThinkingMessage } from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import {
@@ -24,7 +24,7 @@ import {
 import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
 import type { AgentticMessage, ZendeskMessage } from './types';
 
-const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
 const MAX_ATTACHMENTS = 5;
 
 function isSupportedImageType( type: string ) {
@@ -170,6 +170,7 @@ const playNotificationSound = () => {
  * - sendMessage: A function to send a message to the conversation.
  */
 export const useManagedZendeskChat = () => {
+	const [ notice, setNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
 	const startedFromChatId = state?.startedFromChatId;
@@ -446,15 +447,23 @@ export const useManagedZendeskChat = () => {
 	] );
 
 	const handleFilesSelected = useCallback( async ( files: File[] ) => {
-		const toAdd = files
-			.filter( ( f ) => isSupportedImageType( f.type ) )
-			.slice( 0, MAX_ATTACHMENTS );
+		setNotice( undefined );
+
 		setPendingImages( ( prev ) => {
+			const uploadedImages = files.filter( ( f ) => isSupportedImageType( f.type ) );
+			const toAdd = uploadedImages.slice( 0, MAX_ATTACHMENTS - prev.length );
+			const shouldWarnAboutMaxAttachments = uploadedImages.length + prev.length > MAX_ATTACHMENTS;
+
+			if ( shouldWarnAboutMaxAttachments ) {
+				setNotice( {
+					status: 'warning',
+					message: __( 'Only five images can be added to the chat.', '__i18n_text_domain__' ),
+				} );
+			}
+
 			const next = [ ...prev ];
+
 			for ( const file of toAdd ) {
-				if ( next.length >= MAX_ATTACHMENTS ) {
-					break;
-				}
 				if ( next.some( ( p ) => p.name === file.name && p.file.size === file.size ) ) {
 					continue;
 				}
@@ -472,6 +481,7 @@ export const useManagedZendeskChat = () => {
 	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: { id: string } ) => {
+		setNotice( undefined );
 		setPendingImages( ( prev ) => {
 			const item = prev.find( ( p ) => p.id === image.id );
 			if ( item?.url ) {
@@ -572,6 +582,7 @@ export const useManagedZendeskChat = () => {
 		isProcessing: isSettingUpSmooch,
 		conversation,
 		connectionStatus,
+		notice,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
 		onTypingStatusChange: ( typingStatus: boolean ) => {
@@ -582,6 +593,7 @@ export const useManagedZendeskChat = () => {
 			}
 		},
 		onSubmit: onSubmitWithAttachments,
+		supportedImageTypes: SUPPORTED_IMAGE_TYPES,
 		imageUpload,
 	};
 };

@@ -42,6 +42,8 @@ export default function ZendeskChat( {
 		isProcessing,
 		onTypingStatusChange,
 		imageUpload,
+		supportedImageTypes,
+		notice,
 	} = useManagedZendeskChat();
 
 	// Notify parent when has-messages state changes
@@ -62,13 +64,14 @@ export default function ZendeskChat( {
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }
+			notice={ notice }
 			onExpand={ onExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
 			imageUpload={ imageUpload }
-			acceptedImageFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif' ] }
+			acceptedImageFileTypes={ supportedImageTypes }
 		/>
 	);
 }

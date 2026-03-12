@@ -21,7 +21,7 @@ import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../utils/load-external-providers';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -65,6 +65,8 @@ interface Props {
 	inputValue?: string;
 	/** Called when the input value changes. */
 	onInputChange?: ( value: string ) => void;
+	/** Notice to display in the chat. */
+	notice?: NoticeConfig;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
@@ -106,6 +108,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -166,6 +169,7 @@ export default function AgentChat( {
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
 			expandOnHover={ false }
+			notice={ notice }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
