@@ -51,7 +51,7 @@ export function RecommendedFeedItem( {
 					</a>
 					{ ! isCompactView && (
 						<p className="recommended-feed-description">
-							{ site.description || translate( 'No description.' ) }
+							{ site?.description || translate( 'No description.' ) }
 						</p>
 					) }
 				</div>
