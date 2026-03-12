@@ -55,7 +55,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
-		// Handle `show-component` ability tool message
+		// Handle `show-component` tool message
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
@@ -127,7 +127,7 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle `apply-block-edits` ability tool message by rendering the summary as plain text
+		// Handle `apply-block-edits` tool message
 		if (
 			textData.tool_id === 'big_sky__apply_block_edits' &&
 			typeof textData.data?.summary === 'string'
@@ -145,7 +145,7 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle support tool message by rendering its data as plain text
+		// Handle `wordpress-com-support` tool message
 		if (
 			textData.tool_id === 'big_sky__wordpress_com_support' &&
 			typeof textData.data === 'string'
