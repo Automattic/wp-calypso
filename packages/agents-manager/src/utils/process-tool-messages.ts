@@ -127,6 +127,24 @@ export function convertToolMessagesToComponents( {
 			];
 		}
 
+		// Handle `apply-block-edits` ability tool message by rendering the summary as plain text
+		if (
+			textData.tool_id === 'big_sky__apply_block_edits' &&
+			typeof textData.data?.summary === 'string'
+		) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'text' as const,
+							text: textData.data.summary.trim(),
+						},
+					],
+				},
+			];
+		}
+
 		// Handle support tool message by rendering its data as plain text
 		if (
 			textData.tool_id === 'big_sky__wordpress_com_support' &&

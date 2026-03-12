@@ -145,6 +145,22 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders apply-block-edits tool summary as plain text', () => {
+		const summaryText = 'Updated the heading and added a new paragraph.';
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			summary: summaryText,
+			calypsoCheckpointId: 'checkpoint-1',
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: summaryText,
+		} );
+	} );
+
 	it( 'returns `EscalationButton` when `forward_to_human_support` flag is set', () => {
 		const message = createMessage( {
 			content: [
