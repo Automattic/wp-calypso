@@ -116,6 +116,14 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
+		checkbox(
+			name = "EXPERIMENTAL_BUILDX",
+			value = "false",
+			label = "Use buildx with registry cache",
+			description = "Uses docker buildx with remote cache instead of docker build. Experimental.",
+			checked = "true",
+			unchecked = "false"
+		)
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -197,8 +205,67 @@ object BuildDockerImage : BuildType({
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
+		script {
+			name = "Build docker image (buildx)"
+			conditions {
+				equals("EXPERIMENTAL_BUILDX", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				BUILDER="tc-buildx-%teamcity.build.id%"
+				docker buildx create \
+					--name "${'$'}BUILDER" \
+					--driver docker-container \
+					--driver-opt network=host \
+					--use >/dev/null
+				cleanup() { docker buildx rm -f "${'$'}BUILDER" >/dev/null 2>&1 || true; }
+				trap cleanup EXIT
+				docker buildx inspect --bootstrap >/dev/null
+
+				SHA="${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				CACHE_REF="registry.a8c.com/calypso/buildcache:trunk-v1"
+
+				CACHE_ARGS="--cache-from=type=registry,ref=${'$'}CACHE_REF"
+
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					CACHE_ARGS="${'$'}CACHE_ARGS --cache-to=type=registry,ref=${'$'}CACHE_REF,mode=max"
+				fi
+
+				# shellcheck disable=SC2086
+				docker buildx build \
+					--builder "${'$'}BUILDER" \
+					--progress=plain \
+					--platform=linux/amd64 \
+					--pull \
+					${'$'}CACHE_ARGS \
+					--label com.a8c.target=calypso-live \
+					--label com.a8c.image-builder=teamcity \
+					--label com.a8c.build-id=%teamcity.build.id% \
+					--build-arg workers=32 \
+					--build-arg node_memory=16384 \
+					--build-arg use_cache=true \
+					--build-arg base_image=%base_image% \
+					--build-arg commit_sha=${'$'}SHA \
+					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE% \
+					--build-arg is_default_branch=%teamcity.build.branch.is_default% \
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN% \
+					--build-arg generate_cache_image=false \
+					-f Dockerfile \
+					-t registry.a8c.com/calypso/app:build-%build.number% \
+					-t registry.a8c.com/calypso/app:commit-${'$'}SHA \
+					-t registry.a8c.com/calypso/app:latest \
+					--load \
+					.
+			""".trimIndent()
+		}
+
 		dockerCommand {
 			name = "Build docker image"
+			conditions {
+				doesNotEqual("EXPERIMENTAL_BUILDX", "true")
+			}
 			commandType = build {
 				source = file {
 					path = "Dockerfile"
