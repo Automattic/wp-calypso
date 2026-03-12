@@ -462,7 +462,7 @@ function getSurveyTitle( surveyStep: string ) {
 		return '';
 	}
 	if ( surveyStep === UPSELL_STEP ) {
-		return __( 'Here is an idea' );
+		return '';
 	}
 
 	return __( 'Before you go, please answer a few quick questions to help us improve.' );

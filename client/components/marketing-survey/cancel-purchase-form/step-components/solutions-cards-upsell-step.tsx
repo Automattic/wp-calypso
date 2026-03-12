@@ -204,9 +204,6 @@ export default function SolutionsCardsUpsellStep( {
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				<div className="cancel-purchase-form__upsell-subheader">
-					{ translate( 'Here is an idea' ) }
-				</div>
 				<FormattedHeader
 					brandFont
 					headerText={ translate( 'Have you tried any of these options?' ) }

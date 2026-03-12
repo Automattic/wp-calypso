@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
@@ -42,9 +43,11 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				<div className="cancel-purchase-form__upsell-subheader">
-					{ translate( 'Here is an idea' ) }
-				</div>
+				{ ! isEnabled( 'cancel-flow/solutions-cards-upsell' ) && (
+					<div className="cancel-purchase-form__upsell-subheader">
+						{ translate( 'Here is an idea' ) }
+					</div>
+				) }
 				<FormattedHeader brandFont headerText={ props.title } />
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
 				<div className="cancel-purchase-form__upsell-buttons">
