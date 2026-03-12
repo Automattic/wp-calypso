@@ -7,7 +7,7 @@
 		align-items: anchor-center;
 		border-bottom: 1px solid var( --color-neutral-5 );
 		display: flex;
-		gap: 11px;
+		gap: 12px;
 		justify-content: space-between;
 		padding: 20px 0;
 
@@ -17,34 +17,34 @@
 	}
 
 	.recommended-feed-info {
+		align-items: initial;
 		width: 100%;
 	}
 
 	.recommended-feed-name {
 		color: var( --color-neutral-100 );
+		font-family: Inter, sans-serif;
 		font-size: $font-body;
-		font-weight: 600;
+		font-weight: 500;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		text-decoration: none;
 
 		&:visited {
 			color: var( --color-neutral-100 );
-		}
-
-		.components-external-link__contents {
-			text-decoration: none;
 		}
 	}
 
 	.recommended-feed-description {
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 1;
-		color: var( --color-text-subtle );
+		color: var( --studio-gray-40 );
 		display: -webkit-box;
-		font-size: 14px;
-		line-height: 18px;
+		font-size: rem( 13px );
+		line-height: 20px;
 		overflow: hidden;
+		margin: 0;
 	}
 
 	.recommended-feed-subscribe-button {
@@ -54,6 +54,7 @@
 	.is-compact-view {
 		.recommended-feed-item {
 			align-items: center;
+			border-bottom: none;
 			gap: 10px;
 			justify-content: center;
 			padding: 8px 0;
@@ -66,6 +67,12 @@
 	}
 
 	.is-card-view {
+		margin: 26px 0 0 0;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 16px 0 0 0;
+		}
+
 		.recommended-feed-item {
 			align-items: flex-start;
 			border: 1px solid var( --color-border-subtle );
@@ -73,22 +80,24 @@
 			margin-bottom: 16px;
 			padding: 24px;
 			position: relative;
+			min-height: 96px;
+			box-sizing: border-box;
 
 			@include breakpoint-deprecated( '<660px' ) {
 				border: none;
 				border-bottom: 1px solid var( --color-border-subtle );
 				border-radius: 0;
 				margin: 0;
+				min-height: initial;
 				padding: 14px 0;
 			}
 		}
 
 		.recommended-feed-info {
-			align-self: center;
 			display: flex;
 			flex: 1 1 auto;
 			flex-direction: column;
-			justify-content: center;
+			font-family: Inter, sans-serif;
 
 			a {
 				font-size: rem( 16px );
@@ -102,10 +111,7 @@
 
 		.recommended-feed-name {
 			margin: 0 0 6px 0;
-		}
-
-		.recommended-feed-description {
-			margin: 0;
+			line-height: 18px;
 		}
 
 		.recommended-feed-subscribe-button {

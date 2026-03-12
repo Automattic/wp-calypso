@@ -1,4 +1,4 @@
-import { ExternalLink } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
@@ -19,6 +19,7 @@ export function RecommendedFeedItem( {
 	variant,
 	followSource,
 }: RecommendedFeedItemProps ): JSX.Element {
+	const translate = useTranslate();
 	const { image, name, feedUrl, siteId, feedId } = feed;
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
@@ -45,11 +46,13 @@ export function RecommendedFeedItem( {
 
 			<AutoDirection>
 				<div className="recommended-feed-info">
-					<ExternalLink className="recommended-feed-name" href={ linkUrl || '' }>
-						{ name || feedUrl }
-					</ExternalLink>
-					{ ! isCompactView && site?.description && (
-						<p className="recommended-feed-description">{ site.description }</p>
+					<a className="recommended-feed-name" href={ linkUrl || '' }>
+						<h3>{ name || feedUrl }</h3>
+					</a>
+					{ ! isCompactView && (
+						<p className="recommended-feed-description">
+							{ site.description || translate( 'No description.' ) }
+						</p>
 					) }
 				</div>
 			</AutoDirection>
