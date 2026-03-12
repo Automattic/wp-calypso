@@ -981,4 +981,9 @@ ul.module-content-list-legend {
 	.stats-list-actions__mobile-toggle {
 		display: block;
 	}
+
+	// Prevent the card from clipping the dropdown menu.
+	.stats-card__content:has( .stats-list-actions--expanded ) {
+		overflow: visible;
+	}
 }
