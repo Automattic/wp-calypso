@@ -1,0 +1,87 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.search-more-options {
+	margin: 0 auto;
+	max-width: 1220px;
+	padding: 24px 24px 96px 24px;
+}
+
+.search-more-options__header {
+	margin-bottom: 32px;
+}
+
+.search-more-options__title {
+	color: var( --studio-gray-100 );
+	font-family: $brand-serif;
+	font-size: rem( 40px );
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+
+	@include break-medium {
+		font-size: rem(50px);
+	}
+}
+
+.search-more-options__subtitle {
+	color: var( --studio-gray-80 );
+	font-size: $font-body-large;
+	line-height: 1.5;
+	margin: 8px 0 0;
+}
+
+.search-more-options__cards {
+	display: grid;
+	gap: 24px;
+	grid-template-columns: 1fr;
+
+	@include break-small {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	@include break-large {
+		grid-template-columns: repeat( 3, 1fr );
+	}
+}
+
+.search-more-options__card {
+	display: flex;
+	flex-direction: column;
+}
+
+.search-more-options__illustration {
+	border-radius: 8px;
+	display: block;
+	height: auto;
+	margin-bottom: 16px;
+	width: 100%;
+}
+
+.search-more-options__card-label.badge.badge--info {
+	border-radius: 4px;
+	color: var( --studio-wordpress-blue );
+	background-color: #ebeefc;
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	margin-bottom: 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: fit-content;
+}
+
+.search-more-options__card-text {
+	color: var( --studio-gray-100 );
+	flex: 1;
+	font-size: $font-body;
+	line-height: 1.5;
+	margin: 0 0 16px;
+}
+
+.search-more-options__button.components-button.is-secondary {
+	--wp-components-color-accent: var( --studio-gray-80 );
+	--wp-components-color-accent-darker-20: var( --studio-gray-100 );
+	width: fit-content;
+}

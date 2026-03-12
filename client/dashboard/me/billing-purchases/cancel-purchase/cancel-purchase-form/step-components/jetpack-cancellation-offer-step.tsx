@@ -7,7 +7,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import AkismetLogo from '../../../../../components/akismet-logo';
 import InlineSupportLink from '../../../../../components/inline-support-link';
-import { PageHeader } from '../../../../../components/page-header';
 import type { Purchase, CancellationOffer } from '@automattic/api-core';
 import type { FC } from 'react';
 
@@ -18,7 +17,7 @@ interface Props {
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
 	>;
 	percentDiscount: number;
-	onGetCancellationOffer: () => void;
+	onGetCancellationOffer: ( newPurchaseId: string ) => void;
 	isAkismet?: boolean;
 }
 
@@ -50,7 +49,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 		let renewalCopy;
 
 		switch ( purchase.bill_period_days ) {
-			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
 				offerHeadline = sprintf(
 					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					__( 'Get %(discount)d%% off %(name)s for your next %(periods)d two-year renewals' ),
@@ -60,7 +59,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					sprintf(
 						/* Translators: %(renewalPrice)d%% is this price charged when the subscription renews */
 						__(
-							'Your biennial subscription renews every two years. It will renew at <strong>%(renewalPrice)s/biennium</strong> for the next %(periods)d bienniums. It will then renew at <strong>%(fullPrice)s/biennium</strong> each following biennium.'
+							'Your subscription renews every two years. It will renew at <strong>%(renewalPrice)s / two years</strong> for the next %(periods)d two-year renewals. It will then renew at <strong>%(fullPrice)s / two years</strong> each following two-year renewal.'
 						),
 						renewalCopyOptions.args
 					),
@@ -76,7 +75,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						sprintf(
 							/* Translators: %(renewalPrice)d%% is this price charged when the subscription renews */
 							__(
-								'Your biennial subscription renews every two years. It will renew at <strong>%(renewalPrice)s/biennium</strong> for the next biennium. It will then renew at <strong>%(fullPrice)s/biennium</strong> each following biennium.'
+								'Your subscription renews every two years. It will renew at <strong>%(renewalPrice)s / two years</strong> for the next two years. It will then renew at <strong>%(fullPrice)s/ two years</strong> each following two-year renewal.'
 							),
 							renewalCopyOptions.args
 						),
@@ -84,7 +83,7 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 					);
 				}
 				break;
-			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
 				offerHeadline = sprintf(
 					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					__( 'Get %(discount)d%% off %(name)s for the next %(periods)d years' ),
@@ -158,32 +157,19 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 
 	return (
 		<>
-			<PageHeader
-				title={ __( 'Thanks for your feedback' ) }
-				description={ sprintf(
-					/* Translators: %(brand)s is either Akismet or Jetpack */
-					__(
-						'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
-					),
-					{
-						brand: isAkismet ? 'Akismet' : 'Jetpack',
-					}
-				) }
-			/>
-
 			<div className="jetpack-cancellation-offer__card">
 				{ isAkismet ? (
 					<AkismetLogo className="jetpack-cancellation-offer__logo" size={ { height: 36 } } />
 				) : (
 					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				) }
-				<p className="jetpack-cancellation-offer__headline">{ offerHeadline }</p>
+				<h1 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h1>
 				<p>
 					{ createInterpolateElement(
 						sprintf(
 							/* Translators: %(percentDiscount)d%% is a discount percentage like 15% or 20% */
 							__(
-								'<strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
+								'A <strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
 							),
 							{
 								percentDiscount,
@@ -192,9 +178,9 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 						{
 							strong: <strong />,
 						}
-					) }
+					) }{ ' ' }
+					{ renewalCopy }
 				</p>
-				<p>{ renewalCopy }</p>
 				<p className="jetpack-cancellation-offer__tos">
 					{ createInterpolateElement(
 						__(

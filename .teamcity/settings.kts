@@ -174,7 +174,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-e2e:%build.number%"
-				commandArgs = "--target ci-e2e"
+				commandArgs = "--target ci-e2e --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -185,7 +185,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-wpcom:%build.number%"
-				commandArgs = "--target ci-wpcom"
+				commandArgs = "--target ci-wpcom --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
 		}

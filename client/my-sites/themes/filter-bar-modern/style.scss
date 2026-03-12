@@ -80,10 +80,7 @@
 	flex-shrink: 0;
 	margin-top: -24px; // Accommodate the external label
 	min-width: 120px;
-
-	@media ( min-width: $break-mobile ) {
-		margin-left: 0;
-	}
+	padding-left: 16px;
 
 	.components-input-control__container {
 		border-radius: 4px;
