@@ -27,7 +27,11 @@ export function dashboardOrigins(): string[] {
  * This is a temporary measure until we reimplement the screen natively in the dashboard.
  */
 export function wpcomLink( path: string ) {
-	if ( [ '/start', '/setup', '/checkout' ].some( ( prefix ) => path.startsWith( prefix ) ) ) {
+	if (
+		[ '/start', '/setup', '/checkout' ].some(
+			( prefix ) => path === prefix || path.startsWith( prefix + '/' )
+		)
+	) {
 		const dashboard = getCurrentDashboard();
 		if ( dashboard === 'ciab' ) {
 			return buildDashboardLink( dashboard, path );
