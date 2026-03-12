@@ -317,5 +317,4 @@ export type HelpCenterAction =
 			| typeof setHelpCenterOptions
 			| typeof setCurrentUser
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >
-	| GeneratorReturnType< typeof setOpenOdieWithContext >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;
