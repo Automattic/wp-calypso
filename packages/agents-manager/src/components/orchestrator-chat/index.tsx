@@ -4,16 +4,21 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
-import useCopyMessage from '../../hooks/use-copy-message';
-import useFeedback from '../../hooks/use-feedback';
+import useCopyAction from '../../hooks/use-copy-action';
+import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId } from '../../utils/agent-session';
-import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
+import {
+	convertToolMessagesToComponents,
+	disablePickersAndRemoveNextButton,
+} from '../../utils/process-tool-messages';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -24,6 +29,7 @@ import type {
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	ImageUploadHook,
+	UseCheckpointHook,
 } from '../../utils/load-external-providers';
 import type { NavigateFunction } from 'react-router-dom';
 
@@ -60,6 +66,8 @@ interface Props {
 	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -83,6 +91,7 @@ export default function OrchestratorChat( {
 	getChatComponent,
 	siteBuildUtils,
 	useImageUpload,
+	useCheckpoint,
 	onHasMessagesChange,
 	navigate,
 }: Props ) {
@@ -93,6 +102,10 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+
+	const currentPostId = useSelect( ( select ) => {
+		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+	}, [] );
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
@@ -151,14 +164,18 @@ export default function OrchestratorChat( {
 	// Save new chat route for cross-domain conversation restore.
 	useSaveNewChatRoute( agentId, messages );
 
+	// Register an "Undo" action on agent messages with checkpoints.
+	const checkpoint = useCheckpoint?.();
+	useCheckpointAction( registerMessageActions, checkpoint );
+
 	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
+	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
 		registerMessageActions,
 		messages,
 	} );
 
 	// Register a "Copy" action on plain-text agent messages.
-	useCopyMessage( registerMessageActions );
+	useCopyAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -301,6 +318,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			currentPostId,
 		} );
 
 		// Dedup and append new messages to cached messages during back-navigation.
@@ -314,6 +332,7 @@ export default function OrchestratorChat( {
 		return currentMessages;
 	}, [
 		cachedMessages,
+		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
 		hasCachedConversation,
@@ -331,7 +350,11 @@ export default function OrchestratorChat( {
 
 	const handleViewHistory = () => {
 		// Cache current conversation messages to restore when navigating back from history.
-		cachedConversation = { sessionId: getActiveSessionId(), messages: displayedMessages };
+		cachedConversation = {
+			sessionId: getActiveSessionId(),
+			// Disable stale picker components and strip `next-step-button` before caching.
+			messages: disablePickersAndRemoveNextButton( displayedMessages ),
+		};
 	};
 
 	// Determine which suggestions to show following Big Sky's logic:

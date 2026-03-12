@@ -141,6 +141,7 @@ function AgentSetup(): JSX.Element | null {
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
 			useImageUpload={ loadedProviders.useImageUpload }
+			useCheckpoint={ loadedProviders.useCheckpoint }
 		/>
 	);
 }

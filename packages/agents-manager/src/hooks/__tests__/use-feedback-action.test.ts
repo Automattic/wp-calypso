@@ -4,7 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
-import useFeedback from '../use-feedback';
+import useFeedbackAction from '../use-feedback-action';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 
 // Capture the onFeedback callback passed to createFeedbackActions
@@ -68,7 +68,7 @@ function findFetchCall( urlSubstring: string ) {
 	);
 }
 
-describe( 'useFeedback', () => {
+describe( 'useFeedbackAction', () => {
 	const defaultAgentConfig = {
 		agentId: 'test-agent',
 		sessionId: 'session-abc',
@@ -93,7 +93,7 @@ describe( 'useFeedback', () => {
 
 	describe( 'initialization', () => {
 		it( 'registers feedback actions on mount', () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 
 			expect( mockRegisterMessageActions ).toHaveBeenCalledWith(
 				expect.objectContaining( {
@@ -110,20 +110,20 @@ describe( 'useFeedback', () => {
 				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 
 			expect( mockRegisterMessageActions ).not.toHaveBeenCalled();
 		} );
 
 		it( 'only registers once across rerenders', () => {
-			const { rerender } = renderHook( () => useFeedback( defaultConfig ) );
+			const { rerender } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			rerender();
 
 			expect( mockRegisterMessageActions ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'resets registration when session changes', () => {
-			const { rerender } = renderHook( ( props ) => useFeedback( props ), {
+			const { rerender } = renderHook( ( props ) => useFeedbackAction( props ), {
 				initialProps: defaultConfig,
 			} );
 
@@ -142,7 +142,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'passes condition that filters to agent messages only', () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 
 			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
 			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
@@ -152,7 +152,7 @@ describe( 'useFeedback', () => {
 	describe( 'thumbs up feedback', () => {
 		it( 'sends rating with `message_text` via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Here is the answer' ) ];
-			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			renderHook( () => useFeedbackAction( { ...defaultConfig, messages } ) );
 
 			await triggerFeedback( 'msg-1', 'up' );
 
@@ -172,7 +172,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'records tracks event', async () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
@@ -182,7 +182,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'does not show feedback input', async () => {
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( result.current.showFeedbackInput ).toBe( false );
@@ -192,7 +192,7 @@ describe( 'useFeedback', () => {
 	describe( 'thumbs down feedback', () => {
 		it( 'sends rating with `message_text` via fetch', async () => {
 			const messages = [ createMessage( 'msg-1', 'agent', 'Bad answer' ) ];
-			renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			renderHook( () => useFeedbackAction( { ...defaultConfig, messages } ) );
 
 			await triggerFeedback( 'msg-1', 'down' );
 
@@ -210,7 +210,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'records tracks event', async () => {
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
@@ -220,7 +220,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'shows feedback input', async () => {
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( result.current.showFeedbackInput ).toBe( true );
@@ -236,7 +236,7 @@ describe( 'useFeedback', () => {
 				createMessage( 'msg-4', 'agent', 'Let me try a different approach...' ),
 			];
 
-			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			const { result } = renderHook( () => useFeedbackAction( { ...defaultConfig, messages } ) );
 			await triggerFeedback( 'msg-4', 'down' );
 
 			await act( async () => {
@@ -273,7 +273,7 @@ describe( 'useFeedback', () => {
 				createMessage( 'msg-6', 'agent', 'Message 6' ),
 			];
 
-			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			const { result } = renderHook( () => useFeedbackAction( { ...defaultConfig, messages } ) );
 			await triggerFeedback( 'msg-6', 'down' );
 
 			await act( async () => {
@@ -286,7 +286,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'records tracks event when feedback text is submitted', async () => {
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
 			await act( async () => {
@@ -307,7 +307,7 @@ describe( 'useFeedback', () => {
 				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
 			await act( async () => {
@@ -320,7 +320,7 @@ describe( 'useFeedback', () => {
 		} );
 
 		it( 'does not submit if feedback text is empty', async () => {
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 			mockFetch.mockClear();
 
@@ -334,7 +334,7 @@ describe( 'useFeedback', () => {
 
 	describe( 'feedback cancellation', () => {
 		it( 'hides feedback input when cancelled', async () => {
-			const { result } = renderHook( () => useFeedback( defaultConfig ) );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
 			expect( result.current.showFeedbackInput ).toBe( true );
@@ -355,7 +355,7 @@ describe( 'useFeedback', () => {
 				getActiveSessionId: mockGetActiveSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
-			renderHook( () => useFeedback( defaultConfig ) );
+			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
 			expect( mockFetch ).not.toHaveBeenCalled();
@@ -374,7 +374,7 @@ describe( 'useFeedback', () => {
 				createMessage( 'msg-3', 'agent', 'Here are your analytics' ),
 			];
 
-			const { result } = renderHook( () => useFeedback( { ...defaultConfig, messages } ) );
+			const { result } = renderHook( () => useFeedbackAction( { ...defaultConfig, messages } ) );
 			await triggerFeedback( 'msg-3', 'down' );
 
 			await act( async () => {

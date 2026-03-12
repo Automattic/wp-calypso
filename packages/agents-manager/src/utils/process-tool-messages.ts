@@ -7,6 +7,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
+	currentPostId?: number;
 }
 
 /**
@@ -15,11 +16,12 @@ interface Options {
 export function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
+	currentPostId,
 }: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
-		// @ts-expect-error -- 'assistant' comes from Big Sky messages
+		// @ts-expect-error -- `assistant` comes from Big Sky messages
 		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
 			return [ message ];
 		}
@@ -53,7 +55,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
-		// Handle show-component ability tool message
+		// Handle `show-component` ability tool message
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
@@ -71,13 +73,22 @@ export function convertToolMessagesToComponents( {
 				];
 			}
 
-			const { type: contentType, props, followUpTasks } = textData.data ?? {};
+			const { type: contentType, props, followUpTasks, isCurrent, postId } = textData.data ?? {};
 			const Component = getChatComponent?.( contentType );
 
-			// Filter out the raw JSON message to avoid showing it to the user
+			// No matching component found for this content type — drop the message to avoid showing raw JSON.
 			if ( ! Component ) {
 				return [];
 			}
+
+			// Whether this is the last message in the array.
+			const isLastMessage = index === array.length - 1;
+
+			// In the site editor, React-Query caching keeps past conversations alive when the
+			// user navigates to a different page. Compare the picker's `postId` with the
+			// current editor page to disable pickers that no longer belong to this page.
+			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
+			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
 
 			const componentMessage = {
 				...message,
@@ -88,12 +99,14 @@ export function convertToolMessagesToComponents( {
 						componentProps: { ...props, contentType },
 					},
 				],
+				disabled: isStale,
+				// Tag for `disablePickersAndRemoveNextButton` to disable on back-navigation.
+				isShowComponentMessage: true,
 			};
 
-			// Only show `next-step-button` after the most recent component message with follow-up tasks
-			const isLastMessage = index === array.length - 1;
+			// Only show `next-step-button` when the component is active and has follow-up tasks.
 			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( ! isLastMessage || ! followUpTasks || ! NextStepButton ) {
+			if ( isStale || ! followUpTasks || ! NextStepButton ) {
 				return [ componentMessage ];
 			}
 
@@ -108,6 +121,8 @@ export function convertToolMessagesToComponents( {
 							component: NextStepButton,
 						},
 					],
+					// Tag for `disablePickersAndRemoveNextButton` to remove on back-navigation.
+					isNextStepButton: true,
 				},
 			];
 		}
@@ -153,5 +168,24 @@ export function convertToolMessagesToComponents( {
 		// eslint-disable-next-line no-console
 		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
+	} );
+}
+
+/**
+ * Disables stale picker components and removes next-step buttons on back-navigation.
+ */
+export function disablePickersAndRemoveNextButton( messages: UIMessage[] ): UIMessage[] {
+	return messages.flatMap( ( message ) => {
+		// @ts-ignore -- custom flag not on the `UIMessage` type.
+		if ( message.isNextStepButton ) {
+			return [];
+		}
+
+		// @ts-ignore -- custom flag not on the `UIMessage` type.
+		if ( message.isShowComponentMessage ) {
+			return [ { ...message, disabled: true } ];
+		}
+
+		return [ message ];
 	} );
 }

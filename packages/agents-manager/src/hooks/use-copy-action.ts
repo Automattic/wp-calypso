@@ -1,4 +1,5 @@
 import { createElement, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { copy, Icon } from '@wordpress/icons';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
@@ -41,9 +42,9 @@ function getCopyableText( message: UIMessage ): string {
 }
 
 /**
- * Registers a "Copy" action on agent messages that copies the text content to the clipboard.
+ * Registers a copy action on agent messages that copies the text content to the clipboard.
  */
-export default function useCopyMessage( registerMessageActions: RegisterMessageActions ): void {
+export default function useCopyAction( registerMessageActions: RegisterMessageActions ): void {
 	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-copy',
@@ -61,7 +62,7 @@ export default function useCopyMessage( registerMessageActions: RegisterMessageA
 				return [
 					{
 						id: 'copy',
-						label: 'Copy',
+						label: __( 'Copy', '__i18n_text_domain__' ),
 						icon: createElement( Icon, {
 							icon: copy,
 							className:
@@ -72,7 +73,7 @@ export default function useCopyMessage( registerMessageActions: RegisterMessageA
 								await navigator.clipboard.writeText( text );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
-								console.error( '[useCopyMessage] Failed to copy text to clipboard:', error );
+								console.error( '[useCopyAction] Failed to copy text to clipboard:', error );
 							}
 						},
 					},
