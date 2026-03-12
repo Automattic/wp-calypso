@@ -116,6 +116,14 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
+		checkbox(
+			name = "EXPERIMENTAL_BUILDX",
+			value = "false",
+			label = "Run experimental buildx diagnostics.",
+			description = "Runs inline buildx diagnostics for manual/custom builds.",
+			checked = "true",
+			unchecked = "false"
+		)
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -220,6 +228,33 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Experimental buildx diagnostics"
+			conditions {
+				equals("EXPERIMENTAL_BUILDX", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				echo "=== docker ==="
+				docker --version
+				docker version || true
+				docker info | sed -n '1,120p' || true
+
+				echo "=== buildx ==="
+				docker buildx version
+				docker buildx ls || true
+
+				echo "=== buildx inspect (default) ==="
+				docker buildx inspect --bootstrap || true
+
+				echo "=== try create a dedicated builder (docker-container driver) ==="
+				docker buildx create --name tc-builder --driver docker-container --use 2>/dev/null || docker buildx use tc-builder
+				docker buildx inspect --bootstrap
+			""".trimIndent()
 		}
 
 		script {
