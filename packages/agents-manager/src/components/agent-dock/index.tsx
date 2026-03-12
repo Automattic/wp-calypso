@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -131,13 +131,13 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	const handleAbort = () => {
+	const handleAbort = useCallback( () => {
 		const agentManager = getAgentManager();
 
 		if ( agentManager.hasAgent( agentId ) ) {
 			agentManager.abortCurrentRequest( agentId );
 		}
-	};
+	}, [ agentId ] );
 
 	const handleNewChat = () => navigate( '/' );
 
