@@ -252,7 +252,12 @@ object BuildDockerImage : BuildType({
 				docker buildx inspect --bootstrap || true
 
 				echo "=== try create a dedicated builder (docker-container driver) ==="
-				docker buildx create --name tc-builder --driver docker-container --use 2>/dev/null || docker buildx use tc-builder
+				docker buildx rm tc-builder || true
+				docker buildx create \
+				  --name tc-builder \
+				  --driver docker-container \
+				  --driver-opt network=host \
+				  --use
 				docker buildx inspect --bootstrap
 			""".trimIndent()
 		}
