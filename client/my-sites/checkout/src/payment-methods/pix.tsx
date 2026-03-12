@@ -84,6 +84,23 @@ export function createPixPaymentMethod( {
 	};
 }
 
+export function createPixAutomaticoPaymentMethod( {
+	submitButtonContent,
+}: {
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
+	const state = new PixPaymentMethodState();
+
+	return {
+		id: 'pix_automatico',
+		paymentProcessorId: 'pix_automatico',
+		label: <PixLabel />,
+		activeContent: <PixForm state={ state } />,
+		submitButton: <PixPayButton submitButtonContent={ submitButtonContent } state={ state } />,
+		getAriaLabel: () => 'Pix Automático',
+	};
+}
+
 function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 	const [ , forceReload ] = useState( 0 );
 	useEffect( () => {

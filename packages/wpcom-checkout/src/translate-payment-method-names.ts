@@ -147,6 +147,7 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	switch ( slug ) {
 		case 'ebanx':
 		case 'pix':
+		case 'pix_automatico':
 		case 'netbanking':
 		case 'paypal-direct':
 		case 'paypal-express':

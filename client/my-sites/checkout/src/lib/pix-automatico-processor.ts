@@ -95,7 +95,7 @@ export async function pixAutomaticoProcessor(
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart,
 		} ),
-		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix',
+		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico',
 	} );
 
 	const genericErrorMessage = translate(
