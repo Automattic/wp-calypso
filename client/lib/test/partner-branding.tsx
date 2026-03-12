@@ -17,6 +17,7 @@ import {
 	clearPersistedCiabPartnerId,
 	CIAB_PARTNERS,
 } from '../partner-branding';
+import type { CiabPartnerConfig } from '../partner-branding';
 import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
@@ -396,20 +397,20 @@ describe( 'partner-branding', () => {
 	} );
 
 	describe( 'partner without featureFlag is always active', () => {
-		const testPartner = {
+		const testPartner: CiabPartnerConfig = {
 			id: 'test-no-flag',
 			displayName: 'Test',
 			logo: { src: 'test.svg', alt: 'Test' },
-			ssoProviders: [ 'google' ] as const,
+			ssoProviders: [ 'google' ],
 			domains: [ 'test.example.com' ],
 		};
 
 		beforeEach( () => {
-			( CIAB_PARTNERS as Record< string, typeof testPartner > )[ 'test-no-flag' ] = testPartner;
+			( CIAB_PARTNERS as Record< string, CiabPartnerConfig > )[ 'test-no-flag' ] = testPartner;
 		} );
 
 		afterEach( () => {
-			delete ( CIAB_PARTNERS as Record< string, unknown > )[ 'test-no-flag' ];
+			delete ( CIAB_PARTNERS as Record< string, CiabPartnerConfig > )[ 'test-no-flag' ];
 		} );
 
 		test( 'getCiabConfigFromCurrentDomain returns partner even when all feature flags are disabled', () => {
