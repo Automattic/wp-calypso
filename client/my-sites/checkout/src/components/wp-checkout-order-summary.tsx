@@ -90,7 +90,7 @@ export function WPCheckoutOrderSummary( {
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	return (
 		<CheckoutSummaryCard
-			className={ isCartUpdating ? 'is-loading' : '' }
+			className={ `checkout__summary-card${ isCartUpdating ? ' is-loading' : '' }` }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
 			{ showFeaturesList && (
@@ -176,13 +176,16 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			<CheckoutSummaryTitle>
+			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
 				<span>{ translate( 'Your order' ) }</span>
 			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
-			<CheckoutSummaryAmountWrapper>
-				<CheckoutSubtotalSection>
-					<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
+			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
+				<CheckoutSubtotalSection className="wp-checkout-order-summary__subtotal-section">
+					<CheckoutSummarySubtotal
+						key="checkout-summary-line-item-subtotal"
+						className="wp-checkout-order-summary__subtotal"
+					>
 						<span>{ translate( 'Subtotal' ) }</span>
 						<span className="wp-checkout-order-summary__subtotal-price">
 							{ totalDiscount > 0 && (
@@ -228,7 +231,7 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal>
+				<CheckoutSummaryTotal className="wp-checkout-order-summary__total">
 					<span className="wp-checkout-order-summary__label">
 						{ translate( 'Total', {
 							context: 'The label of the total line item in checkout',
