@@ -92,6 +92,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -181,7 +182,8 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.is_upgradable &&
 			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase )
+			! isJetpackTemporarySitePurchase( purchase ) &&
+			! isA4ABillingDragonPurchase( purchase )
 	);
 }
 
@@ -669,7 +671,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -703,6 +705,16 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
+	const offerText = isOffer
+		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
+				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+		  } )
+		: '';
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -710,7 +722,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+			description={
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+			}
 		/>
 	);
 }

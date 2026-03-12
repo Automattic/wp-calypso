@@ -25,7 +25,8 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
-		"wordpress-ai-tools": true
+		"wordpress-ai-tools": true,
+		"two-factor/enhanced-security": true
 	},
 	"enable_all_sections": false,
 	"site_filter": [],

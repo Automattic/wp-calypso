@@ -64,6 +64,10 @@ export function canLeaveSite( site: Site ) {
 	);
 }
 
+export function canDisconnectSite( site: Site ) {
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
+}
+
 export function canResetSite( site: Site ) {
 	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
 }

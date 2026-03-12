@@ -11,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -79,10 +80,29 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 
 		authErrorHandled.current = true;
+
+		if ( config.isEnabled( 'oauth' ) ) {
+			const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
+			redirectUri.search = new URLSearchParams( {
+				next: window.location.pathname + window.location.search,
+			} ).toString();
+
+			const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
+			authUri.search = new URLSearchParams( {
+				response_type: 'token',
+				client_id: String( config( 'oauth_client_id' ) ),
+				redirect_uri: redirectUri.toString(),
+				scope: 'global',
+				blog_id: '0',
+			} ).toString();
+
+			window.location.replace( authUri.toString() );
+			return;
+		}
+
 		const currentPath = window.location.href;
 		const path = config( 'wpcom_login_url' ) || '/log-in';
 		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-
 		window.location.href = loginUrl;
 	}, [] );
 

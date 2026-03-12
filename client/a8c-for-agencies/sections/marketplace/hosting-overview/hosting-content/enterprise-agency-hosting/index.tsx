@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -41,10 +40,6 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 		);
 	};
 
-	const isVipPartnerOpportunityReferralsEnabled = isEnabled(
-		'a4a-vip-partner-opportunity-referrals'
-	);
-
 	return (
 		<div className="enterprise-agency-hosting">
 			<HostingPlanSection
@@ -59,7 +54,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						</div>
 
 						<div>
-							{ isReferMode && isVipPartnerOpportunityReferralsEnabled
+							{ isReferMode
 								? preventWidows(
 										translate(
 											"Successfully refer your client to WordPress VIP and you'll earn up to a %(commission)s%% one-time commission",
@@ -77,7 +72,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					</div>
 
 					<div className="enterprise-agency-hosting__cta-buttons">
-						{ isReferMode && isVipPartnerOpportunityReferralsEnabled ? (
+						{ isReferMode ? (
 							<>
 								<Button
 									className="enterprise-agency-hosting__cta-button"
@@ -115,17 +110,15 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 									{ translate( 'Request a Demo ↗' ) }
 								</Button>
 
-								{ isVipPartnerOpportunityReferralsEnabled && (
-									<Button
-										className="enterprise-agency-hosting__cta-button"
-										href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
-										onClick={ onReferClientClick }
-										variant="secondary"
-										__next40pxDefaultSize
-									>
-										{ translate( 'Refer your client to VIP hosting' ) }
-									</Button>
-								) }
+								<Button
+									className="enterprise-agency-hosting__cta-button"
+									href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+									onClick={ onReferClientClick }
+									variant="secondary"
+									__next40pxDefaultSize
+								>
+									{ translate( 'Refer your client to VIP hosting' ) }
+								</Button>
 							</>
 						) }
 					</div>
@@ -134,27 +127,25 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 				<HostingPlanSection.Details
 					heading={ translate( 'The platform the biggest brands trust.' ) }
 				>
-					{ isVipPartnerOpportunityReferralsEnabled && (
-						<div className="enterprise-agency-hosting__top-details-subheading">
-							{ translate(
-								'Earn up to a %(commission)s%% one-time commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
-								{
-									components: {
-										a: (
-											<a
-												href="https://automattic.com/for-agencies/program-incentives"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-									args: {
-										commission: VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE,
-									},
-								}
-							) }
-						</div>
-					) }
+					<div className="enterprise-agency-hosting__top-details-subheading">
+						{ translate(
+							'Earn up to a %(commission)s%% one-time commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
+							{
+								components: {
+									a: (
+										<a
+											href="https://automattic.com/for-agencies/program-incentives"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+								args: {
+									commission: VIP_PARTNER_OPPORTUNITY_COMMISSION_PERCENTAGE,
+								},
+							}
+						) }
+					</div>
 
 					<SimpleList
 						items={ [

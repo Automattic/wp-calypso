@@ -3,6 +3,7 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import config from '@automattic/calypso-config';
@@ -56,5 +57,6 @@ boot( {
 			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
+		domainsQuery: () => domainsQuery( { garden: 'commerce' } ),
 	},
 } );

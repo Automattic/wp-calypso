@@ -635,7 +635,7 @@
 // Modern theme card overrides (logged-out redesign)
 .theme-showcase.is-modern {
 	.themes__showcase {
-		padding: 0 24px;
+		padding: 0;
 	}
 
 	.themes-list {
@@ -649,11 +649,13 @@
 	}
 
 	.theme-card {
-		margin: 0 0 48px 0;
+		margin: 0;
 	}
 
 	.theme-card__image-container {
+		border: none;
 		border-radius: 8px;
+		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
 	}
 
 	// Hide style variation swatches for logged-out modern view

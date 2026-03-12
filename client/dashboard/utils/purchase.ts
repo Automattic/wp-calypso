@@ -209,8 +209,12 @@ export function isTransferredOwnership(
 	);
 }
 
+export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
+	return purchase.meta === 'is-a4a';
+}
+
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
+	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
@@ -478,6 +482,22 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
 export function isJetpackSearch( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug
 		? Object.keys( JetpackSearchProducts ).includes( product.product_slug )
+		: false;
+}
+
+const JETPACK_STATS_PAID_PRODUCT_SLUGS = [
+	'jetpack_stats_bi_yearly',
+	'jetpack_stats_yearly',
+	'jetpack_stats_monthly',
+	'jetpack_stats_pwyw_yearly',
+] as const;
+
+/**
+ * Checks if a product slug is a paid Jetpack Stats product.
+ */
+export function isJetpackStatsPaidProductSlug( productSlug: string | undefined ): boolean {
+	return productSlug
+		? ( JETPACK_STATS_PAID_PRODUCT_SLUGS as readonly string[] ).includes( productSlug )
 		: false;
 }
 

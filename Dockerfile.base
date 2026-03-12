@@ -6,6 +6,7 @@ FROM node:22.9.0-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG node_memory=16384
+ARG workers=32
 ARG commit_sha="(unknown)"
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
@@ -15,6 +16,7 @@ ENV PROFILE=true
 ENV SKIP_TSC=true
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
+ENV WORKERS=$workers
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV IS_CI=true
@@ -23,7 +25,8 @@ ENV COMMIT_SHA $commit_sha
 COPY . .
 
 RUN yarn --inline-builds \
-	# Prime webpack caches, including sourcemaps.
+	# Prime the production webpack cache flavors used by PR builds and trunk/Sentry builds.
+	&& NODE_ENV=production yarn build-client \
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
@@ -43,6 +46,8 @@ ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
+
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apt-get update \
@@ -114,9 +119,11 @@ RUN apt-get update && \
 	apt-get install -y apt-transport-https wget
 
 # libffi6 is no longer available from apt as of bullseye.
-RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
+RUN wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
 	dpkg -i libffi6_3.2.1-8_amd64.deb && \
-	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
+	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
 	echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php-sury.list && \
 	apt-get update && \
  	apt-get upgrade -y && \
@@ -125,6 +132,7 @@ RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_
 	# Install sentry-cli. We pin it to a version to make it easier to know at a
 	# glance what is the version being used. It's important to keep the JS SDK and
 	# the CLI updated to their latest stable versions.
-	wget -O - https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.18.1" bash
+	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		-O - https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.18.1" bash
 
 ENTRYPOINT [ "/bin/bash" ]

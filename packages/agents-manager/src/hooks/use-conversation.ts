@@ -51,6 +51,10 @@ export default function useConversation( {
 			);
 		},
 		enabled: enabled && !! sessionId,
+		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		staleTime: 300000, // 5 minutes
 	} );
 
 	useEffect(

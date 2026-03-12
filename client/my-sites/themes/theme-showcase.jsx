@@ -51,6 +51,8 @@ import {
 	isStaticFilter,
 	constructThemeShowcaseUrl,
 } from './helpers';
+import SearchResultsModern from './search-results-modern';
+import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
@@ -546,6 +548,37 @@ class ThemeShowcase extends Component {
 		const tabKey = this.getSelectedTabFilter().key;
 		const staticFilters = this.getStaticFilters();
 
+		if (
+			this.isThemeShowcaseModern() &&
+			! this.props.category &&
+			! this.props.isCollectionView &&
+			! this.props.filter &&
+			! this.props.vertical &&
+			! this.props.search &&
+			( ! this.props.tier || this.props.tier === 'all' )
+		) {
+			return (
+				<RecommendedSections
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
+		if ( this.isThemeShowcaseModern() && this.props.search && ! this.props.isCollectionView ) {
+			return (
+				<SearchResultsModern
+					search={ this.props.search }
+					filter={ this.props.filter || '' }
+					tier={ this.props.tier || '' }
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
@@ -574,6 +607,16 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	getThemeSource = ( staticFilters ) => {
+		if ( this.props.tier === 'community' ) {
+			return 'wporg';
+		}
+		if ( this.props.category === staticFilters.MYTHEMES?.key ) {
+			return null;
+		}
+		return 'wpcom';
 	};
 
 	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
@@ -643,7 +686,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.getThemeSource( staticFilters ),
 			isThemeShowcaseModern: this.isThemeShowcaseModern(),
 		};
 
@@ -787,11 +830,12 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								search: '',
+								search: this.props.tier === 'community' ? this.props.search : '',
 								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							options={ { search: this.props.search } }
 							isLoggedIn={ isLoggedIn }
 						/>
 					) }
