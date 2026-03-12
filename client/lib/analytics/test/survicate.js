@@ -36,7 +36,6 @@ jest.mock( '@automattic/survicate', () => ( {
 	isSurvicateScriptLoaded: jest.fn(),
 	setSurvicateVisitorTraits: jest.fn(),
 	getAccountAgeInDays: jest.fn(),
-	getSurvicateApi: jest.fn(),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
@@ -58,7 +57,6 @@ import {
 	isSurvicateScriptLoaded,
 	setSurvicateVisitorTraits,
 	getAccountAgeInDays,
-	getSurvicateApi,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
 import { render } from '@testing-library/react';
@@ -239,7 +237,6 @@ describe( 'HelpCenterMoreResources', () => {
 	beforeEach( () => {
 		delete window._sva;
 		recordTracksEvent.mockClear();
-		getSurvicateApi.mockReset();
 		// Set up fresh module imports
 		jest.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
@@ -277,17 +274,12 @@ describe( 'HelpCenterMoreResources', () => {
 		const removeEventListener = jest.fn();
 		const destroyVisitor = jest.fn();
 
-		const mockApi = {
+		window._sva = {
 			invokeEvent,
 			addEventListener,
 			removeEventListener,
 			destroyVisitor,
 		};
-
-		// HelpCenterMoreResources checks window._sva directly for rendering the button
-		window._sva = { invokeEvent };
-		// showHelpCenterFeedbackSurvey uses getSurvicateApi()
-		getSurvicateApi.mockReturnValue( mockApi );
 
 		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
 		const button = queryByRole( 'button', {
@@ -311,13 +303,11 @@ describe( 'HelpCenterMoreResources', () => {
 		);
 	} );
 
-	test( 'does not invoke events when getSurvicateApi returns null', () => {
-		getSurvicateApi.mockReturnValue( null );
-
-		showHelpCenterFeedbackSurvey();
+	test( 'does not invoke events when _sva is unavailable', () => {
+		delete window._sva;
 
 		// Should exit early without errors
-		expect( getSurvicateApi ).toHaveBeenCalled();
+		expect( () => showHelpCenterFeedbackSurvey() ).not.toThrow();
 	} );
 
 	test( 'invokes Survicate event and wires overlay click to destroy visitor', () => {
@@ -341,13 +331,12 @@ describe( 'HelpCenterMoreResources', () => {
 
 		document.querySelector = jest.fn( () => overlay );
 
-		const mockApi = {
+		window._sva = {
 			addEventListener,
 			removeEventListener,
 			invokeEvent,
 			destroyVisitor,
 		};
-		getSurvicateApi.mockReturnValue( mockApi );
 
 		showHelpCenterFeedbackSurvey();
 

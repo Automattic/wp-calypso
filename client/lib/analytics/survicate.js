@@ -5,7 +5,6 @@ import {
 	isSurvicateScriptLoaded,
 	setSurvicateVisitorTraits,
 	getAccountAgeInDays,
-	getSurvicateApi,
 	SURVICATE_WORKSPACE_ID,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
@@ -53,9 +52,9 @@ export function addSurvicate( { email, registrationDate } ) {
  * See: https://a8c.slack.com/archives/C04H4NY6STW/p1766088738895199?thread_ts=1765290523.386849&cid=C04H4NY6STW
  */
 export function showHelpCenterFeedbackSurvey() {
-	const api = getSurvicateApi();
+	const survicate = window._sva;
 
-	if ( ! api ) {
+	if ( ! survicate?.invokeEvent ) {
 		return;
 	}
 
@@ -67,13 +66,13 @@ export function showHelpCenterFeedbackSurvey() {
 		}
 
 		const handleOverlayClick = () => {
-			api.destroyVisitor();
+			survicate.destroyVisitor?.();
 		};
 
 		overlay.addEventListener( 'click', handleOverlayClick, { once: true } );
-		api.removeEventListener( 'survey_displayed', handleSurveyDisplayed );
+		survicate.removeEventListener?.( 'survey_displayed', handleSurveyDisplayed );
 	};
 
-	api.addEventListener( 'survey_displayed', handleSurveyDisplayed );
-	api.invokeEvent( 'showFeedbackSurveyFromHelpCenter' );
+	survicate.addEventListener?.( 'survey_displayed', handleSurveyDisplayed );
+	survicate.invokeEvent( 'showFeedbackSurveyFromHelpCenter' );
 }
