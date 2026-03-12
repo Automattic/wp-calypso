@@ -76,10 +76,10 @@ const SecurityKeysList = ( {
 							isBrowserSupported
 								? createInterpolateElement(
 										__(
-											'Security keys offer a more robust form of two-step authentication. <learnMoreLink />'
+											'Use a <securityKeyLink>security key</securityKeyLink> to log in to your account.'
 										),
 										{
-											learnMoreLink: (
+											securityKeyLink: (
 												<InlineSupportLink supportContext="two-step-authentication-security-key" />
 											),
 										}
