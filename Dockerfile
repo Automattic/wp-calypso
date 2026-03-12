@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 ARG use_cache=false
 ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
@@ -72,7 +73,8 @@ RUN node --version && yarn --version && npm --version
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-RUN yarn run build 2>&1 | tee /tmp/build_log.txt
+RUN --mount=type=cache,target=/calypso/.cache,id=calypso-cache,sharing=locked \
+    yarn run build 2>&1 | tee /tmp/build_log.txt
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
