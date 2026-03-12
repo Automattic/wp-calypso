@@ -173,6 +173,7 @@ const StatsCard = ( props: StatsCardProps ) => {
 						<a
 							className={ `${ BASE_CLASS_NAME }--footer` }
 							href={ footerAction?.url }
+							onClick={ footerAction.onClick }
 							aria-label={ footerAriaLabel }
 						>
 							{ footerLabel }
