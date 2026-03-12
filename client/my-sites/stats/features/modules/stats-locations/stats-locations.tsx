@@ -391,10 +391,10 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 												: translate( 'View details', {
 														context: 'Stats: Button label to see the detailed content of a panel',
 												  } ),
+										onClick: onShowMoreClick,
 								  }
 								: undefined
 						}
-						onShowMoreClick={ onShowMoreClick }
 						overlay={ moduleOverlay }
 						listItemClassName={ listItemClassName }
 					/>
