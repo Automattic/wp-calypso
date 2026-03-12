@@ -7,6 +7,7 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
@@ -31,7 +32,6 @@ import type {
 	ImageUploadHook,
 	UseCheckpointHook,
 } from '../../utils/load-external-providers';
-import type { NavigateFunction } from 'react-router-dom';
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -62,8 +62,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Navigate function from the router. */
-	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
@@ -93,10 +91,10 @@ export default function OrchestratorChat( {
 	useImageUpload,
 	useCheckpoint,
 	onHasMessagesChange,
-	navigate,
 }: Props ) {
 	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 
+	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );

@@ -220,7 +220,6 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			navigate={ navigate }
 			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
 			onHasMessagesChange={ handleChatHasMessagesChange }
