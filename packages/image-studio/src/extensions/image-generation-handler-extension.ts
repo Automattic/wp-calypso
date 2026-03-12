@@ -51,12 +51,11 @@ export const addImageStudioHandler = (
 		extra?: Record< string, unknown >;
 	}
 ): ( () => void ) | null => {
-	const { entryPoint, onImageSelect } = context;
-
-	// Validate required callback to handle malformed filter contexts gracefully
-	if ( typeof onImageSelect !== 'function' ) {
+	if ( ! context || typeof context.onImageSelect !== 'function' ) {
 		return _defaultHandler;
 	}
+
+	const { entryPoint, onImageSelect } = context;
 
 	const studioEntryPoint = isKnownSurface( entryPoint )
 		? ENTRY_POINT_MAP[ entryPoint ]
