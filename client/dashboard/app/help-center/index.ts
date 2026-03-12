@@ -67,6 +67,31 @@ export function useHelpCenter() {
 		return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setSubject( subject );
 	}, [] );
 
+	const setNewMessagingChat = useCallback(
+		async ( {
+			initialMessage,
+			section,
+			siteUrl,
+			siteId,
+		}: {
+			initialMessage: string;
+			section?: string;
+			siteUrl?: string;
+			siteId?: string;
+		} ) => {
+			const url = addQueryArgs( '/odie', {
+				provider: 'zendesk',
+				userFieldMessage: initialMessage,
+				section,
+				siteUrl,
+				siteId,
+			} );
+			await setNavigateToRoute( url );
+			await setShowHelpCenter( true );
+		},
+		[ setNavigateToRoute, setShowHelpCenter ]
+	);
+
 	const setOpenOdieWithContext = useCallback(
 		async ( {
 			initialMessage,
@@ -97,6 +122,7 @@ export function useHelpCenter() {
 		setShowHelpCenter,
 		setNavigateToRoute,
 		setSubject,
+		setNewMessagingChat,
 		setOpenOdieWithContext,
 	};
 }

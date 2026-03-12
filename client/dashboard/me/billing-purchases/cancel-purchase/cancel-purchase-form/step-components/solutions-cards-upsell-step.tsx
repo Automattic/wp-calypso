@@ -234,7 +234,7 @@ export default function SolutionsCardsUpsellStep( {
 	purchase,
 }: SolutionsCardsUpsellStepProps ) {
 	const solutions = getSolutionsForReason( cancellationReason );
-	const { setSubject, setShowHelpCenter, setOpenOdieWithContext } = useHelpCenter();
+	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
 	const filteredSolutions = solutions?.filter(
@@ -269,8 +269,10 @@ export default function SolutionsCardsUpsellStep( {
 				const initialMessage =
 					"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 					cancellationReason;
-				setSubject( initialMessage );
-				setShowHelpCenter( true );
+				setNewMessagingChat( {
+					initialMessage,
+					section: 'pre-cancellation-upsell',
+				} );
 				closeDialog?.();
 				break;
 			}
