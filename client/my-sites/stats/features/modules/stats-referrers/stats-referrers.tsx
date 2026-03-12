@@ -120,13 +120,14 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 					listItemClassName={ listItemClassName }
 					skipQuery
 					isRealTime={ isRealTime }
-					summaryFooterAction={
+					footerAction={
 						summary && ! shouldGateStatsModule
-							? { label: translate( 'Manage spam referrers' ) }
+							? {
+									label: translate( 'Manage spam referrers' ),
+									onClick: () => setIsSpamModalOpen( true ),
+									ariaLabel: translate( 'Manage spam referrers' ) as string,
+							  }
 							: undefined
-					}
-					onShowMoreClick={
-						summary && ! shouldGateStatsModule ? () => setIsSpamModalOpen( true ) : undefined
 					}
 				/>
 			) }

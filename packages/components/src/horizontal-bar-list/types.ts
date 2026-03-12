@@ -84,6 +84,7 @@ export type StatsCardProps = {
 		label?: string;
 		url?: string;
 		onClick?: ( event?: React.MouseEvent | React.KeyboardEvent ) => void;
+		ariaLabel?: string;
 	};
 	/**
 	 * @property {boolean} isEmpty - renders an empty card with a message (`emptyMessage`) when true. It doesn't render column labels.

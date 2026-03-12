@@ -158,10 +158,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 							className={ `${ BASE_CLASS_NAME }--footer` }
 							onClick={ footerAction.onClick }
 							aria-label={
-								translate( 'View all %(title)s', {
+								footerAction.ariaLabel ??
+								( translate( 'View all %(title)s', {
 									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
 									comment: '"View all posts & pages", "View all referrers", etc.',
-								} ) as string
+								} ) as string )
 							}
 						>
 							{ footerAction.label || translate( 'View all' ) }
@@ -171,10 +172,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 							className={ `${ BASE_CLASS_NAME }--footer` }
 							href={ footerAction?.url }
 							aria-label={
-								translate( 'View all %(title)s', {
+								footerAction.ariaLabel ??
+								( translate( 'View all %(title)s', {
 									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
 									comment: '"View all posts & pages", "View all referrers", etc.',
-								} ) as string
+								} ) as string )
 							}
 						>
 							{ footerAction.label || translate( 'View all' ) }

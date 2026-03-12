@@ -43,7 +43,6 @@ const StatsListCard = ( {
 	overlay, // an overlay used to hide the module behind a blur overlay
 	hasNoBackground,
 	formatValue,
-	onShowMoreClick,
 	statsQuery,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
@@ -137,7 +136,8 @@ const StatsListCard = ( {
 					? {
 							url: showMore?.url,
 							label: showMore?.label,
-							onClick: onShowMoreClick || undefined,
+							onClick: showMore?.onClick,
+							ariaLabel: showMore?.ariaLabel,
 					  }
 					: undefined
 			}

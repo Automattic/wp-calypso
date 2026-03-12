@@ -52,8 +52,7 @@ class StatsModule extends Component {
 		formatValue: PropTypes.func,
 		minutesLimit: PropTypes.number,
 		isRealTime: PropTypes.bool,
-		summaryFooterAction: PropTypes.object,
-		onShowMoreClick: PropTypes.func,
+		footerAction: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -296,14 +295,14 @@ class StatsModule extends Component {
 		// TODO: Support error state in redux store
 		const hasError = false;
 
-		const { summaryFooterAction, onShowMoreClick } = this.props;
+		const { footerAction } = this.props;
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 
 		// Determine showMore action for StatsListCard.
 		let showMoreAction;
-		if ( summary && summaryFooterAction ) {
-			showMoreAction = summaryFooterAction;
+		if ( summary && footerAction ) {
+			showMoreAction = footerAction;
 		} else if ( displaySummaryLink && ! summary ) {
 			showMoreAction = {
 				url: summaryLink,
@@ -338,7 +337,6 @@ class StatsModule extends Component {
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={ showMoreAction }
-					onShowMoreClick={ onShowMoreClick }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
