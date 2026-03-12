@@ -356,27 +356,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.50":
-  version: 0.1.52
-  resolution: "@automattic/agenttic-client@npm:0.1.52"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 7a35858b55f0e672c63632bb73f2dce1c64bd2cf4f7d30c0c0ad0af483eccfb33db961c67ad0abd0f83dc0933d3314b4114ea31f8e87e01d97f07d07987fdcb5
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-client@npm:^0.1.53":
+"@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.53":
   version: 0.1.53
   resolution: "@automattic/agenttic-client@npm:0.1.53"
   dependencies:
