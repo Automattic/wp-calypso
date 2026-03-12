@@ -94,7 +94,7 @@ export function createPixAutomaticoPaymentMethod( {
 	return {
 		id: 'pix_automatico',
 		paymentProcessorId: 'pix_automatico',
-		label: <PixLabel />,
+		label: <PixAutomaticoLabel />,
 		activeContent: <PixForm state={ state } />,
 		submitButton: <PixPayButton submitButtonContent={ submitButtonContent } state={ state } />,
 		getAriaLabel: () => 'Pix Automático',
@@ -328,6 +328,17 @@ function PixLabel() {
 	return (
 		<Fragment>
 			<span>Pix</span>
+			<PixLogoWrapper>
+				<PixLogo />
+			</PixLogoWrapper>
+		</Fragment>
+	);
+}
+
+function PixAutomaticoLabel() {
+	return (
+		<Fragment>
+			<span>Pix Automático</span>
 			<PixLogoWrapper>
 				<PixLogo />
 			</PixLogoWrapper>
