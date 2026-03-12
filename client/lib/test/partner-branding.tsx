@@ -395,6 +395,44 @@ describe( 'partner-branding', () => {
 		} );
 	} );
 
+	describe( 'partner without featureFlag is always active', () => {
+		const testPartner = {
+			id: 'test-no-flag',
+			displayName: 'Test',
+			logo: { src: 'test.svg', alt: 'Test' },
+			ssoProviders: [ 'google' ] as const,
+			domains: [ 'test.example.com' ],
+		};
+
+		beforeEach( () => {
+			( CIAB_PARTNERS as Record< string, typeof testPartner > )[ 'test-no-flag' ] = testPartner;
+		} );
+
+		afterEach( () => {
+			delete ( CIAB_PARTNERS as Record< string, unknown > )[ 'test-no-flag' ];
+		} );
+
+		test( 'getCiabConfigFromCurrentDomain returns partner even when all feature flags are disabled', () => {
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			setLocation( 'test.example.com' );
+
+			const result = getCiabConfigFromCurrentDomain();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'test-no-flag' );
+		} );
+
+		test( 'getCiabConfigFromBrandingCode returns partner even when all feature flags are disabled', () => {
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			setLocation( 'wordpress.com', '?from=test-no-flag' );
+
+			const result = getCiabConfigFromBrandingCode();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'test-no-flag' );
+		} );
+	} );
+
 	describe( 'CIAB_PARTNERS', () => {
 		test( 'woo partner has required configuration', () => {
 			const wooConfig = CIAB_PARTNERS.woo;
