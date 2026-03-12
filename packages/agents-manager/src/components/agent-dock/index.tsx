@@ -77,8 +77,8 @@ export default function AgentDock( {
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
-	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
-	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
+	const [ shouldDisableNewChat, setShouldDisableNewChat ] = useState( true );
+	const [ shouldDisableNewZendeskChat, setShouldDisableNewZendeskChat ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
 		( select ) => {
@@ -157,13 +157,13 @@ export default function AgentDock( {
 			{
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
+				isDisabled: pathname === '/chat' && shouldDisableNewChat,
 				onClick: handleNewChat,
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
+				isDisabled: pathname === '/zendesk' && shouldDisableNewZendeskChat,
 				onClick: () => {
 					handleAbort();
 					navigate( '/zendesk' );
@@ -209,7 +209,7 @@ export default function AgentDock( {
 			siteBuildUtils={ siteBuildUtils }
 			navigate={ navigate }
 			useImageUpload={ useImageUpload }
-			onMessagesCountChange={ setOrchestratorMsgCount }
+			onHasMessagesChange={ ( hasMessages ) => setShouldDisableNewChat( ! hasMessages ) }
 		/>
 	);
 
@@ -222,7 +222,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onMessagesCountChange={ setZendeskMsgCount }
+			onHasMessagesChange={ ( hasMessages ) => setShouldDisableNewZendeskChat( ! hasMessages ) }
 		/>
 	);
 

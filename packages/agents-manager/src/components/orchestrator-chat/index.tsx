@@ -60,12 +60,12 @@ interface Props {
 	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
-	/** Called when the message count changes. */
-	onMessagesCountChange: ( count: number ) => void;
+	/** Called when the has-messages state changes. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 // Module-level cache to preserve conversation state during back-navigation from history.
-let cachedConversation: { sessionId?: string; messages?: UIMessage[] } = {};
+let cachedConversation: { sessionId?: string; messages: UIMessage[] } = { messages: [] };
 
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
@@ -83,7 +83,7 @@ export default function OrchestratorChat( {
 	getChatComponent,
 	siteBuildUtils,
 	useImageUpload,
-	onMessagesCountChange,
+	onHasMessagesChange,
 	navigate,
 }: Props ) {
 	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
@@ -98,7 +98,7 @@ export default function OrchestratorChat( {
 	const agentId = agentConfig!.agentId;
 	const configSessionId = agentConfig!.sessionId;
 
-	const { sessionId: cachedSessionId, messages: cachedMessages = [] } = cachedConversation;
+	const { sessionId: cachedSessionId, messages: cachedMessages } = cachedConversation;
 	const hasCachedConversation = !! cachedSessionId && configSessionId === cachedSessionId;
 
 	const {
@@ -323,10 +323,11 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
-	// Notify parent when message count changes.
+	// Notify parent when has-messages state changes.
+	const hasMessages = displayedMessages.length > 0;
 	useEffect( () => {
-		onMessagesCountChange( displayedMessages.length );
-	}, [ displayedMessages.length, onMessagesCountChange ] );
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
 
 	const handleViewHistory = () => {
 		// Cache current conversation messages to restore when navigating back from history.
