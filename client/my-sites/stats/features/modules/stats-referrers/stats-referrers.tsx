@@ -2,11 +2,11 @@ import { StatsCard } from '@automattic/components';
 import { megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { useSelector, useDispatch } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import {
