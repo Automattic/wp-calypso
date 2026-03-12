@@ -250,10 +250,6 @@ object BuildDockerImage : BuildType({
 
 				echo "=== buildx inspect (default) ==="
 				docker buildx inspect --bootstrap || true
-
-				echo "=== try create a dedicated builder (docker-container driver) ==="
-				docker buildx create --name tc-builder --driver docker-container --use 2>/dev/null || docker buildx use tc-builder
-				docker buildx inspect --bootstrap
 			""".trimIndent()
 		}
 
@@ -266,6 +262,8 @@ object BuildDockerImage : BuildType({
 				#!/usr/bin/env bash
 				set -euo pipefail
 
+				docker buildx use default
+
 				CACHE_REF="registry.a8c.com/calypso/buildcache:canary"
 
 				cat > /tmp/Dockerfile.buildx-canary <<'EOF'
@@ -276,7 +274,7 @@ object BuildDockerImage : BuildType({
 				EOF
 
 				docker buildx build \
-				  --builder tc-builder \
+				  --builder default \
 				  --progress=plain \
 				  --platform=linux/amd64 \
 				  --cache-to=type=registry,ref="${'$'}CACHE_REF",mode=max \
