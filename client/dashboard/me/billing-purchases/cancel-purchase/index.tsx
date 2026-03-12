@@ -147,11 +147,7 @@ function getOfferDiscountBasedOnPurchasePrice(
 	return Math.round( offerDiscountPercentage );
 }
 
-function availableJetpackSurveySteps(
-	purchase: Purchase,
-	flowType: CancelFlowType,
-	cancellationOffer: CancellationOffer | undefined
-): string[] {
+function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
 	const availableSteps = [];
 
 	// If the plan is already expired or is a temporary Jetpack purchase (license),
@@ -170,6 +166,18 @@ function availableJetpackSurveySteps(
 	}
 
 	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
+		availableSteps.push( FEEDBACK_STEP );
+	}
+
+	return availableSteps;
+}
+
+function shouldAddCancellationOfferStep(
+	purchase: Purchase,
+	flowType: CancelFlowType,
+	cancellationOffer: CancellationOffer | undefined
+): boolean {
+	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
 		const isOfferPriceSameOrLowerThanPurchasePrice = cancellationOffer
 			? purchase.amount >= cancellationOffer.original_price
 			: false;
@@ -178,13 +186,9 @@ function availableJetpackSurveySteps(
 			cancellationOffer
 		);
 
-		availableSteps.push( FEEDBACK_STEP );
-		if ( isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10 ) {
-			availableSteps.push( CANCELLATION_OFFER_STEP );
-		}
+		return isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10;
 	}
-
-	return availableSteps;
+	return false;
 }
 
 function getBasicSurveySteps( {
@@ -202,7 +206,6 @@ function getBasicSurveySteps( {
 } ): string[] {
 	const flowType = getPurchaseCancellationFlowType( purchase );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
-	const isAkismet = isAkismetProduct( purchase );
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
 	const hasExpired = purchase.expiry_status === 'expired';
@@ -214,7 +217,7 @@ function getBasicSurveySteps( {
 	) {
 		return [];
 	}
-	if ( isJetpack || isAkismet ) {
+	if ( isJetpack ) {
 		return availableJetpackSurveySteps( purchase, flowType, cancellationOffer );
 	}
 	if ( purchase.is_domain_registration ) {
@@ -270,6 +273,10 @@ function getAllSurveySteps( {
 		const stepsToRemove = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		steps = steps.filter( ( step ) => ! stepsToRemove.includes( step ) );
 		steps = [ REMOVE_PLAN_STEP, ...steps ];
+	}
+
+	if ( shouldAddCancellationOfferStep( purchase, flowType, cancellationOffer ) ) {
+		steps.push( CANCELLATION_OFFER_STEP );
 	}
 
 	return steps;
