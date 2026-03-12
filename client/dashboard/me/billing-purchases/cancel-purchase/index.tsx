@@ -194,13 +194,11 @@ function shouldAddCancellationOfferStep(
 function getBasicSurveySteps( {
 	purchase,
 	upsell,
-	cancellationOffer,
 	hasQuestionTwo,
 	plans,
 }: {
 	purchase: Purchase;
 	upsell: CancelPurchaseState[ 'upsell' ];
-	cancellationOffer: CancellationOffer | undefined;
 	hasQuestionTwo: boolean;
 	plans: PlanProduct[];
 } ): string[] {
@@ -218,7 +216,7 @@ function getBasicSurveySteps( {
 		return [];
 	}
 	if ( isJetpack ) {
-		return availableJetpackSurveySteps( purchase, flowType, cancellationOffer );
+		return availableJetpackSurveySteps( purchase, flowType );
 	}
 	if ( purchase.is_domain_registration ) {
 		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
@@ -257,7 +255,6 @@ function getAllSurveySteps( {
 	let steps = getBasicSurveySteps( {
 		purchase,
 		upsell,
-		cancellationOffer,
 		hasQuestionTwo,
 		plans,
 	} );
