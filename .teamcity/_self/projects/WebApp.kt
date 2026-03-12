@@ -258,6 +258,36 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
+			name = "Experimental buildx cache test"
+			conditions {
+				equals("EXPERIMENTAL_BUILDX", "true")
+			}
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				CACHE_REF="registry.a8c.com/calypso/buildcache:canary"
+
+				cat > /tmp/Dockerfile.buildx-canary <<'EOF'
+				# syntax=docker/dockerfile:1.7
+				FROM alpine:3.20
+				RUN --mount=type=cache,target=/root/.cache,id=canary-cache \
+				    sh -c 'date > /root/.cache/hello && cat /root/.cache/hello'
+				EOF
+
+				docker buildx build \
+				  --progress=plain \
+				  --platform=linux/amd64 \
+				  --cache-to=type=registry,ref="${'$'}CACHE_REF",mode=max \
+				  --cache-from=type=registry,ref="${'$'}CACHE_REF" \
+				  -f /tmp/Dockerfile.buildx-canary \
+				  --load \
+				  -t registry.a8c.com/calypso/buildx-canary:build-%build.number% \
+				  /tmp
+			""".trimIndent()
+		}
+
+		script {
 			name = "Webhook fail OR webhook done and push trunk tag for deploy"
 			executionMode = BuildStep.ExecutionMode.ALWAYS
 			conditions {
