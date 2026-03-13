@@ -71,7 +71,9 @@ export function InviteScreenLayout( {
 	};
 
 	const branding = blogDetails?.garden
-		? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name )
+		? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+				persistToSession: true,
+		  } )
 		: null;
 
 	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
