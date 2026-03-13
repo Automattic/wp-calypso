@@ -1,5 +1,6 @@
 import { EscalationButton } from '../components/escalation-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
+import { CHECKPOINT_ACTION_ID } from '../hooks/use-checkpoint-action';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -100,7 +101,7 @@ export function convertToolMessagesToComponents( {
 					},
 				],
 				disabled: isStale,
-				// Tag for `disablePickersAndRemoveNextButton` to disable on back-navigation.
+				// Tag for `deactivateStaleMessages` to disable on back-navigation.
 				isShowComponentMessage: true,
 			};
 
@@ -121,7 +122,7 @@ export function convertToolMessagesToComponents( {
 							component: NextStepButton,
 						},
 					],
-					// Tag for `disablePickersAndRemoveNextButton` to remove on back-navigation.
+					// Tag for `deactivateStaleMessages` to remove on back-navigation.
 					isNextStepButton: true,
 				},
 			];
@@ -190,9 +191,12 @@ export function convertToolMessagesToComponents( {
 }
 
 /**
- * Disables stale picker components and removes next-step buttons on back-navigation.
+ * Deactivates messages that should no longer be interactive:
+ * - Removes next-step buttons.
+ * - Disables picker components.
+ * - Removes the undo action so it won't reappear on cached messages.
  */
-export function disablePickersAndRemoveNextButton( messages: UIMessage[] ): UIMessage[] {
+export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
 	return messages.flatMap( ( message ) => {
 		// @ts-ignore -- custom flag not on the `UIMessage` type.
 		if ( message.isNextStepButton ) {
@@ -202,6 +206,15 @@ export function disablePickersAndRemoveNextButton( messages: UIMessage[] ): UIMe
 		// @ts-ignore -- custom flag not on the `UIMessage` type.
 		if ( message.isShowComponentMessage ) {
 			return [ { ...message, disabled: true } ];
+		}
+
+		if ( message.actions?.some( ( action ) => action.id === CHECKPOINT_ACTION_ID ) ) {
+			return [
+				{
+					...message,
+					actions: message.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
+				},
+			];
 		}
 
 		return [ message ];
