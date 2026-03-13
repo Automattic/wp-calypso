@@ -95,6 +95,7 @@ export type DomainsQueryData = {
 };
 
 // Response from the `/domains/${ domain }/email/new` API endpoint
-export type AddEmailForwardResponse = {
+export type AddEmailForwardResponse = Array< {
 	created: boolean;
-};
+	verified: boolean;
+} >;
