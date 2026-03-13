@@ -8,8 +8,7 @@ import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
 import type { FeatureId } from '../shared-types';
 import type { DomainSuggestion } from '@automattic/api-core';
-// somewhat hacky, but resolves the circular dependency issue
-import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 // copied from design picker to avoid a circular dependency
