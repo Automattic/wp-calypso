@@ -3,13 +3,13 @@ ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim as builder-cache-false
+FROM node:${node_version}-bullseye-slim AS builder-cache-false
 
 
 ###################
 # This image contains a directory /calypso/.cache which includes caches
 # for yarn, terser, css-loader and babel.
-FROM ${base_image} as builder-cache-true
+FROM ${base_image} AS builder-cache-true
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
@@ -18,7 +18,7 @@ ARG generate_cache_image=false
 ENV GENERATE_CACHE_IMAGE $generate_cache_image
 
 ###################
-FROM builder-cache-${use_cache} as builder
+FROM builder-cache-${use_cache} AS builder
 
 # Make sure shell options, like pipefail, are set for the build.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -83,7 +83,7 @@ RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"
-FROM ${base_image} as update-base-cache
+FROM ${base_image} AS update-base-cache
 
 # Update webpack cache in the base image so that it can be re-used in future builds.
 # We only copy this part of the cache to make --push faster, and because webpack
@@ -91,7 +91,7 @@ FROM ${base_image} as update-base-cache
 COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
-FROM node:${node_version}-alpine as app
+FROM node:${node_version}-alpine AS app
 
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
