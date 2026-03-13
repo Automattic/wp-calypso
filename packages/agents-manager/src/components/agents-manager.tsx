@@ -12,7 +12,7 @@ import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contex
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
-import { clearSessionId } from '../utils/agent-session';
+import { getSiteKey, clearSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -26,6 +26,8 @@ export interface AgentsManagerProps {
 	site?: AgentsManagerSite | null;
 	/** The current route path. */
 	currentRoute?: string;
+	/** The ID of the currently selected site, or undefined for non-site contexts. */
+	currentSiteId?: number;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
 }
@@ -37,6 +39,7 @@ export default function AgentsManager( {
 	currentUser,
 	site,
 	currentRoute,
+	currentSiteId,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -50,9 +53,11 @@ export default function AgentsManager( {
 	}
 
 	return (
-		<AgentsManagerContextProvider value={ { sectionName, currentUser, site, currentRoute } }>
+		<AgentsManagerContextProvider
+			value={ { sectionName, currentUser, site, currentSiteId, currentRoute } }
+		>
 			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter>
+				<PersistentRouter siteKey={ getSiteKey( currentSiteId ) }>
 					<AgentSetup />
 				</PersistentRouter>
 			</QueryClientProvider>
@@ -62,10 +67,12 @@ export default function AgentsManager( {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup(): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
+	const { site, currentRoute, agentConfig, setAgentConfig, currentSiteId } =
+		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
+	const siteKey = getSiteKey( currentSiteId );
 
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
@@ -89,7 +96,7 @@ function AgentSetup(): JSX.Element | null {
 				}
 
 				// Clear stored session ID
-				clearSessionId( agentId );
+				clearSessionId( agentId, siteKey );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -113,13 +120,24 @@ function AgentSetup(): JSX.Element | null {
 				environment: 'calypso',
 				agentId,
 				version,
+				siteKey,
 			} );
 
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
+	}, [
+		agentId,
+		version,
+		currentRoute,
+		isNewChat,
+		navigate,
+		sessionId,
+		setAgentConfig,
+		site?.ID,
+		siteKey,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

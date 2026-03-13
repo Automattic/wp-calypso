@@ -65,7 +65,9 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	}
 }
 
-export function setRouterHistory( history: { entries: Location[]; index: number } | undefined ) {
+export function setRouterHistory(
+	history: Record< string, { entries: Location[]; index: number } > | undefined
+) {
 	return {
 		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
 		history,

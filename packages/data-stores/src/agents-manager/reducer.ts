@@ -20,7 +20,7 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 };
 
 const routerHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
+	Record< string, { entries: Location[]; index: number } > | undefined,
 	AgentsManagerAction
 > = ( state, action ) => {
 	switch ( action.type ) {

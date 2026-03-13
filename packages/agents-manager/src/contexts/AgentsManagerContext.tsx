@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
-import { getSessionId } from '../utils/agent-session';
+import { getSessionId, getSiteKey } from '../utils/agent-session';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -16,6 +16,8 @@ export interface AgentsManagerContextType {
 	isLoggedIn: boolean;
 	/** The selected site object. */
 	site?: AgentsManagerSite | null;
+	/** The ID of the currently selected site, or undefined for non-site contexts. */
+	currentSiteId?: number;
 	/** The name of the current section (e.g., `wp-admin`, `gutenberg`). */
 	sectionName: string;
 	/** The current route path. */
@@ -38,6 +40,7 @@ const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	isLoggedIn: false,
 	site: null,
+	currentSiteId: undefined,
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,
@@ -51,7 +54,10 @@ const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultC
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
-		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+		Pick<
+			AgentsManagerContextType,
+			'currentUser' | 'site' | 'currentSiteId' | 'currentRoute' | 'isEligibleForChat'
+		>
 	> & { sectionName: string };
 }
 
@@ -64,10 +70,11 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
+	const siteKey = getSiteKey( value.currentSiteId );
 
 	const getActiveSessionId = useCallback( () => {
-		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
-	}, [ agentConfig ] );
+		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId, siteKey );
+	}, [ agentConfig, siteKey ] );
 
 	return (
 		<AgentsManagerContext.Provider

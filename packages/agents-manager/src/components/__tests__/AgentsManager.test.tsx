@@ -64,6 +64,7 @@ describe( 'AgentsManager', () => {
 				currentUser={ mockUser }
 				site={ mockSite }
 				currentRoute="/sites/fulltest.com"
+				currentSiteId={ 999 }
 			/>
 		);
 
@@ -73,6 +74,7 @@ describe( 'AgentsManager', () => {
 				currentUser: mockUser,
 				site: mockSite,
 				currentRoute: '/sites/fulltest.com',
+				currentSiteId: 999,
 			} )
 		);
 	} );

@@ -12,14 +12,18 @@ import {
 } from './actions';
 import type { APIFetchOptions } from '../shared-types';
 
+type SingleRouterHistory = {
+	entries: Location[];
+	index: number;
+};
+
+type PerSiteRouterHistory = Record< string, SingleRouterHistory >;
+
 type AgentsManagerStateResponse = {
 	agents_manager_open?: boolean;
 	agents_manager_docked?: boolean;
 	agents_manager_floating_position?: 'left' | 'right';
-	agents_manager_router_history?: {
-		entries: Location[];
-		index: number;
-	};
+	agents_manager_router_history?: SingleRouterHistory | PerSiteRouterHistory;
 };
 
 export function* getAgentsManagerState() {
@@ -36,7 +40,12 @@ export function* getAgentsManagerState() {
 			  } as APIFetchOptions );
 
 		if ( state.agents_manager_router_history ) {
-			yield setRouterHistory( state.agents_manager_router_history );
+			const history = state.agents_manager_router_history;
+
+			// Only load per-site format. Legacy format ({ entries, index }) is discarded.
+			if ( ! ( 'entries' in history && Array.isArray( history.entries ) ) ) {
+				yield setRouterHistory( history as PerSiteRouterHistory );
+			}
 		}
 
 		if ( typeof state.agents_manager_docked === 'boolean' ) {

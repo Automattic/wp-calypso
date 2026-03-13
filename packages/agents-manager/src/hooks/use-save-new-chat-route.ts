@@ -11,8 +11,9 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
 /**
  * Saves the chat route so the conversation can be restored later.
  */
-function saveNewChatRoute( sessionId: string ): void {
-	const current = ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getRouterHistory();
+function saveNewChatRoute( sessionId: string, siteKey?: string ): void {
+	const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
+	const current = store.getRouterHistory( siteKey );
 
 	const entry = {
 		pathname: '/chat',
@@ -26,15 +27,23 @@ function saveNewChatRoute( sessionId: string ): void {
 	const entries = current?.entries?.length ? [ ...current.entries ] : [];
 	const index = current?.index ?? 0;
 	entries[ index ] = entry;
+	const historyData = { entries, index };
 
-	persistAgentsManagerState( { agents_manager_router_history: { entries, index } } );
+	if ( siteKey ) {
+		const fullMap = store.getAgentsManagerState().routerHistory || {};
+		persistAgentsManagerState( {
+			agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
+		} );
+	} else {
+		persistAgentsManagerState( { agents_manager_router_history: historyData } );
+	}
 }
 
 /**
  * Waits for the first AI reply (which creates the session ID),
  * then saves the chat route so the conversation can be resumed later.
  */
-export default function useSaveNewChatRoute( messages: UIMessage[] ) {
+export default function useSaveNewChatRoute( messages: UIMessage[], siteKey?: string ) {
 	const { agentConfig } = useAgentsManagerContext();
 
 	const sessionId = getSessionId( agentConfig?.agentId ?? '' );
@@ -55,8 +64,8 @@ export default function useSaveNewChatRoute( messages: UIMessage[] ) {
 
 		// Save the route only when the session ID changes.
 		if ( sessionId && sessionId !== prevSessionIdRef.current ) {
-			saveNewChatRoute( sessionId );
+			saveNewChatRoute( sessionId, siteKey );
 			prevSessionIdRef.current = sessionId;
 		}
-	}, [ messages, pathname, sessionId, state?.sessionId ] );
+	}, [ messages, pathname, sessionId, siteKey, state?.sessionId ] );
 }

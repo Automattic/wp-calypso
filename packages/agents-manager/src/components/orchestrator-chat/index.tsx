@@ -15,6 +15,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import { getSiteKey } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
 	deactivateStaleMessages,
@@ -91,7 +92,8 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, currentSiteId } = useAgentsManagerContext();
+	const siteKey = getSiteKey( currentSiteId );
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -141,6 +143,11 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
+	// Clear module-level cached conversation when site changes.
+	useEffect( () => {
+		cachedConversation = { messages: [] };
+	}, [ siteKey ] );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
@@ -158,7 +165,7 @@ export default function OrchestratorChat( {
 	} );
 
 	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( messages );
+	useSaveNewChatRoute( messages, siteKey );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();

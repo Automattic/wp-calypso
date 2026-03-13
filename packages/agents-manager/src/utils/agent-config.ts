@@ -24,6 +24,8 @@ export interface CreateAgentConfigOptions {
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
+	/** Site key for per-site session storage (e.g., '12345' or 'no-site'). */
+	siteKey?: string;
 }
 
 /**
@@ -148,13 +150,14 @@ export async function createAgentConfig(
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
+		siteKey,
 	} = options;
 
 	const config: UseAgentChatConfig = {
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
-		sessionIdStorageKey: getSessionStorageKey( agentId ),
+		sessionIdStorageKey: getSessionStorageKey( agentId, siteKey ),
 		authProvider: createCalypsoAuthProvider( siteId ),
 		enableStreaming: true,
 	};
