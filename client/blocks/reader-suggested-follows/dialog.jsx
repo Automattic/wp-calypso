@@ -158,10 +158,15 @@ const ReaderSuggestedFollowsDialog = ( {
 										</li>
 									) ) }
 								{ resourceType === 'recommended' && (
-									<RecommendedFeedsList
-										feeds={ data }
-										followSource="reader-recommended-follows-dialog__recommended-feeds-list"
-									/>
+									<li
+										className="reader-recommended-follows-dialog__follow-item"
+										style={ { padding: 0 } }
+									>
+										<RecommendedFeedsList
+											feeds={ data }
+											followSource="reader-recommended-follows-dialog__recommended-feeds-list"
+										/>
+									</li>
 								) }
 							</ul>
 						</div>

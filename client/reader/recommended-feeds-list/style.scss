@@ -18,6 +18,7 @@
 
 	.recommended-feed-info {
 		align-items: initial;
+		overflow: hidden;
 		width: 100%;
 	}
 
@@ -26,13 +27,17 @@
 		font-family: Inter, sans-serif;
 		font-size: $font-body;
 		font-weight: 500;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 		text-decoration: none;
 
 		&:visited {
 			color: var( --color-neutral-100 );
+		}
+
+		h3 {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-decoration: none;
+			white-space: nowrap;
 		}
 	}
 
@@ -118,6 +123,10 @@
 			position: absolute;
 			right: 20px;
 			top: 20px;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				top: 15px;
+			}
 		}
 	}
 }
