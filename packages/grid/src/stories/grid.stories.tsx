@@ -136,8 +136,6 @@ export const Default: StoryObj< typeof Grid > = {
  * - `width: N` — fixed column span
  * - `fillWidth` — fills remaining columns in the current row
  * - `fullWidth` — always spans all columns (grid-column: 1 / -1)
- *
- * Resize the browser to see how `fillWidth` items recalculate their
  * span as the effective column count changes.
  */
 export const Responsive: StoryObj< typeof Grid > = {
@@ -232,7 +230,7 @@ export const RowHeight: StoryObj< typeof Grid > = {
 /**
  * Auto row height — rows size to their content.
  *
- * **`columns=6`, `rowHeight='auto'` (default)**<br />
+ * **`minColumnWidth=128` (responsive mode), `rowHeight='auto'` (default)**<br />
  *
  * Rows grow to fit the tallest item. The `height` property has no
  * visual effect since there is no fixed row size to multiply.
@@ -247,7 +245,7 @@ export const AutoRowHeight: StoryObj< typeof Grid > = {
 			{ key: 'd', width: 3, order: 4 },
 			{ key: 'e', width: 3, order: 5 },
 		],
-		columns: 6,
+		minColumnWidth: 128,
 		rowHeight: 'auto',
 		children: [
 			<Card key="a" color="#f44336" style={ { minHeight: 60 } }>

@@ -10,6 +10,9 @@ import type { DragOverEvent } from '@dnd-kit/core';
  * Resolves `fillWidth` items by computing how many columns they should span.
  * Simulates CSS Grid row packing to determine remaining space in each row,
  * then assigns that space to `fillWidth` items.
+ *
+ * Complexity: O(n). The inner look-ahead breaks at fill/full boundaries,
+ * so each fixed item is visited by at most one fill's look-ahead.
  */
 function resolveFillWidths(
 	sortedKeys: string[],
@@ -17,16 +20,31 @@ function resolveFillWidths(
 	maxColumns: number
 ): Map< string, number > {
 	const resolved = new Map< string, number >();
+	const n = sortedKeys.length;
 
-	const hasFillWidth = sortedKeys.some( ( key ) => layoutMap.get( key )?.fillWidth );
+	// Pre-extract items into a flat array and pre-compute clamped widths.
+	// This avoids repeated Map.get() and Math.min() calls in the hot loops.
+	const items = new Array< GridLayoutItem | undefined >( n );
+	const widths = new Array< number >( n );
+	let hasFillWidth = false;
+
+	for ( let i = 0; i < n; i++ ) {
+		const item = layoutMap.get( sortedKeys[ i ] );
+		items[ i ] = item;
+		widths[ i ] = item ? Math.min( item.width ?? 1, maxColumns ) : 1;
+		if ( item?.fillWidth ) {
+			hasFillWidth = true;
+		}
+	}
+
 	if ( ! hasFillWidth ) {
 		return resolved;
 	}
 
 	let currentCol = 0;
 
-	for ( let i = 0; i < sortedKeys.length; i++ ) {
-		const item = layoutMap.get( sortedKeys[ i ] );
+	for ( let i = 0; i < n; i++ ) {
+		const item = items[ i ];
 		if ( ! item ) {
 			continue;
 		}
@@ -40,12 +58,12 @@ function resolveFillWidths(
 			// Look ahead: reserve columns for subsequent
 			// non-fill items that fit in this row.
 			let reserved = 0;
-			for ( let j = i + 1; j < sortedKeys.length; j++ ) {
-				const next = layoutMap.get( sortedKeys[ j ] );
+			for ( let j = i + 1; j < n; j++ ) {
+				const next = items[ j ];
 				if ( ! next || next.fullWidth || next.fillWidth ) {
 					break;
 				}
-				const nextW = Math.min( next.width ?? 1, maxColumns );
+				const nextW = widths[ j ];
 				if ( currentCol + 1 + reserved + nextW <= maxColumns ) {
 					reserved += nextW;
 				} else {
@@ -57,7 +75,7 @@ function resolveFillWidths(
 			resolved.set( item.key, fillCols );
 			currentCol += fillCols;
 		} else {
-			const w = Math.min( item.width ?? 1, maxColumns );
+			const w = widths[ i ];
 			if ( currentCol + w > maxColumns ) {
 				currentCol = 0;
 			}
@@ -120,11 +138,21 @@ export function Grid( {
 		[ activeLayout ]
 	);
 
-	// Resolve fillWidth items to concrete column spans
-	const fillWidthMap = useMemo(
-		() => resolveFillWidths( items, layoutMap, effectiveColumns ),
-		[ items, layoutMap, effectiveColumns ]
-	);
+	// Resolve fillWidth items to concrete column spans.
+	// Returns a map of key → resolved GridLayoutItem (with fillWidth replaced by a computed width).
+	// Items without fillWidth are returned as-is from layoutMap (same reference).
+	const resolvedItemMap = useMemo( () => {
+		const fillWidths = resolveFillWidths( items, layoutMap, effectiveColumns );
+		if ( fillWidths.size === 0 ) {
+			return layoutMap;
+		}
+		const map = new Map< string, GridLayoutItem >();
+		for ( const [ key, item ] of layoutMap ) {
+			const fillW = fillWidths.get( key );
+			map.set( key, fillW !== undefined ? { ...item, width: fillW } : item );
+		}
+		return map;
+	}, [ items, layoutMap, effectiveColumns ] );
 
 	const [ childrenMap, remaining ] = useMemo( () => {
 		const map = new Map< string, React.ReactElement >();
@@ -246,15 +274,10 @@ export function Grid( {
 					} }
 				>
 					{ items.map( ( id ) => {
-						const item = layoutMap.get( id ) as GridLayoutItem;
-						const resolvedItem = fillWidthMap.has( id )
-							? { ...item, width: fillWidthMap.get( id ) }
-							: item;
-
 						return (
 							<GridItem
 								key={ id }
-								item={ resolvedItem }
+								item={ resolvedItemMap.get( id ) as GridLayoutItem }
 								maxColumns={ effectiveColumns }
 								disabled={ ! editMode }
 								onResize={ ( delta ) => handleResize( id, delta ) }
