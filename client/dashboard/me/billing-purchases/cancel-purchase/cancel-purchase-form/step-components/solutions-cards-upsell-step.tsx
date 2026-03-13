@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	brush,
 	calendar,
-	code,
 	comment,
 	commentContent,
 	globe,
@@ -40,7 +39,6 @@ const CARD_ICONS: Record< string, IconType > = {
 	'ask-ai-assistant': commentContent,
 	'upgrade-for-full-access': upload,
 	'get-theme-addon': brush,
-	'get-css-addon': code,
 	'find-guides': postList,
 	'make-site-faster': trendingUp,
 	'use-migration-tools': shipping,
@@ -85,7 +83,7 @@ function getCardHref(
 	if ( cardId === 'built-by' ) {
 		return BUILT_BY_URL;
 	}
-	if ( cardId === 'get-theme-addon' || cardId === 'get-css-addon' ) {
+	if ( cardId === 'get-theme-addon' ) {
 		return changePlanUrl;
 	}
 	if ( cardId === 'find-guides' ) {
@@ -117,7 +115,6 @@ function getCardOnClick(
 		'renew-now-pay-less',
 		'upgrade-for-full-access',
 		'get-theme-addon',
-		'get-css-addon',
 		'find-guides',
 		'make-site-faster',
 		'use-migration-tools',
@@ -154,8 +151,6 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
 			return __( 'Change your plan' );
-		case 'get-css-addon':
-			return __( 'Get our CSS add-on' );
 		case 'find-guides':
 			return __( 'Find easy step-by-step guides' );
 		case 'make-site-faster':
@@ -190,8 +185,6 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
 			return __( 'Unlock premium themes on another plan.' );
-		case 'get-css-addon':
-			return __( 'Customize every design detail with a simple add-on.' );
 		case 'find-guides':
 			return __( 'Browse our guides and get back on track quickly.' );
 		case 'make-site-faster':
@@ -299,7 +292,6 @@ export default function SolutionsCardsUpsellStep( {
 				window.location.replace( BUILT_BY_URL );
 				break;
 			case 'get-theme-addon':
-			case 'get-css-addon':
 				window.location.href = changePlanUrl;
 				break;
 			case 'find-guides':
@@ -354,7 +346,6 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'switch-to-monthly' ||
 							card.id === 'upgrade-for-full-access' ||
 							card.id === 'get-theme-addon' ||
-							card.id === 'get-css-addon' ||
 							card.id === 'find-guides' ||
 							card.id === 'make-site-faster' ||
 							card.id === 'use-migration-tools' ||

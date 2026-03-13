@@ -142,16 +142,6 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		},
 	},
 	{
-		id: 'get-css-addon',
-		title: 'Get our CSS add-on',
-		subtitle: 'Customize every design detail with a simple add-on.',
-		getHref: ( ctx ) => ctx.changePlanUrl,
-		onClick: ( ctx ) => {
-			page( ctx.changePlanUrl );
-			ctx.closeDialog();
-		},
-	},
-	{
 		id: 'find-guides',
 		title: 'Find easy step-by-step guides',
 		subtitle: 'Browse our guides and get back on track quickly.',

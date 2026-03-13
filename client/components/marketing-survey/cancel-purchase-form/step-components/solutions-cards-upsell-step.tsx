@@ -11,7 +11,6 @@ import {
 	Icon,
 	brush,
 	calendar,
-	code,
 	comment,
 	commentContent,
 	globe,
@@ -44,7 +43,6 @@ const CARD_ICONS: Record< string, React.ReactElement > = {
 	'ask-ai-assistant': commentContent,
 	'upgrade-for-full-access': upload,
 	'get-theme-addon': brush,
-	'get-css-addon': code,
 	'find-guides': postList,
 	'make-site-faster': trendingUp,
 	'use-migration-tools': shipping,
@@ -90,8 +88,6 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
 			return translate( 'Change your plan' );
-		case 'get-css-addon':
-			return translate( 'Get our CSS add-on' );
 		case 'find-guides':
 			return translate( 'Find easy step-by-step guides' );
 		case 'make-site-faster':
@@ -128,8 +124,6 @@ function getTranslatedSubtitle(
 			return translate( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
 			return translate( 'Unlock premium themes on another plan.' );
-		case 'get-css-addon':
-			return translate( 'Customize every design detail with a simple add-on.' );
 		case 'find-guides':
 			return translate( 'Browse our guides and get back on track quickly.' );
 		case 'make-site-faster':

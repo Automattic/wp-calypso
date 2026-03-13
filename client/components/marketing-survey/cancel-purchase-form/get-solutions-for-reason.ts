@@ -14,7 +14,6 @@ const SOLUTION_IDS = {
 	ASK_AI_ASSISTANT: 'ask-ai-assistant',
 	UPGRADE_FULL_ACCESS: 'upgrade-for-full-access',
 	GET_THEME_ADDON: 'get-theme-addon',
-	GET_CSS_ADDON: 'get-css-addon',
 	FIND_GUIDES: 'find-guides',
 	MAKE_SITE_FASTER: 'make-site-faster',
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
@@ -80,7 +79,6 @@ const SOLUTIONS_CANNOT_UPLOAD_THEMES: SolutionCardConfig[] = [
 /** Limited customization */
 const SOLUTIONS_LIMITED_CUSTOMIZATION: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.UPGRADE_FULL_ACCESS },
-	{ id: SOLUTION_IDS.GET_CSS_ADDON },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
