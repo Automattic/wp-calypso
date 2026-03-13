@@ -116,6 +116,14 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling inside the Docker build.",
+			checked = "true",
+			unchecked = "false"
+		)
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -191,6 +199,7 @@ object BuildDockerImage : BuildType({
 			--build-arg use_cache=true
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
