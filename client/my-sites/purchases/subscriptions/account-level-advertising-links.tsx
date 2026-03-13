@@ -22,9 +22,7 @@ export default function AccountLevelAdvertisingLinks() {
 
 	return (
 		<>
-			<CompactCard href={ advertisingUrl }>
-				{ translate( 'View advertising campaigns' ) }
-			</CompactCard>
+			<CompactCard href={ advertisingUrl }>{ translate( 'View Blaze Ads campaigns' ) }</CompactCard>
 		</>
 	);
 }
