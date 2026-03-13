@@ -21,7 +21,6 @@ export type HelpCenterRequiredInformation = {
 		id: number;
 		pressableId?: number;
 	} | null;
-	haveSurvicateEnabled: boolean;
 	/**
 	 * Product identifier. Defaults to 'wpcom' when omitted.
 	 */
@@ -75,7 +74,6 @@ const defaultContext: HelpCenterRequiredInformation = {
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
 	agency: null,
-	haveSurvicateEnabled: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
@@ -105,16 +103,9 @@ export function useHelpCenterContext() {
  * Defaults to the 'wpcom' product when no product is specified.
  */
 export function useFeatureConfig(): HelpCenterFeatureConfig {
-	const { product = 'wpcom', haveSurvicateEnabled } = useHelpCenterContext();
+	const { product = 'wpcom' } = useHelpCenterContext();
 
 	return useMemo( () => {
-		const preset = PRODUCT_PRESETS[ product ];
-		return {
-			...preset,
-			moreResources: {
-				...preset.moreResources,
-				feedback: preset.moreResources.feedback && haveSurvicateEnabled,
-			},
-		};
-	}, [ product, haveSurvicateEnabled ] );
+		return PRODUCT_PRESETS[ product ];
+	}, [ product ] );
 }
