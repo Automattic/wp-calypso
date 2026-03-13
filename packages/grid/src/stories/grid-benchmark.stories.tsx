@@ -5,7 +5,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 interface BenchmarkArgs {
 	itemCount: number;
-	fillRatio: number;
+	fillWidthRatio: number;
+	fullWidthRatio: number;
 	columns: number;
 	minColumnWidth: number;
 	responsive: boolean;
@@ -21,9 +22,13 @@ const meta: Meta = {
 			control: { type: 'range', min: 10, max: 2000, step: 10 },
 			description: 'Number of grid items to render',
 		},
-		fillRatio: {
+		fillWidthRatio: {
 			control: { type: 'range', min: 0, max: 1, step: 0.05 },
 			description: 'Ratio of items with fillWidth (0 = none, 1 = all)',
+		},
+		fullWidthRatio: {
+			control: { type: 'range', min: 0, max: 1, step: 0.05 },
+			description: 'Ratio of items with fullWidth (0 = none, 1 = all)',
 		},
 		columns: {
 			control: { type: 'range', min: 1, max: 12, step: 1 },
@@ -55,18 +60,25 @@ interface TimingEntry {
 	baseDuration: number;
 }
 
-function generateLayout( count: number, fillRatio: number ): GridLayoutItem[] {
+function generateLayout(
+	count: number,
+	fillWidthRatio: number,
+	fullWidthRatio: number
+): GridLayoutItem[] {
 	const items: GridLayoutItem[] = [];
-	const fillEvery = fillRatio > 0 ? Math.round( 1 / fillRatio ) : 0;
+	const fillEvery = fillWidthRatio > 0 ? Math.round( 1 / fillWidthRatio ) : 0;
+	const fullEvery = fullWidthRatio > 0 ? Math.round( 1 / fullWidthRatio ) : 0;
 
 	for ( let i = 0; i < count; i++ ) {
-		const useFill = fillEvery > 0 && i % fillEvery === 0;
+		const useFull = fullEvery > 0 && i % fullEvery === 0;
+		const useFill = ! useFull && fillEvery > 0 && i % fillEvery === 0;
 		items.push( {
 			key: `item-${ i }`,
-			width: useFill ? undefined : ( i % 3 ) + 1,
+			width: useFill || useFull ? undefined : ( i % 3 ) + 1,
 			height: 1,
 			order: i,
 			fillWidth: useFill || undefined,
+			fullWidth: useFull || undefined,
 		} );
 	}
 	return items;
@@ -151,7 +163,8 @@ function TimingPanel( {
 export const Benchmark: StoryObj< BenchmarkArgs > = {
 	args: {
 		itemCount: 500,
-		fillRatio: 0,
+		fillWidthRatio: 0,
+		fullWidthRatio: 0,
 		columns: 6,
 		minColumnWidth: 120,
 		responsive: false,
@@ -159,11 +172,20 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 		editMode: true,
 	},
 	render: function BenchmarkStory( args: BenchmarkArgs ) {
-		const { itemCount, fillRatio, columns, minColumnWidth, responsive, rowHeight, editMode } = args;
+		const {
+			itemCount,
+			fillWidthRatio,
+			fullWidthRatio,
+			columns,
+			minColumnWidth,
+			responsive,
+			rowHeight,
+			editMode,
+		} = args;
 
 		const generatedLayout = useMemo(
-			() => generateLayout( itemCount, fillRatio ),
-			[ itemCount, fillRatio ]
+			() => generateLayout( itemCount, fillWidthRatio, fullWidthRatio ),
+			[ itemCount, fillWidthRatio, fullWidthRatio ]
 		);
 
 		const [ layout, setLayout ] = useState( generatedLayout );
@@ -184,11 +206,12 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 		const configLabel = useMemo( () => {
 			const parts = [
 				`${ itemCount } items`,
-				`fill=${ ( fillRatio * 100 ).toFixed( 0 ) }%`,
+				`fill=${ ( fillWidthRatio * 100 ).toFixed( 0 ) }%`,
+				`full=${ ( fullWidthRatio * 100 ).toFixed( 0 ) }%`,
 				responsive ? `minCol=${ minColumnWidth }` : `cols=${ columns }`,
 			];
 			return parts.join( ', ' );
-		}, [ itemCount, fillRatio, responsive, minColumnWidth, columns ] );
+		}, [ itemCount, fillWidthRatio, fullWidthRatio, responsive, minColumnWidth, columns ] );
 
 		const pendingLabel = useRef( configLabel );
 		useEffect( () => {
@@ -266,6 +289,7 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 		}, [ configLabel, layout ] );
 
 		const fillCount = layout.filter( ( i ) => i.fillWidth ).length;
+		const fullCount = layout.filter( ( i ) => i.fullWidth ).length;
 
 		const children = useMemo(
 			() =>
@@ -286,6 +310,7 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 						>
 							{ item.key }
 							{ item.fillWidth ? ' (fill)' : '' }
+							{ item.fullWidth ? ' (full)' : '' }
 						</div>
 					);
 				} ),
@@ -320,7 +345,8 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 						{ responsive
 							? ` | responsive (minColumnWidth=${ minColumnWidth })`
 							: ` | static (columns=${ columns })` }
-						{ ` | ${ fillCount } fill (${ ( fillRatio * 100 ).toFixed( 0 ) }%)` }
+						{ ` | ${ fillCount } fill (${ ( fillWidthRatio * 100 ).toFixed( 0 ) }%)` }
+						{ ` | ${ fullCount } full (${ ( fullWidthRatio * 100 ).toFixed( 0 ) }%)` }
 					</span>
 					<button
 						onClick={ addTile }
