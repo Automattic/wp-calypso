@@ -8,7 +8,6 @@ import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { logToLogstash } from 'calypso/lib/logstash';
-import wp from 'calypso/lib/wp';
 import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
@@ -16,11 +15,6 @@ import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 jest.mock( 'calypso/lib/logstash' );
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
 
 const continueButton = () => screen.getByRole( 'button', { name: 'Continue' } );
 const intentByName = ( intent: string ) => screen.getByRole( 'checkbox', { name: intent } );
@@ -36,25 +30,6 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		jest.clearAllMocks();
 		( wpcomRequest as jest.Mock ).mockResolvedValue( { success: true } );
 		( useSiteSlugParam as jest.Mock ).mockReturnValue( 'site-url.wordpress.com' );
-
-		// Mock wp.req.get for site info and domains lookup
-		( wp.req.get as jest.Mock ).mockImplementation( ( { path } ) => {
-			if ( path.includes( '/sites/' ) && path.includes( '/domains' ) ) {
-				return Promise.resolve( {
-					domains: [
-						{
-							domain: 'site-url.wordpress.com',
-							wpcom_domain: true,
-							is_wpcom_staging_domain: false,
-						},
-					],
-				} );
-			}
-			if ( path.includes( '/sites/' ) ) {
-				return Promise.resolve( { ID: 12345 } );
-			}
-			return Promise.resolve( {} );
-		} );
 	} );
 
 	it( 'renders the site domain from the query params', () => {
@@ -143,30 +118,6 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		} );
 
 		expect( navigation.submit ).toHaveBeenCalled();
-	} );
-
-	it( 'shows error when wpcom subdomain lookup fails', async () => {
-		const navigation = { submit: jest.fn() };
-		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
-
-		( wp.req.get as jest.Mock ).mockRejectedValue( new Error( 'Site lookup error' ) );
-
-		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
-		await userEvent.click( continueButton() );
-
-		expect( await screen.findByText( /Something went wrong. Please try again./ ) ).toBeVisible();
-		expect( logToLogstash ).toHaveBeenCalledWith( {
-			message: 'Error submitting migration survey',
-			feature: 'calypso_client',
-			extra: {
-				siteSlug: 'site-url.wordpress.com',
-				step: 'site-migration-already-wpcom',
-				from: 'https://example.com',
-				error: 'Site lookup error',
-			},
-		} );
-
-		expect( navigation.submit ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows error when ZenDesk ticket creation fails', async () => {
