@@ -103,14 +103,14 @@
 			flex: 1 1 auto;
 			flex-direction: column;
 			font-family: Inter, sans-serif;
+			margin-right: 120px; // // Margin to not obscure the relative-absolute positioned follow button.
+
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-right: 60px; // Reduce margin when follow button has no label.
+			}
 
 			a {
 				font-size: rem( 16px );
-				margin-right: 120px; // // Margin to not obscure the relative-absolute positioned follow button.
-
-				@include breakpoint-deprecated( '<660px' ) {
-					margin-right: 60px; // Reduce margin when follow button has no label.
-				}
 			}
 		}
 
