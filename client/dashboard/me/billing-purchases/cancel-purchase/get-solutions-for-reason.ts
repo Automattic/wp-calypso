@@ -170,6 +170,7 @@ const SOLUTIONS_SLOW_OR_UNHELPFUL: SolutionCardConfig[] = [
 /** No human support */
 const SOLUTIONS_NO_HUMAN_SUPPORT: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
+	{ id: SOLUTION_IDS.FIND_GUIDES },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
