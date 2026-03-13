@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { AlterDestinationParams, EmailAccountEmail } from './types';
+import type { AlterDestinationParams, EmailAccountEmail, EmailAccountsQueryData } from './types';
 import type { UpdateEmailForwardResponse } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
@@ -15,7 +15,7 @@ type UpdateEmailForwardParams = AlterDestinationParams & {
 };
 
 type Context = {
-	[ key: string ]: any;
+	emailAccountsQueryData: EmailAccountsQueryData | undefined;
 };
 
 const MUTATION_KEY = 'updateEmailForward';
@@ -75,12 +75,13 @@ export default function useUpdateEmailForwardMutation(
 
 		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
 
-		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
+		const previousEmailAccountsQueryData =
+			queryClient.getQueryData< EmailAccountsQueryData >( emailAccountsQueryKey );
 
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;
 
 		// Optimistically update the forward's target in `useGetEmailAccountsQuery` data
-		if ( emailForwards ) {
+		if ( previousEmailAccountsQueryData && emailForwards ) {
 			queryClient.setQueryData( emailAccountsQueryKey, {
 				...previousEmailAccountsQueryData,
 				accounts: [
@@ -102,7 +103,7 @@ export default function useUpdateEmailForwardMutation(
 		}
 
 		return {
-			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
+			emailAccountsQueryData: previousEmailAccountsQueryData,
 		};
 	};
 
@@ -110,10 +111,7 @@ export default function useUpdateEmailForwardMutation(
 		suppliedOnError?.( error, params, context );
 
 		if ( context ) {
-			queryClient.setQueryData(
-				emailAccountsQueryKey,
-				context[ JSON.stringify( emailAccountsQueryKey ) ]
-			);
+			queryClient.setQueryData( emailAccountsQueryKey, context.emailAccountsQueryData );
 		}
 
 		dispatch(
