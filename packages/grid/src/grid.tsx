@@ -273,21 +273,19 @@ export function Grid( {
 						gap: gapPx,
 					} }
 				>
-					{ items.map( ( id ) => {
-						return (
-							<GridItem
-								key={ id }
-								item={ resolvedItemMap.get( id ) as GridLayoutItem }
-								maxColumns={ effectiveColumns }
-								disabled={ ! editMode }
-								onResize={ ( delta ) => handleResize( id, delta ) }
-								onResizeEnd={ persistTemporaryLayout }
-								actionableArea={ actionableAreaMap.get( id ) }
-							>
-								{ childrenMap.get( id ) }
-							</GridItem>
-						);
-					} ) }
+					{ items.map( ( id ) => (
+						<GridItem
+							key={ id }
+							item={ resolvedItemMap.get( id ) as GridLayoutItem }
+							maxColumns={ effectiveColumns }
+							disabled={ ! editMode }
+							onResize={ ( delta ) => handleResize( id, delta ) }
+							onResizeEnd={ persistTemporaryLayout }
+							actionableArea={ actionableAreaMap.get( id ) }
+						>
+							{ childrenMap.get( id ) }
+						</GridItem>
+					) ) }
 					{ remaining }
 				</div>
 			</SortableContext>
