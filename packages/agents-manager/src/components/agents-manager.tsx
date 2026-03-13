@@ -75,7 +75,9 @@ function AgentSetup(): JSX.Element | null {
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version } = getAgentConfig();
 	let environment: 'calypso' | 'wp-admin' | 'ciab-admin' = 'calypso';
-	if ( [ 'wp-admin', 'ciab-admin' ].includes( sectionName ) ) {
+	if ( sectionName === 'wooai-admin' ) {
+		environment = 'wp-admin';
+	} else if ( [ 'wp-admin', 'ciab-admin' ].includes( sectionName ) ) {
 		environment = sectionName as 'wp-admin' | 'ciab-admin';
 	}
 	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
