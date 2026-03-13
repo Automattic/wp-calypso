@@ -9,3 +9,7 @@
     justify-content: space-between;
 }
 
+.container:has([data-slot="suggestions"]) [data-slot="messages"] {
+    padding-bottom: 44px;
+}
+

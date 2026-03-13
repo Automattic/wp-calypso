@@ -62,6 +62,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 		<AnimatePresence>
 			{ visible && (
 				<motion.div
+					data-slot="suggestions"
 					className={ cn(
 						styles.container,
 						layout === 'vertical'
