@@ -33,7 +33,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 				const query = encodeURIComponent( `blazepress-widget=${ keyValue }` );
 				window.location.href = isAtomic
 					? `https://jetpack.com/redirect/?source=jetpack-blaze&site=${ siteSlug }&query=${ query }`
-					: `${ siteAdminUrl }tools.php?page=advertising#!${ blazeURL }`;
+					: `${ siteAdminUrl }admin.php?page=advertising#!${ blazeURL }`;
 			} else {
 				page( blazeURL );
 			}
