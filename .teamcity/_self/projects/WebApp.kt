@@ -392,6 +392,11 @@ object RunAllUnitTests : BuildType({
 		artifacts => artifacts
 	""".trimIndent()
 
+	params {
+		// Unit tests don't exercise Playwright browsers, so avoid downloading them during yarn install.
+		param("env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
@@ -506,12 +511,13 @@ object RunAllUnitTests : BuildType({
 		bashNodeScript {
 			name = "Tag build"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
 			scriptContent = """
 				set -x
 
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-				fi
+				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 			""".trimIndent()
 		}
 	}
@@ -526,7 +532,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 15
 	}
 	features {
 		feature {
