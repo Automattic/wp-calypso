@@ -14,6 +14,10 @@
 		display: none;
 	}
 
+	.dashboard-notice {
+		margin-block-end: 24px;
+	}
+
 	.dataviews-wrapper {
 		.dataviews-no-results {
 			// In v1 we specify margins for <p> globally in <body>.
