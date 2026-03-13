@@ -8,11 +8,11 @@ import NotFound from '../404';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
-import Header from '../header';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
-import Snackbars from '../snackbars';
 import './style.scss';
 
+const Header = lazy( () => import( '../header' ) );
+const Snackbars = lazy( () => import( '../snackbars' ) );
 const WebpackBuildMonitor = lazy(
 	() =>
 		import(
@@ -109,7 +109,11 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
+			{ ! isInitialLoad && (
+				<Suspense fallback={ null }>
+					<Header />
+				</Suspense>
+			) }
 			{ ! isVerySlowNavigation && (
 				<main>
 					<CatchNotFound fallback={ NotFound }>
@@ -118,7 +122,9 @@ function Root() {
 				</main>
 			) }
 			{ supports.commandPalette && <CommandPalette /> }
-			<Snackbars />
+			<Suspense fallback={ null }>
+				<Snackbars />
+			</Suspense>
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (

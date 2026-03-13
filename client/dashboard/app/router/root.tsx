@@ -4,11 +4,10 @@ import {
 	queryClient,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
+import { createRootRouteWithContext, lazyRouteComponent, redirect } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
 import { AUTH_QUERY_KEY } from '../auth';
 import Root from '../root';
-import NotFoundRoot from '../root/error';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 
@@ -20,7 +19,7 @@ export type RootRouterContext = {
 
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
-	notFoundComponent: NotFoundRoot,
+	notFoundComponent: lazyRouteComponent( () => import( '../root/error' ) ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;

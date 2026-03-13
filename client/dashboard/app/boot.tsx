@@ -12,7 +12,6 @@ import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
 import isDashboardEnv from '../utils/is-dashboard-env';
 import { handleOAuthCallback } from './auth/oauth-callback';
-import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
@@ -30,7 +29,9 @@ function boot( config: AppConfig ) {
 
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
-	loadPreferencesHelper();
+	import( /* webpackChunkName: "async-dev-tools-preferences" */ './dev-tools/preferences' ).then(
+		( { loadPreferencesHelper } ) => loadPreferencesHelper()
+	);
 	limitTotalSnackbars();
 	initSentry();
 

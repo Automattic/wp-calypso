@@ -332,6 +332,12 @@ const webpackConfig = {
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
+			// Bypass @wordpress/components exports field for direct subpath imports.
+			// The babel-plugin-wp-components-imports plugin rewrites barrel imports to subpaths.
+			'@wordpress/components/build-module': path.resolve(
+				__dirname,
+				'../node_modules/@wordpress/components/build-module'
+			),
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),

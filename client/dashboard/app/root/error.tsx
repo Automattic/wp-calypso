@@ -1,5 +1,7 @@
+import { Suspense, lazy } from 'react';
 import NotFound from '../404';
-import Header from '../header';
+
+const Header = lazy( () => import( '../header' ) );
 
 /**
  * When notFound() is called within a beforeLoad, TanStack Router will skip rendering the root route,
@@ -12,7 +14,9 @@ import Header from '../header';
 export default function NotFoundRoot() {
 	return (
 		<div className="dashboard-root__layout">
-			<Header />
+			<Suspense fallback={ null }>
+				<Header />
+			</Suspense>
 			<main>
 				<NotFound />
 			</main>
