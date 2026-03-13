@@ -4,6 +4,8 @@
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { RecommendedFeedItem } from '../recommended-feed-item';
@@ -18,17 +20,28 @@ jest.mock( 'calypso/components/data/query-sites', () => ( {
 	default: () => null,
 } ) );
 
+jest.mock( 'calypso/state/notices/actions', () => ( {
+	__esModule: true,
+	successNotice: jest.fn( ( text: string, options: { duration: number } ) => ( {
+		type: 'NOTICE/SUCCESS',
+		text,
+		options,
+	} ) ),
+} ) );
+
 // Mock ReaderFollowButton - requires complex Redux state (reader, route, currentUser) and has side effects (analytics, API calls for follow/unfollow).
 jest.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: ( { isButtonOnly, className }: { isButtonOnly: boolean; className: string } ) => (
-		<button
-			data-testid="follow-button"
-			data-is-button-only={ isButtonOnly }
-			className={ className }
-		>
-			{ isButtonOnly ? null : 'Subscribe' }
-		</button>
+	default: jest.fn(
+		( { isButtonOnly, className }: { isButtonOnly: boolean; className: string } ) => (
+			<button
+				data-testid="follow-button"
+				data-is-button-only={ isButtonOnly }
+				className={ className }
+			>
+				{ isButtonOnly ? null : 'Subscribe' }
+			</button>
+		)
 	),
 } ) );
 
@@ -140,6 +153,45 @@ describe( 'RecommendedFeedItem', () => {
 			const button = screen.getByTestId( 'follow-button' );
 			expect( button ).toHaveAttribute( 'data-is-button-only', 'true' );
 			expect( button ).not.toHaveTextContent( 'Subscribe' );
+		} );
+	} );
+
+	describe( 'onFollowToggle', () => {
+		const mockedReaderFollowButton = jest.mocked( ReaderFollowButton );
+		const mockedSuccessNotice = jest.mocked( successNotice );
+
+		beforeEach( () => {
+			mockedReaderFollowButton.mockClear();
+			mockedSuccessNotice.mockClear();
+		} );
+
+		function getOnFollowToggle() {
+			const [ { onFollowToggle } ] = mockedReaderFollowButton.mock.calls.map(
+				( [ props ] ) => props
+			);
+			return onFollowToggle;
+		}
+
+		test( 'shows subscribed notice when followed', () => {
+			renderComponent();
+
+			getOnFollowToggle()?.( true );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				'Success! You are now subscribed to Test Blog.',
+				{ duration: 2000 }
+			);
+		} );
+
+		test( 'shows unsubscribed notice when unfollowed', () => {
+			renderComponent();
+
+			getOnFollowToggle()?.( false );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				'Success! You are now unsubscribed from "Test Blog".',
+				{ duration: 2000 }
+			);
 		} );
 	} );
 } );
