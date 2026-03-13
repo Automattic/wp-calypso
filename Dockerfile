@@ -79,7 +79,7 @@ RUN yarn run build 2>&1 | tee /tmp/build_log.txt
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
 
 # Delete any sourcemaps which may have been generated to avoid creating a large artifact.
-RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
+RUN find /calypso/build /calypso/public -name "*.*.map" -delete
 
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"
