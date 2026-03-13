@@ -190,33 +190,29 @@ export function convertToolMessagesToComponents( {
 	} );
 }
 
-/**
- * Deactivates messages that should no longer be interactive:
- * - Removes next-step buttons.
- * - Disables picker components.
- * - Removes the undo action so it won't reappear on cached messages.
- */
+// Deactivates messages that should no longer be interactive when caching.
 export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
-	return messages.flatMap( ( message ) => {
-		// @ts-ignore -- custom flag not on the `UIMessage` type.
-		if ( message.isNextStepButton ) {
-			return [];
-		}
+	return messages
+		.filter( ( message ) => {
+			// @ts-ignore -- custom flag not on the `UIMessage` type.
+			// Remove next-step buttons injected by `convertToolMessagesToComponents`.
+			return ! message.isNextStepButton;
+		} )
+		.map( ( message ) => {
+			// @ts-ignore -- custom flag not on the `UIMessage` type.
+			// Disable picker components so they become non-interactive.
+			if ( message.isShowComponentMessage ) {
+				return { ...message, disabled: true };
+			}
 
-		// @ts-ignore -- custom flag not on the `UIMessage` type.
-		if ( message.isShowComponentMessage ) {
-			return [ { ...message, disabled: true } ];
-		}
-
-		if ( message.actions?.some( ( action ) => action.id === CHECKPOINT_ACTION_ID ) ) {
-			return [
-				{
+			// Strip the undo (checkpoint) action so it won't reappear on cached messages.
+			if ( message.actions?.length ) {
+				return {
 					...message,
 					actions: message.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
-				},
-			];
-		}
+				};
+			}
 
-		return [ message ];
-	} );
+			return message;
+		} );
 }
