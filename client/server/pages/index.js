@@ -557,6 +557,7 @@ function setUpCSP( req, res, next ) {
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
 			'https://bat.bing.com', // Bing Ads JS
+			'https://blackbox-api.wp.com', // Blackbox bot detection
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -639,6 +640,7 @@ function setUpCSP( req, res, next ) {
 			'*.verygoodsecurity.com', // VGS Collect secure iframes
 			'www.paypal.com', // PayPal checkout flow
 			'*.paypal.com', // PayPal additional flows
+			'https://blackbox-api.wp.com', // Blackbox iframe transport
 		],
 		'font-src': [
 			"'self'",
