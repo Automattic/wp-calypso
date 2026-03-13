@@ -84,6 +84,7 @@ async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canConnectToZendesk();
 	return {
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
@@ -97,6 +98,7 @@ async function createWrappedContextProvider(
 
 			return {
 				...resolvedContext,
+				can_access_zendesk: canAccessZendesk,
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
@@ -115,7 +117,6 @@ async function createDefaultContextProvider(
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
-
 	return {
 		getClientContext: () => ( {
 			url: window.location.href,
