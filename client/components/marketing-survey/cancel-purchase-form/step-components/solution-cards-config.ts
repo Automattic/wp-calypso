@@ -123,7 +123,7 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 	{
 		id: 'upgrade-for-full-access',
-		title: 'Upgrade for full access',
+		title: 'Pick another paid plan for access to more features',
 		subtitle: 'Get the business plan to access all available plugins and themes.',
 		getHref: ( ctx ) => ctx.changePlanUrl,
 		onClick: ( ctx ) => {

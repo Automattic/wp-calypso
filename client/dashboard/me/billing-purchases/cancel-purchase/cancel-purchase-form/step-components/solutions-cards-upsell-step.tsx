@@ -157,7 +157,7 @@ function getCardTitle( cardId: string ): string {
 		case 'ask-ai-assistant':
 			return __( 'Ask our AI assistant' );
 		case 'upgrade-for-full-access':
-			return __( 'Upgrade for full access' );
+			return __( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
 			return __( 'Change your plan' );
 		case 'get-css-addon':

@@ -89,7 +89,7 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 		case 'ask-ai-assistant':
 			return translate( 'Ask our AI assistant' );
 		case 'upgrade-for-full-access':
-			return translate( 'Upgrade for full access' );
+			return translate( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
 			return translate( 'Change your plan' );
 		case 'get-css-addon':
