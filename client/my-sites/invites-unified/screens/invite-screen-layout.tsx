@@ -55,7 +55,7 @@ export function InviteScreenLayout( {
 		dispatch( hideMasterbar() );
 		recordTracksEvent( `${ trackingEventPrefix }_load_page`, {
 			...trackingProps,
-			logged_in: true,
+			logged_in: !! user,
 		} );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
