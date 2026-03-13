@@ -1,4 +1,4 @@
-import { createElement, useEffect } from '@wordpress/element';
+import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
 import type { UseCheckpointReturn } from '../utils/load-external-providers';
@@ -38,21 +38,28 @@ export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn
 ): void {
+	// Use a ref to access the latest checkpoint without re-triggering the effect.
+	// The actions callback is evaluated lazily per-message, so it always reads the current value.
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
+
 	useEffect( () => {
-		if ( ! checkpoint ) {
+		if ( ! checkpointRef.current ) {
 			return;
 		}
 
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
+				const cp = checkpointRef.current;
+
+				if ( ! cp || message.role !== 'agent' ) {
 					return [];
 				}
 
 				const checkpointId = getCheckpointId( message );
 
-				if ( ! checkpointId || ! checkpoint.hasCheckpoint( checkpointId ) ) {
+				if ( ! checkpointId || ! cp.hasCheckpoint( checkpointId ) ) {
 					return [];
 				}
 
@@ -66,7 +73,7 @@ export default function useCheckpointAction(
 						} ),
 						onClick: async () => {
 							try {
-								await checkpoint.restoreCheckpoint( checkpointId );
+								await cp.restoreCheckpoint( checkpointId );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
@@ -76,5 +83,5 @@ export default function useCheckpointAction(
 				];
 			},
 		} );
-	}, [ registerMessageActions, checkpoint ] );
+	}, [ registerMessageActions ] );
 }
