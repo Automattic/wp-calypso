@@ -229,7 +229,11 @@ export default function SolutionsCardsUpsellStep( {
 			<div className="cancel-purchase-form__upsell-content">
 				<FormattedHeader
 					brandFont
-					headerText={ translate( 'Have you tried any of these options?' ) }
+					headerText={
+						filteredSolutions.length === 1
+							? translate( "Before you cancel, here's an idea:" )
+							: translate( 'Have you tried any of these options?' )
+					}
 				/>
 				<div className="cancel-purchase-form__upsell-solutions-cards">
 					{ filteredSolutions.map( ( card ) => {

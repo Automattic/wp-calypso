@@ -337,7 +337,11 @@ export default function SolutionsCardsUpsellStep( {
 	return (
 		<VStack spacing={ 6 }>
 			<SummaryButtonList
-				title={ __( 'Before canceling, you can consider these options:' ) }
+				title={
+					filteredSolutions.length === 1
+						? __( "Before you cancel, here's an idea:" )
+						: __( 'Before canceling, you can consider these options:' )
+				}
 				density="medium-low"
 			>
 				{ filteredSolutions.map( ( card ) => {
