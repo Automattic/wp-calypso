@@ -33,6 +33,7 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"onboarding/interval-dropdown": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
