@@ -62,7 +62,8 @@ export default function AgentsManager( {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup(): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
+	const { site, currentRoute, sectionName, agentConfig, setAgentConfig } =
+		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -73,6 +74,10 @@ function AgentSetup(): JSX.Element | null {
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version } = getAgentConfig();
+	let environment: 'calypso' | 'wp-admin' | 'ciab-admin' = 'calypso';
+	if ( [ 'wp-admin', 'ciab-admin' ].includes( sectionName ) ) {
+		environment = sectionName as 'wp-admin' | 'ciab-admin';
+	}
 	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
@@ -109,7 +114,7 @@ function AgentSetup(): JSX.Element | null {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
-				environment: 'calypso',
+				environment,
 				agentId,
 				version,
 			} );
@@ -118,7 +123,17 @@ function AgentSetup(): JSX.Element | null {
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
+	}, [
+		agentId,
+		version,
+		currentRoute,
+		isNewChat,
+		navigate,
+		sessionId,
+		setAgentConfig,
+		site?.ID,
+		environment,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

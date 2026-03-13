@@ -19,7 +19,7 @@ export interface CreateAgentConfigOptions {
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	environment?: 'calypso' | 'wp-admin';
+	environment?: 'calypso' | 'wp-admin' | 'ciab-admin';
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
@@ -82,6 +82,8 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
  */
 async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
+	currentRoute: string | undefined,
+	environment: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
@@ -96,7 +98,15 @@ async function createWrappedContextProvider(
 				  }
 				: pluginContext;
 
+			const fallbackContext = {
+				url: window.location.href,
+				pathname: currentRoute || window.location.pathname,
+				search: window.location.search,
+				environment,
+			};
+
 			return {
+				...fallbackContext,
 				...resolvedContext,
 				can_access_zendesk: canAccessZendesk,
 				constructorArguments: {
@@ -164,7 +174,12 @@ export async function createAgentConfig(
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			currentRoute,
+			environment,
+			version
+		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
 			currentRoute,
