@@ -6,7 +6,7 @@ import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 // Tool IDs that are silently dropped without a console warning.
-const SILENT_TOOL_IDS = new Set( [ 'big_sky__set_processing_state' ] );
+const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
 
 interface Options {
 	messages: UIMessage[];
@@ -187,7 +187,7 @@ export function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		if ( ! SILENT_TOOL_IDS.has( textData.tool_id ) ) {
+		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
 			// eslint-disable-next-line no-console
 			console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		}
