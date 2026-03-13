@@ -4,166 +4,183 @@
  * Transforms:
  *   import { Button, Modal, CardBody } from '@wordpress/components';
  * Into:
- *   import { default as Button } from '@wordpress/components/build-module/button/index.mjs';
- *   import { default as Modal } from '@wordpress/components/build-module/modal/index.mjs';
- *   import { CardBody } from '@wordpress/components/build-module/card/index.mjs';
+ *   import { Button } from '@wp-components-direct/button/index.mjs';
+ *   import { Modal } from '@wp-components-direct/modal/index.mjs';
+ *   import { CardBody } from '@wp-components-direct/card/index.mjs';
  *
  * This avoids pulling in the entire barrel re-export which includes 180+ components.
  *
  * Generated from @wordpress/components build-module/index.mjs barrel analysis.
  */
 
-// Maps exported name -> { subpath, isDefault }
-// isDefault: true means the component is the default export of the subpath module
-// isDefault: false means the component is a named export of the subpath module
+// Maps exported name -> { subpath, exportName }
+// subpath: the subdirectory under build-module/
+// exportName: the actual export name in the subpath module
+//   - 'default' means use `import { default as X }`
+//   - any other name means use `import { exportName as X }` (or `import { X }` if names match)
 const MAPPING = {
-	__experimentalAlignmentMatrixControl: { subpath: 'alignment-matrix-control', isDefault: true },
-	__experimentalBorderBoxControl: { subpath: 'border-box-control', isDefault: true },
-	__experimentalBorderControl: { subpath: 'border-control', isDefault: true },
-	__experimentalBoxControl: { subpath: 'box-control', isDefault: true },
-	__experimentalConfirmDialog: { subpath: 'confirm-dialog', isDefault: true },
-	__experimentalDivider: { subpath: 'divider', isDefault: true },
+	__experimentalAlignmentMatrixControl: {
+		subpath: 'alignment-matrix-control',
+		exportName: 'default',
+	},
+	__experimentalBorderBoxControl: { subpath: 'border-box-control', exportName: 'BorderBoxControl' },
+	__experimentalBorderControl: { subpath: 'border-control', exportName: 'BorderControl' },
+	__experimentalBoxControl: { subpath: 'box-control', exportName: 'default' },
+	__experimentalConfirmDialog: { subpath: 'confirm-dialog', exportName: 'ConfirmDialog' },
+	__experimentalDivider: { subpath: 'divider', exportName: 'Divider' },
 	__experimentalDropdownContentWrapper: {
 		subpath: 'dropdown/dropdown-content-wrapper',
-		isDefault: true,
+		exportName: 'default',
 	},
-	__experimentalElevation: { subpath: 'elevation', isDefault: true },
-	__experimentalGrid: { subpath: 'grid', isDefault: true },
-	__experimentalHeading: { subpath: 'heading', isDefault: true },
-	__experimentalHStack: { subpath: 'h-stack', isDefault: true },
-	__experimentalInputControl: { subpath: 'input-control', isDefault: true },
+	__experimentalElevation: { subpath: 'elevation', exportName: 'Elevation' },
+	__experimentalGrid: { subpath: 'grid', exportName: 'Grid' },
+	__experimentalHeading: { subpath: 'heading', exportName: 'Heading' },
+	__experimentalHStack: { subpath: 'h-stack', exportName: 'HStack' },
+	__experimentalInputControl: { subpath: 'input-control', exportName: 'default' },
 	__experimentalInputControlPrefixWrapper: {
 		subpath: 'input-control/input-prefix-wrapper',
-		isDefault: true,
+		exportName: 'default',
 	},
 	__experimentalInputControlSuffixWrapper: {
 		subpath: 'input-control/input-suffix-wrapper',
-		isDefault: true,
+		exportName: 'default',
 	},
-	__experimentalItem: { subpath: 'item-group', isDefault: true },
-	__experimentalItemGroup: { subpath: 'item-group', isDefault: true },
-	__experimentalNavigation: { subpath: 'navigation', isDefault: true },
-	__experimentalNavigationBackButton: { subpath: 'navigation/back-button', isDefault: true },
-	__experimentalNavigationGroup: { subpath: 'navigation/group', isDefault: true },
-	__experimentalNavigationItem: { subpath: 'navigation/item', isDefault: true },
-	__experimentalNavigationMenu: { subpath: 'navigation/menu', isDefault: true },
-	__experimentalNumberControl: { subpath: 'number-control', isDefault: true },
-	__experimentalPaletteEdit: { subpath: 'palette-edit', isDefault: true },
-	__experimentalRadio: { subpath: 'radio-group/radio', isDefault: true },
-	__experimentalRadioGroup: { subpath: 'radio-group', isDefault: true },
-	__experimentalScrollable: { subpath: 'scrollable', isDefault: true },
-	__experimentalSpacer: { subpath: 'spacer', isDefault: true },
-	__experimentalStyleProvider: { subpath: 'style-provider', isDefault: true },
-	__experimentalSurface: { subpath: 'surface', isDefault: true },
-	__experimentalText: { subpath: 'text', isDefault: true },
-	__experimentalToggleGroupControl: { subpath: 'toggle-group-control', isDefault: true },
-	__experimentalToggleGroupControlOption: { subpath: 'toggle-group-control', isDefault: false },
-	__experimentalToggleGroupControlOptionIcon: { subpath: 'toggle-group-control', isDefault: false },
-	__experimentalTreeGrid: { subpath: 'tree-grid', isDefault: true },
-	__experimentalTreeGridCell: { subpath: 'tree-grid', isDefault: false },
-	__experimentalTreeGridItem: { subpath: 'tree-grid', isDefault: false },
-	__experimentalTreeGridRow: { subpath: 'tree-grid', isDefault: false },
-	__experimentalTruncate: { subpath: 'truncate', isDefault: true },
-	__experimentalUseNavigator: { subpath: 'navigator', isDefault: false },
-	__experimentalVStack: { subpath: 'v-stack', isDefault: true },
-	__experimentalView: { subpath: 'view', isDefault: true },
-	__experimentalZStack: { subpath: 'z-stack', isDefault: true },
-	AlignmentMatrixControl: { subpath: 'alignment-matrix-control', isDefault: true },
-	AnglePickerControl: { subpath: 'angle-picker-control', isDefault: true },
-	Animate: { subpath: 'animate', isDefault: true },
-	Autocomplete: { subpath: 'autocomplete', isDefault: true },
-	BaseControl: { subpath: 'base-control', isDefault: true },
-	BorderBoxControl: { subpath: 'border-box-control', isDefault: true },
-	BorderControl: { subpath: 'border-control', isDefault: true },
-	BoxControl: { subpath: 'box-control', isDefault: true },
-	Button: { subpath: 'button', isDefault: true },
-	ButtonGroup: { subpath: 'button-group', isDefault: true },
-	Card: { subpath: 'card', isDefault: false },
-	CardBody: { subpath: 'card', isDefault: false },
-	CardDivider: { subpath: 'card', isDefault: false },
-	CardFooter: { subpath: 'card', isDefault: false },
-	CardHeader: { subpath: 'card', isDefault: false },
-	CardMedia: { subpath: 'card', isDefault: false },
-	CheckboxControl: { subpath: 'checkbox-control', isDefault: true },
-	ColorIndicator: { subpath: 'color-indicator', isDefault: true },
-	ColorPalette: { subpath: 'color-palette', isDefault: true },
-	ColorPicker: { subpath: 'color-picker', isDefault: true },
-	ComboboxControl: { subpath: 'combobox-control', isDefault: true },
-	Composite: { subpath: 'composite', isDefault: true },
-	CustomGradientPicker: { subpath: 'custom-gradient-picker', isDefault: true },
-	CustomSelectControl: { subpath: 'custom-select-control', isDefault: true },
-	Dashicon: { subpath: 'dashicon', isDefault: true },
-	DatePicker: { subpath: 'date-time', isDefault: false },
-	DateTimePicker: { subpath: 'date-time', isDefault: false },
-	Disabled: { subpath: 'disabled', isDefault: true },
-	Draggable: { subpath: 'draggable', isDefault: true },
-	Dropdown: { subpath: 'dropdown', isDefault: true },
-	DropdownMenu: { subpath: 'dropdown-menu', isDefault: true },
-	DropZone: { subpath: 'drop-zone', isDefault: true },
-	DuotonePicker: { subpath: 'duotone-picker', isDefault: false },
-	DuotoneSwatch: { subpath: 'duotone-picker', isDefault: false },
-	ExternalLink: { subpath: 'external-link', isDefault: true },
-	Fill: { subpath: 'slot-fill', isDefault: false },
-	Flex: { subpath: 'flex', isDefault: false },
-	FlexBlock: { subpath: 'flex', isDefault: false },
-	FlexItem: { subpath: 'flex', isDefault: false },
-	FocalPointPicker: { subpath: 'focal-point-picker', isDefault: true },
-	FontSizePicker: { subpath: 'font-size-picker', isDefault: true },
-	FormFileUpload: { subpath: 'form-file-upload', isDefault: true },
-	FormToggle: { subpath: 'form-toggle', isDefault: true },
-	FormTokenField: { subpath: 'form-token-field', isDefault: true },
-	GradientPicker: { subpath: 'gradient-picker', isDefault: true },
-	Guide: { subpath: 'guide', isDefault: true },
-	GuidePage: { subpath: 'guide/page', isDefault: true },
-	Icon: { subpath: 'icon', isDefault: true },
-	KeyboardShortcuts: { subpath: 'keyboard-shortcuts', isDefault: true },
-	MenuGroup: { subpath: 'menu-group', isDefault: true },
-	MenuItem: { subpath: 'menu-item', isDefault: true },
-	MenuItemsChoice: { subpath: 'menu-items-choice', isDefault: true },
-	Modal: { subpath: 'modal', isDefault: true },
-	NavigableMenu: { subpath: 'navigable-container', isDefault: false },
-	Navigator: { subpath: 'navigator', isDefault: true },
-	Notice: { subpath: 'notice', isDefault: true },
-	NoticeList: { subpath: 'notice/list', isDefault: true },
-	Panel: { subpath: 'panel', isDefault: true },
-	PanelBody: { subpath: 'panel/body', isDefault: true },
-	PanelHeader: { subpath: 'panel/header', isDefault: true },
-	PanelRow: { subpath: 'panel/row', isDefault: true },
-	Placeholder: { subpath: 'placeholder', isDefault: true },
-	Popover: { subpath: 'popover', isDefault: true },
-	privateApis: { subpath: 'private-apis', isDefault: false },
-	ProgressBar: { subpath: 'progress-bar', isDefault: true },
-	QueryControls: { subpath: 'query-controls', isDefault: true },
-	RadioControl: { subpath: 'radio-control', isDefault: true },
-	RangeControl: { subpath: 'range-control', isDefault: true },
-	ResizableBox: { subpath: 'resizable-box', isDefault: true },
-	ResponsiveWrapper: { subpath: 'responsive-wrapper', isDefault: true },
-	SandBox: { subpath: 'sandbox', isDefault: true },
-	ScrollLock: { subpath: 'scroll-lock', isDefault: true },
-	SearchControl: { subpath: 'search-control', isDefault: true },
-	SelectControl: { subpath: 'select-control', isDefault: true },
-	Slot: { subpath: 'slot-fill', isDefault: false },
-	SlotFillProvider: { subpath: 'slot-fill', isDefault: false },
-	Snackbar: { subpath: 'snackbar', isDefault: true },
-	SnackbarList: { subpath: 'snackbar/list', isDefault: true },
-	Spinner: { subpath: 'spinner', isDefault: true },
-	TabbableContainer: { subpath: 'navigable-container', isDefault: false },
-	TabPanel: { subpath: 'tab-panel', isDefault: true },
-	TextareaControl: { subpath: 'textarea-control', isDefault: true },
-	TextControl: { subpath: 'text-control', isDefault: true },
-	TextHighlight: { subpath: 'text-highlight', isDefault: true },
-	TimePicker: { subpath: 'date-time', isDefault: false },
-	Tip: { subpath: 'tip', isDefault: true },
-	ToggleControl: { subpath: 'toggle-control', isDefault: true },
-	Toolbar: { subpath: 'toolbar', isDefault: true },
-	ToolbarButton: { subpath: 'toolbar', isDefault: false },
-	ToolbarDropdownMenu: { subpath: 'toolbar', isDefault: false },
-	ToolbarGroup: { subpath: 'toolbar', isDefault: false },
-	ToolbarItem: { subpath: 'toolbar', isDefault: false },
-	Tooltip: { subpath: 'tooltip', isDefault: true },
-	TreeSelect: { subpath: 'tree-select', isDefault: true },
-	useNavigator: { subpath: 'navigator', isDefault: false },
-	VisuallyHidden: { subpath: 'visually-hidden', isDefault: true },
+	__experimentalItem: { subpath: 'item-group', exportName: 'Item' },
+	__experimentalItemGroup: { subpath: 'item-group', exportName: 'ItemGroup' },
+	__experimentalNavigation: { subpath: 'navigation', exportName: 'default' },
+	__experimentalNavigationBackButton: { subpath: 'navigation/back-button', exportName: 'default' },
+	__experimentalNavigationGroup: { subpath: 'navigation/group', exportName: 'default' },
+	__experimentalNavigationItem: { subpath: 'navigation/item', exportName: 'default' },
+	__experimentalNavigationMenu: { subpath: 'navigation/menu', exportName: 'default' },
+	__experimentalNumberControl: { subpath: 'number-control', exportName: 'default' },
+	__experimentalPaletteEdit: { subpath: 'palette-edit', exportName: 'default' },
+	__experimentalRadio: { subpath: 'radio-group/radio', exportName: 'default' },
+	__experimentalRadioGroup: { subpath: 'radio-group', exportName: 'default' },
+	__experimentalScrollable: { subpath: 'scrollable', exportName: 'Scrollable' },
+	__experimentalSpacer: { subpath: 'spacer', exportName: 'Spacer' },
+	__experimentalStyleProvider: { subpath: 'style-provider', exportName: 'default' },
+	__experimentalSurface: { subpath: 'surface', exportName: 'Surface' },
+	__experimentalText: { subpath: 'text', exportName: 'Text' },
+	__experimentalToggleGroupControl: {
+		subpath: 'toggle-group-control',
+		exportName: 'ToggleGroupControl',
+	},
+	__experimentalToggleGroupControlOption: {
+		subpath: 'toggle-group-control',
+		exportName: 'ToggleGroupControlOption',
+	},
+	__experimentalToggleGroupControlOptionIcon: {
+		subpath: 'toggle-group-control',
+		exportName: 'ToggleGroupControlOptionIcon',
+	},
+	__experimentalTreeGrid: { subpath: 'tree-grid', exportName: 'default' },
+	__experimentalTreeGridCell: { subpath: 'tree-grid', exportName: 'TreeGridCell' },
+	__experimentalTreeGridItem: { subpath: 'tree-grid', exportName: 'TreeGridItem' },
+	__experimentalTreeGridRow: { subpath: 'tree-grid', exportName: 'TreeGridRow' },
+	__experimentalTruncate: { subpath: 'truncate', exportName: 'Truncate' },
+	__experimentalUseNavigator: { subpath: 'navigator', exportName: 'useNavigator' },
+	__experimentalVStack: { subpath: 'v-stack', exportName: 'VStack' },
+	__experimentalView: { subpath: 'view', exportName: 'View' },
+	__experimentalZStack: { subpath: 'z-stack', exportName: 'ZStack' },
+	AlignmentMatrixControl: {
+		subpath: 'alignment-matrix-control',
+		exportName: 'AlignmentMatrixControl',
+	},
+	AnglePickerControl: { subpath: 'angle-picker-control', exportName: 'AnglePickerControl' },
+	Animate: { subpath: 'animate', exportName: 'Animate' },
+	Autocomplete: { subpath: 'autocomplete', exportName: 'default' },
+	BaseControl: { subpath: 'base-control', exportName: 'BaseControl' },
+	BorderBoxControl: { subpath: 'border-box-control', exportName: 'BorderBoxControl' },
+	BorderControl: { subpath: 'border-control', exportName: 'BorderControl' },
+	BoxControl: { subpath: 'box-control', exportName: 'default' },
+	Button: { subpath: 'button', exportName: 'Button' },
+	ButtonGroup: { subpath: 'button-group', exportName: 'ButtonGroup' },
+	Card: { subpath: 'card', exportName: 'Card' },
+	CardBody: { subpath: 'card', exportName: 'CardBody' },
+	CardDivider: { subpath: 'card', exportName: 'CardDivider' },
+	CardFooter: { subpath: 'card', exportName: 'CardFooter' },
+	CardHeader: { subpath: 'card', exportName: 'CardHeader' },
+	CardMedia: { subpath: 'card', exportName: 'CardMedia' },
+	CheckboxControl: { subpath: 'checkbox-control', exportName: 'CheckboxControl' },
+	ColorIndicator: { subpath: 'color-indicator', exportName: 'ColorIndicator' },
+	ColorPalette: { subpath: 'color-palette', exportName: 'ColorPalette' },
+	ColorPicker: { subpath: 'color-picker', exportName: 'ColorPicker' },
+	ComboboxControl: { subpath: 'combobox-control', exportName: 'default' },
+	Composite: { subpath: 'composite', exportName: 'Composite' },
+	CustomGradientPicker: { subpath: 'custom-gradient-picker', exportName: 'CustomGradientPicker' },
+	CustomSelectControl: { subpath: 'custom-select-control', exportName: 'default' },
+	Dashicon: { subpath: 'dashicon', exportName: 'default' },
+	DatePicker: { subpath: 'date-time', exportName: 'DatePicker' },
+	DateTimePicker: { subpath: 'date-time', exportName: 'default' },
+	Disabled: { subpath: 'disabled', exportName: 'default' },
+	Draggable: { subpath: 'draggable', exportName: 'Draggable' },
+	Dropdown: { subpath: 'dropdown', exportName: 'Dropdown' },
+	DropdownMenu: { subpath: 'dropdown-menu', exportName: 'DropdownMenu' },
+	DropZone: { subpath: 'drop-zone', exportName: 'default' },
+	DuotonePicker: { subpath: 'duotone-picker', exportName: 'DuotonePicker' },
+	DuotoneSwatch: { subpath: 'duotone-picker', exportName: 'DuotoneSwatch' },
+	ExternalLink: { subpath: 'external-link', exportName: 'ExternalLink' },
+	Fill: { subpath: 'slot-fill', exportName: 'Fill' },
+	Flex: { subpath: 'flex', exportName: 'Flex' },
+	FlexBlock: { subpath: 'flex', exportName: 'FlexBlock' },
+	FlexItem: { subpath: 'flex', exportName: 'FlexItem' },
+	FocalPointPicker: { subpath: 'focal-point-picker', exportName: 'FocalPointPicker' },
+	FontSizePicker: { subpath: 'font-size-picker', exportName: 'FontSizePicker' },
+	FormFileUpload: { subpath: 'form-file-upload', exportName: 'FormFileUpload' },
+	FormToggle: { subpath: 'form-toggle', exportName: 'FormToggle' },
+	FormTokenField: { subpath: 'form-token-field', exportName: 'FormTokenField' },
+	GradientPicker: { subpath: 'gradient-picker', exportName: 'GradientPicker' },
+	Guide: { subpath: 'guide', exportName: 'default' },
+	GuidePage: { subpath: 'guide/page', exportName: 'default' },
+	Icon: { subpath: 'icon', exportName: 'default' },
+	KeyboardShortcuts: { subpath: 'keyboard-shortcuts', exportName: 'default' },
+	MenuGroup: { subpath: 'menu-group', exportName: 'MenuGroup' },
+	MenuItem: { subpath: 'menu-item', exportName: 'MenuItem' },
+	MenuItemsChoice: { subpath: 'menu-items-choice', exportName: 'default' },
+	Modal: { subpath: 'modal', exportName: 'Modal' },
+	NavigableMenu: { subpath: 'navigable-container', exportName: 'NavigableMenu' },
+	Navigator: { subpath: 'navigator', exportName: 'Navigator' },
+	Notice: { subpath: 'notice', exportName: 'default' },
+	NoticeList: { subpath: 'notice/list', exportName: 'default' },
+	Panel: { subpath: 'panel', exportName: 'Panel' },
+	PanelBody: { subpath: 'panel/body', exportName: 'PanelBody' },
+	PanelHeader: { subpath: 'panel/header', exportName: 'default' },
+	PanelRow: { subpath: 'panel/row', exportName: 'PanelRow' },
+	Placeholder: { subpath: 'placeholder', exportName: 'Placeholder' },
+	Popover: { subpath: 'popover', exportName: 'Popover' },
+	privateApis: { subpath: 'private-apis', exportName: 'privateApis' },
+	ProgressBar: { subpath: 'progress-bar', exportName: 'ProgressBar' },
+	QueryControls: { subpath: 'query-controls', exportName: 'QueryControls' },
+	RadioControl: { subpath: 'radio-control', exportName: 'RadioControl' },
+	RangeControl: { subpath: 'range-control', exportName: 'RangeControl' },
+	ResizableBox: { subpath: 'resizable-box', exportName: 'ResizableBox' },
+	ResponsiveWrapper: { subpath: 'responsive-wrapper', exportName: 'default' },
+	SandBox: { subpath: 'sandbox', exportName: 'default' },
+	ScrollLock: { subpath: 'scroll-lock', exportName: 'ScrollLock' },
+	SearchControl: { subpath: 'search-control', exportName: 'SearchControl' },
+	SelectControl: { subpath: 'select-control', exportName: 'SelectControl' },
+	Slot: { subpath: 'slot-fill', exportName: 'Slot' },
+	SlotFillProvider: { subpath: 'slot-fill', exportName: 'Provider' },
+	Snackbar: { subpath: 'snackbar', exportName: 'Snackbar' },
+	SnackbarList: { subpath: 'snackbar/list', exportName: 'SnackbarList' },
+	Spinner: { subpath: 'spinner', exportName: 'Spinner' },
+	TabbableContainer: { subpath: 'navigable-container', exportName: 'TabbableContainer' },
+	TabPanel: { subpath: 'tab-panel', exportName: 'TabPanel' },
+	TextareaControl: { subpath: 'textarea-control', exportName: 'TextareaControl' },
+	TextControl: { subpath: 'text-control', exportName: 'TextControl' },
+	TextHighlight: { subpath: 'text-highlight', exportName: 'TextHighlight' },
+	TimePicker: { subpath: 'date-time', exportName: 'TimePicker' },
+	Tip: { subpath: 'tip', exportName: 'Tip' },
+	ToggleControl: { subpath: 'toggle-control', exportName: 'ToggleControl' },
+	Toolbar: { subpath: 'toolbar', exportName: 'Toolbar' },
+	ToolbarButton: { subpath: 'toolbar', exportName: 'ToolbarButton' },
+	ToolbarDropdownMenu: { subpath: 'toolbar', exportName: 'ToolbarDropdownMenu' },
+	ToolbarGroup: { subpath: 'toolbar', exportName: 'ToolbarGroup' },
+	ToolbarItem: { subpath: 'toolbar', exportName: 'ToolbarItem' },
+	Tooltip: { subpath: 'tooltip', exportName: 'Tooltip' },
+	TreeSelect: { subpath: 'tree-select', exportName: 'TreeSelect' },
+	useNavigator: { subpath: 'navigator', exportName: 'useNavigator' },
+	VisuallyHidden: { subpath: 'visually-hidden', exportName: 'VisuallyHidden' },
 };
 
 // Components that use a .mjs file directly (no /index.mjs subdirectory)
@@ -184,9 +201,11 @@ const FLAT_FILES = new Set( [
 	'radio-group/radio',
 ] );
 
+// Use a virtual alias prefix to bypass the @wordpress/components exports field.
+// The webpack config maps @wp-components-direct/ to the actual build-module directory.
 function getSourcePath( subpath ) {
 	const suffix = FLAT_FILES.has( subpath ) ? '.mjs' : '/index.mjs';
-	return `@wordpress/components/build-module/${ subpath }${ suffix }`;
+	return `@wp-components-direct/${ subpath }${ suffix }`;
 }
 
 module.exports = function () {
@@ -212,7 +231,7 @@ module.exports = function () {
 				}
 
 				// Group specifiers by their target subpath to combine imports
-				const groups = new Map(); // subpath -> [{ importedName, localName, isDefault }]
+				const groups = new Map(); // subpath -> [{ exportName, local }]
 				const unmapped = [];
 
 				for ( const specifier of specifiers ) {
@@ -243,9 +262,8 @@ module.exports = function () {
 						groups.set( key, [] );
 					}
 					groups.get( key ).push( {
-						importedName,
+						exportName: mapping.exportName,
 						local: specifier.local,
-						isDefault: mapping.isDefault,
 					} );
 				}
 
@@ -256,17 +274,10 @@ module.exports = function () {
 				const newImports = [];
 				for ( const [ subpath, items ] of groups ) {
 					const source = getSourcePath( subpath );
-					const importSpecifiers = items.map( ( { importedName, local, isDefault } ) => {
-						if ( isDefault ) {
-							return {
-								type: 'ImportSpecifier',
-								imported: { type: 'Identifier', name: 'default' },
-								local,
-							};
-						}
+					const importSpecifiers = items.map( ( { exportName, local } ) => {
 						return {
 							type: 'ImportSpecifier',
-							imported: { type: 'Identifier', name: importedName },
+							imported: { type: 'Identifier', name: exportName },
 							local,
 						};
 					} );

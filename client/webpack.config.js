@@ -266,7 +266,10 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
-				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
+				plugins: [
+					...( shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [] ),
+					path.resolve( __dirname, 'babel-plugin-wp-components-imports.js' ),
+				],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
@@ -332,9 +335,10 @@ const webpackConfig = {
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
-			// Bypass @wordpress/components exports field for direct subpath imports.
-			// The babel-plugin-wp-components-imports plugin rewrites barrel imports to subpaths.
-			'@wordpress/components/build-module': path.resolve(
+			// Virtual alias for direct @wordpress/components subpath imports.
+			// The babel-plugin-wp-components-imports plugin rewrites barrel imports
+			// to @wp-components-direct/ to bypass the package's exports field.
+			'@wp-components-direct': path.resolve(
 				__dirname,
 				'../node_modules/@wordpress/components/build-module'
 			),
