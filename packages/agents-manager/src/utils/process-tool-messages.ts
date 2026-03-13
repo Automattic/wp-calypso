@@ -195,7 +195,7 @@ export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
 	return messages
 		.filter( ( message ) => {
 			// @ts-ignore -- custom flag not on the `UIMessage` type.
-			// Remove next-step buttons injected by `convertToolMessagesToComponents`.
+			// Remove next-step buttons.
 			return ! message.isNextStepButton;
 		} )
 		.map( ( message ) => {
