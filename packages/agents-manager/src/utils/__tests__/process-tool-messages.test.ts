@@ -357,6 +357,23 @@ describe( 'deactivateStaleMessages', () => {
 		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
 	} );
 
+	it( 'strips the checkpoint action from `isShowComponentMessage` messages', () => {
+		const message = {
+			...createMessage( { id: 'component-msg' } ),
+			isShowComponentMessage: true,
+			actions: [
+				{ id: 'checkpoint', label: 'Undo', onClick: jest.fn() },
+				{ id: 'copy', label: 'Copy', onClick: jest.fn() },
+			],
+		} as UIMessage;
+
+		const result = deactivateStaleMessages( [ message ] );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
+		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
+	} );
+
 	it( 'handles a mix of message types', () => {
 		const regular = createMessage( { id: 'regular' } );
 		const component = {

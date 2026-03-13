@@ -5,6 +5,9 @@ import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
+// Tool IDs that are silently dropped without a console warning.
+const SILENT_TOOL_IDS = new Set( [ 'big_sky__set_processing_state' ] );
+
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
@@ -184,8 +187,10 @@ export function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		// eslint-disable-next-line no-console
-		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		if ( ! SILENT_TOOL_IDS.has( textData.tool_id ) ) {
+			// eslint-disable-next-line no-console
+			console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		}
 		return [];
 	} );
 }
@@ -199,20 +204,22 @@ export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
 			return ! message.isNextStepButton;
 		} )
 		.map( ( message ) => {
-			// @ts-ignore -- custom flag not on the `UIMessage` type.
-			// Disable picker components so they become non-interactive.
-			if ( message.isShowComponentMessage ) {
-				return { ...message, disabled: true };
-			}
+			let updated = message;
 
 			// Strip the undo (checkpoint) action so it won't reappear on cached messages.
-			if ( message.actions?.length ) {
-				return {
-					...message,
-					actions: message.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
+			if ( updated.actions?.length ) {
+				updated = {
+					...updated,
+					actions: updated.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
 				};
 			}
 
-			return message;
+			// @ts-ignore -- custom flag not on the `UIMessage` type.
+			// Disable picker components so they become non-interactive.
+			if ( updated.isShowComponentMessage ) {
+				return { ...updated, disabled: true };
+			}
+
+			return updated;
 		} );
 }
