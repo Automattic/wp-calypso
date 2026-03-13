@@ -118,9 +118,7 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	useEffect( () => {
-		invokeSurvicateEvent( 'migrationStarted' );
-	}, [] );
+	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
 
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const { data: ticketId } = useQuery( {

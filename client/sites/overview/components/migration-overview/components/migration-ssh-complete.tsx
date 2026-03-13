@@ -12,9 +12,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 export const MigrationSSHComplete = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 
-	useEffect( () => {
-		invokeSurvicateEvent( 'migrationCompleted' );
-	}, [] );
+	useEffect( () => invokeSurvicateEvent( 'migrationCompleted' ), [] );
 
 	const sourceSiteDomain = site?.options?.migration_source_site_domain
 		? urlToDomain( site.options.migration_source_site_domain )

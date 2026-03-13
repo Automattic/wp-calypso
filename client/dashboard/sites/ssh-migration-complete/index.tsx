@@ -20,9 +20,7 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 
 	const { recordTracksEvent } = useAnalytics();
 
-	useEffect( () => {
-		invokeSurvicateEvent( 'migrationCompleted' );
-	}, [] );
+	useEffect( () => invokeSurvicateEvent( 'migrationCompleted' ), [] );
 
 	const sourceSiteDomain = site.options?.migration_source_site_domain;
 	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' );
