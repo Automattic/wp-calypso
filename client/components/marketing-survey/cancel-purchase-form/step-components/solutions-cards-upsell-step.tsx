@@ -21,7 +21,6 @@ import {
 	reusableBlock,
 	search,
 	shipping,
-	shuffle,
 	trendingUp,
 	upload,
 } from '@wordpress/icons';
@@ -51,7 +50,6 @@ const CARD_ICONS: Record< string, React.ReactElement > = {
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
 	'explore-domain-options': search,
-	'move-subscription': shuffle,
 };
 
 function getDecorationForCard( cardId: string ) {
@@ -104,8 +102,6 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 			return translate( 'Use our domain guide' );
 		case 'explore-domain-options':
 			return translate( 'Explore more domain options' );
-		case 'move-subscription':
-			return translate( 'Move your subscription' );
 		default:
 			return '';
 	}
@@ -144,8 +140,6 @@ function getTranslatedSubtitle(
 			return translate( 'Follow our simple guide to get connected quickly.' );
 		case 'explore-domain-options':
 			return translate( "Our search tool finds great alternatives you'll love." );
-		case 'move-subscription':
-			return translate( 'Transfer your subscription to another site you own.' );
 		default:
 			return undefined;
 	}

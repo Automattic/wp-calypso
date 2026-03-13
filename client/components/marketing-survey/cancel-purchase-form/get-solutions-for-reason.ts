@@ -20,7 +20,6 @@ const SOLUTION_IDS = {
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
 	USE_DOMAIN_GUIDE: 'use-domain-guide',
 	EXPLORE_DOMAIN_OPTIONS: 'explore-domain-options',
-	MOVE_SUBSCRIPTION: 'move-subscription',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -153,10 +152,7 @@ const SOLUTIONS_WRONG_PLAN: SolutionCardConfig[] = [
 ];
 
 /** Wrong site */
-const SOLUTIONS_WRONG_SITE: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.MOVE_SUBSCRIPTION },
-	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
-];
+const SOLUTIONS_WRONG_SITE: SolutionCardConfig[] = [ { id: SOLUTION_IDS.SPEAK_WITH_SUPPORT } ];
 
 /** Plan didn't match (noMatch) */
 const SOLUTIONS_NO_MATCH: SolutionCardConfig[] = [

@@ -15,7 +15,6 @@ import {
 	reusableBlock,
 	search,
 	shipping,
-	shuffle,
 	trendingUp,
 	upload,
 } from '@wordpress/icons';
@@ -47,7 +46,6 @@ const CARD_ICONS: Record< string, IconType > = {
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
 	'explore-domain-options': search,
-	'move-subscription': shuffle,
 };
 
 function getDecorationForCard( cardId: string ) {
@@ -105,9 +103,6 @@ function getCardHref(
 	if ( cardId === 'explore-domain-options' ) {
 		return dashboardLink( `/sites/${ siteSlug }/domains` );
 	}
-	if ( cardId === 'move-subscription' && subscriptionsUrl ) {
-		return subscriptionsUrl;
-	}
 	return undefined;
 }
 
@@ -128,7 +123,6 @@ function getCardOnClick(
 		'use-migration-tools',
 		'use-domain-guide',
 		'explore-domain-options',
-		'move-subscription',
 	];
 	if ( navCardIds.includes( cardId ) ) {
 		return ( e: React.MouseEvent ) => {
@@ -172,8 +166,6 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Use our domain guide' );
 		case 'explore-domain-options':
 			return __( 'Explore more domain options' );
-		case 'move-subscription':
-			return __( 'Move your subscription' );
 		default:
 			return '';
 	}
@@ -210,8 +202,6 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Follow our simple guide to get connected quickly.' );
 		case 'explore-domain-options':
 			return __( "Our search tool finds great alternatives you'll love." );
-		case 'move-subscription':
-			return __( 'Transfer your subscription to another site you own.' );
 		default:
 			return '';
 	}
@@ -327,9 +317,6 @@ export default function SolutionsCardsUpsellStep( {
 			case 'explore-domain-options':
 				window.location.href = dashboardLink( `/sites/${ purchase.site_slug }/domains` );
 				break;
-			case 'move-subscription':
-				window.location.href = subscriptionsUrl;
-				break;
 			case 'ask-ai-assistant': {
 				const initialMessage =
 					"User is contacting from pre-cancellation form. Cancellation reason they've given: " +
@@ -368,8 +355,7 @@ export default function SolutionsCardsUpsellStep( {
 							card.id === 'make-site-faster' ||
 							card.id === 'use-migration-tools' ||
 							card.id === 'use-domain-guide' ||
-							card.id === 'explore-domain-options' ||
-							card.id === 'move-subscription'
+							card.id === 'explore-domain-options'
 					);
 					const href = getCardHref(
 						card.id,

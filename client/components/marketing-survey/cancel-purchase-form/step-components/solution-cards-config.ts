@@ -197,16 +197,6 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 			ctx.closeDialog();
 		},
 	},
-	{
-		id: 'move-subscription',
-		title: 'Move your subscription',
-		subtitle: 'Transfer your subscription to another site you own.',
-		getHref: ( ctx ) => `/purchases/subscriptions/${ ctx.site.slug }/${ ctx.purchase.id }`,
-		onClick: ( ctx ) => {
-			page( `/purchases/subscriptions/${ ctx.site.slug }/${ ctx.purchase.id }` );
-			ctx.closeDialog();
-		},
-	},
 ];
 
 export { BUILT_BY_URL, RENEW_COUPON, getLiveChatUrlForPlans };
