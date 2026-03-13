@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -30,6 +31,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useSummarizer } from 'calypso/reader/components/summarizer/use-summarizer';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -96,6 +98,8 @@ export class FullPostView extends Component {
 		currentPath: PropTypes.string,
 		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
+		summarizedContent: PropTypes.string,
+		runSummarizer: PropTypes.func,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -821,6 +825,11 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
+									afterButtons={
+										<Button onClick={ () => this.props.runSummarizer() }>
+											{ translate( 'Summarize' ) }
+										</Button>
+									}
 								/>
 							) }
 
@@ -834,6 +843,23 @@ export class FullPostView extends Component {
 								/>
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
+							{ this.props.summarizedContent && (
+								<div className="reader-full-post__story-content-container">
+									<div
+										className="reader-full-post__story-content-container-summary"
+										style={ {
+											fontSize: '1.2rem',
+											fontStyle: 'italic',
+											border: '1px solid #ccc',
+											padding: '10px',
+											borderRadius: '5px',
+											paddingLeft: '20px',
+										} }
+									>
+										{ this.props.summarizedContent }
+									</div>
+								</div>
+							) }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							) : (
@@ -1012,4 +1038,26 @@ export default connect(
 		showSelectedPost,
 		requestPostComments,
 	}
-)( FullPostView );
+)( WithSummarizer( FullPostView ) );
+
+function WithSummarizer( Wrapped ) {
+	return function WithSummarizerComponent( props ) {
+		const { summary, summarize } = useSummarizer( {
+			type: 'tldr',
+			format: 'plain-text',
+			length: 'medium',
+			sharedContext: `
+				The summary should be in the same language as the text.
+				If the post is written by ${ props.post.author }, include the post author in the summary.
+				If the post title is ${ props.post.title }.
+			`,
+		} );
+		const summarizeContent = () => {
+			summarize( props.post.content );
+		};
+
+		return (
+			<Wrapped { ...props } summarizedContent={ summary } runSummarizer={ summarizeContent } />
+		);
+	};
+}

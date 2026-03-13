@@ -250,6 +250,7 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
+		"@types/dom-chromium-ai": "^0.0.15",
 		"@types/express": "^4.17.22",
 		"@types/express-useragent": "^1.0.5",
 		"@types/react": "^18.3.23",

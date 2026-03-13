@@ -7,7 +7,8 @@
 			"node",
 			"@types/gtag.js",
 			"@emotion/react/types/css-prop",
-			"@testing-library/jest-dom"
+			"@testing-library/jest-dom",
+			"@types/dom-chromium-ai"
 		],
 		"paths": {
 			"calypso/*": [ "./*" ]

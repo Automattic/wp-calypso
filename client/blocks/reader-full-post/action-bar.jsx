@@ -19,6 +19,7 @@ const ReaderFullPostActionBar = ( {
 	feedUrl,
 	siteUrl,
 	onFollowToggle,
+	afterButtons,
 } ) => {
 	const canEdit = site && userCan( 'edit_post', post );
 	const showLikes = shouldShowLikes( post );
@@ -67,6 +68,7 @@ const ReaderFullPostActionBar = ( {
 						railcar={ post?.railcar }
 					/>
 				) }
+				{ afterButtons }
 			</div>
 		</div>
 	);
@@ -84,6 +86,7 @@ ReaderFullPostActionBar.propTypes = {
 	feedUrl: PropTypes.string,
 	siteUrl: PropTypes.string,
 	onFollowToggle: PropTypes.func,
+	afterButtons: PropTypes.node,
 };
 
 export default ReaderFullPostActionBar;
