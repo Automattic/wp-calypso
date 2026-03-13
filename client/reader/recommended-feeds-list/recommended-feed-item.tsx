@@ -8,7 +8,7 @@ import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 
-export interface RecommendedFeedItemProps {
+interface RecommendedFeedItemProps {
 	feed: FeedRecommendation;
 	variant: 'card' | 'compact' | 'default';
 	followSource: string;
