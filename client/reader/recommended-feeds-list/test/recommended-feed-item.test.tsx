@@ -83,6 +83,12 @@ describe( 'RecommendedFeedItem', () => {
 		expect( screen.getByTestId( 'follow-button' ) ).toBeVisible();
 	} );
 
+	test( 'fallback to feedUrl when feedId is empty', () => {
+		renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '' } } );
+
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://example.com/feed' );
+	} );
+
 	describe( 'feed name variations', () => {
 		test( 'fallback to feedUrl when name is not provided', () => {
 			renderComponent( { ...defaultProps, feed: { ...defaultFeed, name: undefined } } );
@@ -90,12 +96,6 @@ describe( 'RecommendedFeedItem', () => {
 			expect( screen.getByRole( 'heading', { level: 3 } ) ).toHaveTextContent(
 				'https://example.com/feed'
 			);
-		} );
-
-		test( 'fallback to feedUrl when feedId is empty', () => {
-			renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '' } } );
-
-			expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://example.com/feed' );
 		} );
 	} );
 

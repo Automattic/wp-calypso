@@ -4,52 +4,53 @@
 	}
 
 	.recommended-feed-item {
-		align-items: anchor-center;
 		border-bottom: 1px solid var( --color-neutral-5 );
 		display: flex;
-		gap: 12px;
-		justify-content: space-between;
-		padding: 20px 0;
+		list-style-type: none;
+		position: relative;
 
 		&:last-child {
 			border-bottom: none;
 		}
 	}
 
+	.recommended-feed-item__link {
+		align-items: center;
+		display: flex;
+		flex-grow: 1;
+		gap: 12px;
+		justify-content: space-between;
+		outline: none;
+		padding: 20px 0;
+		text-decoration: none;
+	}
+
 	.recommended-feed-info {
 		align-items: initial;
 		overflow: hidden;
 		width: 100%;
-	}
-
-	.recommended-feed-name {
-		color: var( --color-neutral-100 );
-		font-family: Inter, sans-serif;
-		font-size: $font-body;
-		font-weight: 500;
-		text-decoration: none;
-
-		&:visited {
-			color: var( --color-neutral-100 );
-		}
 
 		h3 {
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 1;
+			color: var( --color-neutral-100 );
+			display: -webkit-box;
+			font-family: Inter, sans-serif;
+			font-size: $font-body;
+			font-weight: 500;
 			overflow: hidden;
-			text-overflow: ellipsis;
-			text-decoration: none;
-			white-space: nowrap;
 		}
-	}
 
-	.recommended-feed-description {
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 1;
-		color: var( --studio-gray-40 );
-		display: -webkit-box;
-		font-size: rem( 13px );
-		line-height: 20px;
-		overflow: hidden;
-		margin: 0;
+		p {
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 1;
+			color: var( --studio-gray-40 );
+			display: -webkit-box;
+			font-size: rem( 13px );
+			line-height: 20px;
+			margin: 0;
+			overflow: hidden;
+		}
 	}
 
 	.recommended-feed-subscribe-button {
@@ -58,14 +59,19 @@
 
 	.is-compact-view {
 		.recommended-feed-item {
+			display: flex;
+		}
+
+		.recommended-feed-item__link {
 			align-items: center;
 			border-bottom: none;
+			flex-grow: 1;
 			gap: 10px;
 			justify-content: center;
 			padding: 8px 0;
 		}
 
-		.recommended-feed-name {
+		.recommended-feed-info h3 {
 			font-size: rem( 14px );
 			font-weight: normal;
 		}
@@ -79,6 +85,10 @@
 		}
 
 		.recommended-feed-item {
+			border: none;
+		}
+
+		.recommended-feed-item__link {
 			align-items: flex-start;
 			border: 1px solid var( --color-border-subtle );
 			border-radius: 8px;
@@ -109,14 +119,11 @@
 				margin-right: 60px; // Reduce margin when follow button has no label.
 			}
 
-			a {
+			h3 {
 				font-size: rem( 16px );
+				margin: 0 0 6px 0;
+				line-height: 18px;
 			}
-		}
-
-		.recommended-feed-name {
-			margin: 0 0 6px 0;
-			line-height: 18px;
 		}
 
 		.recommended-feed-subscribe-button {

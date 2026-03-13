@@ -20,7 +20,7 @@ export function RecommendedFeedItem( {
 	followSource,
 }: RecommendedFeedItemProps ): JSX.Element {
 	const translate = useTranslate();
-	const { image, name, feedUrl, siteId, feedId } = feed;
+	const { image, name, feedUrl = '', siteId, feedId } = feed;
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
 	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
@@ -36,26 +36,21 @@ export function RecommendedFeedItem( {
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
 
-			<ReaderAvatar
-				isCompact={ isCompactView }
-				siteIcon={ siteIcon }
-				siteUrl={ feedId ? `/reader/feeds/${ feedId }` : feedUrl }
-				iconSize={ variant === 'default' ? 48 : 30 }
-				className="recommended-feed-icon"
-			/>
+			<a className="recommended-feed-item__link" href={ linkUrl }>
+				<ReaderAvatar
+					isCompact={ isCompactView }
+					siteIcon={ siteIcon }
+					iconSize={ variant === 'default' ? 48 : 30 }
+					className="recommended-feed-icon"
+				/>
 
-			<AutoDirection>
-				<div className="recommended-feed-info">
-					<a className="recommended-feed-name" href={ linkUrl || '' }>
+				<AutoDirection>
+					<div className="recommended-feed-info">
 						<h3>{ name || feedUrl }</h3>
-					</a>
-					{ ! isCompactView && (
-						<p className="recommended-feed-description">
-							{ site?.description || translate( 'No description.' ) }
-						</p>
-					) }
-				</div>
-			</AutoDirection>
+						{ ! isCompactView && <p>{ site?.description || translate( 'No description.' ) }</p> }
+					</div>
+				</AutoDirection>
+			</a>
 
 			{ feedUrl && (
 				<ReaderFollowButton
