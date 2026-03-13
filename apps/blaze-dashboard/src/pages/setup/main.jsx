@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -30,10 +29,9 @@ const renderSetupComponent = ( setupInfo ) => {
 };
 
 export default function BlazeSetup( { setupInfo } ) {
-	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const translate = useTranslate();
 
-	const headerTitle = isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' );
+	const headerTitle = translate( 'Blaze Ads' );
 
 	return (
 		<MainWrapper>

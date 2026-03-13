@@ -5,7 +5,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const useAdvertisingUrl = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteAdminUrl = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, 'tools.php?page=advertising' )
+		getSiteAdminUrl( state, siteId, 'admin.php?page=advertising' )
 	);
 
 	return siteAdminUrl;

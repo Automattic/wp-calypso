@@ -266,7 +266,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 
 	return (
 		<MainWrapper>
-			<DocumentHead title={ translate( 'Advertising' ) } />
+			<DocumentHead title={ translate( 'Blaze Ads' ) } />
 
 			<div className="promote-post-i2__top-bar-container">
 				<div className="promote-post-i2__top-bar">

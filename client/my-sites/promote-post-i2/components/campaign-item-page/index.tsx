@@ -50,7 +50,7 @@ export default function CampaignItemPage( props: Props ) {
 
 	return (
 		<MainWrapper>
-			<DocumentHead title={ translate( 'Advertising - Campaign details' ) } />
+			<DocumentHead title={ translate( 'Blaze Ads - Campaign details' ) } />
 			{ ! isLoading && campaign && (
 				<CampaignItemDetails isLoading={ isLoading } siteId={ +siteId } campaign={ campaign } />
 			) }
