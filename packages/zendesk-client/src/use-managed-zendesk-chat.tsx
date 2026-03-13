@@ -457,7 +457,7 @@ export const useManagedZendeskChat = () => {
 			if ( shouldWarnAboutMaxAttachments ) {
 				setNotice( {
 					status: 'warning',
-					message: __( 'Only five images can be added to the chat.', '__i18n_text_domain__' ),
+					message: __( 'Only five images can be added at a time.', '__i18n_text_domain__' ),
 				} );
 			}
 
@@ -507,6 +507,7 @@ export const useManagedZendeskChat = () => {
 		( message: string ) => {
 			const toUpload = pendingImages;
 			setPendingImages( [] );
+			setNotice( undefined );
 			if ( toUpload.length > 0 && conversation?.id && authData?.jwt && clientId && Smooch ) {
 				const conversationId = conversation.id;
 				Promise.all(
