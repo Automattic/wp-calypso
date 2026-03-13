@@ -829,8 +829,12 @@ $button-border: 4px;
 	@include breakpoint-deprecated( '<960px' ) {
 		.theme__sheet-column-header .theme__sheet-main,
 		.theme__sheet-reviews-summary,
-		.theme__sheet-column-left {
+		.theme__sheet-column-left,
+		.theme__sheet-style-variations {
 			padding: 0;
+		}
+		.theme__sheet-reviews-summary {
+			padding-top: 16px;
 		}
 		.theme__sheet-features .card.is-compact {
 			padding: 16px 0;

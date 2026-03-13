@@ -320,9 +320,9 @@ export function filterProductsAndPlansByType(
 
 		case PRODUCT_TYPE_PRESSABLE_ADDON:
 			return (
-				allProductsAndPlans?.filter( ( { family_slug } ) =>
-					isPressableAddonProduct( family_slug )
-				) || []
+				allProductsAndPlans
+					?.filter( ( { family_slug } ) => isPressableAddonProduct( family_slug ) )
+					.sort( ( a, b ) => a.name.localeCompare( b.name, undefined, { numeric: true } ) ) || []
 			);
 
 		case PRODUCT_TYPE_WOO_EXTENSION:
