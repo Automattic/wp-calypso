@@ -22,7 +22,15 @@ ENV HOME=/calypso
 ENV IS_CI=true
 ENV COMMIT_SHA $commit_sha
 
+## If you're testing running on a mac architecture, you may need to add the following
+## line to make lzma work:
+## RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
+
 COPY . .
+
+## The cache image is only used for /calypso/.cache and /calypso/.yarn, so we can skip downloading browsers.
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN yarn --inline-builds \
 	# Prime the production webpack cache flavors used by PR builds and trunk/Sentry builds.
