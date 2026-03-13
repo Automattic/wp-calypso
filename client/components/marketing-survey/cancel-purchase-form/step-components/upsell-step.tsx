@@ -156,7 +156,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							siteId: site.ID,
 						} );
 
-						props.closeDialog();
+						props.closeDialog?.();
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
@@ -266,7 +266,10 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 									'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
 									{
 										args: {
-											refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
+											refundAmount: formatCurrency(
+												parseFloat( refundAmount ?? '0' ),
+												currencyCode
+											),
 										},
 									}
 							  )
