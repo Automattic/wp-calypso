@@ -12,7 +12,6 @@ import Notice from 'calypso/components/notice';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { logToLogstash } from 'calypso/lib/logstash';
-import wp from 'calypso/lib/wp';
 import {
 	type TicketMigrationData,
 	useMigrationTicketMutation,
@@ -103,46 +102,6 @@ const extractDomainFromUrl = ( url: string ) => {
 	}
 };
 
-interface SiteInfo {
-	ID: number;
-}
-
-interface Domain {
-	domain: string;
-	wpcom_domain: boolean;
-	is_wpcom_staging_domain: boolean;
-}
-
-interface DomainsResponse {
-	domains: Domain[];
-}
-
-/**
- * Looks up the wpcom subdomain (e.g., "markbiekorg.wordpress.com") for a given domain.
- * This is needed because the ticket creation API stores tickets by the wpcom subdomain,
- * not by custom domains.
- */
-const getWpcomSubdomain = async ( domain: string ): Promise< string > => {
-	// First, get site info to retrieve the site ID
-	const siteInfo: SiteInfo = await wp.req.get( {
-		path: `/sites/${ encodeURIComponent( domain ) }`,
-		apiVersion: '1.1',
-	} );
-
-	// Then, get domains list to find the wpcom subdomain
-	const domainsResponse: DomainsResponse = await wp.req.get( {
-		path: `/sites/${ siteInfo.ID }/domains`,
-		apiVersion: '1.1',
-	} );
-
-	// Find the wpcom subdomain (not the staging domain)
-	const wpcomDomain = domainsResponse.domains.find(
-		( d ) => d.wpcom_domain && ! d.is_wpcom_staging_domain
-	);
-
-	return wpcomDomain?.domain ?? domain;
-};
-
 const Form: FC< FormProps > = ( { onComplete } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -198,15 +157,11 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 		setIsSubmitting( true );
 
 		try {
-			// Look up the wpcom subdomain for ticket creation
-			// The ticket API stores tickets by wpcom subdomain, not custom domains
-			const wpcomSiteSlug = await getWpcomSubdomain( targetSiteSlug );
-
 			// Create ZenDesk ticket (required before survey can be submitted)
 			await createZendeskTicket( {
 				locale,
 				from_url: from ?? '',
-				blog_url: wpcomSiteSlug,
+				blog_url: targetSiteSlug,
 			} );
 
 			// Submit survey
