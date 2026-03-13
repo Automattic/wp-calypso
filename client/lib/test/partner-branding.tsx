@@ -17,6 +17,7 @@ import {
 	clearPersistedCiabPartnerId,
 	CIAB_PARTNERS,
 } from '../partner-branding';
+import type { CiabPartnerConfig } from '../partner-branding';
 import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
@@ -392,6 +393,44 @@ describe( 'partner-branding', () => {
 			const tosElement = getPartnerSignupTosElement( null, mockTranslate );
 
 			expect( tosElement ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'partner without featureFlag is always active', () => {
+		const testPartner: CiabPartnerConfig = {
+			id: 'test-no-flag',
+			displayName: 'Test',
+			logo: { src: 'test.svg', alt: 'Test' },
+			ssoProviders: [ 'google' ],
+			domains: [ 'test.example.com' ],
+		};
+
+		beforeEach( () => {
+			( CIAB_PARTNERS as Record< string, CiabPartnerConfig > )[ 'test-no-flag' ] = testPartner;
+		} );
+
+		afterEach( () => {
+			delete ( CIAB_PARTNERS as Record< string, CiabPartnerConfig > )[ 'test-no-flag' ];
+		} );
+
+		test( 'getCiabConfigFromCurrentDomain returns partner even when all feature flags are disabled', () => {
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			setLocation( 'test.example.com' );
+
+			const result = getCiabConfigFromCurrentDomain();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'test-no-flag' );
+		} );
+
+		test( 'getCiabConfigFromBrandingCode returns partner even when all feature flags are disabled', () => {
+			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			setLocation( 'wordpress.com', '?from=test-no-flag' );
+
+			const result = getCiabConfigFromBrandingCode();
+
+			expect( result ).not.toBeNull();
+			expect( result?.id ).toBe( 'test-no-flag' );
 		} );
 	} );
 

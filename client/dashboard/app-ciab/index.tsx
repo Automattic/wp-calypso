@@ -38,7 +38,7 @@ boot( {
 			security: {
 				sshKey: false,
 			},
-			privacy: false,
+			privacy: true,
 			apps: false,
 		},
 		plugins: false,

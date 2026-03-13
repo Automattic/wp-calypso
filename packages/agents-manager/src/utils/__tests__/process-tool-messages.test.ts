@@ -1,10 +1,7 @@
 import { EscalationButton } from '../../components/escalation-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import { isEditorPage } from '../is-editor-page';
-import {
-	convertToolMessagesToComponents,
-	disablePickersAndRemoveNextButton,
-} from '../process-tool-messages';
+import { convertToolMessagesToComponents, deactivateStaleMessages } from '../process-tool-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock( '@automattic/components', () => ( {
@@ -142,6 +139,22 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'text',
 			text: supportText,
+		} );
+	} );
+
+	it( 'renders apply-block-edits tool summary as plain text', () => {
+		const summaryText = 'Updated the heading and added a new paragraph.';
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			summary: summaryText,
+			calypsoCheckpointId: 'checkpoint-1',
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: summaryText,
 		} );
 	} );
 
@@ -304,11 +317,11 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 } );
 
-describe( 'disablePickersAndRemoveNextButton', () => {
+describe( 'deactivateStaleMessages', () => {
 	it( 'disables messages with `isShowComponentMessage`', () => {
 		const message = { ...createMessage(), isShowComponentMessage: true } as UIMessage;
 
-		const result = disablePickersAndRemoveNextButton( [ message ] );
+		const result = deactivateStaleMessages( [ message ] );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
@@ -317,7 +330,7 @@ describe( 'disablePickersAndRemoveNextButton', () => {
 	it( 'removes messages with `isNextStepButton`', () => {
 		const message = { ...createMessage(), isNextStepButton: true } as UIMessage;
 
-		const result = disablePickersAndRemoveNextButton( [ message ] );
+		const result = deactivateStaleMessages( [ message ] );
 
 		expect( result ).toHaveLength( 0 );
 	} );
@@ -325,9 +338,40 @@ describe( 'disablePickersAndRemoveNextButton', () => {
 	it( 'passes through regular messages unchanged', () => {
 		const message = createMessage();
 
-		const result = disablePickersAndRemoveNextButton( [ message ] );
+		const result = deactivateStaleMessages( [ message ] );
 
 		expect( result ).toEqual( [ message ] );
+	} );
+
+	it( 'removes the checkpoint action from messages', () => {
+		const message = {
+			...createMessage( { id: 'agent-msg' } ),
+			actions: [
+				{ id: 'checkpoint', label: 'Undo', onClick: jest.fn() },
+				{ id: 'copy', label: 'Copy', onClick: jest.fn() },
+			],
+		} as UIMessage;
+
+		const result = deactivateStaleMessages( [ message ] );
+
+		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
+	} );
+
+	it( 'strips the checkpoint action from `isShowComponentMessage` messages', () => {
+		const message = {
+			...createMessage( { id: 'component-msg' } ),
+			isShowComponentMessage: true,
+			actions: [
+				{ id: 'checkpoint', label: 'Undo', onClick: jest.fn() },
+				{ id: 'copy', label: 'Copy', onClick: jest.fn() },
+			],
+		} as UIMessage;
+
+		const result = deactivateStaleMessages( [ message ] );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
+		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
 	} );
 
 	it( 'handles a mix of message types', () => {
@@ -341,7 +385,7 @@ describe( 'disablePickersAndRemoveNextButton', () => {
 			isNextStepButton: true,
 		} as UIMessage;
 
-		const result = disablePickersAndRemoveNextButton( [ regular, component, nextStep ] );
+		const result = deactivateStaleMessages( [ regular, component, nextStep ] );
 
 		expect( result ).toHaveLength( 2 );
 		expect( result[ 0 ].id ).toBe( 'regular' );

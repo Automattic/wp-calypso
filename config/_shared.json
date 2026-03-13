@@ -216,6 +216,8 @@
 	"theme_color_admin_color_scheme_override": true,
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
+	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
+	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
 	"site_spec": {
 		"script_url": "https://widgets.wp.com/site-spec/v1.4.8/index.js",
 		"css_url": "https://widgets.wp.com/site-spec/v1.4.8/style.css"

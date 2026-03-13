@@ -131,7 +131,13 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
+	const handleAbort = useCallback( () => {
+		const agentManager = getAgentManager();
+
+		if ( agentManager.hasAgent( agentId ) ) {
+			agentManager.abortCurrentRequest( agentId );
+		}
+	}, [ agentId ] );
 
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
