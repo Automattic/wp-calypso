@@ -144,6 +144,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			</>
 		);
 	}
+
+	if ( shouldShowCancellationNotice && cancellationOfferNotice ) {
+		return cancellationOfferNotice;
+	}
 }
 
 function shouldShowExpiredRenewNotice(
