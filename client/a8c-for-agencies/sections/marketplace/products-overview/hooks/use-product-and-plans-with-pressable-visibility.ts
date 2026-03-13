@@ -15,7 +15,7 @@ export default function useProductAndPlansWithPressableVisibility(
 		}
 
 		const pressableAddonProductIds = new Set(
-			products.pressableAddons.map( ( product ) => product.product_id ).sort()
+			products.pressableAddons.map( ( product ) => product.product_id )
 		);
 
 		return {
