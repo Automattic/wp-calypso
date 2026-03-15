@@ -43,19 +43,21 @@ const getEmailTakenLoginRedirectMessage = (
 	translate: ReturnType< typeof useTranslate >
 ) => {
 	const { href, pathname } = window.location;
-	const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
-	const isAkismetCheckout = pathname.includes( '/checkout/akismet' );
-	const isA4AExpressCheckout = pathname.includes( '/checkout/agency/referral' );
-	const isGiftingCheckout = pathname.includes( '/gift/' );
 
 	// Users with a WP.com account should return to the checkout page
 	// once they are logged in to complete the process. The flow for them is
 	// checkout -> login -> checkout.
 	const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
-	const redirectTo =
-		isJetpackCheckout || isAkismetCheckout || isGiftingCheckout || isA4AExpressCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
-			: '/checkout/no-site?cart=no-user';
+	const redirectTo = addQueryArgs(
+		{
+			...currentURLQueryParameters,
+			// For /checkout/no-site, ensure cart=no-user is present so that post-login product
+			// loading from localStorage works (needed by the onboarding-registrationless flow).
+			...( pathname.includes( '/checkout/no-site' ) && { cart: 'no-user' } ),
+			flow: 'coming_from_login',
+		},
+		pathname
+	);
 
 	const loginUrl = login( { redirectTo, emailAddress } );
 

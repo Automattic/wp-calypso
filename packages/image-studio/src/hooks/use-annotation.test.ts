@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useAnnotation } from './use-annotation';
 let mockSelectorState: {
-	draftIds: number[];
 	annotationCanvas: any;
 	imageStudioAttachmentId: number | null;
 };
@@ -12,7 +11,7 @@ const mockSetImageStudioOriginalImageUrl = jest.fn();
 const mockSetImageStudioAiProcessing = jest.fn();
 const mockSetIsAnnotationSaving = jest.fn();
 const mockAddAnnotatedAttachmentId = jest.fn();
-const mockSetDraftIds = jest.fn();
+
 const mockAnnotationCanvas = {
 	getBlob: jest.fn(),
 	clear: jest.fn(),
@@ -37,7 +36,6 @@ jest.mock( '@wordpress/data', () => ( {
 				setImageStudioAiProcessing: mockSetImageStudioAiProcessing,
 				setIsAnnotationSaving: mockSetIsAnnotationSaving,
 				addAnnotatedAttachmentId: mockAddAnnotatedAttachmentId,
-				setDraftIds: mockSetDraftIds,
 			};
 		}
 		return {};
@@ -46,7 +44,6 @@ jest.mock( '@wordpress/data', () => ( {
 		callback( ( storeName: string ) => {
 			if ( storeName === 'image-studio' ) {
 				return {
-					getDraftIds: () => mockSelectorState.draftIds,
 					getAnnotationCanvasRef: () => mockSelectorState.annotationCanvas,
 				};
 			}
@@ -97,7 +94,6 @@ describe( 'useAnnotation', () => {
 		mockBlobUrl = 'blob:http://example.com/test-123';
 
 		mockSelectorState = {
-			draftIds: [ 1, 2 ],
 			annotationCanvas: mockAnnotationCanvas,
 			imageStudioAttachmentId: 5,
 		};
@@ -302,7 +298,6 @@ describe( 'useAnnotation', () => {
 			await promise;
 
 			expect( mockUpdateImageStudioCanvas ).toHaveBeenCalledWith( mockUploadedUrl, 456, false );
-			expect( mockSetDraftIds ).toHaveBeenCalledWith( [ 1, 2, 456 ] );
 			expect( mockSetImageStudioOriginalImageUrl ).toHaveBeenCalledWith( mockUploadedUrl );
 			expect( mockAddAnnotatedAttachmentId ).toHaveBeenCalledWith( 456 );
 			expect( mockSetImageStudioAiProcessing ).toHaveBeenCalledWith( {

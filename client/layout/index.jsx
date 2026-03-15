@@ -258,6 +258,10 @@ class Layout extends Component {
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
+		const loadAgentsManager =
+			[ 'home', 'help' ].includes( this.props.sectionName ) ||
+			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute );
+
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
@@ -267,9 +271,11 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
-					source={ isA8CForAgencies() ? 'a4a' : 'wpcom' }
 				/>
-				<AgentsManagerLoader sectionName={ this.props.sectionName } />
+				<AgentsManagerLoader
+					sectionName={ this.props.sectionName }
+					loadAgentsManager={ loadAgentsManager }
+				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && (
 					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				) }

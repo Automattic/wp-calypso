@@ -1,5 +1,6 @@
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, external } from '@wordpress/icons';
 import { store as imageStudioStore } from '../../store';
@@ -8,6 +9,7 @@ import {
 	trackImageStudioMetadataUpdated,
 	trackImageStudioSidebarClose,
 } from '../../utils/tracking';
+import { ConfirmationDialog } from '../confirmation-dialog';
 import { EditableField } from './editable-field';
 import { FileDetails } from './file-details';
 import './style.scss';
@@ -31,7 +33,7 @@ export function ImageStudioSidebar( { onClose, title, children }: ImageStudioSid
 					<h2>{ title }</h2>
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close sidebar', 'big-sky' ) }
+						label={ __( 'Close sidebar', __i18n_text_domain__ ) }
 						onClick={ handleClose }
 					/>
 				</div>
@@ -43,9 +45,22 @@ export function ImageStudioSidebar( { onClose, title, children }: ImageStudioSid
 
 interface ImageStudioAltTextSidebarProps {
 	onClose: () => void;
+	onDeletePermanently?: () => Promise< void >;
+	canDeletePermanently?: boolean;
 }
 
-export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSidebarProps ) {
+export function ImageStudioAltTextSidebar( {
+	onClose,
+	onDeletePermanently,
+	canDeletePermanently,
+}: ImageStudioAltTextSidebarProps ) {
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+
+	let deletePermanentlyDisabledTooltip: string | undefined;
+	if ( ! canDeletePermanently ) {
+		deletePermanentlyDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
+	}
+
 	const attachmentId = useSelect(
 		( select ) => select( imageStudioStore ).getImageStudioAttachmentId(),
 		[]
@@ -80,16 +95,16 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 	};
 
 	return (
-		<ImageStudioSidebar onClose={ onClose } title={ __( 'Image Info', 'big-sky' ) }>
+		<ImageStudioSidebar onClose={ onClose } title={ __( 'Image Info', __i18n_text_domain__ ) }>
 			<EditableField
-				label={ __( 'Title', 'big-sky' ) }
+				label={ __( 'Title', __i18n_text_domain__ ) }
 				value={ canvasMetadata?.title || '' }
 				onSave={ ( value ) => handleSave( MetadataField.Title, value ) }
 				field={ MetadataField.Title }
 				attachmentId={ normalizedAttachmentId }
 			/>
 			<EditableField
-				label={ __( 'Caption', 'big-sky' ) }
+				label={ __( 'Caption', __i18n_text_domain__ ) }
 				value={ canvasMetadata?.caption || '' }
 				onSave={ ( value ) => handleSave( MetadataField.Caption, value ) }
 				isTextarea
@@ -97,7 +112,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				attachmentId={ normalizedAttachmentId }
 			/>
 			<EditableField
-				label={ __( 'Description', 'big-sky' ) }
+				label={ __( 'Description', __i18n_text_domain__ ) }
 				value={ canvasMetadata?.description || '' }
 				onSave={ ( value ) => handleSave( MetadataField.Description, value ) }
 				isTextarea
@@ -105,7 +120,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 				attachmentId={ normalizedAttachmentId }
 			/>
 			<EditableField
-				label={ __( 'Alt Text', 'big-sky' ) }
+				label={ __( 'Alt Text', __i18n_text_domain__ ) }
 				value={ canvasMetadata?.alt_text || '' }
 				onSave={ ( value ) => handleSave( MetadataField.AltText, value ) }
 				isTextarea
@@ -115,7 +130,7 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 			<p className="image-studio-alt-text-sidebar__help-text">
 				{ __(
 					"Alt text describes the image's purpose. Leave it blank if the image is purely decorative.",
-					'big-sky'
+					__i18n_text_domain__
 				) }{ ' ' }
 				<a
 					href="https://www.w3.org/WAI/tutorials/images/decision-tree/"
@@ -123,11 +138,60 @@ export function ImageStudioAltTextSidebar( { onClose }: ImageStudioAltTextSideba
 					rel="noreferrer noopener"
 					className="image-studio-alt-text-sidebar__learn-more-link"
 				>
-					{ __( 'Learn more', 'big-sky' ) }
+					{ __( 'Learn more', __i18n_text_domain__ ) }
 					<Icon icon={ external } size={ 16 } />
 				</a>
 			</p>
 			{ attachmentId && <FileDetails attachmentId={ attachmentId } /> }
+			{ onDeletePermanently && (
+				<>
+					<Button
+						variant="link"
+						isDestructive
+						disabled={ ! canDeletePermanently }
+						label={
+							deletePermanentlyDisabledTooltip || __( 'Delete permanently', __i18n_text_domain__ )
+						}
+						showTooltip
+						accessibleWhenDisabled={ !! deletePermanentlyDisabledTooltip }
+						onClick={ () => setIsDeleteDialogOpen( true ) }
+					>
+						{ __( 'Delete permanently', __i18n_text_domain__ ) }
+					</Button>
+					{ isDeleteDialogOpen && (
+						<ConfirmationDialog
+							isOpen={ isDeleteDialogOpen }
+							onClose={ () => setIsDeleteDialogOpen( false ) }
+							title={ __( 'Delete this item', __i18n_text_domain__ ) }
+							actions={ [
+								{
+									text: __( 'Cancel', __i18n_text_domain__ ),
+									onClick: () => setIsDeleteDialogOpen( false ),
+									variant: 'secondary',
+								},
+								{
+									text: __( 'Delete permanently', __i18n_text_domain__ ),
+									onClick: async () => {
+										// Close dialog first to prevent interaction during deletion
+										// The exit overlay will appear once deletion starts
+										setIsDeleteDialogOpen( false );
+										// Note: Don't set state after this - onDeletePermanently
+										// triggers onExit() which unmounts this component
+										await onDeletePermanently();
+									},
+									variant: 'primary',
+									isDestructive: true,
+								},
+							] }
+						>
+							{ __(
+								'You are about to permanently delete this item from your site. This action cannot be undone.',
+								__i18n_text_domain__
+							) }
+						</ConfirmationDialog>
+					) }
+				</>
+			) }
 		</ImageStudioSidebar>
 	);
 }

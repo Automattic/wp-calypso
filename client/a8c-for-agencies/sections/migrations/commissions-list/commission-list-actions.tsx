@@ -8,15 +8,15 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
-import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
-import { TaggedSite } from '../types';
+import type { TaggedSite } from '../types';
 
 type Props = {
 	site: TaggedSite;
 	fetchMigratedSites: () => void;
+	migrationTags: string[];
 };
 
-const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
+const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -39,9 +39,9 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 
 	const onRemoveSite = useCallback( () => {
 		closeDropdown();
-		// Removing the A4A_MIGRATED_SITE_TAG tag only
+		// Removing the migration tags only
 		const newTags = site.tags.reduce( ( acc, tag ) => {
-			if ( tag.name === A4A_MIGRATED_SITE_TAG ) {
+			if ( migrationTags.includes( tag.name ) ) {
 				return acc;
 			}
 			acc.push( tag.name );
@@ -66,11 +66,13 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 			}
 		);
 	}, [
-		fetchMigratedSites,
-		mutate,
-		site,
 		closeDropdown,
-		setShowRemoveSiteDialog,
+		site.tags,
+		site.id,
+		site.url,
+		mutate,
+		migrationTags,
+		fetchMigratedSites,
 		dispatch,
 		translate,
 	] );

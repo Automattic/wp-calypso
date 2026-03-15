@@ -1,8 +1,3 @@
-/**
- * ConversationHistoryView Component
- * Displays the list of past conversations with a "new chat" action
- */
-
 import { Button } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -13,26 +8,16 @@ import ConversationListSkeleton from '../conversation-list-skeleton';
 import './style.scss';
 
 interface Props {
-	agentId: string;
-	authProvider?: () => Promise< Record< string, string > >;
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
 	onNewChat: () => void;
 }
 
-export default function ConversationHistoryView( {
-	agentId,
-	authProvider,
-	onSelectConversation,
-	onNewChat,
-}: Props ) {
+export default function ConversationHistoryView( { onSelectConversation, onNewChat }: Props ) {
 	// To use the latest onSelectConversation in the callback
 	const onSelectConversationRef = useRef( onSelectConversation );
 	onSelectConversationRef.current = onSelectConversation;
 
-	const { conversations, isLoading, isError } = useConversationList( {
-		agentId,
-		authProvider,
-	} );
+	const { conversations, isLoading, isError } = useConversationList();
 
 	return (
 		<div className="agents-manager-conversation-history-view">

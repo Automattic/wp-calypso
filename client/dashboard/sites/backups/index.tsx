@@ -13,6 +13,7 @@ import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-pa
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -132,7 +133,7 @@ export function BackupsListPage() {
 	};
 	const columns = isSmallViewport ? 1 : 2;
 
-	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const handleBackupSelection = ( backup: ActivityLogEntry | null ) => {
 		setSelectedBackup( backup );
@@ -141,25 +142,31 @@ export function BackupsListPage() {
 	const renderMobileView = () => {
 		if ( selectedBackup ) {
 			return (
-				<BackupDetails
-					backup={ selectedBackup }
-					site={ site }
-					timezoneString={ timezoneString }
-					gmtOffset={ gmtOffset }
-				/>
+				<>
+					<PerformanceTrackerStop />
+					<BackupDetails
+						backup={ selectedBackup }
+						site={ site }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				</>
 			);
 		}
 
 		return (
-			<BackupsList
-				activityLog={ activityLog }
-				isLoadingActivityLog={ isLoadingActivityLog }
-				selectedBackup={ selectedBackup }
-				setSelectedBackup={ handleBackupSelection }
-				dateRange={ dateRange }
-				timezoneString={ timezoneString }
-				gmtOffset={ gmtOffset }
-			/>
+			<>
+				{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
+				<BackupsList
+					activityLog={ activityLog }
+					isLoadingActivityLog={ isLoadingActivityLog }
+					selectedBackup={ selectedBackup }
+					setSelectedBackup={ handleBackupSelection }
+					dateRange={ dateRange }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			</>
 		);
 	};
 
@@ -237,6 +244,7 @@ export function BackupsListPage() {
 						renderMobileView()
 					) : (
 						<Grid columns={ columns } templateColumns="40% 1fr">
+							{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
 							<BackupsList
 								activityLog={ activityLog }
 								isLoadingActivityLog={ isLoadingActivityLog }
@@ -251,6 +259,7 @@ export function BackupsListPage() {
 					) }
 				</>
 			) }
+			{ ! hasBackups && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }
@@ -269,7 +278,7 @@ function SiteBackups() {
 	return (
 		<HostingFeatureGatedWithCallout
 			site={ site }
-			feature={ HostingFeatures.BACKUPS }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
 			fullPage
 			upsellId="site-backups"
 			upsellIcon={ backup }

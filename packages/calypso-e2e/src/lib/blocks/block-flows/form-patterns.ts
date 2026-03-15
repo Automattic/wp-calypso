@@ -55,6 +55,10 @@ export class FormPatternsFlow implements BlockFlow {
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
 
+		// We now have to double-click to edit the pattern-added form.
+		// (or click an "Edit section" sidebar button, but this is easier)
+		await newParentBlockLocator.dblclick( { force: true } );
+
 		// Email is a common field shared amongst all Form patterns.
 		// So let's make it unique here!
 		await labelFormFieldBlock( newParentBlockLocator, {

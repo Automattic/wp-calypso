@@ -5,7 +5,6 @@
 
 	// When the feature flag is enabled, adjust TabPanel padding
 	.stats-navigation__tabs {
-		margin: 0 -16px;  // This creates a negative margin to counteract the parent's padding
 
 		.components-tab-panel__tabs {
 			padding: 0 16px;  // This sets the actual padding to 16px
@@ -54,10 +53,16 @@
 		}
 
 		.stats-navigation__tabs {
-			margin-left: -16px;
 
 			.components-tab-panel__tabs {
+				gap: 12px;
 				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.components-tab-panel__tabs-item {
+				padding-left: 0;
+				padding-right: 0;
 			}
 
 			@media (max-width: $break-small) {
@@ -78,9 +83,17 @@
 
 		// Only apply these styles when using the new TabPanel navigation
 		.stats-navigation__tabs {
-			width: calc(100% + 32px);  // Extend width to counter the parent padding
-			margin-left: -16px;        // Pull left to counter parent padding
-			margin-right: -16px;       // Pull right to counter parent padding
+
+			.components-tab-panel__tabs {
+				gap: 12px;
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.components-tab-panel__tabs-item {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 
 		.section-nav {
@@ -143,7 +156,7 @@
 
 		.section-nav-tab {
 			&:not(:first-child) {
-				margin-left: 40px;
+				margin-left: 12px;
 
 				@media (max-width: $break-mobile) {
 					margin-left: 0;

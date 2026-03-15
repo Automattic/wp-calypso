@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../../hooks/use-agent-config';
+import { useErrorNotice } from '../../hooks/use-error-notice';
 import { store as imageStudioStore } from '../../store';
 import { defaultAgentConfigFactory } from '../../utils/agent-config';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';
@@ -33,17 +34,7 @@ function GenAIButton( {
 		setProcessing( agentChatProps.isProcessing );
 	}, [ agentChatProps.isProcessing, setProcessing ] );
 
-	useEffect( () => {
-		if ( ! agentChatProps.error ) {
-			return;
-		}
-
-		const errorMessage =
-			( agentChatProps.error as unknown as Error )?.message ||
-			String( agentChatProps.error ) ||
-			__( 'An error occurred while generating content.', 'big-sky' );
-		addNotice( errorMessage, 'error' );
-	}, [ agentChatProps.error, addNotice ] );
+	useErrorNotice( agentChatProps.error, addNotice );
 
 	const handleClick = () => {
 		// Track the GenAI button click
@@ -59,7 +50,7 @@ function GenAIButton( {
 	return (
 		<Button
 			icon={ <RegenerateIcon /> }
-			label={ __( 'Regenerate', 'big-sky' ) }
+			label={ __( 'Regenerate', __i18n_text_domain__ ) }
 			onClick={ handleClick }
 			size="small"
 			disabled={ agentChatProps.isProcessing }

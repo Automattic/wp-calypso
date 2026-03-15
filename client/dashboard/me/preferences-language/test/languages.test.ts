@@ -9,10 +9,6 @@ import {
 } from '../languages';
 
 describe( 'languages utilities', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'languagesAsOptions', () => {
 		it( 'should transform languages into options format', () => {
 			// Test with real languages data

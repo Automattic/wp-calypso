@@ -49,10 +49,10 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	if ( canAccessWpcomApis() ) {
 		// Use the promise version to do that action without waiting for the result.
 		wpcomRequestPromise( {
-			path: '/me/preferences',
+			path: '/agents-manager/state',
 			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: { calypso_preferences: saveState },
+			method: 'POST',
+			body: { state: saveState },
 		} ).catch( () => {} );
 	} else {
 		// Use the promise version to do that action without waiting for the result.

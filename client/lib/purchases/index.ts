@@ -800,6 +800,16 @@ export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
 }
 
+/**
+ * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ */
+export function isFailedAutoRenewal( purchase: Purchase ): boolean {
+	return (
+		isInExpirationGracePeriod( purchase ) &&
+		( isRenewing( purchase ) || ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) )
+	);
+}
+
 export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductoryOffer?.isWithinPeriod ?? false;
 }

@@ -1,4 +1,7 @@
 import { uploadMedia } from '@wordpress/media-utils';
+import type { Attachment } from '@wordpress/media-utils';
+
+type UploadedMedia = Partial< Attachment >;
 
 interface UploadAnnotationOptions {
 	blob: Blob;
@@ -9,7 +12,7 @@ interface UploadAnnotationOptions {
 		caption?: string;
 		description?: string;
 	};
-	onSuccess: ( media: any ) => void | Promise< void >;
+	onSuccess: ( media: UploadedMedia ) => void | Promise< void >;
 	onError?: ( error: Error ) => void;
 }
 
@@ -27,7 +30,7 @@ export function uploadAnnotation( {
 	originalFilename,
 	onSuccess,
 	onError,
-}: UploadAnnotationOptions ): Promise< any > {
+}: UploadAnnotationOptions ): Promise< UploadedMedia > {
 	// Generate filename based on original filename if provided
 	// Add timestamp to ensure unique filename for each annotation
 	const timestamp = Date.now();
@@ -46,10 +49,10 @@ export function uploadAnnotation( {
 	} );
 
 	// Upload to WordPress
-	return new Promise< any >( ( resolve, reject ) => {
+	return new Promise< UploadedMedia >( ( resolve, reject ) => {
 		uploadMedia( {
 			filesList: [ file ],
-			onFileChange: async ( [ media ]: any[] ) => {
+			onFileChange: async ( [ media ]: UploadedMedia[] ) => {
 				// Only process once when media is fully uploaded (not blob URL)
 				if ( media && media.id ) {
 					try {

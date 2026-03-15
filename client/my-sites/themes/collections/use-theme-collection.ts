@@ -18,12 +18,14 @@ export interface ThemesQuery {
 	tier: string;
 	filter: string;
 	search: string;
-	collection: string;
+	collection?: string;
+	sort?: string;
 }
 
 export function useThemeCollection( query: ThemesQuery ) {
-	const themes =
+	const allThemes =
 		useSelector( ( state ) => getThemesForQueryIgnoringPage( state, 'wpcom', query ) ) || [];
+	const themes = query.number ? allThemes.slice( 0, query.number ) : allThemes;
 
 	const siteId = useSelector( getSelectedSiteId );
 

@@ -58,7 +58,7 @@ describe( 'UserPosts', () => {
 		expect( streamComponent ).toHaveAttribute( 'data-stream-key', `user:${ defaultUser.ID }` );
 
 		// Class name should indicate user profile
-		expect( streamComponent ).toHaveClass( 'is-user-profile' );
+		expect( streamComponent ).toHaveClass( 'user-profile-posts' );
 
 		// Props should be correctly set
 		const propsContainer = screen.getByTestId( 'stream-props' );

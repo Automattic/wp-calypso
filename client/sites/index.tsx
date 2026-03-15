@@ -21,6 +21,10 @@ export default function () {
 	/**
 	 * Backport Multi-site Dashboard
 	 */
+	page( '/sites/settings/site/:site', ( context ) => {
+		return page.redirect( `/sites/${ context.params.site }/settings` );
+	} );
+
 	page(
 		'/sites/:site/settings/:feature?',
 		siteSelection,

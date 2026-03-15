@@ -3,9 +3,16 @@ import { formatNumber, formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { TitanOrder } from 'calypso/state/a8c-for-agencies/types';
+import { calculateEffectiveCapacity } from './capacity';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
@@ -19,6 +26,14 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 	const agency = useSelector( getActiveAgency );
 	const planUsage = agency?.third_party?.pressable?.usage;
 	const titanUsage = agency?.third_party?.pressable?.titan_usage;
+	const { data: pressableLicensesData } = useFetchLicenses(
+		LicenseFilter.NotRevoked,
+		'pressable',
+		LicenseSortField.IssuedAt,
+		LicenseSortDirection.Descending,
+		1,
+		100
+	);
 
 	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan?.slug ) : null;
 
@@ -48,6 +63,8 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 		return null;
 	}
 
+	const effectiveCapacity = calculateEffectiveCapacity( planInfo, pressableLicensesData?.items );
+
 	// Only render the Titan card if there are active orders
 	const shouldRenderTitanCard = titanUsage?.orders && activeOrders.length > 0;
 
@@ -73,7 +90,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 								translate( '%(used_storage)s of %(max_storage)s GB', {
 									args: {
 										used_storage: planUsage ? planUsage.storage_gb : '?',
-										max_storage: planInfo.storage,
+										max_storage: effectiveCapacity.storage,
 									},
 									comment: '%(used_storage)s and %(max_storage)d are the storage values in GB.',
 								} ) }
@@ -84,7 +101,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 							className="pressable-usage-details__storage-bar"
 							compact
 							value={ planUsage ? planUsage.storage_gb : 0 }
-							total={ planInfo.storage }
+							total={ effectiveCapacity.storage }
 						/>
 					</div>
 				</div>
@@ -98,7 +115,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<div className="pressable-usage-details__info-top-right">
 							{ translate( '%(total_sites)s of %(max_sites)s', {
 								args: {
-									max_sites: planInfo.install,
+									max_sites: effectiveCapacity.install,
 									total_sites: planUsage?.sites_count ?? 0,
 								},
 								comment:
@@ -111,7 +128,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 							className="pressable-usage-details__storage-bar"
 							compact
 							value={ planUsage ? planUsage.sites_count : 0 }
-							total={ planInfo.install }
+							total={ effectiveCapacity.install }
 						/>
 					</div>
 				</div>
@@ -124,7 +141,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<div className="pressable-usage-details__info-top-right">
 							{ translate( '%(visits_count)s of %(max_visits)s', {
 								args: {
-									max_visits: formatNumber( planInfo.visits ),
+									max_visits: formatNumber( effectiveCapacity.visits ),
 									visits_count: formatNumber( planUsage?.visits_count ?? 0 ),
 								},
 								comment:
@@ -137,7 +154,7 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 							className="pressable-usage-details__storage-bar"
 							compact
 							value={ planUsage ? planUsage.visits_count : 0 }
-							total={ planInfo.visits }
+							total={ effectiveCapacity.visits }
 						/>
 					</div>
 				</div>

@@ -30,10 +30,14 @@ function useUpgradeHandler( {
 	siteSlug,
 	coupon,
 	cartHandler,
+	redirectTo,
+	pluginSlug,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	redirectTo?: string;
+	pluginSlug?: string;
 } ) {
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
@@ -58,16 +62,26 @@ function useUpgradeHandler( {
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
 
-			const checkoutUrl = cartItemForStorageAddOn
+			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
 				: `/checkout/${ siteSlug }/${ planPath }`;
 
-			const checkoutUrlWithArgs = addQueryArgs( { ...( coupon && { coupon } ) }, checkoutUrl );
+			// Append plugin if present
+			if ( pluginSlug ) {
+				checkoutUrl = cartItemForStorageAddOn
+					? `${ checkoutUrl },${ pluginSlug }`
+					: `/checkout/${ siteSlug }/${ planPath },${ pluginSlug }`;
+			}
+
+			const checkoutUrlWithArgs = addQueryArgs(
+				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
+				checkoutUrl
+			);
 
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
 	);
 
 	return useCallback(
@@ -155,6 +169,8 @@ function useGenerateActionCallback( {
 	siteId,
 	coupon,
 	isGatingBusinessQ1,
+	redirectTo,
+	pluginSlug,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -170,6 +186,8 @@ function useGenerateActionCallback( {
 	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
 	 */
 	isGatingBusinessQ1?: boolean;
+	redirectTo?: string;
+	pluginSlug?: string;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -183,7 +201,13 @@ function useGenerateActionCallback( {
 			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
 			: null
 	);
-	const handleUpgradeClick = useUpgradeHandler( { siteSlug, coupon, cartHandler } );
+	const handleUpgradeClick = useUpgradeHandler( {
+		siteSlug,
+		coupon,
+		cartHandler,
+		redirectTo,
+		pluginSlug,
+	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
 		siteUrl: siteUrl || '',

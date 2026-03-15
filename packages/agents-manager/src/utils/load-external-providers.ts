@@ -8,7 +8,12 @@
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type {
+	MarkdownComponents,
+	MarkdownExtensions,
+	UploadedImage,
+	UploadingImage,
+} from '@automattic/agenttic-ui';
 
 /**
  * Check if the unified experience flag is set via agentsManagerData.
@@ -84,6 +89,66 @@ type ChatComponentType =
  */
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
+export type ImagePreview = {
+	id: string;
+	url: string;
+	name: string;
+	alt: string;
+	mime_type: string;
+	file: File;
+};
+
+export type MediaObject = {
+	id: number;
+	title: string;
+	fileName: string;
+	fileType: string;
+	fileSize: number;
+	dimensions: {
+		width: number;
+		height: number;
+	};
+	uploadDate: string;
+	uploadedBy: number;
+	url: string;
+	alt: string;
+	caption: string;
+};
+
+export type UseImageUploadResult = {
+	pendingImages: ImagePreview[];
+	uploadingImages: UploadingImage[];
+	isUploadingImages: boolean;
+	handleFilesSelected: ( files: File[] ) => Promise< void >;
+	handleRemoveImage: ( image: UploadedImage ) => void;
+	uploadImagesToWordPress: () => Promise< MediaObject[] >;
+};
+
+export type ImageUploadHook = () => UseImageUploadResult;
+
+/**
+ * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
+ */
+export type UseCheckpointReturn = {
+	getLastEditorState: () => unknown;
+	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	addCheckpointKeys: ( id: string, keys: string[] ) => void;
+	restoreCheckpoint: ( id: string ) => Promise< void >;
+	addNewPageToCheckpoint: ( pageId: string ) => void;
+	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
+	addPageRemovalToCheckpoint: (
+		pageId: string,
+		pageTitle: string,
+		options?: { shouldRestoreNavigation?: boolean }
+	) => void;
+	getLatestUserMessageId: () => string | undefined;
+	clearCheckpoint: ( userMessageId: string ) => void;
+	hasCheckpoint: ( id: string ) => boolean;
+};
+
+/** Hook that returns checkpoint utilities for the current editor session. */
+export type UseCheckpointHook = () => UseCheckpointReturn;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -96,6 +161,8 @@ export interface LoadedProviders {
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
+	useImageUpload?: ImageUploadHook;
+	useCheckpoint?: UseCheckpointHook;
 }
 
 /**
@@ -123,6 +190,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
+	let mergedImageUpload: ImageUploadHook | undefined;
+	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -160,6 +229,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.siteBuildUtils ) {
 				mergedSiteBuildUtils = module.siteBuildUtils;
 			}
+			if ( module.useImageUpload ) {
+				mergedImageUpload = module.useImageUpload;
+			}
+			if ( module.useCheckpoint ) {
+				mergedUseCheckpoint = module.useCheckpoint;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -180,5 +255,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
+		useImageUpload: mergedImageUpload,
+		useCheckpoint: mergedUseCheckpoint,
 	};
 }

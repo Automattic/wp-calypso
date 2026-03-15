@@ -686,6 +686,16 @@ class CancelPurchaseForm extends Component {
 			return translate( 'Remove product' );
 		}
 
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+			if ( isPlan( purchase ) ) {
+				return translate( 'Cancel plan' );
+			}
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription' );
+			}
+			return translate( 'Cancel product' );
+		}
+
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				return translate( 'Cancel domain and refund' );

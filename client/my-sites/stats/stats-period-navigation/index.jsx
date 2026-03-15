@@ -40,6 +40,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		endContent: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -325,6 +326,7 @@ class StatsPeriodNavigation extends PureComponent {
 			gateDateControl,
 			siteId,
 			momentSiteZone,
+			endContent,
 		} = this.props;
 
 		const isToday = momentSiteZone( date ).isSame( momentSiteZone(), period );
@@ -383,6 +385,7 @@ class StatsPeriodNavigation extends PureComponent {
 								}
 							/>
 						</div>
+						{ endContent }
 					</div>
 				) }
 			</div>

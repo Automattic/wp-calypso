@@ -178,6 +178,18 @@ const StatsModuleUTM = ( {
 		</StatsInfoArea>
 	);
 
+	const toggleControl = (
+		<div className="stats-module__extended-toggle">
+			<UTMBuilder />
+			<UTMDropdown
+				buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+				onSelect={ setSelectedOption }
+				selectOptions={ optionLabels }
+				selected={ selectedOption }
+			/>
+		</div>
+	);
+
 	return (
 		<>
 			{ showLoader && (
@@ -193,13 +205,15 @@ const StatsModuleUTM = ( {
 					<StatsCard
 						className={ className }
 						title={ moduleStrings.title }
-						titleNodes={ <StatsInfoArea /> }
+						titleNodes={ titleNodes }
+						splitHeader
+						toggleControl={ toggleControl }
 						isEmpty
 						emptyMessage={
 							<EmptyModuleCard
 								icon={ trendingUp }
 								description={ translate(
-									'Your {{link}}campaign UTM performance data{{/link}} will display here once readers click on your URLs with UTM codes. Get started!',
+									'No data yet for this {{link}}UTM{{/link}} parameter. Try selecting a different combination above, or generate a URL with our builder below to get started.',
 									{
 										comment: '{{link}} links to support documentation.',
 										components: {
@@ -252,17 +266,7 @@ const StatsModuleUTM = ( {
 						error={ hasError && <ErrorPanel /> }
 						splitHeader
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-						toggleControl={
-							<div className="stats-module__extended-toggle">
-								<UTMBuilder />
-								<UTMDropdown
-									buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-									onSelect={ setSelectedOption }
-									selectOptions={ optionLabels }
-									selected={ selectedOption }
-								/>
-							</div>
-						}
+						toggleControl={ toggleControl }
 					/>
 				) }
 		</>

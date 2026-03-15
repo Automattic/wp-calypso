@@ -20,12 +20,14 @@ export interface CancelPurchaseRefundInformationConnectedProps {
 export interface CancelPurchaseRefundInformationProps {
 	purchase: Purchases.Purchase;
 	isJetpackPurchase: boolean;
+	useAutoRenewFlow?: boolean;
 }
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isGravatarRestrictedDomain,
 	isJetpackPurchase,
+	useAutoRenewFlow,
 }: CancelPurchaseRefundInformationProps & CancelPurchaseRefundInformationConnectedProps ) => {
 	const { refundPeriodInDays } = purchase;
 	let text;
@@ -52,7 +54,17 @@ const CancelPurchaseRefundInformation = ( {
 			}
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if ( isSubscription( purchase ) && useAutoRenewFlow ) {
+			text = i18n.translate(
+				"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
+					'Once it expires, it will be automatically removed from your site.',
+				{
+					args: {
+						productName: getName( purchase ),
+					},
+				}
+			);
+		} else if ( isSubscription( purchase ) ) {
 			text = [
 				i18n.translate(
 					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",

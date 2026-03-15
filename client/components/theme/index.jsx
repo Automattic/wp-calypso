@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
@@ -6,6 +7,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 	isLockedStyleVariation,
 } from '@automattic/design-picker';
+import { Button as WPButton } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import photon from 'photon';
@@ -15,6 +17,7 @@ import { connect } from 'react-redux';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
@@ -88,6 +91,7 @@ export class Theme extends Component {
 		softLaunched: PropTypes.bool,
 		selectedStyleVariation: PropTypes.object,
 		shouldLimitGlobalStyles: PropTypes.bool,
+		isThemeShowcaseModern: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -343,6 +347,53 @@ export class Theme extends Component {
 		);
 	};
 
+	renderImageOverlay = () => {
+		const { isThemeShowcaseModern, buttonContents, theme } = this.props;
+
+		if ( ! isThemeShowcaseModern ) {
+			return null;
+		}
+
+		const previewOption = buttonContents.preview;
+		const signupOption = buttonContents.signup;
+
+		if ( ! previewOption && ! signupOption ) {
+			return null;
+		}
+
+		return (
+			<div className="theme__overlay-buttons">
+				{ previewOption && (
+					<WPButton
+						__next40pxDefaultSize
+						variant="secondary"
+						className="theme__overlay-button theme__overlay-button-preview"
+						onClick={ ( e ) => {
+							e.stopPropagation();
+							e.preventDefault();
+							previewOption.action?.( theme.id );
+						} }
+					>
+						{ this.props.translate( 'Preview demo' ) }
+					</WPButton>
+				) }
+				{ signupOption && (
+					<WPButton
+						__next40pxDefaultSize
+						variant="primary"
+						className="theme__overlay-button theme__overlay-button-get-started"
+						href={ signupOption.getUrl?.( theme.id ) }
+						onClick={ ( e ) => {
+							e.stopPropagation();
+						} }
+					>
+						{ this.props.translate( 'Get started' ) }
+					</WPButton>
+				) }
+			</div>
+		);
+	};
+
 	render() {
 		const { selectedStyleVariation, theme } = this.props;
 		const { name, style_variations = [] } = theme;
@@ -358,6 +409,7 @@ export class Theme extends Component {
 				image={ this.renderScreenshot() }
 				imageClickUrl={ this.props.screenshotClickUrl }
 				imageActionLabel={ this.props.actionLabel }
+				imageOverlay={ this.renderImageOverlay() }
 				banner={ this.renderUpdateAlert() }
 				badge={ this.renderBadge() }
 				styleVariations={ style_variations }
@@ -382,6 +434,9 @@ const ConnectedTheme = connect(
 		} = state;
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
+		const isLoggedIn = isUserLoggedIn( state );
+
+		const isThemeShowcaseModern = isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
 
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
@@ -389,6 +444,7 @@ const ConnectedTheme = connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
+			isThemeShowcaseModern,
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

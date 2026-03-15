@@ -262,7 +262,6 @@ export interface SiteDetailsOptions {
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
-	is_summer_special_2025?: boolean;
 	is_domain_only?: boolean;
 	is_mapped_domain?: boolean;
 	is_pending_plan?: boolean;

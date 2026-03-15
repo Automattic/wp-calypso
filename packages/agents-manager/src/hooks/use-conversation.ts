@@ -6,11 +6,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
-	agentId: string;
-	sessionId: string;
-	authProvider?: () => Promise< Record< string, string > >;
+	enabled?: boolean;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -22,12 +21,12 @@ interface Result {
 }
 
 export default function useConversation( {
-	agentId,
-	sessionId,
-	authProvider,
+	enabled = true,
 	maxPages = 10,
 	onSuccess = () => {},
 }: Config ): Result {
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, sessionId, authProvider } = agentConfig!;
 	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
@@ -51,7 +50,11 @@ export default function useConversation( {
 				true
 			);
 		},
-		enabled: !! sessionId,
+		enabled: enabled && !! sessionId,
+		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		staleTime: 300000, // 5 minutes
 	} );
 
 	useEffect(

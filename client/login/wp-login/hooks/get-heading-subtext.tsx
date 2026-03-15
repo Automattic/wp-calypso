@@ -1,11 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
+import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
 	action?: string;
 	isWooJPC?: boolean;
+	ciabConfig?: CiabPartnerConfig | null;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -18,6 +20,7 @@ const getHeadingSubText = ( {
 	action,
 	translate,
 	isWooJPC,
+	ciabConfig,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
@@ -25,27 +28,49 @@ const getHeadingSubText = ( {
 
 	const tos = (
 		<span className="wp-login__one-login-layout-tos">
-			{ translate(
-				'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				{
-					components: {
-						tosLink: (
-							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						privacyLink: (
-							<a
-								href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			) }
+			{ ciabConfig
+				? translate(
+						'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}. WordPress.com is used to manage your account.',
+						{
+							components: {
+								tosLink: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								privacyLink: (
+									<a
+										href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+				  )
+				: translate(
+						'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						{
+							components: {
+								tosLink: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								privacyLink: (
+									<a
+										href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+				  ) }
 		</span>
 	);
 

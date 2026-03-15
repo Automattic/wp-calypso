@@ -33,6 +33,7 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 
 	let page: Page;
 	let editorPage: EditorPage;
+	let testAccount: TestAccount;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
 	let uploadedImageURL: string;
@@ -43,12 +44,13 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		editorPage = new EditorPage( page );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		const siteSlug = testAccount.getSiteURL( { protocol: false } );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {

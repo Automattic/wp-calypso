@@ -126,6 +126,12 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		window.ttq.track( 'CompleteRegistration', params );
 	}
 
+	if ( mayWeTrackByTracker( 'quora' ) ) {
+		const params = { value: 0 };
+		debug( 'recordSignup: [Quora]', params );
+		window.qp( 'track', 'CompleteRegistration', params );
+	}
+
 	// DCM Floodlight
 
 	if ( mayWeTrackByTracker( 'floodlight' ) ) {

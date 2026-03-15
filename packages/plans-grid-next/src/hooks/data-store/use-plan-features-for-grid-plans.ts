@@ -31,7 +31,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	isSummerSpecial,
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
@@ -46,7 +45,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	isSummerSpecial?: boolean;
 	useLongSetFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
@@ -72,7 +70,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	isSummerSpecial,
 	useLongSetFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
@@ -98,9 +95,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						allFeaturesList,
 						planConstantObj?.getVar5StackedSignupWpcomFeatures?.() ??
 							planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-								isSummerSpecial,
-							} ) ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
 						isExperimentVariant ?? true // isExperimentVariant
 					);
@@ -115,9 +110,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-								isSummerSpecial,
-							} ) ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
 						isExperimentVariant ?? true // isExperimentVariant
 					);
@@ -133,9 +126,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						allFeaturesList,
 						planConstantObj?.getLongSetStackedSignupWpcomFeatures?.() ??
 							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-								isSummerSpecial,
-							} ) ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
 						isExperimentVariant ?? true // isExperimentVariant
 					);
@@ -150,9 +141,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-								isSummerSpecial,
-							} ) ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
 						isExperimentVariant ?? true // isExperimentVariant
 					);
@@ -170,9 +159,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-p2' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isSummerSpecial,
-						} ) ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 					);
 				} else if ( 'plans-blog-onboarding' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -187,9 +174,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-woocommerce' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isSummerSpecial,
-						} ) ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -227,9 +212,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						// Fallback to default features if visual split features aren't available
 						wpcomFeatures = getPlanFeaturesObject(
 							allFeaturesList,
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-								isSummerSpecial,
-							} ) ?? []
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 						);
 					}
 
@@ -240,9 +223,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
-							isSummerSpecial,
-						} ) ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -396,7 +377,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
-		isSummerSpecial,
 		useLongSetFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,

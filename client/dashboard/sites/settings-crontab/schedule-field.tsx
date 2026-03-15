@@ -1,11 +1,14 @@
 import {
 	SelectControl,
+	TextControl,
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-
-export type ScheduleType = 'hourly' | 'twicedaily' | 'daily' | 'weekly';
+import { __, _n } from '@wordpress/i18n';
+import { useMemo } from 'react';
+import { parseSchedule, PREDEFINED_SCHEDULES } from './schedules';
+import { ScheduleType, CustomFrequency } from './types';
 
 interface ScheduleFieldProps {
 	value: string;
@@ -13,119 +16,91 @@ interface ScheduleFieldProps {
 	disabled?: boolean;
 }
 
-export const PREDEFINED_SCHEDULES = [
-	{ value: 'hourly', label: __( 'Every hour' ) },
-	{ value: 'twicedaily', label: __( 'Twice daily' ) },
-	{ value: 'daily', label: __( 'Daily' ) },
-	{ value: 'weekly', label: __( 'Weekly' ) },
-];
-
-/**
- * Parses a cron expression and returns the schedule type.
- *
- * Patterns:
- * - Hourly: `M * * * *`
- * - Twice daily: `M H1,H2 * * *`
- * - Daily: `M H * * *`
- * - Weekly: `M H * * D`
- */
-export function parseScheduleValue( schedule: string ): ScheduleType {
-	// If it's already a schedule type, return it
-	if ( [ 'hourly', 'twicedaily', 'daily', 'weekly' ].includes( schedule ) ) {
-		return schedule as ScheduleType;
-	}
-
-	const parts = schedule.trim().split( /\s+/ );
-
-	if ( parts.length === 5 ) {
-		const [ minute, hour, dayOfMonth, month, dayOfWeek ] = parts;
-
-		// Hourly: specific minute, wildcard for everything else
-		if (
-			/^\d+$/.test( minute ) &&
-			hour === '*' &&
-			dayOfMonth === '*' &&
-			month === '*' &&
-			dayOfWeek === '*'
-		) {
-			return 'hourly';
-		}
-
-		// Twice daily: specific minute, two hours (comma-separated), wildcard for day/month/weekday
-		if (
-			/^\d+$/.test( minute ) &&
-			/^\d+,\d+$/.test( hour ) &&
-			dayOfMonth === '*' &&
-			month === '*' &&
-			dayOfWeek === '*'
-		) {
-			return 'twicedaily';
-		}
-
-		// Daily: specific minute and hour, wildcard for day/month/weekday
-		if (
-			/^\d+$/.test( minute ) &&
-			/^\d+$/.test( hour ) &&
-			dayOfMonth === '*' &&
-			month === '*' &&
-			dayOfWeek === '*'
-		) {
-			return 'daily';
-		}
-
-		// Weekly: specific minute, hour, and day of week
-		if (
-			/^\d+$/.test( minute ) &&
-			/^\d+$/.test( hour ) &&
-			dayOfMonth === '*' &&
-			month === '*' &&
-			/^\d+$/.test( dayOfWeek )
-		) {
-			return 'weekly';
-		}
-	}
-
-	// Default to hourly for any unrecognized value
-	return 'hourly';
+function getFrequencyOptions( number: number ): { value: CustomFrequency; label: string }[] {
+	return [
+		{
+			value: 'h',
+			label: _n( 'time per hour', 'times per hour', number ),
+		},
+		{
+			value: 'd',
+			label: _n( 'time per day', 'times per day', number ),
+		},
+		{
+			value: 'w',
+			label: _n( 'time per week', 'times per week', number ),
+		},
+	];
 }
 
-function formatSchedulePreview( scheduleValue: string ): string {
-	if ( scheduleValue === 'hourly' ) {
-		return __( 'Runs once every hour.' );
-	}
-	if ( scheduleValue === 'twicedaily' ) {
-		return __( 'Runs twice per day.' );
-	}
-	if ( scheduleValue === 'daily' ) {
-		return __( 'Runs once per day.' );
-	}
-	if ( scheduleValue === 'weekly' ) {
-		return __( 'Runs once per week.' );
-	}
-
-	return '';
-}
+const FREQUENCY_MAX: Record< CustomFrequency, number > = {
+	h: 12,
+	d: 23,
+	w: 6,
+};
 
 export function ScheduleField( { value, onChange, disabled }: ScheduleFieldProps ) {
-	const preview = formatSchedulePreview( value );
+	const parsed = useMemo( () => parseSchedule( value ), [ value ] );
+	const { scheduleType, customNumber, customFrequency } = parsed;
+
+	const frequencyOptions = useMemo( () => getFrequencyOptions( customNumber ), [ customNumber ] );
 
 	return (
 		<VStack spacing={ 3 }>
 			<SelectControl
 				label={ __( 'Schedule' ) }
-				value={ value }
+				value={ scheduleType }
 				options={ PREDEFINED_SCHEDULES }
 				onChange={ ( newValue ) => {
-					onChange( newValue );
+					const newScheduleType = newValue as ScheduleType;
+					if ( newScheduleType === 'custom' ) {
+						onChange( `${ customNumber }${ customFrequency }` );
+					} else {
+						onChange( newScheduleType );
+					}
 				} }
 				disabled={ disabled }
 			/>
-			{ preview && (
-				<Text variant="muted" size={ 12 }>
-					{ preview }{ ' ' }
-					{ __( 'The specific execution time is randomized to prevent system overload.' ) }
-				</Text>
+			{ scheduleType === 'custom' && (
+				<HStack spacing={ 2 } alignment="bottom" justify="flex-start">
+					<TextControl
+						label={ __( 'Custom schedule' ) }
+						hideLabelFromVision
+						style={ { width: '80px' } }
+						disabled={ disabled }
+						type="number"
+						min={ 1 }
+						max={ FREQUENCY_MAX[ customFrequency ] }
+						value={ String( customNumber ) }
+						onChange={ ( newValue ) => {
+							const num = parseInt( newValue, 10 );
+
+							if ( ! isNaN( num ) && num >= 1 && num <= FREQUENCY_MAX[ customFrequency ] ) {
+								onChange( `${ num }${ customFrequency }` );
+							} else if ( newValue === '' ) {
+								onChange( `1${ customFrequency }` );
+							}
+						} }
+					/>
+					<SelectControl
+						label={ __( 'Frequency' ) }
+						hideLabelFromVision
+						disabled={ disabled }
+						value={ customFrequency }
+						options={ frequencyOptions }
+						onChange={ ( newValue ) => {
+							const freq = newValue as CustomFrequency;
+
+							const clampedNumber =
+								customNumber > FREQUENCY_MAX[ freq ] ? FREQUENCY_MAX[ freq ] : customNumber;
+							onChange( `${ clampedNumber }${ freq }` );
+						} }
+					/>
+				</HStack>
 			) }
+			<Text variant="muted" size={ 12 }>
+				{ __( 'The specific execution time is randomized to prevent system overload.' ) }
+			</Text>
 		</VStack>
 	);
 }

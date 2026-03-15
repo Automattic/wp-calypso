@@ -3,6 +3,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import i18n, { translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
+	FEATURE_100GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
 	FEATURE_1GB_STORAGE,
@@ -195,6 +196,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
@@ -492,11 +494,38 @@ import {
 	WPCOM_FEATURES_BIG_SKY,
 	FEATURE_WOO_HOSTED_PACKAGE,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 	FEATURE_WOO_HOSTED_MARKETING_TOOLS,
 	FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 	FEATURE_WOO_HOSTED_PRO_MAILPOET,
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_BASIC_STORAGE,
+	FEATURE_WOO_HOSTED_PRO_STORAGE,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import {
@@ -922,7 +951,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -931,13 +960,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
+			FEATURE_UPLOAD_PLUGINS,
 		];
 
 		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
-		}
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
@@ -996,7 +1022,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_PLUGINS,
 	],
 
-	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverride: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1006,6 +1032,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_STYLE_CUSTOMIZATION,
+			FEATURE_PLUGINS_THEMES,
 		];
 
 		let features = baseFeatures;
@@ -1014,16 +1041,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
 		}
 
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
 		return features;
 	},
 	// Experimental: Comparison grid features for experiment variants.
 	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
-	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1035,16 +1058,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION_FONTS_COLORS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_AI_ASSISTANT,
+			FEATURE_PLUGINS_THEMES,
 		];
 
 		let features = baseFeatures;
 
 		if ( isGlobalStylesGridChangesVariation() ) {
 			features = [ ...features, FEATURE_PAYMENT_TRANSACTION_FEES_8 ];
-		}
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
 		}
 
 		return features;
@@ -1108,7 +1128,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 			FEATURE_CUSTOM_DOMAIN,
-			...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
+			FEATURE_PLUGINS_THEMES,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
 			FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1119,11 +1139,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
-		FEATURE_AUDIO_UPLOADS,
-		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
-	],
+	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, WPCOM_FEATURES_FULL_ACTIVITY_LOG ],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1454,9 +1470,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
-		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_SCAN_SELF_SERVE,
 		WPCOM_FEATURES_ANTISPAM,
-		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		FEATURE_SFTP,
 		FEATURE_SSH,
@@ -1638,19 +1654,64 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		),
 } );
 
+const getWooHostedPlanCompareFeatures = (): string[] => [
+	// Create your own online store
+	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
+	FEATURE_WOO_HOSTED_AI_BUILDER,
+	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+	// Accept payments with WooPayments
+	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
+	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	// Sell products and bookable services
+	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
+	FEATURE_WOO_HOSTED_BOOKINGS,
+	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
+	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
+	FEATURE_WOO_HOSTED_GIFT_CARDS,
+	// Manage your store (common features)
+	FEATURE_WOO_HOSTED_MOBILE_APP,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
+	FEATURE_WOO_HOSTED_USPS_UPS,
+	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_SECURITY,
+	FEATURE_PRIORITY_24_7_SUPPORT,
+	// Grow your business (common features)
+	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
+	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
+	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
+	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
+	FEATURE_WOO_HOSTED_SEO_TOOLS,
+	FEATURE_WOO_HOSTED_COUPONS,
+];
+
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_50GB_STORAGE,
 	],
-	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
-	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	getPlanCompareFeatures: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_BASIC_STORAGE,
+		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
+		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
+	],
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
 	getPlanTagline: () =>
@@ -1664,17 +1725,30 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
+		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PRO_MAILPOET,
 		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_100GB_STORAGE,
 	],
-	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
-	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
-	getStorageFeature: () => FEATURE_200GB_STORAGE,
+	getPlanCompareFeatures: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	],
+	get2023PlanComparisonFeatureOverride: () => [
+		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_MAILPOET,
+		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
+	],
+	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
 	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
 	getTagline: () =>
@@ -1809,7 +1883,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_WORDADS, FEATURE_PAYMENT_TRANSACTION_FEES_4 ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -1821,13 +1895,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
+			FEATURE_UPLOAD_PLUGINS,
 		];
 
 		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
-		}
 
 		// When the global styles grid variation is active, surface the payments fee for Premium
 		if ( isGlobalStylesGridChangesVariation() ) {
@@ -1879,7 +1950,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 	],
 
-	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverride: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1890,20 +1961,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
+			FEATURE_PLUGINS_THEMES,
 		];
 
-		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
-		return features;
+		return baseFeatures;
 	},
 	// Experimental: Comparison grid features for experiment variants.
 	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
 	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
-	get2023PlanComparisonFeatureOverrideForExperiment: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FREE_FAST_SUPPORT, // Shows "Free support with faster response times"
@@ -1916,20 +1982,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
+			FEATURE_PLUGINS_THEMES,
 		];
 
-		let features = baseFeatures;
-
-		if ( props?.isSummerSpecial ) {
-			features = [ ...features, FEATURE_PLUGINS_THEMES ];
-		}
-
-		return features;
+		return baseFeatures;
 	},
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
-		...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
+		FEATURE_PLUGINS_THEMES,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
@@ -1989,11 +2050,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
+	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
-		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -2413,9 +2473,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
-		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_SCAN_SELF_SERVE,
 		WPCOM_FEATURES_ANTISPAM,
-		WPCOM_FEATURES_BACKUPS,
+		WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		FEATURE_SFTP,
 		FEATURE_SSH,
@@ -3228,7 +3288,10 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_PERSONAL_MONTHLY ]: {
 		...getPlanPersonalDetails(),
 		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].includes( plan ),
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_TRIAL_MONTHLY ].includes(
+				plan
+			),
 		getProductId: () => 1019,
 		getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
 		getPathSlug: () => 'personal-monthly',
@@ -3239,7 +3302,13 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_MONTHLY ].includes( plan ),
+			[
+				PLAN_FREE,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
+				PLAN_PERSONAL_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
 		getPathSlug: () => 'personal',
@@ -3254,6 +3323,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 			].includes( plan ),
@@ -3271,6 +3341,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3288,6 +3359,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3306,6 +3378,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3326,6 +3399,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3346,6 +3420,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3368,6 +3443,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3394,6 +3470,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3420,6 +3497,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_STARTER,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3449,6 +3527,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_STARTER,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3514,6 +3593,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3538,6 +3618,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_FREE,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3568,6 +3649,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3601,6 +3683,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -3795,6 +3878,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_WPCOM_PRO_2_YEARS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
 				PLAN_PERSONAL_MONTHLY,
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
@@ -4469,4 +4553,28 @@ PLANS_LIST[ PLAN_HOSTING_TRIAL_MONTHLY ] = {
 	getTitle: getPlanBusinessTrialTitle,
 	getDescription: () => i18n.translate( 'Hosting free trial' ),
 	getTagline: () => i18n.translate( 'Get a taste of unlimited performance and unbeatable uptime' ),
+};
+
+PLANS_LIST[ PLAN_PERSONAL_TRIAL_MONTHLY ] = {
+	...getPlanPersonalDetails(),
+	...getMonthlyTimeframe(),
+	availableFor: ( plan ) => [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].includes( plan ),
+	getProductId: () => 1059,
+	getStoreSlug: () => PLAN_PERSONAL_TRIAL_MONTHLY,
+	getPathSlug: () => 'personal-trial-monthly',
+	getPlanCompareFeatures: () =>
+		compact(
+			[
+				FEATURE_HOSTING,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+				FEATURE_FREE_THEMES,
+				isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
+				FEATURE_6GB_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_MEMBERSHIPS,
+				FEATURE_PREMIUM_CONTENT_BLOCK,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			].filter( ( feature ) => feature !== null )
+		),
 };

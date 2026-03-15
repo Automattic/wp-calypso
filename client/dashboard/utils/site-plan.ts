@@ -13,9 +13,10 @@ import {
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { purchaseSettingsRoute, purchasesRoute } from '../app/router/me';
+import { getCurrentDashboard } from '../app/routing';
 import { hasPlanFeature } from '../utils/site-features';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from './link';
+import { redirectToDashboardLink, wpcomLink } from './link';
 import { isCommerceGarden, isSelfHostedJetpackConnected } from './site-types';
 import type { JetpackFeatureSlug, Purchase, Site } from '@automattic/api-core';
 

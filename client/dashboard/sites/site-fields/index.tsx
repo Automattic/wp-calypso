@@ -28,7 +28,6 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteFormattedUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
@@ -100,6 +99,8 @@ export function NameRenderer( {
 } ) {
 	const renderBadge = () => {
 		switch ( badge ) {
+			case 'redirect':
+				return <Badge>{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
 				return <Badge>{ __( 'Staging' ) }</Badge>;
 			case 'trial':
@@ -140,7 +141,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ getSiteFormattedUrl( site ) }
+			href={ site.URL }
 		>
 			{ value }
 		</ExternalLink>
@@ -229,7 +230,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 
 export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const {
 		data: lastBackup,

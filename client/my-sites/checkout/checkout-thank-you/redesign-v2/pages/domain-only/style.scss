@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.checkout-thank-you__domain-only-container {
+	@include break-small {
+		z-index: z-index( '.is-section-checkout-thank-you', '.domain-only-container' );
+	}
+}
+
+.step-container-v2--domain-only {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	a.domain-only__migrate-link {
+		margin: 0 auto;
+		width: fit-content;
+		color: inherit;
+		font-weight: 500;
+
+		&:hover {
+			color: inherit;
+		}
+	}
+}

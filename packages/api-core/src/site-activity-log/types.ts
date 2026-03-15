@@ -109,6 +109,8 @@ export type ActivityLogActor = {
 	// Flags used in actor detection
 	is_cli?: boolean;
 	is_happiness?: boolean;
+	is_mcp_agent?: boolean;
+	mcp_client?: string;
 };
 
 export interface ActivityLogParams {
@@ -121,7 +123,7 @@ export interface ActivityLogParams {
 	by?: string;
 	date_range?: string;
 	number?: number;
-	not_group?: string;
+	not_group?: string[];
 	group?: string[];
 	name?: string[];
 	text_search?: string;

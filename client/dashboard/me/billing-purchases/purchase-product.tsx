@@ -11,7 +11,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 		return null;
 	}
 
-	const productType = getSubtitleForDisplay( purchase );
+	const productType = purchase.is_domain_registration ? null : getSubtitleForDisplay( purchase );
 
 	if ( site ) {
 		if ( productType && site.name && site.slug ) {

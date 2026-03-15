@@ -7,6 +7,8 @@ import { plus } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
+import DocumentHead from 'calypso/components/data/document-head';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
@@ -112,9 +114,10 @@ export const SubscribersHeader = ( {
 
 	return (
 		<>
+			<DocumentHead title="Subscribers" />
 			<NavigationHeader
 				className="subscribers__header"
-				title={ translate( 'Subscribers' ) }
+				title={ <JetpackTitle title={ translate( 'Subscribers' ) } /> }
 				subtitle={
 					hideSubtitle
 						? null

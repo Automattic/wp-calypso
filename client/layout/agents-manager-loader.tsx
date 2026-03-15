@@ -6,14 +6,20 @@ import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export default function AgentsManagerLoader( { sectionName }: { sectionName: string } ) {
+export default function AgentsManagerLoader( {
+	sectionName,
+	loadAgentsManager,
+}: {
+	sectionName: string;
+	loadAgentsManager: boolean;
+} ) {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
-	if ( ! shouldUseUnifiedAgent ) {
+	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
 		return null;
 	}
 

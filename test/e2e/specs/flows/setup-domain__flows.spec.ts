@@ -6,7 +6,7 @@ import {
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
@@ -115,7 +115,84 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a free site and then add a domain with a plan upgrade', async ( {
+		test( 'As a new user, I can create a free site and then add a domain WITHOUT a plan upgrade', async ( {
+			page,
+			componentDomainSearch,
+			componentSelectItems,
+			componentSiteSelect,
+			helperData,
+			pageCartCheckout,
+			pageSignupPickPlan,
+			pageUserSignUp,
+		} ) => {
+			const siteCreationPlan = 'Free';
+			const testUser = helperData.getNewTestUser();
+			let newUserDetails: NewUserResponse;
+			let newSiteDetails: NewSiteResponse;
+			let selectedDomain: string;
+
+			await test.step( 'When I enter the onboarding flow', async function () {
+				await page.goto( helperData.getCalypsoURL( '/setup' ) );
+			} );
+
+			await test.step( 'And I sign up as a new user', async function () {
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+			} );
+
+			await test.step( 'And I skip the domains step', async function () {
+				await componentDomainSearch.search( helperData.getBlogName() );
+				await componentDomainSearch.skipPurchase();
+			} );
+
+			await test.step( `And I select the ${ siteCreationPlan } plan`, async function () {
+				newSiteDetails = await pageSignupPickPlan.selectPlan(
+					siteCreationPlan,
+					new RegExp( '.*/home/.*' )
+				);
+				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+			} );
+
+			await test.step( 'And I enter the domain flow', async function () {
+				await page.goto( helperData.getCalypsoURL( '/setup/domain' ) );
+			} );
+
+			await test.step( 'And I search for a domain', async function () {
+				await componentDomainSearch.search( helperData.getBlogName() );
+			} );
+
+			await test.step( 'And I add the first suggestion to the cart', async function () {
+				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
+			} );
+
+			await test.step( 'And I continue to the next step', async function () {
+				await componentDomainSearch.continue();
+			} );
+
+			await test.step( 'And I select existing site option', async function () {
+				await componentSelectItems.clickButton( 'Existing WordPress.com site', 'Select a site' );
+			} );
+
+			await test.step( 'And I select the site', async function () {
+				await componentSiteSelect.selectSite(
+					newSiteDetails.blog_details.site_slug as string,
+					false
+				);
+			} );
+
+			await test.step( 'And I select the Free plan', async function () {
+				await pageSignupPickPlan.selectEscapeHatchWithoutSiteCreation( 'Free' );
+			} );
+
+			await test.step( 'And I see the domain at checkout', async function () {
+				await pageCartCheckout.validateCartItem( selectedDomain );
+
+				await expect( page ).toHaveURL(
+					new RegExp( `/checkout/${ newSiteDetails.blog_details.site_slug }` )
+				);
+			} );
+		} );
+
+		test( 'As a new user, I can create a free site and then add a domain WITH a plan upgrade', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,

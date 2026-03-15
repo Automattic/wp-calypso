@@ -108,6 +108,7 @@ body.is-reader-full-post {
 
 			.dataviews-view-list__field-wrapper {
 				min-width: 0;
+				min-height: 35px;
 			}
 
 			div[role='row'] {
@@ -140,6 +141,7 @@ body.is-reader-full-post {
 					width: 24px;
 					height: 24px;
 					background-color: transparent;
+					top: 2px;
 
 					&::after {
 						box-shadow: none;
@@ -192,7 +194,7 @@ body.is-reader-full-post {
 		}
 	}
 
-	&__post-column {
+	.recent-feed__post-column {
 		@extend %column-shared;
 		display: none;
 		overflow-y: auto;
@@ -204,7 +206,7 @@ body.is-reader-full-post {
 
 		&-engagement-bar {
 			position: fixed;
-			bottom: calc(var( --content-padding-bottom ) - 1px);
+			bottom: calc( var( --content-padding-bottom ) - 1px );
 			height: 60px;
 			background: var( --color-surface );
 			border-radius: 0 0 $feed-card-border-radius $feed-card-border-radius;

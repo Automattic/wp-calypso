@@ -51,7 +51,7 @@ export const TRACKING_IDS = {
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',
-	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+	quoraPixelId: '683a7cd9d4c24c33a4645f1cc9ffe3df',
 	twitterPixelId: 'nvzbs',
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',

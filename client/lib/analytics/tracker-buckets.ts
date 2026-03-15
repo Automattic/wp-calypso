@@ -65,6 +65,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	reddit: Bucket.ADVERTISING,
 	linkedin: Bucket.ADVERTISING,
 	tiktok: Bucket.ADVERTISING,
+	quora: Bucket.ADVERTISING,
 
 	// Disabled trackers:
 	quantcast: null,
@@ -73,7 +74,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	iconMedia: null,
 	criteo: null,
 	pandora: null,
-	quora: null,
 	adroll: null,
 	clarity: null,
 	outbrain: null,

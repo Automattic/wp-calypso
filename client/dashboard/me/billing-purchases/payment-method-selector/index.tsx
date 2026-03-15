@@ -26,6 +26,7 @@ import { creditCardHasAlreadyExpired, isAkismetProduct } from '../../../utils/pu
 import {
 	assignExistingCardProcessor,
 	assignPayPalProcessor,
+	assignExistingPayPalPPCPProcessor,
 	assignNewCardProcessor,
 } from '../payment-methods';
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
@@ -107,6 +108,8 @@ export function PaymentMethodSelector( {
 					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
 				'existing-card-ebanx': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, data, assignPaymentMethod ),
+				'existing-paypal-ppcp': ( data: unknown ) =>
+					assignExistingPayPalPPCPProcessor( purchase, data, assignPaymentMethod ),
 				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{

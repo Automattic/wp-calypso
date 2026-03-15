@@ -90,7 +90,10 @@ export function useRevertToOriginal( {
 		const targetAttachmentId = originalAttachmentIdRef.current;
 
 		if ( ! targetAttachmentId ) {
-			addNoticeRef.current( __( 'Cannot revert - original image not found', 'big-sky' ), 'error' );
+			addNoticeRef.current(
+				__( 'Cannot revert - original image not found', __i18n_text_domain__ ),
+				'error'
+			);
 			isRevertingRef.current = false;
 			return;
 		}
@@ -107,7 +110,7 @@ export function useRevertToOriginal( {
 
 			if ( ! originalImageUrl ) {
 				addNoticeRef.current(
-					__( 'Cannot revert - failed to load original image', 'big-sky' ),
+					__( 'Cannot revert - failed to load original image', __i18n_text_domain__ ),
 					'error'
 				);
 				isRevertingRef.current = false;
@@ -124,13 +127,13 @@ export function useRevertToOriginal( {
 			// This ensures the app behaves as if freshly opened
 			await resetCanvasHistory();
 
-			addNoticeRef.current( __( 'Reverted to original', 'big-sky' ), 'success' );
+			addNoticeRef.current( __( 'Reverted to original', __i18n_text_domain__ ), 'success' );
 		} catch ( error ) {
 			const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 			addNoticeRef.current(
 				sprintf(
 					/* translators: %s: error message */
-					__( 'Failed to revert image: %s', 'big-sky' ),
+					__( 'Failed to revert image: %s', __i18n_text_domain__ ),
 					errorMessage
 				),
 				'error'

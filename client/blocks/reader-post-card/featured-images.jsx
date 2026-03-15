@@ -9,7 +9,7 @@ import {
 
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, hasExcerpt } ) => {
 	const numImages = isCompactPost ? 1 : 4;
-	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
+	const imagesToDisplay = post.featured_image ? [] : getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
 			<ReaderFeaturedImage

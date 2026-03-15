@@ -3,7 +3,6 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainForwardingForm from '../form';
 import type { FormData } from '../form';
@@ -29,8 +28,6 @@ function renderEditForm( props: TestFormProps = {} ) {
 
 	return render( <DomainForwardingForm { ...defaultProps } /> );
 }
-
-afterEach( () => nock.cleanAll() );
 
 test( 'renders edit form with pre-filled subdomain forwarding data', async () => {
 	const initialData = {

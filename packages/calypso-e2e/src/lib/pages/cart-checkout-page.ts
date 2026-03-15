@@ -249,6 +249,7 @@ export class CartCheckoutPage {
 		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
 		await this.page.fill( selectors.addressInput, registrarDetails.address );
 		await this.page.fill( selectors.cityInput, registrarDetails.city );
+		await this.page.waitForSelector( selectors.stateSelect );
 		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
 		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
 		await this.page.click( selectors.submitRegistrarInformationButton );
@@ -303,7 +304,9 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Click on the Credit or debit card input in order
 		// to expand the fields.
-		const cardInputLocator = this.page.locator( 'span:has-text("Credit or debit card")' );
+		const cardInputLocator = await this.page.waitForSelector(
+			'span:has-text("Credit or debit card")'
+		);
 		await cardInputLocator.click();
 
 		// Begin filling in the card details from

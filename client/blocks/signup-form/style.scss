@@ -1,11 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/onboarding/styles/mixins";
-@import "../../assets/stylesheets/shared/mixins/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/onboarding/styles/mixins';
+@import '../../assets/stylesheets/shared/mixins/breakpoints';
 
 .signup-form-social-first {
 	display: grid;
-	grid-template-areas: "stack";
+	grid-template-areas: 'stack';
 
 	&-screen {
 		grid-area: stack;
@@ -26,15 +26,15 @@
 	transition: none;
 
 	&.is-error,
-	&[type="password"],
-	&[name="password"] {
+	&[type='password'],
+	&[name='password'] {
 		margin-bottom: 0;
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
 	}
 
-	&[name="username"] {
+	&[name='username'] {
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
@@ -47,7 +47,7 @@
 	text-align: left;
 
 	a {
-		@include breakpoint-deprecated(">480px") {
+		@include breakpoint-deprecated( '>480px' ) {
 			white-space: pre;
 		}
 	}
@@ -63,7 +63,7 @@
 
 	p {
 		font-size: $font-body-small;
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
 
@@ -95,7 +95,7 @@
 	display: none;
 	padding: 20px 10px 10px;
 	font-size: $font-body-small;
-	color: var(--studio-blue-5);
+	color: var( --studio-blue-5 );
 	text-align: center;
 
 	p {
@@ -104,7 +104,7 @@
 	}
 
 	a {
-		color: var(--studio-blue-5);
+		color: var( --studio-blue-5 );
 		text-decoration: underline;
 	}
 }
@@ -117,17 +117,17 @@
 	margin-right: 16px;
 
 	// 32px is the column margins
-	width: calc(var(--signup-form-column-max-width) - 32px);
+	width: calc( var( --signup-form-column-max-width ) - 32px );
 
 	@include break-medium {
 		// 2 columns + the 60px wide "or" element
-		width: calc(var(--signup-form-column-max-width) * 2 + 60px - 32px);
+		width: calc( var( --signup-form-column-max-width ) * 2 + 60px - 32px );
 	}
 }
 
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
-@media (max-width: 660px) {
+@media ( max-width: 660px ) {
 	.signup-form__recaptcha-tos {
 		display: block;
 	}
@@ -164,7 +164,7 @@ body.is-section-accept-invite {
 				margin-right: 0;
 
 				&.is-transparent-info {
-					color: var(--studio-gray-80, #2c3338);
+					color: var( --studio-gray-80, #2c3338 );
 				}
 			}
 
@@ -174,8 +174,8 @@ body.is-section-accept-invite {
 
 			.signup-form-social-first__tos-link,
 			.signup-form-social-first__email-tos-link {
-				color: var(--studio-gray-60, #646970);
-				font-family: "SF Pro Text", sans-serif;
+				color: var( --studio-gray-60, #646970 );
+				font-family: 'SF Pro Text', sans-serif;
 				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 400;
@@ -184,7 +184,7 @@ body.is-section-accept-invite {
 				margin-bottom: 2rem;
 
 				a {
-					color: var(--studio-gray-50, #646970);
+					color: var( --studio-gray-50, #646970 );
 					text-decoration-line: underline;
 				}
 			}
@@ -201,35 +201,35 @@ body.is-section-accept-invite {
 				padding-right: 0;
 				background-color: unset;
 
-				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
+				button:not( .is-borderless, .signup-form__domain-suggestion-confirmation ) {
 					display: block;
 					max-width: 327px;
 					margin: 0 auto;
 				}
 
 				button.signup-form__domain-suggestion-confirmation {
-					color: var(--color-link);
+					color: var( --color-link );
 					cursor: pointer;
 					text-decoration: none;
 
 					&:hover {
-						color: var(--color-link-dark);
+						color: var( --color-link-dark );
 					}
 				}
 
 				button.is-borderless {
-					color: var(--color-link);
+					color: var( --color-link );
 					padding: 0;
 
 					&:hover {
-						color: var(--color-link-dark);
+						color: var( --color-link-dark );
 					}
 				}
 			}
 
 			.form-label {
-				color: var(--studio-gray-60, #50575e);
-				font-family: "SF Pro Text", sans-serif;
+				color: var( --studio-gray-60, #50575e );
+				font-family: 'SF Pro Text', sans-serif;
 				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 500;
@@ -244,7 +244,7 @@ body.is-section-accept-invite {
 			button.back-button {
 				color: #1d2327;
 				text-align: center;
-				font-family: "SF Pro Text", sans-serif;
+				font-family: 'SF Pro Text', sans-serif;
 				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 500;
@@ -256,23 +256,23 @@ body.is-section-accept-invite {
 				top: 0;
 
 				&:hover {
-					color: var(--studio-blue-50, #0675c4);
+					color: var( --studio-blue-50, #0675c4 );
 				}
 
 				&:focus {
-					outline: 1px dashed var(--studio-blue-50, #0675c4);
+					outline: 1px dashed var( --studio-blue-50, #0675c4 );
 					outline-offset: 3px;
 					box-shadow: none;
 					border-radius: 0;
 				}
 			}
 
-			button.button:not(.is-borderless) {
+			button.button:not( .is-borderless ) {
 				border-radius: 4px;
 
 				&:focus {
 					box-shadow: none;
-					outline: 2px solid var(--studio-blue-60, #055d9c);
+					outline: 2px solid var( --studio-blue-60, #055d9c );
 					outline-offset: 1px;
 				}
 			}
@@ -353,6 +353,33 @@ body.is-section-accept-invite {
 				}
 			}
 		}
+	}
+}
+
+.signup-form--connect-screen {
+	.card.auth-form__social.is-signup {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+		box-shadow: none;
+		background: none;
+	}
+
+	.auth-form__social-buttons,
+	.auth-form__social-buttons-container {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		gap: 10px;
+	}
+
+	.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+		width: 100%;
+	}
+
+	.signup-form__passwordless-form-wrapper .signup-form__action-buttons {
+		margin-top: 16px;
 	}
 }
 

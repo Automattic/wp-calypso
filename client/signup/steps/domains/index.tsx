@@ -379,7 +379,13 @@ const DomainSearchUI = (
 	// For /start flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) || isDomainOnlyFlow ) {
+		if (
+			siteSlug ||
+			siteId ||
+			isMonthlyOrFreeFlow( flowName ) ||
+			isDomainOnlyFlow ||
+			isDomainForGravatarFlow( flowName )
+		) {
 			return false;
 		}
 		return true;

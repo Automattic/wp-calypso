@@ -553,9 +553,11 @@ function setUpCSP( req, res, next ) {
 			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://a.quora.com', // Quora tracking pixel.
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
 			'https://bat.bing.com', // Bing Ads JS
+			'https://blackbox-api.wp.com', // Blackbox bot detection
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -622,6 +624,7 @@ function setUpCSP( req, res, next ) {
 			'https://woocommerce.com', // WooCommerce marketplace
 			'localhost:8888',
 			'p.typekit.net',
+			'https://q.quora.com', //Quora tracking pixel image.
 		],
 		'frame-src': [
 			"'self'",
@@ -637,6 +640,7 @@ function setUpCSP( req, res, next ) {
 			'*.verygoodsecurity.com', // VGS Collect secure iframes
 			'www.paypal.com', // PayPal checkout flow
 			'*.paypal.com', // PayPal additional flows
+			'https://blackbox-api.wp.com', // Blackbox iframe transport
 		],
 		'font-src': [
 			"'self'",
@@ -669,6 +673,7 @@ function setUpCSP( req, res, next ) {
 			'*.sentry.io',
 			'*.reddit.com',
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
 			'api.stripe.com', // Stripe API endpoint

@@ -50,7 +50,8 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { masterbarIsVisible } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -87,6 +88,7 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isCIABSite,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -147,6 +149,11 @@ const LayoutLoggedOut = ( {
 				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 			userAllowedToHelpCenter );
 
+	const isThemeShowcaseModern =
+		[ 'themes', 'theme' ].includes( sectionName ) &&
+		isEnabled( 'themes/showcase-modern' ) &&
+		! isLoggedIn;
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -174,6 +181,7 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
 	let masterbar = null;
@@ -239,6 +247,7 @@ const LayoutLoggedOut = ( {
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
 					} ) }
+				{ ...( isThemeShowcaseModern && { logoColor: 'var(--studio-black)' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
@@ -260,6 +269,7 @@ const LayoutLoggedOut = ( {
 				isCheckoutPending={ isCheckoutPending }
 				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
+				isCIABSite={ isCIABSite }
 			/>
 		);
 	}
@@ -402,6 +412,10 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
+			const isCIABSite = site?.is_garden && site.garden_name === 'commerce';
+
 			return {
 				isAkismet,
 				isPassport,
@@ -425,6 +439,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isCIABSite,
 			};
 		},
 		{ clearLastActionRequiresLogin }

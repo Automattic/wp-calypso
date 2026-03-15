@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
@@ -33,13 +32,25 @@ jest.mock( 'calypso/reader/components/back-button', () => () => (
 	<button data-testid="back-button">Back</button>
 ) );
 
-jest.mock( 'calypso/components/empty-content', () => ( { title, line, action } ) => (
-	<div data-testid="empty-content">
-		<h2>{ title }</h2>
-		<p>{ line }</p>
-		<button>{ action }</button>
-	</div>
-) );
+jest.mock(
+	'calypso/reader/components/reader-main',
+	() =>
+		( { children }: { children: React.ReactNode } ) => (
+			<div data-testid="reader-main">{ children }</div>
+		)
+);
+
+jest.mock(
+	'calypso/components/empty-content',
+	() =>
+		( { title, line, action }: { title: string; line: string; action: string } ) => (
+			<div data-testid="empty-content">
+				<h2>{ title }</h2>
+				<p>{ line }</p>
+				<button>{ action }</button>
+			</div>
+		)
+);
 
 describe( 'UserProfile', () => {
 	const mockRequestUser = jest.fn().mockResolvedValue( undefined );

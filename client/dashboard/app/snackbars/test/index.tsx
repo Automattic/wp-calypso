@@ -60,7 +60,6 @@ describe( 'Snackbars', () => {
 	let mockSubscribe: jest.Mock;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
 		hasSubscription = false;
 
 		currentNotices = [

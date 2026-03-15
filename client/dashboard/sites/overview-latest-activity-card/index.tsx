@@ -11,6 +11,7 @@ import { TextSkeleton } from '../../components/text-skeleton';
 import TimeSince from '../../components/time-since';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getActivityLogHiddenGroups } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -63,7 +64,8 @@ export default function LatestActivityCard( {
 	site: Site;
 	isCompact?: boolean;
 } ) {
-	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
+	const notGroup = getActivityLogHiddenGroups( site );
+	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID, notGroup ) );
 	const { recordTracksEvent } = useAnalytics();
 
 	const view = {

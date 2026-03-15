@@ -9,6 +9,7 @@ import {
 	BrowserManager,
 	SecretsManager,
 	PluginsPage,
+	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -50,6 +51,11 @@ describe( 'Plugins: Add multiple to cart', function () {
 
 		it( 'Click on install button', async function () {
 			await pluginsPage.clickInstallPlugin();
+		} );
+
+		it( 'Select a plan on the plans page', async function () {
+			const plansPage = new PlansPage( page );
+			await plansPage.selectPlan( 'Personal' );
 		} );
 
 		it.each( [ 'WordPress.com', pluginName ] )( '%s is added to cart', async function ( target ) {

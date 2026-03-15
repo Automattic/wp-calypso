@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import clsx from 'clsx';
@@ -11,6 +10,7 @@ import {
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
+	EXTERNAL_PRESSABLE_AUTH_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
@@ -21,6 +21,8 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
+import { useSelector } from 'calypso/state';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
@@ -47,7 +49,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const handleOnClick = useCallback(
 		( modalType: string ) => {
@@ -99,7 +101,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					buttonProps={ {
 						href:
 							pressableOwnership === 'regular'
-								? 'https://my.pressable.com/agency/auth'
+								? EXTERNAL_PRESSABLE_AUTH_URL
 								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 						target: pressableOwnership === 'regular' ? '_blank' : undefined,
 					} }
@@ -127,52 +129,57 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					) : undefined }
 				</AddNewSiteMenuItem>
 			</AddNewSitePopoverColumn>
-			{ devSitesEnabled && (
-				<AddNewSitePopoverColumn>
-					<AddNewSiteMenuItem
-						isBanner
-						icon={ <img src={ devSiteBanner } alt="Start building for free" /> }
-						heading={ translate( 'Start building for free' ) }
-						description={ translate(
-							'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
-						) }
-						disabled={ ! hasAvailableDevSites }
-						buttonProps={ {
-							onClick: () => {
-								if ( ! hasAvailableDevSites ) {
-									return;
-								}
-								if ( paymentMethodRequired ) {
-									page(
-										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
-									);
-								} else {
-									setVisibleModalType( 'dev-site-configurations' );
-								}
-								setMenuVisible( false );
-							},
-						} }
-					>
-						<div>
-							<div className="add-new-site-popover__count">
-								{ translate( '%(pendingSites)d of 5 free licenses available', {
-									args: {
-										pendingSites: availableDevSites,
-									},
-									comment: '%(pendingSites)s is the number of free licenses available.',
-								} ) }
-							</div>
-							<div
-								className={ clsx( 'add-new-site-popover__cta', {
-									disabled: ! hasAvailableDevSites,
-								} ) }
-							>
-								{ translate( 'Create a site now →' ) }
-							</div>
+			<AddNewSitePopoverColumn>
+				<AddNewSiteMenuItem
+					isBanner
+					icon={ <img src={ devSiteBanner } alt="Start building for free" /> }
+					heading={ translate( 'Start building for free' ) }
+					description={ translate(
+						'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
+					) }
+					disabled={ ! hasAvailableDevSites || ! isAgencyApproved }
+					buttonProps={ {
+						onClick: () => {
+							if ( ! hasAvailableDevSites || ! isAgencyApproved ) {
+								return;
+							}
+							if ( paymentMethodRequired ) {
+								page(
+									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+								);
+							} else {
+								setVisibleModalType( 'dev-site-configurations' );
+							}
+							setMenuVisible( false );
+						},
+					} }
+					tooltip={
+						! isAgencyApproved
+							? translate(
+									'Your agency is not yet approved. Please wait for approval before creating a development site.'
+							  )
+							: undefined
+					}
+				>
+					<div>
+						<div className="add-new-site-popover__count">
+							{ translate( '%(pendingSites)d of 5 free licenses available', {
+								args: {
+									pendingSites: availableDevSites,
+								},
+								comment: '%(pendingSites)s is the number of free licenses available.',
+							} ) }
 						</div>
-					</AddNewSiteMenuItem>
-				</AddNewSitePopoverColumn>
-			) }
+						<div
+							className={ clsx( 'add-new-site-popover__cta', {
+								disabled: ! hasAvailableDevSites,
+							} ) }
+						>
+							{ translate( 'Create a site now →' ) }
+						</div>
+					</div>
+				</AddNewSiteMenuItem>
+			</AddNewSitePopoverColumn>
 		</>
 	);
 };

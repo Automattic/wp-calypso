@@ -1,9 +1,6 @@
-import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './service-description.scss';
@@ -18,101 +15,6 @@ class SharingServiceDescription extends Component {
 
 	static defaultProps = {
 		descriptions: Object.freeze( {
-			bluesky() {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Sharing posts to your Bluesky profile.' );
-				}
-				return this.props.translate( 'Share posts to your Bluesky profile.' );
-			},
-			facebook: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing posts to your Facebook page.',
-						'Sharing posts to your Facebook pages.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Facebook Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate(
-					'Facebook’s massive active user base makes for a great place to share your posts and connect with your followers.',
-					{
-						comment: 'Description for Facebook Publicize when no accounts are connected',
-					}
-				);
-			},
-			instagram_business: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing photos to your Instagram account.',
-						'Sharing photos to your Instagram accounts.',
-						{
-							count: this.props.numberOfConnections,
-							comment:
-								'Description for Instagram Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return (
-					<>
-						{ this.props.translate(
-							'Share photos from your site to your Instagram Business account.',
-							{
-								comment: 'Description for Instagram Publicize when no accounts are connected',
-							}
-						) }
-						<InfoPopover className="instagram-business__info">
-							{ this.props.translate(
-								'Instagram requires a business account connected to Facebook in order to work with third party services.'
-							) }
-							<ExternalLink
-								className="instagram-business__help-link"
-								href="https://jetpack.com/redirect/?source=jetpack-social-instagram-business-help"
-							>
-								{ this.props.translate( 'Learn how to convert & link your Instagram account.' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</>
-				);
-			},
-			twitter: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing posts to your Twitter feed.',
-						'Sharing posts to your Twitter feeds.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Twitter Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate(
-					'Keep your followers up to date with your news, events, and other happenings by sharing posts on your Twitter feed.',
-					{
-						comment: 'Description for Twitter Publicize when no accounts are connected',
-					}
-				);
-			},
-			google_plus: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Commenting and sharing to your profile.',
-						'Commenting and sharing to your profiles.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Google+ Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate( 'Comment and share to your profile.', {
-					comment: 'Description for Google+ Publicize when no accounts are connected',
-				} );
-			},
 			mailchimp: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
@@ -125,39 +27,6 @@ class SharingServiceDescription extends Component {
 				}
 
 				return this.props.translate( 'Allow users to sign up to your Mailchimp mailing list.' );
-			},
-			linkedin: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Sharing posts to your connections.', {
-						comment: 'Description for LinkedIn Publicize when one or more accounts are connected',
-					} );
-				}
-
-				return this.props.translate(
-					'Reach a professional audience and contribute valuable content by sharing your posts with the LinkedIn community.',
-					{
-						comment: 'Description for LinkedIn Publicize when no accounts are connected',
-					}
-				);
-			},
-			tumblr: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing posts to your Tumblr blog.',
-						'Sharing posts to your Tumblr blogs.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Tumblr Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate(
-					'Sharing posts on your Tumblr blog expands your reach to a diverse younger audience in a fun and creative community.',
-					{
-						comment: 'Description for Tumblr Publicize when no accounts are connected',
-					}
-				);
 			},
 			instagram_basic_display: function () {
 				if ( this.props.numberOfConnections > 0 ) {
@@ -225,34 +94,6 @@ class SharingServiceDescription extends Component {
 					comment: 'Embed GitHub Issues in P2 posts.',
 				} );
 			},
-			mastodon: function () {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing posts to your Mastodon feed.',
-						'Sharing posts to your Mastodon feeds.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Mastodon Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate( 'Share posts to your Mastodon feed.', {
-					comment: 'Description for Mastodon Publicize when no accounts are connected',
-				} );
-			},
-			nextdoor() {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Sharing posts to Nextdoor.' );
-				}
-				return this.props.translate( 'Share posts with your local community on Nextdoor.' );
-			},
-			threads() {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Sharing posts to Threads.' );
-				}
-				return this.props.translate( 'Share posts to your Threads feed.' );
-			},
 		} ),
 		numberOfConnections: 0,
 	};
@@ -260,27 +101,7 @@ class SharingServiceDescription extends Component {
 	render() {
 		let description;
 
-		// Temporary message: the `must-disconnect` status for Facebook connection is likely due to Facebook API changes
-		if ( 'facebook' === this.props.service.ID && 'must-disconnect' === this.props.status ) {
-			description = this.props.translate(
-				'As of August 1, 2018, Facebook no longer allows direct sharing of posts to Facebook Profiles. ' +
-					'Connections to Facebook Pages remain unchanged. {{a}}Learn more{{/a}}',
-				{
-					components: {
-						a: (
-							<a
-								href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			);
-		} else if (
-			'google_photos' === this.props.service.ID &&
-			'must-disconnect' === this.props.status
-		) {
+		if ( 'google_photos' === this.props.service.ID && 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'Please connect again to continue using Google Photos.' );
 		} else if ( 'reconnect' === this.props.status || 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'There is an issue connecting to %(service)s.', {

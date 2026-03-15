@@ -1,9 +1,9 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
-import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useAppContext } from '../../app/context';
 import { Text } from '../../components/text';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
@@ -11,6 +11,7 @@ import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
+import { sortNullableStrings } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -23,7 +24,8 @@ export const useFields = ( {
 	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
-	const { data: domains } = useQuery( domainsQuery() );
+	const { queries } = useAppContext();
+	const { data: domains } = useQuery( queries.domainsQuery() );
 
 	const siteElements = useMemo( () => {
 		if ( ! domains ) {
@@ -137,21 +139,7 @@ export const useFields = ( {
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
-				sort: ( a, b, direction ) => {
-					if ( a.expiry === null && b.expiry === null ) {
-						return 0;
-					}
-					if ( a.expiry === null ) {
-						return 1;
-					}
-
-					if ( b.expiry === null ) {
-						return -1;
-					}
-
-					const factor = direction === 'asc' ? 1 : -1;
-					return a.expiry.localeCompare( b.expiry ) * factor;
-				},
+				sort: sortNullableStrings,
 				elements: [
 					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
@@ -214,7 +202,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
 	);
 
 	return fields;

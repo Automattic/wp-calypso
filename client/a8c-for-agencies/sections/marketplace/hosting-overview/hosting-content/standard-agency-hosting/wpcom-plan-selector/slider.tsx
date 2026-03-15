@@ -96,9 +96,19 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan 
 		}
 	};
 
-	const value = isOverMaxValue
-		? MaxValue
-		: options.findIndex( ( option ) => option.value === ownedPlans + quantity );
+	const value = useMemo( () => {
+		if ( isOverMaxValue ) {
+			return options.length - 1;
+		}
+		const index = options.findIndex( ( option ) => option.value === ownedPlans + quantity );
+		// If persisted value doesn't match any option, default to first valid option
+		return index >= 0
+			? index
+			: Math.max(
+					0,
+					options.findIndex( ( o ) => o.value > ownedPlans )
+			  );
+	}, [ isOverMaxValue, options, ownedPlans, quantity ] );
 
 	return (
 		<A4ASlider

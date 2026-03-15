@@ -5,6 +5,7 @@ import {
 	allSitesQuery,
 	connectedApplicationsQuery,
 	countryListQuery,
+	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
 	monetizeSubscriptionsQuery,
@@ -256,6 +257,10 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
+	validateSearch: ( search ): { refunded?: true } => {
+		const isRefunded = search.refunded === true || search.refunded === 'true';
+		return isRefunded ? { refunded: true } : {};
+	},
 } );
 
 export const purchaseSettingsIndexRoute = createRoute( {
@@ -274,6 +279,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,
 			] );
+		}
+
+		// Preload domain data to avoid layout shift for the "Attach to a site" card
+		if ( purchase.meta && purchase.is_domain ) {
+			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
 	},
 } ).lazy( () =>
@@ -297,6 +307,11 @@ export const changePaymentMethodRoute = createRoute( {
 	loader: () => {
 		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	},
+	validateSearch: ( search ): { redirect_to?: string } => {
+		return {
+			redirect_to: typeof search.redirect_to === 'string' ? search.redirect_to : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>

@@ -11,13 +11,16 @@ import { loadTextFormatting } from './load-text-formatting';
  *                   It receives the serialized content as a parameter.
  * @param isRTL      Whether the editor should be RTL.
  * @param requestParamsGenerator Function that generates request params for embeds. It receives the embed URL as a parameter.
+ * @param isDarkMode Whether the editor should be in dark mode.
+ * @param focusOnMount Whether the editor should be focused on mount.
  */
 export const attachGutenberg = (
 	textarea: HTMLTextAreaElement,
 	setComment: ( newValue: string ) => void,
 	isRTL = false,
 	requestParamsGenerator: ( embedURL: string ) => EmbedRequestParams,
-	isDarkMode = false
+	isDarkMode = false,
+	focusOnMount = true
 ) => {
 	const editor = document.createElement( 'div' );
 	editor.className = 'verbum-editor-wrapper';
@@ -36,6 +39,7 @@ export const attachGutenberg = (
 			isRTL={ isRTL }
 			onChange={ ( content ) => setComment( content ) }
 			isDarkMode={ isDarkMode }
+			focusOnMount={ focusOnMount }
 		/>
 	);
 };

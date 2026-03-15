@@ -1,17 +1,21 @@
 import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import {
+	shouldLoadSurvicate,
+	loadSurvicateScript,
+	isSurvicateScriptLoaded,
+	SURVICATE_WORKSPACE_ID,
+} from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
 import debug from 'debug';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 const survicateDebug = debug( 'calypso:analytics:survicate' );
 
-let survicateScriptLoaded = false;
-const workspaceId = 'e4794374cce15378101b63de24117572';
-
 /**
- * Sets Survicate visitor traits with current user data
+ * Sets Survicate visitor traits with current user data.
+ * Calypso-specific: uses getCurrentUser() and checks anonymous paths.
  */
-const setSurvicateVisitorTraits = () => {
+const setCalypsoVisitorTraits = () => {
 	const user = getCurrentUser();
 
 	if ( isUserOnAnonymousPaths() ) {
@@ -71,19 +75,18 @@ export function isUserOnAnonymousPaths() {
 }
 
 export function addSurvicate() {
-	// Only add survicate for en languages
-	if ( ! getLocaleSlug().startsWith( 'en' ) ) {
-		survicateDebug( 'Not loading Survicate script for non-en language' );
+	if (
+		! shouldLoadSurvicate( {
+			locale: getLocaleSlug(),
+			isMobile: !! isMobile(),
+		} )
+	) {
+		survicateDebug( 'Not loading Survicate script: conditions not met' );
 		return;
 	}
 
-	if ( isMobile() ) {
-		survicateDebug( 'Not loading Survicate script on mobile device' );
-		return;
-	}
-
-	if ( survicateScriptLoaded ) {
-		setTimeout( setSurvicateVisitorTraits, 1000 );
+	if ( isSurvicateScriptLoaded() ) {
+		setTimeout( setCalypsoVisitorTraits, 1000 );
 		survicateDebug( 'Survicate script already loaded' );
 		return;
 	}
@@ -93,26 +96,14 @@ export function addSurvicate() {
 		return;
 	}
 
-	( function () {
-		const s = document.createElement( 'script' );
-		s.src = `https://survey.survicate.com/workspaces/${ workspaceId }/web_surveys.js`;
-		s.async = true;
-
-		// Wait for the script to load before setting visitor traits
-		s.onload = function () {
+	loadSurvicateScript( SURVICATE_WORKSPACE_ID )
+		.then( () => {
 			survicateDebug( 'Survicate script loaded' );
-			setTimeout( setSurvicateVisitorTraits, 1000 );
-		};
-
-		s.onerror = function () {
+			setTimeout( setCalypsoVisitorTraits, 1000 );
+		} )
+		.catch( () => {
 			survicateDebug( 'Failed to load Survicate script' );
-		};
-
-		const e = document.getElementsByTagName( 'script' )[ 0 ];
-		e.parentNode.insertBefore( s, e );
-	} )();
-
-	survicateScriptLoaded = true;
+		} );
 }
 
 /**

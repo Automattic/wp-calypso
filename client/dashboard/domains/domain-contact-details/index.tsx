@@ -11,6 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
@@ -155,6 +156,7 @@ export default function DomainContactInfo() {
 				initialData={ initialData }
 				validate={ validateMutation.mutateAsync }
 			/>
+			<PerformanceTrackerStop />
 		</DomainContactDetailsLayout>
 	);
 }

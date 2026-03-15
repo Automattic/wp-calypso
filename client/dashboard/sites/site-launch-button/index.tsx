@@ -1,12 +1,14 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { domainsQuery, siteLaunchMutation } from '@automattic/api-queries';
+import { siteLaunchMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { useAppContext } from '../../app/context';
+import { getCurrentDashboard } from '../../app/routing';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -29,9 +31,10 @@ export function SiteLaunchButton( {
 		onLaunch: () => void;
 	} >;
 } ) {
+	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( {
-		...domainsQuery(),
+		...queries.domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 	const launchMutation = useMutation( {

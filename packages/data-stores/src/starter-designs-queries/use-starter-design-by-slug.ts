@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { Design } from '@automattic/design-picker/src/types';
+import type { Design } from '@automattic/design-types';
 
 interface Options extends QueryOptions< Design > {
 	enabled?: boolean;

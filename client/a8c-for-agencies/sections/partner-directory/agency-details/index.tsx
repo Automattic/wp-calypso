@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
-import { Button, SearchableDropdown } from '@automattic/components';
-import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
+import { SearchableDropdown } from '@automattic/components';
+import { TextareaControl, TextControl, ToggleControl, Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -16,6 +16,7 @@ import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -43,6 +44,7 @@ type Props = {
 const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { showSupportGuide } = useHelpCenter();
 
 	const { validate, validationError, updateValidationError } = useDetailsFormValidation();
 
@@ -126,9 +128,12 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			description={
 				<>
 					Add details to your agency's public profile for clients to see.{ ' ' }
-					<a href={ `/partner-directory/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }>
+					<Button
+						variant="link"
+						href={ `/partner-directory/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }
+					>
 						Want to update your expertise instead?
-					</a>
+					</Button>
 				</>
 			}
 		>
@@ -206,7 +211,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						{
 							components: {
 								a: (
-									<a
+									<Button
+										variant="link"
 										href="https://commonmark.org/help/"
 										target="_blank"
 										rel="noreferrer noopener"
@@ -250,10 +256,13 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate( 'Need help? {{a}}View our logo guidelines.{{/a}}', {
 						components: {
 							a: (
-								<a
-									href="https://agencieshelp.automattic.com/knowledge-base/adding-a-logo-to-the-partner-directory-agency-profile/"
-									target="_blank"
-									rel="noreferrer noopener"
+								<Button
+									variant="link"
+									onClick={ () => {
+										showSupportGuide(
+											'https://agencieshelp.automattic.com/knowledge-base/adding-a-logo-to-the-partner-directory-agency-profile/'
+										);
+									} }
 								/>
 							),
 						},
@@ -380,7 +389,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			</div>
 
 			<div className="partner-directory-agency-cta__footer">
-				<Button primary onClick={ submitForm } disabled={ isSubmitting }>
+				<Button variant="primary" onClick={ submitForm } disabled={ isSubmitting }>
 					{ translate( 'Save public profile' ) }
 				</Button>
 			</div>

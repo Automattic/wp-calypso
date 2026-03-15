@@ -210,7 +210,15 @@ export default function NameServersForm( {
 				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[ formData, isBusy, showUpsellNudge, domainName, domainSiteSlug, recordTracksEvent ]
+		[
+			formData,
+			isBusy,
+			showUpsellNudge,
+			domainName,
+			domainSiteSlug,
+			recordTracksEvent,
+			defaultNameServers,
+		]
 	);
 
 	const handleSubmit = useCallback(

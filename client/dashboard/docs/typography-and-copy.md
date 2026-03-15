@@ -2,6 +2,8 @@
 
 ## General
 
+Use US English spelling (e.g. "customize" not "customise", "color" not "colour").
+
 End sentences with a period. Even short ones. Button and form labels do not end in periods, and neither do headings.
 
 Use curly quotes and apostrophes.
@@ -49,4 +51,3 @@ Error message should be helpful where possible, although it is not always possib
 In the final case the copy can be simplified by not including the nuance that a success would have actually resulted in a request being made.
 
 And remember, snackbar messages end with a period.
-

@@ -274,6 +274,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-woo-hosted':
 			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
 			break;
+		case 'plans-migration':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}

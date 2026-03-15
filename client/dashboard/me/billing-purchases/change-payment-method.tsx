@@ -28,6 +28,7 @@ import './style.scss';
 
 function ChangePaymentMethod() {
 	const { purchaseId } = changePaymentMethodRoute.useParams();
+	const { redirect_to } = changePaymentMethodRoute.useSearch();
 	const navigate = useNavigate();
 
 	const numericId = parseInt( purchaseId );
@@ -37,12 +38,19 @@ function ChangePaymentMethod() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
 
 	const { isLoading: isLoadingStoredCards } = useQuery(
-		userPaymentMethodsQuery( { type: 'card' } )
+		userPaymentMethodsQuery( {
+			type: 'card',
+		} )
+	);
+	const { isLoading: isLoadingPayPal } = useQuery(
+		userPaymentMethodsQuery( {
+			type: 'vault-token',
+		} )
 	);
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
-	const isDataLoading = isLoadingStoredCards || isStripeLoading;
+	const isDataLoading = isLoadingStoredCards || isLoadingPayPal || isStripeLoading;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {
@@ -56,6 +64,17 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
+		if ( redirect_to ) {
+			try {
+				const parsed = new URL( redirect_to );
+				if ( purchase.domain && parsed.hostname === purchase.domain ) {
+					window.location.href = redirect_to;
+					return;
+				}
+			} catch {
+				// Invalid URL — fall through to default navigation.
+			}
+		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
 

@@ -1,4 +1,7 @@
-import { FEATURE_SECURITY_SETTINGS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import {
+	FEATURE_SECURITY_SETTINGS,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -84,7 +87,7 @@ export default connect( ( state ) => {
 	return {
 		site,
 		siteId,
-		hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ),
+		hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE ),
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),

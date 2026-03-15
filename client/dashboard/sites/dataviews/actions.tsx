@@ -9,10 +9,11 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteBlockingStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { canManageSite, canLeaveSite, canRestoreSite } from '../features';
+import { canManageSite, canDisconnectSite, canLeaveSite, canRestoreSite } from '../features';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
+const JetpackSiteDisconnect = lazy( () => import( '../jetpack-site-disconnect' ) );
 const SiteLeaveContentInfo = lazy( () => import( '../site-leave-modal/content-info' ) );
 const SiteRestoreContentInfo = lazy( () => import( '../site-restore-modal/content-info' ) );
 
@@ -115,6 +116,16 @@ export function useActions(): Action< Site >[] {
 			RenderModal: ( { items, closeModal } ) => (
 				<Suspense fallback={ null }>
 					<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
+				</Suspense>
+			),
+		},
+		{
+			id: 'disconnect',
+			label: __( 'Disconnect site' ),
+			isEligible: ( item: Site ) => canDisconnectSite( item ),
+			RenderModal: ( { items, closeModal } ) => (
+				<Suspense fallback={ null }>
+					<JetpackSiteDisconnect site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
 			),
 		},
