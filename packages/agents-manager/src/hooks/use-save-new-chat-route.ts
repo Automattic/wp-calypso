@@ -36,8 +36,8 @@ function saveNewChatRoute( sessionId: string ): void {
  */
 export default function useSaveNewChatRoute( messages: UIMessage[] ) {
 	const { agentConfig } = useAgentsManagerContext();
-	const agentId = agentConfig?.agentId ?? '';
-	const sessionId = getSessionId( agentId );
+
+	const sessionId = getSessionId( agentConfig?.agentId ?? '' );
 	const prevSessionIdRef = useRef< string >( sessionId );
 	const { pathname, state } = useLocation();
 
