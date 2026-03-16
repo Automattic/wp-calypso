@@ -127,6 +127,7 @@ const FilterBarModern = ( {
 								onSearchOpen={ handleSearchOpen }
 								onSearchClose={ handleSearchClose }
 								initialValue={ searchQuery }
+								value={ searchQuery }
 								onSearch={ onSearch }
 								placeholder={ translate( 'Search themes…' ) }
 								searchMode={ SEARCH_MODE_ON_ENTER }
