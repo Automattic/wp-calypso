@@ -38,7 +38,6 @@ let isRegistered = false;
 interface LowCreditsNotice {
 	type: 'low_credits_warning';
 	message: string;
-	requests_remaining?: number;
 	upgrade_url?: string | null;
 }
 
@@ -139,6 +138,25 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 								description: 'The alt text for the image.',
 							},
 						},
+					},
+					notice: {
+						type: 'object',
+						description: 'Optional notice from the backend, e.g. a low-credits warning.',
+						properties: {
+							type: {
+								type: 'string',
+								description: 'The notice type identifier.',
+							},
+							message: {
+								type: 'string',
+								description: 'The user-facing message to display.',
+							},
+							upgrade_url: {
+								type: 'string',
+								description: 'Optional URL to an upgrade page.',
+							},
+						},
+						required: [ 'type', 'message' ],
 					},
 				},
 				required: [ 'attachmentId' ],
