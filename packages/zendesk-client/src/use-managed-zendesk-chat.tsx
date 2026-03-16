@@ -206,6 +206,13 @@ export const useManagedZendeskChat = () => {
 		[ Smooch, setConversation, conversation?.id ]
 	);
 
+	const hasCSAT = useMemo( () => {
+		const messages = conversation?.messages ?? [];
+		return messages.some(
+			( msg ) => msg.source?.type === 'zd:surveys' || msg.metadata?.type === 'csat'
+		);
+	}, [ conversation?.messages ] );
+
 	const disconnectedListener = useCallback( () => {
 		setConnectionStatus( 'disconnected' );
 		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
@@ -296,7 +303,9 @@ export const useManagedZendeskChat = () => {
 
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
 			const isCSAT =
-				message.source?.type === 'zd:surveys' && message.actions && message.actions.length > 0;
+				( message.source?.type === 'zd:surveys' || message.metadata?.type === 'csat' ) &&
+				message.actions &&
+				message.actions.length > 0;
 
 			if ( isCSAT && ! hasRated ) {
 				const ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
@@ -586,6 +595,7 @@ export const useManagedZendeskChat = () => {
 		notice,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
+		hasInteractionEnded: hasCSAT,
 		onTypingStatusChange: ( typingStatus: boolean ) => {
 			if ( typingStatus ) {
 				Smooch?.startTyping( conversation?.id );
