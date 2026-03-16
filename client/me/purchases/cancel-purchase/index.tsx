@@ -129,6 +129,10 @@ export interface CancelPurchaseConnectedProps {
 
 export interface CancelPurchaseProps {
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	getConfirmCancelDomainUrlFor?: (
+		targetSiteSlug: string,
+		targetPurchaseId: string | number
+	) => string;
 	purchaseId: number;
 	purchaseListUrl?: string;
 	siteSlug: string;
