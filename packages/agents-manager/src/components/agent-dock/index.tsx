@@ -16,7 +16,6 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import OrchestratorChat from '../orchestrator-chat';
@@ -166,7 +165,6 @@ export default function AgentDock( {
 			const sessionId = conversation.session_id || '';
 
 			handleAbort();
-			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};

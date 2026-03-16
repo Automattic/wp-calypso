@@ -15,7 +15,6 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import { setSessionId } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
 	deactivateStaleMessages,
@@ -151,7 +150,6 @@ export default function OrchestratorChat( {
 
 			// Sync local session ID with the server's
 			if ( configSessionId !== serverSessionId ) {
-				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
