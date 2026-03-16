@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, useCallback } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
@@ -1052,9 +1052,9 @@ function WithSummarizerHOC( Wrapped ) {
 				If the post title is ${ props.post.title }.
 			`,
 		} );
-		const summarizeContent = () => {
+		const summarizeContent = useCallback( () => {
 			summarize( props.post.content );
-		};
+		}, [ summarize, props.post.content ] );
 
 		return (
 			<Wrapped { ...props } summarizedContent={ summary } runSummarizer={ summarizeContent } />
