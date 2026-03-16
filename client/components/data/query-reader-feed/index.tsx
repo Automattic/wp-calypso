@@ -8,7 +8,7 @@ import {
 } from 'calypso/state/reader/feeds/actions';
 
 interface Props {
-	feedId: number;
+	feedId: number | null;
 }
 
 /**
@@ -29,7 +29,7 @@ export default function QueryReaderFeed( { feedId }: Props ) {
 	}, [ dispatch, feed, isSuccess ] );
 
 	useEffect( () => {
-		if ( isError ) {
+		if ( isError && feedId ) {
 			dispatch( receiveReaderFeedRequestFailure( feedId, error ) );
 		}
 	}, [ dispatch, feedId, isError, error ] );
