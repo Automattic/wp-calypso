@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -46,6 +47,16 @@ const FilterBarModern = ( {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
+
+	const handleSearchOpen = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_expand' );
+		setIsSearchOpen( true );
+	}, [] );
+
+	const handleSearchClose = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_clear_icon_click' );
+		setIsSearchOpen( false );
+	}, [] );
 
 	const pillCategories = useMemo(
 		() =>
@@ -113,8 +124,8 @@ const FilterBarModern = ( {
 							<Search
 								pinned
 								isOpen={ isSearchOpen }
-								onSearchOpen={ () => setIsSearchOpen( true ) }
-								onSearchClose={ () => setIsSearchOpen( false ) }
+								onSearchOpen={ handleSearchOpen }
+								onSearchClose={ handleSearchClose }
 								initialValue={ searchQuery }
 								onSearch={ onSearch }
 								placeholder={ translate( 'Search themes…' ) }

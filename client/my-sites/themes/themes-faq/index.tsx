@@ -21,9 +21,14 @@ export default function ThemesFAQ() {
 		( faqArgs: { id: string; isExpanded: boolean } ) => {
 			const { id, isExpanded } = faqArgs;
 			dispatch(
-				recordTracksEvent( isExpanded ? 'calypso_themes_faq_open' : 'calypso_themes_faq_closed', {
-					faq_id: id,
-				} )
+				recordTracksEvent(
+					isExpanded
+						? 'calypso_themeshowcase_faq_open_click'
+						: 'calypso_themeshowcase_faq_close_click',
+					{
+						faq_id: id,
+					}
+				)
 			);
 		},
 		[ dispatch ]

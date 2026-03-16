@@ -28,7 +28,9 @@ import {
 	lazyRouteComponent,
 	Outlet,
 } from '@tanstack/react-router';
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
@@ -138,7 +140,18 @@ export const domainRoute = createRoute( {
 		}
 
 		if ( isTransferSubRoute ) {
-			checkDomainTransferPermissions( domain );
+			try {
+				checkDomainTransferPermissions( domain );
+			} catch ( error ) {
+				dispatch( noticesStore ).createWarningNotice(
+					__( 'You do not have permission to transfer this domain.' ),
+					{ type: 'snackbar' }
+				);
+				throw redirect( {
+					to: '/domains/$domainName',
+					params: { domainName },
+				} );
+			}
 		}
 
 		if ( isContactInfoSubRoute ) {

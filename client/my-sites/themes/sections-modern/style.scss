@@ -25,15 +25,20 @@
 }
 
 .theme-section-header {
-	align-items: flex-end;
+	align-items: flex-start;
 	display: flex;
+	flex-direction: column;
+	gap: 16px;
 	justify-content: space-between;
-	margin: 48px auto;
+	margin: 24px auto;
 	max-width: 1220px;
-}
 
-.theme-section-header__headings {
-	padding-right: 24px;
+	@include break-mobile {
+		align-items: flex-end;
+		flex-direction: row;
+		gap: 24px;
+		margin: 48px auto;
+	}
 }
 
 .theme-section-header__title {

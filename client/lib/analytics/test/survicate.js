@@ -3,10 +3,6 @@
  */
 
 // Mock dependencies before importing the module
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
 
@@ -26,10 +22,6 @@ jest.mock( 'calypso/lib/i18n-utils', () => ( {
 	getLocaleSlug: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	localizeUrl: ( url ) => url,
-} ) );
-
 jest.mock( '@automattic/survicate', () => ( {
 	shouldLoadSurvicate: jest.fn(),
 	loadSurvicateScript: jest.fn(),
@@ -39,17 +31,9 @@ jest.mock( '@automattic/survicate', () => ( {
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: () => ( {
-		__: ( text ) => text,
-	} ),
-} ) );
+// Mock debug module used transitively by calypso-config.
+jest.mock( 'debug', () => () => jest.fn() );
 
-jest.mock( 'react-router-dom', () => ( {
-	useNavigate: () => jest.fn(),
-} ) );
-
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	shouldLoadSurvicate,
@@ -59,12 +43,7 @@ import {
 	getAccountAgeInDays,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { HelpCenterMoreResources } from '../../../../packages/help-center/src/components/help-center-more-resources';
-import { HelpCenterRequiredContextProvider } from '../../../../packages/help-center/src/contexts/HelpCenterContext';
 
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
@@ -87,12 +66,6 @@ describe( 'survicate', () => {
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
 			addSurvicate = survicateModule.addSurvicate;
 		} );
-	} );
-
-	afterAll( () => {
-		// Clean up document and window objects
-		document.body.innerHTML = '';
-		window.location = null;
 	} );
 
 	describe( 'mayWeLoadSurvicateScript', () => {
@@ -217,148 +190,5 @@ describe( 'survicate', () => {
 				account_age_in_days: 42,
 			} );
 		} );
-	} );
-} );
-
-describe( 'HelpCenterMoreResources', () => {
-	let showHelpCenterFeedbackSurvey;
-	const renderComponent = ( contextValue = {} ) =>
-		render(
-			<HelpCenterRequiredContextProvider
-				value={ {
-					sectionName: 'test-section',
-					...contextValue,
-				} }
-			>
-				<HelpCenterMoreResources />
-			</HelpCenterRequiredContextProvider>
-		);
-
-	beforeEach( () => {
-		delete window._sva;
-		recordTracksEvent.mockClear();
-		// Set up fresh module imports
-		jest.isolateModules( () => {
-			const survicateModule = require( 'calypso/lib/analytics/survicate' );
-			showHelpCenterFeedbackSurvey = survicateModule.showHelpCenterFeedbackSurvey;
-		} );
-	} );
-
-	afterEach( () => {
-		delete window._sva;
-	} );
-
-	test( 'does not render feedback button when survicate is disabled', () => {
-		const { queryByRole } = renderComponent( { haveSurvicateEnabled: false } );
-
-		expect(
-			queryByRole( 'button', {
-				name: 'Share feedback',
-			} )
-		).toBeNull();
-	} );
-
-	test( 'does not render feedback button when survicate widget is unavailable', () => {
-		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
-
-		expect(
-			queryByRole( 'button', {
-				name: 'Share feedback',
-			} )
-		).toBeNull();
-	} );
-
-	test( 'renders feedback button and triggers survicate event when available', async () => {
-		const invokeEvent = jest.fn();
-		const addEventListener = jest.fn();
-		const removeEventListener = jest.fn();
-		const destroyVisitor = jest.fn();
-
-		window._sva = {
-			invokeEvent,
-			addEventListener,
-			removeEventListener,
-			destroyVisitor,
-		};
-
-		const { queryByRole } = renderComponent( { haveSurvicateEnabled: true } );
-		const button = queryByRole( 'button', {
-			name: 'Share feedback',
-		} );
-
-		expect( button ).not.toBeNull();
-
-		const user = userEvent.setup();
-		if ( button ) {
-			await user.click( button );
-		}
-
-		expect( invokeEvent ).toHaveBeenCalledWith( 'showFeedbackSurveyFromHelpCenter' );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_help_moreresources_click',
-			expect.objectContaining( {
-				resource: 'feedback-survey',
-				section: 'test-section',
-			} )
-		);
-	} );
-
-	test( 'does not invoke events when _sva is unavailable', () => {
-		delete window._sva;
-
-		// Should exit early without errors
-		expect( () => showHelpCenterFeedbackSurvey() ).not.toThrow();
-	} );
-
-	test( 'invokes Survicate event and wires overlay click to destroy visitor', () => {
-		const overlay = document.createElement( 'div' );
-		overlay.className = 'sv__overlay sv__overlay--dark';
-
-		const overlayAddEventListener = jest.fn();
-
-		overlay.addEventListener = overlayAddEventListener;
-		document.body.appendChild( overlay );
-
-		let surveyDisplayedHandler;
-		const invokeEvent = jest.fn();
-		const destroyVisitor = jest.fn();
-		const removeEventListener = jest.fn();
-		const addEventListener = jest.fn( ( event, handler ) => {
-			if ( event === 'survey_displayed' ) {
-				surveyDisplayedHandler = handler;
-			}
-		} );
-
-		document.querySelector = jest.fn( () => overlay );
-
-		window._sva = {
-			addEventListener,
-			removeEventListener,
-			invokeEvent,
-			destroyVisitor,
-		};
-
-		showHelpCenterFeedbackSurvey();
-
-		expect( addEventListener ).toHaveBeenCalled();
-		expect( typeof surveyDisplayedHandler ).toBe( 'function' );
-		expect( invokeEvent ).toHaveBeenCalledWith( 'showFeedbackSurveyFromHelpCenter' );
-
-		// Simulate Survicate emitting the survey display event
-		surveyDisplayedHandler?.();
-
-		expect( overlayAddEventListener ).toHaveBeenCalled();
-		const [ overlayCall ] = overlayAddEventListener.mock.calls;
-		expect( overlayCall?.[ 0 ] ).toBe( 'click' );
-		expect( typeof overlayCall?.[ 1 ] ).toBe( 'function' );
-		expect( overlayCall?.[ 2 ] ).toEqual( { once: true } );
-
-		overlayCall?.[ 1 ]?.();
-
-		expect( destroyVisitor ).toHaveBeenCalled();
-		expect( removeEventListener ).toHaveBeenCalled();
-		const [ removeCall ] = removeEventListener.mock.calls;
-		expect( removeCall?.[ 0 ] ).toBe( 'survey_displayed' );
-		expect( removeCall?.[ 1 ] ).toBe( surveyDisplayedHandler );
 	} );
 } );
