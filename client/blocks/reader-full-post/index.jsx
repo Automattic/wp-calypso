@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import sparkles from '@automattic/components/src/icons/sparkles';
+import { Button, Icon, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -100,6 +101,7 @@ export class FullPostView extends Component {
 		commentsApiDisabled: PropTypes.bool,
 		summarizedContent: PropTypes.string,
 		runSummarizer: PropTypes.func,
+		isSummarizing: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -827,8 +829,15 @@ export class FullPostView extends Component {
 									onFollowToggle={ this.openSuggestedFollowsModal }
 									beforeButtons={
 										config.isEnabled( 'reader/summarizer' ) && (
-											<Button onClick={ () => this.props.runSummarizer() }>
-												{ translate( 'Summarize' ) }
+											<Button
+												onClick={ () => this.props.runSummarizer() }
+												disabled={ this.props.isSummarizing }
+											>
+												{ this.props.isSummarizing ? (
+													<Spinner />
+												) : (
+													<Icon icon={ sparkles } size={ 24 } />
+												) }
 											</Button>
 										)
 									}
@@ -1044,7 +1053,7 @@ export default connect(
 
 function WithSummarizerHOC( Wrapped ) {
 	return function WithSummarizerComponent( props ) {
-		const { summary, summarize } = useSummarizer( {
+		const { summary, summarize, isLoading } = useSummarizer( {
 			type: 'tldr',
 			format: 'plain-text',
 			length: 'medium',
@@ -1063,7 +1072,12 @@ function WithSummarizerHOC( Wrapped ) {
 		}, [ summarize, props.post.content ] );
 
 		return (
-			<Wrapped { ...props } summarizedContent={ summary } runSummarizer={ summarizeContent } />
+			<Wrapped
+				{ ...props }
+				summarizedContent={ summary }
+				runSummarizer={ summarizeContent }
+				isSummarizing={ isLoading }
+			/>
 		);
 	};
 }
