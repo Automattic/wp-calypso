@@ -401,6 +401,15 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	margin-bottom: 0;
 }
 
+.reader-full-post__summary {
+	font-size: 1.25rem;
+	font-style: italic;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 4px;
+	padding-inline-start: 20px;
+}
+
 .reader-full-post .reader-full-post__sidebar {
 	color: var( --color-text-subtle );
 

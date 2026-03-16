@@ -18,8 +18,19 @@ interface UseSummarizerOptions {
 }
 
 export const useSummarizerAvailability = ( options: UseSummarizerOptions = {} ) => {
+	const { type, format, length, sharedContext, outputLanguage } = options;
 	return useQuery( {
-		queryKey: [ 'browser', 'ai', 'summarizer-supported', options ],
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- scalar values used intentionally for stable cache keys
+		queryKey: [
+			'browser',
+			'ai',
+			'summarizer-supported',
+			type,
+			format,
+			length,
+			sharedContext,
+			outputLanguage,
+		],
 		queryFn: async () => {
 			// Summarizer API is not on globalThis in standard DOM types; @types/dom-chromium-ai provides the type.
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,7 +122,16 @@ export function useSummarizer( options: UseSummarizerOptions = {} ) {
 	}, [ type, format, length, sharedContext, outputLanguage, availability ] );
 
 	const query = useQuery( {
-		queryKey: [ 'summarizer', cacheKey, input, options ],
+		queryKey: [
+			'summarizer',
+			cacheKey,
+			input,
+			type,
+			format,
+			length,
+			sharedContext,
+			outputLanguage,
+		],
 		queryFn: async () => {
 			if ( ! ( 'Summarizer' in globalThis ) ) {
 				throw new Error( 'Summarizer API is not supported in this browser.' );
@@ -128,6 +148,8 @@ export function useSummarizer( options: UseSummarizerOptions = {} ) {
 			);
 		},
 		enabled: input !== null,
+		staleTime: Infinity,
+		refetchOnWindowFocus: false,
 	} );
 
 	const summarize = useCallback( ( content: string, context?: string ) => {

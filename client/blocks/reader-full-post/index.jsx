@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component, useCallback } from 'react';
+import { createRef, Component, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
@@ -838,6 +838,7 @@ export class FullPostView extends Component {
 												) : (
 													<Icon icon={ sparkles } size={ 24 } />
 												) }
+												{ translate( 'Summarize' ) }
 											</Button>
 										)
 									}
@@ -855,21 +856,7 @@ export class FullPostView extends Component {
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ this.props.summarizedContent && (
-								<div className="reader-full-post__story-content-container">
-									<div
-										className="reader-full-post__story-content-container-summary"
-										style={ {
-											fontSize: '1.2rem',
-											fontStyle: 'italic',
-											border: '1px solid #ccc',
-											padding: '10px',
-											borderRadius: '5px',
-											paddingLeft: '20px',
-										} }
-									>
-										{ this.props.summarizedContent }
-									</div>
-								</div>
+								<div className="reader-full-post__summary">{ this.props.summarizedContent }</div>
 							) }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -1053,19 +1040,25 @@ export default connect(
 
 function WithSummarizerHOC( Wrapped ) {
 	return function WithSummarizerComponent( props ) {
+		const sharedContext = useMemo( () => {
+			const authorName = props.post?.author?.name;
+			const title = props.post?.title;
+			return `
+				The summary should be in the same language as the text.
+				${
+					authorName
+						? `The post is written by ${ authorName }. Include the post author in the summary.`
+						: ''
+				}
+				${ title ? `The post title is ${ title }.` : '' }
+			`;
+		}, [ props.post?.author?.name, props.post?.title ] );
+
 		const { summary, summarize, isLoading } = useSummarizer( {
 			type: 'tldr',
 			format: 'plain-text',
 			length: 'medium',
-			sharedContext: `
-				The summary should be in the same language as the text.
-				${
-					props.post?.author?.name
-						? `The post is written by ${ props.post.author.name }. Include the post author in the summary.`
-						: ''
-				}
-				${ props.post?.title ? `The post title is ${ props.post.title }.` : '' }
-			`,
+			sharedContext,
 		} );
 		const summarizeContent = useCallback( () => {
 			summarize( props.post.content );
