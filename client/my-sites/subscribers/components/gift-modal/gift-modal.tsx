@@ -54,7 +54,7 @@ const GiftSubscriptionModal = ( {
 		recordTracksEvent( 'calypso_subscribers_comp_confirm', {
 			site_id: siteId,
 			plan_id: plan_id,
-			user_id: user_id,
+			...( typeof user_id === 'number' ? { user_id: user_id } : { is_email_subscriber: true } ),
 		} );
 
 		dispatch(
