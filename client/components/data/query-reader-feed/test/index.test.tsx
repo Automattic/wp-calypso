@@ -19,7 +19,7 @@ const TestComponent = () => {
 		return null;
 	}
 
-	if ( 'is_error' in feed && feed?.is_error ) {
+	if ( feed?.is_error ) {
 		return <>{ feed?.error?.message }</>;
 	}
 

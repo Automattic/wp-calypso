@@ -1,7 +1,7 @@
 import { fetchReadFeed, fetchReadFeedSearch, ReadFeedSearchSort } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const readFeedQuery = ( feedId?: number | string ) => {
+export const readFeedQuery = ( feedId?: number | string | null ) => {
 	return queryOptions( {
 		queryKey: [ 'read', 'feed', Number( feedId ) ],
 		staleTime: 1000 * 60, // 1 minute
