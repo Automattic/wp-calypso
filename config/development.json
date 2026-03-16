@@ -168,6 +168,7 @@
 		"reader/discover-v3": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
+		"reader/summarizer": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,

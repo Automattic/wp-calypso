@@ -21,6 +21,8 @@ export const useSummarizerAvailability = ( options: UseSummarizerOptions = {} ) 
 	return useQuery( {
 		queryKey: [ 'browser', 'ai', 'summarizer-supported', options ],
 		queryFn: async () => {
+			// Summarizer API is not on globalThis in standard DOM types; @types/dom-chromium-ai provides the type.
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const SummarizerAPI = ( globalThis as any ).Summarizer as typeof Summarizer;
 			if ( ! SummarizerAPI ) {
 				return 'unavailable';
@@ -64,11 +66,19 @@ export function useSummarizer( options: UseSummarizerOptions = {} ) {
 		};
 	}, [] );
 
+	// Invalidate summarizer when options change
+	useEffect( () => {
+		summarizerRef.current?.destroy();
+		summarizerRef.current = null;
+	}, [ type, format, length, sharedContext, outputLanguage ] );
+
 	const ensureSummarizer = useCallback( async () => {
 		if ( summarizerRef.current ) {
 			return summarizerRef.current;
 		}
 
+		// Summarizer API is not on globalThis in standard DOM types; @types/dom-chromium-ai provides the type.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const SummarizerAPI = ( globalThis as any ).Summarizer;
 
 		if ( availability === 'unavailable' ) {

@@ -129,6 +129,7 @@
 		"reader/discover-v3": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
+		"reader/summarizer": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

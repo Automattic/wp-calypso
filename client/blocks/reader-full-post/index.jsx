@@ -826,9 +826,11 @@ export class FullPostView extends Component {
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
 									afterButtons={
-										<Button onClick={ () => this.props.runSummarizer() }>
-											{ translate( 'Summarize' ) }
-										</Button>
+										config.isEnabled( 'reader/summarizer' ) && (
+											<Button onClick={ () => this.props.runSummarizer() }>
+												{ translate( 'Summarize' ) }
+											</Button>
+										)
 									}
 								/>
 							) }
@@ -1048,8 +1050,12 @@ function WithSummarizerHOC( Wrapped ) {
 			length: 'medium',
 			sharedContext: `
 				The summary should be in the same language as the text.
-				If the post is written by ${ props.post.author }, include the post author in the summary.
-				If the post title is ${ props.post.title }.
+				${
+					props.post?.author?.name
+						? `The post is written by ${ props.post.author.name }. Include the post author in the summary.`
+						: ''
+				}
+				${ props.post?.title ? `The post title is ${ props.post.title }.` : '' }
 			`,
 		} );
 		const summarizeContent = useCallback( () => {
