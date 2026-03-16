@@ -43,10 +43,6 @@ export default function useCheckpointAction(
 	checkpointRef.current = checkpoint;
 
 	useEffect( () => {
-		if ( ! checkpointRef.current ) {
-			return;
-		}
-
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
