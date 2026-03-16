@@ -48,6 +48,7 @@
   --spacing-8: calc(var(--spacing) * 8); /* 32px */
   --spacing-9: calc(var(--spacing) * 9); /* 36px */
   --spacing-10: calc(var(--spacing) * 10); /* 40px */
+  --spacing-12: calc(var(--spacing) * 12); /* 48px */
   --spacing-20: calc(var(--spacing) * 20); /* 80px */
   
   /* === BORDER RADIUS === */
