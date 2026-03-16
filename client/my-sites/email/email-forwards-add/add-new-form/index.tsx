@@ -1,6 +1,6 @@
 import { Button, CheckboxControl, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useState } from 'react';
 import { DestinationsInput } from './destination-input';
 import { SourceInput } from './source-input';
 import { isValidMailbox } from './utils';
@@ -14,13 +14,9 @@ export function NewForwardForm( {
 	showMxWarning,
 }: NewForwardFormProps ) {
 	const translate = useTranslate();
-	const [ mailbox, setMailbox ] = React.useState( '' );
-	const [ destinations, setDestinations ] = React.useState< string[] >( [] );
-	const [ mxWarningAcknowledged, setMxWarningAcknowledged ] = React.useState( false );
-
-	React.useEffect( () => {
-		setMxWarningAcknowledged( false );
-	}, [ showMxWarning ] );
+	const [ mailbox, setMailbox ] = useState( '' );
+	const [ destinations, setDestinations ] = useState< string[] >( [] );
+	const [ mxWarningAcknowledged, setMxWarningAcknowledged ] = useState( false );
 
 	const existingForwardsForMailbox = existingEmailForwards?.filter(
 		( forward ) =>
