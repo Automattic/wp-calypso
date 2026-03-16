@@ -36,6 +36,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN yarn --inline-builds \
+	&& BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \
 	# Prime the production webpack cache flavors used by PR builds and trunk/Sentry builds.
 	&& NODE_ENV=production yarn build-client \
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
