@@ -38,7 +38,7 @@ export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn
 ): void {
-	// Ref avoids infinite re-renders caused by unstable checkpoint identity.
+	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
 	const checkpointRef = useRef( checkpoint );
 	checkpointRef.current = checkpoint;
 
