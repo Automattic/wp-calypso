@@ -61,8 +61,8 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 
 	const [ giftUserId, setGiftUserId ] = useState< number | string | null >( null );
 	const [ giftUsername, setGiftUsername ] = useState( '' );
-	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
-		setGiftUserId( user_id );
+	const onGiftSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+		setGiftUserId( user_id || email_address );
 		setGiftUsername( display_name );
 	};
 

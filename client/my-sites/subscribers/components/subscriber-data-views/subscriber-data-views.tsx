@@ -7,10 +7,9 @@ import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -104,7 +103,6 @@ export default function SubscriberDataViews( {
 	isUnverified,
 	subscriberId,
 }: SubscriberDataViewsProps ) {
-	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
@@ -427,15 +425,6 @@ export default function SubscriberDataViews( {
 						return;
 					}
 
-					if ( ! subscriber.user_id ) {
-						dispatch(
-							errorNotice( translate( 'Unable to comp a subscription for this subscriber.' ), {
-								duration: 10000,
-							} )
-						);
-						return;
-					}
-
 					onGiftSubscription( subscriber );
 				},
 				isPrimary: false,
@@ -449,7 +438,6 @@ export default function SubscriberDataViews( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
-		dispatch,
 	] );
 
 	const handleViewChange = useCallback(
