@@ -10,12 +10,15 @@ import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
+	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { starEmpty, starFilled } from '@wordpress/icons';
+import { useCallback, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -43,6 +46,28 @@ function IneligibleIndicator() {
 
 function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
+}
+
+export function Favorite() {
+	const [ isFavorite, setIsFavorite ] = useState( false );
+
+	const toggleFavorite = useCallback( ( event: React.MouseEvent ) => {
+		event.stopPropagation();
+		event.preventDefault();
+		setIsFavorite( ( prev ) => ! prev );
+	}, [] );
+
+	return (
+		<Button
+			icon={ isFavorite ? starFilled : starEmpty }
+			label={ isFavorite ? __( 'Remove from favorites' ) : __( 'Add to favorites' ) }
+			onClick={ toggleFavorite }
+			size="small"
+			style={ {
+				color: isFavorite ? '#F0B849' : '#C3C4C7',
+			} }
+		/>
+	);
 }
 
 function getSiteManagementUrl( site: Site ) {
@@ -85,7 +110,12 @@ export function SiteLink( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
+	return (
+		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
+			<NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />
+			<Favorite />
+		</HStack>
+	);
 }
 
 export function NameRenderer( {
