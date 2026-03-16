@@ -38,7 +38,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I skip domain selection', async function () {
-				await componentDomainSearch.search( 'foo' );
+				await componentDomainSearch.search( helperData.getBlogName() );
 				await componentDomainSearch.skipPurchase();
 			} );
 

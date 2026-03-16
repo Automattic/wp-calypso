@@ -69,7 +69,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 
 		it( 'Skip domain selection', async function () {
 			const signupDomainPage = new DomainSearchComponent( page );
-			await signupDomainPage.search( 'foo' );
+			await signupDomainPage.search( DataHelper.getBlogName() );
 			await signupDomainPage.skipPurchase();
 		} );
 
