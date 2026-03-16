@@ -605,8 +605,10 @@ function getFields( {
 						return (
 							<ActionList.ActionItem
 								title={ __( 'Subscription renewal' ) }
-								description={ helpText?.toString() }
-								actions={ {} }
+								description={ ( (): string => {
+									return typeof helpText === 'string' ? helpText : helpText?.props?.children ?? '';
+								} )() }
+								actions={ <></> }
 							/>
 						);
 					}
