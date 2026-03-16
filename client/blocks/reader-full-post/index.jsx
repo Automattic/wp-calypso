@@ -1038,9 +1038,9 @@ export default connect(
 		showSelectedPost,
 		requestPostComments,
 	}
-)( WithSummarizer( FullPostView ) );
+)( WithSummarizerHOC( FullPostView ) );
 
-function WithSummarizer( Wrapped ) {
+function WithSummarizerHOC( Wrapped ) {
 	return function WithSummarizerComponent( props ) {
 		const { summary, summarize } = useSummarizer( {
 			type: 'tldr',
