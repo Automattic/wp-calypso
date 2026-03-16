@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -5,7 +6,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
 import { DEFAULT_STATIC_FILTER } from 'calypso/state/themes/constants';
 import { constructThemeShowcaseUrl } from '../helpers';

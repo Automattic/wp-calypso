@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -219,15 +220,20 @@ export default function SearchResultsModern( {
 			{ hasWporgThemes && (
 				<div className="search-results-modern__section">
 					<ThemeSectionHeader
-						title={ translate( 'Community themes' ) }
-						subtitle={ translate(
-							'Explore "%(query)s" themes from the WordPress community, and upload to install when ready.',
-							{ args: { query: search } }
-						) }
+						title={ THEME_COLLECTIONS.community.title }
+						subtitle={
+							typeof THEME_COLLECTIONS.community.description === 'function'
+								? THEME_COLLECTIONS.community.description( { search } )
+								: THEME_COLLECTIONS.community.description
+						}
 						buttonLabel={ hasMoreWporgThemes ? translate( 'See all' ) : undefined }
 						onButtonClick={
 							hasMoreWporgThemes
 								? () => {
+										recordTracksEvent( 'calypso_themeshowcase_collection_see_all_click', {
+											collection: THEME_COLLECTIONS.community.collectionSlug,
+											collection_index: 1,
+										} );
 										page(
 											buildRelativeSearchUrl( THEME_COLLECTIONS.community.seeAllLink, search )
 										);
