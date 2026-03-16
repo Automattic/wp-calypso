@@ -10,6 +10,6 @@
 }
 
 .container:has([data-slot="suggestions"]) [data-slot="messages"] {
-    padding-bottom: var(--spacing-10);
+    padding-bottom: var(--spacing-12);
 }
 
