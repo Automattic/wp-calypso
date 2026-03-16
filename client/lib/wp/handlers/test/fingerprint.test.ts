@@ -2,14 +2,10 @@
  * @jest-environment jsdom
  */
 
-import {
-	type loadFingerprint as loadFingerprintType,
-	type injectFingerprint as injectFingerprintType,
-} from '../fingerprint';
+import type * as fingerprintModuleType from '../fingerprint';
 
 describe( '#injectFingerprint', () => {
-	let loadFingerprint: typeof loadFingerprintType;
-	let injectFingerprint: typeof injectFingerprintType;
+	let fingerprintModule: typeof fingerprintModuleType;
 	let wpcom: { request: jest.Mock };
 	let originalRequest: jest.Mock;
 	const callback = jest.fn();
@@ -17,7 +13,8 @@ describe( '#injectFingerprint', () => {
 	beforeAll( async () => {
 		jest.spyOn( document, 'readyState', 'get' ).mockReturnValue( 'loading' );
 		jest.spyOn( document, 'addEventListener' ).mockImplementation( () => {} );
-		( { loadFingerprint, injectFingerprint } = await import( '../fingerprint' ) );
+		fingerprintModule = await import( '../fingerprint' );
+		fingerprintModule.__disableFingerprint();
 	} );
 
 	beforeEach( () => {
@@ -26,22 +23,22 @@ describe( '#injectFingerprint', () => {
 	} );
 
 	test( 'should not inject X-Fingerprint header when fingerprint is not available', async () => {
-		injectFingerprint( wpcom );
+		fingerprintModule.injectFingerprint( wpcom );
 
-		wpcom.request( { path: '/me/transactions' }, callback );
+		await wpcom.request( { path: '/me/transactions' }, callback );
 
 		expect( originalRequest ).toHaveBeenCalledWith( { path: '/me/transactions' }, callback );
 	} );
 
-	describe( 'when fingerprint is loaded', () => {
-		beforeAll( async () => {
-			await loadFingerprint();
+	describe( 'when fingerprint is enabled', () => {
+		beforeAll( () => {
+			fingerprintModule.__enableFingerprint();
 		} );
 
-		test( 'should inject fingerprint header for transactions path', () => {
-			injectFingerprint( wpcom );
+		test( 'should inject fingerprint header for transactions path', async () => {
+			fingerprintModule.injectFingerprint( wpcom );
 
-			wpcom.request( { path: '/me/transactions' }, callback );
+			await wpcom.request( { path: '/me/transactions' }, callback );
 
 			expect( originalRequest ).toHaveBeenCalledWith(
 				{
@@ -54,18 +51,18 @@ describe( '#injectFingerprint', () => {
 			);
 		} );
 
-		test( 'should not inject header for other paths', () => {
-			injectFingerprint( wpcom );
+		test( 'should not inject header for other paths', async () => {
+			fingerprintModule.injectFingerprint( wpcom );
 
-			wpcom.request( { path: '/me/settings' }, callback );
+			await wpcom.request( { path: '/me/settings' }, callback );
 
 			expect( originalRequest ).toHaveBeenCalledWith( { path: '/me/settings' }, callback );
 		} );
 
-		test( 'should merge with existing headers if present', () => {
-			injectFingerprint( wpcom );
+		test( 'should merge with existing headers if present', async () => {
+			fingerprintModule.injectFingerprint( wpcom );
 
-			wpcom.request(
+			await wpcom.request(
 				{ path: '/me/transactions', headers: { 'Content-Type': 'application/json' } },
 				callback
 			);

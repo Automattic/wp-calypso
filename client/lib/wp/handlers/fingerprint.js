@@ -1,15 +1,42 @@
-import { load } from '@fingerprintjs/fingerprintjs';
+let cached;
+let hasLoaded = false;
+let enabled = true;
 
-let fingerprint;
-export async function loadFingerprint() {
+// NOTE: This method is only used for testing.
+export function __enableFingerprint() {
+	enabled = true;
+}
+
+// NOTE: This method is only used for testing.
+export function __disableFingerprint() {
+	enabled = false;
+}
+
+/**
+ * Loads the `fingerprintjs` library and retrieves a fingerprint.
+ * This gets stored in a local cache.
+ */
+async function loadFingerprint() {
+	const { load } = await import( '@fingerprintjs/fingerprintjs' );
 	const agent = await load( { monitoring: false } );
 	const result = await agent.get();
-	fingerprint = result.visitorId;
+	cached = result.visitorId;
 }
-if ( document.readyState !== 'loading' ) {
-	loadFingerprint();
-} else {
-	document.addEventListener( 'DOMContentLoaded', loadFingerprint );
+
+/**
+ * Returns the fingerprint, loading the library and generating it
+ * if needed.
+ * @returns string|undefined The fingerprint.
+ */
+async function getFingerprint() {
+	if ( ! enabled ) {
+		return undefined;
+	}
+	if ( ! hasLoaded ) {
+		await loadFingerprint();
+		hasLoaded = true;
+	}
+	return cached;
 }
 
 /**
@@ -19,15 +46,18 @@ if ( document.readyState !== 'loading' ) {
 export function injectFingerprint( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
 
-	wpcom.request = function ( params, callback ) {
-		if ( fingerprint && params?.path === '/me/transactions' ) {
-			params = {
-				...params,
-				headers: {
-					...( params.headers || {} ),
-					'X-Fingerprint': fingerprint,
-				},
-			};
+	wpcom.request = async function ( params, callback ) {
+		if ( params?.path === '/me/transactions' ) {
+			const fingerprint = await getFingerprint();
+			if ( fingerprint ) {
+				params = {
+					...params,
+					headers: {
+						...( params.headers || {} ),
+						'X-Fingerprint': fingerprint,
+					},
+				};
+			}
 		}
 		return request( params, callback );
 	};
