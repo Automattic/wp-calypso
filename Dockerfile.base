@@ -15,6 +15,8 @@ ENV PERSISTENT_CACHE=true
 ENV GENERATE_CACHE_IMAGE=true
 ENV PROFILE=$profile
 ENV SKIP_TSC=true
+ENV SKIP_CALYPSO_POSTINSTALL=true
+ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV WORKERS=$workers
@@ -34,6 +36,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN yarn --inline-builds \
+	&& BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \
 	# Prime the production webpack cache flavors used by PR builds and trunk/Sentry builds.
 	&& NODE_ENV=production yarn build-client \
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
