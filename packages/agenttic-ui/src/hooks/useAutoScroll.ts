@@ -21,6 +21,9 @@ const SNAP_THRESHOLD = 1;
  *
  * Auto-scrolling is disabled when the user scrolls manually and re-enabled
  * when a new user message is sent.
+ * @param root0
+ * @param root0.scrollAreaRef
+ * @param root0.visibleMessages
  */
 export function useAutoScroll( {
 	scrollAreaRef,
