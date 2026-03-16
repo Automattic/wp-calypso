@@ -141,10 +141,8 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	// progressPhase may not be present in all versions of agenttic-client
 	const isFinalizingPhase =
-		'progressPhase' in agentChatProps &&
-		( agentChatProps as unknown as Record< string, unknown > ).progressPhase === 'uploading';
+		( agentChatProps as unknown as { progressPhase?: string } ).progressPhase === 'uploading';
 
 	// Disable input during upload phase or annotation saving to prevent orphan images
 	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
