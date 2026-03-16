@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CustomSelectWrapper } from 'calypso/my-sites/themes/custom-select-wrapper';
 import { DEFAULT_STATIC_FILTER } from 'calypso/state/themes/constants';
 import { constructThemeShowcaseUrl } from '../helpers';
@@ -46,6 +47,16 @@ const FilterBarModern = ( {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
+
+	const handleSearchOpen = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_expand' );
+		setIsSearchOpen( true );
+	}, [] );
+
+	const handleSearchClose = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_clear_icon_click' );
+		setIsSearchOpen( false );
+	}, [] );
 
 	const pillCategories = useMemo(
 		() =>
@@ -113,8 +124,8 @@ const FilterBarModern = ( {
 							<Search
 								pinned
 								isOpen={ isSearchOpen }
-								onSearchOpen={ () => setIsSearchOpen( true ) }
-								onSearchClose={ () => setIsSearchOpen( false ) }
+								onSearchOpen={ handleSearchOpen }
+								onSearchClose={ handleSearchClose }
 								initialValue={ searchQuery }
 								onSearch={ onSearch }
 								placeholder={ translate( 'Search themes…' ) }
