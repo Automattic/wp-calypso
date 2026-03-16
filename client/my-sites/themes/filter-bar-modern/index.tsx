@@ -31,6 +31,7 @@ interface FilterBarModernProps {
 	showTierFilter?: boolean;
 	searchQuery?: string;
 	onSearch?: ( query: string ) => void;
+	sentinelRef?: React.RefObject< HTMLDivElement >;
 }
 
 const FilterBarModern = ( {
@@ -43,6 +44,7 @@ const FilterBarModern = ( {
 	showTierFilter = true,
 	searchQuery = '',
 	onSearch,
+	sentinelRef,
 }: FilterBarModernProps ) => {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
@@ -115,7 +117,7 @@ const FilterBarModern = ( {
 				fallbackInView
 				onChange={ ( inView ) => setIsSticky( ! inView ) }
 			>
-				<div className="filter-bar-modern__sentinel" />
+				<div className="filter-bar-modern__sentinel" ref={ sentinelRef } />
 			</InView>
 			<div className={ clsx( 'filter-bar-modern', { 'is-sticky': isSticky } ) }>
 				<div className="filter-bar-modern__content">
