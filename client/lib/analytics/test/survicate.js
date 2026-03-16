@@ -3,10 +3,6 @@
  */
 
 // Mock dependencies before importing the module
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
 
@@ -35,9 +31,9 @@ jest.mock( '@automattic/survicate', () => ( {
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
+// Mock debug module used transitively by calypso-config.
 jest.mock( 'debug', () => () => jest.fn() );
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	shouldLoadSurvicate,
@@ -70,12 +66,6 @@ describe( 'survicate', () => {
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
 			addSurvicate = survicateModule.addSurvicate;
 		} );
-	} );
-
-	afterAll( () => {
-		// Clean up document and window objects
-		document.body.innerHTML = '';
-		window.location = null;
 	} );
 
 	describe( 'mayWeLoadSurvicateScript', () => {
@@ -202,4 +192,3 @@ describe( 'survicate', () => {
 		} );
 	} );
 } );
-
