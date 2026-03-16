@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import { createElement, type ReactElement } from 'react';
-import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 
 // Raw config structure from the server
 interface SiteSpecRawConfig {
@@ -202,7 +201,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=',
 		backButton: {
 			enabled: ref === 'new-site-popover',
-			url: buildCiabDashboardLink( '/sites' ),
+			url: '/sites',
 		},
 		exitButton: {
 			enabled: false,
