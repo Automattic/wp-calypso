@@ -121,7 +121,7 @@ export const siteRoute = createRoute( {
 
 		if (
 			site.__inaccessible_jetpack_error &&
-			! matches.some( ( match ) => getInaccessibleJetpackAllowedRoutes().includes( match.routeId ) )
+			! matches.some( ( match ) => match.staticData?.availableToInaccessibleJetpackSites )
 		) {
 			throw redirect( { to: overviewUrl } );
 		}
@@ -176,6 +176,7 @@ export const siteRoute = createRoute( {
 );
 
 export const siteOverviewRoute = createRoute( {
+	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
@@ -523,6 +524,7 @@ export const siteBackupDownloadRoute = createRoute( {
 );
 
 export const siteDomainsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'domains', availableToInaccessibleJetpackSites: true },
 	head: () => ( {
 		meta: [
 			{
@@ -1500,11 +1502,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
-}
-
-// Site routes allowed when the Jetpack connection is broken.
-function getInaccessibleJetpackAllowedRoutes() {
-	return [ siteOverviewRoute.id, siteDomainsRoute.id ];
 }
 
 function redirectAsNotAllowed( options: {
