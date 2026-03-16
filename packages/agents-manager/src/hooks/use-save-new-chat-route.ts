@@ -1,7 +1,7 @@
 import { select } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
-import { useAgentsManagerContext } from '../contexts/AgentsManagerContext';
+import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { getSessionId } from '../utils/agent-session';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
