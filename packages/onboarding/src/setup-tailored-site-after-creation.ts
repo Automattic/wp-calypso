@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Onboard, OnboardSelect, Site } from '@automattic/data-stores';
+import { Onboard, type OnboardSelect, Site } from '@automattic/data-stores';
 import { select } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
 import { isNewsletterFlow } from './utils';
+import { wpcom } from './wpcom-request';
 
 const ONBOARD_STORE = Onboard.register();
 
@@ -79,23 +79,24 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		}
 
 		promises.push(
-			wpcomRequest< { updated: object } >( {
-				path: `/sites/${ siteId }/onboarding-customization`,
-				apiNamespace: 'wpcom/v2',
-				method: 'POST',
-				formData,
-			} ).then( () => {
-				recordTracksEvent( 'calypso_signup_site_options_submit', {
-					has_site_title: !! siteTitle,
-					has_tagline: !! siteDescription,
-				} );
-				/**
-				 * We need to wait the site being created, then go to checkout and wait for the user
-				 * to buy the plan before we can set a premium theme to the site. If we reset the store
-				 * here we loose this information.
-				 */
-				// resetOnboardStore();
-			} )
+			wpcom.req
+				.post( {
+					path: `/sites/${ siteId }/onboarding-customization`,
+					apiNamespace: 'wpcom/v2',
+					formData,
+				} )
+				.then( () => {
+					recordTracksEvent( 'calypso_signup_site_options_submit', {
+						has_site_title: !! siteTitle,
+						has_tagline: !! siteDescription,
+					} );
+					/**
+					 * We need to wait the site being created, then go to checkout and wait for the user
+					 * to buy the plan before we can set a premium theme to the site. If we reset the store
+					 * here we loose this information.
+					 */
+					// resetOnboardStore();
+				} )
 		);
 
 		return Promise.all( promises );

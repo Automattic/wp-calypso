@@ -3,7 +3,7 @@ import { getLanguage } from '@automattic/i18n-utils';
 import { addProductsToCart, getNewSiteParams, setThemeOnSite } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
@@ -60,10 +60,9 @@ export const createSite = async ( {
 
 	const locale = getLocaleSlug();
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post( {
 		path: '/sites/new',
 		apiVersion: '1.1',
-		method: 'POST',
 		body: {
 			...newSiteParams,
 			locale,

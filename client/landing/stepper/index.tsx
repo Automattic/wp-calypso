@@ -15,7 +15,6 @@ import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
@@ -107,10 +106,6 @@ async function main() {
 
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
-
-	// put the proxy iframe in "all blog access" mode
-	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
-	requestAllBlogsAccess();
 
 	setupWpDataDebug();
 

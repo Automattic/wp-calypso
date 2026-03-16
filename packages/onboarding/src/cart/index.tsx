@@ -1,13 +1,11 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
-import { SiteGoal } from '@automattic/data-stores/src/onboard';
+import { type NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { getTld } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -15,8 +13,10 @@ import {
 	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
+import { wpcom } from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
+import type { SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -184,10 +184,9 @@ export const createSite = async (
 	// This is the parameter that will contain the internal referral, e.g. a landing page.
 	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post( {
 		path: '/sites/new',
 		apiVersion: '1.1',
-		method: 'POST',
 		body: {
 			...newSiteParams,
 			locale,
@@ -315,9 +314,8 @@ export async function setThemeOnSite(
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	try {
-		await wpcomRequest( {
+		await wpcom.req.post( {
 			path: `/sites/${ siteSlug }/themes/mine`,
-			method: 'POST',
 			apiVersion: '1.1',
 			body: {
 				theme,

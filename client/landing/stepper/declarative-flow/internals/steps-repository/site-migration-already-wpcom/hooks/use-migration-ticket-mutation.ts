@@ -1,5 +1,5 @@
 import { DefaultError, useMutation } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 
 export interface TicketMigrationData {
 	intents: string[];
@@ -14,10 +14,9 @@ const setMigration = (
 	siteSlug: string,
 	{ intents, otherDetails }: TicketMigrationData
 ): Promise< ApiResponse > => {
-	return wpcomRequest( {
+	return wpcom.req.post( {
 		path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
 		apiNamespace: 'wpcom/v2',
-		method: 'POST',
 		body: {
 			intents,
 			other_details: otherDetails,
