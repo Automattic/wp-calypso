@@ -825,7 +825,7 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
-									afterButtons={
+									beforeButtons={
 										config.isEnabled( 'reader/summarizer' ) && (
 											<Button onClick={ () => this.props.runSummarizer() }>
 												{ translate( 'Summarize' ) }
