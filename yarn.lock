@@ -10070,6 +10070,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dom-chromium-ai@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "@types/dom-chromium-ai@npm:0.0.15"
+  checksum: 226bf0c95b9a32120c541012830d543189d7776d921cc874bc764bb786f66fd565d4083c6570fbd15ba871e2ecb9c838dad9f447924a01dc6f56852abd5d1601
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.7":
   version: 3.7.7
   resolution: "@types/eslint-scope@npm:3.7.7"
@@ -15203,6 +15210,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
+    "@types/dom-chromium-ai": "npm:^0.0.15"
     "@types/express": "npm:^4.17.22"
     "@types/express-useragent": "npm:^1.0.5"
     "@types/react": "npm:^18.3.23"
