@@ -8,11 +8,11 @@ import PageLayout from '../../components/page-layout';
 import { DomainPermissionError } from '../../utils/domain-permissions';
 
 export default function DomainError( { error }: { error: Error } ) {
+	const { domainName } = domainRoute.useParams();
+
 	if ( ! ( error instanceof DomainPermissionError ) ) {
 		return <UnknownError error={ error } />;
 	}
-
-	const { domainName } = domainRoute.useParams();
 
 	return (
 		<PageLayout
@@ -20,11 +20,7 @@ export default function DomainError( { error }: { error: Error } ) {
 			notices={
 				<Notice
 					variant="warning"
-					actions={
-						<Link to={ domainRoute.fullPath } params={ { domainName } }>
-							{ __( 'Go back to domain overview' ) }
-						</Link>
-					}
+					actions={ <Link to="/domains">{ __( 'Go back to domains' ) }</Link> }
 				>
 					{ error.message }
 				</Notice>
