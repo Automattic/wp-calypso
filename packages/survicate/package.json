@@ -39,6 +39,7 @@
 	},
 	"dependencies": {
 		"@automattic/load-script": "workspace:^",
+		"debug": "^4.4.1",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
