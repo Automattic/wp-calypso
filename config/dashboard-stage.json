@@ -43,6 +43,10 @@
 		"wpcom-user-bootstrap": true
 	},
 	"enable_all_sections": false,
+	"sections": {
+		"signup": true,
+		"checkout": true
+	},
 	"site_filter": [],
 	"theme": "dashboard",
 	"restricted_me_access": false
