@@ -20,6 +20,7 @@
 	"wpcom_url": "https://wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": false,
