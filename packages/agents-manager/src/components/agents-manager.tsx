@@ -103,7 +103,7 @@ function AgentSetup(): JSX.Element | null {
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
 
-			const config = createAgentConfig( {
+			const config = await createAgentConfig( {
 				sessionId,
 				siteId,
 				currentRoute,

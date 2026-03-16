@@ -12,6 +12,7 @@
 	"features": {
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
+		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,

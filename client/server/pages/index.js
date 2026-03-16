@@ -18,6 +18,7 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
+import { isAllowedDashboardHostname } from 'calypso/dashboard/app/routing';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
@@ -557,6 +558,7 @@ function setUpCSP( req, res, next ) {
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
 			'https://bat.bing.com', // Bing Ads JS
+			'https://blackbox-api.wp.com', // Blackbox bot detection
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -639,6 +641,7 @@ function setUpCSP( req, res, next ) {
 			'*.verygoodsecurity.com', // VGS Collect secure iframes
 			'www.paypal.com', // PayPal checkout flow
 			'*.paypal.com', // PayPal additional flows
+			'https://blackbox-api.wp.com', // Blackbox iframe transport
 		],
 		'font-src': [
 			"'self'",
@@ -1108,6 +1111,18 @@ export default function pages() {
 				serverRender
 			);
 		};
+
+		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
+		handleRoute( signupSectionDefinition, '/start', 'entry-main', ( req ) =>
+			isAllowedDashboardHostname( req.hostname )
+		);
+		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
+		handleRoute( checkoutSectionDefinition, '/checkout', 'entry-main', ( req ) =>
+			isAllowedDashboardHostname( req.hostname )
+		);
+		handleRoute( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
+			isAllowedDashboardHostname( req.hostname )
+		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
 				isAllowedDotcomDashboardHostname( req.hostname )
@@ -1117,9 +1132,6 @@ export default function pages() {
 			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
 				isAllowedCiabDashboardHostname( req.hostname )
 			);
-		} );
-		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			return isAllowedDotcomDashboardHostname( req.hostname );
 		} );
 	}
 

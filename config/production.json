@@ -18,11 +18,13 @@
 	"zendesk_presales_chat_key_akismet": "7ce13115-7b34-4069-9d64-228d90f148d1",
 	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"zendesk_support_chat_key": "cec07bc9-4da6-4dd2-afa7-c7e01ae73584",
+	"blackbox_api_key": "1b4f123e7dae4d83bbd18170c4358f8e",
 	"features": {
 		"100-year-plan/vip": true,
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"bilmur-script": true,
+		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
 		"calypso/all-domain-management": true,

@@ -117,6 +117,7 @@ const webpackCacheVersion = JSON.stringify( {
 	emitStats: shouldEmitStats,
 	concatenateModules: shouldConcatenateModules,
 	hotReload: shouldHotReload,
+	profile: shouldProfile,
 } );
 
 if ( shouldCreateSentryRelease ) {
@@ -456,13 +457,17 @@ const webpackConfig = {
 						config: webpackCacheBuildDependencies,
 					},
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
-					profile: true,
+					profile: shouldProfile,
 					version: webpackCacheVersion,
 					readonly: shouldUseReadonlyCache,
 				},
-				infrastructureLogging: {
-					debug: /webpack\.cache/,
-				},
+				...( shouldProfile
+					? {
+							infrastructureLogging: {
+								debug: /webpack\.cache/,
+							},
+					  }
+					: {} ),
 				snapshot: {
 					managedPaths: [
 						path.resolve( __dirname, '../node_modules' ),

@@ -1,8 +1,12 @@
 import { EscalationButton } from '../components/escalation-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
+import { CHECKPOINT_ACTION_ID } from '../hooks/use-checkpoint-action';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
+
+// Tool IDs that are silently dropped without a console warning.
+const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
 
 interface Options {
 	messages: UIMessage[];
@@ -55,7 +59,7 @@ export function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
-		// Handle `show-component` ability tool message
+		// Handle `show-component` tool message
 		if ( textData.tool_id === 'big_sky__show_component' ) {
 			// If not on an editor page, show an unavailable tool message instead of the component
 			if ( ! isEditorPage() ) {
@@ -100,7 +104,7 @@ export function convertToolMessagesToComponents( {
 					},
 				],
 				disabled: isStale,
-				// Tag for `disablePickersAndRemoveNextButton` to disable on back-navigation.
+				// Tag for `deactivateStaleMessages` to disable on back-navigation.
 				isShowComponentMessage: true,
 			};
 
@@ -121,13 +125,31 @@ export function convertToolMessagesToComponents( {
 							component: NextStepButton,
 						},
 					],
-					// Tag for `disablePickersAndRemoveNextButton` to remove on back-navigation.
+					// Tag for `deactivateStaleMessages` to remove on back-navigation.
 					isNextStepButton: true,
 				},
 			];
 		}
 
-		// Handle support tool message by rendering its data as plain text
+		// Handle `apply-block-edits` tool message
+		if (
+			textData.tool_id === 'big_sky__apply_block_edits' &&
+			typeof textData.data?.summary === 'string'
+		) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'text' as const,
+							text: textData.data.summary.trim(),
+						},
+					],
+				},
+			];
+		}
+
+		// Handle `wordpress-com-support` tool message
 		if (
 			textData.tool_id === 'big_sky__wordpress_com_support' &&
 			typeof textData.data === 'string'
@@ -165,27 +187,39 @@ export function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		// eslint-disable-next-line no-console
-		console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
+			// eslint-disable-next-line no-console
+			console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
+		}
 		return [];
 	} );
 }
 
-/**
- * Disables stale picker components and removes next-step buttons on back-navigation.
- */
-export function disablePickersAndRemoveNextButton( messages: UIMessage[] ): UIMessage[] {
-	return messages.flatMap( ( message ) => {
-		// @ts-ignore -- custom flag not on the `UIMessage` type.
-		if ( message.isNextStepButton ) {
-			return [];
-		}
+// Deactivates messages that should no longer be interactive when caching.
+export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
+	return messages
+		.filter( ( message ) => {
+			// @ts-ignore -- custom flag not on the `UIMessage` type.
+			// Remove next-step buttons.
+			return ! message.isNextStepButton;
+		} )
+		.map( ( message ) => {
+			let updated = message;
 
-		// @ts-ignore -- custom flag not on the `UIMessage` type.
-		if ( message.isShowComponentMessage ) {
-			return [ { ...message, disabled: true } ];
-		}
+			// Strip the undo (checkpoint) action so it won't reappear on cached messages.
+			if ( updated.actions?.length ) {
+				updated = {
+					...updated,
+					actions: updated.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
+				};
+			}
 
-		return [ message ];
-	} );
+			// @ts-ignore -- custom flag not on the `UIMessage` type.
+			// Disable picker components so they become non-interactive.
+			if ( updated.isShowComponentMessage ) {
+				return { ...updated, disabled: true };
+			}
+
+			return updated;
+		} );
 }

@@ -20,13 +20,20 @@ function getCopyableText( message: UIMessage ): string {
 	try {
 		const parsed = JSON.parse( firstPartText );
 
+		// Tools with copyable text.
 		if ( parsed.tool_id ) {
-			// Only the support tool has copyable text in `data`.
 			if (
 				parsed.tool_id === 'big_sky__wordpress_com_support' &&
 				typeof parsed.data === 'string'
 			) {
 				return parsed.data.trim();
+			}
+
+			if (
+				parsed.tool_id === 'big_sky__apply_block_edits' &&
+				typeof parsed.data?.summary === 'string'
+			) {
+				return parsed.data.summary.trim();
 			}
 
 			return '';

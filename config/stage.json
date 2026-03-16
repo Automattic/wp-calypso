@@ -21,6 +21,7 @@
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
+		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
 		"calypso/all-domain-management": true,

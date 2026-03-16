@@ -24,6 +24,7 @@
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
+		"blackbox-login": true,
 		"calypso/all-domain-management": true,
 		"calypso/domains-dataviews": true,
 		"catch-js-errors": false,

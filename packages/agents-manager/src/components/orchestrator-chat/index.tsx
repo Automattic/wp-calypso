@@ -18,7 +18,7 @@ import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { setSessionId } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
-	disablePickersAndRemoveNextButton,
+	deactivateStaleMessages,
 } from '../../utils/process-tool-messages';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -350,8 +350,8 @@ export default function OrchestratorChat( {
 		// Cache current conversation messages to restore when navigating back from history.
 		cachedConversation = {
 			sessionId: getActiveSessionId(),
-			// Disable stale picker components and strip `next-step-button` before caching.
-			messages: disablePickersAndRemoveNextButton( displayedMessages ),
+			// Deactivate interactive elements before caching.
+			messages: deactivateStaleMessages( displayedMessages ),
 		};
 	};
 

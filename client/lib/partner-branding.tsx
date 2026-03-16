@@ -5,7 +5,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import { isCiabOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import type {
@@ -32,8 +34,8 @@ export interface CiabPartnerConfig {
 	id: string;
 	/** Display name shown in UI (e.g., "Woo") */
 	displayName: string;
-	/** Feature flag to enable/disable this partner */
-	featureFlag: string;
+	/** Feature flag to enable/disable this partner. If omitted, the partner is always active. */
+	featureFlag?: string;
 	/** Logo configuration */
 	logo: LogoConfig;
 	/** Compact logo for TopBar (falls back to logo if not provided) */
@@ -44,6 +46,8 @@ export interface CiabPartnerConfig {
 	fontStyle?: 'system';
 	/** Domains that identify this partner in redirect URLs (e.g., ['my.woo.ai']) */
 	domains?: string[];
+	/** Callback to check if an OAuth2 client belongs to this partner */
+	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
 }
 
 /**
@@ -75,8 +79,13 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
 		domains: [ 'my.woo.ai', 'my.woo.localhost' ],
+		isOAuth2Client: isCiabOAuth2Client,
 	},
 };
+
+function isPartnerEnabled( partnerConfig: CiabPartnerConfig ): boolean {
+	return ! partnerConfig.featureFlag || config.isEnabled( partnerConfig.featureFlag );
+}
 
 const CIAB_PARTNER_SESSION_KEY = 'calypso.ciab.partner-id';
 
@@ -168,7 +177,7 @@ export function getCiabConfigFromGarden(
 function getCiabConfigByHostname( hostname: string ): CiabPartnerConfig | null {
 	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
 		if ( partnerConfig.domains?.includes( hostname ) ) {
-			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+			if ( isPartnerEnabled( partnerConfig ) ) {
 				return partnerConfig;
 			}
 		}
@@ -203,7 +212,7 @@ export function getCiabConfigFromBrandingCode(): CiabPartnerConfig | null {
 
 	if ( from && CIAB_PARTNERS[ from ] ) {
 		const partnerConfig = CIAB_PARTNERS[ from ];
-		if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+		if ( isPartnerEnabled( partnerConfig ) ) {
 			return partnerConfig;
 		}
 	}
@@ -233,6 +242,27 @@ export function getCiabConfigFromRedirectUrl(
 }
 
 /**
+ * Get CIAB partner config by matching an OAuth2 client (from Redux store) against partner configs.
+ */
+export function getCiabConfigFromOAuth2Client(
+	oauth2Client: { id: number } | null | undefined
+): CiabPartnerConfig | null {
+	if ( ! oauth2Client ) {
+		return null;
+	}
+
+	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
+		if ( partnerConfig.isOAuth2Client?.( oauth2Client ) ) {
+			if ( isPartnerEnabled( partnerConfig ) ) {
+				return partnerConfig;
+			}
+		}
+	}
+
+	return null;
+}
+
+/**
  * Read a query parameter from the current URL.
  */
 function getSearchParam( name: string ): string | null {
@@ -245,21 +275,22 @@ function getSearchParam( name: string ): string | null {
 /**
  * Detect CIAB partner config from globally available values.
  *
- * Callers should NOT pass values — the detector reads from window.location internally.
+ * The oauth2Client parameter comes from Redux (getCurrentOAuth2Client).
+ * Other detection sources read from window.location internally.
  *
  * Detection precedence (first match wins):
  *   1. hostname           — window.location.hostname against partner domains
  *   2. branding code      — ?from= query param (transitional, see getCiabConfigFromBrandingCode)
- *   3. redirect_to        — hostname inside ?redirect_to= URL
- *   4. oauth2_redirect    — hostname inside ?oauth2_redirect= URL
+ *   3. OAuth2 client      — current OAuth2 client from Redux store matched against partner configs
+ *   4. redirect_to        — hostname inside ?redirect_to= URL
  *   5. session storage    — persisted partner from a previous detection in this session
  */
-export function detectCiabConfig(): CiabPartnerConfig | null {
+export function detectCiabConfig( oauth2Client?: { id: number } | null ): CiabPartnerConfig | null {
 	const detected =
 		getCiabConfigFromCurrentDomain() ??
 		getCiabConfigFromBrandingCode() ??
-		getCiabConfigFromRedirectUrl( getSearchParam( 'redirect_to' ) ) ??
-		getCiabConfigFromRedirectUrl( getSearchParam( 'oauth2_redirect' ) );
+		getCiabConfigFromOAuth2Client( oauth2Client ) ??
+		getCiabConfigFromRedirectUrl( getSearchParam( 'redirect_to' ) );
 
 	if ( detected ) {
 		persistCiabPartnerId( detected.id );
@@ -273,7 +304,7 @@ export function detectCiabConfig(): CiabPartnerConfig | null {
 	if ( persistedPartnerId ) {
 		const persistedConfig = CIAB_PARTNERS[ persistedPartnerId ];
 
-		if ( persistedConfig && config.isEnabled( persistedConfig.featureFlag ) ) {
+		if ( persistedConfig && isPartnerEnabled( persistedConfig ) ) {
 			return persistedConfig;
 		}
 
@@ -289,8 +320,10 @@ export function detectCiabConfig(): CiabPartnerConfig | null {
  * Returns the array of allowed SSO providers or null if no restrictions apply.
  * @returns Array of allowed service names (e.g., ['paypal', 'google', 'apple']) or null
  */
-export function getPartnerAllowedSocialServices(): AllowedSocialService[] | null {
-	const ciabConfig = detectCiabConfig();
+export function getPartnerAllowedSocialServices(
+	oauth2Client?: { id: number } | null
+): AllowedSocialService[] | null {
+	const ciabConfig = detectCiabConfig( oauth2Client );
 	return ciabConfig?.ssoProviders ?? null;
 }
 
@@ -337,10 +370,10 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const initialQuery = useSelector( getInitialQueryArguments );
 	const from = currentQuery?.from || initialQuery?.from;
 	const redirectTo = currentQuery?.redirect_to || initialQuery?.redirect_to;
-	const oauth2Redirect = currentQuery?.oauth2_redirect || initialQuery?.oauth2_redirect;
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	return useMemo( () => {
-		const ciabConfig = detectCiabConfig();
+		const ciabConfig = detectCiabConfig( oauth2Client );
 		const hasCustomBranding = ciabConfig !== null;
 
 		// Build logo element for TopBar
@@ -364,7 +397,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 			topBarLogo,
 			signupTosElement,
 		};
-	}, [ from, redirectTo, oauth2Redirect, translate ] );
+	}, [ from, redirectTo, oauth2Client, translate ] );
 }
 
 /**

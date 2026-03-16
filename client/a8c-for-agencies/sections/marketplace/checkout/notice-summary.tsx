@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -128,7 +129,7 @@ export default function NoticeSummary( { type }: Props ) {
 			{ title && <h3>{ title }</h3> }
 			{ items.map( ( item, index ) => (
 				<div key={ `notice-item-${ index }` } className="checkout__summary-notice-item">
-					{ item }
+					{ preventWidows( item ) }
 				</div>
 			) ) }
 		</div>

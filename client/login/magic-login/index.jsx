@@ -397,7 +397,7 @@ const mapState = ( state ) => {
 			'jetpack-onboarding',
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
-		ciabConfig: detectCiabConfig(),
+		ciabConfig: detectCiabConfig( getCurrentOAuth2Client( state ) ),
 	};
 };
 

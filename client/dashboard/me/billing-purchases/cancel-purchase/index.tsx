@@ -56,7 +56,6 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
-	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -82,6 +81,7 @@ import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
+import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -147,11 +147,7 @@ function getOfferDiscountBasedOnPurchasePrice(
 	return Math.round( offerDiscountPercentage );
 }
 
-function availableJetpackSurveySteps(
-	purchase: Purchase,
-	flowType: CancelFlowType,
-	cancellationOffer: CancellationOffer | undefined
-): string[] {
+function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
 	const availableSteps = [];
 
 	// If the plan is already expired or is a temporary Jetpack purchase (license),
@@ -170,6 +166,18 @@ function availableJetpackSurveySteps(
 	}
 
 	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
+		availableSteps.push( FEEDBACK_STEP );
+	}
+
+	return availableSteps;
+}
+
+function shouldAddCancellationOfferStep(
+	purchase: Purchase,
+	flowType: CancelFlowType,
+	cancellationOffer: CancellationOffer | undefined
+): boolean {
+	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
 		const isOfferPriceSameOrLowerThanPurchasePrice = cancellationOffer
 			? purchase.amount >= cancellationOffer.original_price
 			: false;
@@ -178,25 +186,19 @@ function availableJetpackSurveySteps(
 			cancellationOffer
 		);
 
-		availableSteps.push( FEEDBACK_STEP );
-		if ( isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10 ) {
-			availableSteps.push( CANCELLATION_OFFER_STEP );
-		}
+		return isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10;
 	}
-
-	return availableSteps;
+	return false;
 }
 
 function getBasicSurveySteps( {
 	purchase,
 	upsell,
-	cancellationOffer,
 	hasQuestionTwo,
 	plans,
 }: {
 	purchase: Purchase;
 	upsell: CancelPurchaseState[ 'upsell' ];
-	cancellationOffer: CancellationOffer | undefined;
 	hasQuestionTwo: boolean;
 	plans: PlanProduct[];
 } ): string[] {
@@ -214,7 +216,7 @@ function getBasicSurveySteps( {
 		return [];
 	}
 	if ( isJetpack ) {
-		return availableJetpackSurveySteps( purchase, flowType, cancellationOffer );
+		return availableJetpackSurveySteps( purchase, flowType );
 	}
 	if ( purchase.is_domain_registration ) {
 		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
@@ -253,7 +255,6 @@ function getAllSurveySteps( {
 	let steps = getBasicSurveySteps( {
 		purchase,
 		upsell,
-		cancellationOffer,
 		hasQuestionTwo,
 		plans,
 	} );
@@ -269,6 +270,10 @@ function getAllSurveySteps( {
 		const stepsToRemove = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		steps = steps.filter( ( step ) => ! stepsToRemove.includes( step ) );
 		steps = [ REMOVE_PLAN_STEP, ...steps ];
+	}
+
+	if ( shouldAddCancellationOfferStep( purchase, flowType, cancellationOffer ) ) {
+		steps.push( CANCELLATION_OFFER_STEP );
 	}
 
 	return steps;
@@ -344,6 +349,8 @@ export default function CancelPurchase() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
+
+	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -678,7 +685,7 @@ export default function CancelPurchase() {
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
 		const skippingDomainOptionsForAutoRenew =
-			shouldShowRefundEligibilityNotice( purchase ) && cancelIntent !== 'refund';
+			showRefundEligibilityNotice && cancelIntent !== 'refund';
 
 		const needsDomainOptions =
 			! skippingDomainOptionsForAutoRenew &&
@@ -1093,10 +1100,7 @@ export default function CancelPurchase() {
 			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 		}
 		// If default Cancel button on refundable wpcom plan, use auto-renew flow
-		else if (
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
-			shouldShowRefundEligibilityNotice( purchase )
-		) {
+		else if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
 			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}
 
@@ -1363,7 +1367,7 @@ export default function CancelPurchase() {
 			notices={
 				! state.surveyShown &&
 				! state.showDomainOptionsStep &&
-				( shouldShowRefundEligibilityNotice( purchase ) ? (
+				( showRefundEligibilityNotice ? (
 					<RefundEligibilityNotice
 						purchase={ purchase }
 						onClaimRefund={ onCancellationStartForRefund }
