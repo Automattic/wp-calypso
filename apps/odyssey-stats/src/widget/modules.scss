@@ -51,6 +51,10 @@ $jp-gray: #dcdcde;
 	&.is-primary {
 		color: var(--studio-white);
 		background: var(--studio-black);
+
+		&:hover:not(.is-busy) {
+			background: $emerald-hover-color;
+		}
 	}
 
 	// Use secondary styles (previously transparent)
