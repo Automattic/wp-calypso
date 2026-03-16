@@ -394,7 +394,7 @@ export default function SubscriberDataViews( {
 			return [];
 		}
 
-		const baseActions = [
+		const baseActions: Action< Subscriber >[] = [
 			{
 				id: 'view',
 				label: translate( 'View' ),
@@ -419,6 +419,8 @@ export default function SubscriberDataViews( {
 			baseActions.push( {
 				id: 'gift',
 				label: translate( 'Gift a subscription' ),
+				isEligible: ( subscriber: Subscriber ) =>
+					!! ( subscriber.user_id || subscriber.email_address ),
 				callback: ( items: Subscriber[] ) => {
 					const subscriber = items[ 0 ];
 					if ( ! subscriber ) {
