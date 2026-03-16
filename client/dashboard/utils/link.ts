@@ -34,7 +34,7 @@ export function wpcomLink( path: string ) {
 	) {
 		const dashboard = getCurrentDashboard();
 		if ( dashboard === 'ciab' ) {
-			return buildDashboardLink( dashboard, path );
+			return path;
 		}
 	}
 	return new URL( path, config( 'wpcom_url' ) ).href;
