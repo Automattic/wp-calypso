@@ -605,7 +605,8 @@ function getFields( {
 						return (
 							<ActionList.ActionItem
 								title={ __( 'Subscription renewal' ) }
-								description={ helpText }
+								description={ helpText?.toString() }
+								actions={ {} }
 							/>
 						);
 					}
@@ -614,7 +615,7 @@ function getFields( {
 							title={ __( 'Your subscription is inactive' ) }
 							description={ sprintf(
 								// translators: date is a formatted expiry date
-								__( 'Expires on %(date)s' ),
+								__( 'Expires on %(date)s.' ),
 								{
 									date: formatDate( new Date( purchase.expiry_date ), locale, {
 										dateStyle: 'long',
