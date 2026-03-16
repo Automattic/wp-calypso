@@ -583,6 +583,7 @@ function isAllowedOrigin( urlOrigin ) {
 	return (
 		wpcomAllowedOrigins.includes( urlOrigin ) ||
 		/^https:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
+		/^https:\/\/[a-z0-9-]+\.github.dev$/.test( urlOrigin ) ||
 		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin )
 	);
 }
