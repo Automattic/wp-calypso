@@ -159,8 +159,8 @@ export default function OrchestratorChat( {
 		enabled: ! hasCachedConversation,
 	} );
 
-	// Save new chat route for cross-domain conversation restore.
-	useSaveNewChatRoute( agentId, messages );
+	// Persist the chat route so the conversation can be resumed later.
+	useSaveNewChatRoute( messages );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
