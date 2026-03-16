@@ -83,7 +83,7 @@ describe( 'ThemeSection', () => {
 
 	test( 'renders "See all" button', () => {
 		render( <ThemeSection { ...defaultProps } /> );
-		expect( screen.getByRole( 'button', { name: 'See all' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'See all' } ) ).toBeVisible();
 	} );
 
 	test( 'applies light variant by default', () => {

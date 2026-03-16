@@ -21,6 +21,7 @@ describe( 'Theme', () => {
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
 		onScreenshotClick: () => {},
+		recordTracksEvent: jest.fn(),
 	};
 
 	describe( 'rendering', () => {
