@@ -1,148 +1,118 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import '@xterm/xterm/css/xterm.css';
 import './style.scss';
 
-function getWsUrl(): string {
-	const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-	return `${ proto }//${ window.location.host }/api/verto/terminal`;
+interface Message {
+	role: 'user' | 'assistant' | 'error';
+	content: string;
+}
+
+function getRoleLabel( role: Message[ 'role' ] ): string {
+	switch ( role ) {
+		case 'user':
+			return 'You';
+		case 'assistant':
+			return 'Claude';
+		default:
+			return 'Error';
+	}
 }
 
 export default function VertoMain() {
-	const termContainerRef = useRef< HTMLDivElement | null >( null );
-	const wsRef = useRef< WebSocket | null >( null );
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const termRef = useRef< any >( null );
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const fitAddonRef = useRef< any >( null );
+	const [ messages, setMessages ] = useState< Message[] >( [] );
+	const [ input, setInput ] = useState( '' );
+	const [ loading, setLoading ] = useState( false );
+	const [ sessionId, setSessionId ] = useState< string | null >( () => {
+		const hash = window.location.hash.replace( /^#/, '' );
+		return hash || null;
+	} );
+	const messagesEndRef = useRef< HTMLDivElement | null >( null );
+	const inputRef = useRef< HTMLTextAreaElement | null >( null );
+	const abortRef = useRef< AbortController | null >( null );
 
-	const connect = useCallback( async () => {
-		const container = termContainerRef.current;
-		if ( ! container ) {
-			return;
-		}
-
-		const { Terminal } = await import( '@xterm/xterm' );
-		const { FitAddon } = await import( '@xterm/addon-fit' );
-
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let WebglAddon: any = null;
-		try {
-			const mod = await import( '@xterm/addon-webgl' );
-			WebglAddon = mod.WebglAddon;
-		} catch {
-			// WebGL not available, fall back to canvas renderer
-		}
-
-		const term = new Terminal( {
-			cursorBlink: true,
-			fontSize: 13,
-			fontFamily: 'ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Code", monospace',
-			theme: {
-				background: '#1e1e2e',
-				foreground: '#cdd6f4',
-				cursor: '#f5e0dc',
-				selectionBackground: '#585b7066',
-				black: '#45475a',
-				red: '#f38ba8',
-				green: '#a6e3a1',
-				yellow: '#f9e2af',
-				blue: '#89b4fa',
-				magenta: '#f5c2e7',
-				cyan: '#94e2d5',
-				white: '#bac2de',
-				brightBlack: '#585b70',
-				brightRed: '#f38ba8',
-				brightGreen: '#a6e3a1',
-				brightYellow: '#f9e2af',
-				brightBlue: '#89b4fa',
-				brightMagenta: '#f5c2e7',
-				brightCyan: '#94e2d5',
-				brightWhite: '#a6adc8',
-			},
-		} );
-
-		const fitAddon = new FitAddon();
-		term.loadAddon( fitAddon );
-		term.open( container );
-
-		if ( WebglAddon ) {
-			try {
-				term.loadAddon( new WebglAddon() );
-			} catch {
-				// WebGL init failed, continue with canvas
-			}
-		}
-
-		fitAddon.fit();
-
-		termRef.current = term;
-		fitAddonRef.current = fitAddon;
-
-		const ws = new WebSocket( getWsUrl() );
-		wsRef.current = ws;
-
-		ws.onopen = () => {
-			ws.send(
-				JSON.stringify( {
-					type: 'resize',
-					cols: term.cols,
-					rows: term.rows,
-				} )
-			);
-		};
-
-		ws.onmessage = ( event ) => {
-			try {
-				const msg = JSON.parse( event.data );
-				if ( msg.type === 'output' ) {
-					term.write( msg.data );
-				} else if ( msg.type === 'exit' ) {
-					term.writeln( `\r\n\x1b[90m[Process exited with code ${ msg.code }]\x1b[0m` );
-				}
-			} catch {
-				// ignore malformed messages
-			}
-		};
-
-		ws.onclose = () => {
-			term.writeln( '\r\n\x1b[90m[Connection closed]\x1b[0m' );
-		};
-
-		term.onData( ( data: string ) => {
-			if ( ws.readyState === WebSocket.OPEN ) {
-				ws.send( JSON.stringify( { type: 'input', data } ) );
-			}
-		} );
-
-		term.onResize( ( { cols, rows }: { cols: number; rows: number } ) => {
-			if ( ws.readyState === WebSocket.OPEN ) {
-				ws.send( JSON.stringify( { type: 'resize', cols, rows } ) );
-			}
-		} );
+	const scrollToBottom = useCallback( () => {
+		messagesEndRef.current?.scrollIntoView( { behavior: 'smooth' } );
 	}, [] );
 
 	useEffect( () => {
-		connect();
+		scrollToBottom();
+	}, [ messages, scrollToBottom ] );
 
-		const handleResize = () => {
-			if ( fitAddonRef.current ) {
-				try {
-					fitAddonRef.current.fit();
-				} catch {
-					// terminal not ready
+	const sendPrompt = useCallback(
+		async ( prompt: string ) => {
+			setMessages( ( prev ) => [ ...prev, { role: 'user', content: prompt } ] );
+			setInput( '' );
+			setLoading( true );
+
+			const controller = new AbortController();
+			abortRef.current = controller;
+
+			try {
+				const res = await fetch( '/api/verto/prompt', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify( { prompt, sessionId } ),
+					signal: controller.signal,
+				} );
+
+				const data = await res.json();
+
+				if ( ! res.ok ) {
+					setMessages( ( prev ) => [
+						...prev,
+						{ role: 'error', content: data.error || `HTTP ${ res.status }` },
+					] );
+					return;
 				}
+
+				if ( data.session_id && data.session_id !== sessionId ) {
+					setSessionId( data.session_id );
+					window.history.replaceState( null, '', `#${ data.session_id }` );
+				}
+
+				const text = data.result ?? JSON.stringify( data, null, 2 );
+				setMessages( ( prev ) => [ ...prev, { role: 'assistant', content: text } ] );
+			} catch ( err: unknown ) {
+				if ( err instanceof Error && err.name === 'AbortError' ) {
+					setMessages( ( prev ) => [ ...prev, { role: 'error', content: 'Request cancelled.' } ] );
+				} else {
+					const msg = err instanceof Error ? err.message : String( err );
+					setMessages( ( prev ) => [ ...prev, { role: 'error', content: msg } ] );
+				}
+			} finally {
+				setLoading( false );
+				abortRef.current = null;
 			}
-		};
+		},
+		[ sessionId ]
+	);
 
-		window.addEventListener( 'resize', handleResize );
+	const handleSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
+			const trimmed = input.trim();
+			if ( ! trimmed || loading ) {
+				return;
+			}
+			sendPrompt( trimmed );
+		},
+		[ input, loading, sendPrompt ]
+	);
 
-		return () => {
-			window.removeEventListener( 'resize', handleResize );
-			wsRef.current?.close();
-			termRef.current?.dispose();
-		};
-	}, [ connect ] );
+	const handleKeyDown = useCallback(
+		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
+			if ( e.key === 'Enter' && ! e.shiftKey ) {
+				e.preventDefault();
+				handleSubmit( e );
+			}
+		},
+		[ handleSubmit ]
+	);
+
+	const handleStop = useCallback( () => {
+		abortRef.current?.abort();
+	}, [] );
 
 	return (
 		<div className="verto-page">
@@ -150,11 +120,59 @@ export default function VertoMain() {
 			<div className="verto-page__window">
 				<iframe className="verto-page__iframe" src="/" title="Calypso" />
 			</div>
-			<aside className="verto-page__terminal">
-				<div className="verto-page__terminal-header">
-					<h2 className="verto-page__terminal-title">Terminal</h2>
+			<aside className="verto-page__chat">
+				<div className="verto-page__chat-header">
+					<h2 className="verto-page__chat-title">Claude</h2>
+					{ sessionId && (
+						<span className="verto-page__chat-session">{ sessionId.slice( 0, 8 ) }</span>
+					) }
 				</div>
-				<div className="verto-page__terminal-container" ref={ termContainerRef } />
+				<div className="verto-page__chat-messages">
+					{ messages.map( ( msg, i ) => (
+						<div key={ i } className={ `verto-page__chat-msg is-${ msg.role }` }>
+							<div className="verto-page__chat-msg-role">{ getRoleLabel( msg.role ) }</div>
+							{ msg.role === 'assistant' ? (
+								<div className="verto-page__chat-msg-content is-markdown">
+									<ReactMarkdown>{ msg.content }</ReactMarkdown>
+								</div>
+							) : (
+								<pre className="verto-page__chat-msg-content">{ msg.content }</pre>
+							) }
+						</div>
+					) ) }
+					{ loading && (
+						<div className="verto-page__chat-msg is-assistant is-loading">
+							<div className="verto-page__chat-msg-role">Claude</div>
+							<div className="verto-page__chat-typing">
+								<span />
+								<span />
+								<span />
+							</div>
+						</div>
+					) }
+					<div ref={ messagesEndRef } />
+				</div>
+				<form className="verto-page__chat-input-area" onSubmit={ handleSubmit }>
+					<textarea
+						ref={ inputRef }
+						className="verto-page__chat-input"
+						value={ input }
+						onChange={ ( e ) => setInput( e.target.value ) }
+						onKeyDown={ handleKeyDown }
+						placeholder="Ask Claude..."
+						rows={ 2 }
+						disabled={ loading }
+					/>
+					{ loading ? (
+						<button type="button" className="verto-page__chat-btn is-stop" onClick={ handleStop }>
+							Stop
+						</button>
+					) : (
+						<button type="submit" className="verto-page__chat-btn" disabled={ ! input.trim() }>
+							Send
+						</button>
+					) }
+				</form>
 			</aside>
 		</div>
 	);

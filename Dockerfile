@@ -60,15 +60,12 @@ WORKDIR /calypso
 COPY ./env-config.sh /tmp/env-config.sh
 RUN bash /tmp/env-config.sh
 
-# Install build dependencies for native modules (e.g. node-pty)
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
-
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache --inline-builds; exit 0
+RUN yarn install --immutable --check-cache --inline-builds
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)
 ## RUN node --version && yarn --version && npm --version
@@ -77,8 +74,8 @@ RUN yarn install --immutable --check-cache --inline-builds; exit 0
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-ENV NODE_ENV production
-RUN yarn run build 2>&1 | tee /tmp/build_log.txt
+ENV NODE_ENV development
+RUN yarn start 2>&1 | tee /tmp/build_log.txt
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
@@ -88,19 +85,19 @@ RUN find /calypso/build /calypso/public -name "*.*.map" -delete
 
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"
-FROM ${base_image} AS update-base-cache
+# FROM ${base_image} AS update-base-cache
 
 # Update webpack cache in the base image so that it can be re-used in future builds.
 # We only copy this part of the cache to make --push faster, and because webpack
 # is the main thing which will impact build performance when the cache invalidates.
-COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
+#COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
 FROM node:${node_version}-alpine AS app
 
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
-ENV NODE_ENV production
+ENV NODE_ENV development
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
