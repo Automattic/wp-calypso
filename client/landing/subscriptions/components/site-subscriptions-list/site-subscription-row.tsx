@@ -319,7 +319,7 @@ const SiteSubscriptionRow = ( {
 
 						{ !! is_gift && (
 							<span className="gift-label">
-								{ translate( 'Comp', { context: 'Label for a complimentary subscription' } ) }
+								{ translate( 'Gift', { context: 'Label for a gifted subscription' } ) }
 							</span>
 						) }
 
