@@ -5,7 +5,7 @@ import './style.scss';
 
 interface ThemeSectionHeaderProps {
 	title: TranslateResult;
-	subtitle: TranslateResult;
+	subtitle: TranslateResult | null;
 	buttonLabel?: string;
 	buttonHref?: string;
 	onButtonClick?: () => void;

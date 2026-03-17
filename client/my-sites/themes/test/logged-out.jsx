@@ -122,7 +122,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } category="recommended" /> );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'No themes match your search' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes found' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -160,7 +160,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } category="recommended" /> );
 
 		await waitFor( () => {
-			expect( screen.queryByText( 'No themes match your search' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes found' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

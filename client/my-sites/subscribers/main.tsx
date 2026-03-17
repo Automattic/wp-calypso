@@ -59,10 +59,10 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 		}
 	}, [ siteId, getSubscribersImports ] );
 
-	const [ giftUserId, setGiftUserId ] = useState( 0 );
+	const [ giftUserId, setGiftUserId ] = useState< number | string | null >( null );
 	const [ giftUsername, setGiftUsername ] = useState( '' );
-	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
-		setGiftUserId( user_id );
+	const onGiftSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+		setGiftUserId( user_id || email_address || null );
 		setGiftUsername( display_name );
 	};
 
@@ -79,13 +79,13 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
-					{ giftUserId !== 0 && (
+					{ giftUserId !== null && (
 						<GiftSubscriptionModal
 							siteId={ siteId ?? 0 }
 							userId={ giftUserId }
 							username={ giftUsername }
-							onCancel={ () => setGiftUserId( 0 ) }
-							onConfirm={ () => setGiftUserId( 0 ) }
+							onCancel={ () => setGiftUserId( null ) }
+							onConfirm={ () => setGiftUserId( null ) }
 						/>
 					) }
 				</SubscriberValidationGate>

@@ -9,8 +9,6 @@ import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import {
 	FIRST_POSTS_TAB,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
 	RECOMMENDED_TAB,
 	FRESHLY_PRESSED_TAB,
 	TAGS_TAB,
@@ -48,12 +46,6 @@ export default function DiscoverHeaderAndNavigation(
 				newCopy: translate( 'Browse posts by popular tags.' ),
 				oldCopy: '', // No previous translation available.
 			} );
-			break;
-		case ADD_NEW_TAB:
-			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
-			break;
-		case REDDIT_TAB:
-			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
 		case RECOMMENDED_TAB:
 			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
