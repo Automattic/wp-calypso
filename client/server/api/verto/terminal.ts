@@ -23,13 +23,29 @@ export default function attachTerminalWebSocket( server: Server | HttpsServer ) 
 	const WsServer = WebSocket.Server || WebSocket.WebSocketServer;
 	const wss = new WsServer( { noServer: true } );
 
-	server.on( 'upgrade', ( req: { url?: string }, socket: unknown, head: unknown ) => {
+	const ALLOWED_IPS = new Set( [ '80.238.97.23', '45.121.182.251', '127.0.0.1', '::1' ] );
+
+	server.on( 'upgrade', ( req: any, socket: any, head: unknown ) => {
 		const url = req.url ?? '';
-		if ( url.startsWith( '/api/verto/terminal' ) ) {
-			wss.handleUpgrade( req, socket, head, ( ws: unknown ) => {
-				wss.emit( 'connection', ws, req );
-			} );
+		if ( ! url.startsWith( '/api/verto/terminal' ) ) {
+			return;
 		}
+
+		const forwarded = req.headers?.[ 'x-forwarded-for' ];
+		const ip = forwarded
+			? String( forwarded ).split( ',' )[ 0 ].trim()
+			: socket?.remoteAddress ?? '';
+		const normalizedIp = ip.replace( /^::ffff:/, '' );
+
+		if ( ! ALLOWED_IPS.has( normalizedIp ) ) {
+			socket.write( 'HTTP/1.1 403 Forbidden\r\n\r\n' );
+			socket.destroy();
+			return;
+		}
+
+		wss.handleUpgrade( req, socket, head, ( ws: unknown ) => {
+			wss.emit( 'connection', ws, req );
+		} );
 	} );
 
 	wss.on( 'connection', ( ws: WebSocket ) => {

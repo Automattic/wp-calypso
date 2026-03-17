@@ -76,7 +76,7 @@ if ( process.env.NODE_ENV !== 'development' ) {
 }
 
 // Calypso Agentic Framework: attach PTY terminal WebSocket (development only)
-if ( config( 'env_id' ) === 'development' ) {
+if ( config( 'env_id' ) === 'development' || config( 'env_id' ) === 'wpcalypso' ) {
 	require( 'calypso/server/api/verto/terminal' ).default( server );
 }
 
