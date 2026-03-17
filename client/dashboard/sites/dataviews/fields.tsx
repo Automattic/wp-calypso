@@ -35,9 +35,11 @@ import type { Field, Operator, View } from '@wordpress/dataviews';
 function getDefaultFields( {
 	viewType,
 	queries,
+	viewFields,
 }: {
 	viewType?: string;
 	queries: AppConfig[ 'queries' ];
+	viewFields?: string[];
 } ): Field< Site >[] {
 	const visibilityLabels = getVisibilityLabels();
 	return [
@@ -47,7 +49,13 @@ function getDefaultFields( {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
-			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
+			render: ( { field, item } ) => (
+				<Name
+					site={ item }
+					value={ field.getValue( { item } ) }
+					showFavorite={ viewFields?.includes( 'is_favorited' ) }
+				/>
+			),
 		},
 		{
 			id: 'is_favorited',
@@ -70,6 +78,7 @@ function getDefaultFields( {
 					/>
 				);
 			},
+			isVisible: () => false,
 		},
 		{
 			id: 'URL',
@@ -277,14 +286,16 @@ function getDefaultFields( {
 export function useFields( {
 	isAutomattician,
 	viewType,
+	viewFields,
 }: {
 	isAutomattician?: boolean;
 	viewType?: string;
+	viewFields?: string[];
 } ) {
 	const { queries } = useAppContext();
 
 	return useMemo( () => {
-		const defaultFields = getDefaultFields( { viewType, queries } );
+		const defaultFields = getDefaultFields( { viewType, queries, viewFields } );
 		return defaultFields.filter( ( field ) => {
 			if ( field.id === 'is_a8c' && ! isAutomattician ) {
 				return false;
@@ -300,7 +311,7 @@ export function useFields( {
 
 			return true;
 		} );
-	}, [ isAutomattician, viewType, queries ] );
+	}, [ isAutomattician, viewType, queries, viewFields ] );
 }
 
 export function sanitizeFields( fields: View[ 'fields' ] ) {

@@ -117,15 +117,25 @@ export function SiteLink( {
 	);
 }
 
-export function Name( { site, value }: { site: Site; value: string } ) {
+export function Name( {
+	site,
+	value,
+	showFavorite,
+}: {
+	site: Site;
+	value: string;
+	showFavorite?: boolean;
+} ) {
 	const { mutate } = useMutation( siteFavoriteMutation( site.ID ) );
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
 			<NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />
-			<Favorite
-				isFavorited={ site.is_favorited }
-				onToggle={ () => mutate( ! site.is_favorited ) }
-			/>
+			{ showFavorite && (
+				<Favorite
+					isFavorited={ site.is_favorited }
+					onToggle={ () => mutate( ! site.is_favorited ) }
+				/>
+			) }
 		</HStack>
 	);
 }

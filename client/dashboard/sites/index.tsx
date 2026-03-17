@@ -176,7 +176,7 @@ export default function Sites() {
 		}
 	);
 
-	const fields = useFields( { isAutomattician, viewType: view.type } );
+	const fields = useFields( { isAutomattician, viewType: view.type, viewFields: view.fields } );
 	const actions = useActions();
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
