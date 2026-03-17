@@ -51,10 +51,11 @@ const GiftSubscriptionModal = ( {
 			user_id: user_id,
 		};
 
-		recordTracksEvent( 'calypso_subscribers_comp_confirm', {
+		recordTracksEvent( 'calypso_subscribers_comp_modal_confirm', {
 			site_id: siteId,
 			plan_id: plan_id,
-			...( typeof user_id === 'number' ? { user_id: user_id } : { is_email_subscriber: true } ),
+			user_id: typeof user_id === 'number' ? user_id : 0,
+			is_email_subscriber: typeof user_id !== 'number',
 		} );
 
 		dispatch(
