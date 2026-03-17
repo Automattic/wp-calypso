@@ -40,6 +40,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { OnboardingFlowStepper } from '../../components/onboarding-flow-stepper';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
@@ -422,6 +423,13 @@ const DomainSearchStep: StepType< {
 			);
 		};
 
+		const stepperHeading = (
+			<>
+				{ isOnboardingFlow( flow ) && <OnboardingFlowStepper currentStep="select-domain" /> }
+				<Step.Heading text={ headerText } subText={ subHeaderText } />
+			</>
+		);
+
 		return (
 			<Step.CenteredColumnLayout
 				topBar={
@@ -431,8 +439,9 @@ const DomainSearchStep: StepType< {
 					/>
 				}
 				columnWidth={ 10 }
+				headingColumnWidth={ 10 }
 				className="step-container-v2--domain-search"
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				heading={ stepperHeading }
 			>
 				{ domainSearchElement }
 			</Step.CenteredColumnLayout>

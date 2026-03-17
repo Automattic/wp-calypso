@@ -1,0 +1,149 @@
+// Gutenberg design tokens
+// heading-small: @include heading-small() → font-size: $font-size-x-small (11px), font-weight: $font-weight-medium (500)
+// $font-family-body: system font stack
+// $gray-900: #1e1e1e (active/done)
+// $gray-600: #949494 (inactive)
+// link hover: var(--wp-admin-theme-color)
+
+.onboarding-flow-stepper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin-block-end: 40px;
+
+	// Mobile-first: connectors expand to fill space between circles
+	&__connector {
+		flex: 1;
+		height: 1px;
+		background: $gray-600;
+		min-width: 12px;
+		max-width: 64px;
+		opacity: 0.4;
+		margin-inline: 8px;
+	}
+
+	&__step {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
+
+	// Reset button element for clickable completed steps
+	&__step.is-clickable {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		font: inherit;
+
+		&:hover {
+			.onboarding-flow-stepper__circle {
+				border-color: var(--wp-admin-theme-color);
+				color: var(--wp-admin-theme-color);
+			}
+
+			.onboarding-flow-stepper__number,
+			.onboarding-flow-stepper__check {
+				color: var(--wp-admin-theme-color);
+				fill: var(--wp-admin-theme-color);
+			}
+
+			.onboarding-flow-stepper__label {
+				color: var(--wp-admin-theme-color);
+				text-decoration: underline;
+			}
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--wp-admin-theme-color);
+			outline-offset: 2px;
+			border-radius: 2px;
+		}
+	}
+
+	&__circle {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 1.5px solid $gray-600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		color: $gray-600;
+		box-sizing: border-box;
+	}
+
+	// heading-small: $font-size-x-small / $font-weight-medium / $font-family-headings
+	&__number {
+		font-family: $font-family-body;
+		font-size: $font-size-x-small; // 11px
+		font-weight: $font-weight-medium; // 500
+		line-height: 1;
+	}
+
+	&__check {
+		fill: currentColor;
+		display: none; // desktop-only, enabled below
+	}
+
+	&__label {
+		display: none; // desktop-only, enabled below
+		font-family: $font-family-body;
+		font-size: 14px;
+		font-weight: 400;
+		color: $gray-600;
+		white-space: nowrap;
+	}
+
+	// Done/completed steps
+	&__step.is-completed {
+		.onboarding-flow-stepper__circle {
+			border-color: $gray-900;
+			color: $gray-900;
+		}
+
+		.onboarding-flow-stepper__label {
+			color: $gray-900;
+		}
+	}
+
+	// Active (current) step
+	&__step.is-active {
+		.onboarding-flow-stepper__circle {
+			background: $gray-900;
+			border-color: $gray-900;
+			color: #fff;
+		}
+
+		.onboarding-flow-stepper__label {
+			color: $gray-900;
+			font-weight: 600;
+		}
+	}
+
+	// Desktop: hide connectors, show labels and swap number → checkmark on completed steps
+	@include break-small {
+		gap: 24px;
+
+		&__connector {
+			display: none;
+		}
+
+		&__label {
+			display: block;
+		}
+
+		&__step.is-completed {
+			.onboarding-flow-stepper__number {
+				display: none;
+			}
+
+			.onboarding-flow-stepper__check {
+				display: block;
+			}
+		}
+	}
+}

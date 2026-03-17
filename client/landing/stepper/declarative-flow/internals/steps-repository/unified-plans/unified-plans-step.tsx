@@ -43,6 +43,7 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { OnboardingFlowStepper } from '../../components/onboarding-flow-stepper';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -610,6 +611,12 @@ function UnifiedPlansStep( {
 					}
 					heading={
 						<>
+							{ flowName === ONBOARDING_FLOW && (
+								<OnboardingFlowStepper
+									currentStep="select-plan"
+									stepUrls={ { 'select-domain': '/setup/onboarding' } }
+								/>
+							) }
 							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
 								<IntentToggle
 									currentIntent={ intent }

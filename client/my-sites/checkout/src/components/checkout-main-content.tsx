@@ -40,6 +40,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
+import { OnboardingFlowStepper } from 'calypso/landing/stepper/declarative-flow/internals/components/onboarding-flow-stepper';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -869,6 +870,17 @@ export default function CheckoutMainContent( {
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
+				heading={
+					isSignupCheckout ? (
+						<OnboardingFlowStepper
+							currentStep="payment"
+							stepUrls={ {
+								'select-domain': '/setup/onboarding',
+								'select-plan': '/setup/onboarding/plans',
+							} }
+						/>
+					) : undefined
+				}
 				topBar={ ( { isLargeViewport } ) => {
 					const topBar = (
 						<Step.TopBar
@@ -1021,14 +1033,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				height: 100%;
 
 				&:before {
-					content: '';
-					display: block;
-					background: var( --color-neutral-0 );
-					position: fixed;
-					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-					transform: translateX( calc( var( --left-padding ) * -1 ) );
-					width: 100vw;
-					bottom: 0;
+					display: none;
 				}
 			}
 
