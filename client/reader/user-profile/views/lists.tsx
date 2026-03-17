@@ -1,4 +1,6 @@
+import './lists.scss';
 import { SummaryButton } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { formatListBullets, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -42,7 +44,11 @@ export const UserLists = ( {
 	}, [ userLogin, requestUserLists, hasRequested ] );
 
 	if ( isLoading || ! hasRequested ) {
-		return <></>;
+		return (
+			<div className="user-profile__lists-loader">
+				<Spinner /> { translate( 'Loading lists' ) }...
+			</div>
+		);
 	}
 
 	if ( ! lists || lists.length === 0 ) {
