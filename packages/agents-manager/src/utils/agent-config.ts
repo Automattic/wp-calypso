@@ -7,7 +7,7 @@
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL, UNIFIED_CHAT_AGENT_ID } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
@@ -189,8 +189,13 @@ export function getAgentConfig(): { agentId: string; version?: string } {
 	const agentIdParam = urlSearchParams.get( 'agent' );
 	const versionParam = urlSearchParams.get( 'version' );
 
+	let defaultAgentId = ORCHESTRATOR_AGENT_ID;
+	if ( typeof agentsManagerData !== 'undefined' && agentsManagerData?.useUnifiedAgent ) {
+		defaultAgentId = UNIFIED_CHAT_AGENT_ID;
+	}
+
 	return {
-		agentId: agentIdParam || ORCHESTRATOR_AGENT_ID,
+		agentId: agentIdParam || defaultAgentId,
 		version: versionParam || undefined,
 	};
 }
