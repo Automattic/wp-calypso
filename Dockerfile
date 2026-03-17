@@ -99,6 +99,7 @@ FROM node:${node_version}-alpine AS app
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
 ENV NODE_ENV production
+ENV PATH="/root/.local/bin:${PATH}"
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
