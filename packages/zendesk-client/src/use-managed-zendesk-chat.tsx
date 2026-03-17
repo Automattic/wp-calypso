@@ -1,4 +1,9 @@
-import { NoticeConfig, ThinkingMessage } from '@automattic/agenttic-ui';
+import {
+	NoticeConfig,
+	ThinkingMessage,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
+} from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import {
@@ -299,32 +304,59 @@ export const useManagedZendeskChat = () => {
 
 	const agentticMessages = useMemo( () => {
 		const rawMessages = conversation?.messages ?? [];
-		const hasRated = rawMessages.some( ( msg ) => msg.metadata?.rated === true );
+		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
+		const hasRated = ratingMessage !== undefined;
+		let score: 'GOOD' | 'BAD' | null = null;
+
+		if ( hasRated && ratingMessage.payload ) {
+			score = JSON.parse( ratingMessage.payload ).csat_rating;
+		}
 
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
-			const isCSAT =
-				( message.source?.type === 'zd:surveys' || message.metadata?.type === 'csat' ) &&
-				message.actions &&
-				message.actions.length > 0;
+			const isCSAT = message.metadata?.type === 'csat';
+			let ticketId: number | null = null;
 
-			if ( isCSAT && ! hasRated ) {
-				const ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
+			if ( isCSAT ) {
+				ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
+				return {
+					...convertZendeskMessageToAgentticFormat( message ),
+					actions:
+						message.actions?.map( ( action ) => {
+							const label =
+								action.metadata.score === 'GOOD'
+									? __( 'Good 👍', '__i18n_text_domain__' )
+									: __( 'Needs improvement 👎', '__i18n_text_domain__' );
+							return {
+								...action,
+								label,
+								tooltip: label,
+								icon: action.metadata.score === 'GOOD' ? <ThumbsUpIcon /> : <ThumbsDownIcon />,
+								onClick: () => {
+									sendFeedbackMessage( action.metadata.score === 'GOOD' ? 'good' : 'bad' );
+								},
+								pressed: action.metadata.score === score,
+							};
+						} ) ?? [],
+				};
+			}
 
+			const isCSATForm =
+				message.type === 'form' &&
+				message.fields?.some( ( field ) => field.name === 'csat_comment' );
+
+			if ( isCSATForm ) {
 				return {
 					id: message.id || crypto.randomUUID(),
 					role: 'agent',
 					content: [
 						{
-							type: 'text',
-							text: __(
-								'Please help us improve. How would you rate your support experience?',
-								'__i18n_text_domain__'
-							),
-						},
-						{
 							type: 'component',
 							component: () => (
-								<CSATForm ticketId={ ticketId } onSendFeedback={ sendFeedbackMessage } />
+								<CSATForm
+									score={ score === 'GOOD' ? 'good' : 'bad' }
+									ticketId={ ticketId }
+									onSendFeedback={ sendFeedbackMessage }
+								/>
 							),
 						},
 					],

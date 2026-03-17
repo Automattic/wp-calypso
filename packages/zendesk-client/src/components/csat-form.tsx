@@ -12,10 +12,10 @@ export interface CSATFormProps {
 	ticketId: number | null;
 	onSendFeedback: ( score: 'good' | 'bad' ) => void;
 	className?: string;
+	score: 'good' | 'bad' | null;
 }
 
-export const CSATForm = ( { ticketId, onSendFeedback, className }: CSATFormProps ) => {
-	const [ score, setScore ] = useState< 'good' | 'bad' | '' >( '' );
+export const CSATForm = ( { ticketId, score, onSendFeedback, className }: CSATFormProps ) => {
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
 	const [ isFormHidden, setIsFormHidden ] = useState( false );
@@ -32,7 +32,6 @@ export const CSATForm = ( { ticketId, onSendFeedback, className }: CSATFormProps
 
 	const postScore = useCallback(
 		( selectedScore: 'good' | 'bad' ) => {
-			setScore( selectedScore );
 			onSendFeedback( selectedScore );
 		},
 		[ onSendFeedback ]
@@ -44,7 +43,6 @@ export const CSATForm = ( { ticketId, onSendFeedback, className }: CSATFormProps
 		}
 
 		setIsFormHidden( true );
-
 		if ( ! comment && ! reason ) {
 			return;
 		}
