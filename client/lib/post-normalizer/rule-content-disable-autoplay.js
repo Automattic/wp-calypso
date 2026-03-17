@@ -26,8 +26,10 @@ export function disableAutoPlayOnMedia( post, dom ) {
 	}
 	dom.querySelectorAll( 'audio, video' ).forEach( ( el ) => {
 		el.autoplay = false;
-		el.controls = true;
-		el.preload = 'metadata';
+		if ( el.tagName === 'VIDEO' ) {
+			el.controls = true;
+			el.preload = 'metadata';
+		}
 	} );
 	return post;
 }

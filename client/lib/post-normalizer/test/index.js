@@ -242,14 +242,12 @@ describe( 'index', () => {
 			} );
 		} );
 
-		test( 'should strip autoplay attributes from audio and add controls and preload', () => {
+		test( 'should strip autoplay attributes from audio', () => {
 			const post = {
 				content: '<audio autoplay="1"></audio>',
 			};
 			const normalized = withContentDOM( [ disableAutoPlayOnMedia ] )( post );
-			expect( normalized ).toEqual( {
-				content: '<audio controls="" preload="metadata"></audio>',
-			} );
+			expect( normalized ).toEqual( { content: '<audio></audio>' } );
 		} );
 
 		test( 'should strip autoplay like attributes from iframes', () => {
