@@ -1,3 +1,9 @@
+// Packages that Jest can't resolve in this environment
+jest.mock( '@automattic/oauth-token', () => ( {} ), { virtual: true } );
+jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
+jest.mock( 'wpcom-proxy-request', () => ( {} ), { virtual: true } );
+jest.mock( '@wordpress/api-fetch', () => ( {} ), { virtual: true } );
+
 import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
 import { getAgentConfig } from '../agent-config';
 
