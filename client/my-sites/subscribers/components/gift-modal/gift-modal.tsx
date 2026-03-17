@@ -40,9 +40,9 @@ const GiftSubscriptionModal = ( {
 		} );
 	}, [ siteId ] );
 
-	const title = translate( 'Gift a subscription' );
+	const title = translate( 'Complimentary subscription' );
 
-	const text = translate( 'Select a plan to gift to this user: ' );
+	const text = translate( 'Select a plan to give complimentary access to this user: ' );
 
 	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		const giftDetails: Gift = {
@@ -62,7 +62,7 @@ const GiftSubscriptionModal = ( {
 			requestAddGift(
 				siteId,
 				giftDetails,
-				translate( 'Gifted subscription to user "%(username)s".', {
+				translate( 'Gave complimentary subscription to user "%(username)s".', {
 					args: {
 						username: username,
 					},

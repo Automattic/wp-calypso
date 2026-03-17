@@ -418,7 +418,7 @@ export default function SubscriberDataViews( {
 		if ( couponsAndGiftsEnabled ) {
 			baseActions.push( {
 				id: 'gift',
-				label: translate( 'Gift a subscription' ),
+				label: translate( 'Comp a subscription' ),
 				isEligible: ( subscriber: Subscriber ) =>
 					!! ( subscriber.user_id || subscriber.email_address ),
 				callback: ( items: Subscriber[] ) => {
