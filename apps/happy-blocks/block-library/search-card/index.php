@@ -132,31 +132,23 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 		);
 		?>
 	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
-			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
-			<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
-			<fieldset class="support-search-form-container">
-				<?php
-				load_template(
-					__DIR__ . '/search-form.php',
-					false,
-					array(
-						'form_id'             => isset( $args['form_id'] ) ? $args['form_id'] : '',
-						'form_class'          => isset( $args['form_class'] ) ? $args['form_class'] : '',
-						'input_id'            => isset( $args['input_id'] ) ? $args['input_id'] : '',
-						'input_class'         => isset( $args['input_class'] ) ? $args['input_class'] : '',
-						'placeholder'         => isset( $args['placeholder'] ) ? $args['placeholder'] : '',
-						'enable_odie_answers' => $enable_odie_answers,
-					)
-				);
-				?>
+		<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+		<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 
-				<ul class="search-terms">
-					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email' ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
-				</ul>
-			</fieldset>
+		<?php
+		load_template(
+			__DIR__ . '/search-form.php',
+			false,
+			array(
+				'form_id'             => isset( $args['form_id'] ) ? $args['form_id'] : '',
+				'form_class'          => isset( $args['form_class'] ) ? $args['form_class'] : '',
+				'input_id'            => isset( $args['input_id'] ) ? $args['input_id'] : '',
+				'input_class'         => isset( $args['input_class'] ) ? $args['input_class'] : '',
+				'placeholder'         => isset( $args['placeholder'] ) ? $args['placeholder'] : '',
+				'enable_odie_answers' => $enable_odie_answers,
+			)
+		);
+		?>
 	</div>
 	<?php endif; ?>
 </div>
