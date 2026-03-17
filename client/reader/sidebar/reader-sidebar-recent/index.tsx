@@ -39,7 +39,7 @@ type Props = {
 	translate: ( key: string ) => string;
 };
 
-const SITE_DISPLAY_CUTOFF = 8;
+const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
@@ -56,7 +56,6 @@ const ReaderSidebarRecent = ( {
 	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
-	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 	const selectedSite = sites.find( ( site ) => site.feed_ID === selectedSiteFeedId );
 	if ( selectedSite && ! sitesToShow.includes( selectedSite ) ) {
