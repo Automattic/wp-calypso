@@ -1,11 +1,11 @@
-const WPCOM_SUBDOMAIN_SUFFIXES = [ '.wordpress.com', '.wp.com' ];
+const WPCOM_SUBDOMAIN_SUFFIX = '.wordpress.com';
 
 /**
  * Detects whether a search query is for a WordPress.com subdomain
- * (e.g. "mysite.wordpress.com" or "mysite.wp.com").
+ * (e.g. "mysite.wordpress.com").
  */
 export function isWpcomSubdomainQuery( query: string ): boolean {
-	return WPCOM_SUBDOMAIN_SUFFIXES.some( ( suffix ) => query.endsWith( suffix ) );
+	return query.endsWith( WPCOM_SUBDOMAIN_SUFFIX );
 }
 
 /**
@@ -13,10 +13,8 @@ export function isWpcomSubdomainQuery( query: string ): boolean {
  * subdomain label (e.g. "mysite.wordpress.com" → "mysite").
  */
 export function stripWpcomSubdomainSuffix( query: string ): string {
-	for ( const suffix of WPCOM_SUBDOMAIN_SUFFIXES ) {
-		if ( query.endsWith( suffix ) ) {
-			return query.slice( 0, -suffix.length );
-		}
+	if ( query.endsWith( WPCOM_SUBDOMAIN_SUFFIX ) ) {
+		return query.slice( 0, -WPCOM_SUBDOMAIN_SUFFIX.length );
 	}
 	return query;
 }
