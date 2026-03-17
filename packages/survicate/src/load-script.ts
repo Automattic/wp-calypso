@@ -1,4 +1,5 @@
 import { loadScript } from '@automattic/load-script';
+import debug from './debug';
 
 /**
  * Checks whether the Survicate script is already loaded on the page.
@@ -12,5 +13,10 @@ export function isSurvicateScriptLoaded(): boolean {
  * Deduplication is handled by @automattic/load-script.
  */
 export function loadSurvicateScript( workspaceId: string ): Promise< void > {
-	return loadScript( `https://survey.survicate.com/workspaces/${ workspaceId }/web_surveys.js` );
+	debug( 'Loading Survicate script for workspace %s', workspaceId );
+	return loadScript(
+		`https://survey.survicate.com/workspaces/${ workspaceId }/web_surveys.js`
+	).then( () => {
+		debug( 'Survicate script loaded successfully' );
+	} );
 }

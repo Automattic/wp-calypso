@@ -7,10 +7,9 @@ import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -104,7 +103,6 @@ export default function SubscriberDataViews( {
 	isUnverified,
 	subscriberId,
 }: SubscriberDataViewsProps ) {
-	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
@@ -182,7 +180,8 @@ export default function SubscriberDataViews( {
 				subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
 					? parseInt( subscriberId, 10 )
 					: undefined,
-			userId: subscriberDetails?.user_id,
+			userId:
+				typeof subscriberDetails?.user_id === 'number' ? subscriberDetails.user_id : undefined,
 			enabled: !! subscriberId && !! siteId,
 		} );
 
@@ -395,7 +394,7 @@ export default function SubscriberDataViews( {
 			return [];
 		}
 
-		const baseActions = [
+		const baseActions: Action< Subscriber >[] = [
 			{
 				id: 'view',
 				label: translate( 'View' ),
@@ -420,24 +419,11 @@ export default function SubscriberDataViews( {
 			baseActions.push( {
 				id: 'gift',
 				label: translate( 'Gift a subscription' ),
+				isEligible: ( subscriber: Subscriber ) =>
+					!! ( subscriber.user_id || subscriber.email_address ),
 				callback: ( items: Subscriber[] ) => {
 					const subscriber = items[ 0 ];
 					if ( ! subscriber ) {
-						return;
-					}
-
-					// TODO: Subscriber.user_id is typed as number but can be a string
-					// (e.g., email address) at runtime. The type should be widened to
-					// number | string and downstream consumers updated to validate.
-					if ( ! subscriber.user_id || isNaN( Number( subscriber.user_id ) ) ) {
-						dispatch(
-							errorNotice(
-								translate(
-									'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
-								),
-								{ duration: 10000 }
-							)
-						);
 						return;
 					}
 
@@ -454,7 +440,6 @@ export default function SubscriberDataViews( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
-		dispatch,
 	] );
 
 	const handleViewChange = useCallback(

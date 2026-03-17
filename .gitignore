@@ -127,8 +127,6 @@ packages/plans-grid-next/static/mockServiceWorker.js
 .phpunit.result.cache
 .phpunit.cache
 
-.docusaurus
-
 # Playwright
 playwright-report/
 .playwright-mcp/

@@ -10,9 +10,23 @@ jest.mock( 'calypso/components/search-themes', () => ( {
 	),
 } ) );
 
+jest.mock( '../../use-theme-showcase-logged-out-seo-content', () => ( {
+	__esModule: true,
+	default: () => ( {
+		title: 'WordPress Themes | 1000s of Options for All WordPress Sites',
+		header: 'Beautiful themes for every idea',
+		description:
+			'Choose from thousands of free and premium themes to launch your blog, portfolio, store, or business—and customize every detail to make it your own.',
+		metaDescription:
+			'Choose from thousands of free and premium themes to launch your blog, portfolio, store, or business—and customize every detail to make it your own.',
+	} ),
+} ) );
+
 describe( 'HeroModern', () => {
 	const defaultProps = {
+		filter: '',
 		searchQuery: '',
+		tier: '',
 		onSearch: jest.fn(),
 		onSearchTracksEvent: jest.fn(),
 	};

@@ -80,6 +80,7 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 		this.showcaseRef = createRef();
+		this.sentinelRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -270,6 +271,15 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// In the modern showcase, scroll to the filter bar sentinel when sticky.
+		if ( this.isThemeShowcaseModern() ) {
+			const sentinel = this.sentinelRef.current;
+			if ( sentinel && sentinel.getBoundingClientRect().top < 0 ) {
+				sentinel.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			}
+			return;
+		}
+
 		// Scroll to the top of the showcase
 		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
@@ -746,6 +756,7 @@ class ThemeShowcase extends Component {
 							) }
 							{ this.isThemeShowcaseModern() ? (
 								<FilterBarModern
+									sentinelRef={ this.sentinelRef }
 									categories={ Object.values( tabFilters ) }
 									selectedCategory={ this.getSelectedTabFilter().key }
 									onCategorySelect={ ( category ) =>

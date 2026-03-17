@@ -239,35 +239,28 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 					{
 						label: __( 'Take bookings for a hair salon' ),
 						prompt: __(
-							"Create a trendy, fashion-forward hair salon website with a sleek, modern, polished aesthetic. Use black, cool gray, white, and accents of electric blue, emerald, or magenta. Apply stylish, confident copy and elegant sans-serif fonts like Bonita. Highlight the salon's unique skills and ensure the design feels vibrant and engaging.",
+							'Create a sleek, modern website for a trendy, fashion-forward hair salon. Use a charcoal gray and soft white palette with vibrant, polished accents. Highlight the salon’s unique skills and craftsmanship. Write stylish, engaging, confident copy. Design with a clean, elegant sans-serif font similar to Bonita. Emphasize bold visuals, refined layouts, and a premium, contemporary feel.',
 							'site-spec'
 						),
 					},
 					{
 						label: __( 'Offer personal training sessions' ),
 						prompt: __(
-							'Create a high-intensity fitness instructor website with an energetic, bold, dynamic aesthetic using black, deep red, electric orange, and charcoal gray. Use urgent, inspiring, direct copy and powerful sport-style sans-serif fonts like Jumpshot. Design the site to motivate users to book a training session.',
+							'Create a high-intensity website for a fitness instructor focused on driving session bookings. Use a deep red and charcoal gray palette with bold, dynamic visuals and powerful layouts. Write urgent, inspiring, direct copy that pushes action. Highlight transformation, strength, and results. Use a bold, energetic sans-serif font similar to Jumpshot. Feature strong CTAs, motion-inspired sections, and an aggressive, performance-driven feel.',
 							'site-spec'
 						),
 					},
 					{
 						label: __( 'Create an online plant shop' ),
 						prompt: __(
-							'Create an eco-friendly plant store website with a natural, earthy, calming aesthetic using forest green, moss, terra cotta, warm beige, and natural white. Use nurturing, organic copy and fonts like Mollani Nature Script or Plantae. Showcase the full breadth of products with a fresh, inviting design.',
-							'site-spec'
-						),
-					},
-					{
-						label: __( 'Host cooking workshops' ),
-						prompt: __(
-							'Create a fun, family-friendly cooking workshop website with a warm, inviting, colorful, playful aesthetic. Use bright yellow, orange, tomato red, warm brown, and cream tones. Apply warm, appetizing copy and friendly, whimsical fonts like Pacifico or Amatic SC. Design the site to encourage users to book a workshop.',
+							'Create an eco-friendly website for a plant store that showcases a wide range of beautiful greenery and botanical products. Use a forest green and warm beige palette with natural, earthy, calming visuals. Write nurturing, informative, organic copy that builds trust and inspires mindful living. Use a nature-inspired script like Mollani or a clean, friendly sans-serif like Plantae. Design a fresh, minimal layout that feels grounded and vibrant.',
 							'site-spec'
 						),
 					},
 					{
 						label: __( 'Sell handmade jewelry' ),
 						prompt: __(
-							'Create a handmade, one-of-a-kind jewelry store website with a rustic, intricate, elegant aesthetic. Use deep browns, terracotta, moss green, metallic gold or silver, and soft neutrals. Apply personal, inviting copy and refined script or serif fonts like Parisienne or Cormorant Garamond. Design the site to encourage users to buy online.',
+							'Create an elegant eCommerce website for a handmade, one-of-a-kind jewelry store focused on driving online purchases. Use a deep brown and metallic gold palette with rustic, intricate, refined visuals. Write personal, inviting, and distinctive copy that highlights craftsmanship and authenticity. Use a delicate script like Parisienne or a sophisticated serif like Cormorant Garamond. Feature rich product imagery, warm storytelling, and clear purchase CTAs.',
 							'site-spec'
 						),
 					},
