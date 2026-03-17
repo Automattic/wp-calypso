@@ -12,6 +12,7 @@ import './style.scss';
 
 interface Props {
 	freeSuggestion?: string;
+	unavailableDomain?: string;
 	existingSiteUrl?: string;
 	onSkip: () => void;
 	disabled?: boolean;
@@ -20,6 +21,7 @@ interface Props {
 
 const DomainSearchSkipSuggestion = ( {
 	freeSuggestion,
+	unavailableDomain,
 	existingSiteUrl,
 	onSkip,
 	disabled,
@@ -28,6 +30,7 @@ const DomainSearchSkipSuggestion = ( {
 	let title;
 	let subtitle;
 	let buttonText = __( 'Skip purchase' );
+	let showButton = true;
 
 	if ( existingSiteUrl ) {
 		const [ domain, ...tld ] = existingSiteUrl.split( '.' );
@@ -47,8 +50,24 @@ const DomainSearchSkipSuggestion = ( {
 				tld: <strong style={ { whiteSpace: 'nowrap' } } />,
 			}
 		);
+	} else if ( freeSuggestion && unavailableDomain ) {
+		title = sprintf(
+			// translators: %(domain)s is the WordPress.com subdomain the user searched for
+			__( '%(domain)s is not available' ),
+			{ domain: unavailableDomain }
+		);
+		subtitle = sprintf(
+			// translators: %(suggestion)s is an alternative free WordPress.com subdomain
+			__( 'Try %(suggestion)s instead?' ),
+			{ suggestion: freeSuggestion }
+		);
+		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = __( 'Start free with a WordPress.com subdomain' );
+		title = sprintf(
+			// translators: %(domain)s is the free WordPress.com subdomain
+			__( 'Start free with %(domain)s' ),
+			{ domain: freeSuggestion }
+		);
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = __( 'Start Free' );
 	}
@@ -68,18 +87,22 @@ const DomainSearchSkipSuggestion = ( {
 			}
 			subtitle={ subtitle && <Text>{ subtitle }</Text> }
 			right={
-				<Button
-					className="domain-search-skip-suggestion__btn"
-					variant="secondary"
-					// translators: %(domain)s is the domain name
-					label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), { domain } ) }
-					onClick={ onSkip }
-					disabled={ disabled }
-					isBusy={ isBusy && ! disabled }
-					__next40pxDefaultSize
-				>
-					{ buttonText }
-				</Button>
+				showButton ? (
+					<Button
+						className="domain-search-skip-suggestion__btn"
+						variant="secondary"
+						// translators: %(domain)s is the domain name
+						label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), {
+							domain,
+						} ) }
+						onClick={ onSkip }
+						disabled={ disabled }
+						isBusy={ isBusy && ! disabled }
+						__next40pxDefaultSize
+					>
+						{ buttonText }
+					</Button>
+				) : undefined
 			}
 		/>
 	);

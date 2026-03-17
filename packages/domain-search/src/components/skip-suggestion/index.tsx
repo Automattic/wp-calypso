@@ -1,4 +1,5 @@
 import { useIsMutating, useQuery } from '@tanstack/react-query';
+import { isWpcomSubdomainQuery, stripWpcomSubdomainSuffix } from '../../helpers';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchSkipSuggestion } from '../../ui';
 
@@ -7,7 +8,10 @@ const SkipSuggestion = () => {
 
 	const isMutating = useIsMutating();
 
-	const { data: suggestion } = useQuery( queries.freeSuggestion( query ) );
+	const isWpcomSubdomain = isWpcomSubdomainQuery( query );
+	const normalizedQuery = isWpcomSubdomain ? stripWpcomSubdomainSuffix( query ) : query;
+
+	const { data: suggestion } = useQuery( queries.freeSuggestion( normalizedQuery ) );
 
 	if ( currentSiteUrl ) {
 		return (
@@ -20,9 +24,12 @@ const SkipSuggestion = () => {
 	}
 
 	if ( suggestion ) {
+		const isUnavailable = isWpcomSubdomain && suggestion.domain_name !== query;
+
 		return (
 			<DomainSearchSkipSuggestion
 				freeSuggestion={ suggestion.domain_name }
+				unavailableDomain={ isUnavailable ? query : undefined }
 				onSkip={ () => events.onSkip( suggestion ) }
 				disabled={ !! isMutating }
 			/>
