@@ -31,7 +31,7 @@
 	display: flex;
 	margin: 0 auto;
 	max-width: 1220px;
-	padding: 40px 24px 16px 24px; // Top padding adjusted +24px to accommodate the external tier label
+	padding: 24px;
 
 	@media ( min-width: $break-wide ) {
 		padding-left: 0;
@@ -78,16 +78,31 @@
 
 .filter-bar-modern__tier-select {
 	flex-shrink: 0;
-	margin-top: -24px; // Accommodate the external label
 	min-width: 120px;
 	padding-left: 16px;
+	position: relative;
+
+	.components-base-control__label {
+		color: var( --studio-gray-60 );
+		font-size: 11px;
+		left: 28px; // 16px padding-left + 12px inner padding
+		line-height: 1;
+		margin-bottom: 0;
+		pointer-events: none;
+		position: absolute;
+		text-transform: none;
+		top: 8px;
+		z-index: 1;
+	}
 
 	.components-input-control__container {
 		border-radius: 4px;
 	}
 
 	button {
+		font-size: 14px;
 		height: 44px;
+		padding-top: 14px;
 	}
 
 	.components-custom-select-control__item.is-selected {

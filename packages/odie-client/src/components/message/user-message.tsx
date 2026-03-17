@@ -1,4 +1,5 @@
 import {
+	getConversationLimitReachedMessage,
 	getOdieForwardToForumsMessage,
 	getOdieForwardToZendeskMessage,
 	getOdieThirdPartyMessageContent,
@@ -15,7 +16,9 @@ import {
 	getIsLastBotMessage,
 	getIsErrorMessage,
 } from '../../utils';
-import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
+import getMostRecentOpenLiveInteraction, {
+	hasReachedConversationLimit,
+} from '../notices/get-most-recent-open-live-interaction';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -94,6 +97,10 @@ export const UserMessage = ( {
 
 		if ( chat.provider === 'zendesk' ) {
 			return '';
+		}
+
+		if ( hasReachedConversationLimit() ) {
+			return getConversationLimitReachedMessage().content;
 		}
 
 		return getDisplayMessage(

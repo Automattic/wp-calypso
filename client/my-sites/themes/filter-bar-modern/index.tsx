@@ -101,13 +101,9 @@ const FilterBarModern = ( {
 		const selectedTierObj = tiers.find( ( t ) => t.key === selectedTier );
 		return {
 			key: selectedTier,
-			name: String(
-				translate( 'View: %s', {
-					args: selectedTierObj?.name ?? '',
-				} )
-			),
+			name: selectedTierObj?.name ?? '',
 		};
-	}, [ tiers, selectedTier, translate ] );
+	}, [ tiers, selectedTier ] );
 
 	return (
 		<>

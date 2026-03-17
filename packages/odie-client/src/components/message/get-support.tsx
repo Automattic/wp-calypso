@@ -7,7 +7,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
+import getMostRecentOpenLiveInteraction, {
+	hasReachedConversationLimit,
+} from '../notices/get-most-recent-open-live-interaction';
 
 import './get-support.scss';
 
@@ -49,6 +51,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
+	const isConversationLimitReached = hasReachedConversationLimit();
 	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
@@ -75,6 +78,19 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						onClickAdditionalEvent?.( 'email' );
 						params.set( 'wapuuFlow', 'true' );
 						navigate( '/contact-form?' + params.toString() );
+					},
+				} );
+			} else if ( isConversationLimitReached ) {
+				buttons.push( {
+					text: (
+						<>
+							{ __( 'View my conversations', __i18n_text_domain__ ) }
+							<Icon icon={ chevronRight } />
+						</>
+					),
+					action: async () => {
+						trackEvent( 'chat_view_support_history_from_limit' );
+						navigate( '/chat-history' );
 					},
 				} );
 			} else {
