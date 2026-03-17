@@ -606,7 +606,7 @@ function getFields( {
 							<ActionList.ActionItem
 								title={ __( 'Subscription renewal' ) }
 								description={ ( (): string => {
-									return typeof helpText === 'string' ? helpText : helpText?.props?.children ?? '';
+									return typeof helpText === 'string' ? helpText : '';
 								} )() }
 								actions={ <></> }
 							/>
