@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 
-const useAddSitesModalNotices = () => {
+const useAddSitesNotices = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -75,4 +75,4 @@ const useAddSitesModalNotices = () => {
 	};
 };
 
-export default useAddSitesModalNotices;
+export default useAddSitesNotices;
