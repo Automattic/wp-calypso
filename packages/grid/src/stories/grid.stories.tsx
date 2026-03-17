@@ -268,6 +268,97 @@ export const AutoRowHeight: StoryObj< typeof Grid > = {
 };
 
 /**
+ * Comparison: hardcoded `width: 3` vs `fillWidth: true`.
+ *
+ * Both grids share the same layout state and have edit mode enabled.
+ * The top grid simulates the CSS approach — the fill item has a
+ * hardcoded `width: 3` (the equivalent of `grid-column: 2 / -3`
+ * in 6 columns). The bottom grid uses `fillWidth: true`.
+ *
+ * Drag items to reorder or resize sidebars to see the difference:
+ * the hardcoded grid breaks, the fillWidth grid adapts.
+ */
+export const FillWidthVsCss: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	render: function FillWidthVsCssStory() {
+		const [ cssLayout, setCssLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'left', width: 1, height: 1, order: 0 },
+			{ key: 'fill', width: 3, height: 1, order: 1 },
+			{ key: 'right', width: 2, height: 1, order: 2 },
+		] );
+
+		const [ fillLayout, setFillLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'left', width: 1, height: 1, order: 0 },
+			{ key: 'fill', fillWidth: true, height: 1, order: 1 },
+			{ key: 'right', width: 2, height: 1, order: 2 },
+		] );
+
+		const label = {
+			fontFamily: 'monospace',
+			fontSize: 12,
+			margin: '24px 0 8px',
+			color: '#666',
+		};
+
+		const cssItems = Object.fromEntries( cssLayout.map( ( i ) => [ i.key, i ] ) );
+		const fillItems = Object.fromEntries( fillLayout.map( ( i ) => [ i.key, i ] ) );
+
+		return (
+			<div style={ { width: '100%', maxWidth: 900 } }>
+				<h3 style={ { fontFamily: 'sans-serif', fontSize: 14 } }>
+					Hardcoded: width: 3 (equivalent to grid-column: 2 / -3)
+				</h3>
+				<p style={ label }>
+					Drag or resize — the fill item stays at width: { cssItems.fill?.width ?? 3 }. It overflows
+					or leaves gaps when siblings change.
+				</p>
+				<Grid
+					layout={ cssLayout }
+					columns={ 6 }
+					rowHeight={ 80 }
+					editMode
+					onChangeLayout={ setCssLayout }
+				>
+					<Card key="left" color="#607d8b">
+						left (w:{ cssItems.left?.width ?? 1 })
+					</Card>
+					<Card key="fill" color="#e53935">
+						hardcoded w:{ cssItems.fill?.width ?? 3 }
+					</Card>
+					<Card key="right" color="#607d8b">
+						right (w:{ cssItems.right?.width ?? 2 })
+					</Card>
+				</Grid>
+
+				<h3 style={ { fontFamily: 'sans-serif', fontSize: 14, marginTop: 32 } }>
+					fillWidth: computed dynamically
+				</h3>
+				<p style={ label }>
+					Drag or resize — the fill item recalculates its span based on siblings and column count.
+				</p>
+				<Grid
+					layout={ fillLayout }
+					columns={ 6 }
+					rowHeight={ 80 }
+					editMode
+					onChangeLayout={ setFillLayout }
+				>
+					<Card key="left" color="#607d8b">
+						left (w:{ fillItems.left?.width ?? 1 })
+					</Card>
+					<Card key="fill" color="#2196f3">
+						fillWidth — adapts
+					</Card>
+					<Card key="right" color="#607d8b">
+						right (w:{ fillItems.right?.width ?? 2 })
+					</Card>
+				</Grid>
+			</div>
+		);
+	},
+};
+
+/**
  * Static fillWidth without responsive behavior.
  *
  * **`columns=6`, no `minColumnWidth`**<br />
