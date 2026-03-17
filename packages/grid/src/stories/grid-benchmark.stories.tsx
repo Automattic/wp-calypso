@@ -72,14 +72,16 @@ function generateLayout(
 	for ( let i = 0; i < count; i++ ) {
 		const useFull = fullEvery > 0 && i % fullEvery === 0;
 		const useFill = ! useFull && fillEvery > 0 && i % fillEvery === 0;
-		items.push( {
-			key: `item-${ i }`,
-			width: useFill || useFull ? undefined : ( i % 3 ) + 1,
-			height: 1,
-			order: i,
-			fillWidth: useFill || undefined,
-			fullWidth: useFull || undefined,
-		} );
+		const item: GridLayoutItem = useFull
+			? { key: `item-${ i }`, height: 1, order: i, fullWidth: true }
+			: {
+					key: `item-${ i }`,
+					width: useFill ? undefined : ( i % 3 ) + 1,
+					height: 1,
+					order: i,
+					fillWidth: useFill || undefined,
+			  };
+		items.push( item );
 	}
 	return items;
 }
