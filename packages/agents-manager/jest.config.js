@@ -3,4 +3,7 @@ module.exports = {
 	testEnvironment: 'jsdom',
 	testMatch: [ '<rootDir>/**/__tests__/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	moduleFileExtensions: [ 'ts', 'tsx', 'js', 'json' ],
+	moduleNameMapper: {
+		'\\.scss$': '<rootDir>/src/__mocks__/style-mock.js',
+	},
 };

@@ -11,6 +11,8 @@ describe( 'getAgentConfig', () => {
 	const originalWindow = global.window;
 
 	const mockLocation = ( search: string ) => {
+		// @ts-expect-error - Mocking window
+		delete global.window;
 		global.window = {
 			location: { search },
 		} as Window & typeof globalThis;
