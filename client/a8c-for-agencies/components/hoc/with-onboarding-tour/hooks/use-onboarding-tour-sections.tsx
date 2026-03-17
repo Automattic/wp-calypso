@@ -97,8 +97,71 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
+				id: 'partner-directory',
+				title: translate( 'Get more leads' ),
+				bannerImage: OnboardingTourBannerPartnerDirectory,
+				isDarkBanner: true,
+				content: {
+					title: translate( 'Get leads from multiple agency directories' ),
+					descriptions: [
+						translate(
+							"By partnering with us, you're eligible to be listed on up to four agency directories across our Woo, Pressable, WordPress.com, and Jetpack sites."
+						),
+						translate(
+							'To get listed on these directories, you have to qualify for our Agency Partner tier and demonstrate expertise with each of the brands that you would like to be listed with.'
+						),
+					],
+				},
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'Check out Partner Directories' ),
+							variant: 'secondary',
+							href: A4A_PARTNER_DIRECTORY_LINK,
+							onClick: () => onExplore( 'partner-directory', onClose ),
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => onNextBenefit( 'partner-directory', onNext ),
+						},
+					];
+				},
+			},
+			{
+				id: 'referrals',
+				title: translate( 'Earn commissions' ),
+				bannerImage: OnboardingTourBannerReferrals,
+				content: {
+					title: translate( 'Track referrals and commissions with ease' ),
+					descriptions: [
+						translate(
+							"Send referrals through the marketplace, then head to your referrals dashboard to view total commissions, upcoming payouts, and the status of your clients' products and hosting."
+						),
+						translate(
+							"You'll earn a 20% recurring commission for referring Pressable or WordPress.com hosting, and a 50% recurring commission for referring Woo or Jetpack products."
+						),
+					],
+				},
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'View Referrals Dashboard' ),
+							variant: 'secondary',
+							href: A4A_REFERRALS_DASHBOARD,
+							onClick: () => onExplore( 'referrals', onClose ),
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => onNextBenefit( 'referrals', onNext ),
+						},
+					];
+				},
+			},
+			{
 				id: 'sites',
-				title: translate( 'Sites' ),
+				title: translate( 'Manage client sites' ),
 				bannerImage: OnboardingTourBannerSites,
 				content: {
 					title: translate( 'One dashboard. Every site. Seamless management.' ),
@@ -142,7 +205,7 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'marketplace',
-				title: translate( 'Marketplace' ),
+				title: translate( 'Buy products & hosting' ),
 				bannerImage: OnboardingTourBannerMarketplace,
 				isDarkBanner: true,
 				content: {
@@ -171,68 +234,8 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'purchases',
-				title: translate( 'Purchases' ),
-				bannerImage: OnboardingTourBannerPurchases,
-				isDarkBanner: true,
-				content: {
-					title: translate( 'Easily manage all your purchases in one spot.' ),
-					descriptions: [
-						translate(
-							'Assign Jetpack products and Woo extensions, launch WordPress.com sites, manage Pressable hosting, and access all your billing and invoices—no digging required.'
-						),
-					],
-				},
-				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
-					return [
-						{
-							label: translate( 'View purchases' ),
-							variant: 'secondary',
-							href: A4A_PURCHASES_LINK,
-							onClick: () => onExplore( 'purchases', onClose ),
-						},
-						{
-							label: translate( 'Next benefit' ),
-							variant: 'primary',
-							onClick: () => onNextBenefit( 'purchases', onNext ),
-						},
-					];
-				},
-			},
-			{
-				id: 'referrals',
-				title: translate( 'Referrals' ),
-				bannerImage: OnboardingTourBannerReferrals,
-				content: {
-					title: translate( 'Track referrals and commissions with ease' ),
-					descriptions: [
-						translate(
-							"Send referrals through the marketplace, then head to your referrals dashboard to view total commissions, upcoming payouts, and the status of your clients' products and hosting."
-						),
-						translate(
-							"You'll earn a 20% recurring commission for referring Pressable or WordPress.com hosting, and a 50% recurring commission for referring Woo or Jetpack products."
-						),
-					],
-				},
-				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
-					return [
-						{
-							label: translate( 'View Referrals Dashboard' ),
-							variant: 'secondary',
-							href: A4A_REFERRALS_DASHBOARD,
-							onClick: () => onExplore( 'referrals', onClose ),
-						},
-						{
-							label: translate( 'Next benefit' ),
-							variant: 'primary',
-							onClick: () => onNextBenefit( 'referrals', onNext ),
-						},
-					];
-				},
-			},
-			{
 				id: 'migrations',
-				title: translate( 'Migrations' ),
+				title: translate( 'Move to better hosting' ),
 				bannerImage: OnboardingTourBannerMigrations,
 				content: {
 					title: translate( 'Better hosting for your clients. Up to $10K for you.' ),
@@ -263,7 +266,7 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'woopayments',
-				title: translate( 'WooPayments' ),
+				title: translate( 'Monetize Woo stores' ),
 				bannerImage: OnboardingTourBannerWooPayments,
 				isDarkBanner: true,
 				content: {
@@ -298,7 +301,7 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'reports',
-				title: translate( 'Reports' ),
+				title: translate( 'Report to clients' ),
 				bannerImage: OnboardingTourBannerReports,
 				isDarkBanner: true,
 				content: {
@@ -329,40 +332,8 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
-				id: 'partner-directory',
-				title: translate( 'Partner Directories' ),
-				bannerImage: OnboardingTourBannerPartnerDirectory,
-				isDarkBanner: true,
-				content: {
-					title: translate( 'Get leads from multiple agency directories' ),
-					descriptions: [
-						translate(
-							"By partnering with us, you're eligible to be listed on up to four agency directories across our Woo, Pressable, WordPress.com, and Jetpack sites."
-						),
-						translate(
-							'To get listed on these directories, you have to qualify for our Agency Partner tier and demonstrate expertise with each of the brands that you would like to be listed with.'
-						),
-					],
-				},
-				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
-					return [
-						{
-							label: translate( 'Check out Partner Directories' ),
-							variant: 'secondary',
-							href: A4A_PARTNER_DIRECTORY_LINK,
-							onClick: () => onExplore( 'partner-directory', onClose ),
-						},
-						{
-							label: translate( 'Next benefit' ),
-							variant: 'primary',
-							onClick: () => onNextBenefit( 'partner-directory', onNext ),
-						},
-					];
-				},
-			},
-			{
 				id: 'agency-tiers',
-				title: translate( 'Agency Tiers' ),
+				title: translate( 'Level up your agency' ),
 				bannerImage: OnboardingTourBannerAgencyTiers,
 				content: {
 					title: translate( 'Resources and rewards tailored for your growth' ),
@@ -390,7 +361,7 @@ export default function useOnboardingTourSections() {
 			},
 			{
 				id: 'team',
-				title: translate( 'Team' ),
+				title: translate( 'Collaborate as a team' ),
 				bannerImage: OnboardingTourBannerTeam,
 				content: {
 					title: translate( 'Invite your team. Reclaim your time.' ),
@@ -417,8 +388,37 @@ export default function useOnboardingTourSections() {
 				},
 			},
 			{
+				id: 'purchases',
+				title: translate( 'Manage billing' ),
+				bannerImage: OnboardingTourBannerPurchases,
+				isDarkBanner: true,
+				content: {
+					title: translate( 'Easily manage all your purchases in one spot.' ),
+					descriptions: [
+						translate(
+							'Assign Jetpack products and Woo extensions, launch WordPress.com sites, manage Pressable hosting, and access all your billing and invoices—no digging required.'
+						),
+					],
+				},
+				renderableActions: ( { onNext, onClose }: RenderableActionProps ): RenderableAction[] => {
+					return [
+						{
+							label: translate( 'View purchases' ),
+							variant: 'secondary',
+							href: A4A_PURCHASES_LINK,
+							onClick: () => onExplore( 'purchases', onClose ),
+						},
+						{
+							label: translate( 'Next benefit' ),
+							variant: 'primary',
+							onClick: () => onNextBenefit( 'purchases', onNext ),
+						},
+					];
+				},
+			},
+			{
 				id: 'growth-call',
-				title: translate( 'Free growth call' ),
+				title: translate( 'Get growth advice' ),
 				bannerImage: OnboardingTourBannerGrowthCall,
 				isDarkBanner: true,
 				content: {
