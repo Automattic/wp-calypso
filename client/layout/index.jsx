@@ -439,7 +439,11 @@ class Layout extends Component {
 					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+					<AsyncLoad
+						require={ loadCookieBanner }
+						placeholder={ null }
+						loadFailureFallback={ null }
+					/>
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require={ loadAppBanner } placeholder={ null } />
