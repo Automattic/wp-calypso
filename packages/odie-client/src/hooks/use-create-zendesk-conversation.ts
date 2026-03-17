@@ -57,6 +57,10 @@ export const useCreateZendeskConversation = () => {
 			trackEvent( 'conversation_limit_reached', {
 				created_from: createdFrom,
 			} );
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				status: 'loaded',
+			} ) );
 			return;
 		}
 
