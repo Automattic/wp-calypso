@@ -201,8 +201,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# after URL resolution. This step is non-blocking and only logs data.
 				# Remove this step after data collection is complete.
 
-				POLL_INTERVAL=5
-				MAX_WAIT=120
+				POLL_INTERVAL=1
+				MAX_WAIT=60
 
 				# Build a space-separated list of label=url pairs to probe.
 				# Word splitting in the for loop below is intentional.
