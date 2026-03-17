@@ -70,6 +70,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'verto',
+		paths: [ '/verto' ],
+		module: 'calypso/verto',
+		title: 'Calypso Agentic Framework',
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',

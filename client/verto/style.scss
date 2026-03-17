@@ -1,0 +1,66 @@
+// Full-bleed layout for this section
+.is-section-verto .layout__content {
+	padding: 0;
+}
+.is-section-verto .layout__primary {
+	padding: 0;
+	height: 100vh;
+}
+
+.verto-page {
+	display: flex;
+	height: 100vh;
+	width: 100%;
+	overflow: hidden;
+	background: #1e1e2e;
+}
+
+.verto-page__window {
+	flex: 1 1 60%;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	border-inline-end: 1px solid #313244;
+}
+
+.verto-page__iframe {
+	flex: 1;
+	width: 100%;
+	border: none;
+	background: var(--color-neutral-0, #fff);
+}
+
+.verto-page__terminal {
+	flex: 0 0 40%;
+	display: flex;
+	flex-direction: column;
+	background: #1e1e2e;
+	max-height: 100vh;
+	min-width: 320px;
+}
+
+.verto-page__terminal-header {
+	padding: 10px 16px;
+	border-bottom: 1px solid #313244;
+	flex-shrink: 0;
+	background: #181825;
+}
+
+.verto-page__terminal-title {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #cdd6f4;
+	letter-spacing: 0.02em;
+}
+
+.verto-page__terminal-container {
+	flex: 1 1 auto;
+	min-height: 0;
+	padding: 8px;
+	overflow: hidden;
+
+	.xterm {
+		height: 100%;
+	}
+}

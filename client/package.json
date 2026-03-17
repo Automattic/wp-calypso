@@ -123,6 +123,9 @@
 		"@wordpress/react-i18n": "^4.23.0",
 		"@wordpress/viewport": "^6.23.0",
 		"@wordpress/warning": "^3.23.0",
+		"@xterm/addon-fit": "^0.11.0",
+		"@xterm/addon-webgl": "^0.19.0",
+		"@xterm/xterm": "^6.0.0",
 		"autosize": "^4.0.4",
 		"body-parser": "^1.20.3",
 		"browser-filesaver": "^1.1.1",
@@ -189,6 +192,7 @@
 		"moment-timezone": "^0.5.48",
 		"moment-timezone-data-webpack-plugin": "^1.5.1",
 		"nock": "^13.5.6",
+		"node-pty": "^1.1.0",
 		"path-browserify": "^1.0.1",
 		"percentage-regex": "^3.0.0",
 		"phone": "^3.1.59",
@@ -240,7 +244,8 @@
 		"webpack-node-externals": "^3.0.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^",
-		"wpcom-xhr-request": "workspace:^"
+		"wpcom-xhr-request": "workspace:^",
+		"ws": "^8.19.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

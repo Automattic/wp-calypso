@@ -66,6 +66,8 @@ RUN bash /tmp/env-config.sh
 # Calypso development.
 COPY . /calypso/
 RUN yarn install --immutable --check-cache --inline-builds
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)
 ## RUN node --version && yarn --version && npm --version

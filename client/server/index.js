@@ -75,6 +75,11 @@ if ( process.env.NODE_ENV !== 'development' ) {
 	server.timeout = 50 * 1000; //50 seconds, in ms;
 }
 
+// Calypso Agentic Framework: attach PTY terminal WebSocket (development only)
+if ( config( 'env_id' ) === 'development' ) {
+	require( 'calypso/server/api/verto/terminal' ).default( server );
+}
+
 process.on( 'uncaughtExceptionMonitor', ( err ) => {
 	logger.error( err );
 } );
