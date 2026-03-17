@@ -38,6 +38,7 @@ export interface SiteOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
+	can_delete_site?: boolean;
 }
 
 export interface Site {
@@ -82,6 +83,7 @@ export interface Site {
 	garden_name: string | null;
 	garden_partner: string | null;
 	garden_is_provisioned: boolean | null;
+	can_delete_site?: boolean;
 
 	// Injected local properties
 	__inaccessible_jetpack_error?: Error;

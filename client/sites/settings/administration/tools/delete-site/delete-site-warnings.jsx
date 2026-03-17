@@ -9,6 +9,7 @@ function DeleteSiteWarnings( {
 	p2HubP2Count,
 	isAtomicRemovalInProgress,
 	isTrialSite = false,
+	isCommerceStore = false,
 } ) {
 	const translate = useTranslate();
 
@@ -59,20 +60,32 @@ function DeleteSiteWarnings( {
 		}
 
 		if ( isTrialSite ) {
-			return translate(
-				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
-			);
+			return isCommerceStore
+				? translate(
+						'You have an active or expired free trial on your store. Please cancel this plan prior to deleting your store.'
+				  )
+				: translate(
+						'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
+				  );
 		}
 
-		return translate(
-			'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
-		);
+		return isCommerceStore
+			? translate(
+					'You have active paid upgrades on your store. Please cancel your upgrades prior to deleting your store.'
+			  )
+			: translate(
+					'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
+			  );
 	};
 
 	return (
 		<PanelCard>
 			<>
-				<PanelCardHeading>{ translate( 'Unable to delete site' ) }</PanelCardHeading>
+				<PanelCardHeading>
+					{ isCommerceStore
+						? translate( 'Unable to delete store' )
+						: translate( 'Unable to delete site' ) }
+				</PanelCardHeading>
 				<p>{ renderWarningContent() }</p>
 				{ getButtons() }
 			</>
@@ -85,6 +98,7 @@ DeleteSiteWarnings.propTypes = {
 	p2HubP2Count: PropTypes.number,
 	isAtomicRemovalInProgress: PropTypes.bool,
 	isTrialSite: PropTypes.bool,
+	isCommerceStore: PropTypes.bool,
 };
 
 export default DeleteSiteWarnings;

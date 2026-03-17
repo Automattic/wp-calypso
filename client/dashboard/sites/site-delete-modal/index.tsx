@@ -30,6 +30,7 @@ import {
 	hasStagingSite,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
+import { isCommerceGarden } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -37,15 +38,30 @@ type SiteDeleteFormData = {
 	domain: string;
 };
 
-const canDeleteSite = ( site: Site ) =>
-	( site.is_garden || site.is_wpcom_atomic || ! site.jetpack ) &&
-	! site.is_vip &&
-	! site.options?.p2_hub_blog_id;
+const canDeleteSite = ( site: Site ) => {
+	// For commerce stores (MSD), only the store owner can delete.
+	if ( isCommerceGarden( site ) ) {
+		return ( site.options?.can_delete_site ?? site.can_delete_site ?? false ) === true;
+	}
+	return (
+		( site.is_garden || site.is_wpcom_atomic || ! site.jetpack ) &&
+		! site.is_vip &&
+		! site.options?.p2_hub_blog_id
+	);
+};
 
 const isTrialSite = ( site: Site ) =>
 	site.plan?.product_slug && ( TrialPlans as string[] ).includes( site.plan?.product_slug );
 
-function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () => void } ) {
+function SiteDeleteWarningContent( {
+	site,
+	onClose,
+	isCommerceStore,
+}: {
+	site: Site;
+	onClose: () => void;
+	isCommerceStore: boolean;
+} ) {
 	const { data: p2HubP2s } = useQuery( {
 		...p2HubP2sQuery( site.ID, { limit: 1 } ),
 		enabled: !! site.options?.p2_hub_blog_id && site.options?.is_wpforteams_site,
@@ -74,14 +90,22 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 		}
 
 		if ( isTrialSite( site ) ) {
-			return __(
-				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
-			);
+			return isCommerceStore
+				? __(
+						'You have an active or expired free trial on your store. Please cancel this plan prior to deleting your store.'
+				  )
+				: __(
+						'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
+				  );
 		}
 
-		return __(
-			'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
-		);
+		return isCommerceStore
+			? __(
+					'You have active paid upgrades on your store. Please cancel your upgrades prior to deleting your store.'
+			  )
+			: __(
+					'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
+			  );
 	};
 
 	const renderPrimaryButton = () => {
@@ -140,7 +164,15 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	);
 }
 
-function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () => void } ) {
+function SiteDeleteConfirmContent( {
+	site,
+	onClose,
+	isCommerceStore,
+}: {
+	site: Site;
+	onClose: () => void;
+	isCommerceStore: boolean;
+} ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
@@ -153,16 +185,27 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	} );
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
-	const fields: Field< SiteDeleteFormData >[] = [
-		{
-			id: 'domain',
-			label: __( 'Type the site domain to confirm' ),
-			type: 'text' as const,
-			description: sprintf(
+	const domainLabel = isCommerceStore
+		? __( 'Type the store domain to confirm' )
+		: __( 'Type the site domain to confirm' );
+	const domainDescription = isCommerceStore
+		? sprintf(
+				/* translators: %s: store domain */
+				__( 'The store domain is: %s' ),
+				site.slug
+		  )
+		: sprintf(
 				/* translators: %s: site domain */
 				__( 'The site domain is: %s' ),
 				site.slug
-			),
+		  );
+
+	const fields: Field< SiteDeleteFormData >[] = [
+		{
+			id: 'domain',
+			label: domainLabel,
+			type: 'text' as const,
+			description: domainDescription,
 		},
 	];
 
@@ -187,9 +230,11 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				);
 			},
 			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to delete site' ), {
-					type: 'snackbar',
-				} );
+				createErrorNotice(
+					error.message ||
+						( isCommerceStore ? __( 'Failed to delete store' ) : __( 'Failed to delete site' ) ),
+					{ type: 'snackbar' }
+				);
 			},
 		} );
 	};
@@ -208,9 +253,13 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 			<Notice variant="warning" density="medium">
 				<Text>
 					{ createInterpolateElement(
-						__(
-							'Before deleting your site, consider <link>exporting your content as a backup</link>.'
-						),
+						isCommerceStore
+							? __(
+									'Before deleting your store, consider <link>exporting your products and orders as a backup</link>.'
+							  )
+							: __(
+									'Before deleting your site, consider <link>exporting your content as a backup</link>.'
+							  ),
 						{
 							link: <ExternalLink href={ `/export/${ site.slug }` } children={ null } />,
 						}
@@ -218,9 +267,13 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				</Text>
 			</Notice>
 			<Text as="p">
-				{ __(
-					'Deletion is irreversible and will permanently remove all site content — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
-				) }
+				{ isCommerceStore
+					? __(
+							'Deletion is irreversible and will permanently remove all store content — products, orders, media, users, domains, purchased upgrades, and premium themes.'
+					  )
+					: __(
+							'Deletion is irreversible and will permanently remove all site content — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
+					  ) }
 			</Text>
 			<Text as="p">
 				{ sprintf(
@@ -256,7 +309,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							isBusy={ mutation.isPending || mutation.isSuccess }
 							disabled={ formData.domain !== site.slug }
 						>
-							{ __( 'Delete site' ) }
+							{ isCommerceStore ? __( 'Delete store' ) : __( 'Delete site' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -272,7 +325,13 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 	} );
 
 	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesThatBlockSiteDeletion;
-	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
+	const isCommerceStore = isCommerceGarden( site );
+	let title;
+	if ( canBeDeleted ) {
+		title = isCommerceStore ? __( 'Delete store' ) : __( 'Delete site' );
+	} else {
+		title = isCommerceStore ? __( 'Unable to delete store' ) : __( 'Unable to delete site' );
+	}
 
 	if ( isLoading ) {
 		return null;
@@ -282,9 +341,17 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 		<Modal title={ title } size="medium" onRequestClose={ onClose }>
 			<VStack spacing={ 4 }>
 				{ canBeDeleted ? (
-					<SiteDeleteConfirmContent site={ site } onClose={ onClose } />
+					<SiteDeleteConfirmContent
+						site={ site }
+						onClose={ onClose }
+						isCommerceStore={ isCommerceStore }
+					/>
 				) : (
-					<SiteDeleteWarningContent site={ site } onClose={ onClose } />
+					<SiteDeleteWarningContent
+						site={ site }
+						onClose={ onClose }
+						isCommerceStore={ isCommerceStore }
+					/>
 				) }
 			</VStack>
 		</Modal>

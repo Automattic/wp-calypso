@@ -96,6 +96,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
 	'can_blaze',
+	'can_delete_site',
 	'is_commercial',
 	'is_commercial_reasons',
 	'wpcom_admin_interface',

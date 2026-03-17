@@ -18,7 +18,7 @@ import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-s
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSite, getSiteDomain, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -57,15 +57,19 @@ class DeleteSite extends Component {
 			<ExportNotice
 				siteSlug={ this.props.siteSlug }
 				siteId={ siteId }
-				warningText={ translate(
-					'Before deleting your site, consider exporting your content as a backup.'
-				) }
+				warningText={
+					this.props.isCommerceGardenSite
+						? translate(
+								'Before deleting your store, consider exporting your products and orders as a backup.'
+						  )
+						: translate( 'Before deleting your site, consider exporting your content as a backup.' )
+				}
 			/>
 		);
 	}
 
 	renderDeleteSiteCTA() {
-		const { isAtomic, isFreePlan, siteDomain } = this.props;
+		const { isAtomic, isFreePlan, siteDomain, isCommerceGardenSite: isCommerceStore } = this.props;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
@@ -74,17 +78,29 @@ class DeleteSite extends Component {
 		return (
 			<>
 				<p>
-					{ translate(
-						'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								siteDomain: this.props.siteDomain,
-							},
-						}
-					) }
+					{ isCommerceStore
+						? translate(
+								'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the store:',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										siteDomain: this.props.siteDomain,
+									},
+								}
+						  )
+						: translate(
+								'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										siteDomain: this.props.siteDomain,
+									},
+								}
+						  ) }
 				</p>
 				<>
 					<FormTextInput
@@ -106,7 +122,7 @@ class DeleteSite extends Component {
 						}
 						onClick={ this.handleDeleteSiteClick }
 					>
-						{ translate( 'Delete site' ) }
+						{ isCommerceStore ? translate( 'Delete store' ) : translate( 'Delete site' ) }
 					</Button>
 				</>
 			</>
@@ -118,14 +134,23 @@ class DeleteSite extends Component {
 			<>
 				<div>
 					<p>
-						{ translate(
-							'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
+						{ this.props.isCommerceGardenSite
+							? translate(
+									'Deletion is {{strong}}irreversible and will permanently remove all store content{{/strong}} — products, orders, media, users, domains, purchased upgrades, and premium themes.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+							  )
+							: translate(
+									'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+							  ) }
 					</p>
 					<p>
 						{ translate(
@@ -193,8 +218,12 @@ class DeleteSite extends Component {
 		const canDeleteSite =
 			! isAtomicRemovalInProgress && ! hasCancelablePurchases && p2HubP2Count === 0;
 		const strings = {
-			confirmDeleteSite: translate( 'Confirm delete site' ),
-			deleteSite: translate( 'Delete site' ),
+			confirmDeleteSite: this.props.isCommerceGardenSite
+				? translate( 'Confirm delete store' )
+				: translate( 'Confirm delete site' ),
+			deleteSite: this.props.isCommerceGardenSite
+				? translate( 'Delete store' )
+				: translate( 'Delete site' ),
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
@@ -207,22 +236,39 @@ class DeleteSite extends Component {
 					navigationItems={ [] }
 					mobileItem={ null }
 					title={ strings.deleteSite }
-					subtitle={ translate(
-						'Permanently delete your site and all of its content. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: (
-									<InlineSupportLink supportContext="delete_site" showIcon={ false } />
-								),
-							},
-						}
-					) }
+					subtitle={
+						this.props.isCommerceGardenSite
+							? translate(
+									'Permanently delete your store and all of its content. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink supportContext="delete_site" showIcon={ false } />
+											),
+										},
+									}
+							  )
+							: translate(
+									'Permanently delete your site and all of its content. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink supportContext="delete_site" showIcon={ false } />
+											),
+										},
+									}
+							  )
+					}
 				></NavigationHeader>
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ canDeleteSite ? (
 					<PanelCard>
 						<>
-							<PanelCardHeading>{ translate( 'Confirm site deletion' ) }</PanelCardHeading>
+							<PanelCardHeading>
+								{ this.props.isCommerceGardenSite
+									? translate( 'Confirm store deletion' )
+									: translate( 'Confirm site deletion' ) }
+							</PanelCardHeading>
 							{ this.renderBody() }
 							{ this.renderNotice() }
 						</>
@@ -234,6 +280,7 @@ class DeleteSite extends Component {
 						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
 						p2HubP2Count={ this.props.p2HubP2Count }
 						isTrialSite={ this.props.isTrialSite }
+						isCommerceStore={ this.props.isCommerceGardenSite }
 					/>
 				) }
 			</Panel>
@@ -250,6 +297,7 @@ export default connect(
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
+			isCommerceGardenSite: isCommerceGardenSite( state, siteId ),
 			isFreePlan: isFreePlanProduct( site?.plan ),
 			siteDomain,
 			siteId,
