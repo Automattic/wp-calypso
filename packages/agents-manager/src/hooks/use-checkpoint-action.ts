@@ -1,4 +1,4 @@
-import { createElement, useEffect } from '@wordpress/element';
+import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
 import type { UseCheckpointReturn } from '../utils/load-external-providers';
@@ -38,21 +38,23 @@ export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn
 ): void {
-	useEffect( () => {
-		if ( ! checkpoint ) {
-			return;
-		}
+	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
 
+	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
+				const currentCheckpoint = checkpointRef.current;
+
+				if ( ! currentCheckpoint || message.role !== 'agent' ) {
 					return [];
 				}
 
 				const checkpointId = getCheckpointId( message );
 
-				if ( ! checkpointId || ! checkpoint.hasCheckpoint( checkpointId ) ) {
+				if ( ! checkpointId || ! currentCheckpoint.hasCheckpoint( checkpointId ) ) {
 					return [];
 				}
 
@@ -66,7 +68,7 @@ export default function useCheckpointAction(
 						} ),
 						onClick: async () => {
 							try {
-								await checkpoint.restoreCheckpoint( checkpointId );
+								await checkpointRef.current?.restoreCheckpoint( checkpointId );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
@@ -76,5 +78,5 @@ export default function useCheckpointAction(
 				];
 			},
 		} );
-	}, [ registerMessageActions, checkpoint ] );
+	}, [ registerMessageActions ] );
 }

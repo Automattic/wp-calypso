@@ -25,3 +25,4 @@ bin/build-docker.sh
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+**/*.tsbuildinfo

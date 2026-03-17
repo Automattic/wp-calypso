@@ -41,7 +41,8 @@ ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
-ENV PLAYWRIGHT_SKIP_DOWNLOAD true
+ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV SKIP_TSC true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 ENV IS_CI=true
@@ -66,7 +67,9 @@ RUN bash /tmp/env-config.sh
 # Calypso development.
 COPY . /calypso/
 RUN yarn install --immutable --check-cache --inline-builds
-RUN node --version && yarn --version && npm --version
+
+## Version debugging, temp uncomment if needed (Like working on a node upgrade)
+## RUN node --version && yarn --version && npm --version
 
 # Build the final layer
 #

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -30,6 +31,7 @@ interface FilterBarModernProps {
 	showTierFilter?: boolean;
 	searchQuery?: string;
 	onSearch?: ( query: string ) => void;
+	sentinelRef?: React.RefObject< HTMLDivElement >;
 }
 
 const FilterBarModern = ( {
@@ -42,10 +44,21 @@ const FilterBarModern = ( {
 	showTierFilter = true,
 	searchQuery = '',
 	onSearch,
+	sentinelRef,
 }: FilterBarModernProps ) => {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
+
+	const handleSearchOpen = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_expand' );
+		setIsSearchOpen( true );
+	}, [] );
+
+	const handleSearchClose = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_search_clear_icon_click' );
+		setIsSearchOpen( false );
+	}, [] );
 
 	const pillCategories = useMemo(
 		() =>
@@ -104,7 +117,7 @@ const FilterBarModern = ( {
 				fallbackInView
 				onChange={ ( inView ) => setIsSticky( ! inView ) }
 			>
-				<div className="filter-bar-modern__sentinel" />
+				<div className="filter-bar-modern__sentinel" ref={ sentinelRef } />
 			</InView>
 			<div className={ clsx( 'filter-bar-modern', { 'is-sticky': isSticky } ) }>
 				<div className="filter-bar-modern__content">
@@ -113,9 +126,10 @@ const FilterBarModern = ( {
 							<Search
 								pinned
 								isOpen={ isSearchOpen }
-								onSearchOpen={ () => setIsSearchOpen( true ) }
-								onSearchClose={ () => setIsSearchOpen( false ) }
+								onSearchOpen={ handleSearchOpen }
+								onSearchClose={ handleSearchClose }
 								initialValue={ searchQuery }
+								value={ searchQuery }
 								onSearch={ onSearch }
 								placeholder={ translate( 'Search themes…' ) }
 								searchMode={ SEARCH_MODE_ON_ENTER }

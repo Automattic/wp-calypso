@@ -12,7 +12,7 @@ import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contex
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
-import { getSessionId, clearSessionId } from '../utils/agent-session';
+import { clearSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -67,13 +67,14 @@ function AgentSetup(): JSX.Element | null {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 
-	const isChatRoute = pathname.startsWith( '/chat' );
-	const isNewChat = isChatRoute && !! state?.isNewChat;
-	const routeSessionId = isChatRoute && state?.sessionId;
+	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
+	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
+	// Restore the session ID from route state for existing chats; empty for new chats.
+	const sessionId = ( ! isNewChat && state?.sessionId ) || '';
+
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version } = getAgentConfig();
-	const sessionId = isNewChat ? '' : routeSessionId || getSessionId( agentId );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
