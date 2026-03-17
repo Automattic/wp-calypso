@@ -1,6 +1,7 @@
 import { EmailProvider } from '@automattic/api-core';
 import {
 	addEmailForwarderMutation,
+	domainDnsQuery,
 	domainQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
@@ -10,6 +11,7 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
+	CheckboxControl,
 	FormTokenField,
 	Spinner,
 } from '@wordpress/components';
@@ -19,7 +21,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
@@ -98,6 +100,20 @@ function AddEmailForwarder() {
 		enabled: !! formData.domain,
 	} );
 
+	const { data: dnsData } = useQuery( {
+		...domainDnsQuery( formData.domain ),
+		enabled: !! formData.domain,
+	} );
+
+	const hasMxRecords = ( dnsData?.records ?? [] ).some( ( record ) => record.type === 'MX' );
+	const showMxWarning = !! domainData?.has_wpcom_nameservers && hasMxRecords;
+
+	const [ mxWarningAcknowledged, setMxWarningAcknowledged ] = useState( false );
+
+	useEffect( () => {
+		setMxWarningAcknowledged( false );
+	}, [ formData.domain ] );
+
 	const fields: Field< FormData >[] = useMemo(
 		() => [
 			{
@@ -157,7 +173,8 @@ function AddEmailForwarder() {
 		( isUntokenizedInputValidEmail || untokenizedInput.trim() === '' ) &&
 		! isDomainMaxForwardsReached &&
 		! willDomainMaxForwardsBeReached &&
-		! duplicateForwardAddresses.length;
+		! duplicateForwardAddresses.length &&
+		( ! showMxWarning || mxWarningAcknowledged );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -368,6 +385,26 @@ function AddEmailForwarder() {
 											),
 											{ code: <code /> }
 										) }
+									</Notice>
+								) }
+
+								{ showMxWarning && (
+									<Notice variant="warning">
+										<VStack spacing={ 3 }>
+											<span>
+												{ __(
+													'Enabling email forwarding will replace your current MX records. If you are using an email service like Google Workspace or Microsoft 365, this will disable that email service.'
+												) }
+											</span>
+											<CheckboxControl
+												__nextHasNoMarginBottom
+												checked={ mxWarningAcknowledged }
+												onChange={ setMxWarningAcknowledged }
+												label={ __(
+													'I understand that adding email forwarding will replace my existing email configuration'
+												) }
+											/>
+										</VStack>
 									</Notice>
 								) }
 

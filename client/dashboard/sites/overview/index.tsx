@@ -146,7 +146,9 @@ function SiteOverviewSecondaryCards( {
 					<DomainsCard site={ site } />
 				) : (
 					<>
-						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						{ ! site.__inaccessible_jetpack_error && (
+							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						) }
 						<VStack spacing={ spacing } justify="start">
 							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (

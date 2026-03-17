@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
@@ -159,10 +158,6 @@ export function setUrlQuery( key: string, value: string, pathname: string = '' )
 	if ( nextPath !== path ) {
 		page.replace( nextPath );
 	}
-}
-
-export function isDiscoverV3Enabled(): boolean {
-	return isEnabled( 'reader/discover-v3' );
 }
 
 /**

@@ -10,7 +10,7 @@
  * The help icon is already provided by the PHP admin bar Item component
  * as a direct link to the help page. This file just adds tracking for clicks.
  */
-
+import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 // Import WordPress admin bar integration styles

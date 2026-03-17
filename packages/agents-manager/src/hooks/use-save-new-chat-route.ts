@@ -1,6 +1,7 @@
 import { select } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
+import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { getSessionId } from '../utils/agent-session';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
@@ -33,9 +34,11 @@ function saveNewChatRoute( sessionId: string ): void {
  * Waits for the first AI reply (which creates the session ID),
  * then saves the chat route so the conversation can be resumed later.
  */
-export default function useSaveNewChatRoute( agentId: string, messages: UIMessage[] ) {
-	const sessionId = getSessionId( agentId );
-	const prevSessionIdRef = useRef< string >( getSessionId( agentId ) );
+export default function useSaveNewChatRoute( messages: UIMessage[] ) {
+	const { agentConfig } = useAgentsManagerContext();
+
+	const sessionId = getSessionId( agentConfig?.agentId ?? '' );
+	const prevSessionIdRef = useRef< string >( sessionId );
 	const { pathname, state } = useLocation();
 
 	useEffect( () => {

@@ -1,4 +1,5 @@
 /* global agentsManagerData */
+import './config';
 import AgentsManager from '@automattic/agents-manager';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
