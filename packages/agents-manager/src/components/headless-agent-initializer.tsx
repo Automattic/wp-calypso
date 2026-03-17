@@ -33,7 +33,7 @@ export default function HeadlessAgentInitializer( {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 
-	const sessionId = getSessionId( undefined );
+	const sessionId = getSessionId();
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {

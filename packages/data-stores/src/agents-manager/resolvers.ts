@@ -1,5 +1,4 @@
 import { apiFetch } from '@wordpress/data-controls';
-import { Location } from 'history';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
@@ -10,14 +9,8 @@ import {
 	setHasLoaded,
 	setFloatingPosition,
 } from './actions';
+import { PerSiteRouterHistory, SingleRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
-
-type SingleRouterHistory = {
-	entries: Location[];
-	index: number;
-};
-
-type PerSiteRouterHistory = Record< string, SingleRouterHistory >;
 
 type AgentsManagerStateResponse = {
 	agents_manager_open?: boolean;
