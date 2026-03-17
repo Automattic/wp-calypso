@@ -54,6 +54,7 @@ fi
 # After URL resolution, containers typically need 5-7s before accepting connections.
 MAX_READY_LOOP=30
 READY_COUNTER=0
+READY_START=$SECONDS
 echo "Waiting for ${URL} to be ready..." >&2
 
 while [[ $READY_COUNTER -le $MAX_READY_LOOP ]]; do
@@ -61,7 +62,7 @@ while [[ $READY_COUNTER -le $MAX_READY_LOOP ]]; do
 	READY_STATUS=$(curl --output /dev/null --silent --connect-timeout 1 --max-time 3 --write-out "%{http_code}" --location "$URL") || READY_STATUS="000"
 
 	if [[ "${READY_STATUS}" -eq "200" ]]; then
-		echo "Container ready after ${READY_COUNTER}s" >&2
+		echo "Container ready after $((SECONDS - READY_START))s" >&2
 		break
 	fi
 
@@ -70,7 +71,7 @@ while [[ $READY_COUNTER -le $MAX_READY_LOOP ]]; do
 done
 
 if [[ "${READY_STATUS}" -ne "200" ]]; then
-	echo "Warning: container not ready after ${MAX_READY_LOOP}s (last HTTP ${READY_STATUS}), proceeding anyway" >&2
+	echo "Warning: container not ready after $((SECONDS - READY_START))s (last HTTP ${READY_STATUS}), proceeding anyway" >&2
 fi
 
 echo "$URL"
