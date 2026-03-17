@@ -1,7 +1,6 @@
 ---
 name: help-center-ui-test
 description: Run a browser-based UI review of the WordPress.com Help Center across multiple surfaces, looking for visual and behavioral issues. Use when asked to test the Help Center UI.
-disable-model-invocation: true
 allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash, Agent, ToolSearch
 ---
 
