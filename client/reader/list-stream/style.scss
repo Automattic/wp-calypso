@@ -56,3 +56,17 @@
 		fill: var(--color-neutral-dark);
 	}
 }
+
+.is-reader-page {
+	.formatted-header__title {
+		a {
+			text-decoration-color: transparent;
+			color: var(--color-text);
+			transition: 0.25s;
+
+			&:hover {
+				text-decoration-color: initial;
+			}
+		}
+	}
+}

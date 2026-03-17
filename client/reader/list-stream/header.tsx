@@ -7,7 +7,7 @@ import { isExternal } from 'calypso/lib/url';
 
 interface ListStreamHeaderProps {
 	isPublic?: boolean;
-	title: string;
+	title: React.ReactNode;
 	description?: string;
 	showEdit?: boolean;
 	editUrl: string;
