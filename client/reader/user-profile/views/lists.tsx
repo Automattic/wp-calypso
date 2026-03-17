@@ -67,11 +67,6 @@ export const UserLists = ( {
 	return (
 		<div className="user-profile__lists">
 			{ lists.map( ( list: List ) => {
-				// Do not show "Recommended Blogs" list if it belongs to the user.
-				if ( list.owner === user.user_login && list.slug === 'recommended-blogs' ) {
-					return null;
-				}
-
 				let description: React.ReactNode = list.description;
 				if ( list.slug === 'recommended-blogs' ) {
 					description = translate( 'A list of blogs recommended by %s.', {

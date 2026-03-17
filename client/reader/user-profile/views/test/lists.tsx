@@ -111,41 +111,6 @@ describe( 'UserLists', () => {
 		);
 	} );
 
-	test( 'should hide recommended-blogs list when owned by current user', () => {
-		const mockLists: List[] = [
-			{
-				ID: 1,
-				title: 'Test List',
-				description: 'A regular list',
-				slug: 'test-list',
-				owner: 'testuser',
-				is_public: true,
-				is_owner: true,
-			},
-			{
-				ID: 2,
-				title: 'Recommended Blogs',
-				description: 'My recommended blogs',
-				slug: 'recommended-blogs',
-				owner: 'testuser',
-				is_public: true,
-				is_owner: true,
-			},
-		];
-
-		render(
-			<UserLists
-				user={ defaultUser }
-				requestUserLists={ mockRequestUserLists }
-				lists={ mockLists }
-				isLoading={ false }
-			/>
-		);
-
-		expect( screen.getByText( 'Test List' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Recommended Blogs' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'should show recommended-blogs list from another user with custom description', () => {
 		const mockLists: List[] = [
 			{
