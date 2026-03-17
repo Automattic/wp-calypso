@@ -191,3 +191,171 @@
 		background-color: var( --studio-gray-0 );
 	}
 }
+
+// Plan upgrade banner
+.plan-upgrade-banner {
+	--plan-banner-bg: var( --studio-gray-0 );
+	--plan-banner-text: var( --studio-gray-100 );
+	--plan-banner-text-secondary: var( --studio-gray-80 );
+	--plan-banner-text-tertiary: var( --studio-gray-60 );
+	--plan-banner-accent: var( --studio-blue-50 );
+	--plan-banner-radio-border: var( --studio-gray-20 );
+	--plan-banner-radio-bg: var( --studio-white );
+
+	background-color: var( --plan-banner-bg );
+	border-inline-start: 4px solid var( --plan-banner-accent );
+	display: grid;
+	gap: 24px;
+	grid-template-columns: 1fr;
+	padding: 32px 24px;
+
+	@include break-medium {
+		align-items: center;
+		grid-template-columns: 2fr 1.5fr 1.5fr;
+		padding: 32px;
+	}
+}
+
+.plan-upgrade-banner.is-dark {
+	--plan-banner-bg: var( --studio-gray-90 );
+	--plan-banner-text: var( --studio-white );
+	--plan-banner-text-secondary: var( --studio-gray-20 );
+	--plan-banner-text-tertiary: var( --studio-gray-30 );
+	--plan-banner-radio-border: var( --studio-gray-50 );
+	--plan-banner-radio-bg: var( --studio-gray-90 );
+
+	border-inline-start: none;
+}
+
+.plan-upgrade-banner__title {
+	color: var( --plan-banner-text );
+	font-family: $brand-serif;
+	font-size: rem( 32px );
+	font-weight: 400;
+	line-height: 1.2;
+	margin: 0;
+
+	@include break-medium {
+		font-size: rem( 40px );
+	}
+}
+
+.plan-upgrade-banner__description {
+	color: var( --plan-banner-text-secondary );
+	font-size: $font-body;
+	line-height: 1.5;
+	margin: 8px 0 0;
+}
+
+.plan-upgrade-banner__features-heading {
+	color: var( --plan-banner-text );
+	font-size: $font-body;
+	font-weight: 600;
+	margin: 0 0 12px;
+}
+
+.plan-upgrade-banner__features-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.plan-upgrade-banner__features-item {
+	align-items: center;
+	color: var( --plan-banner-text-secondary );
+	display: flex;
+	font-size: $font-body;
+	gap: 8px;
+	line-height: 1.5;
+
+	& + & {
+		margin-block-start: 8px;
+	}
+}
+
+.plan-upgrade-banner__check-icon {
+	color: var( --plan-banner-accent );
+	flex-shrink: 0;
+	height: 20px;
+	width: 20px;
+}
+
+.plan-upgrade-banner__price {
+	align-items: flex-start;
+	display: flex;
+	gap: 2px;
+	margin-block-end: 8px;
+}
+
+.plan-upgrade-banner__price-currency {
+	color: var( --plan-banner-text );
+	font-size: rem( 20px );
+	line-height: 1;
+	margin-block-start: 8px;
+}
+
+.plan-upgrade-banner__price-amount {
+	color: var( --plan-banner-text );
+	font-family: $brand-serif;
+	font-size: rem( 56px );
+	font-weight: 400;
+	line-height: 1;
+}
+
+.plan-upgrade-banner__price-period {
+	align-self: flex-end;
+	color: var( --plan-banner-text-tertiary );
+	font-size: $font-body;
+	margin-block-end: 8px;
+}
+
+.plan-upgrade-banner__billing-toggle {
+	border: none;
+	display: flex;
+	gap: 16px;
+	margin: 0 0 16px;
+	padding: 0;
+}
+
+.plan-upgrade-banner__billing-option {
+	align-items: center;
+	color: var( --plan-banner-text-secondary );
+	cursor: pointer;
+	display: flex;
+	font-size: $font-body;
+	gap: 6px;
+
+	input[type='radio'] {
+		appearance: none;
+		border: 2px solid var( --plan-banner-radio-border );
+		border-radius: 50%;
+		cursor: pointer;
+		height: 20px;
+		margin: 0;
+		width: 20px;
+	}
+
+	input[type='radio']:checked {
+		background-color: var( --plan-banner-accent );
+		border-color: var( --plan-banner-accent );
+		box-shadow: inset 0 0 0 3px var( --plan-banner-radio-bg );
+	}
+}
+
+.plan-upgrade-banner__billing-savings {
+	color: var( --plan-banner-text-tertiary );
+	font-size: $font-body-small;
+}
+
+.plan-upgrade-banner__cta.components-button.is-primary {
+	--wp-components-color-accent: var( --plan-banner-accent );
+	--wp-components-color-accent-darker-10: var( --studio-blue-60 );
+	--wp-components-color-accent-darker-20: var( --studio-blue-70 );
+
+	border-radius: 4px;
+	font-size: $font-body;
+	height: auto;
+	justify-content: center;
+	padding: 12px 24px;
+	width: 100%;
+}
