@@ -190,7 +190,7 @@ export function getAgentConfig(): { agentId: string; version?: string } {
 	const versionParam = urlSearchParams.get( 'version' );
 
 	let defaultAgentId = ORCHESTRATOR_AGENT_ID;
-	if ( typeof agentsManagerData !== 'undefined' && agentsManagerData?.useUnifiedAgent ) {
+	if ( typeof agentsManagerData !== 'undefined' && agentsManagerData?.useUnifiedExperience ) {
 		defaultAgentId = UNIFIED_CHAT_AGENT_ID;
 	}
 

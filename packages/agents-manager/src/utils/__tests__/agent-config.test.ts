@@ -26,20 +26,20 @@ describe( 'getAgentConfig', () => {
 		expect( agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns ORCHESTRATOR_AGENT_ID when agentsManagerData.useUnifiedAgent is false', () => {
-		( global as any ).agentsManagerData = { useUnifiedAgent: false };
+	it( 'returns ORCHESTRATOR_AGENT_ID when agentsManagerData.useUnifiedExperience is false', () => {
+		( global as any ).agentsManagerData = { useUnifiedExperience: false };
 		const { agentId } = getAgentConfig();
 		expect( agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns UNIFIED_CHAT_AGENT_ID when agentsManagerData.useUnifiedAgent is true', () => {
-		( global as any ).agentsManagerData = { useUnifiedAgent: true };
+	it( 'returns UNIFIED_CHAT_AGENT_ID when agentsManagerData.useUnifiedExperience is true', () => {
+		( global as any ).agentsManagerData = { useUnifiedExperience: true };
 		const { agentId } = getAgentConfig();
 		expect( agentId ).toBe( UNIFIED_CHAT_AGENT_ID );
 	} );
 
-	it( 'URL ?agent= param overrides agentsManagerData.useUnifiedAgent', () => {
-		( global as any ).agentsManagerData = { useUnifiedAgent: true };
+	it( 'URL ?agent= param overrides agentsManagerData.useUnifiedExperience', () => {
+		( global as any ).agentsManagerData = { useUnifiedExperience: true };
 		mockLocation( '?agent=custom-agent-id' );
 		const { agentId } = getAgentConfig();
 		expect( agentId ).toBe( 'custom-agent-id' );
