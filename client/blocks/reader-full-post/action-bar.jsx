@@ -1,3 +1,5 @@
+import { Icon, globe } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import PostEditButton from 'calypso/blocks/post-edit-button';
@@ -13,6 +15,7 @@ const ReaderFullPostActionBar = ( {
 	commentCount,
 	onCommentClick,
 	onEditClick,
+	onViewOriginalClick,
 	commentsApiDisabled,
 	showComments,
 	renderMarkAsSeenButton,
@@ -20,11 +23,13 @@ const ReaderFullPostActionBar = ( {
 	siteUrl,
 	onFollowToggle,
 } ) => {
+	const translate = useTranslate();
 	const canEdit = site && userCan( 'edit_post', post );
 	const showLikes = shouldShowLikes( post );
 	const followUrl = feedUrl || siteUrl;
 	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
 	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
+	const viewOriginalUrl = post.URL;
 
 	return (
 		<div className="reader-full-post__action-bar">
@@ -49,6 +54,26 @@ const ReaderFullPostActionBar = ( {
 						likeSource="reader"
 						iconSize={ 24 }
 					/>
+				) }
+
+				{ viewOriginalUrl && (
+					<a
+						className="reader-full-post__view-original-button tooltip"
+						href={ viewOriginalUrl }
+						target="_blank"
+						rel="external noopener noreferrer"
+						data-tooltip={ translate( 'View original' ) }
+						onClick={ onViewOriginalClick }
+					>
+						<Icon
+							icon={ globe }
+							size={ 24 }
+							className="reader-full-post__view-original-button-icon"
+						/>
+						<span className="reader-full-post__view-original-button-label">
+							{ translate( 'View' ) }
+						</span>
+					</a>
 				) }
 
 				{ renderMarkAsSeenButton && renderMarkAsSeenButton() }
@@ -78,6 +103,7 @@ ReaderFullPostActionBar.propTypes = {
 	commentCount: PropTypes.number,
 	onCommentClick: PropTypes.func,
 	onEditClick: PropTypes.func,
+	onViewOriginalClick: PropTypes.func,
 	commentsApiDisabled: PropTypes.bool,
 	showComments: PropTypes.bool,
 	renderMarkAsSeenButton: PropTypes.func,

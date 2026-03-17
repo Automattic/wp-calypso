@@ -813,6 +813,7 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									onCommentClick={ this.handleCommentClick }
 									onEditClick={ this.onEditClick }
+									onViewOriginalClick={ this.handleVisitSiteClick }
 									commentsApiDisabled={ commentsApiDisabled }
 									showComments={ shouldShowComments( post ) }
 									renderMarkAsSeenButton={
