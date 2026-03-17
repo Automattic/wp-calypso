@@ -6,7 +6,7 @@ import {
 	__experimentalText as Text,
 	ToggleControl,
 	__experimentalHStack as HStack,
-	FormTokenField,
+	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -14,7 +14,7 @@ import { useState } from 'react';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
-	getSiteAccountToolsEnabled,
+	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
 import { useAppContext } from '../../app/context';
 import { Card, CardBody } from '../../components/card';
@@ -24,7 +24,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { getSiteDisplayUrl } from '../../utils/site-url';
+import PreferencesLoginSiteDropdown from '../preferences-primary-site/site-dropdown';
 import { CATEGORY_ORDER, getDisplayCategory } from './categories';
 import type { Site } from '@automattic/api-core';
 
@@ -38,24 +41,21 @@ interface McpAbility {
 	annotations?: Record< string, unknown >;
 }
 
-interface McpSite {
-	blog_id: number;
-	account_tools_enabled?: boolean;
-	abilities?: Record< string, unknown >;
-}
-
 function McpComponent() {
 	const { queries } = useAppContext();
 	const sitesQueryResult = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
+	const isSiteListLoading = sitesQueryResult.isLoading;
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
-	// Site selector state for disabling MCP access on specific sites
-	const [ selectedSiteIds, setSelectedSiteIds ] = useState< number[] >( [] );
+	// Site selector state for managing MCP access on specific sites
+	const [ selectedSiteId, setSelectedSiteId ] = useState< string | null >( null );
 	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-	const disabledSites = disabledSiteIds.map( ( siteId ) => {
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+
+	const buildSiteEntry = ( siteId: number ) => {
 		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
 		const name = site
 			? getSiteDisplayName( site )
@@ -64,14 +64,18 @@ function McpComponent() {
 					__( 'Site ID: %s' ),
 					String( siteId )
 			  );
-		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
-
+		const displayUrl = site ? getSiteDisplayUrl( site ) : '';
 		return {
 			id: siteId,
 			name,
-			domain,
+			displayUrl,
+			slug: site?.slug ?? '',
+			site: site ?? null,
 		};
-	} );
+	};
+
+	const disabledSites = disabledSiteIds.map( buildSiteEntry );
+	const enabledSites = enabledSiteIds.map( buildSiteEntry );
 
 	// Use the standard userSettingsMutation with snackbar notifications
 	const mutation = useMutation( {
@@ -137,94 +141,11 @@ function McpComponent() {
 		return grouped;
 	};
 
-	// Convert sites to suggestions for FormTokenField
-	// Format: "siteId|siteName" - ID for uniqueness, name for searchability
-	// FormTokenField will automatically filter out already selected sites
-	const siteSuggestions = sites.map( ( site ) => {
-		const siteName = getSiteDisplayName( site );
-		return `${ site.ID }|${ siteName }`;
-	} );
-
-	// Convert selected site IDs to token values (using the same format)
-	const selectedSiteTokens = selectedSiteIds.map( ( siteId ) => {
-		const site = sites.find( ( s ) => s.ID === siteId );
-		if ( ! site ) {
-			return String( siteId );
-		}
-		const siteName = getSiteDisplayName( site );
-		return `${ siteId }|${ siteName }`;
-	} );
-
-	// Display transform to show site name (extract from "id|name" format)
-	const displaySiteName = ( tokenValue: string ) => {
-		// Extract site name from "id|name" format, or fallback to just the value
-		const parts = tokenValue.split( '|' );
-		return parts.length > 1 ? parts[ 1 ] : tokenValue;
-	};
-
-	const handleSiteTokensChange = ( tokens: ( string | { value: string; title?: string } )[] ) => {
-		// Convert token values (format: "id|name") back to site IDs
-		// FormTokenField can return either string[] or TokenItem[], so we normalize to strings
-		const tokenStrings = tokens.map( ( token ) =>
-			typeof token === 'string' ? token : token.value
-		);
-		const newSiteIds = tokenStrings
-			.map( ( token ) => {
-				// Extract site ID from "id|name" format
-				const parts = token.split( '|' );
-				const siteId = Number( parts[ 0 ] );
-				return isNaN( siteId ) ? undefined : siteId;
-			} )
-			.filter( ( id ): id is number => id !== undefined );
-		setSelectedSiteIds( newSiteIds );
-	};
-
-	const handleAllSitesToggle = ( enabled: boolean ) => {
-		// Get current sites array from nested structure
-		const currentSites = ( userSettings?.mcp_abilities?.sites as McpSite[] | undefined ) || [];
-
-		// Build the new sites array by processing all selected sites
-		let newSites = [ ...currentSites ];
-
-		selectedSiteIds.forEach( ( siteId ) => {
-			const siteIndex = newSites.findIndex( ( site: McpSite ) => site.blog_id === siteId );
-
-			if ( enabled ) {
-				// Enabling: remove from sites array (use defaults)
-				if ( siteIndex >= 0 ) {
-					// Remove the site entry entirely
-					newSites = newSites.filter( ( _site: McpSite, index: number ) => index !== siteIndex );
-				}
-			} else if ( siteIndex >= 0 ) {
-				// Disabling: update existing site entry
-				newSites[ siteIndex ] = {
-					...newSites[ siteIndex ],
-					account_tools_enabled: false,
-				};
-			} else {
-				// Disabling: add new site entry with override
-				newSites.push( {
-					blog_id: siteId,
-					account_tools_enabled: false,
-					abilities: {},
-				} );
-			}
-		} );
-
-		// For the API payload, send all selected sites
-		const sitesPayload = selectedSiteIds.map( ( siteId ) => ( {
-			blog_id: siteId,
-			account_tools_enabled: enabled,
-		} ) );
-
-		// Only include sites in payload if there are any sites to send
-		const payload = {
-			mcp_abilities: {
-				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
-			},
-		};
-		mutation.mutate( payload as any );
-	};
+	// Sites available in the picker (exclude already-managed sites)
+	const managedSiteIds = anyToolsEnabled ? disabledSiteIds : enabledSiteIds;
+	const availableSitesForPicker = sites.filter(
+		( site: Site ) => ! managedSiteIds.includes( site.ID )
+	);
 
 	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
 		const payload = {
@@ -241,13 +162,14 @@ function McpComponent() {
 		mutation.mutate( payload as any );
 	};
 
-	// Check if all selected sites have AI access enabled
-	const allSelectedSitesEnabled =
-		selectedSiteIds.length > 0
-			? selectedSiteIds.every( ( siteId ) =>
-					getSiteAccountToolsEnabled( userSettings || {}, siteId )
-			  )
-			: false;
+	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {
+		if ( siteIdStr ) {
+			const siteId = parseInt( siteIdStr, 10 );
+			// When account MCP is ON: disable for specific site; when OFF: enable for specific site
+			handleSiteToggle( siteId, ! anyToolsEnabled );
+			setSelectedSiteId( null );
+		}
+	};
 
 	// Helper function to render tools section with categories
 	const renderToolsSection = ( tools: Array< [ string, McpAbility ] > ) => {
@@ -354,73 +276,127 @@ function McpComponent() {
 				</Card>
 
 				{ /* Site-Specific Settings */ }
-				{ hasTools && anyToolsEnabled && (
-					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									level={ 3 }
-									title={ __( 'Site-specific MCP settings' ) }
-									description={ __(
-										'Choose sites to manage AI access for all users on those sites. This overrides your account settings.'
-									) }
-								/>
-
-								<FormTokenField
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ __( 'Select sites to manage AI access' ) }
-									value={ selectedSiteTokens }
-									suggestions={ siteSuggestions }
-									onChange={ handleSiteTokensChange }
-									displayTransform={ displaySiteName }
-									placeholder={ __( 'Type to search and select sites…' ) }
-									__experimentalShowHowTo={ false }
-									__experimentalExpandOnFocus
-								/>
-
-								{ selectedSiteIds.length > 0 && (
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ allSelectedSitesEnabled }
-										disabled={ mutation.isPending }
-										onChange={ handleAllSitesToggle }
-										label={
-											<Text>
-												{ allSelectedSitesEnabled
-													? __( 'Disable AI access for selected sites' )
-													: __( 'Enable AI access for selected sites' ) }
-											</Text>
+				{ hasTools && (
+					<>
+						<Card>
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<SectionHeader
+										level={ 3 }
+										title={
+											anyToolsEnabled ? __( 'Site-specific MCP settings' ) : __( 'Add a site' )
+										}
+										description={
+											anyToolsEnabled
+												? __(
+														'Disable MCP access for specific sites. This overrides your account settings.'
+												  )
+												: __( 'Search for a site to enable MCP access.' )
 										}
 									/>
-								) }
-								{ disabledSites.length > 0 && (
+									<PreferencesLoginSiteDropdown
+										sites={ availableSitesForPicker }
+										isLoading={ isSiteListLoading }
+										value={ selectedSiteId ?? '' }
+										onChange={ handleSitePickerSelect }
+										hideLabelFromVision
+									/>
+								</VStack>
+							</CardBody>
+						</Card>
+
+						{ /* Enabled sites (when account MCP is OFF) */ }
+						{ ! anyToolsEnabled && enabledSites.length > 0 && (
+							<Card>
+								<CardBody>
+									<VStack spacing={ 4 }>
+										<SectionHeader
+											level={ 3 }
+											title={ __( 'Enabled sites' ) }
+											description={ __( 'These sites have MCP access enabled.' ) }
+										/>
+										<VStack spacing={ 3 }>
+											{ enabledSites.map( ( site ) => (
+												<HStack key={ site.id } justify="space-between" alignment="center">
+													<HStack spacing={ 3 } alignment="center" justify="flex-start">
+														{ site.site && <SiteIcon site={ site.site } size={ 32 } /> }
+														<VStack spacing={ 0 }>
+															<Text weight={ 500 } size={ 14 }>
+																{ site.name }
+															</Text>
+															<Text variant="muted" size={ 12 }>
+																{ site.displayUrl }
+															</Text>
+														</VStack>
+													</HStack>
+													<HStack spacing={ 2 } expanded={ false }>
+														{ site.slug && (
+															<RouterLinkButton
+																to={ `/sites/${ site.slug }/settings/ai-tools` }
+																variant="link"
+															>
+																{ __( 'Manage' ) }
+															</RouterLinkButton>
+														) }
+														<Button
+															__next40pxDefaultSize
+															variant="secondary"
+															disabled={ mutation.isPending }
+															onClick={ () => handleSiteToggle( site.id, false ) }
+														>
+															{ __( 'Remove' ) }
+														</Button>
+													</HStack>
+												</HStack>
+											) ) }
+										</VStack>
+									</VStack>
+								</CardBody>
+							</Card>
+						) }
+
+						{ /* Disabled sites (when account MCP is ON) */ }
+						{ anyToolsEnabled && disabledSites.length > 0 && (
+							<Card>
+								<CardBody>
 									<VStack spacing={ 4 }>
 										<SectionHeader
 											level={ 3 }
 											title={ __( 'Sites with disabled MCP access' ) }
-											description={ __(
-												'Sites with disabled MCP access are not accessible to AI assistants.'
-											) }
+											description={ __( 'MCP access is disabled for these sites.' ) }
 										/>
-										<VStack spacing={ 2 }>
+										<VStack spacing={ 3 }>
 											{ disabledSites.map( ( site ) => (
-												<ToggleControl
-													key={ site.id }
-													__nextHasNoMarginBottom
-													checked={ false }
-													disabled={ mutation.isPending }
-													onChange={ ( enabled ) => handleSiteToggle( site.id, enabled ) }
-													label={ site.name }
-													help={ site.domain }
-												/>
+												<HStack key={ site.id } justify="space-between" alignment="center">
+													<HStack spacing={ 3 } alignment="center" justify="flex-start">
+														{ site.site && <SiteIcon site={ site.site } size={ 32 } /> }
+														<VStack spacing={ 0 }>
+															<Text weight={ 500 } size={ 14 }>
+																{ site.name }
+															</Text>
+															<Text variant="muted" size={ 12 }>
+																{ site.displayUrl }
+															</Text>
+														</VStack>
+													</HStack>
+													<HStack spacing={ 2 } expanded={ false }>
+														<Button
+															__next40pxDefaultSize
+															variant="secondary"
+															disabled={ mutation.isPending }
+															onClick={ () => handleSiteToggle( site.id, true ) }
+														>
+															{ __( 'Remove' ) }
+														</Button>
+													</HStack>
+												</HStack>
 											) ) }
 										</VStack>
 									</VStack>
-								) }
-							</VStack>
-						</CardBody>
-					</Card>
+								</CardBody>
+							</Card>
+						) }
+					</>
 				) }
 
 				{ /* Account Tools Sections */ }

@@ -1,5 +1,12 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { bigSkyPluginMutation, bigSkyPluginQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	bigSkyPluginMutation,
+	bigSkyPluginQuery,
+	siteBySlugQuery,
+	userSettingsMutation,
+	userSettingsQuery,
+} from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -12,6 +19,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
 import { useState } from 'react';
+import { getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
@@ -20,6 +28,7 @@ import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
@@ -45,6 +54,34 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+
+	// MCP settings for this site
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const isMcpEnabled = getSiteAccountToolsEnabled( userSettings || {}, site.ID );
+	const mcpMutation = useMutation( {
+		...userSettingsMutation(),
+		meta: {
+			snackbar: {
+				success: isMcpEnabled
+					? __( 'MCP access disabled for this site.' )
+					: __( 'MCP access enabled for this site.' ),
+				error: __( 'Failed to save MCP settings.' ),
+			},
+		},
+	} );
+
+	const handleMcpToggle = ( enabled: boolean ) => {
+		mcpMutation.mutate( {
+			mcp_abilities: {
+				sites: [
+					{
+						blog_id: site.ID,
+						account_tools_enabled: enabled,
+					},
+				],
+			},
+		} as any );
+	};
 
 	const mutation = useMutation( {
 		...bigSkyPluginMutation( site.ID ),
@@ -142,6 +179,31 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</CardFooter>
 					) }
 				</Card>
+				{ config.isEnabled( 'mcp-settings' ) && (
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									title={ __( 'MCP access' ) }
+									description={ __(
+										'Control whether AI assistants can access this site via MCP (Model Context Protocol).'
+									) }
+									level={ 3 }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isMcpEnabled }
+									disabled={ mcpMutation.isPending }
+									label={ __( 'Enable MCP access for this site' ) }
+									onChange={ handleMcpToggle }
+								/>
+								<RouterLinkButton to="/me/mcp" variant="link">
+									{ __( 'Manage at account level' ) }
+								</RouterLinkButton>
+							</VStack>
+						</CardBody>
+					</Card>
+				) }
 				{ isFreeTrial && (
 					<ConfirmModal
 						isOpen={ isConfirmModalOpen }
