@@ -60,13 +60,15 @@ WORKDIR /calypso
 COPY ./env-config.sh /tmp/env-config.sh
 RUN bash /tmp/env-config.sh
 
+# Install build dependencies for native modules (e.g. node-pty)
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
+
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
 RUN yarn install --immutable --check-cache --inline-builds
-
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)
 ## RUN node --version && yarn --version && npm --version
