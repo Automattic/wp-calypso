@@ -31,69 +31,111 @@ describe( 'setSurvicateVisitorTraits', () => {
 		window._sva = undefined;
 	} );
 
-	test( 'should set visitor traits when SurvicateReady fires', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
+	describe( 'when _sva is not yet available (event-based path)', () => {
+		test( 'should set visitor traits when SurvicateReady fires', () => {
+			const setVisitorTraits = jest.fn();
 
-		setSurvicateVisitorTraits( { email: 'test@example.com' } );
+			// _sva not available at call time
+			setSurvicateVisitorTraits( { email: 'test@example.com' } );
 
-		// Should not be called before the event fires
-		expect( setVisitorTraits ).not.toHaveBeenCalled();
+			// Should not be called before the event fires
+			expect( setVisitorTraits ).not.toHaveBeenCalled();
 
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			// Simulate Survicate becoming ready
+			window._sva = { setVisitorTraits };
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
-		expect( setVisitorTraits ).toHaveBeenCalledWith( { email: 'test@example.com' } );
+			expect( setVisitorTraits ).toHaveBeenCalledWith( { email: 'test@example.com' } );
+		} );
+
+		test( 'should not throw when _sva is still undefined at event time', () => {
+			window._sva = undefined;
+
+			setSurvicateVisitorTraits( { email: 'test@example.com' } );
+
+			expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
+		} );
+
+		test( 'should not throw when setVisitorTraits is not available at event time', () => {
+			setSurvicateVisitorTraits( { email: 'test@example.com' } );
+
+			window._sva = {};
+			expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
+		} );
+
+		test( 'should not call setVisitorTraits before the event fires', () => {
+			const setVisitorTraits = jest.fn();
+
+			setSurvicateVisitorTraits( { email: 'test@example.com' } );
+
+			// _sva becomes available but event hasn't fired
+			window._sva = { setVisitorTraits };
+			expect( setVisitorTraits ).not.toHaveBeenCalled();
+
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'should return a cleanup function that removes the listener', () => {
+			const setVisitorTraits = jest.fn();
+
+			const cleanup = setSurvicateVisitorTraits( { email: 'test@example.com' } );
+
+			cleanup();
+
+			window._sva = { setVisitorTraits };
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			expect( setVisitorTraits ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should only fire once due to { once: true }', () => {
+			const setVisitorTraits = jest.fn();
+
+			setSurvicateVisitorTraits( { email: 'test@example.com' } );
+
+			window._sva = { setVisitorTraits };
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 
-	test( 'should not throw when _sva is undefined', () => {
-		window._sva = undefined;
+	describe( 'when _sva is already available (immediate path)', () => {
+		test( 'should set traits immediately', () => {
+			const setVisitorTraits = jest.fn();
+			window._sva = { setVisitorTraits };
 
-		setSurvicateVisitorTraits( { email: 'test@example.com' } );
+			setSurvicateVisitorTraits( { email: 'already@loaded.com' } );
 
-		expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
-	} );
+			expect( setVisitorTraits ).toHaveBeenCalledWith( { email: 'already@loaded.com' } );
+			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+		} );
 
-	test( 'should not throw when setVisitorTraits is not available', () => {
-		window._sva = {};
+		test( 'should return a no-op cleanup function', () => {
+			const setVisitorTraits = jest.fn();
+			window._sva = { setVisitorTraits };
 
-		setSurvicateVisitorTraits( { email: 'test@example.com' } );
+			const cleanup = setSurvicateVisitorTraits( { email: 'already@loaded.com' } );
 
-		expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
-	} );
+			expect( typeof cleanup ).toBe( 'function' );
+			expect( () => cleanup() ).not.toThrow();
 
-	test( 'should not call setVisitorTraits before the event fires', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
+			// Dispatching the event after immediate set should not call again
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+		} );
 
-		setSurvicateVisitorTraits( { email: 'test@example.com' } );
+		test( 'should only call setVisitorTraits once even if event fires', () => {
+			const setVisitorTraits = jest.fn();
+			window._sva = { setVisitorTraits };
 
-		expect( setVisitorTraits ).not.toHaveBeenCalled();
+			setSurvicateVisitorTraits( { email: 'already@loaded.com' } );
 
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
-		expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
-	} );
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
+			window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
-	test( 'should return a cleanup function that removes the listener', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
-
-		const cleanup = setSurvicateVisitorTraits( { email: 'test@example.com' } );
-
-		cleanup();
-
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
-		expect( setVisitorTraits ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should only fire once due to { once: true }', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
-
-		setSurvicateVisitorTraits( { email: 'test@example.com' } );
-
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
-
-		expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );

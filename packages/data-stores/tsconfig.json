@@ -13,7 +13,7 @@
 		{ "path": "../calypso-config" },
 		{ "path": "../api-core" },
 		{ "path": "../api-queries" },
-		{ "path": "../global-styles" },
+		{ "path": "../design-types" },
 		{ "path": "../i18n-utils" },
 		{ "path": "../shopping-cart" },
 		{ "path": "../js-utils" }

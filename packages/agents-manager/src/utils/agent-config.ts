@@ -9,6 +9,7 @@
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
+import { canConnectToZendesk } from './can-connect-to-zendesk';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -79,10 +80,11 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 /**
  * Create a context provider that resolves context entries.
  */
-function createWrappedContextProvider(
+async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
 	version?: string
-): UseAgentChatConfig[ 'contextProvider' ] {
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canConnectToZendesk();
 	return {
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
@@ -96,6 +98,7 @@ function createWrappedContextProvider(
 
 			return {
 				...resolvedContext,
+				can_access_zendesk: canAccessZendesk,
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
@@ -108,16 +111,18 @@ function createWrappedContextProvider(
 /**
  * Create a default context provider for environments without a plugin context.
  */
-function createDefaultContextProvider(
+async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
 	version?: string
-): UseAgentChatConfig[ 'contextProvider' ] {
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canConnectToZendesk();
 	return {
 		getClientContext: () => ( {
 			url: window.location.href,
 			pathname: currentRoute || window.location.pathname,
 			search: window.location.search,
+			can_access_zendesk: canAccessZendesk,
 			environment,
 			// TODO: Remove once agenttic-client supports top-level constructorArguments
 			...( version && { constructorArguments: { version } } ),
@@ -131,7 +136,9 @@ function createDefaultContextProvider(
  * Used by both the full Agents Manager UI and headless mode to ensure
  * consistent configuration.
  */
-export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgentChatConfig {
+export async function createAgentConfig(
+	options: CreateAgentConfigOptions
+): Promise< UseAgentChatConfig > {
 	const {
 		sessionId,
 		siteId,
@@ -157,9 +164,13 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = await createWrappedContextProvider( contextProvider, version );
 	} else {
-		config.contextProvider = createDefaultContextProvider( currentRoute, environment, version );
+		config.contextProvider = await createDefaultContextProvider(
+			currentRoute,
+			environment,
+			version
+		);
 	}
 
 	return config;

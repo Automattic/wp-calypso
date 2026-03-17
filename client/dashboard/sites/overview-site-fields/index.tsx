@@ -80,7 +80,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( wpVersion ) {
+	if ( wpVersion && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="wp-version" title={ __( 'WordPress' ) }>
 				{ isSelfHostedJetpackConnected( site ) ? (
@@ -92,7 +92,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( hasPHPFeature ) {
+	if ( hasPHPFeature && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>

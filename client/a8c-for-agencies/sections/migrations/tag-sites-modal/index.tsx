@@ -150,9 +150,7 @@ export default function MigrationsTagSitesModal( {
 				</Button>
 			}
 			title={ translate( 'Tag your transferred sites for commission.' ) }
-			subtile={ translate(
-				"Select the sites you moved on your own. We'll check the migration and tag them as ready for your commission."
-			) }
+			subtile={ translate( 'Select the sites you moved on your own.' ) }
 		>
 			<div className="migrations-tag-sites-modal__instruction">
 				<Icon size={ 18 } icon={ info } />

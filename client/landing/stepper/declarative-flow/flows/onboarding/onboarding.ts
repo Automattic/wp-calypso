@@ -18,7 +18,7 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -300,6 +300,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const isLoggedIn = useSelector( isUserLoggedIn );
+		const user = useSelector( getCurrentUser );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -327,10 +328,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * - Analytics tracking works correctly throughout the onboarding flow
 		 */
 		useEffect( () => {
-			if ( isLoggedIn ) {
-				addSurvicate();
+			if ( isLoggedIn && user?.email && user?.date ) {
+				addSurvicate( { email: user.email, registrationDate: user.date } );
 			}
-		}, [ isLoggedIn, currentStepSlug ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

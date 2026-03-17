@@ -4,6 +4,7 @@
  * Entry point for the standalone Block Notes bundle.
  * Loaded on pages where Block Notes should be active (Block Editor, Post Editor, etc. )
  */
+import './config';
 
 /**
  * External dependencies

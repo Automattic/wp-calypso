@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -10,6 +11,10 @@ const CARD_PROPS = {
 };
 
 export default function VisibilityCardCiab( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
 	const link = site.options?.admin_url
 		? `${ site.options.admin_url }admin.php?page=next-admin&p=%2Fwoocommerce%2Fsettings%2Fgeneral`
 		: undefined;

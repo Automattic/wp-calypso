@@ -1,3 +1,5 @@
+import debug from './debug';
+
 declare global {
 	interface Window {
 		_sva?: {
@@ -21,22 +23,31 @@ export function getAccountAgeInDays( registrationDate: string ): number {
 
 /**
  * Sets Survicate visitor traits (e.g. email) on the global `_sva` object.
- * Waits for the `SurvicateReady` window event before setting traits.
+ * If the Survicate API is already available, sets traits immediately.
+ * Otherwise, waits for the `SurvicateReady` window event before setting traits.
  * @returns A cleanup function that removes the event listener.
  */
 export function setSurvicateVisitorTraits( traits: {
 	email: string;
 	account_age_in_days?: number;
 } ): () => void {
-	const handler = function () {
+	const setTraits = function () {
 		if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
 			window._sva.setVisitorTraits( traits );
+			debug( 'Visitor traits set: %o', traits );
 		}
 	};
 
-	window.addEventListener( 'SurvicateReady', handler, { once: true } );
+	// If Survicate is already loaded, set traits immediately.
+	if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
+		setTraits();
+		return () => {};
+	}
+
+	debug( 'Survicate not ready, deferring visitor traits until SurvicateReady event' );
+	window.addEventListener( 'SurvicateReady', setTraits, { once: true } );
 
 	return () => {
-		window.removeEventListener( 'SurvicateReady', handler );
+		window.removeEventListener( 'SurvicateReady', setTraits );
 	};
 }

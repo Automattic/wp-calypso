@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import { formatNumberCompact } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
@@ -73,9 +73,9 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
 								<Button
-									primary
+									variant="primary"
 									className="jetpack-emerald-button"
-									busy={ disabled }
+									isBusy={ disabled }
 									onClick={ onActivateProduct }
 								>
 									{ translate( 'Activate' ) }
@@ -83,9 +83,9 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 							) }
 							{ error === 'not_installed' && (
 								<Button
-									transparent
+									variant="secondary"
 									className="jetpack-emerald-button"
-									busy={ disabled }
+									isBusy={ disabled }
 									onClick={ onActivateProduct }
 								>
 									{ translate( 'Install' ) }

@@ -326,8 +326,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.52"
-    "@automattic/agenttic-ui": "npm:^0.1.52"
+    "@automattic/agenttic-client": "npm:^0.1.53"
+    "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -356,9 +356,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.52":
-  version: 0.1.52
-  resolution: "@automattic/agenttic-client@npm:0.1.52"
+"@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.53":
+  version: 0.1.53
+  resolution: "@automattic/agenttic-client@npm:0.1.53"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -372,13 +372,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 7a35858b55f0e672c63632bb73f2dce1c64bd2cf4f7d30c0c0ad0af483eccfb33db961c67ad0abd0f83dc0933d3314b4114ea31f8e87e01d97f07d07987fdcb5
+  checksum: 09dbbdb387f0b2b052f1b3cd7c08a6d62e5abeb808234cd20ada788f8d940038b6494ae3be095e1655acf1be547fc19f89f339a47be87ecc6f8d1b8fed9bcf07
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.52":
-  version: 0.1.52
-  resolution: "@automattic/agenttic-ui@npm:0.1.52"
+"@automattic/agenttic-ui@npm:^0.1.53":
+  version: 0.1.53
+  resolution: "@automattic/agenttic-ui@npm:0.1.53"
   dependencies:
     "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -404,7 +404,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 4ec496f6c4cf6818f3fb5d8154b40a20c74102ab897c7912a43612857b79d02c94350eefea41c9237f2e3e1d709eea85254138711a4f8903b36591e406794585
+  checksum: ce9c723149cc688b83b96c49468bbf1fb507c35a53ca281a2a56d59242f0d8f587b690d5e7c4afe5ab4869655563711ed61075072819d96c237fbc93e3f15178
   languageName: node
   linkType: hard
 
@@ -1141,7 +1141,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
+    "@automattic/design-types": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/number-formatters": "npm:^1.1.0"
@@ -1184,6 +1184,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/design-types": "workspace:^"
     "@automattic/global-styles": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
@@ -1277,6 +1278,15 @@ __metadata:
   dependenciesMeta:
     sass-embedded:
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@automattic/design-types@workspace:^, @automattic/design-types@workspace:packages/design-types":
+  version: 0.0.0-use.local
+  resolution: "@automattic/design-types@workspace:packages/design-types"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -1439,6 +1449,7 @@ __metadata:
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/design-types": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
@@ -1602,8 +1613,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.52"
-    "@automattic/agenttic-ui": "npm:^0.1.52"
+    "@automattic/agenttic-client": "npm:^0.1.53"
+    "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1936,7 +1947,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.52"
+    "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -2351,6 +2362,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
+    debug: "npm:^4.4.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -10786,11 +10798,11 @@ __metadata:
   linkType: hard
 
 "@types/simple-peer@npm:^9.11.5":
-  version: 9.11.9
-  resolution: "@types/simple-peer@npm:9.11.9"
+  version: 9.11.8
+  resolution: "@types/simple-peer@npm:9.11.8"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 90583cd3440524da1fb6e1b58827bf1c0bf56d6dd08d591fa30b2ac6af048b826f55b82fcbe147ac99fdc821c7a14f3158ad8d79c08f18316902a4ef65c63db2
+  checksum: ef55b05fb2d12ed790d8e3b46d96bb84224c67bbcdfb6a867d14129ffc77f7b3edbf66b1eb5e737953d1f1b2ce9928f3505fe29061bfb048016616beaf866ef8
   languageName: node
   linkType: hard
 
@@ -13186,11 +13198,12 @@ __metadata:
   linkType: hard
 
 "@wordpress/undo-manager@npm:^1.23.0":
-  version: 1.41.0
-  resolution: "@wordpress/undo-manager@npm:1.41.0"
+  version: 1.23.0
+  resolution: "@wordpress/undo-manager@npm:1.23.0"
   dependencies:
-    "@wordpress/is-shallow-equal": "npm:^5.41.0"
-  checksum: a242564710623ec834c63f2773f3dcc8b5aa7a505b2d87c70e499d67d56642ab32c27ecc9fdd0a89843247caeff44d9fe6fb036605b5b54e620dcaf860f71f43
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/is-shallow-equal": "npm:^5.23.0"
+  checksum: 0aadf230c2dc0dccdc7aa7bd4c0ee415132335277aa4fd939f81bc53670280b1b490bee34a58e08174b38f4927e0b23176e08da78322ae0ac96ee365b4f7ce44
   languageName: node
   linkType: hard
 
@@ -15112,7 +15125,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.52"
+    "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -24929,7 +24942,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib0@npm:^0.2.42, lib0@npm:^0.2.74, lib0@npm:^0.2.85, lib0@npm:^0.2.99":
+"lib0@npm:^0.2.42, lib0@npm:^0.2.74, lib0@npm:^0.2.85":
   version: 0.2.117
   resolution: "lib0@npm:0.2.117"
   dependencies:
@@ -38556,7 +38569,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.3.1, ws@npm:^7.5.10":
+"ws@npm:^7.2.0, ws@npm:^7.3.1, ws@npm:^7.5.10":
   version: 7.5.10
   resolution: "ws@npm:7.5.10"
   peerDependencies:
@@ -38571,9 +38584,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.11.0, ws@npm:^8.13.0, ws@npm:^8.14.2, ws@npm:^8.2.3":
-  version: 8.19.0
-  resolution: "ws@npm:8.19.0"
+"ws@npm:^8.11.0, ws@npm:^8.13.0, ws@npm:^8.2.3":
+  version: 8.18.1
+  resolution: "ws@npm:8.18.1"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -38582,7 +38595,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 4741d9b9bc3f9c791880882414f96e36b8b254e34d4b503279d6400d9a4b87a033834856dbdd94ee4b637944df17ea8afc4bce0ff4a1560d2166be8855da5b04
+  checksum: e498965d6938c63058c4310ffb6967f07d4fa06789d3364829028af380d299fe05762961742971c764973dce3d1f6a2633fe8b2d9410c9b52e534b4b882a99fa
   languageName: node
   linkType: hard
 
@@ -38651,17 +38664,17 @@ __metadata:
   linkType: hard
 
 "y-indexeddb@npm:~9.0.11":
-  version: 9.0.12
-  resolution: "y-indexeddb@npm:9.0.12"
+  version: 9.0.11
+  resolution: "y-indexeddb@npm:9.0.11"
   dependencies:
     lib0: "npm:^0.2.74"
   peerDependencies:
     yjs: ^13.0.0
-  checksum: b31fbc12ef4a7d71f09212db02570af07c6a17b02537ce4cbb29f0549137adcbebf613cb2af63fa1d13e0932645be0293a4e7189cb5bf5dc6263cf2f72b65004
+  checksum: 2968254276535daa476048a51056942019a92746507146b7322cf577a02aaca047aa81a54121832a2233c48c8c0bd53bdb28050ef60dc8164e54160190f2b22c
   languageName: node
   linkType: hard
 
-"y-protocols@npm:^1.0.5, y-protocols@npm:^1.0.6":
+"y-protocols@npm:^1.0.5":
   version: 1.0.7
   resolution: "y-protocols@npm:1.0.7"
   dependencies:
@@ -38673,21 +38686,19 @@ __metadata:
   linkType: hard
 
 "y-webrtc@npm:~10.2.5":
-  version: 10.2.6
-  resolution: "y-webrtc@npm:10.2.6"
+  version: 10.2.5
+  resolution: "y-webrtc@npm:10.2.5"
   dependencies:
     lib0: "npm:^0.2.42"
     simple-peer: "npm:^9.11.0"
-    ws: "npm:^8.14.2"
-    y-protocols: "npm:^1.0.6"
-  peerDependencies:
-    yjs: ^13.6.8
+    ws: "npm:^7.2.0"
+    y-protocols: "npm:^1.0.5"
   dependenciesMeta:
     ws:
       optional: true
   bin:
     y-webrtc-signaling: bin/server.js
-  checksum: 47284dccab2f8e16db03e2201d47f96b32a7427c72a19f9b21f5dee7d45047817a9faee4c7b3c6a7475f9127223f83a7606edbf60ebdce5a79be4648fc1521c9
+  checksum: 8590dcc5a69be704b3c7373d4bbb97572369689eb7338351cd38a99ee14f2befc6afed322b8f4c9b15bec6203354d0dab78c9fd133442042e4d9d028aaec445c
   languageName: node
   linkType: hard
 
@@ -38819,11 +38830,11 @@ __metadata:
   linkType: hard
 
 "yjs@npm:~13.6.6":
-  version: 13.6.29
-  resolution: "yjs@npm:13.6.29"
+  version: 13.6.7
+  resolution: "yjs@npm:13.6.7"
   dependencies:
-    lib0: "npm:^0.2.99"
-  checksum: f300786ea63deac8a83e85598707ab9542e0a90b72fc0a1bcc77a58e618799de531ba4f85bcf349e647ad9e72bc4186edf50c4ecf67c8144cd53d3ac80d27351
+    lib0: "npm:^0.2.74"
+  checksum: fd2cdcafa0c558f41ac5e16e82295e51b0084248c9339f512f2f293bc613fd03e99fe41376fcb180683c93b35841c41342e1c078fc5128dde683f7ac2a9a23d7
   languageName: node
   linkType: hard
 

@@ -35,8 +35,16 @@ export default function ZendeskChat( {
 	markdownExtensions = {},
 	onHasMessagesChange,
 }: Props ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat();
+	const {
+		agentticMessages,
+		onSubmit,
+		isLoadingConversation,
+		isProcessing,
+		onTypingStatusChange,
+		imageUpload,
+		supportedImageTypes,
+		notice,
+	} = useManagedZendeskChat();
 
 	// Notify parent when has-messages state changes
 	const hasMessages = agentticMessages.length > 0;
@@ -56,11 +64,14 @@ export default function ZendeskChat( {
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }
+			notice={ notice }
 			onExpand={ onExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			imageUpload={ imageUpload }
+			acceptedImageFileTypes={ supportedImageTypes }
 		/>
 	);
 }

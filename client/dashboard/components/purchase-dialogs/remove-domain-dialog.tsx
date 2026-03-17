@@ -94,25 +94,27 @@ export default function RemoveDomainDialog( {
 								) }
 							</Text>
 						) }
-						<Text as="p">
-							{ createInterpolateElement(
-								__(
-									'If you want to use <domain /> with another provider you can <transferLink>transfer it</transferLink>.'
-								),
-								{
-									domain: <strong>{ domain.domain }</strong>,
-									transferLink: (
-										<RouterLinkButton
-											variant="link"
-											to={ domainTransferRoute.fullPath }
-											params={ { domainName: domain.domain } }
-										>
-											{ __( 'Transfer' ) }
-										</RouterLinkButton>
+						{ ( domain.can_transfer_to_any_user || domain.can_transfer_to_other_site ) && (
+							<Text as="p">
+								{ createInterpolateElement(
+									__(
+										'If you want to use <domain /> with another provider you can <transferLink>transfer it</transferLink>.'
 									),
-								}
-							) }
-						</Text>
+									{
+										domain: <strong>{ domain.domain }</strong>,
+										transferLink: (
+											<RouterLinkButton
+												variant="link"
+												to={ domainTransferRoute.fullPath }
+												params={ { domainName: domain.domain } }
+											>
+												{ __( 'Transfer' ) }
+											</RouterLinkButton>
+										),
+									}
+								) }
+							</Text>
+						) }
 						<Text as="p">{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
 					</>
 				) }

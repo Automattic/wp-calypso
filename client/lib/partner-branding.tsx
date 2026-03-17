@@ -34,8 +34,8 @@ export interface CiabPartnerConfig {
 	id: string;
 	/** Display name shown in UI (e.g., "Woo") */
 	displayName: string;
-	/** Feature flag to enable/disable this partner */
-	featureFlag: string;
+	/** Feature flag to enable/disable this partner. If omitted, the partner is always active. */
+	featureFlag?: string;
 	/** Logo configuration */
 	logo: LogoConfig;
 	/** Compact logo for TopBar (falls back to logo if not provided) */
@@ -82,6 +82,10 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		isOAuth2Client: isCiabOAuth2Client,
 	},
 };
+
+function isPartnerEnabled( partnerConfig: CiabPartnerConfig ): boolean {
+	return ! partnerConfig.featureFlag || config.isEnabled( partnerConfig.featureFlag );
+}
 
 const CIAB_PARTNER_SESSION_KEY = 'calypso.ciab.partner-id';
 
@@ -173,7 +177,7 @@ export function getCiabConfigFromGarden(
 function getCiabConfigByHostname( hostname: string ): CiabPartnerConfig | null {
 	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
 		if ( partnerConfig.domains?.includes( hostname ) ) {
-			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+			if ( isPartnerEnabled( partnerConfig ) ) {
 				return partnerConfig;
 			}
 		}
@@ -208,7 +212,7 @@ export function getCiabConfigFromBrandingCode(): CiabPartnerConfig | null {
 
 	if ( from && CIAB_PARTNERS[ from ] ) {
 		const partnerConfig = CIAB_PARTNERS[ from ];
-		if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+		if ( isPartnerEnabled( partnerConfig ) ) {
 			return partnerConfig;
 		}
 	}
@@ -249,7 +253,7 @@ export function getCiabConfigFromOAuth2Client(
 
 	for ( const partnerConfig of Object.values( CIAB_PARTNERS ) ) {
 		if ( partnerConfig.isOAuth2Client?.( oauth2Client ) ) {
-			if ( config.isEnabled( partnerConfig.featureFlag ) ) {
+			if ( isPartnerEnabled( partnerConfig ) ) {
 				return partnerConfig;
 			}
 		}
@@ -300,7 +304,7 @@ export function detectCiabConfig( oauth2Client?: { id: number } | null ): CiabPa
 	if ( persistedPartnerId ) {
 		const persistedConfig = CIAB_PARTNERS[ persistedPartnerId ];
 
-		if ( persistedConfig && config.isEnabled( persistedConfig.featureFlag ) ) {
+		if ( persistedConfig && isPartnerEnabled( persistedConfig ) ) {
 			return persistedConfig;
 		}
 

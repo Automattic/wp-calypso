@@ -7,7 +7,7 @@ import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
  * Context type for AgentsManager data.
  *
  * This context provides user, site, and section data to all components
- * in the AgentsManager tree, avoiding prop drilling.
+ * in the `AgentsManager` tree, avoiding prop drilling.
  */
 export interface AgentsManagerContextType {
 	/** The current user object. */
@@ -16,7 +16,7 @@ export interface AgentsManagerContextType {
 	isLoggedIn: boolean;
 	/** The selected site object. */
 	site?: AgentsManagerSite | null;
-	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
+	/** The name of the current section (e.g., `wp-admin`, `gutenberg`). */
 	sectionName: string;
 	/** The current route path. */
 	currentRoute?: string;
@@ -28,9 +28,9 @@ export interface AgentsManagerContextType {
 	isEligibleForChat: boolean;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
-	/** Sets the agent configuration (called from AgentSetup after initialization). */
+	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
-	/** Returns the active session ID from agentConfig or stored session. */
+	/** Returns the active session ID from `agentConfig` or stored session. */
 	getActiveSessionId: () => string;
 }
 
@@ -56,7 +56,7 @@ export interface AgentsManagerContextProviderProps {
 }
 
 /**
- * Provider component that makes AgentsManager data available to all children.
+ * Provider component that makes `AgentsManager` data available to all children.
  */
 export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProviderProps > = ( {
 	children,
@@ -86,9 +86,9 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 };
 
 /**
- * Hook to access AgentsManager context data.
+ * Hook to access `AgentsManager` context data.
  *
- * Must be used within an AgentsManagerContextProvider.
+ * Must be used within an `AgentsManagerContextProvider`.
  * @returns The current context value with user, site, and section data.
  */
 export function useAgentsManagerContext(): AgentsManagerContextType {
