@@ -4,6 +4,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
@@ -22,6 +23,7 @@ import {
 	getPurchaseNewEmailAccountPath,
 } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsBySiteId,
@@ -60,6 +62,13 @@ const EmailForwardsAdd = ( {
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+
+	const domainDns = useSelector( ( state ) => getDomainDns( state, selectedDomainName ) );
+	const hasMxRecords = ( domainDns?.records ?? [] ).some(
+		( record: { type: string } ) => record.type === 'MX'
+	);
+	const showMxWarning = !! selectedDomain?.hasWpcomNameservers && hasMxRecords;
+
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
 	const isGravatarRestrictedDomain =
 		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
@@ -137,6 +146,7 @@ const EmailForwardsAdd = ( {
 						onAddedEmailForwards={ onAddedEmailForwards }
 						selectedDomainName={ selectedDomainName }
 						showFormHeader={ showFormHeader }
+						showMxWarning={ showMxWarning }
 					/>
 				) }
 			</Card>
@@ -147,6 +157,8 @@ const EmailForwardsAdd = ( {
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+
+			{ selectedDomainName && <QueryDomainDns domain={ selectedDomainName } /> }
 
 			<Main wideLayout className="email-forwards-add">
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
