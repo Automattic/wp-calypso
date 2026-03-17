@@ -84,7 +84,7 @@ export const UserLists = ( {
 						key={ `user-list-${ list.ID }` }
 						href={ `/reader/list/${ list.owner }/${ list.slug }` }
 						title={ list.title }
-						description={ description }
+						description={ description || translate( 'No description.' ) }
 					/>
 				);
 			} ) }
