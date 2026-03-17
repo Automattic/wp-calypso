@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL, UNIFIED_CHAT_AGENT_ID } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { getUseUnifiedExperienceFromInlineData } from './load-external-providers';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -190,7 +191,7 @@ export function getAgentConfig(): { agentId: string; version?: string } {
 	const versionParam = urlSearchParams.get( 'version' );
 
 	let defaultAgentId = ORCHESTRATOR_AGENT_ID;
-	if ( typeof agentsManagerData !== 'undefined' && agentsManagerData?.useUnifiedExperience ) {
+	if ( getUseUnifiedExperienceFromInlineData() ) {
 		defaultAgentId = UNIFIED_CHAT_AGENT_ID;
 	}
 
