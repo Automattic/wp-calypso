@@ -911,6 +911,90 @@ export const mcpSetupRoute = createRoute( {
 	)
 );
 
+export const mcpAiSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add AI assistant to sites' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'ai-sites',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/ai-sites' ).then( ( d ) =>
+		createLazyRoute( 'mcp-ai-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpMcpSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add MCP to specific sites' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'mcp-sites',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/mcp-sites' ).then( ( d ) =>
+		createLazyRoute( 'mcp-mcp-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpReadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Read' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'read',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/read' ).then( ( d ) =>
+		createLazyRoute( 'mcp-read' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpWriteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Write' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/write' ).then( ( d ) =>
+		createLazyRoute( 'mcp-write' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
@@ -981,7 +1065,16 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
+		meRoutes.push(
+			mcpRoute.addChildren( [
+				mcpIndexRoute,
+				mcpSetupRoute,
+				mcpAiSitesRoute,
+				mcpMcpSitesRoute,
+				mcpReadRoute,
+				mcpWriteRoute,
+			] )
+		);
 	}
 
 	if ( config.supports.me.apps ) {

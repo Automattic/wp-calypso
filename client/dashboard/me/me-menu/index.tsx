@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
@@ -20,9 +19,6 @@ const MeMenu = () => {
 			<ResponsiveMenu.Item to="/me/security">{ __( 'Security' ) }</ResponsiveMenu.Item>
 			{ supports.notifications && (
 				<ResponsiveMenu.Item to="/me/notifications">{ __( 'Notifications' ) }</ResponsiveMenu.Item>
-			) }
-			{ isEnabled( 'mcp-settings' ) && (
-				<ResponsiveMenu.Item to="/me/mcp">{ __( 'MCP' ) }</ResponsiveMenu.Item>
 			) }
 			{ hasAppSupport( supports, 'apps' ) && (
 				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
