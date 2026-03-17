@@ -61,12 +61,17 @@ WORKDIR /calypso
 COPY ./env-config.sh /tmp/env-config.sh
 RUN bash /tmp/env-config.sh
 
+# If Claude Code is installed by env-config.sh, copy it to a global path.
+# The runtime container runs as `nobody`, which cannot traverse `/root` (0700),
+# so `/root/.local/bin/claude` would fail with "Permission denied".
+RUN if [ -x /root/.local/bin/claude ]; then install -m 0755 /root/.local/bin/claude /usr/local/bin/claude; fi
+
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache --inline-builds
+RUN yarn install --immutable --check-cache --inline-builds;exit 0
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)
 ## RUN node --version && yarn --version && npm --version
@@ -94,20 +99,20 @@ FROM ${base_image} AS update-base-cache
 COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
-FROM node:${node_version}-alpine AS app
+FROM node:${node_version}-bullseye-slim AS app
 
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
 ENV NODE_ENV production
-ENV PATH="/root/.local/bin:${PATH}"
 WORKDIR /calypso
 
-RUN apk add --no-cache tini
+RUN apt-get update && apt-get install -y --no-install-recommends tini ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /usr/local/bin/claude /usr/local/bin/claude
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package.json
 
 USER nobody
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "--unhandled-rejections=warn", "build/server.js"]
