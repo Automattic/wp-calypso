@@ -10,10 +10,10 @@ interface ListStreamHeaderProps {
 	title: React.ReactNode;
 	description?: string;
 	showEdit?: boolean;
-	editUrl: string;
+	editUrl?: string;
 	showFollow?: boolean;
-	following: boolean;
-	onFollowToggle: () => void;
+	following?: boolean;
+	onFollowToggle?: () => void;
 }
 
 const ListStreamHeader = ( {
