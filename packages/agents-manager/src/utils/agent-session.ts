@@ -8,14 +8,6 @@ export const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
- * Get the site key used for per-site session storage.
- * Returns the site ID as a string, or 'no-site' for non-site contexts (e.g. /me, /sites).
- */
-export function getSiteKey( currentSiteId?: number ): string {
-	return currentSiteId ? String( currentSiteId ) : 'no-site';
-}
-
-/**
  * Get the `localStorage` key for the given agent.
  */
 export function getSessionStorageKey( agentId?: string ): string {

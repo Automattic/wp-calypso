@@ -74,7 +74,7 @@ describe( 'AgentsManager', () => {
 				currentUser: mockUser,
 				site: mockSite,
 				currentRoute: '/sites/fulltest.com',
-				currentSiteId: 999,
+				siteKey: '999',
 			} )
 		);
 	} );

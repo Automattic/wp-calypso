@@ -15,7 +15,6 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import { getSiteKey } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
 	deactivateStaleMessages,
@@ -92,8 +91,7 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, currentSiteId } = useAgentsManagerContext();
-	const siteKey = getSiteKey( currentSiteId );
+	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );

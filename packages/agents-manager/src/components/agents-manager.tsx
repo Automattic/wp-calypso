@@ -12,7 +12,7 @@ import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contex
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
-import { getSiteKey, clearSessionId } from '../utils/agent-session';
+import { clearSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -52,12 +52,14 @@ export default function AgentsManager( {
 		return null;
 	}
 
+	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
+
 	return (
 		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, currentSiteId, currentRoute } }
+			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
 		>
 			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ getSiteKey( currentSiteId ) }>
+				<PersistentRouter siteKey={ siteKey }>
 					<AgentSetup />
 				</PersistentRouter>
 			</QueryClientProvider>
