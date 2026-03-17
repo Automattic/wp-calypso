@@ -56,7 +56,6 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
-	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -82,6 +81,7 @@ import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
+import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -349,6 +349,8 @@ export default function CancelPurchase() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
+
+	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -683,7 +685,7 @@ export default function CancelPurchase() {
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
 		const skippingDomainOptionsForAutoRenew =
-			shouldShowRefundEligibilityNotice( purchase ) && cancelIntent !== 'refund';
+			showRefundEligibilityNotice && cancelIntent !== 'refund';
 
 		const needsDomainOptions =
 			! skippingDomainOptionsForAutoRenew &&
@@ -1098,10 +1100,7 @@ export default function CancelPurchase() {
 			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 		}
 		// If default Cancel button on refundable wpcom plan, use auto-renew flow
-		else if (
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
-			shouldShowRefundEligibilityNotice( purchase )
-		) {
+		else if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
 			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}
 
@@ -1368,7 +1367,7 @@ export default function CancelPurchase() {
 			notices={
 				! state.surveyShown &&
 				! state.showDomainOptionsStep &&
-				( shouldShowRefundEligibilityNotice( purchase ) ? (
+				( showRefundEligibilityNotice ? (
 					<RefundEligibilityNotice
 						purchase={ purchase }
 						onClaimRefund={ onCancellationStartForRefund }

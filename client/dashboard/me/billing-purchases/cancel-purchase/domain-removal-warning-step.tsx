@@ -33,6 +33,8 @@ export default function DomainRemovalWarningStep( {
 		enabled: Boolean( domainName ),
 	} );
 
+	const canTransfer = domain?.can_transfer_to_any_user || domain?.can_transfer_to_other_site;
+
 	return (
 		<VStack spacing={ 8 }>
 			<VStack spacing={ 3 }>
@@ -61,29 +63,46 @@ export default function DomainRemovalWarningStep( {
 				) }
 
 				<Text>
-					{ createInterpolateElement(
-						/* translators: <domainName /> is the domain name */
-						__(
-							'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
-						),
-						{
-							domainName: <strong>{ domainName }</strong>,
-							moveLink: (
-								<RouterLinkButton
-									variant="link"
-									to="/domains/$domainName"
-									params={ { domainName } }
-								/>
-							),
-							transferLink: (
-								<RouterLinkButton
-									variant="link"
-									to="/domains/$domainName/transfer"
-									params={ { domainName } }
-								/>
-							),
-						}
-					) }
+					{ canTransfer
+						? createInterpolateElement(
+								/* translators: <domainName /> is the domain name */
+								__(
+									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
+								),
+								{
+									domainName: <strong>{ domainName }</strong>,
+									moveLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName"
+											params={ { domainName } }
+										/>
+									),
+									transferLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName/transfer"
+											params={ { domainName } }
+										/>
+									),
+								}
+						  )
+						: createInterpolateElement(
+								/* translators: <domainName /> is the domain name */
+								__(
+									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink>.'
+								),
+								{
+									domainName: <strong>{ domainName }</strong>,
+									moveLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName"
+											params={ { domainName } }
+										/>
+									),
+								}
+						  ) }
 				</Text>
 
 				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
