@@ -245,7 +245,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 						PROBE_COUNT=${'$'}(( ${'$'}PROBE_COUNT + 1 ))
 
-						HTTP_CODE=${'$'}(curl --output /dev/null --silent --connect-timeout 5 --max-time 10 --write-out "%{http_code}" --location "${'$'}URL" 2>/dev/null) || HTTP_CODE="000"
+						HTTP_CODE=${'$'}(curl --output /dev/null --silent --connect-timeout 1 --max-time 3 --write-out "%{http_code}" --location "${'$'}URL" 2>/dev/null) || HTTP_CODE="000"
 
 						echo "  Probe #${'$'}PROBE_COUNT (${'$'}{ELAPSED}s elapsed): HTTP ${'$'}HTTP_CODE"
 						STATUS_LOG="${'$'}STATUS_LOG ${'$'}{ELAPSED}s:${'$'}HTTP_CODE"
