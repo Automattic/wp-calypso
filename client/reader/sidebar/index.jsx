@@ -1,4 +1,7 @@
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
+import './style.scss';
 import page from '@automattic/calypso-router';
+import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -46,8 +49,6 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
-import './style.scss';
 
 //TODO: Remove this component once the new reader MSD is enabled for all users
 const DeprecatedReaderSidebarHeader = () => {
@@ -263,6 +264,13 @@ export class ReaderSidebar extends Component {
 					) }
 
 					<SidebarSeparator />
+
+					<SidebarItem
+						label={ translate( 'New Subscription' ) }
+						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
+						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
+						link="/reader/new"
+					/>
 
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {

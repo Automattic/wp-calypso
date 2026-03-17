@@ -1,7 +1,5 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
-import { Icon } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -17,6 +15,7 @@ import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selecto
 import { AppState } from 'calypso/types';
 import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
+
 // Not complete, just useful fields for now
 type Site = {
 	ID: number;
@@ -111,17 +110,6 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			<MenuItem key="add" selected={ path.startsWith( '/reader/new' ) }>
-				<MenuItemLink
-					href="/reader/new"
-					className="sidebar__menu-link"
-					onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
-				>
-					<Icon icon={ plus } viewBox="2 0 24 24" />
-					<span>{ translate( 'Add new' ) }</span>
-				</MenuItemLink>
-			</MenuItem>
-
 			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
 				<MenuItemLink
 					href="/reader"
