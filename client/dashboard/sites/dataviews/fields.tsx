@@ -1,4 +1,5 @@
-import { queryClient } from '@automattic/api-queries';
+import { queryClient, siteFavoriteMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAuth } from '../../app/auth';
@@ -16,6 +17,7 @@ import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibil
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import {
 	AsyncEngagementStat,
+	Favorite,
 	LastBackup,
 	MediaStorage,
 	Name,
@@ -46,6 +48,28 @@ function getDefaultFields( {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
+		},
+		{
+			id: 'is_favorited',
+			label: __( 'Favorited' ),
+			type: 'boolean',
+			getValue: ( { item } ) => item.is_favorited,
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			render: function FavoritedField( { item } ) {
+				const { mutate } = useMutation( siteFavoriteMutation( item.ID ) );
+				return (
+					<Favorite
+						isFavorited={ item.is_favorited }
+						onToggle={ () => mutate( ! item.is_favorited ) }
+					/>
+				);
+			},
 		},
 		{
 			id: 'URL',

@@ -5,9 +5,10 @@ import {
 	sitePHPVersionQuery,
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
+	siteFavoriteMutation,
 } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -18,7 +19,7 @@ import {
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { starEmpty, starFilled } from '@wordpress/icons';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -48,23 +49,30 @@ function LoadingIndicator( { label }: { label: string } ) {
 	return <TextBlur>{ label }</TextBlur>;
 }
 
-export function Favorite() {
-	const [ isFavorite, setIsFavorite ] = useState( false );
-
-	const toggleFavorite = useCallback( ( event: React.MouseEvent ) => {
-		event.stopPropagation();
-		event.preventDefault();
-		setIsFavorite( ( prev ) => ! prev );
-	}, [] );
+export function Favorite( {
+	isFavorited,
+	onToggle,
+}: {
+	isFavorited: boolean;
+	onToggle?: () => void;
+} ) {
+	const handleClick = useCallback(
+		( event: React.MouseEvent ) => {
+			event.stopPropagation();
+			event.preventDefault();
+			onToggle?.();
+		},
+		[ onToggle ]
+	);
 
 	return (
 		<Button
-			icon={ isFavorite ? starFilled : starEmpty }
-			label={ isFavorite ? __( 'Remove from favorites' ) : __( 'Add to favorites' ) }
-			onClick={ toggleFavorite }
+			icon={ isFavorited ? starFilled : starEmpty }
+			label={ isFavorited ? __( 'Remove from favorites' ) : __( 'Add to favorites' ) }
+			onClick={ onToggle ? handleClick : undefined }
 			size="small"
 			style={ {
-				color: isFavorite ? '#F0B849' : '#C3C4C7',
+				color: isFavorited ? '#F0B849' : '#C3C4C7',
 			} }
 		/>
 	);
@@ -110,10 +118,14 @@ export function SiteLink( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
+	const { mutate } = useMutation( siteFavoriteMutation( site.ID ) );
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
 			<NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />
-			<Favorite />
+			<Favorite
+				isFavorited={ site.is_favorited }
+				onToggle={ () => mutate( ! site.is_favorited ) }
+			/>
 		</HStack>
 	);
 }

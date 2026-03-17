@@ -4,6 +4,7 @@ import {
 	deleteSite,
 	launchSite,
 	restoreSite,
+	setFavoriteSite,
 	SITE_FIELDS,
 	SITE_OPTIONS,
 } from '@automattic/api-core';
@@ -152,5 +153,43 @@ export const siteRestoreMutation = ( siteId: number ) =>
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+		},
+	} );
+
+export const siteFavoriteMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( isFavorited: boolean ) => setFavoriteSite( siteId, isFavorited ),
+		onMutate: async ( isFavorited: boolean ) => {
+			await queryClient.cancelQueries( { queryKey: [ 'sites' ] } );
+
+			const updateSite = ( oldData?: Site ) => {
+				if ( ! oldData ) {
+					return oldData;
+				}
+				return { ...oldData, is_favorited: isFavorited };
+			};
+
+			queryClient.setQueriesData< { sites: Site[]; total: number } >(
+				{ queryKey: [ 'sites' ] },
+				( oldData ) => {
+					if ( ! oldData ) {
+						return oldData;
+					}
+					return {
+						...oldData,
+						sites: oldData.sites.map( ( site ) =>
+							site.ID === siteId ? { ...site, is_favorited: isFavorited } : site
+						),
+					};
+				}
+			);
+
+			queryClient.setQueriesData< Site >( siteQueryFilter( siteId ), updateSite );
+
+			return { siteId };
+		},
+		onError: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
 	} );
