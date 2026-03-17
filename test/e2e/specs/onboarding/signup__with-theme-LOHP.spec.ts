@@ -50,13 +50,14 @@ test.describe(
 				await flowLOHPThemeSignup.loggedOutHomePage.exploreThemesLink.click();
 
 				await flowLOHPThemeSignup.loggedOutThemesPage.filterBy( 'Free' );
-				await flowLOHPThemeSignup.loggedOutThemesPage.firstThemeCard.click();
+				await flowLOHPThemeSignup.loggedOutThemesPage.selectFirstThemeCard();
 
 				themeSlug = await flowLOHPThemeSignup.visitCalypsoGetStartedLinkForTheme();
 			} );
 
 			await test.step( 'Then I see the "Create your account" page', async function () {
-				await expect( flowLOHPThemeSignup.userSignupPage.createYourAccountHeading ).toBeVisible();
+				await flowLOHPThemeSignup.userSignupPage.waitUntilLoaded();
+				await expect( flowLOHPThemeSignup.userSignupPage.emailInput ).toBeVisible();
 			} );
 
 			await test.step( 'When I sign up with my email', async function () {

@@ -112,6 +112,13 @@ export class UserSignupPage {
 	}
 
 	/**
+	 * Waits until one of the supported signup form variants is ready.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.waitForSignupForm();
+	}
+
+	/**
 	 * Navigates to the /start endpoint.
 	 *
 	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /start. E.g. /start/premium is the premium plan signup flow.
