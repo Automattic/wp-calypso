@@ -91,7 +91,7 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -158,7 +158,7 @@ export default function OrchestratorChat( {
 	} );
 
 	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( messages, siteKey );
+	useSaveNewChatRoute( messages );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();

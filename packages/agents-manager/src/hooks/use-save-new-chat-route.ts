@@ -43,8 +43,8 @@ function saveNewChatRoute( sessionId: string, siteKey?: string ): void {
  * Waits for the first AI reply (which creates the session ID),
  * then saves the chat route so the conversation can be resumed later.
  */
-export default function useSaveNewChatRoute( messages: UIMessage[], siteKey?: string ) {
-	const { agentConfig } = useAgentsManagerContext();
+export default function useSaveNewChatRoute( messages: UIMessage[] ) {
+	const { agentConfig, siteKey } = useAgentsManagerContext();
 
 	const sessionId = getSessionId( agentConfig?.agentId ?? '' );
 	const prevSessionIdRef = useRef< string >( sessionId );
