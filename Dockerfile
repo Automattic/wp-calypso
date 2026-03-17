@@ -64,7 +64,8 @@ RUN bash /tmp/env-config.sh
 # If Claude Code is installed by env-config.sh, copy it to a global path.
 # The runtime container runs as `nobody`, which cannot traverse `/root` (0700),
 # so `/root/.local/bin/claude` would fail with "Permission denied".
-RUN if [ -x /root/.local/bin/claude ]; then install -m 0755 /root/.local/bin/claude /usr/local/bin/claude; fi
+# If not installed (e.g. in CI), create a no-op stub so COPY in the app stage always succeeds.
+RUN if [ -x /root/.local/bin/claude ]; then install -m 0755 /root/.local/bin/claude /usr/local/bin/claude; else printf '%s\n' '#!/bin/sh' 'exit 0' > /usr/local/bin/claude && chmod 0755 /usr/local/bin/claude; fi
 
 # Build a "source" layer
 #
@@ -107,7 +108,7 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apt-get update && apt-get install -y --no-install-recommends tini ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /usr/local/bin/claude /usr/local/bin/claude
+COPY --from=builder --chown=nobody:nobody /usr/local/bin/claude /usr/local/bin/claude
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
