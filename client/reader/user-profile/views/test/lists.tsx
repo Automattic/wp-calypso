@@ -110,4 +110,97 @@ describe( 'UserLists', () => {
 			`/reader/list/${ defaultUser.user_login }/test-list-2`
 		);
 	} );
+
+	test( 'should hide recommended-blogs list when owned by current user', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Test List',
+				description: 'A regular list',
+				slug: 'test-list',
+				owner: 'testuser',
+				is_public: true,
+				is_owner: true,
+			},
+			{
+				ID: 2,
+				title: 'Recommended Blogs',
+				description: 'My recommended blogs',
+				slug: 'recommended-blogs',
+				owner: 'testuser',
+				is_public: true,
+				is_owner: true,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		expect( screen.getByText( 'Test List' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Recommended Blogs' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should show recommended-blogs list from another user with custom description', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Recommended Blogs',
+				description: '',
+				slug: 'recommended-blogs',
+				owner: 'anotheruser',
+				is_public: true,
+				is_owner: false,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		expect( screen.getByText( 'Recommended Blogs' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'A list of blogs recommended by @anotheruser.' )
+		).toBeInTheDocument();
+
+		// Link should point to the other user's list
+		const link = document.querySelector( 'a.summary-button' );
+		expect( link?.getAttribute( 'href' ) ).toBe( '/reader/list/anotheruser/recommended-blogs' );
+	} );
+
+	test( 'should display fallback description when list has no description', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Test List',
+				description: '',
+				slug: 'no-desc-list',
+				owner: 'testuser',
+				is_public: true,
+				is_owner: true,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		expect( screen.getByText( 'Test List' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'No description.' ) ).toBeInTheDocument();
+	} );
 } );
