@@ -194,6 +194,92 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
 		bashNodeScript {
+			name = "[Experiment] Measure calypso.live readiness"
+			id = "measure_readiness"
+			scriptContent = """
+				# Experiment: Measure how long calypso.live takes to serve HTTP 200
+				# after URL resolution. This step is non-blocking and only logs data.
+				# Remove this step after data collection is complete.
+
+				POLL_INTERVAL=5
+				MAX_WAIT=120
+
+				# Build a space-separated list of label=url pairs to probe.
+				# Word splitting in the for loop below is intentional.
+				URLS_TO_CHECK=""
+				if [[ -n "%CALYPSO_BASE_URL%" ]]; then
+					URLS_TO_CHECK="calypso=%CALYPSO_BASE_URL%"
+				fi
+				if [[ -n "%DASHBOARD_BASE_URL%" ]]; then
+					if [[ -n "${'$'}URLS_TO_CHECK" ]]; then
+						URLS_TO_CHECK="${'$'}URLS_TO_CHECK dashboard=%DASHBOARD_BASE_URL%"
+					else
+						URLS_TO_CHECK="dashboard=%DASHBOARD_BASE_URL%"
+					fi
+				fi
+
+				if [[ -z "${'$'}URLS_TO_CHECK" ]]; then
+					echo "No URLs to check, skipping readiness measurement"
+					exit 0
+				fi
+
+				# Intentionally unquoted to allow word splitting on space-separated entries.
+				for entry in ${'$'}URLS_TO_CHECK; do
+					LABEL="${'$'}{entry%%=*}"
+					URL="${'$'}{entry#*=}"
+
+					echo ""
+					echo "=== Readiness probe for ${'$'}LABEL: ${'$'}URL ==="
+
+					START_TIME=${'$'}(date +%s)
+					PROBE_COUNT=0
+					READY=false
+					STATUS_LOG=""
+					HTTP_CODE="000"
+
+					while true; do
+						ELAPSED=${'$'}(( ${'$'}(date +%s) - ${'$'}START_TIME ))
+						if [[ ${'$'}ELAPSED -ge ${'$'}MAX_WAIT ]]; then
+							break
+						fi
+
+						PROBE_COUNT=${'$'}(( ${'$'}PROBE_COUNT + 1 ))
+
+						HTTP_CODE=${'$'}(curl --output /dev/null --silent --connect-timeout 5 --max-time 10 --write-out "%{http_code}" --location "${'$'}URL" 2>/dev/null) || HTTP_CODE="000"
+
+						echo "  Probe #${'$'}PROBE_COUNT (${'$'}{ELAPSED}s elapsed): HTTP ${'$'}HTTP_CODE"
+						STATUS_LOG="${'$'}STATUS_LOG ${'$'}{ELAPSED}s:${'$'}HTTP_CODE"
+
+						if [[ "${'$'}HTTP_CODE" == "200" ]]; then
+							READY=true
+							break
+						fi
+
+						sleep ${'$'}POLL_INTERVAL
+					done
+
+					TOTAL_TIME=${'$'}(( ${'$'}(date +%s) - ${'$'}START_TIME ))
+
+					echo ""
+					echo "--- ${'$'}LABEL readiness summary ---"
+					echo "  URL: ${'$'}URL"
+					echo "  Total probes: ${'$'}PROBE_COUNT"
+					echo "  Time to ready: ${'$'}{TOTAL_TIME}s"
+					echo "  Probe log:${'$'}STATUS_LOG"
+
+					if [[ "${'$'}READY" == true ]]; then
+						echo "  Result: READY (HTTP 200 after ${'$'}{TOTAL_TIME}s)"
+						echo "##teamcity[buildStatisticValue key='readiness_${'$'}{LABEL}_seconds' value='${'$'}TOTAL_TIME']"
+					else
+						echo "  Result: NOT READY after ${'$'}{MAX_WAIT}s (last HTTP status: ${'$'}HTTP_CODE)"
+						echo "##teamcity[buildStatisticValue key='readiness_${'$'}{LABEL}_seconds' value='-1']"
+					fi
+				done
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
 			name = "Run e2e tests"
 			id = "run_tests"
 			scriptContent = """
