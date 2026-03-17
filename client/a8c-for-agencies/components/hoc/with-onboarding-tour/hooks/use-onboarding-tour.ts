@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useCallback, useEffect, useState } from 'react';
 
 export const ONBOARDING_TOUR_HASH = '#onboarding-tour';
@@ -9,7 +8,7 @@ export default function useOnboardingTour() {
 	useEffect( () => {
 		const handleHashChange = () => {
 			const hash = window.location.hash;
-			if ( isEnabled( 'a4a-unified-onboarding-tour' ) && hash.startsWith( ONBOARDING_TOUR_HASH ) ) {
+			if ( hash.startsWith( ONBOARDING_TOUR_HASH ) ) {
 				setIsOpen( true );
 			}
 		};

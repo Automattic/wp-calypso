@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -49,12 +48,7 @@ export default function AgencySignupFinish() {
 	useEffect( () => {
 		if ( agency ) {
 			// Redirect to the sites page if the user already has an agency record.
-
-			if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
-				page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
-			} else {
-				page.redirect( A4A_OVERVIEW_LINK );
-			}
+			page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
 		}
 	}, [ agency ] );
 

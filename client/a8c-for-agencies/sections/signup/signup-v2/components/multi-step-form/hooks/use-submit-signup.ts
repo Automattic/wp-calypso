@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useCallback, useEffect } from 'react';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
@@ -39,11 +38,7 @@ export default function useSubmitSignup() {
 
 	useEffect( () => {
 		if ( currentAgency ) {
-			if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
-				page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
-			} else {
-				page.redirect( A4A_OVERVIEW_LINK );
-			}
+			page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
 		}
 	}, [ createAgency.isSuccess, currentAgency, dispatch ] );
 

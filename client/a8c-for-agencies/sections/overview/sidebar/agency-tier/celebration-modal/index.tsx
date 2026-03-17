@@ -5,7 +5,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import AgencyTierCelebrationModalContent from './celebration-modal-content';
-import AgencyTierFeatureAnnouncement from './feature-announcement';
 import type { AgencyTierInfo } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 import './style.scss';
@@ -72,7 +71,7 @@ export default function AgencyTierCelebrationModal( {
 		// Don't show the modal if the user is already on the emerging-partner tier and it's not their first purchase
 		( currentAgencyTier === 'emerging-partner' && ! isAgencyFirstPurchase )
 	) {
-		return <AgencyTierFeatureAnnouncement />;
+		return null;
 	}
 
 	return (

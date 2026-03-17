@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -9,13 +8,11 @@ import OverviewSidebarAgencyTier from './agency-tier';
 import OverviewSidebarContactSupport from './contact-support';
 import OverviewSidebarFeaturedWooPayments from './featured-woopayments';
 import OverviewSidebarGrowthAccelerator from './growth-accelerator';
-import OverviewSidebarQuickLinks from './quick-links';
 import OverviewSidebarRelaunchWelcomeTour from './relaunch-welcome-tour';
 
 import './style.scss';
 
 const OverviewSidebar = () => {
-	const isNewArrangement = isEnabled( 'a4a-unified-onboarding-tour' );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -25,17 +22,11 @@ const OverviewSidebar = () => {
 
 	return (
 		<div className="overview-sidebar">
-			{ isNewArrangement && (
-				<>
-					<OverviewSidebarRelaunchWelcomeTour />
-					<OverviewSidebarGrowthAccelerator />
-				</>
-			) }
+			<OverviewSidebarRelaunchWelcomeTour />
+			<OverviewSidebarGrowthAccelerator />
 			<OverviewSidebarAgencyTier />
-			{ ! isNewArrangement && <OverviewSidebarQuickLinks /> }
 			<OverviewSidebarFeaturedWooPayments />
 			<PressablePremiumPlanMigrationCard />
-			{ ! isNewArrangement && <OverviewSidebarGrowthAccelerator /> }
 			<OverviewSidebarContactSupport />
 			<Button
 				className="overview__sidebar-button"
