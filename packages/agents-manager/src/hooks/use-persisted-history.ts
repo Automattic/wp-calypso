@@ -1,4 +1,8 @@
-import { AgentsManagerSelect } from '@automattic/data-stores';
+import {
+	AgentsManagerSelect,
+	PerSiteRouterHistory,
+	SingleRouterHistory,
+} from '@automattic/data-stores';
 import { select as storeSelect, useSelect } from '@wordpress/data';
 import { useState, useEffect, useLayoutEffect, useCallback } from '@wordpress/element';
 import { Action, Location } from 'history';
@@ -10,7 +14,7 @@ export interface HistoryEvent {
 	location: Location;
 }
 
-type PersistCallback = ( historyData: { entries: Location[]; index: number } ) => void;
+type PersistCallback = ( historyData: SingleRouterHistory ) => void;
 
 /**
  * This is a custom implementation of the MemoryHistory class from the history package.
@@ -132,9 +136,7 @@ class MemoryHistory {
 /**
  * Read the full router history map from the store (synchronous, outside React).
  */
-function getFullRouterHistory():
-	| Record< string, { entries: Location[]; index: number } >
-	| undefined {
+function getFullRouterHistory(): PerSiteRouterHistory | undefined {
 	return ( storeSelect( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState()
 		.routerHistory;
 }
@@ -153,7 +155,7 @@ export const usePersistedHistory = ( siteKey?: string ) => {
 
 	// Create a persist callback that merges with existing per-site histories.
 	const persistHistory = useCallback(
-		( historyData: { entries: Location[]; index: number } ) => {
+		( historyData: SingleRouterHistory ) => {
 			if ( siteKey ) {
 				const fullMap = getFullRouterHistory() || {};
 				persistAgentsManagerState( {
