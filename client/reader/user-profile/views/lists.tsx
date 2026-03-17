@@ -1,3 +1,4 @@
+import { SummaryButton } from '@automattic/components';
 import { formatListBullets, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -59,22 +60,28 @@ export const UserLists = ( {
 
 	return (
 		<div className="user-profile__lists">
-			<div className="user-profile__lists-body">
-				{ lists.map( ( list: List ) => (
-					<a
-						className="user-profile__lists-body-link"
+			{ lists.map( ( list: List ) => {
+				// Do not show "Recommended Blogs" list if it belongs to the user.
+				if ( list.owner === user.user_login && list.slug === 'recommended-blogs' ) {
+					return null;
+				}
+
+				let description: React.ReactNode = list.description;
+				if ( list.slug === 'recommended-blogs' ) {
+					description = translate( 'A list of blogs recommended by %s.', {
+						args: `@${ list.owner }`,
+					} );
+				}
+
+				return (
+					<SummaryButton
+						key={ `user-list-${ list.ID }` }
 						href={ `/reader/list/${ list.owner }/${ list.slug }` }
-						key={ list.ID }
-					>
-						<div className="card reader-post-card is-compact is-clickable">
-							<div className="reader-post-card__post-heading">
-								<h2 className="reader-post-card__title">{ list.title }</h2>
-							</div>
-							<div className="reader-post-card__post-content">{ list.description }</div>
-						</div>
-					</a>
-				) ) }
-			</div>
+						title={ list.title }
+						description={ description }
+					/>
+				);
+			} ) }
 		</div>
 	);
 };

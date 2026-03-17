@@ -10,20 +10,17 @@
 			margin: initial;
 			padding-top: 150px;
 		}
+	}
 
-		&__lists-body-link {
-			color: var( --color-neutral-100 );
-			cursor: pointer;
-			display: block;
-			line-height: 29px;
-			text-wrap: pretty;
-			text-decoration: none;
+	.user-profile__lists {
+		margin: 26px 0 0;
 
-			.reader-post-card__title {
-				margin-top: 0;
-				font-size: 1.25rem;
-				font-weight: 600;
-			}
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 16px 0 0 0;
+		}
+
+		.summary-button {
+			margin-bottom: 16px;
 		}
 	}
 }
