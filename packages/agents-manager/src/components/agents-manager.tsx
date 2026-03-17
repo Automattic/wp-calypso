@@ -67,12 +67,10 @@ export default function AgentsManager( {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup(): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig, currentSiteId } =
-		useAgentsManagerContext();
+	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
-	const siteKey = getSiteKey( currentSiteId );
 
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
@@ -96,7 +94,7 @@ function AgentSetup(): JSX.Element | null {
 				}
 
 				// Clear stored session ID
-				clearSessionId( agentId, siteKey );
+				clearSessionId( agentId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -120,24 +118,13 @@ function AgentSetup(): JSX.Element | null {
 				environment: 'calypso',
 				agentId,
 				version,
-				siteKey,
 			} );
 
 			setAgentConfig( config );
 		}
 
 		initializeAgent();
-	}, [
-		agentId,
-		version,
-		currentRoute,
-		isNewChat,
-		navigate,
-		sessionId,
-		setAgentConfig,
-		site?.ID,
-		siteKey,
-	] );
+	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

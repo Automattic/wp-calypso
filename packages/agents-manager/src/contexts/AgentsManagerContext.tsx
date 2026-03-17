@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
-import { getSessionId, getSiteKey } from '../utils/agent-session';
+import { getSessionId } from '../utils/agent-session';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -70,11 +70,10 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 } ) => {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
-	const siteKey = getSiteKey( value.currentSiteId );
 
 	const getActiveSessionId = useCallback( () => {
-		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId, siteKey );
-	}, [ agentConfig, siteKey ] );
+		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
+	}, [ agentConfig ] );
 
 	return (
 		<AgentsManagerContext.Provider

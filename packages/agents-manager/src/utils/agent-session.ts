@@ -18,15 +18,11 @@ export function getSiteKey( currentSiteId?: number ): string {
 /**
  * Get the `localStorage` key for the given agent.
  */
-export function getSessionStorageKey( agentId?: string, siteKey?: string ): string {
-	let key = SESSION_STORAGE_KEY;
+export function getSessionStorageKey( agentId?: string ): string {
 	if ( agentId && agentId !== ORCHESTRATOR_AGENT_ID ) {
-		key = `${ key }-${ agentId }`;
+		return `${ SESSION_STORAGE_KEY }-${ agentId }`;
 	}
-	if ( siteKey ) {
-		key = `${ key }-site-${ siteKey }`;
-	}
-	return key;
+	return SESSION_STORAGE_KEY;
 }
 
 interface StoredSession {
@@ -40,9 +36,9 @@ interface StoredSession {
  * Returns empty string if no session exists or session expired.
  * @returns The current session ID, or an empty string if no valid session exists.
  */
-export function getSessionId( agentId?: string, siteKey?: string ): string {
+export function getSessionId( agentId?: string ): string {
 	try {
-		const key = getSessionStorageKey( agentId, siteKey );
+		const key = getSessionStorageKey( agentId );
 		const stored = localStorage.getItem( key );
 		if ( stored ) {
 			const session: StoredSession = JSON.parse( stored );
@@ -68,9 +64,9 @@ export function getSessionId( agentId?: string, siteKey?: string ): string {
 /**
  * Clear the stored session to start a new chat.
  */
-export function clearSessionId( agentId?: string, siteKey?: string ): void {
+export function clearSessionId( agentId?: string ): void {
 	try {
-		localStorage.removeItem( getSessionStorageKey( agentId, siteKey ) );
+		localStorage.removeItem( getSessionStorageKey( agentId ) );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error clearing session ID:', error );

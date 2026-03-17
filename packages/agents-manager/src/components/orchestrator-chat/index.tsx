@@ -143,11 +143,6 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
-	// Clear module-level cached conversation when site changes.
-	useEffect( () => {
-		cachedConversation = { messages: [] };
-	}, [ siteKey ] );
-
 	const { isLoading: isLoadingConversation } = useConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages

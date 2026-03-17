@@ -9,7 +9,7 @@
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { createAgentConfig } from '../utils/agent-config';
-import { getSiteKey, getSessionId } from '../utils/agent-session';
+import { getSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
@@ -33,8 +33,7 @@ export default function HeadlessAgentInitializer( {
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 
-	const siteKey = getSiteKey( typeof site?.ID === 'number' ? site.ID : undefined );
-	const sessionId = getSessionId( undefined, siteKey );
+	const sessionId = getSessionId( undefined );
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
@@ -56,7 +55,6 @@ export default function HeadlessAgentInitializer( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				environment: 'wp-admin',
-				siteKey,
 			} );
 
 			setAgentConfig( config );
@@ -65,7 +63,7 @@ export default function HeadlessAgentInitializer( {
 		}
 
 		initializeAgent();
-	}, [ currentRoute, sessionId, site?.ID, siteKey ] );
+	}, [ currentRoute, sessionId, site?.ID ] );
 
 	if ( ! agentConfig ) {
 		return null;
