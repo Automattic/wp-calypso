@@ -1,74 +1,77 @@
+/**
+ * @jest-environment jsdom
+ */
+/* eslint-disable import/order -- jest.mock calls must precede imports */
 // Packages that Jest can't resolve in this environment
 jest.mock( '@automattic/oauth-token', () => ( {} ), { virtual: true } );
 jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
 jest.mock( 'wpcom-proxy-request', () => ( {} ), { virtual: true } );
 jest.mock( '@wordpress/api-fetch', () => ( {} ), { virtual: true } );
+jest.mock( '../../hooks/use-unified-ai-chat', () => ( {
+	useUnifiedAiChat: jest.fn(),
+} ) );
 
+import { renderHook } from '@testing-library/react';
+import { useUnifiedAiChat } from '../../hooks/use-unified-ai-chat';
 import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
-import { getAgentConfig } from '../agent-config';
+import { useAgentConfig } from '../agent-config';
 
-describe( 'getAgentConfig', () => {
-	const originalWindow = global.window;
+const mockUseUnifiedAiChat = useUnifiedAiChat as jest.MockedFunction< typeof useUnifiedAiChat >;
 
-	const mockLocation = ( search: string ) => {
-		// @ts-expect-error - Mocking window
-		delete global.window;
-		global.window = {
-			location: { search },
-		} as Window & typeof globalThis;
+describe( 'useAgentConfig', () => {
+	const mockSearch = ( search: string ) => {
+		window.history.pushState( {}, '', search || '/' );
 	};
 
 	beforeEach( () => {
-		mockLocation( '' );
+		mockSearch( '' );
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
 	} );
 
 	afterEach( () => {
-		global.window = originalWindow;
-		// Reset the agentsManagerData global
-		( global as any ).agentsManagerData = undefined;
+		window.history.pushState( {}, '', '/' );
 	} );
 
-	it( 'returns ORCHESTRATOR_AGENT_ID when agentsManagerData is undefined', () => {
-		( global as any ).agentsManagerData = undefined;
-		const { agentId } = getAgentConfig();
-		expect( agentId ).toBe( ORCHESTRATOR_AGENT_ID );
+	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns undefined', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns ORCHESTRATOR_AGENT_ID when agentsManagerData.useUnifiedExperience is false', () => {
-		( global as any ).agentsManagerData = { useUnifiedExperience: false };
-		const { agentId } = getAgentConfig();
-		expect( agentId ).toBe( ORCHESTRATOR_AGENT_ID );
+	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns false', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: false } as any );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns UNIFIED_CHAT_AGENT_ID when agentsManagerData.useUnifiedExperience is true', () => {
-		( global as any ).agentsManagerData = { useUnifiedExperience: true };
-		const { agentId } = getAgentConfig();
-		expect( agentId ).toBe( UNIFIED_CHAT_AGENT_ID );
+	it( 'returns UNIFIED_CHAT_AGENT_ID when useUnifiedAiChat returns true', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } as any );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( UNIFIED_CHAT_AGENT_ID );
 	} );
 
-	it( 'URL ?agent= param overrides agentsManagerData.useUnifiedExperience', () => {
-		( global as any ).agentsManagerData = { useUnifiedExperience: true };
-		mockLocation( '?agent=custom-agent-id' );
-		const { agentId } = getAgentConfig();
-		expect( agentId ).toBe( 'custom-agent-id' );
+	it( 'URL ?agent= param overrides useUnifiedAiChat result', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } as any );
+		mockSearch( '?agent=custom-agent-id' );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'custom-agent-id' );
 	} );
 
-	it( 'URL ?agent= param overrides the default when agentsManagerData is undefined', () => {
-		( global as any ).agentsManagerData = undefined;
-		mockLocation( '?agent=custom-agent-id' );
-		const { agentId } = getAgentConfig();
-		expect( agentId ).toBe( 'custom-agent-id' );
+	it( 'URL ?agent= param overrides default when unified experience is undefined', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
+		mockSearch( '?agent=custom-agent-id' );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'custom-agent-id' );
 	} );
 
 	it( 'returns version from URL ?version= param', () => {
-		mockLocation( '?version=1.0.25' );
-		const { version } = getAgentConfig();
-		expect( version ).toBe( '1.0.25' );
+		mockSearch( '?version=1.0.25' );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.version ).toBe( '1.0.25' );
 	} );
 
 	it( 'returns undefined version when no ?version= param', () => {
-		mockLocation( '' );
-		const { version } = getAgentConfig();
-		expect( version ).toBeUndefined();
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.version ).toBeUndefined();
 	} );
 } );

@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
+import { createAgentConfig, useAgentConfig } from '../utils/agent-config';
 import { clearSessionId } from '../utils/agent-session';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
@@ -74,7 +74,7 @@ function AgentSetup(): JSX.Element | null {
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version } = getAgentConfig();
+	const { agentId, version } = useAgentConfig();
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {
