@@ -1,5 +1,5 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../../wpcom-request';
 import isValidId from './validators';
 
 type callApiParams = {
@@ -26,12 +26,12 @@ async function callApi< ReturnType >( {
 	apiVersion = '1.1',
 }: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
-		const res = await wpcomRequest( {
+		const reqMethod = method === 'POST' ? wpcom.req.post : wpcom.req.get;
+		const res = await reqMethod( {
 			apiNamespace,
 			path,
 			apiVersion,
-			method,
-			body: method === 'POST' ? body : undefined,
+			...( method === 'POST' && body ? { body } : {} ),
 		} );
 		return res as ReturnType;
 	}

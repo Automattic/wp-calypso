@@ -1,6 +1,5 @@
 import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
-import { stringify } from 'qs';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../wpcom-request';
 import type { StarterDesigns } from './types';
 import type {
 	Category,
@@ -78,11 +77,13 @@ export function useStarterDesignsQuery(
 function fetchStarterDesigns(
 	queryParams: StarterDesignsQueryParams
 ): Promise< StarterDesignsResponse > {
-	return wpcomRequest< StarterDesignsResponse >( {
-		apiNamespace: 'wpcom/v2',
-		path: '/starter-designs',
-		query: stringify( queryParams ),
-	} );
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: '/starter-designs',
+		},
+		queryParams
+	);
 }
 
 function apiStarterDesignsToDesign( design: StarterDesign ): Design {

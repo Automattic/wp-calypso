@@ -1,5 +1,4 @@
-// wpcomRequest is a temporary rename while we're working on migrating generators to thunks
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../wpcom-request';
 import type {
 	CurrentTheme,
 	SiteDetails,
@@ -21,11 +20,13 @@ export const getSite =
 	async ( { dispatch }: Dispatch ) => {
 		dispatch.fetchSite();
 		try {
-			const existingSite: SiteDetails | undefined = await wpcomRequest( {
-				path: '/sites/' + encodeURIComponent( siteId ),
-				apiVersion: '1.1',
-				query: 'force=wpcom',
-			} );
+			const existingSite: SiteDetails | undefined = await wpcom.req.get(
+				{
+					path: '/sites/' + encodeURIComponent( siteId ),
+					apiVersion: '1.1',
+				},
+				{ force: 'wpcom' }
+			);
 			dispatch.receiveSite( siteId, existingSite );
 		} catch ( err ) {
 			dispatch.receiveSiteFailed( siteId, err as NewSiteErrorResponse );
@@ -39,7 +40,7 @@ export const getSite =
 export const getSiteDomains =
 	( siteId: number ) =>
 	async ( { dispatch }: Dispatch ) => {
-		const result: { domains: Domain[] } = await wpcomRequest( {
+		const result: { domains: Domain[] } = await wpcom.req.get( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/domains',
 			apiVersion: '1.2',
 		} );
@@ -53,7 +54,7 @@ export const getSiteDomains =
 export const getSiteSettings =
 	( siteId: number ) =>
 	async ( { dispatch }: Dispatch ) => {
-		const result: { settings: SiteSettings } = await wpcomRequest( {
+		const result: { settings: SiteSettings } = await wpcom.req.get( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/settings',
 			apiVersion: '1.4',
 		} );
@@ -68,7 +69,7 @@ export const getSiteSettings =
 export const getSiteTheme =
 	( siteId: number ) =>
 	async ( { dispatch }: Dispatch ) => {
-		const theme: CurrentTheme = await wpcomRequest( {
+		const theme: CurrentTheme = await wpcom.req.get( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/themes/mine',
 			apiVersion: '1.1',
 		} );

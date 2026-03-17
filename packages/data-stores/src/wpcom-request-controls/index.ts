@@ -1,9 +1,11 @@
-import wpcomProxyRequest, {
+import {
 	reloadProxy as triggerReloadProxy,
 	requestAllBlogsAccess as triggerRequestAllBlogsAccess,
 } from 'wpcom-proxy-request';
+import { wpcom } from '../wpcom-request';
+import type WpcomProxyRequestFunction from 'wpcom-proxy-request';
 
-type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
+type WpcomProxyRequestOptions = Parameters< WpcomProxyRequestFunction >[ 0 ];
 
 export const wpcomRequest = (
 	request: WpcomProxyRequestOptions
@@ -40,7 +42,16 @@ export const requestAllBlogsAccess = () =>
 export const wait = ( ms: number ) => ( { type: 'WAIT', ms } ) as const;
 
 export const controls = {
-	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),
+	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => {
+		const { method, query, ...params } = request;
+		const queryObj = query
+			? Object.fromEntries( new URLSearchParams( query as string ) )
+			: undefined;
+		if ( method === 'POST' ) {
+			return wpcom.req.post( params );
+		}
+		return queryObj ? wpcom.req.get( params, queryObj ) : wpcom.req.get( params );
+	},
 	FETCH_AND_PARSE: async ( { resource, options }: ReturnType< typeof fetchAndParse > ) => {
 		const response = await window.fetch( resource, options );
 

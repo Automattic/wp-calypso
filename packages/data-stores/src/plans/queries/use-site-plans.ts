@@ -1,6 +1,6 @@
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../../wpcom-request';
 import unpackCostOverrides from './lib/unpack-cost-overrides';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
@@ -35,11 +35,13 @@ function useSitePlans( { coupon, siteId }: Props ): UseQueryResult< SitePlansInd
 	return useQuery( {
 		queryKey: queryKeys.sitePlans( coupon, siteId ),
 		queryFn: async (): Promise< SitePlansIndex > => {
-			const data: PricedAPISitePlansIndex = await wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
-				apiVersion: '1.3',
-				query: params.toString(),
-			} );
+			const data: PricedAPISitePlansIndex = await wpcom.req.get(
+				{
+					path: `/sites/${ encodeURIComponent( siteId as string ) }/plans`,
+					apiVersion: '1.3',
+				},
+				Object.fromEntries( params )
+			);
 
 			return Object.fromEntries(
 				Object.keys( data ).map( ( productId ) => {

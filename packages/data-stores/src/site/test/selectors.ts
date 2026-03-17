@@ -7,8 +7,8 @@
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
 import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import { wpcom } from '../../wpcom-request';
 import {
 	getAtomicSoftwareStatus,
 	getAtomicSoftwareError,
@@ -26,6 +26,15 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
 
+jest.mock( '../../wpcom-request', () => ( {
+	wpcom: {
+		req: {
+			get: jest.fn(),
+			post: jest.fn(),
+		},
+	},
+} ) );
+
 let store: ReturnType< typeof register >;
 
 beforeAll( () => {
@@ -33,7 +42,7 @@ beforeAll( () => {
 } );
 
 beforeEach( () => {
-	( wpcomRequest as jest.Mock ).mockReset();
+	( wpcom.req.get as jest.Mock ).mockReset();
 	dispatch( store ).reset();
 } );
 
@@ -79,7 +88,7 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -119,7 +128,7 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -152,7 +161,7 @@ describe( 'getSite', () => {
 			},
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -181,7 +190,7 @@ describe( 'getSite', () => {
 			message: 'Unknown blog',
 		};
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockRejectedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			// The subscribe function in wordpress/data stores only updates when state changes,
@@ -226,7 +235,7 @@ describe( 'requiresUpgrade', () => {
 				},
 			},
 		};
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		// First call returns undefined
 		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
@@ -264,7 +273,7 @@ describe( 'requiresUpgrade', () => {
 				},
 			},
 		};
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		// First call returns undefined
 		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
@@ -425,7 +434,7 @@ describe( 'siteHasFeature', () => {
 			},
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {

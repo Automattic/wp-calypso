@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../../wpcom-request';
 import { createPurchaseObject } from '../lib/assembler';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { RawPurchase, Purchase } from '../types';
@@ -19,7 +19,7 @@ export function getUseSitePurchasesOptions(
 	return {
 		queryKey,
 		queryFn: async (): Promise< PurchasesIndex > => {
-			const purchases: RawPurchase[] = await wpcomRequest( {
+			const purchases: RawPurchase[] = await wpcom.req.get( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/purchases`,
 				apiVersion: '1.1',
 			} );

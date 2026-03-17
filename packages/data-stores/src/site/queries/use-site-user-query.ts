@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
 import { Member } from '../../users/types';
+import { wpcom } from '../../wpcom-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 
 export function getUseSiteUserQueryOptions(
@@ -11,7 +11,7 @@ export function getUseSiteUserQueryOptions(
 	return {
 		queryKey,
 		queryFn: async (): Promise< Member > =>
-			wpcomRequest( { path: `/sites/${ siteId }/users/${ userId }`, apiVersion: '1.1' } ),
+			wpcom.req.get( { path: `/sites/${ siteId }/users/${ userId }`, apiVersion: '1.1' } ),
 		enabled: !! ( siteId && userId ),
 	};
 }

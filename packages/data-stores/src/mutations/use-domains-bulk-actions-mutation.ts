@@ -1,9 +1,9 @@
 import { UseMutationOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { getAllDomainsQueryKey } from '../queries/use-all-domains-query';
 import { getBulkDomainUpdateStatusQueryKey } from '../queries/use-bulk-domain-update-status-query';
 import { getSiteDomainsQueryKey } from '../queries/use-site-domains-query';
+import { wpcom } from '../wpcom-request';
 
 interface UpdateContactInfoVariables {
 	type: 'update-contact-info';
@@ -32,10 +32,9 @@ export function useDomainsBulkActionsMutation<
 		mutationFn: ( variables ) => {
 			switch ( variables.type ) {
 				case 'set-auto-renew':
-					return wpcomRequest( {
+					return wpcom.req.post( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
-						method: 'POST',
 						body: {
 							domains: variables.domains,
 							auto_renew: variables.autoRenew,
@@ -43,10 +42,9 @@ export function useDomainsBulkActionsMutation<
 					} );
 
 				case 'update-contact-info':
-					return wpcomRequest( {
+					return wpcom.req.post( {
 						path: `/domains/bulk-actions/${ variables.type }`,
 						apiNamespace: 'wpcom/v2',
-						method: 'POST',
 						body: {
 							domains: variables.domains,
 							transfer_lock: variables.transferLock,

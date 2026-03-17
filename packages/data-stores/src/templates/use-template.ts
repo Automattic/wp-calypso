@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../wpcom-request';
 import type { Template } from './types';
 
 interface Options extends QueryOptions< Template > {
@@ -14,7 +14,7 @@ const useTemplate = (
 	return useQuery< Template >( {
 		queryKey: [ siteId, 'templates', templateId ],
 		queryFn: () =>
-			wpcomRequest( {
+			wpcom.req.get( {
 				path: `/sites/${ siteId }/templates/${ templateId }`,
 				apiNamespace: 'wp/v2',
 			} ),

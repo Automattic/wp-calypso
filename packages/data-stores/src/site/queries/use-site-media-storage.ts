@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import { wpcom } from '../../wpcom-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { SiteMediaStorage, RawSiteMediaStorage } from '../types';
 
@@ -19,7 +19,7 @@ function useSiteMediaStorage( {
 	return useQuery( {
 		queryKey: queryKeys.siteMediaStorage( siteIdOrSlug ),
 		queryFn: async (): Promise< SiteMediaStorage | undefined > => {
-			const mediaStorage = await wpcomRequest< RawSiteMediaStorage >( {
+			const mediaStorage: RawSiteMediaStorage = await wpcom.req.get( {
 				path: `/sites/${ encodeURIComponent( siteIdOrSlug as string ) }/media-storage`,
 				apiVersion: '1.1',
 			} );
