@@ -160,3 +160,26 @@ export interface AgentticMessage {
 	actions?: MessageAction[];
 	disabled?: boolean;
 }
+
+/** Minimal image preview shape for attachment upload UI (compatible with UseImageUploadResult). */
+export type ZendeskImagePreview = {
+	id: string;
+	url: string;
+	name: string;
+	alt: string;
+	mime_type: string;
+	file: File;
+};
+
+/** Minimal uploading image shape (compatible with UseImageUploadResult.uploadingImages). */
+export type ZendeskUploadingImage = {
+	id: string;
+	url?: string;
+	name?: string;
+};
+
+export type ConversationData = {
+	conversation: {
+		id: string;
+	};
+};
