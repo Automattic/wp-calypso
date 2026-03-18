@@ -12,6 +12,7 @@ export function dashboardOrigins(): string[] {
 		'https://my.wordpress.com',
 		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
+		'http://my.a4a.localhost:3000',
 	];
 }
 

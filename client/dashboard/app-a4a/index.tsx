@@ -5,10 +5,8 @@ import {
 	dashboardSiteFiltersQuery,
 	domainsQuery,
 } from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
-import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
-import Logo from './logo';
+import { Logo } from './logo';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -17,43 +15,32 @@ import type {
 import './style.scss';
 
 boot( {
-	name: 'WordPress.com',
+	name: 'A4A',
 	basePath: '/',
-	mainRoute: '/sites',
+	mainRoute: '/overview',
 	Logo,
 	supports: {
-		agency: false,
+		agency: true,
 		sites: true,
-		domains: true,
-		emails: true,
-		themes: true,
-		reader: true,
+		domains: false,
+		emails: false,
+		themes: false,
+		reader: false,
 		help: true,
-		notifications: true,
-		me: {
-			billing: {
-				monetizeSubscriptions: true,
-			},
-			security: {
-				sshKey: true,
-			},
-			apps: true,
-		},
-		plugins: true,
+		notifications: false,
+		me: false,
+		plugins: false,
 		commandPalette: false,
-		domainOnlySites: true,
-		siteOverview: {
-			preview: ! isEnabled( 'dashboard/omnibar' ),
-		},
-		colorScheme: isEnabled( 'dark-mode' ),
-		darkMode: isEnabled( 'dark-mode' ),
+		domainOnlySites: false,
 	},
-	optIn: true,
+	optIn: false,
 	components: {
+		// Temporary: reuse generic sites components until A4A-specific ones are built.
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
 	},
 	queries: {
+		// Temporary: reuse "all sites" filters; these will be tightened to agency sites later.
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),

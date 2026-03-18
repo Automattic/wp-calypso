@@ -39,6 +39,7 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
+		agency: boolean;
 		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
@@ -84,6 +85,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	Logo: null,
 	LoadingLogo: undefined,
 	supports: {
+		agency: false,
 		sites: false,
 		plugins: false,
 		domains: false,

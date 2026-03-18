@@ -4,6 +4,7 @@ import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
 import { startPerformanceTracking } from '../performance-tracking';
+import { createAgencyRoutes } from './agency';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -48,6 +49,11 @@ const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
+
+	// A4A: agency and agency-client routes.
+	if ( config.supports.agency ) {
+		children.push( ...createAgencyRoutes() );
+	}
 
 	if ( config.supports.sites ) {
 		children.push( ...createSitesRoutes( config ) );

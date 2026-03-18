@@ -2,12 +2,14 @@ import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { wpcomLink } from '../../utils/link';
 import { useAppContext } from '../context';
+import AgencyMenu from './agency';
 
 function PrimaryMenu() {
 	const { supports } = useAppContext();
 
 	return (
 		<ResponsiveMenu>
+			{ supports.agency && <AgencyMenu /> }
 			{ supports.sites && <ResponsiveMenu.Item to="/sites">{ __( 'Sites' ) }</ResponsiveMenu.Item> }
 			{ supports.domains && (
 				<ResponsiveMenu.Item to="/domains">{ __( 'Domains' ) }</ResponsiveMenu.Item>

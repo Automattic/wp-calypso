@@ -25,6 +25,7 @@ boot( {
 	Logo: null,
 	LoadingLogo: CiabDashboardStepperLogo,
 	supports: {
+		agency: false,
 		sites: true,
 		domains: true,
 		emails: true,

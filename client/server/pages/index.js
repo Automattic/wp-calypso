@@ -19,11 +19,13 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
+import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
-import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
+import { A4A_DASHBOARD_EXTRA_PATHS, DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -1257,6 +1259,22 @@ export default function pages() {
 			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
 			loadDashboardLocaleData
 		);
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleSectionPath(
+				A4A_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-a4a',
+				( req ) => isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
+		A4A_DASHBOARD_EXTRA_PATHS.forEach( ( route ) => {
+			handleSectionPath(
+				A4A_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-a4a',
+				( req ) => isAllowedA4ADashboardHostname( req.hostname )
+			);
+		} );
 	}
 
 	sections
