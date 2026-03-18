@@ -47,7 +47,6 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ validationMessage, setValidationMessage ] = useState( '' );
 	const lastInvalidValue = useRef< string | undefined >();
-	const errorRef = useRef< HTMLDivElement >( null );
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -89,38 +88,15 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
-
-		if ( ! isValid ) {
-			// Move focus to error for accessibility
-			errorRef.current?.focus();
-			setSubmitted( true );
-
-			if ( urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
-				lastInvalidValue.current = urlValue;
-				recordTracksEvent( 'calypso_importer_capture_input_invalid', {
-					url: urlValue,
-				} );
-			}
-			return;
-		}
-
-		onInputEnter( urlValue );
+		isValid && onInputEnter( urlValue );
 		setSubmitted( true );
-	}
 
-	function renderError() {
-		if ( ! showValidationMsg ) {
-			return null;
+		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+			lastInvalidValue.current = urlValue;
+			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
+				url: urlValue,
+			} );
 		}
-
-		return (
-			<div className="capture-input__error" role="alert" aria-live="assertive" ref={ errorRef }>
-				<Icon icon={ info } size={ 20 } />{ ' ' }
-				{ validationMessage
-					? validationMessage
-					: translate( 'Please enter a valid website address. You can copy and paste.' ) }
-			</div>
-		);
 	}
 
 	return (
@@ -143,7 +119,18 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					onChange={ onChange }
 				/>
 
-				<FormSettingExplanation>{ renderError() }</FormSettingExplanation>
+				<FormSettingExplanation>
+					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
+						{ showValidationMsg && (
+							<>
+								<Icon icon={ info } size={ 20 } />{ ' ' }
+								{ validationMessage
+									? validationMessage
+									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
+							</>
+						) }
+					</span>
+				</FormSettingExplanation>
 			</FormFieldset>
 
 			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>

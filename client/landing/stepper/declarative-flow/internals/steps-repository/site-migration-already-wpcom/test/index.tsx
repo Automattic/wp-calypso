@@ -89,19 +89,6 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		await userEvent.type( otherDetails(), 'Test Details' );
 		await userEvent.click( continueButton() );
 
-		// First call should be ZenDesk ticket creation
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/help/migration-ticket/new',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: {
-				locale: 'en',
-				from_url: 'https://example.com',
-				blog_url: 'site-url.wordpress.com',
-			},
-		} );
-
-		// Second call should be survey submission
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
 			path: '/sites/site-url.wordpress.com/automated-migration/wpcom-survey',
 			apiNamespace: 'wpcom/v2',
@@ -120,38 +107,11 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		expect( navigation.submit ).toHaveBeenCalled();
 	} );
 
-	it( 'shows error when ZenDesk ticket creation fails', async () => {
+	it( 'shows error when something goes wrong in submission', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( new Error( 'ZenDesk error' ) );
-
-		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
-		await userEvent.click( continueButton() );
-
-		expect( await screen.findByText( /Something went wrong. Please try again./ ) ).toBeVisible();
-		expect( logToLogstash ).toHaveBeenCalledWith( {
-			message: 'Error submitting migration survey',
-			feature: 'calypso_client',
-			extra: {
-				siteSlug: 'site-url.wordpress.com',
-				step: 'site-migration-already-wpcom',
-				from: 'https://example.com',
-				error: 'ZenDesk error',
-			},
-		} );
-
-		expect( navigation.submit ).not.toHaveBeenCalled();
-	} );
-
-	it( 'shows error when survey submission fails', async () => {
-		const navigation = { submit: jest.fn() };
-		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
-
-		// First call (ZenDesk ticket) succeeds, second call (survey) fails
-		( wpcomRequest as jest.Mock )
-			.mockResolvedValueOnce( { success: true } )
-			.mockRejectedValueOnce( new Error( 'Survey error' ) );
+		( wpcomRequest as jest.Mock ).mockRejectedValue( new Error( 'Some error message' ) );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );
@@ -160,13 +120,13 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 
 		expect( await screen.findByText( /Something went wrong. Please try again./ ) ).toBeVisible();
 		expect( logToLogstash ).toHaveBeenCalledWith( {
-			message: 'Error submitting migration survey',
+			message: 'Error submitting migration ticket',
 			feature: 'calypso_client',
 			extra: {
 				siteSlug: 'site-url.wordpress.com',
 				step: 'site-migration-already-wpcom',
 				from: 'https://example.com',
-				error: 'Survey error',
+				error: 'Some error message',
 			},
 		} );
 
