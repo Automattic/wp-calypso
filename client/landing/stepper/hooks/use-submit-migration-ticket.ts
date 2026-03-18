@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { UseMutationOptions } from '@tanstack/react-query/build/modern';
-import wpcom from 'calypso/lib/wp';
+import wpcomRequest from 'wpcom-proxy-request';
 
 interface migrationTicketAPIResponse {
 	success: boolean;
@@ -28,9 +28,10 @@ export const useSubmitMigrationTicket = <
 ) => {
 	const { mutate, mutateAsync, ...rest } = useMutation( {
 		mutationFn: ( { locale, blog_url, from_url, context } ) =>
-			wpcom.req.post( {
+			wpcomRequest( {
 				path: '/help/migration-ticket/new',
 				apiNamespace: 'wpcom/v2',
+				method: 'POST',
 				body: {
 					locale,
 					blog_url,

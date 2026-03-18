@@ -6,8 +6,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import wp from 'calypso/lib/wp';
 import SiteMigrationApplicationPasswordAuthorization from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
@@ -20,12 +20,7 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 	);
 };
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
-} ) );
+jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 const { getByRole, findByText, getByLabelText } = screen;
@@ -45,7 +40,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'renders the loading state when the authorization is successful and the application password is not yet stored', async () => {
-		( wp.req.post as jest.Mock ).mockImplementation( () => new Promise( () => {} ) );
+		( wpcomRequest as jest.Mock ).mockImplementation( () => new Promise( () => {} ) );
 
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 		render( {}, { initialEntry } );
@@ -59,7 +54,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 		const submit = jest.fn();
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 
-		( wp.req.post as jest.Mock ).mockResolvedValue( {
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {
 				data: { status: 200 },
@@ -73,7 +68,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'renders the error state when the application password fails to be stored', async () => {
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		( wpcomRequest as jest.Mock ).mockRejectedValue( {
 			status: 500,
 			body: {
 				code: 'no_ticket_found',

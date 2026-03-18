@@ -1,8 +1,8 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
+import wpcomRequest from 'wpcom-proxy-request';
 import { DomainValidationOptions } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-domains/use-validation-message';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import wpcom from 'calypso/lib/wp';
 
 const VERSION = 2;
 
@@ -60,13 +60,11 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 							},
 							{} as Record< string, string >
 					  );
-				const availability: DomainLockResponse = await wpcom.req.get(
-					{
-						apiVersion: '1.3',
-						path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
-					},
-					options
-				);
+				const availability = await wpcomRequest< DomainLockResponse >( {
+					apiVersion: '1.3',
+					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
+					query: new URLSearchParams( options ).toString(),
+				} );
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
 				const isUnlocked =
@@ -95,17 +93,11 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					};
 				}
 
-				const response: DomainCodeResponse = await wpcom.req
-					.get(
-						{
-							apiVersion: '1.1',
-							path: `/domains/${ encodeURIComponent(
-								pair.domain
-							) }/inbound-transfer-check-auth-code`,
-						},
-						{ auth_code: pair.auth }
-					)
-					.catch( () => ( { success: false } ) );
+				const response = await wpcomRequest< DomainCodeResponse >( {
+					apiVersion: '1.1',
+					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-check-auth-code`,
+					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
+				} ).catch( () => ( { success: false } ) );
 
 				return {
 					domain: pair.domain,

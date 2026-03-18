@@ -1,4 +1,4 @@
-import { Onboard, type OnboardSelect } from '@automattic/data-stores';
+import { Onboard, OnboardSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { ComponentProps } from 'react';
