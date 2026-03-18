@@ -16,7 +16,6 @@
 			"import": "./dist/mocks/index.js"
 		}
 	},
-	"sideEffects": false,
 	"files": [
 		"dist",
 		"README.md"
