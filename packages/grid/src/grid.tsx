@@ -155,12 +155,13 @@ export function Grid( {
 			// Update the temporary layout with the new size
 			const updatedLayout = activeLayout.map( ( item ) => {
 				if ( item.key === id ) {
+					const resolvedItem = resolvedItemMap.get( id );
+					const baseWidth = item.fillWidth
+						? resolvedItem?.width ?? item.width ?? 1
+						: item.width ?? 1;
 					return {
 						...item,
-						width: Math.max(
-							1,
-							Math.min( ( item.width ?? 1 ) + relativeDelta.width, effectiveColumns )
-						),
+						width: Math.max( 1, Math.min( baseWidth + relativeDelta.width, effectiveColumns ) ),
 						height: Math.max( 1, ( item.height ?? 1 ) + relativeDelta.height ),
 						fillWidth: undefined,
 					};
