@@ -777,12 +777,15 @@ describe( 'ResultsPage', () => {
 			} );
 
 			mockGetFreeSuggestionQuery( {
-				params: { query: 'mysite.tech.blog' },
+				params: { query: 'mysite.tech.blog', include_dotblogsubdomain: true },
 				freeSuggestion: buildFreeSuggestion( { domain_name: 'mysite.tech.blog' } ),
 			} );
 
 			render(
-				<TestDomainSearch config={ { skippable: true } } query="mysite.tech.blog">
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="mysite.tech.blog"
+				>
 					<ResultsPage />
 				</TestDomainSearch>
 			);
@@ -800,12 +803,15 @@ describe( 'ResultsPage', () => {
 			} );
 
 			mockGetFreeSuggestionQuery( {
-				params: { query: 'taken.photo.blog' },
+				params: { query: 'taken.photo.blog', include_dotblogsubdomain: true },
 				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken123.photo.blog' } ),
 			} );
 
 			render(
-				<TestDomainSearch config={ { skippable: true } } query="taken.photo.blog">
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="taken.photo.blog"
+				>
 					<ResultsPage />
 				</TestDomainSearch>
 			);
