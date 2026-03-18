@@ -22,6 +22,8 @@ export interface ImageStudioData {
 	id: number | null;
 	style?: string;
 	metadata: ImageStudioMetadata;
+	entryPoint: string | null;
+	blockType?: string | null;
 }
 
 export interface PageContentBlock {
@@ -197,9 +199,16 @@ function detectImageEntity(): ImageStudioData | null {
 		// Generate mode = opened without an existing image
 		const isGenerateMode = originalAttachmentId === null;
 
+		// Entrypoint for image studio context
+		const entryPoint = storeSelect.getEntryPoint?.() || null;
+
+		const blockType = storeSelect.getBlockType?.() || null;
+
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
+			entryPoint, // 'editor_block' | 'media_library' | etc.
+			blockType, // 'core/image' | etc.
 			metadata: {},
 		};
 

@@ -77,7 +77,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 					attachmentId,
 					entryPoint: ImageStudioEntryPoint.EditorBlock,
 				} );
-				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock );
+				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
 			}, [ attachmentId, handleClose, openImageStudio ] );
 
 			if ( props.name !== 'core/image' || ! attributes?.id ) {
