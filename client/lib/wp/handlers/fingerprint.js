@@ -8,9 +8,9 @@ export const cache = {};
  * if needed.
  * @returns string|undefined The fingerprint.
  */
-function getFingerprint() {
+async function getFingerprint() {
 	if ( 'result' in cache ) {
-		return Promise.resolve( cache.result );
+		return cache.result;
 	}
 	cache.promise ??= ( async () => {
 		const { load } = await import( '@fingerprintjs/fingerprintjs' );
@@ -18,7 +18,8 @@ function getFingerprint() {
 		const result = await agent.get();
 		cache.result = result.visitorId;
 	} )();
-	return cache.promise.then( () => cache.result );
+	await cache.promise;
+	return cache.result;
 }
 
 /**
