@@ -97,6 +97,7 @@ const GiftSubscriptionModal = ( {
 				</Button>
 				<Button
 					variant="primary"
+					isBusy={ isSubmitting }
 					onClick={ () => giftSubscription( planId, userId, username ) }
 					disabled={ planId === 0 || isSubmitting }
 				>
