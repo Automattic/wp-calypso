@@ -28,7 +28,6 @@ export function generateSteps( {
 	createSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setOptionsOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -189,15 +188,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
-		},
-
-		'site-options': {
-			stepName: 'site-options',
-			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
-			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
-			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
 		},
 
 		plans: {

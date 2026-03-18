@@ -466,25 +466,6 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
-	if ( ! siteTitle && ! tagline ) {
-		defer( callback );
-		return;
-	}
-
-	wpcom.req.post(
-		`/sites/${ siteSlug }/settings`,
-		{ apiVersion: '1.4' },
-		{
-			blogname: siteTitle,
-			blogdescription: tagline,
-		},
-		function ( errors ) {
-			callback( isEmpty( errors ) ? undefined : [ errors ] );
-		}
-	);
-}
-
 function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 	const plugins = getMarketplaceProducts( state, pluginSlug );
 	const billingPeriodToTerm = {
