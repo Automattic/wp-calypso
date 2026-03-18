@@ -4,6 +4,12 @@
 }
 
 .spam-referrers-modal {
+	.components-spinner {
+		display: block;
+		margin-inline: auto;
+		margin-block: 48px;
+	}
+
 	.spam-referrers-modal__empty {
 		color: var( --color-text-subtle );
 	}
