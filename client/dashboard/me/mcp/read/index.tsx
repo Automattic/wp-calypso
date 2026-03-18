@@ -13,7 +13,7 @@ import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { CATEGORY_ORDER, getDisplayCategory } from '../categories';
+import { CATEGORY_ORDER, getDisplayCategory, isWriteTool } from '../categories';
 
 interface McpAbility {
 	title: string;
@@ -22,6 +22,8 @@ interface McpAbility {
 	category?: string;
 	category_label?: string;
 	type?: string;
+	readonly?: boolean;
+	visible?: boolean;
 	annotations?: Record< string, unknown >;
 }
 
@@ -31,8 +33,10 @@ export default function McpRead() {
 
 	// Show all tools on the Read page — the type field may not be set by all tools,
 	// and the Figma Read page shows all read-type tools (Sites & Content, Posts, etc.)
-	const allTools = Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >;
-	const readTools = allTools.filter( ( [ , tool ] ) => ! tool.type || tool.type === 'read' );
+	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
+		( [ , tool ] ) => tool.visible !== false
+	);
+	const readTools = allTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),

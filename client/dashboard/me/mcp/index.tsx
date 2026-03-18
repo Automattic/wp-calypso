@@ -27,6 +27,8 @@ interface McpAbility {
 	category?: string;
 	category_label?: string;
 	type?: string;
+	readonly?: boolean;
+	visible?: boolean;
 	annotations?: Record< string, unknown >;
 }
 
@@ -95,7 +97,9 @@ function McpComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
-	const availableTools = Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >;
+	const availableTools = (
+		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
+	 ).filter( ( [ , tool ] ) => tool.visible !== false );
 	const mcpEnabled =
 		availableTools.length > 0 && availableTools.some( ( [ , tool ] ) => tool.enabled );
 

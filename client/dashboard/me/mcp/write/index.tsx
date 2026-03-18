@@ -13,7 +13,7 @@ import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { CATEGORY_ORDER, getDisplayCategory } from '../categories';
+import { CATEGORY_ORDER, getDisplayCategory, isWriteTool } from '../categories';
 
 interface McpAbility {
 	title: string;
@@ -22,6 +22,8 @@ interface McpAbility {
 	category?: string;
 	category_label?: string;
 	type?: string;
+	readonly?: boolean;
+	visible?: boolean;
 	annotations?: Record< string, unknown >;
 }
 
@@ -29,8 +31,10 @@ export default function McpWrite() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 
-	const allTools = Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >;
-	const writeTools = allTools.filter( ( [ , tool ] ) => tool.type === 'write' );
+	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
+		( [ , tool ] ) => tool.visible !== false
+	);
+	const writeTools = allTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
