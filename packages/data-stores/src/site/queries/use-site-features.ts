@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { wpcom } from '../../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { SiteFeatures } from '../types';
 
@@ -16,7 +16,7 @@ function useSiteFeatures( { siteIdOrSlug }: Props ): UseQueryResult< SiteFeature
 	return useQuery( {
 		queryKey: queryKeys.siteFeatures( siteIdOrSlug ),
 		queryFn: async (): Promise< SiteFeatures | undefined > => {
-			return await wpcom.req.get( {
+			return await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteIdOrSlug as string ) }/features`,
 				apiVersion: '1.1',
 			} );

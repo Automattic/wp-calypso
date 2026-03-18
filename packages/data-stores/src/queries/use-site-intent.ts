@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import { SiteIntent } from '../onboard';
-import { wpcom } from '../wpcom-request';
 
 export function useSiteIntent( siteId: string | number | undefined ) {
 	return useQuery< {
@@ -8,7 +8,7 @@ export function useSiteIntent( siteId: string | number | undefined ) {
 	} >( {
 		queryKey: [ 'site-intent', siteId ],
 		queryFn: async () =>
-			await wpcom.req.get( {
+			await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/site-intent`,
 				apiNamespace: 'wpcom/v2',
 			} ),

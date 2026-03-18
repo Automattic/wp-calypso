@@ -1,6 +1,6 @@
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export interface SiteResetAPIResponse {
 	success: boolean;
@@ -22,9 +22,10 @@ export const useSiteResetMutation = <
 ) => {
 	const { mutate, ...rest } = useMutation( {
 		mutationFn: ( { siteId } ) =>
-			wpcom.req.post( {
+			wpcomRequest( {
 				path: `/sites/${ siteId }/reset-site`,
 				apiNamespace: 'wpcom/v2',
+				method: 'POST',
 			} ),
 		...options,
 	} );

@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { wpcom } from '../../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPIPlan, PlanNext } from '../types';
@@ -53,22 +53,16 @@ function usePlans( {
 	// Auto-detect Jetpack context and use appropriate request function
 	const isJetpack = isEnabled( 'is_running_in_jetpack_site' );
 
+	const requestFn = isJetpack ? jetpackRequestFunction : wpcomRequest;
+
 	return useQuery( {
 		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
-			const data: PricedAPIPlan[] = isJetpack
-				? await jetpackRequestFunction( {
-						path: '/plans',
-						apiVersion: '1.5',
-						query: params.toString(),
-				  } )
-				: await wpcom.req.get(
-						{
-							path: '/plans',
-							apiVersion: '1.5',
-						},
-						Object.fromEntries( params )
-				  );
+			const data: PricedAPIPlan[] = await requestFn( {
+				path: '/plans',
+				apiVersion: '1.5',
+				query: params.toString(),
+			} );
 
 			return Object.fromEntries(
 				data.map( ( plan ) => {

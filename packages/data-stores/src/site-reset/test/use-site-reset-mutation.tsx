@@ -6,16 +6,12 @@ import { waitFor } from '@testing-library/dom';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { wpcom } from '../../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteResetMutation } from '../use-site-reset-mutation';
 
-jest.mock( '../../wpcom-request', () => ( {
-	wpcom: {
-		req: {
-			get: jest.fn(),
-			post: jest.fn(),
-		},
-	},
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 } ) );
 
 describe( 'use-site-reset-mutation hook', () => {
@@ -33,7 +29,7 @@ describe( 'use-site-reset-mutation hook', () => {
 			success: true,
 		};
 
-		( wpcom.req.post as jest.Mock ).mockImplementation( () => Promise.resolve( expected ) );
+		( wpcomRequest as jest.Mock ).mockImplementation( () => Promise.resolve( expected ) );
 
 		const { result } = renderHook( () => useSiteResetMutation(), {
 			wrapper,
@@ -62,7 +58,7 @@ describe( 'use-site-reset-mutation hook', () => {
 			message: 'Something went wrong',
 		};
 
-		( wpcom.req.post as jest.Mock ).mockImplementation( () => Promise.reject( error ) );
+		( wpcomRequest as jest.Mock ).mockImplementation( () => Promise.reject( error ) );
 
 		const { result } = renderHook( () => useSiteResetMutation(), {
 			wrapper,

@@ -1,5 +1,5 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
 interface DnssecRecords {
 	dnskey?: string;
@@ -160,7 +160,7 @@ export function getSiteDomainsQueryObject< TError = unknown, TData = SiteDomains
 	return {
 		queryKey: getSiteDomainsQueryKey( siteIdOrSlug ),
 		queryFn: () =>
-			wpcom.req.get( {
+			wpcomRequest< SiteDomainsQueryFnData >( {
 				path: `/sites/${ siteIdOrSlug }/domains`,
 				apiVersion: '1.2',
 			} ),

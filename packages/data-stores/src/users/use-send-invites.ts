@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
 interface Invitee {
 	email_or_username: string;
@@ -9,9 +9,10 @@ interface Invitee {
 export function useSendInvites( siteId: number ) {
 	return useMutation( {
 		mutationFn: ( invitees: Invitee[] ) => {
-			return wpcom.req.post( {
+			return wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
 				apiNamespace: 'wpcom/v2',
+				method: 'POST',
 				body: { invitees },
 			} );
 		},

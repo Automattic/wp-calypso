@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import * as ProductsList from '../../products-list';
-import { wpcom } from '../../wpcom-request';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { StoreProductSlug, Product, RawAPIProductsList } from '../types';
 
@@ -24,13 +24,13 @@ function useProducts(
 	return useQuery( {
 		queryKey: [ ...queryKeys.products(), product_slugs, locale ],
 		queryFn: async (): Promise< ProductsIndex > => {
-			const apiProducts: RawAPIProductsList = await wpcom.req.get(
-				{
-					path: '/products',
-					apiVersion: '1.1',
-				},
-				product_slugs ? { product_slugs, locale } : undefined
-			);
+			const apiProducts: RawAPIProductsList = await wpcomRequest( {
+				path: '/products',
+				apiVersion: '1.1',
+				...( product_slugs
+					? { query: new URLSearchParams( { product_slugs, locale } ).toString() }
+					: {} ),
+			} );
 
 			return Object.fromEntries(
 				Object.keys( apiProducts ).map( ( productSlug ) => {

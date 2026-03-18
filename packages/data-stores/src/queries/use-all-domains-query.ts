@@ -1,6 +1,6 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import type { DomainData } from './use-site-domains-query';
 
 // The data returned by the /all-domains endpoint only includes the basic data
@@ -47,7 +47,7 @@ export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnD
 	return useQuery< AllDomainsQueryFnData, TError, TData >( {
 		queryKey: getAllDomainsQueryKey( queryArgs ),
 		queryFn: () =>
-			wpcom.req.get( {
+			wpcomRequest< AllDomainsQueryFnData >( {
 				path: addQueryArgs( '/all-domains', queryArgs ),
 				apiVersion: '1.1',
 			} ),

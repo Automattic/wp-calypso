@@ -1,4 +1,4 @@
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import { RawAPIProductsList, ProductsListFailure, Dispatch } from './types';
 
 /**
@@ -10,7 +10,7 @@ export const getProductsList =
 		dispatch.requestProductsList();
 
 		try {
-			const productsList: RawAPIProductsList = await wpcom.req.get( {
+			const productsList: RawAPIProductsList = await wpcomRequest( {
 				path: '/products',
 				apiVersion: '1.1',
 			} );

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import request from 'wpcom-proxy-request';
 
 export type NewsletterCategory = {
 	id: number;
@@ -33,7 +33,7 @@ export const useNewsletterCategories = ( {
 		queryKey: [ 'newsletter-categories', siteId ] as const, // Make tuple readonly for better caching.
 		queryFn: async () => {
 			try {
-				const response: NewsletterCategoryResponse = await wpcom.req.get( {
+				const response = await request< NewsletterCategoryResponse >( {
 					path: `/sites/${ siteId }/newsletter-categories`,
 					apiNamespace: 'wpcom/v2',
 				} );

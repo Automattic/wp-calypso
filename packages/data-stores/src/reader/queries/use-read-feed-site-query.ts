@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { wpcom } from '../../wpcom-request';
+import { buildQueryString } from '@wordpress/url';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export type ReadFeedSiteResponse = {
 	ID: number;
@@ -11,22 +12,21 @@ export type ReadFeedSiteResponse = {
 	is_following: boolean;
 };
 
-const queryParams = {
+const urlQuery = buildQueryString( {
 	fields: [ 'ID', 'name', 'title', 'URL', 'icon', 'is_following', 'description' ].join( ',' ),
 	options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
-};
+} );
 
 const useReadFeedSiteQuery = ( siteId?: number ) => {
 	return useQuery( {
-		queryKey: [ 'read', 'sites', siteId, queryParams ],
+		queryKey: [ 'read', 'sites', siteId, urlQuery ],
 		queryFn: async (): Promise< ReadFeedSiteResponse > => {
-			return wpcom.req.get(
-				{
-					path: `/read/sites/${ siteId }`,
-					apiVersion: '1.1',
-				},
-				queryParams
-			);
+			return wpcomRequest< ReadFeedSiteResponse >( {
+				path: `/read/sites/${ siteId }`,
+				query: urlQuery,
+				apiVersion: '1.1',
+				method: 'GET',
+			} );
 		},
 		enabled: typeof siteId === 'number' && siteId > 0,
 	} );

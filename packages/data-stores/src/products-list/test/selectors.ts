@@ -6,20 +6,16 @@
  * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
+import wpcomRequest from 'wpcom-proxy-request';
 import { store } from '../';
-import { wpcom } from '../../wpcom-request';
 
-jest.mock( '../../wpcom-request', () => ( {
-	wpcom: {
-		req: {
-			get: jest.fn(),
-			post: jest.fn(),
-		},
-	},
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 } ) );
 
 beforeEach( () => {
-	( wpcom.req.get as jest.Mock ).mockReset();
+	( wpcomRequest as jest.Mock ).mockReset();
 } );
 
 describe( 'selectors', () => {
@@ -45,7 +41,7 @@ describe( 'selectors', () => {
 			},
 		};
 
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
 
 		// First call returns undefined
 		expect( select( store ).getProductsList() ).toEqual( undefined );

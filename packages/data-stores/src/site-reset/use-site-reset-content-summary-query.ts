@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import { APIError } from './use-site-reset-mutation';
 
 export type SiteContent = {
@@ -17,7 +17,7 @@ export const useSiteResetContentSummaryQuery = (
 	return useQuery< SiteContent, APIError >( {
 		queryKey,
 		queryFn: () => {
-			return wpcom.req.get( {
+			return wpcomRequest( {
 				path: `/sites/${ siteId }/reset-site/content-summary`,
 				apiNamespace: 'wpcom/v2',
 			} );

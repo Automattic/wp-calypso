@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export const useHappinessEngineersQuery = () =>
 	useQuery<
@@ -11,7 +11,7 @@ export const useHappinessEngineersQuery = () =>
 	>( {
 		queryKey: [ 'happinessEngineers' ],
 		queryFn: async () =>
-			await wpcom.req.get( { path: '/meta/happiness-engineers/', apiVersion: '1.1' } ),
+			await wpcomRequest( { path: '/meta/happiness-engineers/', apiVersion: '1.1' } ),
 		refetchOnWindowFocus: false,
 		staleTime: Infinity,
 	} );

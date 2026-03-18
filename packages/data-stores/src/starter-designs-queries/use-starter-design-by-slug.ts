@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 import type { Design } from '@automattic/design-types';
 
 interface Options extends QueryOptions< Design > {
@@ -24,11 +24,11 @@ export function useStarterDesignBySlug(
 }
 
 function fetchStarterDesignBySlug( slug: string, localeSlug: string ): Promise< Design > {
-	return wpcom.req.get(
-		{
-			apiNamespace: 'wpcom/v2',
-			path: `/starter-designs/${ encodeURIComponent( slug ) }`,
-		},
-		{ _locale: localeSlug }
-	);
+	const params = new URLSearchParams( { _locale: localeSlug } );
+
+	return wpcomRequest< Design >( {
+		apiNamespace: 'wpcom/v2',
+		path: `/starter-designs/${ encodeURIComponent( slug ) }`,
+		query: params.toString(),
+	} );
 }

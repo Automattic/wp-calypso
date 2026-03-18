@@ -9,15 +9,6 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );
 
-jest.mock( '../../wpcom-request', () => ( {
-	wpcom: {
-		req: {
-			get: jest.fn(),
-			post: jest.fn(),
-		},
-	},
-} ) );
-
 const MOCK_LOCALE = 'test-locale';
 
 beforeEach( () => {

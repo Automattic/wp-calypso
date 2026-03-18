@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores/src/site';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-import { wpcom } from '../wpcom-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 	sourceSiteSlug: string | number | null | undefined,
@@ -8,7 +8,7 @@ export function useSiteQuery< TError = unknown, TData = SiteDetails >(
 ) {
 	return useQuery( {
 		queryFn: () =>
-			wpcom.req.get( {
+			wpcomRequest< SiteDetails >( {
 				path: '/sites/' + encodeURIComponent( sourceSiteSlug ?? '' ),
 			} ),
 		meta: {
