@@ -50,6 +50,12 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	}
 }
 
+$form_id     = isset( $args['form_id'] ) ? $args['form_id'] : '';
+$form_class  = isset( $args['form_class'] ) ? $args['form_class'] : '';
+$input_id    = isset( $args['input_id'] ) ? $args['input_id'] : '';
+$input_class = isset( $args['input_class'] ) ? $args['input_class'] : '';
+$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
+
 ?>
 <div class="happy-blocks-search-card<?php echo $should_show_search_card ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
@@ -146,6 +152,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 
 		<fieldset class="support-search-form-container">
 			<form id="<?php echo esc_attr( $form_id ); ?>" class="<?php echo esc_attr( $form_class ); ?>" role="search" method="get" action="">
+				<input type="hidden" name="group_id" value="blog_id:<?php echo esc_attr( get_current_blog_id() ); ?>"/>
 				<div class="input-wrapper" dir="auto">
 					<?php if ( $enable_odie_answers ) : ?>
 						<input id="<?php echo esc_attr( $input_id ); ?>" type="input" name="odie-query"<?php echo $input_class ? ' class="' . esc_attr( $input_class ) . '"' : ''; ?> placeholder="<?php echo esc_attr( $placeholder ); ?>"/>

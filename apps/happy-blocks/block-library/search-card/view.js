@@ -5,7 +5,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const input = document.getElementById( 'support-search-input' );
 	const submitButton = document.querySelector( '.search-submit-button' );
-	const form = document.getElementById( 'support-search-form' );
+	const form =
+		document.getElementById( 'support-search-form' ) || document.getElementById( 'searchform' );
 
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
@@ -21,7 +22,18 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 			e.preventDefault();
 
-			input.value = query;
+			input.value = query.toLowerCase();
+
+			const groupIdField = form ? form.querySelector( 'input[name="group_id"]' ) : null;
+			if ( groupIdField && window.JetpackInstantSearchOptions?.staticFilters ) {
+				const groupFilter = window.JetpackInstantSearchOptions.staticFilters.find(
+					( f ) => f.filter_id === 'group_id'
+				);
+				if ( groupFilter ) {
+					groupFilter.selected = groupIdField.value;
+				}
+			}
+
 			submitButton.click();
 
 			setTimeout( () => {
