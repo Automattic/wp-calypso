@@ -15,6 +15,7 @@ interface Props {
 	unavailableDomain?: string;
 	existingSiteUrl?: string;
 	onSkip: () => void;
+	onSuggestionClick?: () => void;
 	disabled?: boolean;
 	isBusy?: boolean;
 }
@@ -24,6 +25,7 @@ const DomainSearchSkipSuggestion = ( {
 	unavailableDomain,
 	existingSiteUrl,
 	onSkip,
+	onSuggestionClick,
 	disabled,
 	isBusy,
 }: Props ) => {
@@ -56,10 +58,15 @@ const DomainSearchSkipSuggestion = ( {
 			__( '%(domain)s is not available' ),
 			{ domain: unavailableDomain }
 		);
-		subtitle = sprintf(
-			// translators: %(suggestion)s is an alternative free WordPress.com subdomain
-			__( 'Try %(suggestion)s instead?' ),
-			{ suggestion: freeSuggestion }
+		subtitle = createInterpolateElement(
+			sprintf(
+				// translators: %(suggestion)s is an alternative free WordPress.com subdomain
+				__( 'Try <link>%(suggestion)s</link> instead?' ),
+				{ suggestion: freeSuggestion }
+			),
+			{
+				link: <Button variant="link" onClick={ () => onSuggestionClick?.() } />,
+			}
 		);
 		showButton = false;
 	} else if ( freeSuggestion ) {

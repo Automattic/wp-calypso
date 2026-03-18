@@ -762,7 +762,9 @@ describe( 'ResultsPage', () => {
 			expect(
 				await screen.findByText( 'taken.wordpress.com is not available' )
 			).toBeInTheDocument();
-			expect( screen.getByText( 'Try taken123.wordpress.com instead?' ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: 'taken123.wordpress.com' } )
+			).toBeInTheDocument();
 			expect( screen.queryByLabelText( /Skip purchase/ ) ).not.toBeInTheDocument();
 		} );
 	} );
