@@ -84,7 +84,7 @@ const GiftSubscriptionModal = ( {
 			title={ translate( 'Gift a subscription' ) }
 			onRequestClose={ onClose }
 		>
-			<p>{ translate( 'Select a plan to gift to this user:' ) }</p>
+			<p>{ translate( 'Select a plan to gift to this user: ' ) }</p>
 			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
 				initialSelectedList={ [] }
