@@ -91,7 +91,7 @@ export default function RecommendedSections( {
 				query={ PARTNER_QUERY }
 				sectionSlug="partner"
 				sectionIndex={ 2 }
-				banner={ <PlanUpgradeBanner variant="dark" /> }
+				banner={ <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } variant="dark" /> }
 				getActionLabel={ getActionLabel }
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }
