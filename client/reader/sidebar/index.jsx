@@ -4,7 +4,7 @@ import page from '@automattic/calypso-router';
 import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import i18n, { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,19 +49,6 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-
-//TODO: Remove this component once the new reader MSD is enabled for all users
-const DeprecatedReaderSidebarHeader = () => {
-	const translate = useTranslate();
-	return (
-		<div className="sidebar-header">
-			<div>
-				<h3>{ translate( 'Reader' ) }</h3>
-				<p>{ translate( 'Keep up with your interests.' ) }</p>
-			</div>
-		</div>
-	);
-};
 
 const TrackingKeys = {
 	conversations: {
@@ -169,8 +156,7 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				{ ! this.props.isMSDEnabled && <DeprecatedReaderSidebarHeader /> }
-				{ this.props.isMSDEnabled && <AppTitle /> }
+				<AppTitle />
 				<SidebarMenu>
 					<QueryReaderLists />
 					<QueryReaderTeams />
