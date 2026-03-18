@@ -1,3 +1,5 @@
+// Internal module cache.
+// Exported for use in testing.
 export const cache = {};
 
 /**
