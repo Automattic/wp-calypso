@@ -124,11 +124,29 @@
 	}
 
 	.formatted-header {
-		margin-inline: 0;
+		margin: 0;
 	}
 
-	.formatted-header__title,
-	.formatted-header__subtitle,
+	.formatted-header__title {
+		color: var( --studio-gray-100 );
+		font-family: $brand-serif;
+		font-size: rem( 40px );
+		font-weight: 400;
+		line-height: 1.2;
+		margin: 0;
+
+		@include break-medium {
+			font-size: rem( 50px );
+		}
+	}
+
+	.formatted-header__subtitle {
+		color: var( --studio-gray-80 );
+		font-size: $font-body-large;
+		line-height: 1.5;
+		margin-block-end: 24px;
+	}
+
 	.theme-collection-view-header__back {
 		color: var(--studio-gray-90);
 	}

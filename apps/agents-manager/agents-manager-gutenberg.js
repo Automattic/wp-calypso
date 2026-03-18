@@ -1,3 +1,4 @@
+import './config';
 import { registerPlugin } from '@wordpress/plugins';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 

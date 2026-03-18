@@ -334,6 +334,8 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				isLaunchPage: true,
+				isCustomDomainAllowedOnFreePlan: true,
+				deemphasizeFreePlan: true,
 			},
 		},
 

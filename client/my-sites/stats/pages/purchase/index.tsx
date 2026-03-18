@@ -24,13 +24,13 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
-import StatsLoader from '../../stats-page-loader/stats-loader';
 import PageViewTracker from '../../stats-page-view-tracker';
 import { StatsPurchaseNoticePage } from '../../stats-purchase/stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
 } from '../../stats-purchase/stats-purchase-single-item';
+import PageLoading from '../shared/page-loading';
 import './style.scss';
 
 const StatsPurchasePage = ( {
@@ -192,11 +192,7 @@ const StatsPurchasePage = ( {
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
-				{ isLoading && (
-					<div className="stats-purchase-page__loader">
-						<StatsLoader />
-					</div>
-				) }
+				{ isLoading && <div className="stats-purchase-page__loader">{ PageLoading }</div> }
 				{
 					// a plan is owned or not forced to purchase - show a notice page
 					! isLoading && ! showPurchasePage && (

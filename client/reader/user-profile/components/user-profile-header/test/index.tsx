@@ -37,7 +37,7 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const avatar = screen.getByTestId( 'reader-avatar' );
-		expect( avatar ).toBeInTheDocument();
+		expect( avatar ).toBeVisible();
 		expect( avatar ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
 	} );
 
@@ -45,7 +45,7 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
-		expect( displayNameEl ).toBeInTheDocument();
+		expect( displayNameEl ).toBeVisible();
 	} );
 
 	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
@@ -54,15 +54,15 @@ describe( 'UserProfileHeader', () => {
 		const navItems = screen.getAllByRole( 'menuitem' );
 		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
 
-		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeVisible();
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		expect( screen.queryByRole( 'button', { name: /show more/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /show more/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
@@ -75,18 +75,18 @@ describe( 'UserProfileHeader', () => {
 
 		// Bio section should be present
 		const bioText = screen.getByText( userWithBio.bio );
-		expect( bioText ).toBeInTheDocument();
+		expect( bioText ).toBeVisible();
 	} );
 
 	test( 'should render Gravatar badge when user has profile_URL', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const gravatarBadge = screen.getByRole( 'link', { name: /gravatar/i } );
-		expect( gravatarBadge ).toBeInTheDocument();
+		expect( gravatarBadge ).toBeVisible();
 		expect( gravatarBadge ).toHaveAttribute( 'href', defaultUser.profile_URL );
 
-		const gravatarIcon = screen.getByRole( 'img', { name: /gravatar/i } );
-		expect( gravatarIcon ).toBeInTheDocument();
+		const gravatarIcon = screen.getByRole( 'img', { name: /gravatar badge./i } );
+		expect( gravatarIcon ).toBeVisible();
 	} );
 
 	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
@@ -104,13 +104,11 @@ describe( 'UserProfileHeader', () => {
 		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
 		const userWithLongBio = { ...defaultUser, bio: longBio };
 
-		const { container, rerender } = render(
-			<UserProfileHeader user={ userWithLongBio } view="posts" />
-		);
+		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
 
-		const bioDesc = container.querySelector( '.user-profile-header__bio-desc' );
-		expect( bioDesc ).toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: /show more/i } ) ).not.toBeInTheDocument();
+		const bioDesc = screen.getByText( longBio );
+		expect( bioDesc ).toBeVisible();
+		expect( screen.queryByText( /show more/i ) ).not.toBeInTheDocument();
 
 		// Mock scrollHeight to simulate overflow (needed for useLayoutEffect check)
 		Object.defineProperty( bioDesc, 'scrollHeight', { value: 200, configurable: true } );
@@ -120,13 +118,13 @@ describe( 'UserProfileHeader', () => {
 			<UserProfileHeader user={ { ...userWithLongBio, bio: longBio + '.' } } view="posts" />
 		);
 
-		const showMoreButton = screen.getByRole( 'button', { name: /show more/i } );
-		expect( showMoreButton ).toBeInTheDocument();
+		const showMoreButton = screen.getByText( /show more/i );
+		expect( showMoreButton ).toBeVisible();
 		expect( bioDesc ).toHaveClass( 'is-clamped' );
 
 		await userEvent.click( showMoreButton );
 
 		expect( bioDesc ).toHaveClass( 'is-expanded' );
-		expect( screen.getByRole( 'button', { name: /show less/i } ) ).toBeInTheDocument();
+		expect( screen.getByText( /show less/i ) ).toBeVisible();
 	} );
 } );

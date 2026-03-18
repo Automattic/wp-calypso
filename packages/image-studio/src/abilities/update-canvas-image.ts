@@ -8,6 +8,7 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError, trackImageStudioImageGenerated } from '../utils/tracking';
@@ -34,6 +35,37 @@ const ABILITY_NAME = 'image-studio/update-canvas-image';
 // Track if ability has been registered to avoid duplicate registration
 let isRegistered = false;
 
+interface LowCreditsNotice {
+	type: 'low_credits_warning';
+	message: string;
+	upgrade_url?: string | null;
+}
+
+/**
+ * Validate that a backend notice payload has the required shape.
+ * Guards against malformed or unexpected data from the API.
+ */
+function isValidNoticePayload( notice: unknown ): notice is LowCreditsNotice {
+	if ( typeof notice !== 'object' || notice === null ) {
+		return false;
+	}
+	const candidate = notice as Record< string, unknown >;
+	if ( candidate.type !== 'low_credits_warning' ) {
+		return false;
+	}
+	if ( typeof candidate.message !== 'string' || candidate.message.trim() === '' ) {
+		return false;
+	}
+	if (
+		candidate.upgrade_url !== undefined &&
+		candidate.upgrade_url !== null &&
+		typeof candidate.upgrade_url !== 'string'
+	) {
+		return false;
+	}
+	return true;
+}
+
 interface UpdateCanvasImageAbilityInput {
 	attachmentId?: string | number | null;
 	url?: string | null;
@@ -43,6 +75,7 @@ interface UpdateCanvasImageAbilityInput {
 		description?: string | null;
 		alt_text?: string | null;
 	};
+	notice?: LowCreditsNotice | null;
 }
 
 /**
@@ -106,6 +139,25 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 							},
 						},
 					},
+					notice: {
+						type: 'object',
+						description: 'Optional notice from the backend, e.g. a low-credits warning.',
+						properties: {
+							type: {
+								type: 'string',
+								description: 'The notice type identifier.',
+							},
+							message: {
+								type: 'string',
+								description: 'The user-facing message to display.',
+							},
+							upgrade_url: {
+								type: 'string',
+								description: 'Optional URL to an upgrade page.',
+							},
+						},
+						required: [ 'type', 'message' ],
+					},
 				},
 				required: [ 'attachmentId' ],
 			},
@@ -124,8 +176,13 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 
 				const url = input?.url || '';
 
-				const { updateImageStudioCanvas, setDraftIds, setHasUpdatedMetadata, setCanvasMetadata } =
-					dispatch( imageStudioStore ) as ImageStudioActions;
+				const {
+					updateImageStudioCanvas,
+					setDraftIds,
+					setHasUpdatedMetadata,
+					setCanvasMetadata,
+					addNotice,
+				} = dispatch( imageStudioStore ) as ImageStudioActions;
 
 				const canvasMetadata = select( imageStudioStore ).getCanvasMetadata() || {};
 
@@ -240,6 +297,25 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 						attachmentId,
 						isAnnotated: false,
 					} );
+
+					// Show notice from backend if present and well-formed
+					if ( input?.notice != null && isValidNoticePayload( input.notice ) ) {
+						const notice = input.notice;
+						addNotice(
+							notice.message,
+							'warning',
+							notice.upgrade_url
+								? [
+										{
+											label: __( 'Upgrade', __i18n_text_domain__ ),
+											url: notice.upgrade_url,
+											openInNewTab: true,
+										},
+								  ]
+								: undefined,
+							true // dismissible
+						);
+					}
 				} catch ( error ) {
 					// Track the error
 					trackImageStudioError( {

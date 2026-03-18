@@ -77,7 +77,7 @@ import StatsModuleListing from './pages/shared/stats-module-listing';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
-import DatePicker from './stats-date-picker';
+import StatsDateLabel from './stats-date-label';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -611,7 +611,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						}
 					>
 						{ ' ' }
-						<DatePicker
+						<StatsDateLabel
 							period={ period }
 							date={ date }
 							query={ query }

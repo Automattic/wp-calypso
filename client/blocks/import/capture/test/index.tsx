@@ -148,4 +148,17 @@ describe( 'URL Validation', () => {
 
 		expect( screen.getByText( error ) ).toBeInTheDocument();
 	} );
+
+	it( 'should have proper ARIA attributes on error', async () => {
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput hasError onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		const errorElement = screen.getByRole( 'alert' );
+		expect( errorElement ).toBeInTheDocument();
+		expect( errorElement ).toHaveAttribute( 'aria-live', 'assertive' );
+	} );
 } );

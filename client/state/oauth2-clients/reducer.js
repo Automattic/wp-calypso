@@ -144,6 +144,18 @@ export const initialClientsData = {
 		title: 'Blaze Pro',
 		url: 'https://blazepro.tumblr.com',
 	},
+	134404: {
+		id: 134404,
+		name: 'ciab',
+		title: 'CIAB by Woo',
+		url: 'https://my.woo.ai',
+	},
+	134405: {
+		id: 134405,
+		name: 'ciab',
+		title: 'CIAB by Woo',
+		url: 'https://my.woo.ai',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {

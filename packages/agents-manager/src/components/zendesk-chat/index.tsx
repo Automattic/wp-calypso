@@ -21,8 +21,8 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Called when the message count changes. */
-	onMessagesCountChange: ( count: number ) => void;
+	/** Called when the has-messages state changes. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 export default function ZendeskChat( {
@@ -33,15 +33,24 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-	onMessagesCountChange,
+	onHasMessagesChange,
 }: Props ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat();
+	const {
+		agentticMessages,
+		onSubmit,
+		isLoadingConversation,
+		isProcessing,
+		onTypingStatusChange,
+		imageUpload,
+		supportedImageTypes,
+		notice,
+	} = useManagedZendeskChat();
 
-	// Notify parent when message count changes
+	// Notify parent when has-messages state changes
+	const hasMessages = agentticMessages.length > 0;
 	useEffect( () => {
-		onMessagesCountChange( agentticMessages.length );
-	}, [ agentticMessages.length, onMessagesCountChange ] );
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
 
 	return (
 		<AgentChat
@@ -55,11 +64,14 @@ export default function ZendeskChat( {
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }
+			notice={ notice }
 			onExpand={ onExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			imageUpload={ imageUpload }
+			acceptedImageFileTypes={ supportedImageTypes }
 		/>
 	);
 }

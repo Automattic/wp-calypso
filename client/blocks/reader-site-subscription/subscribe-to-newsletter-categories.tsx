@@ -41,7 +41,6 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 
 	return (
 		<>
-			<hr className="subscriptions__separator" />
 			<div className="site-subscription-info">
 				<h2 className="site-subscription-info__heading">
 					{ translate( 'Newsletter categories' ) }

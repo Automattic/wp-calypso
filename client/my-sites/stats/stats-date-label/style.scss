@@ -1,0 +1,18 @@
+.stats-date-label__refresh-status {
+	line-height: 16px;
+
+	.stats-date-label__update-date {
+		color: var(--color-text-subtle);
+		display: inline-block;
+		font-size: $font-body-small;
+
+		.gridicon {
+			padding: 0 5px;
+			vertical-align: bottom;
+		}
+	}
+}
+
+.stats-date-label__last-update {
+	color: var(--color-neutral-70);
+}

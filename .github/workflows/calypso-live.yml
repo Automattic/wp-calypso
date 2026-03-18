@@ -48,7 +48,6 @@ jobs:
             }
 
             const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
-            const ciabLink = `https://calypso.live/ciab?${{steps.build_link.outputs.QUERY}}`;
 
             const body = trimIndent(`
               <!--calypso-live-watermark:apr@v1-->
@@ -102,12 +101,12 @@ jobs:
               </details>
               <details>
                 <summary>
-                  Dashboard Live (CIAB) <a href="${ciabLink}&env=dashboard">(direct link)</a>
+                  Dashboard Live (CIAB) <a href="${link}&env=dashboard">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
                     <td>
-                      <a href="${ciabLink}&env=dashboard">${ciabLink}&env=dashboard</a>
+                      <a href="${link}&env=dashboard-ciab">${link}&env=dashboard-ciab</a>
                     </td>
                   </tr>
                 </table>

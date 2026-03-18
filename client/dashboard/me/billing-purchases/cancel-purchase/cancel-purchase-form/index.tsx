@@ -8,7 +8,6 @@ import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
-import JetpackCancellationOfferAcceptedStep from './step-components/jetpack-cancellation-offer-accepted-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
@@ -17,7 +16,6 @@ import {
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
@@ -63,7 +61,7 @@ interface CancelPurchaseFormProps {
 	offerApplyError?: Error | null;
 	offerDiscountBasedFromPurchasePrice: number;
 	onClickAcceptForCancellationOffer?: () => void;
-	onGetCancellationOffer: () => void;
+	onGetCancellationOffer: ( newPurchaseId?: string ) => void;
 	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
@@ -261,18 +259,6 @@ function SurveyContent( {
 		);
 	}
 
-	// Step 4: Offer Accepted
-	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
-		// Show after an offer discount has been accepted
-		return (
-			<JetpackCancellationOfferAcceptedStep
-				isAkismet={ isAkismet }
-				percentDiscount={ offerDiscountBasedFromPurchasePrice }
-				productName={ productName }
-			/>
-		);
-	}
-
 	return null;
 }
 
@@ -281,14 +267,14 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
-	isApplyingOffer,
 	isSubmitting,
-	offerApplyError,
-	onClickAcceptForCancellationOffer,
 	onSubmit,
 	solution,
 	surveyStep,
 	allSteps,
+	onClickAcceptForCancellationOffer,
+	isApplyingOffer,
+	offerApplyError,
 }: {
 	canGoNext: boolean;
 } & CancelPurchaseFormProps ) {
@@ -353,14 +339,6 @@ function StepButtons( {
 		return (
 			<ButtonStack justify="flex-start">
 				<Button
-					disabled={ ! canGoNext || disableButtons }
-					isBusy={ isCancelling }
-					onClick={ onSubmit }
-					variant="primary"
-				>
-					{ __( 'No, thanks' ) }
-				</Button>
-				<Button
 					className="jetpack-cancellation-offer__accept-cta"
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
@@ -369,7 +347,15 @@ function StepButtons( {
 					} }
 					variant="primary"
 				>
-					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+					{ isApplyingOffer ? __( 'Getting discount' ) : __( 'Get discount' ) }
+				</Button>
+				<Button
+					disabled={ ! canGoNext || disableButtons }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="secondary"
+				>
+					{ __( 'No, thanks' ) }
 				</Button>
 			</ButtonStack>
 		);
@@ -452,6 +438,9 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
+	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
+		return '';
+	}
 	if ( surveyStep === UPSELL_STEP ) {
 		return __( 'Here is an idea' );
 	}
@@ -460,10 +449,11 @@ function getSurveyTitle( surveyStep: string ) {
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
+	const title = getSurveyTitle( props.surveyStep ?? '' );
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader title={ getSurveyTitle( props.surveyStep ?? '' ) } level={ 3 } />
+				{ title && <SectionHeader title={ title } level={ 3 } /> }
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>
