@@ -71,3 +71,17 @@
 		}
 	}
 }
+
+.capture-input__error {
+	margin-top: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	color: var(--color-error);
+	background-color: var(--color-error-light);
+	border-radius: 4px;
+	font-size: 0.875rem;
+
+	&:focus {
+		outline: 2px solid var(--color-error);
+		outline-offset: 2px;
+	}
+}

@@ -1,14 +1,16 @@
 import { FormLabel } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { CheckboxControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useEffect } from 'react';
-import { Control, Controller, FieldError, useForm } from 'react-hook-form';
+import { FC, useState } from 'react';
+import { Control, Controller, FieldError, RegisterOptions, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { logToLogstash } from 'calypso/lib/logstash';
 import {
 	type TicketMigrationData,
@@ -18,12 +20,14 @@ interface CheckboxProps {
 	label: string;
 	control: Control< TicketMigrationData >;
 	value: string;
+	rules?: RegisterOptions< TicketMigrationData, 'intents' >;
 }
 
-const CheckboxIntents = ( { label, control, value }: CheckboxProps ) => (
+const CheckboxIntents = ( { label, control, value, rules }: CheckboxProps ) => (
 	<Controller
 		control={ control }
 		name="intents"
+		rules={ rules }
 		render={ ( { field } ) => {
 			return (
 				<CheckboxControl
@@ -89,27 +93,38 @@ interface FormProps {
 	onComplete: () => void;
 }
 
+const extractDomainFromUrl = ( url: string ) => {
+	try {
+		const parsedUrl = new URL( url );
+		return parsedUrl.hostname;
+	} catch {
+		return url;
+	}
+};
+
 const Form: FC< FormProps > = ( { onComplete } ) => {
 	const translate = useTranslate();
-	const siteSlug = useSiteSlugParam() ?? '';
+	const locale = useLocale();
+	const siteSlug = useSiteSlugParam();
 	const [ queryParams ] = useSearchParams();
 	const from = queryParams.get( 'from' );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
-	const {
-		mutate: createTicket,
-		isSuccess,
-		error,
-		isPending,
-	} = useMigrationTicketMutation( siteSlug );
+	// Use the destination siteSlug if available, otherwise extract domain from the source wpcom site URL
+	const targetSiteSlug = siteSlug || ( from ? extractDomainFromUrl( from ) : '' );
+
+	const { sendTicketAsync: createZendeskTicket } = useSubmitMigrationTicket();
+	const { mutateAsync: createSurveyTicket } = useMigrationTicketMutation( targetSiteSlug );
 
 	const {
 		control,
 		handleSubmit,
 		watch,
 		setError,
+		clearErrors,
 		formState: { errors },
 	} = useForm< TicketMigrationData >( {
-		disabled: isPending,
+		disabled: isSubmitting,
 		defaultValues: {
 			intents: [],
 			otherDetails: '',
@@ -119,43 +134,61 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 	const isOtherChecked = intents.includes( 'other' );
 	const errorMessage = errors?.root?.message ?? errors?.intents?.message;
 
-	useEffect( () => {
-		if ( error ) {
+	const onSubmit = handleSubmit( async ( data: TicketMigrationData ) => {
+		clearErrors( 'root' );
+
+		if ( ! targetSiteSlug ) {
 			setError( 'root', {
 				type: 'manual',
 				message: translate( 'Something went wrong. Please try again.' ),
 			} );
 			logToLogstash( {
-				message: 'Error submitting migration ticket',
+				message: 'Missing targetSiteSlug in migration survey submission',
 				feature: 'calypso_client',
 				extra: {
-					siteSlug,
 					step: 'site-migration-already-wpcom',
-					from,
-					error: error.message,
+					siteSlug: siteSlug ?? '',
+					from: from ?? '',
 				},
-			} );
-		}
-	}, [ error, setError, translate ] );
-
-	useEffect( () => {
-		if ( isSuccess ) {
-			onComplete();
-		}
-	}, [ isSuccess, onComplete ] );
-
-	const onSubmit = handleSubmit( ( data: TicketMigrationData ) => {
-		if ( data.intents.length === 0 ) {
-			setError( 'intents', {
-				type: 'manual',
-				message: translate( 'Please select an option.' ),
 			} );
 			return;
 		}
-		createTicket( {
-			intents: data.intents,
-			otherDetails: data.otherDetails,
-		} );
+
+		setIsSubmitting( true );
+
+		try {
+			// Create ZenDesk ticket (required before survey can be submitted)
+			await createZendeskTicket( {
+				locale,
+				from_url: from ?? '',
+				blog_url: targetSiteSlug,
+			} );
+
+			// Submit survey
+			await createSurveyTicket( {
+				intents: data.intents,
+				otherDetails: data.otherDetails,
+			} );
+
+			onComplete();
+		} catch ( submitError ) {
+			setError( 'root', {
+				type: 'manual',
+				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+			logToLogstash( {
+				message: 'Error submitting migration survey',
+				feature: 'calypso_client',
+				extra: {
+					siteSlug: targetSiteSlug,
+					step: 'site-migration-already-wpcom',
+					from,
+					error: submitError instanceof Error ? submitError.message : String( submitError ),
+				},
+			} );
+		} finally {
+			setIsSubmitting( false );
+		}
 	} );
 
 	return (
@@ -184,6 +217,10 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						value="transfer-my-domain-to-wordpress-com"
 						label={ translate( 'Transfer my domain to WordPress.com' ) }
 						control={ control }
+						rules={ {
+							validate: ( value: string[] ) =>
+								value.length > 0 || translate( 'Please select an option.' ),
+						} }
 					/>
 					<CheckboxIntents
 						value="copy-one-of-my-existing-sites-on-wordpress-com"
@@ -206,7 +243,7 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 						/>
 					) }
 				</div>
-				<NextButton disabled={ isPending } type="submit">
+				<NextButton disabled={ isSubmitting } type="submit">
 					{ translate( 'Continue' ) }
 				</NextButton>
 			</form>

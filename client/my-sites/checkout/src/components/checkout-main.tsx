@@ -582,6 +582,8 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
+			'stripe-upi': ( transactionData: unknown ) =>
+				genericRedirectProcessor( 'stripe-upi', transactionData, dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>

@@ -8,7 +8,6 @@ import {
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
 } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -676,16 +675,20 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 /**
  * Returns true if the refund eligibility notice should be shown for the given purchase.
  *
- * The notice is shown for refundable WordPress.com plans when the feature flag is enabled.
+ * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
  * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
  * flow, offering the refund as an explicit opt-in action instead.
+ *
+ * @param purchase  - the purchase to check
+ * @param isEnabled - whether the user is assigned to the treatment variation of the
+ *                    calypso_split_cancel_refund experiment. Use the
+ *                    `useShowRefundEligibilityNotice` hook to determine this in React components.
  */
-export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
-	return (
-		config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
-		hasAmountAvailableToRefund( purchase ) &&
-		isDotcomPlan( purchase )
-	);
+export function shouldShowRefundEligibilityNotice(
+	purchase: Purchase,
+	isEnabled: boolean
+): boolean {
+	return isEnabled && hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
 }
 
 /**

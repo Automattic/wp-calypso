@@ -12,7 +12,7 @@ import 'calypso/state/themes/init';
  * Returns true if currently requesting themes for the themes query, regardless
  * of page, or false otherwise.
  * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
+ * @param  {number|string}  siteId Site ID or theme source (e.g. 'wpcom', 'wporg')
  * @param  {Object}  query  Theme query object
  * @returns {boolean}        Whether themes are being requested
  */

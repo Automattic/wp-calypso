@@ -41,12 +41,12 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
-        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
         EnvConfig(
@@ -71,9 +71,8 @@ object BuildDockerImage : BuildType({
 		),
 		EnvConfig(
 			label = "Dashboard Live (CIAB)",
-			baseUrl = "https://calypso.live/ciab",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
+			envQuery = "&env=dashboard-ciab",
+			qrEnv = "env=dashboard-ciab&flags=oauth",
 		)
     )
 
@@ -82,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
@@ -113,6 +112,14 @@ object BuildDockerImage : BuildType({
 			value = "false",
 			label = "Update the base image from the cache.",
 			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
+			checked = "true",
+			unchecked = "false"
+		)
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling inside the Docker build.",
 			checked = "true",
 			unchecked = "false"
 		)
@@ -191,6 +198,7 @@ object BuildDockerImage : BuildType({
 			--build-arg use_cache=true
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
@@ -383,6 +391,11 @@ object RunAllUnitTests : BuildType({
 		artifacts => artifacts
 	""".trimIndent()
 
+	params {
+		// Unit tests don't exercise Playwright browsers, so avoid downloading them during yarn install.
+		param("env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
@@ -497,12 +510,13 @@ object RunAllUnitTests : BuildType({
 		bashNodeScript {
 			name = "Tag build"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
 			scriptContent = """
 				set -x
 
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-				fi
+				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 			""".trimIndent()
 		}
 	}
@@ -517,7 +531,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 15
 	}
 	features {
 		feature {

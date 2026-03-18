@@ -32,8 +32,6 @@ export type HelpCenterFeatureConfig = {
 		courses: boolean;
 		/** Show the "Product updates" external link. */
 		productUpdates: boolean;
-		/** Show the "Share feedback" Survicate button. */
-		feedback: boolean;
 		/** URL for the "Support guides" external link. Null to hide. */
 		supportGuidesUrl: string | null;
 	};

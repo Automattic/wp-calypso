@@ -5,12 +5,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
+import getMostRecentOpenLiveInteraction, {
+	hasReachedConversationLimit,
+} from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
+	getConversationLimitReachedMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	getErrorMessageUnknownError,
 } from '../constants';
@@ -183,7 +186,16 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
-				if ( forceEmailSupport ) {
+				if ( hasReachedConversationLimit() ) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, getConversationLimitReachedMessage() ],
+						status: 'loaded',
+					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
+					return;
+				} else if ( forceEmailSupport ) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,

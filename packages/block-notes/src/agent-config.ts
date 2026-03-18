@@ -5,7 +5,7 @@
  * Passes siteId/blogId to agent config for API authentication
  */
 
-import { createAgentConfig } from '@automattic/agents-manager/src/utils/agent-config';
+import { createAgentConfig } from '@automattic/agents-manager/src/utils/create-agent-config';
 import { createToolProvider } from './utils/tool-provider';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 

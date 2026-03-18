@@ -67,8 +67,14 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									href={ user.profile_URL }
 									target="_blank"
 									rel="noopener noreferrer"
+									aria-label={ translate( 'Go to Gravatar profile' ) }
 								>
-									<img src={ GravatarIcon } alt="Gravatar" width={ 18 } height={ 18 } />
+									<img
+										src={ GravatarIcon }
+										alt={ translate( 'Gravatar badge.' ) }
+										width={ 18 }
+										height={ 18 }
+									/>
 								</a>
 							) }
 						</h1>
@@ -94,6 +100,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 								<button
 									className="user-profile-header__bio-toggle"
 									onClick={ handleShowMoreToggle }
+									aria-hidden="true"
 								>
 									{ isExpanded ? translate( 'Show less' ) : translate( 'Show more' ) }
 								</button>

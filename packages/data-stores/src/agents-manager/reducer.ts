@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
+import { PerSiteRouterHistory } from './types';
 import type { AgentsManagerAction } from './actions';
-import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
 const isOpen: Reducer< boolean | undefined, AgentsManagerAction > = ( state, action ) => {
@@ -19,10 +19,10 @@ const isDocked: Reducer< boolean | undefined, AgentsManagerAction > = ( state, a
 	return state;
 };
 
-const routerHistory: Reducer<
-	{ entries: Location[]; index: number } | undefined,
-	AgentsManagerAction
-> = ( state, action ) => {
+const routerHistory: Reducer< PerSiteRouterHistory | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_ROUTER_HISTORY':
 			return action.history;

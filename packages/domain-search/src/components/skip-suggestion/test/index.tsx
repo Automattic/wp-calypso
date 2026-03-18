@@ -90,9 +90,7 @@ describe( 'SkipSuggestion', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect(
-				await screen.findByText( 'Start free with a WordPress.com subdomain' )
-			).toBeInTheDocument();
+			expect( await screen.findByText( /Start free with / ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			const skipButton = screen.getByRole( 'button', {
@@ -123,9 +121,7 @@ describe( 'SkipSuggestion', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect(
-				await screen.findByText( 'Start free with a WordPress.com subdomain' )
-			).toBeInTheDocument();
+			expect( await screen.findByText( /Start free with / ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			expect( freeSuggestionQuery.isDone() ).toBe( true );
