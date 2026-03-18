@@ -124,10 +124,12 @@ const StatsCard = ( props: StatsCardProps ) => {
 
 	const footerAriaLabel =
 		footerAction?.ariaLabel ??
-		( translate( 'View all %(title)s', {
-			args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
-			comment: '"View all posts & pages", "View all referrers", etc.',
-		} ) as string );
+		( typeof title === 'string'
+			? ( translate( 'View all %(title)s', {
+					args: { title: title.toLocaleLowerCase() },
+					comment: '"View all posts & pages", "View all referrers", etc.',
+			  } ) as string )
+			: ( translate( 'View all' ) as string ) );
 	const footerLabel = footerAction?.label || translate( 'View all' );
 
 	return (
