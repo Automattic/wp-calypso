@@ -285,8 +285,8 @@ export const useManagedZendeskChat = () => {
 
 			const text =
 				score === 'good'
-					? __( 'Good', '__i18n_text_domain__' )
-					: __( 'Needs improvement', '__i18n_text_domain__' );
+					? __( 'Good 👍', '__i18n_text_domain__' )
+					: __( 'Needs improvement 👎', '__i18n_text_domain__' );
 
 			const messageToSend = {
 				type: 'text',
@@ -312,31 +312,41 @@ export const useManagedZendeskChat = () => {
 			score = JSON.parse( ratingMessage.payload ).csat_rating;
 		}
 
+		let ticketId: number | null = null;
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
 			const isCSAT = message.metadata?.type === 'csat';
-			let ticketId: number | null = null;
 
 			if ( isCSAT ) {
 				ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
 				return {
 					...convertZendeskMessageToAgentticFormat( message ),
-					actions:
-						message.actions?.map( ( action ) => {
-							const label =
-								action.metadata.score === 'GOOD'
-									? __( 'Good 👍', '__i18n_text_domain__' )
-									: __( 'Needs improvement 👎', '__i18n_text_domain__' );
-							return {
-								...action,
-								label,
-								tooltip: label,
-								icon: action.metadata.score === 'GOOD' ? <ThumbsUpIcon /> : <ThumbsDownIcon />,
-								onClick: () => {
-									sendFeedbackMessage( action.metadata.score === 'GOOD' ? 'good' : 'bad' );
-								},
-								pressed: action.metadata.score === score,
-							};
-						} ) ?? [],
+					content: [
+						{
+							type: 'text',
+							text: __(
+								'Please help us improve. How would you rate your experience?',
+								'__i18n_text_domain__'
+							),
+						},
+					],
+					actions: ! hasRated
+						? message.actions?.map( ( action ) => {
+								const label =
+									action.metadata.score === 'GOOD'
+										? __( 'Good 👍', '__i18n_text_domain__' )
+										: __( 'Needs improvement 👎', '__i18n_text_domain__' );
+								return {
+									...action,
+									label,
+									tooltip: label,
+									icon: action.metadata.score === 'GOOD' ? <ThumbsUpIcon /> : <ThumbsDownIcon />,
+									onClick: () => {
+										sendFeedbackMessage( action.metadata.score === 'GOOD' ? 'good' : 'bad' );
+									},
+									pressed: action.metadata.score === score,
+								};
+						  } ) ?? []
+						: [],
 				};
 			}
 
@@ -353,7 +363,7 @@ export const useManagedZendeskChat = () => {
 							type: 'component',
 							component: () => (
 								<CSATForm
-									score={ score === 'GOOD' ? 'good' : 'bad' }
+									preDeterminedScore={ score === 'GOOD' ? 'good' : 'bad' }
 									ticketId={ ticketId }
 									onSendFeedback={ sendFeedbackMessage }
 								/>

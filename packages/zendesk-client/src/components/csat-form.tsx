@@ -12,10 +12,16 @@ export interface CSATFormProps {
 	ticketId: number | null;
 	onSendFeedback: ( score: 'good' | 'bad' ) => void;
 	className?: string;
-	score: 'good' | 'bad' | null;
+	preDeterminedScore?: 'good' | 'bad';
 }
 
-export const CSATForm = ( { ticketId, score, onSendFeedback, className }: CSATFormProps ) => {
+export const CSATForm = ( {
+	ticketId,
+	preDeterminedScore,
+	onSendFeedback,
+	className,
+}: CSATFormProps ) => {
+	const [ score, setScore ] = useState( preDeterminedScore );
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
 	const [ isFormHidden, setIsFormHidden ] = useState( false );
@@ -32,6 +38,7 @@ export const CSATForm = ( { ticketId, score, onSendFeedback, className }: CSATFo
 
 	const postScore = useCallback(
 		( selectedScore: 'good' | 'bad' ) => {
+			setScore( selectedScore );
 			onSendFeedback( selectedScore );
 		},
 		[ onSendFeedback ]
@@ -73,13 +80,15 @@ export const CSATForm = ( { ticketId, score, onSendFeedback, className }: CSATFo
 			</div>
 			{ score && (
 				<>
-					<div className="zendesk-csat-form__rating-message">
-						<div>
-							{ score === 'good'
-								? __( 'Good 👍', '__i18n_text_domain__' )
-								: __( 'Needs improvement 👎', '__i18n_text_domain__' ) }
+					{ ! preDeterminedScore && (
+						<div className="zendesk-csat-form__rating-message">
+							<div>
+								{ score === 'good'
+									? __( 'Good 👍', '__i18n_text_domain__' )
+									: __( 'Needs improvement 👎', '__i18n_text_domain__' ) }
+							</div>
 						</div>
-					</div>
+					) }
 
 					{ isSubmitting && (
 						<div className="zendesk-csat-form__loading">
