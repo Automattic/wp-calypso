@@ -141,7 +141,7 @@ function getFullRouterHistory(): PerSiteRouterHistory | undefined {
 		.routerHistory;
 }
 
-export const usePersistedHistory = ( siteKey?: string ) => {
+export const usePersistedHistory = ( siteKey: string ) => {
 	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory() );
 	const [ state, setState ] = useState< HistoryEvent >( {
 		action: history.action,
@@ -156,16 +156,10 @@ export const usePersistedHistory = ( siteKey?: string ) => {
 	// Create a persist callback that merges with existing per-site histories.
 	const persistHistory = useCallback(
 		( historyData: SingleRouterHistory ) => {
-			if ( siteKey ) {
-				const fullMap = getFullRouterHistory() || {};
-				persistAgentsManagerState( {
-					agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
-				} );
-			} else {
-				persistAgentsManagerState( {
-					agents_manager_router_history: historyData,
-				} );
-			}
+			const fullMap = getFullRouterHistory() || {};
+			persistAgentsManagerState( {
+				agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
+			} );
 		},
 		[ siteKey ]
 	);

@@ -11,7 +11,7 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
 /**
  * Saves the chat route so the conversation can be restored later.
  */
-function saveNewChatRoute( sessionId: string, siteKey?: string ): void {
+function saveNewChatRoute( sessionId: string, siteKey: string ): void {
 	const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
 	const current = store.getRouterHistory( siteKey );
 
@@ -27,16 +27,11 @@ function saveNewChatRoute( sessionId: string, siteKey?: string ): void {
 	const entries = current?.entries?.length ? [ ...current.entries ] : [];
 	const index = current?.index ?? 0;
 	entries[ index ] = entry;
-	const historyData = { entries, index };
 
-	if ( siteKey ) {
-		const fullMap = store.getAgentsManagerState().routerHistory || {};
-		persistAgentsManagerState( {
-			agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
-		} );
-	} else {
-		persistAgentsManagerState( { agents_manager_router_history: historyData } );
-	}
+	const fullMap = store.getAgentsManagerState().routerHistory || {};
+	persistAgentsManagerState( {
+		agents_manager_router_history: { ...fullMap, [ siteKey ]: { entries, index } },
+	} );
 }
 
 /**

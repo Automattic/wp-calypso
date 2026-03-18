@@ -3,7 +3,7 @@ import { usePersistedHistory } from '../hooks/use-persisted-history';
 
 interface Props {
 	children: React.ReactNode;
-	siteKey?: string;
+	siteKey: string;
 }
 
 /**

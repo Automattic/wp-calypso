@@ -10,8 +10,8 @@ export const getAgentsManagerState = ( state: State ) => ( {
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
 export const getIsDocked = ( state: State ) => state.isDocked;
-export const getRouterHistory = ( state: State, siteKey?: string ) => {
-	if ( ! state.routerHistory || ! siteKey ) {
+export const getRouterHistory = ( state: State, siteKey: string ) => {
+	if ( ! state.routerHistory ) {
 		return undefined;
 	}
 	return state.routerHistory[ siteKey ];
