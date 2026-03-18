@@ -69,6 +69,8 @@ export type {
 	AgentsManagerSelect,
 	AgentsManagerSite,
 	Dispatch as AgentsManagerDispatch,
+	PerSiteRouterHistory,
+	SingleRouterHistory,
 } from './agents-manager/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';

@@ -1,7 +1,7 @@
-.stats-date-picker__refresh-status {
+.stats-date-label__refresh-status {
 	line-height: 16px;
 
-	.stats-date-picker__update-date {
+	.stats-date-label__update-date {
 		color: var(--color-text-subtle);
 		display: inline-block;
 		font-size: $font-body-small;
@@ -13,6 +13,6 @@
 	}
 }
 
-.stats-date-picker__last-update {
+.stats-date-label__last-update {
 	color: var(--color-neutral-70);
 }

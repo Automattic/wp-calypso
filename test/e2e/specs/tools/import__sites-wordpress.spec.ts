@@ -60,7 +60,7 @@ test.describe(
 			pageImportContentWordpressQuestion,
 			sitePublic,
 		} ) => {
-			const wordpressSiteURL = 'https://test.wordpress.com/';
+			const wordpressSiteURL = 'https://test.wordpress.org/';
 
 			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
 				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
@@ -114,7 +114,7 @@ test.describe(
 			pageImportContentWordpressQuestion,
 			sitePublic,
 		} ) => {
-			const wordpressSiteURL = 'https://test.wordpress.com/';
+			const wordpressSiteURL = 'https://test.wordpress.org/';
 
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {
 				await pageImportContent.visit( sitePublic.blog_details.site_slug );

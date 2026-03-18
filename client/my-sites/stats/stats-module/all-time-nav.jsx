@@ -19,7 +19,7 @@ import {
 } from '../constants';
 import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import { trackStatsAnalyticsEvent } from '../utils';
 import './summary-nav.scss';
 

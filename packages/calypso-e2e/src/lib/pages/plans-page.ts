@@ -122,6 +122,47 @@ export class PlansPage {
 	}
 
 	/**
+	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
+	 */
+	async openEscapeHatch(): Promise< void > {
+		const locator = this.page.getByText( 'start with a free plan' );
+		await locator.first().click();
+	}
+
+	/**
+	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
+	 */
+	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
+		await this.page
+			.getByText( `No free custom domain: Your site will be shown to visitors as ${ domainName }` )
+			.waitFor();
+	}
+
+	/**
+	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
+	 */
+	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
+		await this.page.getByText( `${ domainName } redirects to ${ siteSlug }` ).waitFor();
+	}
+
+	/**
+	 * Clicks the "Continue with Free" button in the escape hatch modal.
+	 *
+	 * This handles both the FreePlanFreeDomainDialog ("Continue with Free") and
+	 * the FreePlanPaidDomainDialog ("Continue with Free plan") variants.
+	 */
+	async clickContinueWithFree(): Promise< void > {
+		const continueWithFreePlanButton = this.page.getByRole( 'button', {
+			name: 'Continue with Free plan',
+		} );
+		if ( await continueWithFreePlanButton.isVisible() ) {
+			await continueWithFreePlanButton.click();
+		} else {
+			await this.page.getByRole( 'button', { name: 'Continue with Free' } ).click();
+		}
+	}
+
+	/**
 	 * Selects the plan on the modal upsell.
 	 *
 	 * @param {Plans} plan Plan to select.
@@ -131,17 +172,16 @@ export class PlansPage {
 			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
 		}
 
-		const locator = this.page.getByText( 'start with a free plan' );
+		await this.openEscapeHatch();
 
-		await locator.first().click();
-
-		const continueWithPlanButton = this.page.getByRole( 'button', {
-			name: `Continue with ${ plan } plan`,
-		} );
-		if ( await continueWithPlanButton.isVisible() ) {
-			await continueWithPlanButton.click();
+		if ( plan === 'Free' ) {
+			await this.clickContinueWithFree();
 		} else {
-			await this.page.getByRole( 'button', { name: `Get ${ plan } plan` } ).click();
+			// Button text is "Get Personal - $X/month" so we match partially.
+			await this.page
+				.getByRole( 'button', { name: new RegExp( `Get ${ plan }` ) } )
+				.first()
+				.click();
 		}
 	}
 
