@@ -1,6 +1,6 @@
 // Internal module cache.
 // Exported for use in testing.
-/** @type { result?: string } */
+/** @type { result?: string|undefined } */
 export const cache = {};
 
 /**
