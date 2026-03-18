@@ -42,7 +42,7 @@ const GiftSubscriptionModal = ( {
 
 	const title = translate( 'Complimentary subscription' );
 
-	const text = translate( 'Select a plan to give complimentary access to this user: ' );
+	const text = translate( 'Select a plan to give complimentary access to this user:' );
 
 	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		const giftDetails: Gift = {
