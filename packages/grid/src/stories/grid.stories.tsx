@@ -422,7 +422,7 @@ export const EditMode: StoryObj< typeof Grid > = {
 		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
 			{ key: 'fill', fillWidth: true, height: 1, order: 1 },
 			{ key: 'fixed-1', width: 1, height: 1, order: 2 },
-			{ key: 'fixed-2', width: 2, height: 1, order: 3 },
+			{ key: 'fixed-2', width: 5, height: 1, order: 3 },
 			{ key: 'full', fullWidth: true, height: 1, order: 4 },
 			{ key: 'fixed-3', width: 2, height: 1, order: 5 },
 			{ key: 'fixed-4', width: 2, height: 1, order: 6 },
@@ -434,8 +434,6 @@ export const EditMode: StoryObj< typeof Grid > = {
 
 		return (
 			<div style={ { width: '800px' } }>
-				<LayoutStatePanel layout={ layout } />
-
 				<Grid
 					layout={ layout }
 					columns={ 6 }
@@ -487,6 +485,8 @@ export const EditMode: StoryObj< typeof Grid > = {
 						width: 2
 					</Card>
 				</Grid>
+
+				<LayoutStatePanel layout={ layout } />
 			</div>
 		);
 	},
