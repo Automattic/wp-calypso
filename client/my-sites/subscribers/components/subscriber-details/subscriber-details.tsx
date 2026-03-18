@@ -184,7 +184,7 @@ const SubscriberDetails = ( {
 							onClick={ () => onGiftSubscription( subscriber ) }
 							variant="primary"
 						>
-							{ translate( 'Gift a subscription' ) }
+							{ translate( 'Comp a subscription' ) }
 						</Button>
 					) }
 					{ onUnsubscribe && (

@@ -60,7 +60,7 @@ export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
 					type: MEMBERSHIPS_GIFT_ADD_FAILURE,
 				} );
 				dispatch(
-					errorNotice( error.error.message ?? error.message, {
+					errorNotice( error.error?.message ?? error.message, {
 						duration: 10000,
 					} )
 				);

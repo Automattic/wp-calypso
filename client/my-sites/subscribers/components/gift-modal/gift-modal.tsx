@@ -11,7 +11,7 @@ type GiftSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
-	onCancel: () => void;
+	onClose: () => void;
 	onConfirm: () => void;
 };
 
@@ -25,7 +25,7 @@ const GiftSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
-	onCancel,
+	onClose,
 	onConfirm,
 }: GiftSubscriptionModalProps ) => {
 	const translate = useTranslate();
@@ -71,17 +71,18 @@ const GiftSubscriptionModal = ( {
 					},
 				} ),
 				( { success }: { success: boolean } ) => {
+					setIsSubmitting( false );
 					if ( success ) {
 						onConfirm();
 					}
-					onCancel();
+					onClose();
 				}
 			)
 		);
 	};
 
 	return (
-		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onCancel }>
+		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onClose }>
 			{ text && <p>{ text }</p> }
 			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
@@ -89,7 +90,7 @@ const GiftSubscriptionModal = ( {
 				allowMultiple={ false }
 			/>
 			<div className="confirm-modal__buttons">
-				<Button className="confirm-modal__cancel" onClick={ onCancel }>
+				<Button className="confirm-modal__cancel" onClick={ onClose }>
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
