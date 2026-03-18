@@ -716,6 +716,57 @@ describe( 'ResultsPage', () => {
 				screen.queryByLabelText( 'Skip purchase and continue with testcom.wordpress.com' )
 			).not.toBeInTheDocument();
 		} );
+
+		it( 'renders the skip suggestion when searching for an available WordPress.com subdomain', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'mysite.wordpress.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'mysite.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'mysite' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'mysite.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { skippable: true } } query="mysite.wordpress.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				await screen.findByText( 'Start free with mysite.wordpress.com' )
+			).toBeInTheDocument();
+			expect(
+				screen.getByLabelText( 'Skip purchase and continue with mysite.wordpress.com' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders unavailable notice when the searched WordPress.com subdomain is taken', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'taken.wordpress.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'taken.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'taken' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken123.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { skippable: true } } query="taken.wordpress.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect(
+				await screen.findByText( 'taken.wordpress.com is not available' )
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: 'taken123.wordpress.com' } )
+			).toBeInTheDocument();
+			expect( screen.queryByLabelText( /Skip purchase/ ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'tracking', () => {

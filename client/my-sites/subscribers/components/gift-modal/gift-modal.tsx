@@ -1,7 +1,8 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useDispatch } from 'calypso/state';
 import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
@@ -33,6 +34,12 @@ const GiftSubscriptionModal = ( {
 
 	const [ planId, setPlanId ] = useState( 0 );
 
+	useEffect( () => {
+		recordTracksEvent( 'calypso_subscribers_comp_modal_open', {
+			site_id: siteId,
+		} );
+	}, [ siteId ] );
+
 	const title = translate( 'Gift a subscription' );
 
 	const text = translate( 'Select a plan to gift to this user: ' );
@@ -43,6 +50,13 @@ const GiftSubscriptionModal = ( {
 			plan_id: plan_id,
 			user_id: user_id,
 		};
+
+		recordTracksEvent( 'calypso_subscribers_comp_modal_confirm', {
+			site_id: siteId,
+			plan_id: plan_id,
+			user_id: typeof user_id === 'number' ? user_id : 0,
+			is_email_subscriber: typeof user_id !== 'number',
+		} );
 
 		dispatch(
 			requestAddGift(

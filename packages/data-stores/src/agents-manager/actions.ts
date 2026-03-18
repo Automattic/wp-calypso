@@ -1,7 +1,7 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { Location } from 'history';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
+import { PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
 
 /**
@@ -65,7 +65,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	}
 }
 
-export function setRouterHistory( history: { entries: Location[]; index: number } | undefined ) {
+export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
 		history,
