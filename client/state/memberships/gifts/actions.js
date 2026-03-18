@@ -17,7 +17,7 @@ export function receiveDeleteCoupon( siteId, giftId ) {
 	};
 }
 
-export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
+export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			gift,
@@ -49,7 +49,7 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 					);
 				}
 
-				onConfirm();
+				onComplete?.( { success: true } );
 
 				return membershipGift;
 			} )
@@ -64,6 +64,8 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 						duration: 10000,
 					} )
 				);
+
+				onComplete?.( { success: false } );
 			} );
 	};
 };

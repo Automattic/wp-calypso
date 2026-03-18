@@ -33,6 +33,7 @@ const GiftSubscriptionModal = ( {
 	const dispatch = useDispatch();
 
 	const [ planId, setPlanId ] = useState( 0 );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_subscribers_comp_modal_open', {
@@ -45,6 +46,8 @@ const GiftSubscriptionModal = ( {
 	const text = translate( 'Select a plan to gift to this user: ' );
 
 	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
+		setIsSubmitting( true );
+
 		const giftDetails: Gift = {
 			gift_id: null,
 			plan_id: plan_id,
@@ -67,7 +70,12 @@ const GiftSubscriptionModal = ( {
 						username: username,
 					},
 				} ),
-				onConfirm
+				( { success }: { success: boolean } ) => {
+					if ( success ) {
+						onConfirm();
+					}
+					onCancel();
+				}
 			)
 		);
 	};
@@ -87,7 +95,8 @@ const GiftSubscriptionModal = ( {
 				<Button
 					onClick={ () => giftSubscription( planId, userId, username ) }
 					primary
-					disabled={ planId === 0 }
+					busy={ isSubmitting }
+					disabled={ planId === 0 || isSubmitting }
 				>
 					{ translate( 'Confirm' ) }
 				</Button>
