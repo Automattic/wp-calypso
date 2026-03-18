@@ -36,8 +36,11 @@ function getWidgetSettings() {
 	const size = ( config( 'dolly_telegram_widget_size' ) as unknown as 'large' | 'medium' | 'small' )
 		? ( config( 'dolly_telegram_widget_size' ) as unknown as 'large' | 'medium' | 'small' )
 		: 'large';
+	const showUserpic = Boolean(
+		config( 'dolly_telegram_show_userpic' ) as unknown as boolean | undefined
+	);
 
-	return { botUsername, authUrl, requestAccess, size };
+	return { botUsername, authUrl, requestAccess, size, showUserpic };
 }
 
 export const DollyCard = () => {
@@ -48,7 +51,10 @@ export const DollyCard = () => {
 	const injectedContainerRef = useRef< HTMLDivElement | null >( null );
 	const [ isConnected, setIsConnected ] = useState( false );
 
-	const { botUsername, authUrl, requestAccess, size } = useMemo( getWidgetSettings, [] );
+	const { botUsername, authUrl, requestAccess, size, showUserpic } = useMemo(
+		getWidgetSettings,
+		[]
+	);
 	const isConfigured = Boolean( botUsername );
 	const authMode = authUrl ? 'redirect' : 'callback';
 
@@ -95,6 +101,7 @@ export const DollyCard = () => {
 			script.src = `${ TELEGRAM_WIDGET_SRC }&_=${ Date.now() }`;
 			script.setAttribute( 'data-telegram-login', botUsername as string );
 			script.setAttribute( 'data-size', size );
+			script.setAttribute( 'data-userpic', showUserpic ? 'true' : 'false' );
 			script.setAttribute( 'data-onauth', 'dollyOnTelegramAuth(user)' );
 
 			if ( authMode === 'redirect' ) {
@@ -130,6 +137,7 @@ export const DollyCard = () => {
 		authMode,
 		requestAccess,
 		size,
+		showUserpic,
 	] );
 
 	// On mount, fetch connection status so we show "Connected" if already linked.

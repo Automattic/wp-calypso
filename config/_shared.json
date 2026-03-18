@@ -218,6 +218,7 @@
 	"dolly_telegram_bot_username": "",
 	"dolly_telegram_request_access": "",
 	"dolly_telegram_widget_size": "large",
+	"dolly_telegram_show_userpic": false,
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
 	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",

@@ -31,5 +31,6 @@
 	"dolly_telegram_auth_url",
 	"dolly_telegram_bot_username",
 	"dolly_telegram_request_access",
-	"dolly_telegram_widget_size"
+	"dolly_telegram_widget_size",
+	"dolly_telegram_show_userpic"
 ]
