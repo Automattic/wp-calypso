@@ -14,7 +14,6 @@ describe( '#injectFingerprint', () => {
 		jest.spyOn( document, 'readyState', 'get' ).mockReturnValue( 'loading' );
 		jest.spyOn( document, 'addEventListener' ).mockImplementation( () => {} );
 		fingerprintModule = await import( '../fingerprint' );
-		fingerprintModule.__disableFingerprint();
 	} );
 
 	beforeEach( () => {
@@ -23,6 +22,8 @@ describe( '#injectFingerprint', () => {
 	} );
 
 	test( 'should not inject X-Fingerprint header when fingerprint is not available', async () => {
+		// Populate the cache, so that we get `undefined` as the fingerprint value.
+		( fingerprintModule.cache as { result?: string } ).result = undefined;
 		fingerprintModule.injectFingerprint( wpcom );
 
 		await wpcom.request( { path: '/me/transactions' }, callback );
@@ -32,7 +33,9 @@ describe( '#injectFingerprint', () => {
 
 	describe( 'when fingerprint is enabled', () => {
 		beforeAll( () => {
-			fingerprintModule.__enableFingerprint();
+			// Clear the cache, so that we can run through the usual steps of
+			// retrieving a fingerprint value.
+			delete ( fingerprintModule.cache as { result?: string } )[ 'result' ];
 		} );
 
 		test( 'should inject fingerprint header for transactions path', async () => {
