@@ -7,7 +7,6 @@ import { uriTransformer } from '../../utils/uri-transformer';
 export default function CustomALink( {
 	href,
 	children,
-	target = '_self',
 	...props
 }: React.AnchorHTMLAttributes< HTMLAnchorElement > ) {
 	const navigate = useNavigate();
@@ -18,7 +17,6 @@ export default function CustomALink( {
 		<a
 			{ ...props }
 			href={ transformedHref }
-			target={ target }
 			rel="noopener noreferrer"
 			onClick={ ( e ) => {
 				const isSupportArticle = isThisASupportArticleLink( transformedHref );
