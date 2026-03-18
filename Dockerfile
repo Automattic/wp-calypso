@@ -44,6 +44,8 @@ ENV BUILD_TRANSLATION_CHUNKS true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV SKIP_TSC true
+ENV SKIP_CALYPSO_POSTINSTALL true
+ENV SKIP_CALYPSO_PACKAGE_BUILDS true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 ENV IS_CI=true
 WORKDIR /calypso
@@ -67,6 +69,7 @@ RUN bash /tmp/env-config.sh
 # Calypso development.
 COPY . /calypso/
 RUN yarn install --immutable --check-cache --inline-builds
+RUN yarn run build-packages:web
 
 ## Version debugging, temp uncomment if needed (Like working on a node upgrade)
 ## RUN node --version && yarn --version && npm --version
