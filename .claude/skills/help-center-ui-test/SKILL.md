@@ -156,10 +156,15 @@ Only FAIL rows and errors should be filed as Linear issues.
 
 ## Taking Evidence
 
-For every issue found during testing:
+For every issue found during testing, record a **GIF** using `mcp__claude-in-chrome__gif_creator`:
 
-- **Visual/layout issues**: Take a **screenshot** using `mcp__claude-in-chrome__computer` with `action: screenshot`.
-- **Behavior/interaction issues**: Record a **GIF** using `mcp__claude-in-chrome__gif_creator`. Capture extra frames before and after the action for smooth playback. Name it descriptively (e.g., "search-clear-button-bug.gif").
+1. Call `gif_creator` with `action: start_recording` on the Help Center tab.
+2. Take a screenshot immediately after to capture the initial state as the first frame.
+3. Perform the actions that demonstrate the issue (click, scroll, type, etc.).
+4. Take a screenshot immediately before stopping to capture the final state.
+5. Call `gif_creator` with `action: stop_recording`.
+
+Name GIFs descriptively (e.g., "search-clear-button-bug.gif"). For static visual issues, a single-frame GIF (start → screenshot → stop) is sufficient.
 
 ## Reporting Issues
 
@@ -184,9 +189,6 @@ After completing all tests, if issues were found:
      ### Actual Behavior
      ...
 
-     ### Screenshot
-     <!-- evidence will be inserted here -->
-
      ### Surface
      - [X] Calypso Dashboard
      - [ ] WP Admin
@@ -197,7 +199,7 @@ After completing all tests, if issues were found:
 
 ### Attaching evidence to Linear issues
 
-After creating each Linear issue, attach the screenshot or GIF into the **Screenshot** section of the description. Both methods require the Linear issue to be open in a Chrome tab within the same tab group.
+After creating each Linear issue, attach the GIF to the description via drag-and-drop. GIF recordings are scoped to the tab group, so they can be exported directly onto the Linear tab.
 
 1. **Navigate to the Linear issue** in a Chrome tab (same tab group as the Help Center tab):
 
@@ -205,34 +207,11 @@ After creating each Linear issue, attach the screenshot or GIF into the **Screen
    https://linear.app/a8c/issue/<ISSUE-ID>
    ```
 
-   Use `mcp__claude-in-chrome__find` to confirm the issue description textbox is visible. If not found, wait 3 seconds and retry.
+   Use `mcp__claude-in-chrome__find` to confirm the issue description is visible. If not found, wait 3 seconds and retry.
 
-2. Use `mcp__claude-in-chrome__read_page` with `filter: interactive` to locate the `textbox "Issue description"` element and click its ref.
+2. **Export the GIF** with `mcp__claude-in-chrome__gif_creator` using `action: export`, setting `tabId` to the **Linear tab** and `coordinate` to a point inside the issue description area. The GIF will be embedded in the description (exact placement within the description may vary).
 
-3. **Place the cursor in the Screenshot section**: click on the "Screenshot" heading in the description, then press `End` followed by `Enter` to position the cursor below it.
-
-#### For GIFs (preferred — direct drag-and-drop)
-
-GIF recordings are scoped to the tab group, so they can be exported directly onto the Linear tab:
-
-1. Record the GIF on the Help Center tab (start recording → perform actions → stop recording).
-2. Export with `mcp__claude-in-chrome__gif_creator` using `action: export`, setting `tabId` to the **Linear tab** and `coordinate` to a point inside the **Screenshot** section of the description.
-3. The GIF will be dropped directly into the description.
-
-#### For screenshots (clipboard paste)
-
-1. **Ensure the bug is visible** in the Chrome tab showing the Help Center.
-2. **Capture the screen to the macOS clipboard**:
-
-   ```bash
-   screencapture -c
-   ```
-
-3. With the cursor positioned in the **Screenshot** section, press `Cmd+V` to paste.
-
-#### Verification
-
-After attaching, use `mcp__claude-in-chrome__find` to confirm the embedded image has appeared. If not found, wait 3 seconds and retry. Then take a screenshot to confirm the image/GIF was embedded in the Screenshot section.
+3. **Verify**: Take a screenshot of the Linear tab to confirm the image was embedded.
 
 ## Tips
 
