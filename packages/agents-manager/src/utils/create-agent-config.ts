@@ -7,8 +7,7 @@
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL, UNIFIED_CHAT_AGENT_ID } from '../constants';
-import { useUnifiedAiChat } from '../hooks/use-unified-ai-chat';
+import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
