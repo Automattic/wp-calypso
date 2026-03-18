@@ -54,6 +54,45 @@ const TOOL_DISPLAY_OVERRIDES: Record< string, string > = {
 };
 
 /**
+ * Keywords in a tool ID (after normalization) that indicate a write operation.
+ * Used as a fallback when the API does not provide an explicit `type` field.
+ */
+const WRITE_TOOL_ID_KEYWORDS = [
+	'create',
+	'update',
+	'delete',
+	'publish',
+	'restore',
+	'trash',
+	'install',
+	'activate',
+	'deactivate',
+	'upload',
+	'edit',
+	'modify',
+	'remove',
+];
+
+/**
+ * Returns true if a tool should be treated as a write operation.
+ * Checks the API `type` field first, then falls back to keyword matching on the tool ID.
+ * @param toolId - The tool ID (e.g., 'wpcom-mcp/create-post')
+ * @param ability - Optional ability object with type from API
+ * @param ability.type - Optional API type value ('read' or 'write')
+ * @returns Whether the tool is a write operation
+ */
+export function isWriteTool( toolId: string, ability?: { type?: string } ): boolean {
+	if ( ability?.type === 'write' ) {
+		return true;
+	}
+	if ( ability?.type === 'read' ) {
+		return false;
+	}
+	const normalizedId = toolId.replace( 'wpcom-mcp/', '' ).toLowerCase();
+	return WRITE_TOOL_ID_KEYWORDS.some( ( keyword ) => normalizedId.includes( keyword ) );
+}
+
+/**
  * Get the display category for a tool based on its ID and optional API category.
  * API category is the primary source; overrides apply for tools needing different grouping.
  * @param toolId - The tool ID (e.g., 'wpcom-mcp/user-profile')
