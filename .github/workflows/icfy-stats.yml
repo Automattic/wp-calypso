@@ -14,8 +14,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: Fetch git history
-        run: git fetch --prune --unshallow
+      - name: Fetch trunk history
+        run: |
+          if git rev-parse --is-shallow-repository | grep -q true; then
+            git fetch --no-tags --unshallow origin +refs/heads/trunk:refs/remotes/origin/trunk
+          else
+            git fetch --no-tags origin +refs/heads/trunk:refs/remotes/origin/trunk
+          fi
       - name: Install dependencies
         run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true SKIP_CALYPSO_POSTINSTALL=true yarn install --inline-builds
       - name: Prepare web workspace packages
