@@ -6,8 +6,8 @@
  * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
-import wpcomRequest from '../../wpcom-request';
 import { store } from '../';
+import wpcomRequest from '../../wpcom-request';
 
 jest.mock( '../../wpcom-request', () => ( {
 	__esModule: true,

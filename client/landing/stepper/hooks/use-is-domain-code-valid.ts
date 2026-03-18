@@ -1,8 +1,8 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
-import wpcom from 'calypso/lib/wp';
 import { DomainValidationOptions } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-domains/use-validation-message';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import wpcom from 'calypso/lib/wp';
 
 const VERSION = 2;
 
@@ -93,11 +93,15 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					};
 				}
 
-				const response = await wpcom.request< DomainCodeResponse >( {
-					apiVersion: '1.1',
-					path: `/domains/${ encodeURIComponent( pair.domain ) }/inbound-transfer-check-auth-code`,
-					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
-				} ).catch( () => ( { success: false } ) );
+				const response = await wpcom
+					.request< DomainCodeResponse >( {
+						apiVersion: '1.1',
+						path: `/domains/${ encodeURIComponent(
+							pair.domain
+						) }/inbound-transfer-check-auth-code`,
+						query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
+					} )
+					.catch( () => ( { success: false } ) );
 
 				return {
 					domain: pair.domain,

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import wpcom from 'calypso/lib/wp';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { bundleStepsSettings } from 'calypso/landing/stepper/declarative-flow/flows/plugin-bundle-flow/plugin-bundle-data';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
+import wpcom from 'calypso/lib/wp';
 import type { Step, PluginsResponse } from '../../types';
 import './styles.scss';
 

@@ -7,8 +7,8 @@
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
-import wpcomRequest from '../../wpcom-request';
 import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import wpcomRequest from '../../wpcom-request';
 import {
 	getAtomicSoftwareStatus,
 	getAtomicSoftwareError,

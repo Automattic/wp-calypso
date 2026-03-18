@@ -5,9 +5,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import wpcom from 'calypso/lib/wp';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { logToLogstash } from 'calypso/lib/logstash';
+import wpcom from 'calypso/lib/wp';
 import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
