@@ -104,6 +104,13 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
+	if ( dependencies.refParameter === 'wp-admin' ) {
+		return addQueryArgs(
+			{ 'celebrate-launch': 'true' },
+			`https://${ dependencies.siteSlug }/wp-admin`
+		);
+	}
+
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
