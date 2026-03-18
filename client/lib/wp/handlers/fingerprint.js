@@ -1,6 +1,6 @@
 // Internal module cache.
 // Exported for use in testing.
-/** @type { result?: string|undefined } */
+/** @type { result?: string|undefined, promise?: Promise<any> } */
 export const cache = {};
 
 /**
@@ -8,15 +8,17 @@ export const cache = {};
  * if needed.
  * @returns string|undefined The fingerprint.
  */
-async function getFingerprint() {
+function getFingerprint() {
 	if ( 'result' in cache ) {
-		return cache.result;
+		return Promise.resolve( cache.result );
 	}
-	const { load } = await import( '@fingerprintjs/fingerprintjs' );
-	const agent = await load( { monitoring: false } );
-	const result = await agent.get();
-	cache.result = result.visitorId;
-	return cache.result;
+	cache.promise ??= ( async () => {
+		const { load } = await import( '@fingerprintjs/fingerprintjs' );
+		const agent = await load( { monitoring: false } );
+		const result = await agent.get();
+		cache.result = result.visitorId;
+	} )();
+	return cache.promise.then( () => cache.result );
 }
 
 /**
