@@ -1076,11 +1076,12 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
+			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
 			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
@@ -1101,36 +1102,31 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
-		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
-			app.get(
-				pathToRegExp( sectionPath ),
-				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-				setupDefaultContext( entrypoint, section.name ),
-				setUpSectionContext( section, entrypoint ),
-				setUpRoute,
-				serverRender
-			);
-		};
-
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
-		handleRoute( signupSectionDefinition, '/start', 'entry-main', ( req ) =>
+		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
 			isAllowedDashboardHostname( req.hostname )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
-		handleRoute( checkoutSectionDefinition, '/checkout', 'entry-main', ( req ) =>
+		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
 			isAllowedDashboardHostname( req.hostname )
 		);
-		handleRoute( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
+		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardHostname( req.hostname )
 		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
-				isAllowedDotcomDashboardHostname( req.hostname )
+			handleSectionPath(
+				DOTCOM_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-dotcom',
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
-				isAllowedCiabDashboardHostname( req.hostname )
+			handleSectionPath(
+				CIAB_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-ciab',
+				( req ) => isAllowedCiabDashboardHostname( req.hostname )
 			);
 		} );
 	}
