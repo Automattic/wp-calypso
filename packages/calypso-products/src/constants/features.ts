@@ -503,7 +503,6 @@ export const FEATURE_WOO_HOSTED_PRO_MAILPOET = 'woo-hosted-pro-mailpoet';
 export const FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS = 'woo-hosted-basic-admin-users';
 export const FEATURE_WOO_HOSTED_PRO_ADMIN_USERS = 'woo-hosted-pro-admin-users';
 export const FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS = 'woo-hosted-powerful-commerce-tools';
-export const FEATURE_WOO_HOSTED_CSV_IMPORTER = 'woo-hosted-csv-importer';
 export const FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR = 'woo-hosted-free-domain-1-year';
 export const FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT = 'woo-hosted-seamless-checkout';
 export const FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS = 'woo-hosted-accept-card-payments';

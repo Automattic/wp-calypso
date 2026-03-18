@@ -214,7 +214,7 @@ export const createSite = async (
 				...( flowName === AI_SITE_BUILDER_FLOW &&
 					gardenName === 'commerce' &&
 					specId && {
-						trigger_backend_build: true,
+						trigger_backend_build: false,
 					} ),
 			},
 		},

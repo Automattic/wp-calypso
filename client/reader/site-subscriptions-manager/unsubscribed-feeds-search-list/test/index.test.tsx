@@ -2,12 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { Reader } from '@automattic/data-stores';
-import { render, screen } from '@testing-library/react';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render as rtlRender, screen } from '@testing-library/react';
+import nock from 'nock';
 import { ComponentProps } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
-import UnsubscribedFeedsSearchList from '../index';
+import { UnsubscribedFeedsSearchList } from '../index';
 
 // Mock recordTrainTracksRender
 const mockRecordTrainTracksRender = jest.fn();
@@ -35,7 +37,7 @@ jest.mock( 'calypso/blocks/reader-feed-item', () => {
 	) );
 } );
 
-const createMockFeedItem = ( overrides = {} ): Reader.FeedItem => ( {
+const createMockFeedItem = ( overrides = {} ): Partial< Reader.FeedItem > => ( {
 	feed_ID: '123',
 	blog_ID: '456',
 	subscribe_URL: 'https://example.com/feed',
@@ -50,86 +52,114 @@ const createMockFeedItem = ( overrides = {} ): Reader.FeedItem => ( {
 	...overrides,
 } );
 
+const Wrapper =
+	( { searchTerm }: { searchTerm: string } ) =>
+	( { children }: { children: React.ReactNode } ) => (
+		<SubscriptionManager.SiteSubscriptionsQueryPropsProvider initialSearchTermState={ searchTerm }>
+			<QueryClientProvider
+				client={
+					new QueryClient( {
+						defaultOptions: {
+							queries: { retry: false },
+						},
+					} )
+				}
+			>
+				{ children }
+			</QueryClientProvider>
+		</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
+	);
+
+const render = ( ui: React.ReactNode, renderOptions: Parameters< typeof Wrapper >[ 0 ] ) =>
+	rtlRender( ui, { wrapper: Wrapper( renderOptions ) } );
+
 describe( 'UnsubscribedFeedsSearchList', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		nock.disableNetConnect();
 	} );
 
-	describe( 'loading state', () => {
-		it( 'shows Spinner when isLoading is true', () => {
-			render( <UnsubscribedFeedsSearchList isLoading feedItems={ [] } /> );
+	it( 'shows the loading state', () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.delay( 1000 );
 
-			expect( screen.getByRole( 'status' ) ).toBeVisible();
-		} );
+		render( <UnsubscribedFeedsSearchList />, { searchTerm: 'test' } );
 
-		it( 'does not show Spinner when isLoading is false', () => {
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ [] } /> );
-
-			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
-		} );
+		expect( screen.getByRole( 'status' ) ).toBeVisible();
 	} );
 
-	describe( 'empty state', () => {
-		it( 'renders empty list when feedItems is empty', () => {
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ [] } /> );
+	it( 'renders error message when no feeds are found', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.reply( 200, {
+				feeds: [],
+			} );
 
-			const list = document.querySelector( '.reader-unsubscribed-feeds-search-list' );
-			expect( list ).toBeVisible();
-			expect( list?.children ).toHaveLength( 0 );
-		} );
-
-		it( 'renders empty list when feedItems is undefined', () => {
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ undefined } /> );
-
-			const list = document.querySelector( '.reader-unsubscribed-feeds-search-list' );
-			expect( list ).toBeVisible();
-			expect( list?.children ).toHaveLength( 0 );
-		} );
+		render( <UnsubscribedFeedsSearchList />, { searchTerm: 'test' } );
+		expect(
+			await screen.findByText( "Sorry, we couldn't find any sites related to your search." )
+		).toBeVisible();
 	} );
 
-	describe( 'single result', () => {
-		it( 'renders FeedPreview when feedItems has exactly one item', () => {
-			const feedItems = [ createMockFeedItem() ];
+	it( 'renders error message when there is an error with the api', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 500, {
+				error: 'Internal Server Error',
+			} );
 
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ feedItems } /> );
+		render( <UnsubscribedFeedsSearchList />, { searchTerm: 'test' } );
+		expect(
+			await screen.findByText( "Sorry, we couldn't find any sites related to your search." )
+		).toBeVisible();
+	} );
 
-			expect( screen.getByTestId( 'mock-feed-preview' ) ).toBeVisible();
-			expect( screen.queryByTestId( 'mock-reader-feed-item' ) ).not.toBeInTheDocument();
-		} );
+	it( 'renders list of feed items', async () => {
+		const feedItems = [
+			createMockFeedItem( { feed_ID: '1', blog_ID: '1' } ),
+			createMockFeedItem( { feed_ID: '2', blog_ID: '2' } ),
+			createMockFeedItem( { feed_ID: '3', blog_ID: '3' } ),
+		];
 
-		it( 'passes correct url and source to FeedPreview', () => {
-			const feedItems = [ createMockFeedItem( { subscribe_URL: 'https://example.com/rss' } ) ];
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 200, {
+				feeds: feedItems,
+			} );
 
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ feedItems } /> );
+		render( <UnsubscribedFeedsSearchList />, { searchTerm: 'test' } );
 
-			const feedPreview = screen.getByTestId( 'mock-feed-preview' );
-			expect( feedPreview ).toHaveAttribute( 'data-url', 'https://example.com/rss' );
-			expect( feedPreview ).toHaveAttribute(
+		const feedItemElements = await screen.findAllByTestId( 'mock-reader-feed-item' );
+		expect( feedItemElements ).toHaveLength( 3 );
+		expect( screen.queryByTestId( 'mock-feed-preview' ) ).not.toBeInTheDocument();
+
+		feedItemElements.forEach( ( element ) => {
+			expect( element ).toHaveAttribute(
 				'data-source',
-				'manage_subscriptions_single_result_feed_preview'
+				'subscriptions-search-recommendation-list'
 			);
 		} );
 	} );
 
-	describe( 'multiple results', () => {
-		it( 'renders ReaderFeedItem components when feedItems has multiple items', () => {
-			const feedItems = [
-				createMockFeedItem( { feed_ID: '1', blog_ID: '1' } ),
-				createMockFeedItem( { feed_ID: '2', blog_ID: '2' } ),
-				createMockFeedItem( { feed_ID: '3', blog_ID: '3' } ),
-			];
+	it( 'renders a feed preview when there is a single feed item', async () => {
+		const feedItem = createMockFeedItem( { feed_ID: '1', blog_ID: '1' } );
 
-			render( <UnsubscribedFeedsSearchList isLoading={ false } feedItems={ feedItems } /> );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 200, { feeds: [ feedItem ] } );
 
-			const feedItemElements = screen.getAllByTestId( 'mock-reader-feed-item' );
-			expect( feedItemElements ).toHaveLength( 3 );
-			expect( screen.queryByTestId( 'mock-feed-preview' ) ).not.toBeInTheDocument();
-			feedItemElements.forEach( ( element ) => {
-				expect( element ).toHaveAttribute(
-					'data-source',
-					'subscriptions-search-recommendation-list'
-				);
-			} );
-		} );
+		render( <UnsubscribedFeedsSearchList />, { searchTerm: 'test' } );
+
+		expect( await screen.findByTestId( 'mock-feed-preview' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'mock-reader-feed-item' ) ).not.toBeInTheDocument();
 	} );
 } );

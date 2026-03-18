@@ -109,6 +109,8 @@ export type ActivityLogActor = {
 	// Flags used in actor detection
 	is_cli?: boolean;
 	is_happiness?: boolean;
+	is_mcp_agent?: boolean;
+	mcp_client?: string;
 };
 
 export interface ActivityLogParams {

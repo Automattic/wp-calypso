@@ -121,6 +121,51 @@ describe( 'maybeUseUnifiedInvite', () => {
 		expect( next ).toHaveBeenCalled();
 	} );
 
+	test( 'uses unified flow for logged-out users on CIAB sites', async () => {
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	test( 'uses unified flow when social callback params are present', async () => {
+		mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+			if ( param === 'code' ) {
+				return 'oauth-code';
+			}
+			return undefined;
+		} );
+
+		const ciabInviteData = {
+			blog_details: {
+				is_garden_site: true,
+				garden: {
+					partner: 'woo',
+					name: 'commerce',
+				},
+			},
+		};
+		mockWpcomGet.mockResolvedValue( ciabInviteData );
+
+		await maybeUseUnifiedInvite( context as never, next );
+
+		expect( context.useUnifiedInvite ).toBe( true );
+		expect( context.primary ).toBeDefined();
+		expect( next ).toHaveBeenCalled();
+	} );
+
 	test( 'falls back to legacy flow on API error', async () => {
 		mockWpcomGet.mockRejectedValue( new Error( 'API Error' ) );
 
@@ -245,5 +290,86 @@ describe( 'maybeUseUnifiedInvite', () => {
 			expect( context.primary ).toBeUndefined();
 			expect( next ).toHaveBeenCalled();
 		} );
+	} );
+
+	describe( 'invalid invite errors', () => {
+		test.each( [
+			[ 'unauthorized_created_by_self', 'You cannot use an invite that you created' ],
+			[ 'invalid_input_invite_used', 'This invite has already been used' ],
+			[ 'invalid_input_incorrect_site', 'This invite is for a different site' ],
+			[ 'unknown_invite', 'This invite does not exist' ],
+		] )( 'uses unified flow for %s error with garden data', async ( errorCode, errorMessage ) => {
+			const apiError = {
+				error: errorCode,
+				message: errorMessage,
+				data: {
+					garden_name: 'commerce',
+					garden_partner: 'woo',
+				},
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBe( true );
+			expect( context.inviteError ).toEqual( {
+				error: errorCode,
+				message: errorMessage,
+			} );
+			expect( context.primary ).toBeDefined();
+			expect( next ).toHaveBeenCalled();
+		} );
+
+		test.each( [
+			[ 'unauthorized_created_by_self', 'You cannot use an invite that you created' ],
+			[ 'invalid_input_invite_used', 'This invite has already been used' ],
+			[ 'invalid_input_incorrect_site', 'This invite is for a different site' ],
+			[ 'unknown_invite', 'This invite does not exist' ],
+		] )( 'uses unified flow for %s error with unified flag', async ( errorCode, errorMessage ) => {
+			mockGetQueryArg.mockImplementation( ( _url: string, param: string ) => {
+				if ( param === 'unified' ) {
+					return '1';
+				}
+				return undefined;
+			} );
+
+			const apiError = {
+				error: errorCode,
+				message: errorMessage,
+			};
+			mockWpcomGet.mockRejectedValue( apiError );
+
+			await maybeUseUnifiedInvite( context as never, next );
+
+			expect( context.useUnifiedInvite ).toBe( true );
+			expect( context.inviteError ).toEqual( {
+				error: errorCode,
+				message: errorMessage,
+			} );
+			expect( context.primary ).toBeDefined();
+			expect( next ).toHaveBeenCalled();
+		} );
+
+		test.each( [
+			[ 'unauthorized_created_by_self', 'You cannot use an invite that you created' ],
+			[ 'invalid_input_invite_used', 'This invite has already been used' ],
+			[ 'invalid_input_incorrect_site', 'This invite is for a different site' ],
+			[ 'unknown_invite', 'This invite does not exist' ],
+		] )(
+			'falls back to legacy for %s error without garden data or unified flag',
+			async ( errorCode, errorMessage ) => {
+				const apiError = {
+					error: errorCode,
+					message: errorMessage,
+				};
+				mockWpcomGet.mockRejectedValue( apiError );
+
+				await maybeUseUnifiedInvite( context as never, next );
+
+				expect( context.useUnifiedInvite ).toBeUndefined();
+				expect( context.primary ).toBeUndefined();
+				expect( next ).toHaveBeenCalled();
+			}
+		);
 	} );
 } );

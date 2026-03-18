@@ -150,7 +150,9 @@ const LayoutLoggedOut = ( {
 			userAllowedToHelpCenter );
 
 	const isThemeShowcaseModern =
-		sectionName === 'themes' && isEnabled( 'themes/showcase-modern' ) && ! isLoggedIn;
+		[ 'themes', 'theme' ].includes( sectionName ) &&
+		isEnabled( 'themes/showcase-modern' ) &&
+		! isLoggedIn;
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,

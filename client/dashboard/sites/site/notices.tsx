@@ -1,8 +1,21 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { Notice } from '../../components/notice';
 
 export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
+	useEffect( () => {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: error.message,
+			tags: [ 'dashboard', 'jetpack-inaccessible' ],
+			properties: {
+				path: window.location.href,
+			},
+		} );
+	}, [ error.message ] );
+
 	return (
 		<Notice
 			variant="error"

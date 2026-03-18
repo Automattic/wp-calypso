@@ -571,7 +571,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<PageHeader />
+			<PageHeader
+				titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
+			/>
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }

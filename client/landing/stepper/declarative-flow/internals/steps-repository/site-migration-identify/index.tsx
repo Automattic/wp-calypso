@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
@@ -10,6 +11,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -20,7 +22,7 @@ import './style.scss';
 
 interface Props {
 	hasError?: boolean;
-	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string ) => void;
+	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string, isWpcom?: boolean ) => void;
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
@@ -35,6 +37,7 @@ export const Analyzer: FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
+	const queryClient = useQueryClient();
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -56,10 +59,23 @@ export const Analyzer: FC< Props > = ( {
 		isFetchingHosting ||
 		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
 
+	// Handle completion - pass wpcom flag to let flow handle navigation
 	useEffect( () => {
-		// Only complete when we have both site info AND hosting info (or hosting check failed)
 		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
-			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
+			const isWpcomSite = siteInfo?.platform_data?.is_wpcom === true;
+
+			// Track wpcom detection
+			if ( isWpcomSite ) {
+				recordTracksEvent( 'calypso_migration_wpcom_site_detected', {
+					site_url: siteInfo.url,
+					step: 'identify',
+					is_wpcom: siteInfo.platform_data?.is_wpcom ?? false,
+					is_wpengine: siteInfo.platform_data?.is_wpengine ?? false,
+					is_pressable: siteInfo.platform_data?.is_pressable ?? false,
+				} );
+			}
+
+			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug, isWpcomSite );
 		}
 	}, [ onComplete, siteInfo, hostingProviderData, hasHostingError ] );
 
@@ -103,7 +119,13 @@ export const Analyzer: FC< Props > = ( {
 			<div className="import__capture-container">
 				<CaptureInput
 					onInputEnter={ setSiteURL }
-					onInputChange={ () => setSiteURL( '' ) }
+					onInputChange={ () => {
+						// Invalidate previous query to ensure fresh fetch
+						if ( siteURL ) {
+							queryClient.removeQueries( { queryKey: [ 'analyze-url-', siteURL ] } );
+						}
+						setSiteURL( '' );
+					} }
 					hasError={ hasError }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
@@ -124,7 +146,10 @@ export const Analyzer: FC< Props > = ( {
 	);
 };
 
-export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
+export type SiteMigrationIdentifyAction =
+	| 'continue'
+	| 'skip_platform_identification'
+	| 'already-wpcom';
 
 const SiteMigrationIdentify: StepType< {
 	submits:
@@ -163,9 +188,13 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url }, hostingProviderSlug ) =>
-				handleSubmit( 'continue', { platform, from: url, host: hostingProviderSlug } )
-			}
+			onComplete={ ( { platform, url }, hostingProviderSlug, isWpcom ) => {
+				if ( isWpcom ) {
+					handleSubmit( 'already-wpcom', { platform, from: url, host: hostingProviderSlug } );
+				} else {
+					handleSubmit( 'continue', { platform, from: url, host: hostingProviderSlug } );
+				}
+			} }
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
 				handleSubmit( 'skip_platform_identification' );

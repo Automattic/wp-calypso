@@ -80,7 +80,7 @@ class ReaderStream extends Component {
 		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
 		restoreScroll: PropTypes.bool,
-		showDefaultEmptyContentIfMissing: PropTypes.bool,
+		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
@@ -104,7 +104,6 @@ class ReaderStream extends Component {
 		isMain: true,
 		onUpdatesShown: noop,
 		restoreScroll: true,
-		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
 		suppressSiteNameLink: false,
@@ -315,35 +314,32 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Move selection down - j
-			case 74: {
+		switch ( event.key ) {
+			// Move selection down.
+			case 'ArrowRight':
+			case 'j': {
 				return this.selectNextItem();
 			}
 
-			// Move selection up - k
-			case 75: {
+			// Move selection up.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.selectPrevItem();
 			}
 
-			// Open selection - Enter
-			case 13: {
+			// Open selection.
+			case 'Enter': {
 				return this.handleOpenSelection();
 			}
 
-			// Open selection in a new tab - v
-			case 86: {
+			// Open selection in a new tab.
+			case 'v': {
 				return this.handleOpenSelectionNewTab();
 			}
 
-			// Like selection - l
-			case 76: {
+			// Like selection.
+			case 'l': {
 				return this.toggleLikeOnSelectedPost();
-			}
-
-			// Go to top - .
-			case 190: {
-				return this.goToTop();
 			}
 		}
 	};
@@ -387,13 +383,6 @@ class ReaderStream extends Component {
 		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
 		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
-
-	goToTop = () => {
-		const { streamKey, updateCount } = this.props;
-		if ( updateCount > 0 ) {
-			this.props.showUpdates( { streamKey } );
-		}
-	};
 
 	getVisibleItemIndexes() {
 		return (
@@ -669,23 +658,24 @@ class ReaderStream extends Component {
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
 		// to be updated before we can remove it.
 		let baseClassnames = clsx( 'following', this.props.className );
-
-		// @TODO: has error of invalid tag?
-		const sidebarContentFn = this.props.streamSidebar;
+		const SidebarContent =
+			typeof this.props.streamSidebar === 'function'
+				? this.props.streamSidebar( wideDisplay )
+				: null;
 
 		if ( hasNoPosts ) {
 			let emptyBody = this.props.emptyContent?.();
-			if ( ! emptyBody && this.props.showDefaultEmptyContentIfMissing ) {
+			if ( ! emptyBody && ! this.props.hideDefaultEmptyContentIfMissing ) {
 				emptyBody = <EmptyContent />;
 			}
 
 			// In wide display with a sidebar, render the two-column layout so the sidebar
 			// (with follow button, subscriber count, tags) remains visible for empty feeds.
-			if ( wideDisplay && sidebarContentFn && streamType !== 'search' ) {
+			if ( wideDisplay && SidebarContent && streamType !== 'search' ) {
 				body = (
 					<div className="stream__two-column">
 						<div className="reader__content">{ emptyBody }</div>
-						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+						<div className="stream__right-column">{ SidebarContent }</div>
 					</div>
 				);
 				baseClassnames = clsx( 'is-two-columns', baseClassnames );
@@ -714,7 +704,7 @@ class ReaderStream extends Component {
 			);
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
-			if ( ! sidebarContentFn || streamType === 'search' ) {
+			if ( ! SidebarContent || streamType === 'search' ) {
 				body = (
 					<div className="reader__content">
 						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
@@ -729,7 +719,7 @@ class ReaderStream extends Component {
 							{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+						<div className="stream__right-column">{ SidebarContent }</div>
 					</div>
 				);
 				baseClassnames = clsx( 'is-two-columns', baseClassnames );
@@ -767,7 +757,7 @@ class ReaderStream extends Component {
 								<div className="reader__content">{ bodyContent }</div>
 							) }
 							{ this.state.selectedTab === 'sites' && (
-								<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+								<div className="stream__right-column">{ SidebarContent }</div>
 							) }
 						</div>
 					</>

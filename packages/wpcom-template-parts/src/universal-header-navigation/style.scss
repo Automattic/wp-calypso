@@ -55,6 +55,19 @@ $studio-blue-15: #e5f4ff;
 				}
 			}
 		}
+
+		&.is-theme-showcase-modern {
+			.masterbar-menu .masterbar {
+				background: transparent;
+				border-bottom-color: transparent;
+			}
+
+			.cta-btn-nav {
+				color: var(--studio-gray-100) !important;
+				background: inherit !important;
+				border: 1px solid var(--studio-gray-100);
+			}
+		}
 	}
 }
 

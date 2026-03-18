@@ -104,6 +104,7 @@ const SubscriptionsManagerWrapper = ( {
 					className="site-subscriptions-manager__nav"
 					selectedText={ selectedTabText }
 					variation="minimal"
+					enforceTabsView
 				>
 					<NavTabs>
 						<NavItem

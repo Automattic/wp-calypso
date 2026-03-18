@@ -1,4 +1,10 @@
 import { translate } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
+
+export type ThemeCollectionDescription =
+	| TranslateResult
+	| ( ( options?: { search?: string } ) => TranslateResult )
+	| null;
 
 export type ThemeCollectionDefinition = {
 	query: {
@@ -12,11 +18,32 @@ export type ThemeCollectionDefinition = {
 	title: string;
 	fullTitle: string;
 	collectionSlug: string;
-	description: string | null;
+	description: ThemeCollectionDescription;
 	seeAllLink: string;
 };
 
-export const THEME_COLLECTIONS = {
+export const THEME_COLLECTIONS: Record< string, ThemeCollectionDefinition > = {
+	recommended: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 20,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		get title() {
+			return translate( 'Our favorites' );
+		},
+		get fullTitle() {
+			return translate( 'Our favorites' );
+		},
+		collectionSlug: 'recommended-themes',
+		get description() {
+			return translate( 'Exceptional themes selected by the WordPress.com design team.' );
+		},
+		seeAllLink: '/themes/recommended/collection',
+	},
 	marketplace: {
 		query: {
 			collection: 'recommended',
@@ -58,5 +85,32 @@ export const THEME_COLLECTIONS = {
 			return translate( 'Professional themes designed and developed by our partners.' );
 		},
 		seeAllLink: '/themes/partner',
+	},
+	community: {
+		query: {
+			collection: '',
+			filter: '',
+			number: 100,
+			page: 1,
+			search: '',
+			tier: '',
+		},
+		get title() {
+			return translate( 'Community themes' );
+		},
+		get fullTitle() {
+			return translate( 'Community themes' );
+		},
+		collectionSlug: 'community-themes',
+		description: ( { search } = {} ) =>
+			search
+				? translate(
+						'Explore "%(query)s" themes from the WordPress community, and upload to install when ready.',
+						{ args: { query: search } }
+				  )
+				: translate(
+						'Explore themes from the WordPress community, and upload to install when ready.'
+				  ),
+		seeAllLink: '/themes/community/collection',
 	},
 };

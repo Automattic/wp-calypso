@@ -5,8 +5,9 @@ import {
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
 	isJetpackSearch,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
@@ -230,6 +231,24 @@ function renderJetpackSearchQuantitySummary(
 	} );
 }
 
+function renderJetpackStatsQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)s views per month', {
+			args: { quantity: formatNumber( licensed_quantity ) },
+			comment: '%(quantity)s is the number of views per month for Jetpack Stats',
+		} );
+	}
+
+	return translate( 'Purchase for %(quantity)s views per month', {
+		args: { quantity: formatNumber( licensed_quantity ) },
+		comment: '%(quantity)s is the number of views per month for Jetpack Stats',
+	} );
+}
+
 function renderSpaceAddOnquantitySummary(
 	licensed_quantity: number,
 	isRenewal: boolean,
@@ -309,6 +328,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isJetpackSearch( product ) ) {
 		return renderJetpackSearchQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( isJetpackStatsPaidProductSlug( wpcom_product_slug ) ) {
+		return renderJetpackStatsQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {

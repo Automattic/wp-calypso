@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -14,6 +13,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
@@ -29,6 +29,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { useExperiment } from 'calypso/lib/explat';
 import {
 	getName,
 	purchaseType,
@@ -119,6 +120,7 @@ export interface CancelPurchaseConnectedProps {
 	isHundredYearDomain: boolean | undefined;
 	isJetpack: boolean;
 	isJetpackPurchase: boolean;
+	isRefundEligibilityNoticeEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
@@ -127,6 +129,10 @@ export interface CancelPurchaseConnectedProps {
 
 export interface CancelPurchaseProps {
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	getConfirmCancelDomainUrlFor?: (
+		targetSiteSlug: string,
+		targetPurchaseId: string | number
+	) => string;
 	purchaseId: number;
 	purchaseListUrl?: string;
 	siteSlug: string;
@@ -353,6 +359,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+				if ( refundable ) {
+					invokeSurvicateEvent( 'purchaseRefunded' );
+				} else {
+					invokeSurvicateEvent( 'purchaseCancelled' );
+				}
 				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 					this.props.siteSlug,
 					this.props.purchaseId
@@ -606,7 +617,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
 		return Boolean(
-			config.isEnabled( 'calypso/refund-eligibility-notice' ) &&
+			this.props.isRefundEligibilityNoticeEnabled &&
 				hasAmountAvailableToRefund( purchase ) &&
 				isPlan( purchase ) &&
 				isWpComPlan( purchase?.productSlug )
@@ -1024,7 +1035,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	}
 }
 
-export default connect(
+const ConnectedCancelPurchase = connect(
 	( state, props: CancelPurchaseProps ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
 		const isJetpackPurchase =
@@ -1055,3 +1066,19 @@ export default connect(
 	},
 	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice, errorNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
+
+function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_split_cancel_refund_20260316'
+	);
+	const isRefundEligibilityNoticeEnabled =
+		! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
+	return (
+		<ConnectedCancelPurchase
+			{ ...props }
+			isRefundEligibilityNoticeEnabled={ isRefundEligibilityNoticeEnabled }
+		/>
+	);
+}
+
+export default CancelPurchaseWithExperiment;

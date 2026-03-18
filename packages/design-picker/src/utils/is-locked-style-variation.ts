@@ -1,5 +1,5 @@
-import { StyleVariation } from '../types';
 import { isDefaultGlobalStylesVariationSlug } from './global-styles';
+import type { StyleVariation } from '../types';
 
 export function isLockedStyleVariation( {
 	isPremiumTheme,

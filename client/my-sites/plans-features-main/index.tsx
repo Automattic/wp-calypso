@@ -116,6 +116,8 @@ export interface PlansFeaturesMainProps {
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	redirectTo?: string;
+	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -199,6 +201,8 @@ const PlansFeaturesMain = ( {
 	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
+	redirectTo,
+	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -435,6 +439,8 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
 		isGatingBusinessQ1: !! differentiatorsVariant,
+		redirectTo,
+		pluginSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

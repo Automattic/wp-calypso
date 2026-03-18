@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -144,8 +145,14 @@ function setupQuoraGlobal() {
 		} );
 		quoraPixel.queue = [];
 	}
-	// If the pixel loads and fires an event before init has been called, it will throw an error, so we call it here.
-	window.qp( 'init', TRACKING_IDS.quoraPixelId );
+	const currentUser = getCurrentUser();
+	const params = currentUser ? { email: currentUser.email } : {};
+
+	/*
+	 * If the pixel loads and fires an event before init has been called, it will throw an error, so we call it here.
+	 * init requires the cleartext user email and hashing is handled by the library.
+	 */
+	window.qp( 'init', TRACKING_IDS.quoraPixelId, params );
 }
 
 /**

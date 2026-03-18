@@ -108,9 +108,9 @@ export async function recordOrder(
 	}
 
 	if ( mayWeTrackByTracker( 'quora' ) ) {
-		const params = [ 'track', 'Generic' ];
+		const params = [ 'track', 'Purchase' ];
 		debug( 'recordOrder: [Quora]', params );
-		window.qp( ...params );
+		window.qp( 'track', 'Purchase', { value: usdTotalCost } );
 	}
 
 	if ( mayWeTrackByTracker( 'iconMedia' ) ) {

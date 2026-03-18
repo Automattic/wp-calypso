@@ -1,6 +1,8 @@
-import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { readFeedQuery } from '@automattic/api-queries';
+import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -9,6 +11,7 @@ import {
 import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
@@ -31,6 +34,9 @@ interface ReaderFeedItemProps {
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
+	railcarExtra?: {
+		uiPosition: number;
+	};
 }
 
 /**
@@ -47,6 +53,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		source,
 		shouldHideOnSubscribedState,
 		onChangeSubscribe,
+		railcarExtra,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -66,12 +73,11 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
+	const { data: feed, isLoading: isFeedLoading } = useQuery( {
+		...readFeedQuery( feedId ),
+		enabled: queryFeed,
+	} );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
-
-	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
-		return null;
-	}
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;
@@ -224,6 +230,23 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
+
+	useEffect( () => {
+		if ( railcar ) {
+			recordTrainTracksRender( {
+				railcarId: railcar.railcar,
+				uiAlgo: 'reader-subscriptions-search',
+				fetchAlgo: railcar.fetch_algo,
+				fetchPosition: railcar.fetch_position,
+				recBlogId: railcar.rec_blog_id,
+				uiPosition: railcarExtra?.uiPosition ?? -1,
+			} );
+		}
+	}, [ railcar, railcarExtra ] );
+
+	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
+		return null;
+	}
 
 	if ( subscriptionId && shouldHideOnSubscribedState ) {
 		return null;

@@ -21,4 +21,5 @@ export interface NewForwardFormProps {
 	selectedDomainName: string;
 	existingEmailForwards: EmailAccountEmail[];
 	disabled: boolean;
+	showMxWarning?: boolean;
 }

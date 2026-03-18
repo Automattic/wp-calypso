@@ -1,6 +1,10 @@
-import { AgentsManagerSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
-import { useState, useEffect, useLayoutEffect } from '@wordpress/element';
+import {
+	AgentsManagerSelect,
+	PerSiteRouterHistory,
+	SingleRouterHistory,
+} from '@automattic/data-stores';
+import { select as storeSelect, useSelect } from '@wordpress/data';
+import { useState, useEffect, useLayoutEffect, useCallback } from '@wordpress/element';
 import { Action, Location } from 'history';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
@@ -10,15 +14,18 @@ export interface HistoryEvent {
 	location: Location;
 }
 
+type PersistCallback = ( historyData: SingleRouterHistory ) => void;
+
 /**
  * This is a custom implementation of the MemoryHistory class from the history package.
  * It is used to persist the navigation history of the agents manager.
- * It persists the history to the server via `persistAgentsManagerState`.
+ * It persists the history to the server via a callback provided by the hook.
  */
 class MemoryHistory {
 	private entries: Location[] = [];
 	private index: number = -1;
 	private listeners: ( ( event: HistoryEvent ) => void )[] = [];
+	private onPersist?: PersistCallback;
 
 	constructor(
 		initialEntries: Location[] = [
@@ -103,6 +110,10 @@ class MemoryHistory {
 		};
 	}
 
+	setOnPersist( callback: PersistCallback ) {
+		this.onPersist = callback;
+	}
+
 	private createLocation( path: string, state?: unknown ): Location {
 		const [ pathname, search = '', hash = '' ] = path.split( /[?#]/ );
 		return {
@@ -118,22 +129,45 @@ class MemoryHistory {
 		const event = { action, location: this.location };
 		this.listeners.forEach( ( listener ) => listener( event ) );
 
-		persistAgentsManagerState( {
-			agents_manager_router_history: { entries: this.entries, index: this.index },
-		} );
+		this.onPersist?.( { entries: this.entries, index: this.index } );
 	}
 }
 
-export const usePersistedHistory = () => {
+/**
+ * Read the full router history map from the store (synchronous, outside React).
+ */
+function getFullRouterHistory(): PerSiteRouterHistory | undefined {
+	return ( storeSelect( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState()
+		.routerHistory;
+}
+
+export const usePersistedHistory = ( siteKey: string ) => {
 	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory() );
 	const [ state, setState ] = useState< HistoryEvent >( {
 		action: history.action,
 		location: history.location,
 	} );
 	const persistedHistory = useSelect(
-		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getRouterHistory(),
-		[]
+		( select ) =>
+			( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getRouterHistory( siteKey ),
+		[ siteKey ]
 	);
+
+	// Create a persist callback that merges with existing per-site histories.
+	const persistHistory = useCallback(
+		( historyData: SingleRouterHistory ) => {
+			const fullMap = getFullRouterHistory() || {};
+			persistAgentsManagerState( {
+				agents_manager_router_history: { ...fullMap, [ siteKey ]: historyData },
+			} );
+		},
+		[ siteKey ]
+	);
+
+	// Keep persist callback in sync on the history instance.
+	useEffect( () => {
+		history.setOnPersist( persistHistory );
+	}, [ history, persistHistory ] );
 
 	useLayoutEffect( () => {
 		return history.listen( setState );
@@ -141,15 +175,16 @@ export const usePersistedHistory = () => {
 
 	useEffect( () => {
 		if ( persistedHistory ) {
-			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
-			setHistory( history );
+			const newHistory = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
+			newHistory.setOnPersist( persistHistory );
+			setHistory( newHistory );
 
 			setState( {
-				action: history.action,
-				location: history.location,
+				action: newHistory.action,
+				location: newHistory.location,
 			} );
 		}
-	}, [ persistedHistory ] );
+	}, [ persistedHistory, persistHistory ] );
 
 	return { history, state };
 };

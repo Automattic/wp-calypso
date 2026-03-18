@@ -1,11 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
-import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
+import { useEffect } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -17,7 +14,7 @@ import Sidebar, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import A4AContactSupportWidget, { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
+import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import ProvideFeedback from '../a4a-feedback/provide-feedback';
 import { withOnboardingTour } from '../hoc/with-onboarding-tour';
 import SidebarHeader from './header';
@@ -64,16 +61,7 @@ const A4ASidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isClient = isClientView();
 	const isNarrowView = useBreakpoint( '<660px' );
-
-	const onShowUserSupportForm = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
-	}, [ dispatch ] );
-
-	const contactUsText = isClient
-		? translate( 'Contact support' )
-		: translate( 'Contact sales & support' );
 
 	// When the sidebar is not displayed (narrow view), we need to set the layout focus to the preview.
 	// This is because, on a narrow view, we want to display the sidebar to navigate to all available pages
@@ -134,21 +122,10 @@ const A4ASidebar = ( {
 						/>
 					) }
 
-					{ ! isEnabled( 'a4a-help-center' ) && (
-						<SidebarNavigatorMenuItem
-							title={ contactUsText }
-							link={ CONTACT_URL_HASH_FRAGMENT }
-							path=""
-							icon={ <Icon icon={ starEmpty } /> }
-							onClickMenuItem={ onShowUserSupportForm }
-						/>
-					) }
-
 					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
 
-			{ ! isEnabled( 'a4a-help-center' ) && <A4AContactSupportWidget /> }
 			<ProvideFeedback />
 		</Sidebar>
 	);

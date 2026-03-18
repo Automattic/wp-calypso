@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { find, includes } from 'lodash';
+import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,7 +33,9 @@ export const uploadPlugin = ( action ) => {
 
 const showErrorNotice = ( error ) => {
 	const knownErrors = {
-		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
+		'too large': translate( 'The plugin zip file must be smaller than %(maxSize)d MB.', {
+			args: { maxSize: Math.floor( MAX_UPLOAD_ZIP_SIZE / 1000000 ) },
+		} ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};

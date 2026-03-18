@@ -29,7 +29,9 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/gifts/` + gift.user_id + '/' + gift.plan_id,
+					path: `/sites/${ siteId }/memberships/gifts/${ encodeURIComponent( gift.user_id ) }/${
+						gift.plan_id
+					}`,
 					apiNamespace: 'wpcom/v2',
 				},
 				null

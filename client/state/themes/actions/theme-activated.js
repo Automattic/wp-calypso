@@ -1,8 +1,10 @@
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
 import { requestSiteSettings } from 'calypso/state/site-settings/actions';
+import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import {
 	getActiveTheme,
@@ -49,6 +51,7 @@ export function themeActivated(
 		const query = getLastThemeQuery( getState(), siteId );
 		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
+		const isPaidPlan = isCurrentPlanPaid( getState(), siteId );
 		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
 			theme: themeId,
 			previous_theme: previousThemeId,
@@ -61,6 +64,10 @@ export function themeActivated(
 			theme_tier: getThemeTierForTheme( getState(), themeId )?.slug,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		if ( isPaidPlan ) {
+			invokeSurvicateEvent( 'themeActivated' );
+		}
 
 		// There are instances where switching themes toggles menu items. This action refreshes
 		// the admin bar to ensure that those updates are displayed in the UI.

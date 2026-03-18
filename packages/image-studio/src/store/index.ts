@@ -2,6 +2,7 @@
  * Image Studio Store
  */
 import { createReduxStore, register, select } from '@wordpress/data';
+import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES } from '../types';
 import type { ImageData } from '../utils/get-image-data';
 
 /**
@@ -45,6 +46,9 @@ export enum ImageStudioEntryPoint {
 	EditorSidebar = 'editor_sidebar',
 	JetpackExternalMediaBlock = 'jetpack_external_media_block',
 	JetpackExternalMediaFeaturedImage = 'jetpack_external_media_featured_image',
+	// Entry points for jetpack.ai.imageGenerationHandler filter
+	JetpackAIFeaturedImage = 'jetpack_ai_featured_image',
+	JetpackAISocialMedia = 'jetpack_ai_social_media',
 }
 
 export interface ImageStudioState {
@@ -928,6 +932,7 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
+	getSupportedMimeTypes: () => readonly string[];
 }
 
 /**
@@ -1095,6 +1100,10 @@ const selectors = {
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
 		return state.lastAgentMessageId;
+	},
+
+	getSupportedMimeTypes(): readonly string[] {
+		return IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
 	},
 };
 

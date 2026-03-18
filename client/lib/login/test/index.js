@@ -216,6 +216,45 @@ describe( 'getSignupUrl', () => {
 			'/start/account?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify'
 		);
 	} );
+
+	test( 'from=woo uses the CIAB AI setup redirect', () => {
+		expect( getSignupUrl( { from: 'woo' }, '/log-in', null, 'en', '' ) ).toEqual(
+			'/start/account?redirect_to=%2Fsetup%2Fai-site-builder-spec%3Fsource%3Dciab-sites-dashboard%26ref%3Dnew-site-popover'
+		);
+	} );
+
+	test( 'CIAB redirect host in redirect_to uses the CIAB AI setup redirect', () => {
+		expect(
+			getSignupUrl( { redirect_to: 'https://my.woo.ai/sites' }, '/log-in', null, 'en', '' )
+		).toEqual(
+			'/start/account?redirect_to=%2Fsetup%2Fai-site-builder-spec%3Fsource%3Dciab-sites-dashboard%26ref%3Dnew-site-popover'
+		);
+	} );
+
+	test( 'non-CIAB from keeps existing behavior', () => {
+		expect( getSignupUrl( { from: 'reader' }, '/log-in', null, 'en', '' ) ).toEqual( '/start' );
+	} );
+
+	test( 'generic OAuth2 client keeps existing behavior in CIAB context', () => {
+		const oauth2Client = {
+			id: 123,
+			name: 'example',
+			title: 'Example',
+			url: 'https://example.com',
+		};
+
+		expect(
+			getSignupUrl(
+				{ from: 'woo', redirect_to: 'https://example.com/oauth' },
+				'/log-in',
+				oauth2Client,
+				'en',
+				''
+			)
+		).toEqual(
+			'/start/wpcc?oauth2_client_id=123&oauth2_redirect=https%3A%2F%2Fexample.com%2Foauth'
+		);
+	} );
 } );
 
 describe( 'getPluginTitle', () => {

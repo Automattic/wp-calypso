@@ -6,7 +6,6 @@ import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
-import { ADD_NEW_TAB, REDDIT_TAB } from 'calypso/reader/discover/helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
@@ -21,17 +20,7 @@ const shouldShowFollowButton = () => {
 		return false;
 	}
 
-	// Do not show if the user is not on the discover page.
-	if ( path[ 1 ] !== 'discover' ) {
-		return false;
-	}
-
-	// Do not show for feed previews available on the "Add New" and "Reddit" tab.
-	if ( [ ADD_NEW_TAB, REDDIT_TAB ].includes( path[ 2 ] ) ) {
-		return false;
-	}
-
-	return true;
+	return path[ 1 ] === 'discover';
 };
 
 const CompactPost = ( props ) => {
