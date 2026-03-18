@@ -16,9 +16,6 @@ FROM ${base_image} AS builder-cache-true
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 
-ARG generate_cache_image=false
-ENV GENERATE_CACHE_IMAGE $generate_cache_image
-
 ###################
 # Dedicated dependency-install stage.
 # By copying only manifests and the lockfile first, we can cache
@@ -113,7 +110,8 @@ RUN yarn run build-packages:web
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-RUN yarn run build 2>&1 | tee /tmp/build_log.txt
+ARG generate_cache_image=false
+RUN GENERATE_CACHE_IMAGE=$generate_cache_image yarn run build 2>&1 | tee /tmp/build_log.txt
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
