@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import { SiteIntent } from '../onboard';
 
 export function useSiteIntent( siteId: string | number | undefined ) {

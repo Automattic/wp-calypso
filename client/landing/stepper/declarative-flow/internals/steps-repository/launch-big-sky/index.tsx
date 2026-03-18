@@ -5,7 +5,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -35,7 +35,7 @@ const LaunchBigSky: StepType = function ( props ) {
 
 	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 		try {
-			await wpcomRequest( {
+			await wpcom.request( {
 				path: '/sites/' + siteId + '/pages/' + pageId,
 				method: 'DELETE',
 				apiNamespace: 'wp/v2',
@@ -73,7 +73,7 @@ const LaunchBigSky: StepType = function ( props ) {
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
 				pendingActions.push(
-					wpcomRequest( {
+					wpcom.request( {
 						path: '/sites/' + selectedSiteId + '/pages',
 						method: 'POST',
 						apiNamespace: 'wp/v2',

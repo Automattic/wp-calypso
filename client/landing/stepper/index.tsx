@@ -2,12 +2,17 @@ import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UserActions, User as UserStore } from '@automattic/data-stores';
+import {
+	setWpcomInstance as setDataStoresWpcom,
+	UserActions,
+	User as UserStore,
+} from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	setWpcomInstance as setOnboardingWpcom,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
@@ -15,7 +20,6 @@ import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
@@ -27,6 +31,7 @@ import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
+import wpcom from 'calypso/lib/wp';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
@@ -90,6 +95,11 @@ async function main() {
 	// Sympathy mode clears cache randomly, Stepper uses the cache to persist state (not really a cache).
 	config.enable( 'no-force-sympathy' );
 
+	if ( config.isEnabled( 'oauth' ) ) {
+		setDataStoresWpcom( wpcom );
+		setOnboardingWpcom( wpcom );
+	}
+
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];
 
@@ -107,10 +117,6 @@ async function main() {
 
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
-
-	// put the proxy iframe in "all blog access" mode
-	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
-	requestAllBlogsAccess();
 
 	setupWpDataDebug();
 

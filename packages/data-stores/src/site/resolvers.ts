@@ -1,5 +1,5 @@
 // wpcomRequest is a temporary rename while we're working on migrating generators to thunks
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import type {
 	CurrentTheme,
 	SiteDetails,

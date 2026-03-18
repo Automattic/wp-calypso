@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSpec } from 'calypso/lib/site-spec';
@@ -23,7 +23,7 @@ const SiteSpec: StepType = function SiteSpec() {
 		if ( messageCount === 1 ) {
 			siteCreationPromise = ( async () => {
 				try {
-					const response = ( await wpcomRequest( {
+					const response = ( await wpcom.request( {
 						path: '/sites/new',
 						apiVersion: '1.1',
 						method: 'POST',

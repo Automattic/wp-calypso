@@ -1,6 +1,6 @@
 import { UseMutationOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import { getAllDomainsQueryKey } from '../queries/use-all-domains-query';
 import { getBulkDomainUpdateStatusQueryKey } from '../queries/use-bulk-domain-update-status-query';
 import { getSiteDomainsQueryKey } from '../queries/use-site-domains-query';

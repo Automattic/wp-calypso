@@ -6,10 +6,10 @@
  * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import { store } from '../';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+jest.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );

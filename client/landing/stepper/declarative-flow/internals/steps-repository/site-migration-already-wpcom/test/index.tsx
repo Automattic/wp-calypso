@@ -5,14 +5,14 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { logToLogstash } from 'calypso/lib/logstash';
 import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+jest.mock( 'calypso/lib/wp', () => ( { request: jest.fn() } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 jest.mock( 'calypso/lib/logstash' );
 
@@ -28,7 +28,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( wpcomRequest as jest.Mock ).mockResolvedValue( { success: true } );
+		( wpcom.request as jest.Mock ).mockResolvedValue( { success: true } );
 		( useSiteSlugParam as jest.Mock ).mockReturnValue( 'site-url.wordpress.com' );
 	} );
 
@@ -89,7 +89,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		await userEvent.type( otherDetails(), 'Test Details' );
 		await userEvent.click( continueButton() );
 
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
+		expect( wpcom.request ).toHaveBeenCalledWith( {
 			path: '/sites/site-url.wordpress.com/automated-migration/wpcom-survey',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
@@ -111,7 +111,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( new Error( 'Some error message' ) );
+		( wpcom.request as jest.Mock ).mockRejectedValue( new Error( 'Some error message' ) );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -75,7 +75,7 @@ const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, dat
 				await wait( backoffTime );
 
 				try {
-					const response: PluginsResponse = await wpcomRequest( {
+					const response: PluginsResponse = await wpcom.request( {
 						path: `/sites/${ siteId }/plugins`,
 						apiVersion: '1.1',
 					} );

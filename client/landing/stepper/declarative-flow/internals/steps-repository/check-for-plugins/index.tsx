@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { bundleStepsSettings } from 'calypso/landing/stepper/declarative-flow/flows/plugin-bundle-flow/plugin-bundle-data';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -24,7 +24,7 @@ const CheckForPlugins: Step< { submits: { hasPlugins: boolean } } > = function C
 			let hasPlugins = false;
 
 			try {
-				const response: PluginsResponse = await wpcomRequest( {
+				const response: PluginsResponse = await wpcom.request( {
 					path: `/sites/${ site?.ID }/plugins`,
 					apiVersion: '1.1',
 				} );

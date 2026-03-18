@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Onboard, OnboardSelect, Site } from '@automattic/data-stores';
 import { select } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from './wpcom-request';
 import { isNewsletterFlow } from './utils';
 
 const ONBOARD_STORE = Onboard.register();

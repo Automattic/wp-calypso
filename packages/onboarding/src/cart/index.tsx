@@ -7,7 +7,7 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,

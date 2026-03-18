@@ -19,7 +19,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
@@ -67,7 +67,7 @@ async function pollForGardenProvisioning(
 
 	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 		try {
-			const siteResponse = ( await wpcomRequest( {
+			const siteResponse = ( await wpcom.request( {
 				path: `/sites/${ siteId }`,
 				apiVersion: '1.1',
 				method: 'GET',

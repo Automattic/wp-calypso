@@ -6,7 +6,6 @@ import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
@@ -15,13 +14,12 @@ import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/lib/wp', () => ( {
+	request: jest.fn(),
 	req: {
 		get: jest.fn(),
 		post: jest.fn(),
 	},
 } ) );
-
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 ( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
@@ -115,7 +113,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		//TODO: Ideally we should use nock to mock the request, but it is not working with the current implementation due to wpcomRequest usage that is well captured by nock.
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
+		expect( wp.request ).toHaveBeenCalledWith( {
 			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
@@ -191,7 +189,7 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'shows error message when there is an error on the with the backup file', async () => {
 		const submit = jest.fn();
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
+		( wp.request as jest.Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
 			data: {
 				params: {
@@ -229,7 +227,7 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		const pendingPromise = new Promise( () => {} );
-		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.request as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		render( { navigation: { submit } } );
 		await fillAddressField();
@@ -245,7 +243,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		const pendingPromise = new Promise( () => {} );
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+		( wp.request as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
@@ -281,7 +279,7 @@ describe( 'SiteMigrationCredentials', () => {
 	it( 'submits already-wpcom action when site is already WPCOM', async () => {
 		const submit = jest.fn();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+		( wp.request as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
@@ -290,7 +288,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAddressField();
 		await userEvent.click( continueButton() );
 
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
+		expect( wp.request ).toHaveBeenCalledWith( {
 			path: '/help/migration-ticket/new',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
