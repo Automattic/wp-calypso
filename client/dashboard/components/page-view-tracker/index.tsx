@@ -15,7 +15,7 @@ export function PageViewTracker() {
 	);
 
 	useEffect( () => {
-		if ( routerStatus !== 'pending' && lastPath.current !== path ) {
+		if ( routerStatus !== 'pending' && path && lastPath.current !== path ) {
 			recordPageView( path, document.title );
 			lastPath.current = path;
 		}
