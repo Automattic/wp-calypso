@@ -1,11 +1,11 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { DotcomFeatures } from '@automattic/api-core';
+import { userSettingsQuery, userSettingsMutation, pluginsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { linkExternal } from '@wordpress/icons';
-import { useState } from 'react';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -121,17 +121,26 @@ function McpComponent() {
 
 	const mcpSiteAddText = getSiteCountBadgeText( enabledSiteIds.length, __( 'No sites' ) );
 
-	const [ aiAssistantEnabled, setAiAssistantEnabled ] = useState( false );
+	const aiAssistantEnabled = userSettings?.ai_assistant ?? false;
+
+	const { data: pluginsData } = useQuery( pluginsQuery() );
+	const aiEnabledSiteCount = Object.values( pluginsData?.sites ?? {} )
+		.flat()
+		.filter( ( p ) => p.slug === DotcomFeatures.BIG_SKY && p.active ).length;
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
+				success: __( 'Settings saved.' ),
+				error: __( 'Failed to save settings.' ),
 			},
 		},
 	} );
+
+	const handleAiAssistantToggle = ( enabled: boolean ) => {
+		mutation.mutate( { ai_assistant: enabled } );
+	};
 
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const accountAbilities: Record< string, boolean > = {};
@@ -184,7 +193,7 @@ function McpComponent() {
 									__nextHasNoMarginBottom
 									checked={ aiAssistantEnabled }
 									label={ __( 'Enable AI assistant' ) }
-									onChange={ setAiAssistantEnabled }
+									onChange={ handleAiAssistantToggle }
 								/>
 							</VStack>
 						</CardBody>
@@ -193,7 +202,7 @@ function McpComponent() {
 							to="/me/mcp/ai-sites"
 							title={ __( 'Add to specific sites' ) }
 							decoration={ sparklesIcon }
-							badges={ [ { text: __( 'No sites' ) } ] }
+							badges={ [ { text: getSiteCountBadgeText( aiEnabledSiteCount, __( 'No sites' ) ) } ] }
 						/>
 					</Card>
 				) }

@@ -1,25 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import {
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { DotcomFeatures, updateBigSkyPlugin } from '@automattic/api-core';
+import { userSettingsQuery, pluginsQuery, invalidatePlugins } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
+import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
+import { getSiteDisplayName } from '../../../utils/site-name';
+import { getSiteDisplayUrl } from '../../../utils/site-url';
 import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dropdown';
 import type { Site } from '@automattic/api-core';
 
 export default function McpAiSites() {
 	const { queries } = useAppContext();
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
@@ -28,23 +29,50 @@ export default function McpAiSites() {
 
 	const [ selectedSiteId, setSelectedSiteId ] = useState< string | null >( null );
 
-	// AI assistant enabled sites are not yet backed by a user setting.
-	// This is a UI stub — actual site list will be wired to data when available.
-	const enabledSites: Array< { id: number; name: string; displayUrl: string; site: Site | null } > =
-		[];
+	const { data: pluginsData } = useQuery( pluginsQuery() );
+	const aiEnabledSiteIds = new Set(
+		Object.entries( pluginsData?.sites ?? {} )
+			.filter( ( [ , plugins ] ) =>
+				plugins.some( ( p ) => p.slug === DotcomFeatures.BIG_SKY && p.active )
+			)
+			.map( ( [ siteId ] ) => Number( siteId ) )
+	);
+
+	const enabledSites = sites
+		.filter( ( site: Site ) => aiEnabledSiteIds.has( site.ID ) )
+		.map( ( site: Site ) => ( {
+			id: site.ID,
+			name: getSiteDisplayName( site ),
+			displayUrl: getSiteDisplayUrl( site ),
+			site,
+		} ) );
 
 	const availableSitesForPicker = sites.filter(
-		( site: Site ) => ! enabledSites.some( ( s ) => s.id === site.ID )
+		( site: Site ) => ! aiEnabledSiteIds.has( site.ID )
 	);
+
+	const { mutate: toggleAiForSite, isPending } = useMutation( {
+		mutationFn: ( { siteId, enable }: { siteId: number; enable: boolean } ) =>
+			updateBigSkyPlugin( siteId, { enable } ),
+		onSuccess: () => {
+			invalidatePlugins();
+		},
+		meta: {
+			snackbar: {
+				success: __( 'AI assistant settings saved.' ),
+				error: __( 'Failed to save AI assistant settings.' ),
+			},
+		},
+	} );
 
 	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {
 		if ( siteIdStr ) {
-			// TODO: wire to mutation when account-level AI assistant user setting is available
+			toggleAiForSite( { siteId: parseInt( siteIdStr, 10 ), enable: true } );
 			setSelectedSiteId( null );
 		}
 	};
 
-	const isAiEnabled = false;
+	const isAiEnabled = userSettings?.ai_assistant ?? false;
 
 	return (
 		<PageLayout
@@ -89,36 +117,26 @@ export default function McpAiSites() {
 							title={ __( 'Enabled sites' ) }
 							description={ __( 'These sites have the AI assistant enabled.' ) }
 						/>
-						<Card>
-							<CardBody>
-								<VStack spacing={ 3 }>
-									{ enabledSites.map( ( site ) => (
-										<HStack key={ site.id } justify="space-between" alignment="center">
-											<HStack spacing={ 3 } alignment="center" justify="flex-start">
-												{ site.site && <SiteIcon site={ site.site } size={ 32 } /> }
-												<VStack spacing={ 0 }>
-													<Text weight={ 500 } size={ 14 }>
-														{ site.name }
-													</Text>
-													<Text variant="muted" size={ 12 }>
-														{ site.displayUrl }
-													</Text>
-												</VStack>
-											</HStack>
-											<Button
-												variant="secondary"
-												size="compact"
-												onClick={ () => {
-													// TODO: wire to mutation when AI assistant user setting is available
-												} }
-											>
-												{ __( 'Remove' ) }
-											</Button>
-										</HStack>
-									) ) }
-								</VStack>
-							</CardBody>
-						</Card>
+						<ActionList>
+							{ enabledSites.map( ( site ) => (
+								<ActionList.ActionItem
+									key={ site.id }
+									title={ site.name }
+									description={ site.displayUrl || undefined }
+									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
+									actions={
+										<Button
+											variant="secondary"
+											size="compact"
+											disabled={ isPending }
+											onClick={ () => toggleAiForSite( { siteId: site.id, enable: false } ) }
+										>
+											{ __( 'Remove' ) }
+										</Button>
+									}
+								/>
+							) ) }
+						</ActionList>
 					</VStack>
 				) }
 			</VStack>

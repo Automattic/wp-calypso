@@ -1,11 +1,6 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import {
@@ -15,6 +10,7 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
+import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -150,35 +146,26 @@ export default function McpMcpSites() {
 							title={ managedSitesTitle }
 							description={ managedSitesDescription }
 						/>
-						<Card>
-							<CardBody>
-								<VStack spacing={ 3 }>
-									{ managedSites.map( ( site ) => (
-										<HStack key={ site.id } justify="space-between" alignment="center">
-											<HStack spacing={ 3 } alignment="center" justify="flex-start">
-												{ site.site && <SiteIcon site={ site.site } size={ 32 } /> }
-												<VStack spacing={ 0 }>
-													<Text weight={ 500 } size={ 14 }>
-														{ site.name }
-													</Text>
-													<Text variant="muted" size={ 12 }>
-														{ site.displayUrl }
-													</Text>
-												</VStack>
-											</HStack>
-											<Button
-												variant="secondary"
-												size="compact"
-												disabled={ mutation.isPending }
-												onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
-											>
-												{ __( 'Remove' ) }
-											</Button>
-										</HStack>
-									) ) }
-								</VStack>
-							</CardBody>
-						</Card>
+						<ActionList>
+							{ managedSites.map( ( site ) => (
+								<ActionList.ActionItem
+									key={ site.id }
+									title={ site.name }
+									description={ site.displayUrl || undefined }
+									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
+									actions={
+										<Button
+											variant="secondary"
+											size="compact"
+											disabled={ mutation.isPending }
+											onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
+										>
+											{ __( 'Remove' ) }
+										</Button>
+									}
+								/>
+							) ) }
+						</ActionList>
 					</VStack>
 				) }
 			</VStack>
