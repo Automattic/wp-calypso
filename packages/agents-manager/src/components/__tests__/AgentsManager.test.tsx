@@ -35,7 +35,8 @@ jest.mock( '../../contexts', () => ( {
 
 // Prevent transitive dependency chains from loading
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../utils/agent-config', () => ( {} ) );
+jest.mock( '../../utils/create-agent-config', () => ( {} ) );
+jest.mock( '../../hooks/use-agent-config', () => ( {} ) );
 jest.mock( '../../utils/agent-session', () => ( {} ) );
 jest.mock( '../../utils/load-external-providers', () => ( {} ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );

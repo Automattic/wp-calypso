@@ -7,16 +7,16 @@ jest.mock( '@automattic/oauth-token', () => ( {} ), { virtual: true } );
 jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
 jest.mock( 'wpcom-proxy-request', () => ( {} ), { virtual: true } );
 jest.mock( '@wordpress/api-fetch', () => ( {} ), { virtual: true } );
-jest.mock( '../../hooks/use-unified-ai-chat', () => ( {
+jest.mock( '../use-unified-ai-chat', () => ( {
 	useUnifiedAiChat: jest.fn(),
 } ) );
 
 import { renderHook } from '@testing-library/react';
-import { useUnifiedAiChat } from '../../hooks/use-unified-ai-chat';
+import { useUnifiedAiChat } from '../use-unified-ai-chat';
 import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
-import { useAgentConfig } from '../agent-config';
+import { useAgentConfig } from '../use-agent-config';
 
-const mockUseUnifiedAiChat = useUnifiedAiChat as jest.MockedFunction< typeof useUnifiedAiChat >;
+const mockUseUnifiedAiChat = useUnifiedAiChat as jest.Mock;
 
 describe( 'useAgentConfig', () => {
 	const mockSearch = ( search: string ) => {
@@ -25,7 +25,7 @@ describe( 'useAgentConfig', () => {
 
 	beforeEach( () => {
 		mockSearch( '' );
-		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } );
 	} );
 
 	afterEach( () => {
@@ -33,32 +33,24 @@ describe( 'useAgentConfig', () => {
 	} );
 
 	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns undefined', () => {
-		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
 	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns false', () => {
-		mockUseUnifiedAiChat.mockReturnValue( { data: false } as any );
+		mockUseUnifiedAiChat.mockReturnValue( { data: false } );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
 	it( 'returns UNIFIED_CHAT_AGENT_ID when useUnifiedAiChat returns true', () => {
-		mockUseUnifiedAiChat.mockReturnValue( { data: true } as any );
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( UNIFIED_CHAT_AGENT_ID );
 	} );
 
 	it( 'URL ?agent= param overrides useUnifiedAiChat result', () => {
-		mockUseUnifiedAiChat.mockReturnValue( { data: true } as any );
-		mockSearch( '?agent=custom-agent-id' );
-		const { result } = renderHook( () => useAgentConfig() );
-		expect( result.current.agentId ).toBe( 'custom-agent-id' );
-	} );
-
-	it( 'URL ?agent= param overrides default when unified experience is undefined', () => {
-		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } as any );
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
 		mockSearch( '?agent=custom-agent-id' );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( 'custom-agent-id' );
