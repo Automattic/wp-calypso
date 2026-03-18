@@ -51,6 +51,8 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 	const injectedContainerRef = useRef< HTMLDivElement | null >( null );
 
 	const [ isConnected, setIsConnected ] = useState( false );
+	/** When false, status has not been fetched yet — do not show widget or assume disconnected. */
+	const [ isStatusReady, setIsStatusReady ] = useState( false );
 
 	const { botUsername, authUrl, requestAccess, size, showUserpic } = useMemo(
 		getWidgetSettings,
@@ -63,7 +65,7 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 	const setConnectedTrue = useCallback( () => setIsConnected( true ), [] );
 
 	useEffect( () => {
-		if ( ! isConfigured || isConnected ) {
+		if ( ! isConfigured || isConnected || ! isStatusReady ) {
 			return;
 		}
 
@@ -133,6 +135,7 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 		dispatch,
 		isConfigured,
 		isConnected,
+		isStatusReady,
 		translate,
 		setConnectedTrue,
 		botUsername,
@@ -144,23 +147,37 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 		trackAuthCallback,
 	] );
 
-	// On mount, fetch connection status so we show "Connected" if already linked.
+	// Fetch connection status before showing the widget (avoids flashing the widget when already connected).
 	useEffect( () => {
-		if ( ! isConfigured || isConnected ) {
+		if ( ! isConfigured ) {
 			return;
 		}
+
+		let cancelled = false;
 
 		wpcom.req
 			.get( { path: '/telegram-bot/status', apiNamespace: 'wpcom/v2' } )
 			.then( ( data: { connected?: boolean; telegram_user_id?: number | string } ) => {
+				if ( cancelled ) {
+					return;
+				}
 				if ( data?.connected || data?.telegram_user_id != null ) {
 					setIsConnected( true );
 				}
 			} )
 			.catch( () => {
-				// No status endpoint or not connected; keep widget visible.
+				// Treat as not connected; show widget after ready.
+			} )
+			.finally( () => {
+				if ( ! cancelled ) {
+					setIsStatusReady( true );
+				}
 			} );
-	}, [ isConfigured, isConnected ] );
+
+		return () => {
+			cancelled = true;
+		};
+	}, [ isConfigured ] );
 
 	const handleDisconnect = useCallback( () => {
 		wpcom.req
@@ -182,6 +199,7 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 		translate,
 		isConfigured,
 		isConnected,
+		isStatusReady,
 		containerRef,
 		handleDisconnect,
 	} as const;

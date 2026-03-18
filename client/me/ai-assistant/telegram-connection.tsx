@@ -4,7 +4,7 @@ import { useTelegramDollyWidget } from '../telegram/use-telegram-dolly-widget';
 import './style.scss';
 
 export default function TelegramConnection() {
-	const { translate, isConfigured, isConnected, containerRef, handleDisconnect } =
+	const { translate, isConfigured, isConnected, isStatusReady, containerRef, handleDisconnect } =
 		useTelegramDollyWidget();
 
 	if ( ! isConfigured ) {
@@ -12,6 +12,9 @@ export default function TelegramConnection() {
 	}
 
 	const renderConnectAction = () => {
+		if ( ! isStatusReady ) {
+			return null;
+		}
 		if ( isConnected ) {
 			return (
 				<Button compact onClick={ handleDisconnect }>
@@ -31,17 +34,18 @@ export default function TelegramConnection() {
 			</div>
 
 			<div className="ai-assistant__telegram-connection-description">
-				{ isConnected ? (
-					<>
-						{ translate( 'Your account is ' ) }
-						<span className="ai-assistant__telegram-connected-word">
-							{ translate( 'connected' ) }
-						</span>
-						{ translate( ' to Telegram.' ) }
-					</>
-				) : (
-					translate( 'Connect Telegram to enable AI Assistant features on your account.' )
-				) }
+				{ isStatusReady &&
+					( isConnected ? (
+						<>
+							{ translate( 'Your account is ' ) }
+							<span className="ai-assistant__telegram-connected-word">
+								{ translate( 'connected' ) }
+							</span>
+							{ translate( ' to Telegram.' ) }
+						</>
+					) : (
+						translate( 'Connect Telegram to enable AI Assistant features on your account.' )
+					) ) }
 			</div>
 		</CompactCard>
 	);

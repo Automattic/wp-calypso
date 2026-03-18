@@ -12,7 +12,7 @@ import './style.scss';
 
 export const DollyCard = () => {
 	const handleClickLink = useHandleClickLink();
-	const { translate, isConfigured, isConnected, containerRef, handleDisconnect } =
+	const { translate, isConfigured, isConnected, isStatusReady, containerRef, handleDisconnect } =
 		useTelegramDollyWidget( {
 			trackAuthCallback: ( user: TelegramAuthPayload ) =>
 				recordTracksEvent( 'calypso_dolly_telegram_widget_auth_callback', {
@@ -26,6 +26,9 @@ export const DollyCard = () => {
 	}
 
 	const renderConnectAction = () => {
+		if ( ! isStatusReady ) {
+			return null;
+		}
 		if ( isConnected ) {
 			return (
 				<Button compact onClick={ handleDisconnect }>
@@ -41,21 +44,22 @@ export const DollyCard = () => {
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
 			<div className="developer-features-list__item-title">{ translate( 'Dolly' ) }</div>
 			<div className="developer-features-list__item-description">
-				{ isConnected ? (
-					<>
-						{ translate( 'Your account is ' ) }
-						<span className="developer-features-list__item-connected-word">
-							{ translate( 'connected' ) }
-						</span>
-						{ translate( ' to Telegram.' ) }
-					</>
-				) : (
-					translate( 'Connect Dolly to Telegram to start using it with your account.' )
-				) }
+				{ isStatusReady &&
+					( isConnected ? (
+						<>
+							{ translate( 'Your account is ' ) }
+							<span className="developer-features-list__item-connected-word">
+								{ translate( 'connected' ) }
+							</span>
+							{ translate( ' to Telegram.' ) }
+						</>
+					) : (
+						translate( 'Connect Dolly to Telegram to start using it with your account.' )
+					) ) }
 			</div>
 			<div className="developer-features-list__item-learn-more">
 				{ renderConnectAction() }
-				{ ! isConnected && (
+				{ isStatusReady && ! isConnected && (
 					<div>
 						<InlineSupportLink
 							showIcon={ false }
