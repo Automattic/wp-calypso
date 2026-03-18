@@ -419,6 +419,7 @@ export default function SubscriberDataViews( {
 			baseActions.push( {
 				id: 'gift',
 				label: translate( 'Comp a subscription', {
+					textOnly: true,
 					comment:
 						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
 				} ),
