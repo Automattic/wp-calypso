@@ -485,41 +485,6 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export function setStoreFeatures( callback, { siteSlug } ) {
-	if ( ! siteSlug ) {
-		defer( callback );
-		return;
-	}
-
-	wpcom.req
-		.post( {
-			path: `/sites/${ siteSlug }/seller_footer`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( () => callback() )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
-}
-
-export function setIntentOnSite( callback, { siteSlug, intent } ) {
-	if ( ! intent ) {
-		defer( callback );
-		return;
-	}
-
-	wpcom.req
-		.post( {
-			path: `/sites/${ siteSlug }/site-intent`,
-			apiNamespace: 'wpcom/v2',
-			body: { site_intent: intent },
-		} )
-		.then( () => callback() )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
-}
-
 function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
 	const plugins = getMarketplaceProducts( state, pluginSlug );
 	const billingPeriodToTerm = {
