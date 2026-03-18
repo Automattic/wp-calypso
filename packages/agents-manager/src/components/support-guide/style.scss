@@ -1,4 +1,5 @@
 @import '@wordpress/base-styles/colors';
+@import '../../styles/mixins';
 
 .agent-manager-support-guide-wrapper {
 	height: calc( 100% - 50px );
@@ -11,21 +12,25 @@
 		scrollbar-color: $gray-400 transparent;
 		scroll-behavior: smooth;
 	}
+
 	.agent-manager-support-guide-footer {
 		padding: 16px;
 		display: flex;
 		justify-content: stretch;
 
 		button {
-			flex: 1
+			flex: 1;
+			justify-content: center;
 		}
 	}
 }
 
-.agents-manager-chat--docked {
+// Docked chat dark-mode overrides
+@include docked-chat-without-modal {
 	.agent-manager-support-guide-wrapper {
 		.help-center-article {
 			color: $white;
+
 			.help-center-article-content__header {
 				&-title {
 					color: $white;
@@ -34,6 +39,7 @@
 					color: $gray-400;
 				}
 			}
+
 			.help-center-article-content__main {
 				h1,
 				h2,
@@ -49,10 +55,12 @@
 				a {
 					color: $white;
 				}
+
 				.wp-block-a8c-support-table-of-contents {
 					background-color: $gray-800;
 				}
 			}
+
 			.help-center-feedback__form {
 				button {
 					color: $white;

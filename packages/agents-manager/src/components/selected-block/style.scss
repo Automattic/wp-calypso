@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/colors";
+@import '../../styles/mixins';
 
 .agents-manager-selected-block {
 	max-width: 150px;
@@ -53,22 +54,23 @@
 	}
 }
 
-// Docked chat overrides
-.agents-manager-chat--docked .agenttic {
-	.agents-manager-selected-block {
-		color: $white;
-		border: 1px solid rgba( $white, 0.1 );
-		margin-top: 8px;
+// Docked chat dark-mode overrides
+@include docked-chat-without-modal {
+	.agenttic {
+		.agents-manager-selected-block {
+			color: $white;
+			border: 1px solid rgba( $white, 0.1 );
+			margin-top: 8px;
 
-		&__divider {
-			border-left: 1px solid rgba( $white, 0.1 );
-		}
+			&__divider {
+				border-left: 1px solid rgba( $white, 0.1 );
+			}
 
-		&__remove {
-			&.components-button {
-				color: $white;
+			&__remove {
+				&.components-button {
+					color: $white;
+				}
 			}
 		}
 	}
 }
-

@@ -40,8 +40,8 @@ export default function SupportGuide( {
 	isEligibleForChat,
 }: Props ) {
 	const navigate = useNavigate();
-	const location = useLocation().search;
-	const query = new URLSearchParams( location );
+	const { search, state } = useLocation();
+	const query = new URLSearchParams( search );
 	const isFromChat = query.has( 'from-chat' );
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
@@ -67,7 +67,14 @@ export default function SupportGuide( {
 			<AgentUI.ConversationView>
 				<ChatHeader
 					onClose={ onClose }
-					onBack={ () => navigate( -1 ) }
+					onBack={ () => {
+						// Navigate back to the source route, preserving `state` (`sessionId`/`conversationId`).
+						if ( state?.sessionId ) {
+							navigate( '/chat', { state } );
+						} else {
+							navigate( '/zendesk', { state } );
+						}
+					} }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
