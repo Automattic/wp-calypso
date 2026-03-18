@@ -7,7 +7,7 @@ import { uriTransformer } from '../../utils/uri-transformer';
 export default function CustomALink( {
 	href,
 	children,
-	target = '_blank',
+	target = '_self',
 	...props
 }: React.AnchorHTMLAttributes< HTMLAnchorElement > ) {
 	const navigate = useNavigate();
