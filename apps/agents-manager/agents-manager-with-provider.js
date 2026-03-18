@@ -12,6 +12,7 @@ export default function AgentsManagerWithProvider() {
 				sectionName={ agentsManagerData.sectionName || 'wp-admin' }
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
+				currentSiteId={ agentsManagerData.site?.ID }
 			/>
 		</QueryClientProvider>
 	);

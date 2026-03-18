@@ -160,7 +160,7 @@ function ImageStudioAgentChat( {
 			messages={ displayMessages as any }
 			variant="embedded"
 			placeholder={ placeholder }
-			className="image-studio-agent agenttic"
+			className="image-studio-agent agenttic dark"
 			onSubmit={ handleSubmit }
 			onStop={ agentChatProps.abortCurrentRequest }
 			isProcessing={ isProcessing }
