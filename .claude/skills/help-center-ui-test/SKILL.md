@@ -73,7 +73,7 @@ For each surface, verify all of the following:
 
 For every issue found during testing:
 
-- **Visual/layout issues**: Take a **screenshot** using `mcp__claude-in-chrome__computer` with `action: screenshot`. Save with a descriptive name.
+- **Visual/layout issues**: Take a **screenshot** using `mcp__claude-in-chrome__computer` with `action: screenshot`.
 - **Behavior/interaction issues**: Record a **GIF** using `mcp__claude-in-chrome__gif_creator`. Capture extra frames before and after the action for smooth playback. Name it descriptively (e.g., "search-clear-button-bug.gif").
 
 ## Reporting Issues
@@ -85,13 +85,63 @@ After completing all tests, if issues were found:
 3. Use `ToolSearch` to load Linear tools: `+linear save issue`.
 4. For each issue, create a Linear issue with `mcp__linear-server__save_issue` including:
    - **Title**: Clear, concise description of the bug.
-   - **Description** (Markdown):
-     - Steps to reproduce.
-     - Expected vs. actual behavior.
-     - Surface where it was found (Calypso Dashboard, WP Admin, or both).
+   - **Description** (Markdown) — use this template:
+     ```markdown
+     ## Bug Report
+
+     ### Steps to Reproduce
+     1. ...
+
+     ### Expected Behavior
+     ...
+
+     ### Actual Behavior
+     ...
+
+     ### Screenshot
+     <!-- evidence will be inserted here -->
+
+     ### Surface
+     - [X] Calypso Dashboard
+     - [ ] WP Admin
+     ```
    - **Team**: Ask user or default to "Dotcom Support Infrastructure" (DOTSUP).
    - **Project**: The project the user specified.
-5. Attach the screenshot or GIF to the issue using `mcp__linear-server__create_attachment`.
+
+### Attaching evidence to Linear issues
+
+After creating each Linear issue, attach the screenshot or GIF into the **Screenshot** section of the description. Both methods require the Linear issue to be open in a Chrome tab within the same tab group.
+
+1. **Navigate to the Linear issue** in a Chrome tab (same tab group as the Help Center tab):
+   ```
+   https://linear.app/a8c/issue/<ISSUE-ID>
+   ```
+   Wait 3 seconds for the page to fully load.
+
+2. Use `mcp__claude-in-chrome__read_page` with `filter: interactive` to locate the `textbox "Issue description"` element and click its ref.
+
+3. **Place the cursor in the Screenshot section**: click on the "Screenshot" heading in the description, then press `End` followed by `Enter` to position the cursor below it.
+
+#### For GIFs (preferred — direct drag-and-drop)
+
+GIF recordings are scoped to the tab group, so they can be exported directly onto the Linear tab:
+
+1. Record the GIF on the Help Center tab (start recording → perform actions → stop recording).
+2. Export with `mcp__claude-in-chrome__gif_creator` using `action: export`, setting `tabId` to the **Linear tab** and `coordinate` to a point inside the **Screenshot** section of the description.
+3. The GIF will be dropped directly into the description.
+
+#### For screenshots (clipboard paste)
+
+1. **Ensure the bug is visible** in the Chrome tab showing the Help Center.
+2. **Capture the screen to the macOS clipboard**:
+   ```bash
+   screencapture -c
+   ```
+3. With the cursor positioned in the **Screenshot** section, press `Cmd+V` to paste.
+
+#### Verification
+
+Wait 3 seconds after attaching, then take a screenshot to confirm the image/GIF was embedded in the Screenshot section.
 
 ## Tips
 
