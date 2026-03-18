@@ -232,7 +232,7 @@ function SiteDeleteConfirmContent( {
 			onError: ( error: Error ) => {
 				createErrorNotice(
 					error.message ||
-						( isCommerceStore ? __( 'Failed to delete store' ) : __( 'Failed to delete site' ) ),
+						( isCommerceStore ? __( 'Failed to delete store.' ) : __( 'Failed to delete site.' ) ),
 					{ type: 'snackbar' }
 				);
 			},
