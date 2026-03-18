@@ -13,6 +13,11 @@ export default function CustomALink( {
 	const { pathname } = useLocation();
 	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
 
+	// Unsafe URL: render as plain text.
+	if ( ! transformedHref ) {
+		return <>{ children }</>;
+	}
+
 	return (
 		<a
 			{ ...props }
@@ -24,7 +29,7 @@ export default function CustomALink( {
 				// Open support article links in the post view.
 				if ( isSupportArticle ) {
 					e.preventDefault();
-					navigate( `/post?link=${ transformedHref }` );
+					navigate( `/post?link=${ encodeURIComponent( transformedHref ) }` );
 				}
 
 				recordTracksEvent( 'calypso_agents_manager_link_click', {
