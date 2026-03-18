@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
@@ -131,13 +132,18 @@ export default function AgentChat( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	const mergedComponents = useMemo(
+		() => ( { a: CustomALink, ...markdownComponents } ),
+		[ markdownComponents ]
+	);
+
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
-				components: markdownComponents,
+				components: mergedComponents,
 				extensions: markdownExtensions,
 			} ),
-		[ markdownComponents, markdownExtensions ]
+		[ mergedComponents, markdownExtensions ]
 	);
 
 	let floatingChatState: ChatState = 'collapsed';
