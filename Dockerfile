@@ -31,6 +31,8 @@ ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV SKIP_TSC=true
 ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
+ENV CONTAINER=docker
+ENV IS_CI=true
 
 # Build a "base" layer
 #
@@ -65,6 +67,7 @@ COPY --parents \
 # We don't need the full postinstall (build-packages, husky) at this
 # stage — just the bare install. SKIP_CALYPSO_POSTINSTALL lets us
 # bypass it safely.
+COPY ./bin/postinstall.sh /calypso/bin/postinstall.sh
 RUN yarn install --immutable --check-cache --inline-builds
 
 ###################
