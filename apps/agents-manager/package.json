@@ -1,6 +1,7 @@
 {
 	"name": "@automattic/agents-manager-app",
 	"version": "1.0.0",
+	"x-docker-cache-bust": "test-2026-03-18",
 	"description": "Agents Manager app to be used in Jetpack.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
