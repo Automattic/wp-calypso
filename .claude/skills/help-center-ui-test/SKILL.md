@@ -43,6 +43,7 @@ Test the Help Center on **both** surfaces, one at a time:
 
 1. **Calypso Dashboard**: `https://my.wordpress.com/sites`
 2. **WP Admin**: `https://en.support.wordpress.com/wp-admin/`
+3. **Editor**: `https://en.support.wordpress.com/wp-admin/post-new.php`
 
 For each surface:
 
