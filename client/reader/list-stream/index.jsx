@@ -65,7 +65,7 @@ class ListStream extends Component {
 			return <QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
-		let formattedTitle = null;
+		let formattedTitle = this.title;
 		if ( list ) {
 			// Show author name in parentheses if the list is owned by someone other than the current user
 			const isOwnedByCurrentUser =
