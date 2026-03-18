@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useDispatch } from 'calypso/state';
 import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
+
+import './style.scss';
 
 type GiftSubscriptionModalProps = {
 	userId: number | string;
@@ -40,10 +41,6 @@ const GiftSubscriptionModal = ( {
 			site_id: siteId,
 		} );
 	}, [ siteId ] );
-
-	const title = translate( 'Gift a subscription' );
-
-	const text = translate( 'Select a plan to gift to this user: ' );
 
 	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		setIsSubmitting( true );
@@ -82,21 +79,26 @@ const GiftSubscriptionModal = ( {
 	};
 
 	return (
-		<Modal overlayClassName="confirm-modal" title={ title } onRequestClose={ onClose }>
-			{ text && <p>{ text }</p> }
+		<Modal
+			overlayClassName="complimentary-subscription-modal"
+			title={ translate( 'Gift a subscription' ) }
+			onRequestClose={ onClose }
+		>
+			<p>{ translate( 'Select a plan to gift to this user: ' ) }</p>
 			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
 				initialSelectedList={ [] }
 				allowMultiple={ false }
+				showLabel={ false }
 			/>
-			<div className="confirm-modal__buttons">
-				<Button className="confirm-modal__cancel" onClick={ onClose }>
+			<div className="complimentary-subscription-modal__buttons">
+				<Button onClick={ onClose } variant="tertiary">
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
+					variant="primary"
+					isBusy={ isSubmitting }
 					onClick={ () => giftSubscription( planId, userId, username ) }
-					primary
-					busy={ isSubmitting }
 					disabled={ planId === 0 || isSubmitting }
 				>
 					{ translate( 'Confirm' ) }
