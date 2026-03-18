@@ -17,7 +17,9 @@ jobs:
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true yarn install --inline-builds
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true SKIP_CALYPSO_POSTINSTALL=true yarn install --inline-builds
+      - name: Prepare web workspace packages
+        run: yarn run build-packages:web
       - name: Build ICFY stats
         env:
           NODE_ENV: production
