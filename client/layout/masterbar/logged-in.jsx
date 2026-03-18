@@ -60,7 +60,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
-import EmptyMasterbar from './empty';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './masterbar-notifications/notifications-button';
@@ -82,7 +81,6 @@ class MasterbarLoggedIn extends Component {
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
 		useUnifiedAgent: PropTypes.bool,
-		isCIABSite: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -814,13 +812,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon, isCIABSite } =
-			this.props;
-
-		// Hide the masterbar entirely during checkout CIAB flows; they will use TopBar instead
-		if ( ( isCheckout || isCheckoutPending ) && isCIABSite ) {
-			return <EmptyMasterbar />;
-		}
+		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -906,7 +898,6 @@ export default connect(
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
 			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
-			isCIABSite: site?.is_garden && site.garden_name === 'commerce',
 		};
 	},
 	{
