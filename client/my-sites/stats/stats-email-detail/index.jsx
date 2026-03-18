@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button as CoreButton } from '@wordpress/components';
+import { Button as CoreButton, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight, isEqual } from 'lodash';
@@ -443,7 +442,7 @@ class StatsEmailDetail extends Component {
 							</WebPreview>
 						</>
 					) : (
-						<Spinner baseClassName="calypso-spinner" />
+						<Spinner />
 					) }
 				</Main>
 			</>
