@@ -4,6 +4,7 @@ import {
 	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
+	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
@@ -20,7 +21,7 @@ import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../utils/load-external-providers';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -64,10 +65,14 @@ interface Props {
 	inputValue?: string;
 	/** Called when the input value changes. */
 	onInputChange?: ( value: string ) => void;
+	/** Notice to display in the chat. */
+	notice?: NoticeConfig;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
 	imageUpload?: UseImageUploadResult;
+	/** Optional list of MIME types accepted for image uploads. When not provided, defaults include HEIC/HEIF. */
+	acceptedImageFileTypes?: string[];
 	/** Whether to show the feedback text input (after thumbs down). */
 	showFeedbackInput?: boolean;
 	/** Called when the user submits feedback text. */
@@ -77,6 +82,15 @@ interface Props {
 	/** Called when the user views the conversation history. */
 	onViewHistory?: () => void;
 }
+
+const DEFAULT_ACCEPTED_IMAGE_TYPES = [
+	'image/jpeg',
+	'image/png',
+	'image/heic',
+	'image/heif',
+	'image/heic-sequence',
+	'image/heif-sequence',
+];
 
 export default function AgentChat( {
 	messages,
@@ -94,6 +108,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -102,6 +117,7 @@ export default function AgentChat( {
 	onInputChange,
 	isCompactMode = false,
 	imageUpload,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
@@ -109,6 +125,7 @@ export default function AgentChat( {
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
+	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -152,6 +169,7 @@ export default function AgentChat( {
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
 			expandOnHover={ false }
+			notice={ notice }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -184,18 +202,12 @@ export default function AgentChat( {
 					<AgentUI.Notice />
 					{ imageUpload && (
 						<ImageUploader
+							ref={ imageUploaderRef }
 							images={ imageUpload.pendingImages }
 							uploadingImages={ imageUpload.uploadingImages }
 							onFilesSelected={ imageUpload.handleFilesSelected }
 							onRemoveImage={ imageUpload.handleRemoveImage }
-							acceptedFileTypes={ [
-								'image/jpeg',
-								'image/png',
-								'image/heic',
-								'image/heif',
-								'image/heic-sequence',
-								'image/heif-sequence',
-							] }
+							acceptedFileTypes={ acceptedImageFileTypes }
 							showFileMetadata
 							allowDragToInsert={ false }
 							dropZoneRef={ conversationViewRef }
@@ -203,7 +215,10 @@ export default function AgentChat( {
 					) }
 
 					<SelectedBlock />
-					<AgentUI.Input />
+					<AgentUI.Input
+						imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+						disabled={ imageUpload?.pendingImages?.length ? false : undefined }
+					/>
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>

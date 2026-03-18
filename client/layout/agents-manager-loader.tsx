@@ -4,7 +4,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, isSiteSection } from 'calypso/state/ui/selectors';
 
 export default function AgentsManagerLoader( {
 	sectionName,
@@ -16,6 +16,7 @@ export default function AgentsManagerLoader( {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
 	const selectedSite = useSelector( getSelectedSite );
+	const isSiteSpecific = useSelector( isSiteSection );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 
@@ -30,6 +31,7 @@ export default function AgentsManagerLoader( {
 			currentUser={ user }
 			sectionName={ sectionName }
 			site={ selectedSite || primarySite }
+			currentSiteId={ isSiteSpecific ? selectedSite?.ID : undefined }
 		/>
 	);
 }

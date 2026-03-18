@@ -560,7 +560,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		const allowedSocialServices = getPartnerAllowedSocialServices();
+		const allowedSocialServices = getPartnerAllowedSocialServices( this.props.oauth2Client );
 
 		return (
 			<>

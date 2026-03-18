@@ -51,10 +51,12 @@ import {
 	isStaticFilter,
 	constructThemeShowcaseUrl,
 } from './helpers';
+import SearchResultsModern from './search-results-modern';
 import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
+import ThemesFAQ from './themes-faq';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
@@ -78,6 +80,7 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 		this.showcaseRef = createRef();
+		this.sentinelRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -268,6 +271,15 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// In the modern showcase, scroll to the filter bar sentinel when sticky.
+		if ( this.isThemeShowcaseModern() ) {
+			const sentinel = this.sentinelRef.current;
+			if ( sentinel && sentinel.getBoundingClientRect().top < 0 ) {
+				sentinel.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			}
+			return;
+		}
+
 		// Scroll to the top of the showcase
 		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
@@ -565,6 +577,19 @@ class ThemeShowcase extends Component {
 			);
 		}
 
+		if ( this.isThemeShowcaseModern() && this.props.search && ! this.props.isCollectionView ) {
+			return (
+				<SearchResultsModern
+					search={ this.props.search }
+					filter={ this.props.filter || '' }
+					tier={ this.props.tier || '' }
+					getActionLabel={ this.getActionLabel }
+					getOptions={ this.getThemeOptions }
+					getScreenshotUrl={ this.getScreenshotUrl }
+				/>
+			);
+		}
+
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
@@ -593,6 +618,16 @@ class ThemeShowcase extends Component {
 			addTracking( this.props.options ),
 			( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, this.props.siteId ) )
 		);
+	};
+
+	getThemeSource = ( staticFilters ) => {
+		if ( this.props.tier === 'community' ) {
+			return 'wporg';
+		}
+		if ( this.props.category === staticFilters.MYTHEMES?.key ) {
+			return null;
+		}
+		return 'wpcom';
 	};
 
 	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
@@ -662,7 +697,7 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
-			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
+			source: this.getThemeSource( staticFilters ),
 			isThemeShowcaseModern: this.isThemeShowcaseModern(),
 		};
 
@@ -721,6 +756,7 @@ class ThemeShowcase extends Component {
 							) }
 							{ this.isThemeShowcaseModern() ? (
 								<FilterBarModern
+									sentinelRef={ this.sentinelRef }
 									categories={ Object.values( tabFilters ) }
 									selectedCategory={ this.getSelectedTabFilter().key }
 									onCategorySelect={ ( category ) =>
@@ -806,11 +842,12 @@ class ThemeShowcase extends Component {
 								isCollectionView: false,
 								tier: '',
 								filter: '',
-								search: '',
+								search: this.props.tier === 'community' ? this.props.search : '',
 								category: this.getDefaultStaticFilter().key,
 							} ) }
 							filter={ this.props.filter }
 							tier={ this.props.tier }
+							options={ { search: this.props.search } }
 							isLoggedIn={ isLoggedIn }
 						/>
 					) }
@@ -819,6 +856,7 @@ class ThemeShowcase extends Component {
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
+					{ this.isThemeShowcaseModern() && <ThemesFAQ /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />

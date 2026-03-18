@@ -53,6 +53,8 @@ export function pathWithLeadingSlash( path ) {
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
+	const ciabSetupRedirectTo =
+		'/setup/ai-site-builder-spec?source=ciab-sites-dashboard&ref=new-site-popover';
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -137,6 +139,23 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_redirect: redirectTo,
 		} );
 		return `/start/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	let hasCiabRedirectHost = false;
+	if ( redirectTo ) {
+		try {
+			const redirectToUrl = new URL( redirectTo );
+			hasCiabRedirectHost = [ 'my.woo.ai', 'my.woo.localhost' ].includes( redirectToUrl.hostname );
+		} catch {
+			// no-op
+		}
+	}
+
+	if ( get( currentQuery, 'from' ) === 'woo' || hasCiabRedirectHost ) {
+		const params = new URLSearchParams( {
+			redirect_to: ciabSetupRedirectTo,
+		} );
+		return `/start/account?${ params.toString() }`;
 	}
 
 	const signupFlow = get( currentQuery, 'signup_flow' );

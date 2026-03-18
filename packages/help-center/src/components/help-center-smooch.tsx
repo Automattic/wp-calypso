@@ -169,7 +169,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			if ( message?.source?.type === 'web' && message.source?.id ) {
 				setZendeskClientId( message.source?.id );
 				// Unregister the listener after setting the client ID
-				// @ts-expect-error -- 'off' is not part of the def.
 				Smooch?.off?.( 'message:sent', clientIdListener );
 			}
 		},
@@ -254,19 +253,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		}
 
 		return () => {
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:sent', clientIdListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'disconnected', disconnectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'reconnecting', reconnectingListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:stop', typingStopListener );
-			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'typing:start', typingStartListener );
 		};
 	}, [

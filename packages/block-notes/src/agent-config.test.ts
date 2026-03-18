@@ -2,10 +2,10 @@
  * Smoke tests for agent-config utilities
  */
 
-import { createAgentConfig } from '@automattic/agents-manager/src/utils/agent-config';
+import { createAgentConfig } from '@automattic/agents-manager/src/utils/create-agent-config';
 import { getBlogId, createBlockNotesAgentConfig, blockNotesAgentConfig } from './agent-config';
 
-jest.mock( '@automattic/agents-manager/src/utils/agent-config', () => ( {
+jest.mock( '@automattic/agents-manager/src/utils/create-agent-config', () => ( {
 	createAgentConfig: jest.fn().mockResolvedValue( {} ),
 } ) );
 

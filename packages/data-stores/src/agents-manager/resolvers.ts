@@ -1,5 +1,4 @@
 import { apiFetch } from '@wordpress/data-controls';
-import { Location } from 'history';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
@@ -10,16 +9,30 @@ import {
 	setHasLoaded,
 	setFloatingPosition,
 } from './actions';
+import type { PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
+
+const VALID_SITE_KEY = /^\d+$|^no-site$/;
+
+/**
+ * Validate that the router history is in the expected per-site format,
+ * keyed by numeric site ID or 'no-site'.
+ */
+function isValidRouterHistory( value?: PerSiteRouterHistory ) {
+	if ( ! value ) {
+		return false;
+	}
+
+	return (
+		typeof value === 'object' && Object.keys( value ).every( ( key ) => VALID_SITE_KEY.test( key ) )
+	);
+}
 
 type AgentsManagerStateResponse = {
 	agents_manager_open?: boolean;
 	agents_manager_docked?: boolean;
 	agents_manager_floating_position?: 'left' | 'right';
-	agents_manager_router_history?: {
-		entries: Location[];
-		index: number;
-	};
+	agents_manager_router_history?: PerSiteRouterHistory;
 };
 
 export function* getAgentsManagerState() {
@@ -35,7 +48,7 @@ export function* getAgentsManagerState() {
 					path: '/agents-manager/open-state',
 			  } as APIFetchOptions );
 
-		if ( state.agents_manager_router_history ) {
+		if ( isValidRouterHistory( state.agents_manager_router_history ) ) {
 			yield setRouterHistory( state.agents_manager_router_history );
 		}
 

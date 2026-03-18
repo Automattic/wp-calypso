@@ -21,7 +21,7 @@ export type RootRouterContext = {
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause, context } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
@@ -29,6 +29,10 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( cause === 'enter' ) {
 			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
 			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+		}
+
+		if ( ! context.config.optIn ) {
+			return;
 		}
 
 		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );

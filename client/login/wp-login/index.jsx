@@ -423,6 +423,7 @@ function getInitialHeadingState( props, translate ) {
 		action,
 		translate,
 		isWooJPC,
+		ciabConfig,
 	} );
 
 	return {
@@ -494,7 +495,7 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			ciabConfig: detectCiabConfig(),
+			ciabConfig: detectCiabConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),

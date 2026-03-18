@@ -17,7 +17,7 @@ export function receiveDeleteCoupon( siteId, giftId ) {
 	};
 }
 
-export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
+export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
 	return ( dispatch ) => {
 		dispatch( {
 			gift,
@@ -29,7 +29,9 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/gifts/` + gift.user_id + '/' + gift.plan_id,
+					path: `/sites/${ siteId }/memberships/gifts/${ encodeURIComponent( gift.user_id ) }/${
+						gift.plan_id
+					}`,
 					apiNamespace: 'wpcom/v2',
 				},
 				null
@@ -47,7 +49,7 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 					);
 				}
 
-				onConfirm();
+				onComplete?.( { success: true } );
 
 				return membershipGift;
 			} )
@@ -58,10 +60,12 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 					type: MEMBERSHIPS_GIFT_ADD_FAILURE,
 				} );
 				dispatch(
-					errorNotice( error.error.message ?? error.message, {
+					errorNotice( error.error?.message ?? error.message, {
 						duration: 10000,
 					} )
 				);
+
+				onComplete?.( { success: false } );
 			} );
 	};
 };

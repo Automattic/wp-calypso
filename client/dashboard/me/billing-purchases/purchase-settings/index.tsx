@@ -600,6 +600,42 @@ function getFields( {
 					}
 					return undefined;
 				} )();
+				if ( purchase.is_jetpack_plan_or_product ) {
+					if ( purchase.is_auto_renew_enabled ) {
+						return (
+							<ActionList.ActionItem
+								title={ __( 'Subscription renewal' ) }
+								description={ ( (): string => {
+									return typeof helpText === 'string' ? helpText : '';
+								} )() }
+								actions={ <></> }
+							/>
+						);
+					}
+					return (
+						<ActionList.ActionItem
+							title={ __( 'Your subscription is inactive' ) }
+							description={ sprintf(
+								// translators: date is a formatted expiry date
+								__( 'Expires on %(date)s.' ),
+								{
+									date: formatDate( new Date( purchase.expiry_date ), locale, {
+										dateStyle: 'long',
+									} ),
+								}
+							) }
+							actions={
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={ () => onChange( { is_auto_renew_enabled: true } ) }
+								>
+									{ __( 'Re-activate subscription' ) }
+								</Button>
+							}
+						/>
+					);
+				}
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
@@ -619,6 +655,7 @@ function getFields( {
 		},
 		{
 			id: 'purchase_payment_method',
+			isVisible: ( item ) => item.is_auto_renew_enabled,
 			Edit: ( { data: purchase } ) => {
 				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
 			},
@@ -705,6 +742,16 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
+	const offerText = isOffer
+		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
+				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+		  } )
+		: '';
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -712,7 +759,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+			description={
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+			}
 		/>
 	);
 }
