@@ -264,7 +264,15 @@ function McpComponent() {
 										<path d="M20.1 4c-.5-.5-1-.8-1.7-.8-.6 0-1.2.3-1.7.7l-12 12.1-.1.2-1 4.1 4.2-.9.2-.1 12-12.1c.9-1 .9-2.4.1-3.2zm-14 11.4l9.5-9.6 1.7 1.6-9.5 9.6-1.7-1.6zm-.9 1.7l1.3 1.3-1.8.4.5-1.7zm13-12.3l-.9.9-1.7-1.6.9-.9c.2-.2.4-.3.7-.3.2 0 .5.1.7.3l.3.3c.4.4.4 1 0 1.3z" />
 									</svg>
 								}
-								badges={ [ { text: getReadStatus( writeTools ) } ] }
+								badges={ [
+									{
+										text: getReadStatus( writeTools ),
+										intent:
+											writeTools.length > 0 && writeTools.every( ( [ , t ] ) => t.enabled )
+												? ( 'success' as const )
+												: undefined,
+									},
+								] }
 							/>
 							<CardDivider />
 							<RouterLinkSummaryButton
