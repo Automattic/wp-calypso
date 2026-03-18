@@ -418,7 +418,10 @@ export default function SubscriberDataViews( {
 		if ( couponsAndGiftsEnabled ) {
 			baseActions.push( {
 				id: 'gift',
-				label: translate( 'Comp a subscription' ),
+				label: translate( 'Comp a subscription', {
+					comment:
+						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
+				} ),
 				isEligible: ( subscriber: Subscriber ) =>
 					!! ( subscriber.user_id || subscriber.email_address ),
 				callback: ( items: Subscriber[] ) => {
