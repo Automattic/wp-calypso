@@ -1,6 +1,6 @@
 import { useIsMutating, useQuery } from '@tanstack/react-query';
 import {
-	isBlogSubdomainQuery,
+	isFreeSubdomainQuery,
 	isWpcomSubdomainQuery,
 	stripWpcomSubdomainSuffix,
 } from '../../helpers';
@@ -12,10 +12,10 @@ const SkipSuggestion = () => {
 
 	const isMutating = useIsMutating();
 
-	const isWpcomSubdomain = isWpcomSubdomainQuery( query );
-	const isBlogSubdomain = isBlogSubdomainQuery( query );
-	const isFreeSubdomain = isWpcomSubdomain || isBlogSubdomain;
-	const normalizedQuery = isWpcomSubdomain ? stripWpcomSubdomainSuffix( query ) : query;
+	const isFreeSubdomain = isFreeSubdomainQuery( query );
+	const normalizedQuery = isWpcomSubdomainQuery( query )
+		? stripWpcomSubdomainSuffix( query )
+		: query;
 
 	const { data: suggestion } = useQuery( queries.freeSuggestion( normalizedQuery ) );
 

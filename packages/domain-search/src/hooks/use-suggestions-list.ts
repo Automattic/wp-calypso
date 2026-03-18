@@ -3,7 +3,7 @@ import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@ta
 import { useMemo } from 'react';
 import {
 	getTld,
-	isBlogSubdomainQuery,
+	isFreeSubdomainQuery,
 	isWpcomSubdomainQuery,
 	stripWpcomSubdomainSuffix,
 } from '../helpers';
@@ -32,10 +32,10 @@ const availablePremiumDomainsCombinator = (
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
-	const isWpcomSubdomain = isWpcomSubdomainQuery( query );
-	const isBlogSubdomain = isBlogSubdomainQuery( query );
-	const isFreeSubdomain = isWpcomSubdomain || isBlogSubdomain;
-	const freeSuggestionQuery = isWpcomSubdomain ? stripWpcomSubdomainSuffix( query ) : query;
+	const isFreeSubdomain = isFreeSubdomainQuery( query );
+	const freeSuggestionQuery = isWpcomSubdomainQuery( query )
+		? stripWpcomSubdomainSuffix( query )
+		: query;
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
