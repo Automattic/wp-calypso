@@ -36,6 +36,7 @@ function SearchResults( { searchInput }: { searchInput: string } ) {
 		getLocaleSlug() ?? 'en',
 		'sectionName'
 	);
+
 	if ( isSearching ) {
 		return <Spinner />;
 	}
