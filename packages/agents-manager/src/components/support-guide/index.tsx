@@ -40,14 +40,14 @@ export default function SupportGuide( {
 	isEligibleForChat,
 }: Props ) {
 	const navigate = useNavigate();
-	const { search, state } = useLocation();
-	const query = new URLSearchParams( search );
-	const isFromChat = query.has( 'from-chat' );
+	const { state } = useLocation();
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+
+	const isFromChat = !! ( state?.sessionId || state?.conversationId );
 
 	return (
 		<AgentUI.Container
@@ -89,7 +89,7 @@ export default function SupportGuide( {
 					</div>
 					{ ! isFromChat && (
 						<div className="agent-manager-support-guide-footer">
-							<Button variant="primary" onClick={ () => navigate( '/chat' ) }>
+							<Button variant="primary" onClick={ () => navigate( '/' ) }>
 								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
 							</Button>
 						</div>
