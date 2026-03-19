@@ -210,12 +210,15 @@
 	display: grid;
 	gap: 24px;
 	grid-template-columns: 1fr;
+	margin: 48px auto;
 	padding: 24px;
+	width: calc( 100% - 24px - 24px );
 
 	@include break-medium {
 		align-items: center;
 		grid-template-columns: 1fr 1fr 1fr;
 		padding: 40px;
+		width: calc( 100% - 40px - 40px );
 	}
 }
 
