@@ -69,7 +69,11 @@ const ReaderFullPostActionBar = ( {
 						rel="external noopener noreferrer"
 						onClick={ handleViewOriginalClick }
 					>
-						<Icon icon={ globe } size={ 24 } />
+						<Icon
+							icon={ globe }
+							size={ 24 }
+							className="reader-full-post__view-original-button-icon"
+						/>
 						<span className="reader-full-post__view-original-button-label">
 							{ translate( 'View original' ) }
 						</span>

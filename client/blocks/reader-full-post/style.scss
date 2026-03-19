@@ -371,6 +371,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__action-bar .reader-full-post__view-original-button {
 	min-height: auto;
 	text-decoration: none;
+
+	.reader-full-post__view-original-button-icon {
+		fill: var( --color-text-subtle );
+	}
+
+	&:hover .reader-full-post__view-original-button-icon {
+		fill: var( --color-link );
+	}
 }
 
 @media ( max-width: 900px ) {
