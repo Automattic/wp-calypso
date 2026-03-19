@@ -40,6 +40,15 @@ export function extractNewContentFromMessage( message: Message ): Message {
 				return true;
 			}
 
+			// INCLUDE sources for article references
+			if (
+				'sources' in part.data &&
+				Array.isArray( part.data.sources ) &&
+				part.data.sources.length > 0
+			) {
+				return true;
+			}
+
 			// INCLUDE tool results (have toolCallId + result)
 			if ( 'toolCallId' in part.data && 'result' in part.data ) {
 				return true;
