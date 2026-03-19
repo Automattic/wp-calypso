@@ -163,6 +163,7 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
+					{ dashboard && <div id="wpcom-omnibar" /> }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"

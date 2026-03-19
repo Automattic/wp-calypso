@@ -1,6 +1,6 @@
 import { persistQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { initSentry } from '@automattic/calypso-sentry';
+import { captureException, initSentry } from '@automattic/calypso-sentry';
 import {
 	isSupportSession,
 	maybeInitializeSupportSession,
@@ -39,6 +39,10 @@ function boot( config: AppConfig ) {
 		throw new Error( 'No root element found' );
 	}
 	const root = createRoot( rootElement );
+
+	if ( isEnabled( 'dashboard/omnibar' ) ) {
+		import( './interim-omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+	}
 
 	persistQueryClientPromise.then( () => {
 		root.render( <Layout config={ config } /> );

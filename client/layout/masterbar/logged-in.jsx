@@ -834,6 +834,8 @@ class MasterbarLoggedIn extends Component {
 	}
 }
 
+export { MasterbarLoggedIn };
+
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
