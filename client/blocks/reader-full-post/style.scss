@@ -657,6 +657,22 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.reader-full-post__header-title-link {
 		display: block;
+		text-decoration: none;
+
+		&::after {
+			content: "↗";
+			display: inline-block;
+			color: var( --color-text-subtle );
+			font-size: 0.65em;
+			margin-inline-start: 8px;
+			opacity: 0;
+			transform: translateY( -1px );
+			transition: opacity 0.2s ease;
+		}
+	}
+
+	.reader-full-post__header-title-link:hover::after {
+		opacity: 1;
 	}
 
 	.reader-full-post__header-title-link,
