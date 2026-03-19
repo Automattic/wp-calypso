@@ -141,7 +141,8 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	const isFinalizingPhase = agentChatProps.progressPhase === 'uploading';
+	const isFinalizingPhase =
+		( agentChatProps as unknown as { progressPhase?: string } ).progressPhase === 'uploading';
 
 	// Disable input during upload phase or annotation saving to prevent orphan images
 	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;

@@ -72,7 +72,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
-import { isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
@@ -400,10 +399,6 @@ export default function CheckoutMainContent( {
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
 	);
 
-	const isWooHostedCheckout = useSelector( ( state ) =>
-		siteId ? isCommerceGardenSite( state, siteId ) : false
-	);
-
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
 	const shouldShowSitePreview =
 		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
@@ -514,7 +509,6 @@ export default function CheckoutMainContent( {
 
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
-	const isUsingTopBar = isStepContainerV2 || isWooHostedCheckout;
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
@@ -529,11 +523,11 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		if ( isUsingTopBar ) {
+		if ( isStepContainerV2 ) {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading hideLogo={ isWooHostedCheckout } />
+					<Step.Loading />
 				</>
 			);
 		}
@@ -608,7 +602,7 @@ export default function CheckoutMainContent( {
 						>
 							<CheckoutSummaryTitleContent className="checkout__summary-title">
 								<CheckoutSummaryTitle>
-									{ ! isUsingTopBar && (
+									{ ! isStepContainerV2 && (
 										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
 									) }
 									{ translate( 'Purchase Details' ) }
@@ -648,7 +642,7 @@ export default function CheckoutMainContent( {
 		<RestorableProductsProvider>
 			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
-				{ isUsingTopBar ? (
+				{ isStepContainerV2 ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
 						align="left"
@@ -855,7 +849,7 @@ export default function CheckoutMainContent( {
 		</RestorableProductsProvider>
 	);
 
-	if ( ! isUsingTopBar ) {
+	if ( ! isStepContainerV2 ) {
 		return (
 			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
 				{ checkoutSummary }
@@ -881,7 +875,6 @@ export default function CheckoutMainContent( {
 									</Step.LinkButton>
 								</span>
 							}
-							hideLogo={ isWooHostedCheckout }
 						/>
 					);
 

@@ -769,6 +769,59 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'free .blog subdomain suggestion', () => {
+		it( 'renders the skip suggestion when searching for an available .blog subdomain', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'mysite.tech.blog' },
+				suggestions: [ buildSuggestion( { domain_name: 'mysite.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'mysite.tech.blog', include_dotblogsubdomain: true },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'mysite.tech.blog' } ),
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="mysite.tech.blog"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Start free with mysite.tech.blog' ) ).toBeInTheDocument();
+			expect(
+				screen.getByLabelText( 'Skip purchase and continue with mysite.tech.blog' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders unavailable notice when the searched .blog subdomain is taken', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'taken.photo.blog' },
+				suggestions: [ buildSuggestion( { domain_name: 'taken.com' } ) ],
+			} );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'taken.photo.blog', include_dotblogsubdomain: true },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'taken123.photo.blog' } ),
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { skippable: true, includeDotBlogSubdomain: true } }
+					query="taken.photo.blog"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'taken.photo.blog is not available' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'taken123.photo.blog' } ) ).toBeInTheDocument();
+			expect( screen.queryByLabelText( /Skip purchase/ ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
 			const onSuggestionsReceive = jest.fn();
