@@ -101,4 +101,9 @@
 	margin: 108px auto;
 	max-width: calc( 1220px - 48px);
 	width: calc( 100% - 48px - 48px);
+
+	@include break-mobile {
+		max-width: calc( 1220px - 80px);
+		width: calc( 100% - 48px - 80px);
+	}
 }
