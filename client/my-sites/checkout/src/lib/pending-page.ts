@@ -283,8 +283,13 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 
 	try {
 		const parsedUrl = new URL( url );
-		const { hostname, pathname } = parsedUrl;
+		const { hostname, pathname, protocol } = parsedUrl;
 		if ( ! hostname ) {
+			return false;
+		}
+
+		// Only allow http and https protocols to prevent javascript: URL XSS.
+		if ( protocol !== 'https:' && protocol !== 'http:' ) {
 			return false;
 		}
 

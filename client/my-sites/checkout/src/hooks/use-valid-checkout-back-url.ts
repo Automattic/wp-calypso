@@ -62,8 +62,13 @@ const useValidCheckoutBackUrl = (
 		} catch {
 			return undefined;
 		}
-		const { hostname } = parsedUrl;
-		if ( resemblesUrl( checkoutBackUrl ) && hostname && allowedHosts.includes( hostname ) ) {
+		const { hostname, protocol } = parsedUrl;
+		if (
+			resemblesUrl( checkoutBackUrl ) &&
+			hostname &&
+			( protocol === 'https:' || protocol === 'http:' ) &&
+			allowedHosts.includes( hostname )
+		) {
 			return checkoutBackUrl;
 		}
 
