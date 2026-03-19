@@ -18,6 +18,7 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 
 		await test.step( 'Given I clear any stale cart items', async function () {
 			await accountAtomic.restAPI.clearShoppingCart( siteId );
+			await accountAtomic.restAPI.clearMyShoppingCart( 'no-site' );
 		} );
 
 		await test.step( 'When I navigate to the domain-and-plan flow', async function () {
