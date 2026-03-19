@@ -21,13 +21,6 @@ $enable_odie_answers     = ! is_user_logged_in() && ( 'treatment' === \ExPlat\as
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && 'true' === $_GET['dotcom_support_enable_odie_answers'] ) );
 $should_show_search_navigation = ( $is_front_page && $enable_odie_answers ) || ( ! $is_front_page && ! $is_404_page );
 
-$heading = __( 'How can we help you?', 'happy-blocks' );
-if ( $is_forums ) {
-	$heading = __( 'WordPress.com support forums', 'happy-blocks' );
-} elseif ( $is_404_page ) {
-	$heading = __( "This page doesn't exist", 'happy-blocks' );
-}
-
 if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	/**
 	 * Generate a support search URL for a given query, scoped to the current site.
@@ -147,7 +140,12 @@ $placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
 		);
 		?>
 	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
-		<h2><?php echo esc_html( $heading ); ?></h2>
+		<?php if ( $is_forums ) : ?>
+			<h1 class="spf-header__title"><?php echo esc_html( __( 'WordPress.com support forums', 'happy-blocks' ) ); ?></h1>
+			<p class="spf-header__subtitle"><?php echo esc_html( __( 'Get help with WordPress.com and the WordPress.com apps.', 'happy-blocks' ) ); ?></p>
+		<?php else : ?>
+			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+		<?php endif; ?>
 		<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 
 		<fieldset class="support-search-form-container">
