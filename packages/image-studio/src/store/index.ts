@@ -38,6 +38,7 @@ export interface Notice {
 	content: string;
 	type: NoticeType;
 	actions?: NoticeAction[];
+	dismissible?: boolean;
 }
 
 export enum ImageStudioEntryPoint {
@@ -282,6 +283,20 @@ type ImageStudioAction =
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
 	| ResetCanvasHistoryAction;
+
+/**
+ * Resolve the dismissible flag for a notice.
+ *
+ * When the caller provides an explicit value it is used as-is.
+ * Otherwise, warning notices default to non-dismissible (e.g. hard
+ * quota errors), while all other notice types default to dismissible.
+ */
+function resolveNoticeDismissible( type: NoticeType, explicit?: boolean ): boolean {
+	if ( explicit !== undefined ) {
+		return explicit;
+	}
+	return type !== 'warning';
+}
 
 /**
  * Key for localStorage persistence
@@ -663,7 +678,8 @@ export interface ImageStudioActions {
 	addNotice: (
 		content: string,
 		type: NoticeType,
-		noticeActions?: NoticeAction[]
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
 	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
@@ -811,7 +827,12 @@ const actions = {
 		};
 	},
 
-	addNotice( content: string, type: NoticeType, noticeActions?: NoticeAction[] ): AddNoticeAction {
+	addNotice(
+		content: string,
+		type: NoticeType,
+		noticeActions?: NoticeAction[],
+		dismissible?: boolean
+	): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
 			payload: {
@@ -819,6 +840,7 @@ const actions = {
 				id: `${ Math.random().toString( 36 ).substring( 2, 9 ) }`,
 				content,
 				type,
+				dismissible: resolveNoticeDismissible( type, dismissible ),
 				...( noticeActions?.length && {
 					actions: noticeActions,
 				} ),

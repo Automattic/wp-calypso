@@ -118,8 +118,12 @@ const DomainSearchStep: StepType< {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
 			},
-			includeDotBlogSubdomain: isNewsletterFlow( flow ),
 			skippable:
+				! isHundredYearPlanFlow( flow ) &&
+				! isHundredYearDomainFlow( flow ) &&
+				! isDomainFlow( flow ) &&
+				! isDomainAndPlanFlow( flow ),
+			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&

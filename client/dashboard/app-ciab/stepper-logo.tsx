@@ -2,11 +2,11 @@
  * Woo logo matching the CIAB dashboard header.
  * Uses currentColor for styling flexibility.
  */
-export function WooDashboardLogo( props: React.SVGProps< SVGSVGElement > ) {
+export default function CiabDashboardStepperLogo( props: React.SVGProps< SVGSVGElement > ) {
 	return (
 		<svg
 			width="72"
-			height="20"
+			height="24"
 			viewBox="0 0 72 20"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"

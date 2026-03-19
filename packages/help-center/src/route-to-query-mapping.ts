@@ -8,6 +8,7 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/hosting-config/': __( 'hosting configuration' ),
 		'/marketing/sharing-buttons/': __( 'social share' ),
 		'/me/get-apps': __( 'wordpress apps' ),
+		'/me/mcp': __( 'mcp' ),
 		'/me/notifications': __( 'notification settings' ),
 		'/me/privacy': __( 'privacy' ),
 		'/me/site-blocks': __( 'blocked sites' ),

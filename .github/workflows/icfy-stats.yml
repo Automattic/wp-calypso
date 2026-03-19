@@ -14,10 +14,32 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: Fetch git history
-        run: git fetch --prune --unshallow
+      - name: Fetch trunk history
+        env:
+          FETCH_DEPTH_STEP: 1000
+          FETCH_DEPTH_MAX_ATTEMPTS: 100
+        run: |
+          if git rev-parse --is-shallow-repository | grep -q true; then
+            attempt=0
+
+            until git merge-base HEAD origin/trunk >/dev/null 2>&1; do
+              attempt=$(( attempt + 1 ))
+
+              if [ "$attempt" -gt "$FETCH_DEPTH_MAX_ATTEMPTS" ]; then
+                echo "Unable to find a merge base with origin/trunk after deepening history $(( FETCH_DEPTH_STEP * FETCH_DEPTH_MAX_ATTEMPTS )) commits." >&2
+                exit 1
+              fi
+
+              echo "Deepening origin/trunk history by $FETCH_DEPTH_STEP commits (attempt $attempt/$FETCH_DEPTH_MAX_ATTEMPTS)"
+              git fetch --no-tags --deepen="$FETCH_DEPTH_STEP" origin +refs/heads/trunk:refs/remotes/origin/trunk
+            done
+          else
+            git fetch --no-tags origin +refs/heads/trunk:refs/remotes/origin/trunk
+          fi
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true yarn install --inline-builds
+        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true SKIP_CALYPSO_POSTINSTALL=true yarn install --inline-builds
+      - name: Prepare web workspace packages
+        run: yarn run build-packages:web
       - name: Build ICFY stats
         env:
           NODE_ENV: production

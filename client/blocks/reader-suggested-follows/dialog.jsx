@@ -1,15 +1,14 @@
+import './style.scss';
 import { Dialog } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { SuggestedFollowItem } from 'calypso/blocks/reader-suggested-follows';
 import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
+import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useRecommendOrRelatedSitesQuery } from './hooks/use-recommend-or-related-sites-query';
-import { RecommendedFeed } from './recommended-feed';
-
-import './style.scss';
 
 const useHasScrolledContent = () => {
 	const [ hasScrolledContent, setHasScrolledContent ] = useState( false );
@@ -158,15 +157,17 @@ const ReaderSuggestedFollowsDialog = ( {
 											/>
 										</li>
 									) ) }
-								{ resourceType === 'recommended' &&
-									data.map( ( recommendedFeed ) => (
-										<li
-											key={ recommendedFeed.feedId }
-											className="reader-recommended-follows-dialog__follow-item"
-										>
-											<RecommendedFeed feed={ recommendedFeed } onClose={ onClose } />
-										</li>
-									) ) }
+								{ resourceType === 'recommended' && (
+									<li
+										className="reader-recommended-follows-dialog__follow-item"
+										style={ { padding: 0 } }
+									>
+										<RecommendedFeedsList
+											feeds={ data }
+											followSource="reader-recommended-follows-dialog__recommended-feeds-list"
+										/>
+									</li>
+								) }
 							</ul>
 						</div>
 					</>

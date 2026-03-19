@@ -152,13 +152,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action: SiteMigrationIdentifyAction;
 						host?: string;
 					};
-
-					// Handle wpcom sites - navigate to already-wpcom step
-					// This check must be FIRST, before SSH migration logic
-					if ( action === 'already-wpcom' ) {
-						return navigate( paths.alreadyWpcomPath( { from } ) );
-					}
-
 					const hasDestinationSite = hasSite( siteId, siteSlug );
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 

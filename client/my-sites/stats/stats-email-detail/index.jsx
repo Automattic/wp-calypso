@@ -40,7 +40,7 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
 import StatsEmailTopRow from '../stats-email-top-row';
