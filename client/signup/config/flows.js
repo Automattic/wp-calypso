@@ -104,10 +104,17 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
+	if ( dependencies.refParameter === 'wp-admin' ) {
+		return addQueryArgs(
+			{ 'celebrate-launch': 'true' },
+			`https://${ dependencies.siteSlug }/wp-admin`
+		);
+	}
+
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { designType, siteSlug } ) {
 	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
 
 	// This designType represents a new site.
@@ -116,7 +123,7 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
 
-		return addQueryArgs( { siteId }, '/start/setup-site' );
+		return `/home/${ siteSlug }`;
 	} else if ( designType === 'existing-site' ) {
 		if ( dashboardType ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );

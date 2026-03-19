@@ -5,7 +5,6 @@ import {
 	isTriennially,
 	isWpComPlan,
 	isYearly,
-	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
@@ -26,7 +25,9 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
+import useEquivalentMonthlyTotals, {
+	getOriginalAmountIntegerForDisplay,
+} from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import {
 	getIsOnboardingAffiliateFlow,
@@ -390,8 +391,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 
 	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 
-	const originalAmountInteger =
-		monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
+	const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
 	const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,

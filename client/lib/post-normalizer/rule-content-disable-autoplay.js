@@ -24,7 +24,13 @@ export function disableAutoPlayOnMedia( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
-	dom.querySelectorAll( 'audio, video' ).forEach( ( el ) => ( el.autoplay = false ) );
+	dom.querySelectorAll( 'audio, video' ).forEach( ( el ) => {
+		el.autoplay = false;
+		if ( el.tagName === 'VIDEO' ) {
+			el.controls = true;
+			el.preload = 'metadata';
+		}
+	} );
 	return post;
 }
 

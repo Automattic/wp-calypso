@@ -282,7 +282,7 @@ export default function SubscribersChartSection( {
 							height={ 300 }
 							curveType="monotone" // can use smooth, linear, monotone
 							EmptyState={ () => null }
-							zeroBaseline
+							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
 							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>

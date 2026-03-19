@@ -1,11 +1,9 @@
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useMemo } from 'react';
 import { connect } from 'react-redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import memoizeLast from 'calypso/lib/memoize-last';
 import { NAVIGATION_METHOD_ARROW } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -15,58 +13,32 @@ import {
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DateLabelDrill from './date-label-drill';
-import withIsDrillingDownHook from './with-is-drilling-down-hook';
 
 import './style.scss';
 
-// TODO: Rename this component to `StatsDateLabel` and refactor it as a Functional Component.
-class StatsDatePicker extends Component {
-	static propTypes = {
-		date: PropTypes.oneOfType( [ PropTypes.object.isRequired, PropTypes.string.isRequired ] ),
-		period: PropTypes.string.isRequired,
-		summary: PropTypes.bool,
-		query: PropTypes.object,
-		queryParams: PropTypes.object,
-		statType: PropTypes.string,
-		isActivity: PropTypes.bool,
-		showQueryDate: PropTypes.bool,
-		isShort: PropTypes.bool,
-	};
+function StatsDateLabel( {
+	date,
+	period,
+	summary,
+	query,
+	queryParams,
+	isActivity,
+	showQueryDate = false,
+	isShort = false,
+	dateRange,
+	queryDate,
+	reduxState,
+	translate,
+	momentSiteZone,
+} ) {
+	// Integrated from withIsDrillingDownHook HOC.
+	// Re-reads sessionStorage when period or navigation method changes.
+	const isDrillingDown = useMemo( () => {
+		return sessionStorage.getItem( 'jetpack_stats_date_range_is_drilling_down' );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ period, queryParams?.navigation ] );
 
-	static defaultProps = {
-		showQueryDate: false,
-		isActivity: false,
-		isShort: false,
-	};
-
-	dateForSummarize() {
-		const { query, momentSiteZone, translate } = this.props;
-
-		if ( query.start_date ) {
-			return this.dateForCustomRange( query.start_date, query.date );
-		}
-
-		const localizedDate = momentSiteZone();
-
-		switch ( query.num ) {
-			case '-1':
-				return translate( 'All Time' );
-
-			default:
-				return translate( '%(number)s days ending %(endDate)s (Summarized)', {
-					context: 'Date range for which stats are being displayed',
-					args: {
-						// LL is a date localized by momentjs
-						number: parseInt( query.num ),
-						endDate: localizedDate.format( 'LL' ),
-					},
-				} );
-		}
-	}
-
-	dateForCustomRange( startDate, endDate, selectedShortcut = null ) {
-		const { momentSiteZone } = this.props;
-
+	function dateForCustomRange( startDate, endDate, selectedShortcut = null ) {
 		// Generate a full date range for the label.
 		const localizedStartDate = momentSiteZone( startDate );
 		const localizedEndDate = momentSiteZone( endDate );
@@ -127,7 +99,30 @@ class StatsDatePicker extends Component {
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	dateForDisplay( selectedShortcut = null ) {
+	function dateForSummarize() {
+		if ( query.start_date ) {
+			return dateForCustomRange( query.start_date, query.date );
+		}
+
+		const localizedDate = momentSiteZone();
+
+		switch ( query.num ) {
+			case '-1':
+				return translate( 'All Time' );
+
+			default:
+				return translate( '%(number)s days ending %(endDate)s (Summarized)', {
+					context: 'Date range for which stats are being displayed',
+					args: {
+						// LL is a date localized by momentjs
+						number: parseInt( query.num ),
+						endDate: localizedDate.format( 'LL' ),
+					},
+				} );
+		}
+	}
+
+	function dateForDisplay( selectedShortcut = null ) {
 		if (
 			selectedShortcut?.label &&
 			! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
@@ -135,12 +130,11 @@ class StatsDatePicker extends Component {
 			return selectedShortcut.label;
 		}
 
-		const { date, period, translate, isShort, dateRange, momentSiteZone } = this.props;
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		// Respect the dateRange if provided.
 		if ( dateRange?.chartStart && dateRange?.chartEnd ) {
-			return this.dateForCustomRange( dateRange.chartStart, dateRange.chartEnd, selectedShortcut );
+			return dateForCustomRange( dateRange.chartStart, dateRange.chartEnd, selectedShortcut );
 		}
 
 		// Ensure we have a moment instance here to work with.
@@ -174,35 +168,35 @@ class StatsDatePicker extends Component {
 		return formattedDate;
 	}
 
-	renderQueryDate() {
-		const { query, queryDate, momentSiteZone, translate } = this.props;
-
+	function renderQueryDate() {
 		let content = '';
 		if ( queryDate && isAutoRefreshAllowedForQuery( query ) ) {
 			const today = momentSiteZone();
-			const date = momentSiteZone( queryDate );
-			const isToday = today.isSame( date, 'day' );
+			const queryDateMoment = momentSiteZone( queryDate );
+			const isToday = today.isSame( queryDateMoment, 'day' );
 
 			content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
-				args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+				args: { time: isToday ? queryDateMoment.format( 'LT' ) : queryDateMoment.fromNow() },
 				components: {
-					b: <span className="stats-date-picker__last-update" />,
+					b: <span className="stats-date-label__last-update" />,
 				},
 			} );
 		}
 
 		return (
-			<div className="stats-date-picker__refresh-status">
-				<span className="stats-date-picker__update-date">{ content }</span>
+			<div className="stats-date-label__refresh-status">
+				<span className="stats-date-label__update-date">{ content }</span>
 			</div>
 		);
 	}
 
-	bindStatusIndicator = ( ref ) => {
-		this.statusIndicator = ref;
-	};
+	const isSummarizeQuery = get( query, 'summarize' );
+	const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
+	const shortDisplayDate = isShort ? dateForDisplay( selectedShortcut ) : null;
+	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize() : null;
+	const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
 
-	getDateHistory = memoizeLast( ( displayDate, isDrillingDown ) => {
+	const previousDisplayDate = useMemo( () => {
 		if ( ! isDrillingDown ) {
 			sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down_date_history' );
 		}
@@ -214,7 +208,7 @@ class StatsDatePicker extends Component {
 		const dateHistory = JSON.parse(
 			sessionStorage.getItem( 'jetpack_stats_date_range_is_drilling_down_date_history' ) || '[]'
 		);
-		const isArrowNavigation = this.props?.queryParams?.navigation === NAVIGATION_METHOD_ARROW;
+		const isArrowNavigation = queryParams?.navigation === NAVIGATION_METHOD_ARROW;
 
 		// For the arrow navigation, we want to replace the last element with the new date.
 		if ( isArrowNavigation ) {
@@ -231,92 +225,67 @@ class StatsDatePicker extends Component {
 		}
 
 		return dateHistory.length > 1 ? dateHistory[ dateHistory.length - 2 ] : null;
-	} );
+	}, [ displayDate, isDrillingDown, queryParams?.navigation ] );
 
-	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const {
-			summary,
-			translate,
-			query,
-			showQueryDate,
-			isActivity,
-			isShort,
-			dateRange,
-			reduxState,
-			// Used for drill-downs of the date range chart from `withIsDrillingDownHook`.
-			isDrillingDown,
-		} = this.props;
-		const isSummarizeQuery = get( query, 'summarize' );
-		const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
-		const shortDisplayDate = isShort ? this.dateForDisplay( selectedShortcut ) : null;
-		const summarizeDisplayDate = isSummarizeQuery ? this.dateForSummarize() : null;
-		const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
-		const previousDisplayDate = this.getDateHistory( displayDate, isDrillingDown );
-
-		let sectionTitle = isActivity
-			? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
-					components: {
-						prefix: <span className="prefix" />,
-						period: (
-							<span className="period">
-								<span className="date">
-									{ isSummarizeQuery
-										? this.dateForSummarize()
-										: this.dateForDisplay( selectedShortcut ) }
-								</span>
+	/* eslint-disable wpcalypso/jsx-classname-namespace*/
+	let sectionTitle = isActivity
+		? translate( '{{prefix}}Activity for {{/prefix}}{{period/}}', {
+				components: {
+					prefix: <span className="prefix" />,
+					period: (
+						<span className="period">
+							<span className="date">
+								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
 							</span>
-						),
-					},
-					comment: 'Example: "Activity for December 2017"',
-			  } )
-			: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
-					components: {
-						prefix: <span className="prefix" />,
-						period: (
-							<span className="period">
-								<span className="date">
-									{ isSummarizeQuery
-										? this.dateForSummarize()
-										: this.dateForDisplay( selectedShortcut ) }
-								</span>
+						</span>
+					),
+				},
+				comment: 'Example: "Activity for December 2017"',
+		  } )
+		: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
+				components: {
+					prefix: <span className="prefix" />,
+					period: (
+						<span className="period">
+							<span className="date">
+								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
 							</span>
-						),
-					},
-					context: 'Stats: Main stats page heading',
-					comment:
-						'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
-			  } );
+						</span>
+					),
+				},
+				context: 'Stats: Main stats page heading',
+				comment:
+					'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
+		  } );
 
-		if ( isShort ) {
-			sectionTitle = (
-				<span className="period">
-					<span className="date">{ this.dateForDisplay( selectedShortcut ) }</span>
-				</span>
-			);
-		}
-
-		return (
-			<div>
-				{ summary ? (
-					<span>{ sectionTitle }</span>
-				) : (
-					<div className="stats-section-title">
-						<h3>
-							{ isDrillingDown ? (
-								<DateLabelDrill previousDisplayDate={ previousDisplayDate }>
-									{ sectionTitle }
-								</DateLabelDrill>
-							) : (
-								sectionTitle
-							) }
-						</h3>
-						{ showQueryDate && this.renderQueryDate() }
-					</div>
-				) }
-			</div>
+	if ( isShort ) {
+		sectionTitle = (
+			<span className="period">
+				<span className="date">{ dateForDisplay( selectedShortcut ) }</span>
+			</span>
 		);
 	}
+
+	return (
+		<div>
+			{ summary ? (
+				<span>{ sectionTitle }</span>
+			) : (
+				<div className="stats-section-title">
+					<h3>
+						{ isDrillingDown ? (
+							<DateLabelDrill previousDisplayDate={ previousDisplayDate }>
+								{ sectionTitle }
+							</DateLabelDrill>
+						) : (
+							sectionTitle
+						) }
+					</h3>
+					{ showQueryDate && renderQueryDate() }
+				</div>
+			) }
+		</div>
+	);
 }
 
 const connectComponent = connect( ( state, { query, statsType, showQueryDate } ) => {
@@ -331,9 +300,4 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withLocalizedMoment,
-	withIsDrillingDownHook
-)( StatsDatePicker );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsDateLabel );

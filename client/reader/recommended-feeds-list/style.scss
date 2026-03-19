@@ -1,0 +1,139 @@
+.is-reader-page {
+	.recommended-feeds-list {
+		margin: 0;
+	}
+
+	.recommended-feed-item {
+		border-bottom: 1px solid var( --color-neutral-5 );
+		display: flex;
+		list-style-type: none;
+		position: relative;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.recommended-feed-item__link {
+		align-items: center;
+		display: flex;
+		flex-grow: 1;
+		gap: 12px;
+		justify-content: space-between;
+		outline: none;
+		padding: 20px 0;
+		text-decoration: none;
+	}
+
+	.recommended-feed-info {
+		align-items: initial;
+		overflow: hidden;
+		width: 100%;
+
+		h3 {
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 1;
+			color: var( --color-neutral-100 );
+			display: -webkit-box;
+			font-family: Inter, sans-serif;
+			font-size: $font-body;
+			font-weight: 500;
+			overflow: hidden;
+		}
+
+		p {
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 1;
+			color: var( --studio-gray-40 );
+			display: -webkit-box;
+			font-size: rem( 13px );
+			line-height: 20px;
+			margin: 0;
+			overflow: hidden;
+		}
+	}
+
+	.recommended-feed-subscribe-button {
+		flex-shrink: 0;
+	}
+
+	.is-compact-view {
+		.recommended-feed-item {
+			display: flex;
+		}
+
+		.recommended-feed-item__link {
+			align-items: center;
+			border-bottom: none;
+			flex-grow: 1;
+			gap: 10px;
+			justify-content: center;
+			padding: 8px 0;
+		}
+
+		.recommended-feed-info h3 {
+			font-size: rem( 14px );
+			font-weight: normal;
+		}
+	}
+
+	.is-card-view {
+		margin: 26px 0 0 0;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 16px 0 0 0;
+		}
+
+		.recommended-feed-item {
+			border: none;
+		}
+
+		.recommended-feed-item__link {
+			align-items: flex-start;
+			border: 1px solid var( --color-border-subtle );
+			border-radius: 8px;
+			margin-bottom: 16px;
+			padding: 24px;
+			position: relative;
+			min-height: 96px;
+			box-sizing: border-box;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				border: none;
+				border-bottom: 1px solid var( --color-border-subtle );
+				border-radius: 0;
+				margin: 0;
+				min-height: initial;
+				padding: 14px 0;
+			}
+		}
+
+		.recommended-feed-info {
+			display: flex;
+			flex: 1 1 auto;
+			flex-direction: column;
+			font-family: Inter, sans-serif;
+			margin-right: 120px; // // Margin to not obscure the relative-absolute positioned follow button.
+
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-right: 60px; // Reduce margin when follow button has no label.
+			}
+
+			h3 {
+				font-size: rem( 16px );
+				margin: 0 0 6px 0;
+				line-height: 18px;
+			}
+		}
+
+		.recommended-feed-subscribe-button {
+			position: absolute;
+			right: 20px;
+			top: 20px;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				top: 15px;
+			}
+		}
+	}
+}

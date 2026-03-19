@@ -611,6 +611,7 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
+							onGiftSubscription={ couponsAndGiftsEnabled ? onGiftSubscription : undefined }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>

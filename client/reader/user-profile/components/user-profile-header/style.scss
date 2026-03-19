@@ -3,173 +3,81 @@
 
 .is-section-reader {
 	.user-profile-header {
-		max-width: 768px;
-		margin: 0 auto;
-		overflow: hidden;
+		padding: 20px 0 12px;
+	}
 
-		&::after {
-			@include long-content-fade( $size: 16px );
-		}
+	.user-profile-header__user-info {
+		display: flex;
+		gap: 12px;
+		margin-bottom: 12px;
 
-		&__main {
-			display: flex;
-			padding: 0 0 24px;
-			align-items: center;
-
-			@media only screen and ( max-width: 1300px ) {
-				padding-top: 20px;
-			}
-		}
-
-		&__avatar {
-			margin-right: 24px;
-			flex-shrink: 0;
-			width: 116px;
-			height: 116px;
+		.reader-avatar {
+			margin: 0;
 
 			img {
-				border-radius: 100%;
-				width: 100%;
-				height: 100%;
-			}
-
-			&-mobile {
-				width: 72px;
-				height: 72px;
-				margin-right: 16px;
-				display: block;
-
-				@include break-mobile {
-					display: none;
-				}
-			}
-
-			&-desktop {
-				display: none;
-
-				@include break-mobile {
-					display: block;
-					margin-right: 24px;
-					width: 116px;
-					height: 116px;
-				}
+				max-width: initial;
 			}
 		}
 
-		&__details {
-			flex: 1;
-			min-width: 0;
-		}
-
-		&__display-name {
-			font-family: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
-			font-size: $font-title-medium;
-			font-weight: 600;
-			line-height: 1.5;
-			margin-bottom: 16px;
-			display: flex;
+		h1 {
 			align-items: center;
-			text-wrap: nowrap;
-
-			@include break-mobile {
-				font-size: $font-title-large;
-				margin-bottom: 8px;
-				display: block;
-			}
-		}
-
-		&__bio {
-			font-size: $font-body-large;
-			color: var( --color-text-subtle );
-
-			@include break-mobile {
-				font-size: $font-body;
-			}
-		}
-
-		&__bio-desc {
-			margin: 0;
-			position: relative;
-
-			&-text {
-				-webkit-line-clamp: 3;
-				line-clamp: 3;
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				overflow: hidden;
-			}
-
-			&-link {
-				position: absolute;
-				bottom: 0;
-				right: 0;
-				display: inline-flex;
-				gap: 4px;
-				align-items: center;
-				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-link");
-				color: var(--color-text-subtle);
-				text-decoration: underline;
-				background: #fff;
-
-				&::before {
-					content: "";
-					position: absolute;
-					top: 0;
-					bottom: 0;
-					right: 100%;
-					background: linear-gradient(to right, transparent 0%, #fff 100%);
-					width: 40px;
-				}
-			}
-		}
-
-		.section-nav-tab__link {
-			&:hover {
-				background: none;
-			}
-		}
-
-		.section-nav-tab__text {
+			display: flex;
+			font-family: Inter, sans-serif;
 			font-weight: 500;
-			color: var( --studio-black );
+			font-size: rem( 32px );
+			gap: 8px;
+			line-height: 32px;
+			margin-bottom: 5px;
 		}
 
-		/* Ensure the fader and read more link follow the same format as the content. AutoDirection will add
-		the direction property to the content if it doesn't match the interface's language type. However, it
-		will not adjust the fader and link since one doesn't have text content and the other is in the
-		interface langauage. This prevents the fader and link from appearing on the correct side of the
-		description. */
-		.user-profile-header__bio-desc-text[direction="ltr"] ~ .user-profile-header__bio-desc-link {
-			/*!rtl:ignore*/
-			right: 0;
-			/*!rtl:ignore*/
-			left: auto;
-
-			&::before {
-				/*!rtl:ignore*/
-				right: 100%;
-				/*!rtl:ignore*/
-				left: auto;
-				/*!rtl:ignore*/
-				background: linear-gradient(to right, transparent 0%, #fff 100%);
-			}
-		}
-
-		.user-profile-header__bio-desc-text[direction="rtl"] ~ .user-profile-header__bio-desc-link {
-			/*!rtl:ignore*/
-			left: 0;
-			/*!rtl:ignore*/
-			right: auto;
-
-			&::before {
-				/*!rtl:ignore*/
-				left: 100%;
-				/*!rtl:ignore*/
-				right: auto;
-				/*!rtl:ignore*/
-				background: linear-gradient(to left, transparent 0%, #fff 100%);
-			}
+		p {
+			color: var( --studio-gray-40 );
+			font-size: rem( 14px );
+			line-height: 20px;
+			margin-bottom: 0;
 		}
 	}
-}
 
+	.user-profile-header__gravatar-badge {
+		display: flex;
+	}
+
+	p.user-profile-header__bio-desc {
+		color: var( --studio-gray-40 );
+		font-size: rem( 14px );
+		line-height: 20px;
+		margin-bottom: 0;
+		overflow: hidden;
+		position: relative;
+		transition: max-height 0.3s ease-in-out;
+		white-space: pre-line;
+
+		&.is-clamped {
+			max-height: 60px; // 3 lines × 20px line-height.
+		}
+
+		&.is-expanded {
+			max-height: 1000px; // Large enough to accommodate any bio length.
+		}
+	}
+
+	.user-profile-header__bio-toggle {
+		color: var( --studio-gray-60 );
+		cursor: pointer;
+		font-size: rem( 14px );
+		margin-top: 4px;
+		padding: 0;
+		text-decoration: underline;
+	}
+
+	.section-nav-tab__link {
+		&:hover {
+			background: none;
+		}
+	}
+
+	.section-nav-tab__text {
+		font-weight: 500;
+		color: var( --studio-black );
+	}
+}

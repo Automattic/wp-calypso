@@ -119,7 +119,6 @@ export interface UnifiedPlansStepProps {
 		isExtraWideLayout: boolean;
 	};
 
-	hideLogo?: boolean;
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
 	onIntentChange?: ( intent: PlansIntent ) => void;
@@ -220,7 +219,6 @@ function UnifiedPlansStep( {
 	step,
 	signupDependencies,
 	displayedIntervals,
-	hideLogo,
 	headerText,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
@@ -608,7 +606,6 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
-							hideLogo={ hideLogo }
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
