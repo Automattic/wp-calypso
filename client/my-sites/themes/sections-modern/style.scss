@@ -7,7 +7,7 @@
 	--theme-section-text: var(--studio-gray-100);
 	--theme-section-text-secondary: var(--studio-gray-80);
 
-	margin-bottom: 96px;
+	margin-bottom: 108px;
 	padding-inline: 24px;
 
 	&:last-child {
@@ -64,6 +64,8 @@
 .theme-section-header__button.components-button.is-secondary {
 	--wp-components-color-accent: var(--studio-gray-80);
 	--wp-components-color-accent-darker-20: var(--studio-gray-100);
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .theme-section-modern__grid {
@@ -96,7 +98,7 @@
 }
 
 .recommended-sections .banner-modern {
-	margin: 96px auto;
+	margin: 108px auto;
 	max-width: calc( 1220px - 48px);
 	width: calc( 100% - 48px - 48px);
 }
