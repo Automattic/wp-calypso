@@ -1,6 +1,7 @@
 import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
+import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
@@ -13,6 +14,8 @@ type InviteType = {
 		domain: string;
 		admin_url: string;
 		is_vip: boolean;
+		is_garden_site?: boolean;
+		garden?: { partner: string; name: string };
 	};
 	role: string;
 };
@@ -192,6 +195,15 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 		const isMissingLogmein = destination === remoteLoginHost;
 		return isMissingLogmein ? redirect : destination;
 	};
+
+	// CIAB stores: redirect to the store dashboard
+	if (
+		invite.site.is_garden_site &&
+		invite.site.garden?.partner === 'woo' &&
+		invite.site.garden?.name === 'commerce'
+	) {
+		return buildCiabDashboardLink( `/sites/${ invite.site.domain }` );
+	}
 
 	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
