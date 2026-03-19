@@ -4,9 +4,13 @@ import { isEditorPage } from '../is-editor-page';
 import { convertToolMessagesToComponents, deactivateStaleMessages } from '../process-tool-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-jest.mock( '@automattic/components', () => ( {
-	SummaryButton: () => null,
-} ) );
+jest.mock(
+	'@automattic/components',
+	() => ( {
+		SummaryButton: () => null,
+	} ),
+	{ virtual: true }
+);
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();

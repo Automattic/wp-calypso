@@ -190,6 +190,17 @@ object BuildDockerImage : BuildType({
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
 
+		script {
+			name = "Check Docker workspace COPY globs"
+			scriptContent = """
+				#!/usr/bin/env bash
+				node ./bin/check-docker-workspace-copy-globs.mjs
+			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%

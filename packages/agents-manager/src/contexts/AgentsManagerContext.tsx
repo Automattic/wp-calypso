@@ -16,6 +16,8 @@ export interface AgentsManagerContextType {
 	isLoggedIn: boolean;
 	/** The selected site object. */
 	site?: AgentsManagerSite | null;
+	/** Site key for per-site state: the site ID as a string, or 'no-site' for non-site contexts. */
+	siteKey: string;
 	/** The name of the current section (e.g., `wp-admin`, `gutenberg`). */
 	sectionName: string;
 	/** The current route path. */
@@ -38,6 +40,7 @@ const defaultContext: AgentsManagerContextType = {
 	currentUser: undefined,
 	isLoggedIn: false,
 	site: null,
+	siteKey: 'no-site',
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,
@@ -52,7 +55,7 @@ export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
 		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
-	> & { sectionName: string };
+	> & { sectionName: string; siteKey: string };
 }
 
 /**

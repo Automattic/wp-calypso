@@ -45,7 +45,7 @@ function AnalyticsProviderWithClient( {
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
 			recordTracksEvent( eventName, properties ) {
-				const path = getNormalizedPath( router );
+				const path = getNormalizedPath( router.state.matches, router.basepath );
 				recordTracksEvent( eventName, {
 					path,
 					...properties,

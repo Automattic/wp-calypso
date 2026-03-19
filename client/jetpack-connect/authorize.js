@@ -1332,14 +1332,17 @@ export class JetpackAuthorize extends Component {
 							<BrandHeader
 								title={ translate( 'Connect your account' ) }
 								description={ translate(
-									'To access all of the features and functionality in WooPayments, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+									'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
 									{
 										args: {
+											pluginName: wooDna.getServiceName() || wooDna.getPluginName(),
 											siteName,
 										},
 										components: {
 											siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
-											doc: (
+											doc: wooDna.getServiceHelpUrl() ? (
+												<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
+											) : (
 												<a
 													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
 													target="_blank"

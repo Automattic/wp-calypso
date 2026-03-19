@@ -17,7 +17,7 @@ import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';

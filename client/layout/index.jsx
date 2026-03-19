@@ -17,6 +17,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -366,6 +367,7 @@ class Layout extends Component {
 
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
+		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
@@ -391,6 +393,10 @@ export default withCurrentRoute(
 		const shouldShowCollapsedGlobalSidebar = sidebarType === SidebarType.GlobalCollapsed;
 		const shouldShowUnifiedSiteSidebar = sidebarType === SidebarType.UnifiedSiteClassic;
 
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
+
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -398,6 +404,7 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
+			( dashboard === 'ciab' && isCheckoutSection ) ||
 			( ! isWooJPC && ! isBlazePro && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
@@ -432,9 +439,6 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
-		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
-			sectionName
-		);
 		const isGravatarDomain =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );

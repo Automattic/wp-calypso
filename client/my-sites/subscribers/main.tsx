@@ -84,7 +84,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 							siteId={ siteId ?? 0 }
 							userId={ giftUserId }
 							username={ giftUsername }
-							onCancel={ () => setGiftUserId( null ) }
+							onClose={ () => setGiftUserId( null ) }
 							onConfirm={ () => setGiftUserId( null ) }
 						/>
 					) }

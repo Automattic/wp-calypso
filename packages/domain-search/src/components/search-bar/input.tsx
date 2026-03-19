@@ -1,6 +1,6 @@
 import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 
@@ -10,6 +10,10 @@ export const Input = () => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
+
+	useEffect( () => {
+		setLocalQuery( query );
+	}, [ query ] );
 
 	const debouncedPropagateQuery = useDebounce( setQuery, DELAY_TIMEOUT );
 

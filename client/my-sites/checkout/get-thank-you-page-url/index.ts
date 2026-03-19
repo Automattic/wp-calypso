@@ -396,8 +396,7 @@ export default function getThankYouPageUrl( {
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
 		urlFromCookie &&
-		receiptIdOrPlaceholder &&
-		! urlFromCookie.includes( '/start/setup-site' )
+		receiptIdOrPlaceholder
 	) {
 		clearSignupCompleteFlowName();
 		let newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;

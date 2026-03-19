@@ -12,12 +12,12 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 		const siteSlug = accountAtomic.getSiteURL( { protocol: false } );
 		const siteId = accountAtomic.credentials.testSites?.primary?.id as number;
 
-		await test.step( 'Given I clear any stale cart items', async function () {
-			await accountAtomic.restAPI.clearShoppingCart( siteId );
-		} );
-
 		await test.step( `And I am authenticated as '${ accountAtomic.accountName }'`, async function () {
 			await accountAtomic.authenticate( page );
+		} );
+
+		await test.step( 'Given I clear any stale cart items', async function () {
+			await accountAtomic.restAPI.clearShoppingCart( siteId );
 		} );
 
 		await test.step( 'When I navigate to the domain-and-plan flow', async function () {

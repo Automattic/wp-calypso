@@ -23,7 +23,6 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getWithThemeDestination = noop,
 	getWithPluginDestination = noop,
-	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
@@ -365,28 +364,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
-			name: 'setup-site',
-			steps: [
-				'intent',
-				'site-options',
-				'starting-point',
-				'courses',
-				'store-options',
-				'store-features',
-			],
-			destination: getDestinationFromIntent,
-			description:
-				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2024-01-08',
-			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
-			get pageTitle() {
-				return translate( 'Set up your site' );
-			},
-			enableBranchSteps: true,
-			hideProgressIndicator: true,
 		},
 		{
 			name: DIFM_FLOW,
