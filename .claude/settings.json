@@ -13,5 +13,18 @@
 			"Read(packages/calypso-e2e/dist/**)",
 			"Read(packages/calypso-e2e/src/secrets/*)"
 		]
+	},
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "npx block-no-verify@1.1.2"
+					}
+				]
+			}
+		]
 	}
 }
