@@ -185,7 +185,13 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 }
 
 export async function logout( user: User ): Promise< void > {
-	const configLogoutUrl = config( 'logout_url' ) as string | false;
+	let configLogoutUrl = config( 'logout_url' ) as string | false;
+
+	// Apply locale subdomain to static logout URLs (e.g., |subdomain|wordpress.com)
+	if ( configLogoutUrl ) {
+		const subdomain = magnificentNonEnLocales.includes( user.language ) ? user.language + '.' : '';
+		configLogoutUrl = configLogoutUrl.replace( '|subdomain|', subdomain );
+	}
 
 	// Determine where to send the user after logout. Priority:
 	//
@@ -208,10 +214,6 @@ export async function logout( user: User ): Promise< void > {
 	} else {
 		logoutUrl = configLogoutUrl || window.location.origin;
 	}
-
-	// Apply locale subdomain to static logout URLs (e.g., |subdomain|wordpress.com)
-	const subdomain = magnificentNonEnLocales.includes( user.language ) ? user.language + '.' : '';
-	logoutUrl = logoutUrl.replace( '|subdomain|', subdomain );
 
 	disablePersistQueryClient();
 	clearQueryClient();
