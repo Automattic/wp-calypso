@@ -646,6 +646,15 @@
 			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 			max-width: 1220px;
 		}
+
+		.plan-upgrade-banner {
+			grid-row-start: 3;
+			margin: 48px auto;
+			width: calc( 100% - 24px - 24px );
+			@include break-medium {
+				width: calc( 100% - 40px - 40px );
+			}
+		}
 	}
 
 	.theme-card {
