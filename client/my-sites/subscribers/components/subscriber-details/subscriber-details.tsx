@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { TimeSince } from '@automattic/components';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, Icon } from '@wordpress/components';
+import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
@@ -22,6 +23,7 @@ type SubscriberDetailsProps = {
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
 	onGiftSubscription?: ( subscriber: Subscriber ) => void;
+	onRemoveComp?: ( giftId: number, planName: string ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -34,6 +36,7 @@ const SubscriberDetails = ( {
 	onClose,
 	onUnsubscribe,
 	onGiftSubscription,
+	onRemoveComp,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
@@ -57,6 +60,22 @@ const SubscriberDetails = ( {
 					{ translate( 'Comp', {
 						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
 					} ) }
+					{ onRemoveComp && subscriptionPlan.gift_id && (
+						<Button
+							className="subscriber-details__remove-comp-button"
+							variant="tertiary"
+							aria-label={ String(
+								translate( 'Remove complimentary subscription: %(planName)s', {
+									args: { planName: subscriptionPlan.title ?? '' },
+								} )
+							) }
+							onClick={ () =>
+								onRemoveComp( subscriptionPlan.gift_id!, subscriptionPlan.title ?? '' )
+							}
+						>
+							<Icon icon={ trash } size={ 18 } />
+						</Button>
+					) }
 				</div>
 			);
 		}
